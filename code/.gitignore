@@ -1,4 +1,5 @@
 make.err
 bin
 obj
+splint.out
 
