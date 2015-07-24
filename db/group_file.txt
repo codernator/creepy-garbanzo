@@ -1,0 +1,616 @@
+Gn 1
+Name mage basics~
+Lvl 0 1 0
+Sk dagger~
+
+Gn 3
+Name thief basics~
+Lvl 2 1 0
+Sk dagger~
+Sk steal~
+
+Gn 4
+Name warrior basics~
+Lvl 3 1 0
+Sk sword~
+Sk second attack~
+
+Gn 5
+Name witch basics~
+Lvl 4 1 0
+Sk dagger~
+Sk brew~
+
+Gn 6
+Name mage default~
+Sk lore~
+Sk calm~
+Sk charm person~
+Sk sleep~
+Sk acid blast~
+Sk burning hands~
+Sk chain lightning~
+Sk chill touch~
+Sk colour spray~
+Sk fireball~
+Sk lightning bolt~
+Sk magic missile~
+Sk shocking grasp~
+Sk fireblade~
+Sk detect evil~
+Sk detect good~
+Sk detect invis~
+Sk detect magic~
+Sk detect poison~
+Sk farsight~
+Sk identify~
+Sk know alignment~
+Sk locate object~
+Sk giant strength~
+Sk haste~
+Sk infravision~
+Sk refresh~
+Sk invisibility~
+Sk mass invisibility~
+Sk ventriloquate~
+Sk black plague~
+Sk blindness~
+Sk change sex~
+Sk curse~
+Sk energy drain~
+Sk fear~
+Sk plague~
+Sk poison~
+Sk slow~
+Sk weaken~
+Sk armor~
+Sk cancellation~
+Sk dispel magic~
+Sk fireproof~
+Sk protection evil~
+Sk protection good~
+Sk sanctuary~
+Sk shield~
+Sk stone skin~
+Sk bark skin~
+Sk air armor~
+Sk fly~
+Sk gate~
+Sk nexus~
+Sk pass door~
+Sk portal~
+Sk summon~
+Sk teleport~
+Sk word of recall~
+Sk call lightning~
+Sk control weather~
+Sk faerie fire~
+Sk faerie fog~
+Sk lightning bolt~
+Sk winds~
+
+Gn 7
+Name cleric default~
+Sk flail~
+Sk demonfire~
+Sk dispel evil~
+Sk dispel good~
+Sk earthquake~
+Sk flamestrike~
+Sk ray of truth~
+Sk psychic headbutt~
+Sk continual light~
+Sk create food~
+Sk create spring~
+Sk create water~
+Sk create rose~
+Sk floating disc~
+Sk create feast~
+Sk cure blindness~
+Sk cure disease~
+Sk cure poison~
+Sk cure blood~
+Sk bless~
+Sk calm~
+Sk frenzy~
+Sk holy word~
+Sk remove curse~
+Sk detect evil~
+Sk detect good~
+Sk detect invis~
+Sk detect magic~
+Sk detect poison~
+Sk farsight~
+Sk identify~
+Sk know alignment~
+Sk locate object~
+Sk cure critical~
+Sk cure light~
+Sk cure serious~
+Sk heal~
+Sk extinguish flames~
+Sk mass healing~
+Sk refresh~
+Sk black plague~
+Sk blindness~
+Sk change sex~
+Sk curse~
+Sk energy drain~
+Sk fear~
+Sk plague~
+Sk poison~
+Sk slow~
+Sk weaken~
+Sk armor~
+Sk cancellation~
+Sk dispel magic~
+Sk fireproof~
+Sk protection evil~
+Sk protection good~
+Sk sanctuary~
+Sk shield~
+Sk stone skin~
+Sk bark skin~
+Sk air armor~
+Sk shield block~
+Sk fly~
+Sk gate~
+Sk nexus~
+Sk pass door~
+Sk portal~
+Sk summon~
+Sk teleport~
+Sk word of recall~
+Sk call lightning~
+Sk control weather~
+Sk faerie fire~
+Sk faerie fog~
+Sk lightning bolt~
+Sk winds~
+
+Gn 8
+Name thief default~
+Sk mace~
+Sk sword~
+Sk backstab~
+Sk parry~
+Sk dodge~
+Sk second attack~
+Sk envenom~
+Sk hide~
+Sk peek~
+Sk pick lock~
+Sk sneak~
+Sk shield block~
+
+Gn 9
+Name warrior default~
+Sk axe~
+Sk dagger~
+Sk flail~
+Sk mace~
+Sk polearm~
+Sk spear~
+Sk sword~
+Sk whip~
+Sk shield block~
+Sk bash~
+Sk disarm~
+Sk enhanced damage~
+Sk parry~
+Sk rescue~
+Sk third attack~
+
+Gn 10
+Name witch default~
+Sk lore~
+Sk calm~
+Sk charm person~
+Sk sleep~
+Sk acid blast~
+Sk burning hands~
+Sk chain lightning~
+Sk chill touch~
+Sk colour spray~
+Sk fireball~
+Sk lightning bolt~
+Sk magic missile~
+Sk shocking grasp~
+Sk fireblade~
+Sk detect evil~
+Sk detect good~
+Sk detect invis~
+Sk detect magic~
+Sk detect poison~
+Sk farsight~
+Sk identify~
+Sk know alignment~
+Sk locate object~
+Sk giant strength~
+Sk haste~
+Sk infravision~
+Sk refresh~
+Sk invisibility~
+Sk mass invisibility~
+Sk ventriloquate~
+Sk black plague~
+Sk blindness~
+Sk change sex~
+Sk curse~
+Sk energy drain~
+Sk fear~
+Sk plague~
+Sk poison~
+Sk slow~
+Sk weaken~
+Sk armor~
+Sk cancellation~
+Sk dispel magic~
+Sk fireproof~
+Sk protection evil~
+Sk protection good~
+Sk sanctuary~
+Sk shield~
+Sk stone skin~
+Sk bark skin~
+Sk air armor~
+Sk call lightning~
+Sk control weather~
+Sk faerie fire~
+Sk faerie fog~
+Sk lightning bolt~
+Sk winds~
+Sk supernatural speed~
+
+Gn 11
+Name weaponsmaster~
+Lvl 0 1 -1
+Lvl 1 1 -1
+Lvl 2 1 -1
+Lvl 3 1 -1
+Lvl 4 1 -1
+Sk axe~
+Sk dagger~
+Sk flail~
+Sk mace~
+Sk polearm~
+Sk spear~
+Sk sword~
+Sk whip~
+
+Gn 12
+Name attack~
+Lvl 0 1 -1
+Lvl 1 1 5
+Lvl 2 1 -1
+Lvl 3 1 8
+Lvl 4 1 6
+Sk demonfire~
+Sk dispel evil~
+Sk dispel good~
+Sk earthquake~
+Sk flamestrike~
+Sk ray of truth~
+Sk psychic headbutt~
+Help `&[`6S`^p`!e`^ll`6S`&]`` ATTACK Attack_spell_group (AttSpell)~
+
+Gn 13
+Name mage specials~
+Lvl 0 1 8
+Lvl 1 1 -1
+Lvl 2 1 -1
+Lvl 3 1 -1
+Lvl 4 1 -1
+Sk meteor storm~
+Sk blood boil~
+Sk acidic rain~
+Sk web~
+Sk blink~
+Sk reverse align~
+Sk ring of fire~
+Sk time warp~
+Sk grandeur~
+Help 'MAGE SPECIALS' MAGESPECIALS MAGE_SPECIALS~
+
+Gn 14
+Name clerical~
+Lvl 0 1 -1
+Lvl 1 1 9
+Lvl 2 1 -1
+Lvl 3 1 -1
+Lvl 4 1 -1
+Sk druid call~
+Sk monsoon~
+Sk pollen burst~
+Sk reverse align~
+Sk swarm of thorns~
+Sk revive~
+Sk black mantle~
+Help CLERICAL NATURE~
+
+Gn 15
+Name mystical~
+Lvl 0 1 -1
+Lvl 1 1 -1
+Lvl 2 1 -1
+Lvl 3 1 -1
+Lvl 4 1 7
+Sk blood boil~
+Sk revive~
+Sk druid call~
+Sk reverse align~
+Sk cloud of death~
+Sk bloody tears~
+Sk time warp~
+Sk darkness~
+Sk black mantle~
+Sk supernatural speed~
+Help Mystical Mystical_Group~
+
+Gn 16
+Name beguiling~
+Lvl 0 1 4
+Lvl 1 1 -1
+Lvl 2 1 6
+Lvl 3 1 -1
+Lvl 4 1 2
+Sk calm~
+Sk charm person~
+Sk sleep~
+Help `&[`6S`^p`!e`^ll`6S`&]`` BEGUILING Beguiling_spell_group (AttSpell)~
+
+Gn 17
+Name benedictions~
+Lvl 0 1 -1
+Lvl 1 1 4
+Lvl 2 1 -1
+Lvl 3 1 8
+Lvl 4 1 9
+Sk bless~
+Sk calm~
+Sk frenzy~
+Sk holy word~
+Sk remove curse~
+Help `&[`6S`^p`!e`^ll`6S`&]`` BENEDICTIONS Benediction_spell_group (DefSpell)~
+
+Gn 18
+Name combat~
+Lvl 0 1 6
+Lvl 1 1 -1
+Lvl 2 1 10
+Lvl 3 1 9
+Lvl 4 1 8
+Sk acid blast~
+Sk burning hands~
+Sk chain lightning~
+Sk chill touch~
+Sk colour spray~
+Sk fireball~
+Sk lightning bolt~
+Sk magic missile~
+Sk shocking grasp~
+Sk fireblade~
+Help `&[`!R`8U`&L`8E`!S`&]`` Combat (NewbRules)~
+
+Gn 19
+Name creation~
+Lvl 0 1 4
+Lvl 1 1 4
+Lvl 2 1 8
+Lvl 3 1 8
+Lvl 4 1 8
+Sk continual light~
+Sk create food~
+Sk create spring~
+Sk create water~
+Sk create rose~
+Sk floating disc~
+Sk create feast~
+Help `&[`6S`^p`!e`^ll`6S`&]`` CREATION Creation_spell_group (Spell)~
+
+Gn 20
+Name curative~
+Lvl 0 1 -1
+Lvl 1 1 4
+Lvl 2 1 -1
+Lvl 3 1 8
+Lvl 4 1 5
+Sk cure blindness~
+Sk cure disease~
+Sk cure poison~
+Sk cure blood~
+Help `&[`6S`^p`!e`^ll`6S`&]`` CURATIVE Curative_spell_group (DefSpell)~
+
+Gn 21
+Name detection~
+Lvl 0 1 4
+Lvl 1 1 3
+Lvl 2 1 6
+Lvl 3 1 -1
+Lvl 4 1 5
+Sk detect evil~
+Sk detect good~
+Sk detect invis~
+Sk detect magic~
+Sk detect poison~
+Sk farsight~
+Sk identify~
+Sk know alignment~
+Sk locate object~
+Help `&[`6S`^p`!e`^ll`6S`&]`` DETECTION Detection_spell_group (Spell)~
+
+Gn 22
+Name draconian~
+Lvl 0 1 8
+Lvl 1 1 -1
+Lvl 2 1 -1
+Lvl 3 1 -1
+Lvl 4 1 -1
+Sk acid breath~
+Sk fire breath~
+Sk frost breath~
+Sk gas breath~
+Sk lightning breath~
+Help `&[`6S`^p`!e`^ll`6S`&]`` DRACONIAN Draconian_spell_group (Spell) ~
+
+Gn 23
+Name enchantment~
+Lvl 0 1 6
+Lvl 1 1 -1
+Lvl 2 1 -1
+Lvl 3 1 -1
+Lvl 4 1 -1
+Sk enchant armor~
+Sk enchant weapon~
+Sk fireproof~
+Sk recharge~
+Sk noremove~
+Sk equipment invis~
+Sk shatter curse~
+Help `&[`6S`^p`!e`^ll`6S`&]`` ENCHANTMENT Enchantment_spell_group (Spell)~
+
+Gn 24
+Name enhancement~
+Lvl 0 1 5
+Lvl 1 1 -1
+Lvl 2 1 9
+Lvl 3 1 9
+Lvl 4 1 8
+Sk giant strength~
+Sk haste~
+Sk infravision~
+Sk refresh~
+Help `&[`6S`^p`!e`^ll`6S`&]`` ENHANCEMENT Enhancement_spell_group (Spell)~
+
+Gn 25
+Name harmful~
+Lvl 0 1 -1
+Lvl 1 1 3
+Lvl 2 1 -1
+Lvl 3 1 6
+Lvl 4 1 4
+Sk cause critical~
+Sk cause light~
+Sk cause serious~
+Sk harm~
+Help `&[`6S`^p`!e`^ll`6S`&]``  HARMFUL Harmful_spell_group (AttSpell)~
+
+Gn 26
+Name healing~
+Lvl 0 1 -1
+Lvl 1 1 3
+Lvl 2 1 -1
+Lvl 3 1 6
+Lvl 4 1 9
+Sk cure critical~
+Sk cure light~
+Sk cure serious~
+Sk heal~
+Sk extinguish flames~
+Sk mass healing~
+Sk refresh~
+Help `^[`6S`&k`6i`&ll`6S`^]`` 'FAST HEALING' (Skill)~
+
+Gn 27
+Name illusion~
+Lvl 0 1 4
+Lvl 1 1 -1
+Lvl 2 1 7
+Lvl 3 1 -1
+Lvl 4 1 3
+Sk invisibility~
+Sk mass invisibility~
+Sk ventriloquate~
+Help `&[`6S`^p`!e`^ll`6S`&]`` ILLUSION Illusion_spell_group (DefSpell)~
+
+Gn 28
+Name maladictions~
+Lvl 0 1 5
+Lvl 1 1 5
+Lvl 2 1 9
+Lvl 3 1 9
+Lvl 4 1 4
+Sk black plague~
+Sk blindness~
+Sk change sex~
+Sk curse~
+Sk energy drain~
+Sk fear~
+Sk plague~
+Sk poison~
+Sk slow~
+Sk weaken~
+Help `&[`6S`^p`!e`^ll`6S`&]`` MALADICTIONS Maladictions_spell_group (AttSpell)~
+
+Gn 29
+Name protective~
+Lvl 0 1 8
+Lvl 1 1 7
+Lvl 2 1 9
+Lvl 3 1 11
+Lvl 4 1 9
+Sk armor~
+Sk cancellation~
+Sk dispel magic~
+Sk fireproof~
+Sk protection evil~
+Sk protection good~
+Sk sanctuary~
+Sk shield~
+Sk stone skin~
+Sk bark skin~
+Sk air armor~
+Help `&[`6S`^p`!e`^ll`6S`&]`` PROTECTIVE Protective_spell_group (Spells)~
+
+Gn 30
+Name transportation~
+Lvl 0 1 4
+Lvl 1 1 4
+Lvl 2 1 8
+Lvl 3 1 9
+Lvl 4 1 6
+Sk fly~
+Sk gate~
+Sk nexus~
+Sk pass door~
+Sk portal~
+Sk summon~
+Sk teleport~
+Sk word of recall~
+Help `&[`6S`^p`!e`^ll`6S`&]`` TRANSPORTATION Transportation_spell_group (Spell)~
+
+Gn 31
+Name water~
+Lvl 0 1 5
+Lvl 1 1 5
+Lvl 2 1 5
+Lvl 3 1 8
+Lvl 4 1 9
+Sk create spring~
+Sk create water~
+Sk freeze bolt~
+Sk freeze storm~
+Sk frost hands~
+Help WATER~
+
+Gn 32
+Name weather~
+Lvl 0 1 4
+Lvl 1 1 4
+Lvl 2 1 8
+Lvl 3 1 8
+Lvl 4 1 5
+Sk call lightning~
+Sk control weather~
+Sk faerie fire~
+Sk faerie fog~
+Sk lightning bolt~
+Sk winds~
+Help 'CONTROL WEATHER'~
+
+Gn 33
+Name cleric basics~
+Lvl 1 1 0
+Sk mace~
+
+END

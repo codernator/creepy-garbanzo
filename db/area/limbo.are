@@ -1,0 +1,167 @@
+#AREADATA
+Name Limbo~
+Builders None~
+VNUMs 1 38
+Credits `#[`&  NONE   `#]``  Diku    Limbo~
+Security 9
+Complete 1
+Llevel 0
+Ulevel 0
+Description ~
+End
+
+#MOBILES
+#1
+dire wolf~
+the dire wolf~
+There is a dire wolf, hunched over and growling at you.
+~
+~
+wolf~
+ACFG DFVZ 0 0
+1 0 1d1+1 1d1+1 10d8+20 'bite'
+0 0 0 0
+DEFHN A BE N
+stand stand male 500
+AGV ACDEFJKQV medium unknown
+#0
+
+#OBJECTS
+#1
+coin silver gcash~
+a `8s`7i`&lve`7r c`8oin``~
+One miserable `8s`7i`&lve`7r c`8oin``.~
+silver~
+0 money 0 A
+A 0 0 0 0
+0 0 0 0 P
+#2
+coin gold gcash~
+a `#g`&o`#l`7d `#c`&oi`7n``~
+One valuable `#g`&o`#l`7d `#c`&oi`7n``.~
+gold~
+0 money 0 A
+0 A 0 0 0
+0 0 0 0 P
+#3
+coins gold gcash~
+%d `#go`&l`7d`` coins~
+A pile of `#g`7o`&ld`` coins.~
+gold~
+0 money 0 A
+0 0 0 0 0
+0 0 0 0 P
+#4
+coins silver gcash~
+%d `8sil`7ve`&r co`7in`8s``~
+A pile of worthless `7sil`&ve`8r co`&in`7s``.~
+silver~
+0 money 0 A
+0 0 0 0 0
+0 0 0 0 P
+#5
+coins silver gold gcash~
+%d `8sil`7v`&er co`7in`8s`` and %d `#go`7l`&d coi`7n`#s``~
+A `#p`7i`&l`7e`& o`8f c`&o`7i`#ns``.~
+gold~
+0 money 0 A
+0 0 0 0 0
+0 0 0 0 P
+#10
+corpse~
+the `!cor`1ps`&e`` of %s~
+The `!cor`1ps`&e`` of %s is lying here.~
+meat~
+0 npc_corpse 0 A
+0 0 0 A 0
+10 1 100 0 D
+#11
+corpse~
+the `!cor`1ps`&e`` of %s~
+The `!cor`1p`&se`` of %s is lying here.~
+meat~
+0 pc_corpse O 0
+0 0 0 A 0
+10 30000 100 0 D
+#12
+ear %s~
+the `8sev`1ere`!d e`1a`8r`` of %s~
+The `8sev`1ere`!d e`1a`8r`` of %s is lying here in a small pool of `!blood``.~
+meat~
+0 token 0 AO
+A BD 0 0 0
+0 50 0 0 D
+#13
+heart~
+the `1he`!a`1rt`` of %s~
+The torn`8-``out `1he`!a`1rt`` of %s is lying here.~
+meat~
+0 food 0 A
+E E 0 0 0
+0 20 0 0 D
+#14
+arm~
+the `Pa`3r`1m`` of %s~
+The sliced`8-``off `Pa`3r`1m`` of %s is lying here.~
+meat~
+0 food 0 A
+CE CE 0 0 0
+0 50 0 0 D
+#15
+leg~
+the `1l`3e`Pg`` of %s~
+The sliced`8-``off `Pl`3e`1g`` of %s is lying here.~
+meat~
+0 food 0 A
+CE CE 0 0 0
+0 50 0 0 D
+#16
+guts entrails~
+the `#gu`@t`2s`` of %s~
+A steaming `1pi`!l`&e`` of %s's `!ent`1ra`7i`&ls`` is lying here.~
+meat~
+0 food 0 A
+AC AC 0 A 0
+0 20 0 0 D
+#17
+brains brain~
+the `Pbr`5a`7i`&ns`` of %s~
+The `1s `!plattere `1d `Pbr`5a`7i`&ns`` of %s are lying here.~
+meat~
+0 food 0 A
+BD BD 0 0 0
+0 20 0 0 D
+#0
+
+#ROOMS
+#1
+`4T`Oh`4e `7E`&n`7d of `7t`&h`7e `4U`Oni`4v`Oer`4s`Oe``~
+Nothingness.
+~
+0 4 0
+M 200 H 200
+S
+#2
+Limbo~
+You are floating in a formless void, detached from all sensation of physical
+matter, surrounded by swirling glowing light, which fades into the relative
+darkness around you without any trace of edges or shadow.
+   There is a "No Tipping" notice pinned to the darkness.
+~
+0 9228 1
+S
+#0
+
+#SPECIALS
+S
+
+#PROGRAMS
+#0
+
+#RESETS
+S
+
+#SHOPS
+0
+
+#$

@@ -1,0 +1,43 @@
+From eo@eden.comSat Feb 24 08:36:13 1996
+Date: Sat, 24 Feb 1996 07:27:21 -0600 (CST)
+From: Eo! <eo@eden.com>
+To: nexus@insanity.dorm.umd.edu
+
+#!/usr/bin/perl
+#
+# Add a stat field to a ROM 2.4x pfile
+#
+# -Eo's version-
+#
+
+$pfile = @ARGV[0];
+$toadd = @ARGV[1];
+goto yabba if ($pfile eq '' || $toadd eq '');
+print ("addstat: opening player file\n");
+open (PFIN, "./$pfile");
+open (PFOUT, ">./$pfile.foo");
+gronk:
+chop ($inline = <PFIN>);
+goto wargle if (eof);
+goto fazoozle if (substr($inline,0,4) eq "Attr");
+goto practical_joke if (substr($inline,0,4) eq "Titl");
+wangle:
+print PFOUT ("$inline\n");
+goto gronk;
+yabba:
+print ("addstat: usage: addstat <pfile> <n>, where <n> is the stat to add.\n");
+goto snoogh;
+fazoozle:
+print ("addstat: found stats. Adding new stat.\n");
+$inline = ($inline . " $toadd");
+goto wangle;
+wargle:
+close PFIN;
+close PFOUT;
+print ("addstat: all done.\n");
+goto snoogh;
+practical_joke:
+$inline = "Titl has a spiffy new Eo tattoo!";
+goto wangle;
+
+snoogh:

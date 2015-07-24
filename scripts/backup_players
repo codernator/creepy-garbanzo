@@ -1,0 +1,15 @@
+#!/usr/bin/perl
+#
+# Backs up the pfiles..
+#
+# --Eo
+#
+
+chop ($fmont = `date | cut -f 2 -d \\ `);
+chop ($fdate = `date | cut -f 3 -d \\ `);
+chop ($fyear = `date | cut -f 6 -d \\ `);
+
+$fname = ("players_" . $fmont . "_" . $fdate . "_" . $fyear . ".tar" );
+print ("backup_players: creating $fname\n\r");
+system("cd ~/mud/BT/player;tar -czf ~/mud/BT/BACKUP/$fname *");
+print ("backup_players: backup complete.\n\r");

@@ -1,0 +1,44 @@
+#!/usr/bin/perl
+#
+# Add a Comm2 field to a ROM 2.4x pfile
+#
+# -Eo's version-
+#
+
+system("cd player;ls >../p.lst");
+open (PLAYERS, "p.lst");
+
+nextpfile:
+ chop ($pfile = <PLAYERS>);
+ goto nomore if (eof);
+
+open (PFIN, "./player/$pfile");
+print ("addstat: Opening player $pfile\n\r");
+open (PFOUT, ">./fixed/$pfile");
+
+readline:
+ chop ($inline = <PFIN>);
+ goto found if (substr($inline,0,4) eq "Comm");
+
+writeline:
+ print PFOUT ("$inline\n");
+ goto close_file if (eof);
+ goto readline;
+
+found:
+ print PFOUT ("$inline\nDcry OH NO!\n");
+ goto close_file;
+goto writeline;
+
+close_file:
+ print PFOUT ("$closer\n");
+ $closer = "#END";
+ close PFIN;
+ close PFOUT;
+ print ("addstat: all done.\n");
+ goto end;
+
+end:
+goto nextpfile;
+
+nomore:

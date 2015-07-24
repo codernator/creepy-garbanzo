@@ -1,0 +1,87 @@
+#PLAYER
+Name Codernator~
+Id   1253990350
+LogO 1348535672
+Vers 5
+Vernew 6
+Prom %r (%R) [%z]> ~
+Race Sprite~
+Inote (null)~
+Sex  1
+Cla  3
+Levl 610
+Sec  9
+Plyd 49510
+Msg 'note' 0
+Msg 'penalty' 0
+Msg 'news' 0
+Msg 'change' 0
+Msg 'rpnote' 0
+Msg 'aucnote' 0
+Msg 'questnote' 0
+Msg 'contest' 0
+Msg 'idea' 0
+Msg 'building' 0
+Scro 22
+Room 1
+HMV  10346 10346 8417 8417 7127 7127
+Gold 10004
+Silv 1365
+Silver_in_bank 90
+Gold_in_bank 10
+Exp  610000
+Act  EFQ
+AfBy BDPTZ
+Benter 0
+Bkills 0
+Bloss 0
+Pkil 0
+Pdea 0
+Mkil 0
+Mdea 0
+Pktm 0
+Sftm 0
+Comm QR
+Comm2 K
+Dcry Dammit, I HATE it when that happens!~
+Invi 610
+Pos  8
+Prac 4275
+Trai 626
+Save  -40
+Alig  -1
+Hit   90
+Dam   91
+ACs -2492 -2494 -2492 -2437
+Rpoint 0 0 0 0 0 0 0 0 0 0 0
+Attr 15 16 14 15 11 9
+AMod 31 28 26 37 27 9
+Pass krAk2m0r3~
+Immk  ~
+Titl  does what?~
+Pnts 6
+TSex 1
+LLev 4
+HMVP 8576 6817 5377
+Cnd  0 98 98 98 98
+QPnt 0
+Tenten 0
+Twohundreds 0
+Fireproof 0
+ArmorC 0
+Weaponflag 0
+Damnoun 0
+Restring 0
+Immquest 0
+Immtrivia 0
+Immhidden 0
+Immwild 0
+Imp 0
+Skillset 0
+rp 0
+Bounty 0
+Color 0 5 10 11 2 7 1 6 3 4 8 9 12 0 1
+Extended 0 0
+End
+
+#END

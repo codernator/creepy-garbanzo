@@ -1,0 +1,16 @@
+#!/usr/bin/perl
+#
+# Backs up the source..
+#
+# --Eo
+#
+
+chop ($fmont = `date | cut -f 2 -d \\ `);
+chop ($fdate = `date | cut -f 3 -d \\ `);
+chop ($fyear = `date | cut -f 6 -d \\ `);
+$fname = ("source_" . $fmont . "_" . $fdate . "_" . $fyear . ".zip" );
+print ("backup_source: creating $fname\n\r");
+system ("cd ~/BT/src;zip -9 ../$fname *.c >/dev/null");
+system ("cd ~/BT/src;zip -9 ../$fname *.h >/dev/null");
+system ("mv ~/BT/$fname ~/BT/BACKUP/source");
+print ("backup_source: backup complete.\n\r");

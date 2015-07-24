@@ -1,0 +1,60 @@
+#!/usr/bin/perl
+#
+# Add a Comm2 field to a ROM 2.4x pfile
+#
+# -Eo's version-
+#
+
+system("cd player;ls >../p.lst");
+open (PLAYERS, "p.lst");
+
+nextpfile:
+ goto nomore if (eof);
+ chop ($pfile = <PLAYERS>);
+
+open (PFIN, "./player/$pfile");
+print ("addstat: Opening player $pfile\n\r");
+open (PFOUT, ">./fixed/$pfile");
+
+readline:
+ chop ($inline = <PFIN>);
+ goto found if (substr($inline,0,4) eq "Comm");
+
+writeline:
+ print PFOUT ("$inline\n");
+ goto close_file if (eof);
+ goto readline;
+
+found:
+# print ("addstat: found COMM bitvector. Adding new bitvector.\n");
+# $comm_foo = (substr($inline,5,length($inline)-5));
+# print("\nCOMM Flags: $comm_foo\n\r");
+# $ca_out = "";
+# $cb_out = "";
+# $count = 0;
+# until ( $count == length($comm_foo) )
+# {
+#  $char = substr ($comm_foo, $count, 1);
+#  $ca_out = ($ca_out . $char) if ($char ge "A" && $char le "Z");
+#  $cb_out = ($cb_out . $char) if ($char ge "a" && $char le "z");
+#  $count++;
+# }
+# $inline = ("Comm $ca_out\nComm2 $cb_out");
+# goto writeline;
+#
+# New found routine, replace all with certain bits.
+#
+<PFIN>; # Comm2 is already there!
+$inline = ("Comm NQZ\nComm2 B");
+goto writeline;
+
+close_file:
+ close PFIN;
+ close PFOUT;
+ print ("addstat: all done.\n");
+ goto end;
+
+end:
+goto nextpfile;
+
+nomore:

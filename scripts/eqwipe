@@ -1,0 +1,52 @@
+#!/usr/bin/perl
+#
+# EQ wipe
+#
+# If it sees "#O" then it writes a #END and closes the outfile..
+
+open_list:
+ open (LIST, "player.lst");
+ goto get_a_player;
+
+close_list:
+ close (LIST);
+ goto ending;
+
+get_a_player:
+ $end_it = 0;
+ chop ($current_player = <LIST>);
+ goto close_list if (eof);
+ goto get_a_player if (length($current_player) <= 0);
+ print(" Now EQ-wiping $current_player...\n");
+ if ( -e "gods/$current_player" ) {
+  print( "Woohoohoo! Got us an immortal here. Not touching it!\n");
+  system ("/bin/cp player/$current_player wiped/");
+  goto get_a_player; }
+
+open_a_player:
+ open (PLAY_IN, "player/$current_player");
+ open (PLAY_OUT, ">wiped/$current_player");
+
+get_a_line:
+ goto close_player if ($end_it);
+ chop ($in_line = <PLAY_IN>);
+ if ($in_line eq "#O") {
+  $out_line = "#END";
+  $end_it = 1;
+  goto write_a_line; }
+ $out_line = $in_line;
+ goto write_a_line;
+
+write_a_line:
+ print PLAY_OUT ("$out_line\n");
+ goto close_player if (eof);
+ goto get_a_line;
+
+close_player:
+ close (PLAY_OUT);
+ close (PLAY_IN);
+ goto get_a_player;
+
+ending:
+ close (LIST);
+ print( "Finished with those pesky mortals...\n");

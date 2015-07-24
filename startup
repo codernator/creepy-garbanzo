@@ -1,0 +1,43 @@
+#!/bin/csh
+
+set port = 7778
+if ( "$1" != "" ) set port="$1"
+
+# Set limits.
+if ( -e shutdown.txt ) rm -f shutdown.txt
+
+while ( 1 )
+	# Create log file, with incrementing index to prevent overwrite of existing.
+    set index = 1000
+    while ( 1 )
+		set logfile = log/$index.log
+		if ( ! -e $logfile ) break
+		@ index++
+    end
+
+
+	# Create crash file, with incrementing index to prevent overwrite of existing.
+    set index = 1000
+    while ( 1 )
+		set crashfile = crashes/$index.crash
+		if ( ! -e $crashfile ) break
+		@ index++
+    end
+
+    # Run Bad Trip..
+    ./badtrip.exe $port >&! $logfile
+
+    if ( -e core ) then #echo q| gdb -c core |where badtrip >&! $crashfile
+		echo "Crash"
+		exit 0
+	endif
+
+    #/bin/mv badtrip.core core
+
+    # Restart, giving old connections a chance to die.
+    if ( -e shutdown.txt ) then
+		rm -f shutdown.txt
+		exit 0
+    endif
+    sleep 4
+end

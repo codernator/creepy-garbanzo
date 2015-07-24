@@ -1,0 +1,67 @@
+#KINGDOM
+Descr        #BD#be#ca#bt#Bh #RD#re#ya#wl#ye#rr#Rz~
+Open         ~
+Close        ~
+Name         Death Dealerz~
+Rank1        #wKing~
+Rank2        #wPrince~
+Rank3        #wBaron~
+Rank4        #wKnight~
+Rank5        #wMember~
+Rank6        #wQueen~
+Rank7        #wPrincess~
+Rank8        #wBaroness~
+Rank9        #wKnight~
+Rank10       #wMember~
+Vnum         0 0
+Kreca        0
+Helper       0
+Gold         0
+Stone        0
+Wood         0
+Steel        0
+Quest        1151344
+PKPD         9 1
+Member       3 1 NightMareZ~
+Member       3 1 Vegas~
+Member       2 1 Rubix~
+Member       1 1 Hogan~
+End
+
+#KINGDOM
+Descr        #bT#gH#bE #gF#beDeRatio#gN#e~
+Open         ~
+Close        ~
+Name         THE FeDeRatioN~
+Rank1        #wKing~
+Rank2        #wPrince~
+Rank3        #wBaron~
+Rank4        #wKnight~
+Rank5        #wMember~
+Rank6        #wQueen~
+Rank7        #wPrincess~
+Rank8        #wBaroness~
+Rank9        #wKnight~
+Rank10       #wMember~
+Vnum         0 0
+Kreca        0
+Helper       0
+Gold         0
+Stone        0
+Wood         0
+Steel        0
+Quest        168376
+PKPD         1 1
+Member       3 1 Holly~
+Member       2 1 Mateo~
+Member       1 1 IceMan~
+End
+
+#DIPLOMACY
+Diplomacy    0 Death Dealerz~ Death Dealerz~
+Diplomacy    0 Death Dealerz~ THE FeDeRatioN~
+Diplomacy    0 THE FeDeRatioN~ Death Dealerz~
+Diplomacy    0 THE FeDeRatioN~ THE FeDeRatioN~
+End
+
+#END

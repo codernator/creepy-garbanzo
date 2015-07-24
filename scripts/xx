@@ -1,0 +1,15 @@
+#!/usr/bin/perl
+#
+# Backs up the pfiles..
+#
+# --Eo
+#
+
+$date	= `date`;
+$length = length($date);
+$day    = chop(substr($date, 8, 3));
+$month	= chop(substr($date, 4, 5));
+$year   = substr($date, length($date) - 5, length($date));
+
+print("$date  - $day/$month/$year");
+

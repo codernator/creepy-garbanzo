@@ -1,0 +1,88 @@
+#!/usr/bin/perl
+#
+# Whee.. backs up source and pfiles daily.. fun fun fun!
+# Modified to back up areas monthly.. =)  --Eo, 9-28-1996
+#
+# Eo
+#
+
+chop ($mon = `date | cut -f 2 -d \\ `);
+chop ($die = `date | cut -f 3 -d \\ `);
+chop ($ann = `date | cut -f 6 -d \\ `);
+$force = 0;
+
+if ($die eq '')
+{
+  chop ($die = `date | cut -c9-10`);
+  chop ($ann = `date | cut -c25-`);
+
+    $die = ( "0" . substr( $die, 1, length( $die )-1 )) if (substr($die,0,1) eq ' ');
+}
+
+$date = ($mon . " " . $die . " " . $ann );
+
+open (INFILE, "/home/badtrip/.backup.eo");
+chop ($last_touched = <INFILE>);
+close (INFILE);
+open ( ACHECK, "/home/badtrip/.abackup.eo" );
+chop ($last_abackup = <ACHECK>);
+close (ACHECK);
+goto force if ( @ARGV[0] eq '-f' );
+goto continued;
+
+force:
+print ("\nForcing backup...\n");
+$last_touched = 'XXX';
+$last_abackup = $mon;
+$force = 1;
+
+continued:
+if ( ($last_touched ne $date) && ($mon eq $last_abackup) )
+{
+  # Backup the players...
+
+  print ("BTB: making backups. Please stand by..\n\r");
+  $fname = ("players_" . $mon . "_" . $die . "_" . $ann . ".tar" );
+  $zname = ("players_" . $mon . "_" . $die . "_" . $ann . ".tgz" );
+  print ("BTB: Backing up players to $fname\n\r");
+  system ("cd /home/badtrip/BT/player;tar cvf ../$fname * >/dev/null");
+  system ("mv /home/badtrip/BT/$fname /home/badtrip/BT/BACKUP/players");
+  system ("gzip /home/badtrip/BT/BACKUP/players/$fname");
+  system ("mv /home/badtrip/BT/BACKUP/players/$fname.gz /home/badtrip/BT/BACKUP/players/$zname");
+  print ("BTB: backup complete.\n\r");
+
+  # And backup the 'ol code...
+
+  $fname = ("source_" . $mon . "_" . $die . "_" . $ann . ".tar" );
+  $zname = ("source_" . $mon . "_" . $die . "_" . $ann . ".tgz" );
+  print ("BTB: backing up source to $fname\n\r");
+  system ("cd /home/badtrip/BT/src;tar cvf ../$fname *.c *.h >/dev/null");
+  system ("mv /home/badtrip/BT/$fname /home/badtrip/BT/BACKUP/source");
+  system ("gzip /home/badtrip/BT/BACKUP/source/$fname");
+  system ("mv /home/badtrip/BT/BACKUP/source/$fname.gz /home/badtrip/BT/BACKUP/source/$zname");
+  print ("BTB: backup complete.\n\r");
+
+  open (OUTFILE, ">/home/badtrip/.backup.eo");
+  print OUTFILE ("$date\n");
+  close (OUTFILE);
+  $last_abackup = 'XXX' if ($force == 1);
+}  
+if ($mon ne $last_abackup)
+{
+  $fname = ("areas_" . $mon . "_" . $ann . ".tar" );
+  $zname = ("areas_" . $mon . "_" . $ann . ".tgz" );
+  print ("BTB: backing up areas to $fname\n\r");
+  system ("cd /home/badtrip/BT/area;tar cvf ../$fname *.are *.not >/dev/null");
+  system ("mv /home/badtrip/BT/$fname /home/badtrip/BT/BACKUP/areas");
+  system ("gzip /home/badtrip/BT/BACKUP/areas/$fname");
+  system ("mv /home/badtrip/BT/BACKUP/areas/$fname.gz /home/badtrip/BT/BACKUP/areas/$zname");
+  open (OUTFILE, ">/home/badtrip/.abackup.eo");
+  print OUTFILE ("$mon\n");
+  close (OUTFILE);
+  print ("BTB: backup complete.\n\r");
+}
+else
+{
+  print ("BTB: Already made backup for today, no need to make another.\n\r");
+  exit(2);
+}
