@@ -101,23 +101,6 @@ void violence_update(void)
 			continue;
 		}
 
-		if (is_affected(ch, gsp_blink) && ch->mana > 0) {
-			if (ch->phased) {
-				send_to_char("You `1b`!l`#i`!n`1k`` into existence.\n\r", ch);
-				act("$n `1b`!l`#i`3n`!k`1s`` into existence.", ch, NULL, NULL, TO_ROOM);
-
-				ch->phased = FALSE;
-			} else {
-				send_to_char("You `5b`Pl`7i`Pn`5k`` out of existence.\n\r", ch);
-				act("$n `5b`Pl`7i`8n`Pk`5s`` out of existence.", ch, NULL, NULL, TO_ROOM);
-
-				ch->phased = TRUE;
-				ch->mana -= 200;
-			}
-		} else {
-			ch->phased = FALSE;
-		}
-
 		if (IS_AWAKE(ch) && ch->in_room == victim->in_room)
 			multi_hit(ch, victim, TYPE_UNDEFINED);
 		else

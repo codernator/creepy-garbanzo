@@ -42,7 +42,6 @@ DECLARE_SPELL_FUN(spell_acidic_rain);
 DECLARE_SPELL_FUN(spell_armor);
 DECLARE_SPELL_FUN(spell_bless);
 DECLARE_SPELL_FUN(spell_blindness);
-DECLARE_SPELL_FUN(spell_blink);
 DECLARE_SPELL_FUN(spell_burning_hands);
 DECLARE_SPELL_FUN(spell_burning_flames);        /* Fizzy added 3/29/97  */
 DECLARE_SPELL_FUN(spell_call_lightning);
@@ -125,7 +124,6 @@ DECLARE_SPELL_FUN(spell_poison);
 DECLARE_SPELL_FUN(spell_portal);
 DECLARE_SPELL_FUN(spell_protection_evil);
 DECLARE_SPELL_FUN(spell_protection_good);
-DECLARE_SPELL_FUN(spell_psychic_headbutt);
 DECLARE_SPELL_FUN(spell_ray_of_truth);
 DECLARE_SPELL_FUN(spell_recharge);
 DECLARE_SPELL_FUN(spell_refresh);
@@ -158,7 +156,6 @@ DECLARE_SPELL_FUN(spell_fst);
 DECLARE_SPELL_FUN(spell_create_feast);
 DECLARE_SPELL_FUN(spell_blood_boil);
 DECLARE_SPELL_FUN(spell_make_bag);
-DECLARE_SPELL_FUN(spell_bad_trip);
 DECLARE_SPELL_FUN(spell_black_plague);
 DECLARE_SPELL_FUN(spell_black_mantle);   /*  recreated 4/02 Shez  */
 DECLARE_SPELL_FUN(spell_equipment_invis);
@@ -169,8 +166,6 @@ DECLARE_SPELL_FUN(spell_wall_of_ice);
 DECLARE_SPELL_FUN(spell_wall_of_acid);
 DECLARE_SPELL_FUN(spell_cure_blood);
 DECLARE_SPELL_FUN(spell_fear);
-DECLARE_SPELL_FUN(spell_air_armor);
-DECLARE_SPELL_FUN(spell_bark_skin);
 DECLARE_SPELL_FUN(spell_shatter_curse);
 DECLARE_SPELL_FUN(spell_bloody_tears);
 DECLARE_SPELL_FUN(spell_web);
@@ -183,7 +178,6 @@ DECLARE_SPELL_FUN(spell_displacement);
 DECLARE_SPELL_FUN(spell_haven);
 DECLARE_SPELL_FUN(spell_parasitic_cloud);
 DECLARE_SPELL_FUN(spell_mana_vortex);
-DECLARE_SPELL_FUN(spell_psychedelic);
 
 
 
@@ -196,7 +190,6 @@ DECLARE_AFFECT_FUN(affect_sanatorium);
 DECLARE_AFFECT_FUN(affect_displacement);
 DECLARE_AFFECT_FUN(affect_deathtrap);
 DECLARE_AFFECT_FUN(affect_parasitic_cloud);
-DECLARE_AFFECT_FUN(affect_psychedelic);
 
 /*******************************************************************************
 *	character affects

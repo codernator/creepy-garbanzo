@@ -246,7 +246,6 @@ void show_char_to_char_0(CHAR_DATA *victim, CHAR_DATA *ch)
 	if (is_affected(victim, gsp_web)) strcat(buf, "`8(`2St`@i`2c`@k`2y`8)`` ");
 	if (is_affected(victim, gsp_voodoo)) strcat(buf, "`6(`8Hexxed`6)`` ");
 
-	if (is_affected(victim, gsp_blink)) strcat(buf, "`^(`8S`7h`&i`7mm`&e`7r`&i`7n`8g`^)`` ");
 	if (!IS_NPC(victim) && IS_SET(victim->act, PLR_KILLER)) strcat(buf, "-```1K```!i```1LLER``- ");
 	if (!IS_NPC(victim) && IS_SET(victim->act, PLR_THIEF)) strcat(buf, "-```8TH``i```8EF``- ");
 	if (!IS_NPC(victim) && IS_SET(victim->act, PLR_IDIOT)) strcat(buf, "`7[`PIDIOT`7] ");

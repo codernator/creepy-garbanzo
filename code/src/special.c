@@ -79,7 +79,6 @@ static DECLARE_SPEC_FUN(spec_fido);
 static DECLARE_SPEC_FUN(spec_guard);
 static DECLARE_SPEC_FUN(spec_janitor);
 static DECLARE_SPEC_FUN(spec_mayor);
-static DECLARE_SPEC_FUN(spec_killa);
 static DECLARE_SPEC_FUN(spec_rmove);
 static DECLARE_SPEC_FUN(spec_poison);
 static DECLARE_SPEC_FUN(spec_thief);
@@ -124,7 +123,6 @@ const struct spec_type spec_table[] =
 	{ "spec_janitor",	   spec_janitor		 },
 	{ "spec_mayor",		   spec_mayor		 },
 	{ "spec_rmove",		   spec_rmove		 },
-	{ "spec_killa",		   spec_killa		 },
 	{ "spec_poison",	   spec_poison		 },
 	{ "spec_thief",		   spec_thief		 },
 	{ "spec_nasty",		   spec_nasty		 },
@@ -664,9 +662,6 @@ static bool spec_cast_cleric(CHAR_DATA *ch)
 		case 8:
 		case 9:
 		case 10:
-			min_level = 15;
-			spell = "psychic headbutt";
-			break;
 		case 11:
 			min_level = 15;
 			spell = "plague";
@@ -1122,62 +1117,6 @@ static bool spec_mayor(CHAR_DATA *ch)
 	return FALSE;
 }
 
-/***************************************************************************
-*	spec_killa
-***************************************************************************/
-static bool spec_killa(CHAR_DATA *ch)
-{
-	CHAR_DATA *vch;
-	char *spell_name;
-	int rand;
-	bool success;
-
-	if (ch->fighting != NULL) {
-		vch = ch->fighting;
-		success = TRUE;
-		spell_name = NULL;
-		rand = number_range(1, 10);
-		switch (rand) {
-		case (1):
-			spell_name = "ring of fire";
-			break;
-		case (2):
-			spell_name = "cloud of death";
-			break;
-		case (3):
-			spell_name = "blood boil";
-			break;
-		case (4):
-			spell_name = "gas breath";
-			break;
-		case (5):
-			spell_name = "acid breath";
-			break;
-		case (6):
-			spell_name = "lightning breath";
-			break;
-		case (7):
-			spell_name = "psychic headbutt";
-			break;
-		case (8):
-			spell_name = "teleport";
-			break;
-		case (9):
-			spell_name = "revive";
-			break;
-		case (10):
-			spell_name = "acid blast";
-			break;
-		}
-
-		if (spell_name != NULL)
-			util_mob_cast(ch, spell_name, vch, TARGET_CHAR, "");
-	} else {
-		success = FALSE;
-	}
-
-	return success;
-}
 
 /***************************************************************************
 *	spec_poison

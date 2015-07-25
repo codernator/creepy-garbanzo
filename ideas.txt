@@ -1,0 +1,7 @@
+# spells
+elemental walls
+invisibility (partial, intermittent, full)
+
+# races
+faeries
+ - faerie dust

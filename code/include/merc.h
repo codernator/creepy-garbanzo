@@ -865,8 +865,6 @@ struct kill_data {
 #define AFF_BERSERK                 (aa)
 #define AFF_CALLOUSED             (bb)
 #define AFF_SLOW                      (cc)
-#define AFF_AIR_ARMOR             (dd)
-#define AFF_BARK_SKIN       (ee)
 #define AFF_BURNING       (ff)
 #define AFF_PHASED        (hh)
 #define AFF_STONE_SKIN          (gg)
@@ -2161,8 +2159,6 @@ extern SKILL *gsp_parry;
 extern SKILL *gsp_dodge;
 extern SKILL *gsp_evade;
 extern SKILL *gsp_poison;
-extern SKILL *gsp_psychic_headbutt;
-extern SKILL *gsp_blink;
 extern SKILL *gsp_web;
 extern SKILL *gsp_banzai;
 extern SKILL *gsp_enhanced_damage;
@@ -2377,14 +2373,6 @@ void load_host_exceptions(void);
 /***************************************************************************
 *	global function declarations
 ***************************************************************************/
-#define CD      CHAR_DATA
-#define MID     MOB_INDEX_DATA
-#define OD      OBJ_DATA
-#define OID     OBJ_INDEX_DATA
-#define RID     ROOM_INDEX_DATA
-#define SF      SPEC_FUN
-#define AD      AFFECT_DATA
-#define MPC     MPROG_CODE
 
 
 /***************************************************************************
@@ -2405,7 +2393,7 @@ void set_bash(CHAR_DATA * ch, int pulse);
 
 
 /*	act_enter.c */
-RID *get_random_room(CHAR_DATA * ch, AREA_DATA * area);
+ROOM_INDEX_DATA *get_random_room(CHAR_DATA * ch, AREA_DATA * area);
 
 /*	act_info.c */
 void set_title(CHAR_DATA * ch, char *title);
@@ -2460,17 +2448,17 @@ void boot_db(void);
 void area_update(void);
 
 /*	creation/cloning	*/
-CD *create_mobile(MOB_INDEX_DATA * mob_idx);
+CHAR_DATA *create_mobile(MOB_INDEX_DATA * mob_idx);
 void clone_mobile(CHAR_DATA * parent, CHAR_DATA * clone);
-OD *create_object(OBJ_INDEX_DATA * obj_idx, int level);
+OBJ_DATA *create_object(OBJ_INDEX_DATA * obj_idx, int level);
 void clone_object(OBJ_DATA * parent, OBJ_DATA * clone);
 void clear_char(CHAR_DATA * ch);
 
 /*	find functions		*/
 char *get_extra_descr(const char *name, EXTRA_DESCR_DATA * ed);
-MID *get_mob_index(long vnum);
-OID *get_obj_index(long vnum);
-RID *get_room_index(long vnum);
+MOB_INDEX_DATA *get_mob_index(long vnum);
+OBJ_INDEX_DATA *get_obj_index(long vnum);
+ROOM_INDEX_DATA *get_room_index(long vnum);
 
 /*	file loading		*/
 char fread_letter(FILE * fp);
@@ -2517,7 +2505,7 @@ void log_new(const char *log, const char *str, char *username);
 void tail_chain(void);
 
 /* olc/mprogs */
-MPC *get_mprog_index(long vnum);
+MPROG_CODE *get_mprog_index(long vnum);
 void reset_area(AREA_DATA * pArea);
 void reset_room(ROOM_INDEX_DATA * pRoom);
 void load_socials(void);
@@ -2543,7 +2531,7 @@ void raw_kill(CHAR_DATA * victim, CHAR_DATA * killer);
 
 
 /*	handler.c */
-AD *affect_find(AFFECT_DATA * paf, SKILL * skill);
+AFFECT_DATA *affect_find(AFFECT_DATA * paf, SKILL * skill);
 void affect_check(CHAR_DATA * ch, int where, long vector);
 int count_users(OBJ_DATA * obj);
 void deduct_cost(CHAR_DATA * ch, unsigned int cost);
@@ -2580,7 +2568,7 @@ void char_to_room(CHAR_DATA * ch, ROOM_INDEX_DATA * pRoomIndex);
 void obj_to_char(OBJ_DATA * obj, CHAR_DATA * ch);
 void obj_from_char(OBJ_DATA * obj);
 long apply_ac(OBJ_DATA * obj, int iWear, int type);
-OD *get_eq_char(CHAR_DATA * ch, int iWear);
+OBJ_DATA *get_eq_char(CHAR_DATA * ch, int iWear);
 void equip_char(CHAR_DATA * ch, OBJ_DATA * obj, int iWear);
 void unequip_char(CHAR_DATA * ch, OBJ_DATA * obj);
 int count_obj_list(OBJ_INDEX_DATA * obj, OBJ_DATA * list);
@@ -2590,15 +2578,15 @@ void obj_to_obj(OBJ_DATA * obj, OBJ_DATA * obj_to);
 void obj_from_obj(OBJ_DATA * obj);
 void extract_obj(OBJ_DATA * obj);
 void extract_char(CHAR_DATA * ch, bool fPull);
-CD *get_char_room(CHAR_DATA * ch, char *argument);
-CD *get_char_world(CHAR_DATA * ch, char *argument);
-OD *get_obj_type(OBJ_INDEX_DATA * obj_idxData);
-OD *get_obj_list(CHAR_DATA * ch, char *argument, OBJ_DATA * list);
-OD *get_obj_carry(CHAR_DATA * ch, char *argument);
-OD *get_obj_wear(CHAR_DATA * ch, char *argument);
-OD *get_obj_here(CHAR_DATA * ch, char *argument);
-OD *get_obj_world(CHAR_DATA * ch, char *argument);
-OD *create_money(unsigned int gold, unsigned int silver);
+CHAR_DATA *get_char_room(CHAR_DATA * ch, char *argument);
+CHAR_DATA *get_char_world(CHAR_DATA * ch, char *argument);
+OBJ_DATA *get_obj_type(OBJ_INDEX_DATA * obj_idxData);
+OBJ_DATA *get_obj_list(CHAR_DATA * ch, char *argument, OBJ_DATA * list);
+OBJ_DATA *get_obj_carry(CHAR_DATA * ch, char *argument);
+OBJ_DATA *get_obj_wear(CHAR_DATA * ch, char *argument);
+OBJ_DATA *get_obj_here(CHAR_DATA * ch, char *argument);
+OBJ_DATA *get_obj_world(CHAR_DATA * ch, char *argument);
+OBJ_DATA *create_money(unsigned int gold, unsigned int silver);
 int get_obj_number(OBJ_DATA * obj);
 int get_obj_weight(OBJ_DATA * obj);
 int get_true_weight(OBJ_DATA * obj);
@@ -2632,8 +2620,8 @@ char *uncolor_str(char *txt);
 void identify_item(CHAR_DATA * ch, OBJ_DATA * obj);
 bool is_help(char *argument);
 void furniture_check(CHAR_DATA * ch);
-RID *find_location(CHAR_DATA * ch, char *arg);
-RID *get_death_room(CHAR_DATA * ch);
+ROOM_INDEX_DATA *find_location(CHAR_DATA * ch, char *arg);
+ROOM_INDEX_DATA *get_death_room(CHAR_DATA * ch);
 
 /*	affects.c */
 void affect_to_char(CHAR_DATA * ch, AFFECT_DATA * paf);
@@ -2687,11 +2675,11 @@ void check_improve(CHAR_DATA * ch, SKILL * skill, bool success, int multiplier);
 
 
 /*	special.c */
-SF *spec_lookup(const char *name);
+SPEC_FUN *spec_lookup(const char *name);
 char *spec_name(SPEC_FUN * function);
 
 /*	teleport.c */
-RID *room_by_name(char *target, int level, bool error);
+ROOM_INDEX_DATA *room_by_name(char *target, int level, bool error);
 
 /*	update.c */
 void advance_level(CHAR_DATA * ch, int level);
@@ -2778,15 +2766,6 @@ int race_lookup(const char *name);
 int item_lookup(const char *name);
 int liq_lookup(const char *name);
 
-
-#undef  MPC
-#undef  CD
-#undef  MID
-#undef  OD
-#undef  OID
-#undef  RID
-#undef  SF
-#undef  AD
 
 void add_apply(OBJ_DATA * obj, int loc, int mod, int where, int type, int dur, long vector, int level);
 

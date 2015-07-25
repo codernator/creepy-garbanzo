@@ -74,8 +74,6 @@ SKILL *gsp_third_attack;
 SKILL *gsp_fourth_attack;
 SKILL *gsp_fifth_attack;
 SKILL *gsp_poison;
-SKILL *gsp_psychic_headbutt;
-SKILL *gsp_blink;
 SKILL *gsp_web;
 SKILL *gsp_banzai;
 SKILL *gsp_enhanced_damage;
@@ -171,8 +169,6 @@ static const struct skill_resolve_type {
 	{ "fourth attack",	&gsp_fourth_attack	},
 	{ "fifth attack",	&gsp_fifth_attack	},
 	{ "poison",		&gsp_poison		},
-	{ "psychic headbutt",	&gsp_psychic_headbutt	},
-	{ "blink",		&gsp_blink		},
 	{ "web",		&gsp_web		},
 	{ "banzai",		&gsp_banzai		},
 	{ "enhanced damage",	&gsp_enhanced_damage	},
@@ -212,7 +208,6 @@ static const struct skill_resolve_type {
 	{ "supernatural speed", &gsp_supernatural_speed },
 	{ "tooth and claw",	&gsp_tooth_and_claw	},
 	{ "veil",		&gsp_veil		},
-	{ "psychic headbutt",	&gsp_psychic_headbutt	},
 	{ "anti-magic aura",	&gsp_anti_magic_aura	},
 
 	/* master skills */
@@ -783,7 +778,6 @@ const struct spell_lookup_type spell_lookup_table[] =
 	{ "armor",	       spell_armor	       },
 	{ "bless",	       spell_bless	       },
 	{ "blindness",	       spell_blindness	       },
-	{ "blink",	       spell_blink	       },
 	{ "burning hands",     spell_burning_hands     },
 	{ "call lightning",    spell_call_lightning    },
 	{ "calm",	       spell_calm	       },
@@ -865,7 +859,6 @@ const struct spell_lookup_type spell_lookup_table[] =
 	{ "portal",	       spell_portal	       },
 	{ "protection evil",   spell_protection_evil   },
 	{ "protection good",   spell_protection_good   },
-	{ "psychic headbutt",  spell_psychic_headbutt  },
 	{ "ray of truth",      spell_ray_of_truth      },
 	{ "recharge",	       spell_recharge	       },
 	{ "refresh",	       spell_refresh	       },
@@ -909,8 +902,6 @@ const struct spell_lookup_type spell_lookup_table[] =
 	 */
 	{ "cure blood",	       spell_cure_blood	       },
 	{ "fear",	       spell_fear	       },
-	{ "air armor",	       spell_air_armor	       },
-	{ "bark skin",	       spell_bark_skin	       },
 	{ "shatter curse",     spell_shatter_curse     },
 	{ "bloody tears",      spell_bloody_tears      },
 	{ "web",	       spell_web	       },
@@ -921,7 +912,6 @@ const struct spell_lookup_type spell_lookup_table[] =
 	{ "haven",	       spell_haven	       },
 	{ "parasitic cloud",   spell_parasitic_cloud   },
 	{ "mana vortex",       spell_mana_vortex       },
-	{ "psychedelic",       spell_psychedelic       },
 	{ "",		       NULL		       },
 };
 
@@ -936,7 +926,6 @@ const struct affect_lookup_type affect_lookup_table[] =
 	{ "displacement",    affect_displacement    },
 	{ "deathtrap",	     affect_deathtrap	    },
 	{ "parasitic cloud", affect_parasitic_cloud },
-	{ "psychedelic",     affect_psychedelic	    },
 	{ "black plague",    affect_black_plague    },
 	{ "disease",	     affect_disease	    },
 	{ "burning flames",  affect_burning_flames  },

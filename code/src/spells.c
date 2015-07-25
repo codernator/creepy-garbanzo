@@ -141,104 +141,8 @@ void spell_black_plague(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 }
 
 
-/***************************************************************************
-*	spell_bark_skin
-***************************************************************************/
-void spell_bark_skin(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	CHAR_DATA *victim = (CHAR_DATA *)vo;
-	AFFECT_DATA af;
-
-	if (is_affected(victim, skill)) {
-		if (victim == ch)
-			send_to_char("You are already encased in `3b`2ar`3k``.\n\r", ch);
-		else
-			act("$N is already encased in `3b`2ar`3k``.", ch, NULL, victim, TO_CHAR);
-
-		return;
-	}
-
-	af.where = TO_AFFECTS;
-	af.type = skill->sn;
-	af.skill = skill;
-	af.level = level;
-	af.duration = level;
-	af.location = APPLY_AC;
-	af.modifier = level * -3 / 2;
-	af.bitvector = AFF_BARK_SKIN;
-	affect_to_char(victim, &af);
-
-	act("$n grows a skin of `3b`2ar`3k``.", victim, NULL, NULL, TO_ROOM);
-	send_to_char("A layer of `3b`2ar`3k`` grows around you.\n\r", victim);
-
-	return;
-}
 
 
-void spell_air_armor(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	CHAR_DATA *victim = (CHAR_DATA *)vo;
-	AFFECT_DATA af;
-
-	if (is_affected(victim, skill)) {
-		if (victim == ch)
-			send_to_char("You are already encased in solid `&a`^i`Or``.\n\r", ch);
-		else
-			act("$N is already encased in solid `&a`^i`Or``.", ch, NULL, victim, TO_CHAR);
-		return;
-	}
-
-	af.where = TO_AFFECTS;
-	af.type = skill->sn;
-	af.skill = skill;
-	af.level = level;
-	af.duration = level;
-	af.location = APPLY_AC;
-	af.modifier = level * -3;
-	af.bitvector = AFF_AIR_ARMOR;
-	affect_to_char(victim, &af);
-
-	act("The `&a`^i`Or`` solidifies around $n, forming a shell.", victim, NULL, NULL, TO_ROOM);
-	send_to_char("The `&a`^i`Or`` solidifies around you, forming a clear shell.\n\r", victim);
-	return;
-}
-
-/***************************************************************************
-*	spell_blink
-***************************************************************************/
-void spell_blink(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	CHAR_DATA *victim = (CHAR_DATA *)vo;
-	AFFECT_DATA af;
-
-	if (ch->class != class_lookup("mage")) {
-		send_to_char("Yeah right.  Get a life dipshit.\n\r", ch);
-		return;
-	}
-
-	if (is_affected(ch, skill)) {
-		affect_strip(ch, skill);
-		act("$n `Pph`5a`^s`6e`&s`` back into existence.", victim, NULL, NULL, TO_ROOM);
-		send_to_char("You `Pph`5a`^s`6e`` back into existence.\n\r", victim);
-	} else {
-		af.where = TO_AFFECTS;
-		af.type = skill->sn;
-		af.skill = skill;
-		af.level = level;
-		af.duration = level / 6;
-		af.location = APPLY_NONE;
-		af.modifier = 0;
-		af.bitvector = 0;
-		affect_to_char(victim, &af);
-
-		ch->phased = TRUE;
-
-		act("$n `Pph`5a`^s`6e`&s`` out of existence.", victim, NULL, NULL, TO_ROOM);
-		send_to_char("You `Pph`5a`^s`6e`` out of existence.\n\r", victim);
-	}
-
-	return;
-}
 
 /***************************************************************************
 *	spell_blood_boil
@@ -3389,19 +3293,6 @@ void spell_protection_good(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int
 	return;
 }
 
-void spell_psychic_headbutt(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	CHAR_DATA *victim = (CHAR_DATA *)vo;
-	int dam;
-
-
-	dam = dice(level, 100);
-	if (saves_spell(level, victim, DAM_MENTAL))
-		dam /= 2;
-
-	damage(ch, victim, dam, skill->sn, DAM_MENTAL, TRUE);
-	return;
-}
 
 void spell_ray_of_truth(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
@@ -4802,37 +4693,6 @@ void spell_parasitic_cloud(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int
 
 
 
-/***************************************************************************
-*	spell_psychedelic
-*
-*	add the psychedelic affect the room
-***************************************************************************/
-void spell_psychedelic(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	ROOM_INDEX_DATA *room;
-	AFFECT_DATA af;
-
-	if ((room = ch->in_room) == NULL)
-		return;
-
-	if (is_affected_room(room, skill)) {
-		send_to_char("This room cant get any more funked up.\n\r", ch);
-		return;
-	}
-
-	af.where = TO_AFFECTS;
-	af.type = skill->sn;
-	af.skill = skill;
-	af.level = level;
-	af.duration = number_range(6, 10);
-	af.location = 0;
-	af.modifier = 0;
-	af.bitvector = 0;
-	affect_to_room(room, &af);
-
-	send_to_char("The room becomes all `^t`Pr`&i`Ppp`^y``.\n\r", ch);
-	return;
-}
 
 
 /***************************************************************************

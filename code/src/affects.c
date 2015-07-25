@@ -891,43 +891,6 @@ void affect_parasitic_cloud(SKILL *skill, void *target, int type, AFFECT_DATA *p
 }
 
 
-/***************************************************************************
-*	affect_psychedelic
-*
-*	give the badtrip affect to everyone in the room
-***************************************************************************/
-void affect_psychedelic(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
-{
-	ROOM_INDEX_DATA *room = (ROOM_INDEX_DATA *)target;
-	CHAR_DATA *vch;
-	CHAR_DATA *vch_next;
-	SKILL *skill_acid;
-
-	if ((type = AFFECT_TYPE_ROOM) && paf != NULL) {
-		skill_acid = skill_lookup("bad trip");
-
-		for (vch = room->people; vch != NULL; vch = vch_next) {
-			vch_next = vch->next_in_room;
-			if (!IS_IMMORTAL(vch)
-			    && !IS_NPC(vch)
-			    && !is_affected(vch, skill)) {
-				AFFECT_DATA af;
-
-				af.where = TO_AFFECTS;
-				af.type = skill_acid->sn;
-				af.skill = skill_acid;
-				af.level = paf->level;
-				af.duration = (int)(paf->level / 10);
-				af.location = APPLY_NONE;
-				af.modifier = 0;
-				af.bitvector = 0;
-				act("$n`8'``s eyes `Og`7l`&a`7z`Oe`` over.", vch, NULL, NULL, TO_ROOM);
-				send_to_char("Everything around you explodes in a world of `1c`#o`&l`2o`6r``!\n\r", vch);
-				affect_to_char(vch, &af);
-			}
-		}
-	}
-}
 
 
 /***************************************************************************

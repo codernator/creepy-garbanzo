@@ -580,10 +580,6 @@ void battlefield_special(CHAR_DATA *ch)
 					level = (int)UMAX((battlefield.ulevel * 6) / 5, 300);
 					break;
 				case 0:
-				case 1:
-					skill = skill_lookup("psychedelic");
-					level = (int)UMAX((battlefield.ulevel * 6) / 5, 300);
-					break;
 				case 2:
 				case 3:
 				case 4:

@@ -1434,7 +1434,6 @@ void do_dust(CHAR_DATA *ch, char *argument)
 			     "frenzy",
 			     "bless",
 			     "air armor",
-			     "bark skin",
 			     "stone skin" };
 	int sn[4];
 	int idx;
