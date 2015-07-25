@@ -170,11 +170,9 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 
 		write_to_buffer(d, (char *)echo_on_str, 0);
 
-		if (check_playing(d, ch->name))
+		if (check_playing(d, ch->name) || check_reconnect(d, ch->name, TRUE)) {
 			return;
-
-		if (check_reconnect(d, ch->name, TRUE))
-			return;
+        }
 
 		sprintf(log_buf, "%s@%s has connected.", ch->name, d->host);
 		log_string(log_buf);
@@ -600,32 +598,20 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 
 			switch (rnd) {
 			case (0):
-				do_deathcry(ch, "!@#$!@#$%!@#$!!@@!");
-				break;
-			case (1):
 				do_deathcry(ch, "Oh dear. Oswald will be rather perturbed. I am dead.");
 				break;
-			case (2):
-				do_deathcry(ch, "Oh my. I seem to have been killed. Buttworth will be MOST displeased.");
-				break;
-			case (3):
+			case (1):
 				do_deathcry(ch, "`2*`@gleep`2*`! I'm DEAD.");
 				break;
-			case (4):
-				do_deathcry(ch, "GoddamnitIreallyamgettingsickandtiredofDYING!");
-				break;
-			case (5):
-				do_deathcry(ch, "Dammit, I HATE it when that happens!");
-				break;
-			case (6):
+			case (2):
 				do_deathcry(ch, "Oh NO! Not again!!");
 				break;
-			case (7):
+			case (3):
 				do_deathcry(ch, "The weasels! THE WEASELS!!! AAAGH!!");
 				break;
-			case (8):
-				do_deathcry(ch, "Oh `#SH`&i`#T`!!!");
-				break;
+            case (4):
+                do_deathcry(ch, "I see a light.");
+                break;
 			default:
 				do_deathcry(ch, "AAAAAAAAAAAAAAAAAARGH! I'm DEAD!!");
 			}
@@ -653,12 +639,12 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 
 		do_look(ch, "auto");
 
-		if (IS_SET(ch->act, PLR_BATTLE))
+		if (IS_SET(ch->act, PLR_BATTLE)) {
 			REMOVE_BIT(ch->act, PLR_BATTLE);
+        }
 
 		if (!IS_SET(ch->comm2, COMM2_ENABLE)) {
-			send_to_char("Player File Tokens Enabled!!! "
-				     "You will only see this message once in your entire character life.\n\r", ch);
+			send_to_char("Player File Tokens Enabled!!! You will only see this message once in your entire character life.\n\r", ch);
 
 			SET_BIT(ch->comm2, COMM2_ENABLE);
 
@@ -742,17 +728,61 @@ bool check_parse_name(char *name)
 	MOB_INDEX_DATA *pMobIndex;
 	int hash;
 	char *pc;
-	bool fIll;
-	bool adjcaps = FALSE;
-	bool cleancaps = FALSE;
-	int total_caps = 0;
 
 	/*
 	 * Reserved words.
 	 */
-	if (is_name(name, "all auto immortal imp self someone something the you your none socket who anonymous fuck"))
+	if (is_name(name, "all auto immortal imp self someone something the you your none socket who anonymous fuck")) {
 		return FALSE;
+    }
 
+	if (!str_infix(name, "fuck")
+	        || !str_infix(name, "shit")
+	        || !str_infix(name, "frog")
+	        || !str_infix(name, "cum")
+	        || !str_infix(name, "lick")
+	        || !str_infix(name, "george")
+	        || !str_infix(name, "kerry")
+	        || !str_infix(name, "jim")
+	        || !str_infix(name, "twat")
+	        || !str_infix(name, "bert")
+	        || !str_infix(name, "death")
+	        || !str_infix(name, "kill")
+	        || !str_infix(name, "satan")
+	        || !str_infix(name, "pink")
+	        || !str_infix(name, "blade")
+	        || !str_infix(name, "suck")
+	        || !str_infix(name, "ihate")
+	        || !str_infix(name, "pussy")
+	        || !str_infix(name, "uoykcuf")
+	        || !str_infix(name, "kcuf")
+	        || !str_infix(name, "monger")
+	        || !str_infix(name, "tard")
+	        || !str_infix(name, "idiot")
+	        || !str_infix(name, "cunt")
+	        || !str_infix(name, "crap")
+	        || !str_infix(name, "penis")
+	        || !str_infix(name, "asshole")
+	        || !str_infix(name, "vagina")
+	        || !str_cmp(name, "ass")) {
+		return FALSE;
+    }
+
+
+    /*
+     * Length restrictions.
+     */
+	if (strlen(name) < 2 || strlen(name) > MAX_NAME_LENGTH) {
+		return FALSE;
+    }
+
+    /*
+     * Alphanumerics only.
+     */
+	for (pc = name; *pc != '\0'; pc++) {
+		if (!is_alpha(*pc))
+			return FALSE;
+	}
 
 	/*
 	 * Edwin's been here too. JR -- 10/15/00
@@ -780,87 +810,15 @@ bool check_parse_name(char *name)
 		}
 	}
 
-	if (!str_infix(name, "fuck")
-	    || !str_infix(name, "shit")
-	    || !str_infix(name, "frog")
-	    || !str_infix(name, "cum")
-	    || !str_infix(name, "lick")
-	    || !str_infix(name, "george")
-	    || !str_infix(name, "kerry")
-	    || !str_infix(name, "jim")
-	    || !str_infix(name, "twat")
-	    || !str_infix(name, "bert")
-	    || !str_infix(name, "death")
-	    || !str_infix(name, "kill")
-	    || !str_infix(name, "satan")
-	    || !str_infix(name, "pink")
-	    || !str_infix(name, "blade")
-	    || !str_infix(name, "suck")
-	    || !str_infix(name, "ihate")
-	    || !str_infix(name, "pussy")
-	    || !str_infix(name, "uoykcuf")
-	    || !str_infix(name, "kcuf")
-	    || !str_infix(name, "monger")
-	    || !str_infix(name, "tard")
-	    || !str_infix(name, "idiot")
-	    || !str_infix(name, "cunt")
-	    || !str_infix(name, "crap")
-	    || !str_infix(name, "penis")
-	    || !str_infix(name, "asshole")
-	    || !str_infix(name, "vagina")
-	    || !str_cmp(name, "ass"))
-		return FALSE;
-
-
-/*
- * Length restrictions.
- */
-
-	if (strlen(name) < 2)
-		return FALSE;
-
-	if (strlen(name) > MAX_NAME_LENGTH)
-		return FALSE;
-
-/*
- * Alphanumerics only.
- * Lock out IllIll twits.
- */
-	fIll = TRUE;
-	for (pc = name; *pc != '\0'; pc++) {
-		if (!is_alpha(*pc))
-			return FALSE;
-
-		if (is_upper(*pc)) { /* ugly anti-caps hack */
-			if (adjcaps)
-				cleancaps = TRUE;
-
-			total_caps++;
-			adjcaps = TRUE;
-		} else {
-			adjcaps = FALSE;
-		}
-
-		if (LOWER(*pc) != 'i' && LOWER(*pc) != 'l')
-			fIll = FALSE;
-	}
-
-	if (fIll)
-		return FALSE;
-
-	if (cleancaps || (total_caps > (int)(strlen(name)) / 2 && strlen(name) < 3))
-		return FALSE;
-
-/*
- * Prevent players from naming themselves after mobs.
- */
-
+    /*
+     * Prevent players from naming themselves after mobs.
+     */
 	for (hash = 0; hash < MAX_KEY_HASH; hash++) {
-		for (pMobIndex = mob_index_hash[hash];
-		     pMobIndex != NULL;
-		     pMobIndex = pMobIndex->next)
-			if (is_name(name, pMobIndex->player_name))
+		for (pMobIndex = mob_index_hash[hash]; pMobIndex != NULL; pMobIndex = pMobIndex->next) {
+			if (is_name(name, pMobIndex->player_name)) {
 				return FALSE;
+            }
+        }
 	}
 
 	return TRUE;
@@ -878,9 +836,7 @@ bool check_reconnect(DESCRIPTOR_DATA *d, char *name, bool reconnect)
 	CHAR_DATA *ch;
 
 	for (ch = char_list; ch != NULL; ch = ch->next) {
-		if (!IS_NPC(ch)
-		    && (!reconnect || ch->desc == NULL)
-		    && !str_cmp(d->character->name, ch->name)) {
+		if (!IS_NPC(ch) && (!reconnect || ch->desc == NULL) && !str_cmp(d->character->name, ch->name)) {
 			if (reconnect == FALSE) {
 				free_string(d->character->pcdata->pwd);
 				d->character->pcdata->pwd = str_dup(ch->pcdata->pwd);

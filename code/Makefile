@@ -42,4 +42,4 @@ clean:
 	rm -f $(ODIR)/*.o $(EXE)
 
 install:
-	cp $(EXE) ../../.
+	cp $(EXE) ../.

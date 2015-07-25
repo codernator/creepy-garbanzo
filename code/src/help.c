@@ -111,10 +111,10 @@ void do_help(CHAR_DATA *ch, char *argument)
 					if (help->text[0] == '!') {
 						send_to_char(help->text + 1, ch);
 					} else {
-						if (help->level >= 0 && str_cmp(help->keyword, "imotd")) {
-							page_to_char(help->keyword, ch);
-							page_to_char("\n\r", ch);
-						}
+						//if (help->level >= 0 && str_cmp(help->keyword, "imotd")) {
+						//	page_to_char(help->keyword, ch);
+						//	page_to_char("\n\r", ch);
+						//}
 
 						if (help->text[0] == '.')
 							page_to_char(help->text + 1, ch);
