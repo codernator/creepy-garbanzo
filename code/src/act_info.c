@@ -1443,13 +1443,7 @@ void do_look(CHAR_DATA *ch, char *argument)
 				}
 			}
 			if (is_name(arg3, obj->name)) {
-				if (obj->item_type == ITEM_PARAPH) {
-					printf_to_char(ch, "%s has `2%d``/`@%d`` hits left.\n\r",
-						       obj->short_descr,
-						       obj->value[1],
-						       obj->value[2]);
-					return;
-				} else if (++count == number) {
+				if (++count == number) {
 					send_to_char(obj->description, ch);
 					send_to_char("\n\r", ch);
 					return;

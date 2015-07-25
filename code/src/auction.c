@@ -459,7 +459,6 @@ void do_auction(CHAR_DATA *ch, char *argument)
 		case ITEM_QTOKEN:
 		case ITEM_SCRATCHOFF:
 		case ITEM_LIGHT:
-		case ITEM_DRUGS:
 		case ITEM_QTOKEN2:
 		case ITEM_POTION:
 		case ITEM_CLOTHING:
@@ -473,7 +472,6 @@ void do_auction(CHAR_DATA *ch, char *argument)
 		case ITEM_WAND:
 		case ITEM_SCROLL:
 		case ITEM_DOLL:
-		case ITEM_PARAPH:
 		case ITEM_DICE:
 		case ITEM_FURNITURE:
 		case ITEM_JEWELRY:

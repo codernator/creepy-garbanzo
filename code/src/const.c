@@ -71,8 +71,6 @@ const struct item_type item_table[] =
 	{ ITEM_TELEPORT,   "teleporter",    "ITEM_TELEPORTER" },
 	{ ITEM_ATM,	   "atm_machine",   "ITEM_ATM"	      },
 	{ ITEM_SCARAB,	   "scarab",	    "ITEM_SCARAB"     },
-	{ ITEM_PARAPH,	   "paraphernalia", "ITEM_PARAPH"     },
-	{ ITEM_DRUGS,	   "drugs",	    "ITEM_DRUGS"      },
 	{ ITEM_DOLL,	   "doll",	    "ITEM_DOLL"	      },
 	{ ITEM_INVITATION, "invitation",    "ITEM_INVITATION" },
 	{ ITEM_QTOKEN2,	   "token",	    "ITEM_QTOKEN2"    },
@@ -182,7 +180,6 @@ const struct attack_type attack_table[] =
 	{ "flame",	 "flame",	       DAM_FIRE	     },
 	{ "chill",	 "chill",	       DAM_COLD	     },
 	{ "tracers",	 "tracers",	       DAM_LIGHT     },                                         /* 40 */
-	{ "bitchslap",	 "bitchslap",	       DAM_BASH	     },
 	{ "splinters",	 "splinters",	       DAM_WOOD	     },
 	{ "penstroke",	 "penstroke",	       DAM_PIERCE    },
 	{ "evil stroke", "evil stroke",	       DAM_NEGATIVE  },
@@ -197,9 +194,7 @@ const struct attack_type attack_table[] =
 	{ "deathstroke", "deathstroke",	       DAM_PIERCE    },
 	{ "curse",	 "curse",	       DAM_NEGATIVE  },
 	{ "shockwave",	 "shockwave",	       DAM_SOUND     },                                 /* 55 */
-	{ "penis",	 "penis",	       DAM_BASH	     },
 	{ "gush",	 "gush",	       DAM_DROWNING  },
-	{ "bitching",	 "bitching",	       DAM_SOUND     },
 	{ NULL,		 NULL,		       0	     }
 };
 

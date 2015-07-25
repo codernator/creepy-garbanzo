@@ -2062,11 +2062,6 @@ void do_eat(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if ((obj->item_type == ITEM_DRUGS) && !IS_IMMORTAL(ch)) {
-		send_to_char("You'd rather smoke it.\n\r", ch);
-		return;
-	}
-
 	if (!IS_IMMORTAL(ch)) {
 		if (obj->item_type != ITEM_FOOD && obj->item_type != ITEM_PILL) {
 			send_to_char("That's not edible.\n\r", ch);

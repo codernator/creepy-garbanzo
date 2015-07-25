@@ -2551,48 +2551,6 @@ void identify_item(CHAR_DATA *ch, OBJ_DATA *obj)
 		send_to_char(".\n\r", ch);
 		break;
 
-	case ITEM_DRUGS:
-	case ITEM_PARAPH:
-		if (obj->value[4] > 0) {
-			SKILL *extra;
-			if ((extra = resolve_skill_sn((int)obj->value[4])) != NULL) {
-				printf_to_char(ch, "Level %d spells of: %s\n\r",
-					       obj->value[0],
-					       extra->name);
-			}
-		}
-
-		if (obj->value[1] >= obj->value[2]) {
-			send_to_char("It is full.\n\r", ch);
-			break;
-		}
-
-		if (obj->value[2] > 0) {
-			if (obj->value[1] >= (5 * (obj->value[2] / 6))) {
-				send_to_char("It is almost full.\n\r", ch);
-				break;
-			}
-
-			if (obj->value[1] >= (5 * (obj->value[2] / 8))) {
-				send_to_char("It is about 3/4 full.\n\r", ch);
-				break;
-			}
-
-			if (obj->value[1] >= (obj->value[2] / 2)
-			    || (obj->value[1] >= (4 * (obj->value[2] / 10)))) {
-				send_to_char("It is about 1/2 full.\n\r", ch);
-				break;
-			}
-
-			if (obj->value[1] >= (1 * (obj->value[2] / 4))) {
-				send_to_char("It is about 1/4 full.\n\r", ch);
-				break;
-			}
-		}
-
-		send_to_char("It is almost empty.\n\r", ch);
-		break;
-
 	case ITEM_WAND:
 	case ITEM_STAFF:
 		printf_to_char(ch, "Has %ld charges of level %ld", obj->value[2], obj->value[0]);

@@ -648,8 +648,6 @@ const struct flag_type type_flags[] =
 	{ "teleporter",	    ITEM_TELEPORT,   TRUE  },
 	{ "atm",	    ITEM_ATM,	     TRUE  },
 	{ "invitation",	    ITEM_INVITATION, TRUE  },
-	{ "paraphenalia",   ITEM_PARAPH,     TRUE  },
-	{ "drugs",	    ITEM_DRUGS,	     TRUE  },
 	{ "faeriefog",	    ITEM_FAERIE_FOG, FALSE },
 	{ "dust",	    ITEM_DUST,	     FALSE },
 	{ "doll",	    ITEM_DOLL,	     TRUE  },
@@ -1050,7 +1048,6 @@ const struct flag_type damage_flags[] =
 	{ "flame",		38, TRUE  },
 	{ "chill",		39, TRUE  },
 	{ "tracers",		40, TRUE  },                                            /* 40 */
-	{ "bitchslap",		41, TRUE  },
 	{ "splinters",		42, TRUE  },
 	{ "penstroke",		43, TRUE  },
 	{ "evil stroke",	44, TRUE  },
@@ -1065,9 +1062,7 @@ const struct flag_type damage_flags[] =
 	{ "deathstroke",	53, TRUE  },
 	{ "curse",		54, TRUE  },
 	{ "shockwave",		55, TRUE  },                                            /* 55 */
-	{ "penis",		56, TRUE  },
 	{ "gush",		57, TRUE  },
-	{ "bitching",		58, TRUE  },
 	{ NULL,			0,  FALSE }
 };
 

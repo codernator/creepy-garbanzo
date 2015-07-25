@@ -186,15 +186,6 @@ static void show_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *obj)
 		printf_to_char(ch, "`1[`!v1`1]`& Value``: [%d]\n\r", obj->value[1]);
 		break;
 
-	case ITEM_DRUGS:
-		printf_to_char(ch, "`1[`!v0`1]`& Level``:     [%d]\n\r", obj->value[0]);
-		printf_to_char(ch, "`1[`!v1`1]`& Amount``:    [%d]\n\r", obj->value[1]);
-		printf_to_char(ch, "`1[`!v2`1]`& Stash`` :    [%d]\n\r", obj->value[2]);
-		printf_to_char(ch, "`1[`!v3`1]`& Strength`` : [%d]\n\r", obj->value[3]);
-		printf_to_char(ch, "`1[`!v4`1]`& Spell``:     [%d]\n\r", obj->value[4]);
-
-
-		break;
 	case ITEM_SOCKETS:
 		printf_to_char(ch, "[v0] Type:           %s\n\r",
 			       flag_string(socket_flags, obj->value[0]));
@@ -553,35 +544,6 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 		case 1:
 			send_to_char("Token value set.\n\r\n\r", ch);
 			pObj->value[1] = atoi(argument);
-			break;
-		}
-		break;
-	case ITEM_DRUGS:
-		switch (value_num) {
-		default:
-			return FALSE;
-		case 0:
-			send_to_char("Weed level set.\n\r\n\r", ch);
-			pObj->value[0] = atoi(argument);
-			break;
-		case 1:
-			send_to_char("Stash amount value set.\n\r\n\r", ch);
-			pObj->value[1] = atoi(argument);
-			break;
-		case 2:
-			send_to_char("Weed stash value set.\n\r\n\r", ch);
-			pObj->value[2] = atoi(argument);
-			break;
-		case 3:
-			send_to_char("Weed strength value set.\n\r\n\r", ch);
-			pObj->value[3] = atoi(argument);
-			break;
-
-		case 4:
-			if ((skill = skill_lookup(argument)) != NULL) {
-				pObj->value[4] = skill->sn;
-				send_to_char("Weed spell set.\n\r\n\r", ch);
-			}
 			break;
 		}
 		break;

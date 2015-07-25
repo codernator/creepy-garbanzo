@@ -200,13 +200,11 @@ extern int close(int fd);
 /* RT max open files fix */
 static void maxfilelimit()
 {
-#if defined(unix)
 	struct rlimit r;
 
 	getrlimit(RLIMIT_NOFILE, &r);
 	r.rlim_cur = r.rlim_max;
 	setrlimit(RLIMIT_NOFILE, &r);
-#endif
 }
 
 
@@ -442,19 +440,19 @@ void boot_db()
 #undef KEY
 #endif
 
-#define KEY(literal, field, value)                                      \
-	if (!str_cmp(word, literal))                     \
-	{                                                                       \
-		field = value;                                 \
-		break;                                                  \
+#define KEY(literal, field, value)   \
+	if (!str_cmp(word, literal))     \
+	{                                \
+		field = value;               \
+		break;                       \
 	}
 
-#define SKEY(word, string, field)                                       \
-	if (!str_cmp(word, string))                      \
-	{                                                                       \
-		free_string(field);                             \
-		field = fread_string(fp);               \
-		break;                                                  \
+#define SKEY(word, string, field)    \
+	if (!str_cmp(word, string))      \
+	{                                \
+		free_string(field);          \
+		field = fread_string(fp);    \
+		break;                       \
 	}
 
 
@@ -1116,17 +1114,8 @@ void load_mobiles(FILE *fp)
 		mob_idx->parts = fread_flag(fp) | race_table[mob_idx->race].parts;
 
 		/* size */
-#if defined(WIN32)
-		{
-			char *tmp = str_dup(fread_word(fp));
-			mob_idx->size = size_lookup(tmp);
-			if (mob_idx->size < 0)
-				bug("CHECK_POS : size == %d < 0", mob_idx->size);
-			free_string(tmp);
-		}
-#else
 		CHECK_POS(mob_idx->size, (int)size_lookup(fread_word(fp)), "size");
-#endif
+
 		/*mob_idx->size = size_lookup(fread_word(fp));*/
 		mob_idx->drained = mob_idx->level;
 		mob_idx->material = str_dup(fread_word(fp));
@@ -1250,17 +1239,8 @@ void load_objects(FILE *fp)
 		obj_idx->material = fread_string(fp);
 		obj_idx->extra2_flags = (int)fread_flag(fp);
 
-#if defined(WIN32)
-		{
-			char *tmp = str_dup(fread_word(fp));
-			obj_idx->item_type = item_lookup(tmp);
-			if (obj_idx->item_type < 0)
-				bug("CHECK_POS : item_type == %d < 0", obj_idx->item_type);
-			free_string(tmp);
-		}
-#else
 		CHECK_POS(obj_idx->item_type, (int)item_lookup(fread_word(fp)), "item_type");
-#endif
+
 		/* obj_idx->item_type	= item_lookup(fread_word(fp)); */
 		obj_idx->extra_flags = (int)fread_flag(fp);
 		obj_idx->wear_flags = (int)fread_flag(fp);
@@ -1285,18 +1265,9 @@ void load_objects(FILE *fp)
 			obj_idx->value[0] = fread_number(fp);
 			obj_idx->value[1] = fread_number(fp);
 			/*obj_idx->value[2] = liq_lookup(fread_word(fp));*/
-#if defined(WIN32)
-			{
-				char *tmp = str_dup(fread_word(fp));
 
-				obj_idx->value[2] = liq_lookup(tmp);
-				if (obj_idx->value[2] < 0)
-					bug("CHECK_POS : liq_lookup == %d < 0", obj_idx->value[2]);
-				free_string(tmp);
-			}
-#else
 			CHECK_POS(obj_idx->value[2], (int)liq_lookup(fread_word(fp)), "liq_lookup");
-#endif
+
 			obj_idx->value[3] = fread_number(fp);
 			obj_idx->value[4] = fread_number(fp);
 			break;
@@ -2491,8 +2462,6 @@ OBJ_DATA *create_object(OBJ_INDEX_DATA *obj_idx, int level)
 	case ITEM_QTOKEN2:
 	case ITEM_SCRATCHOFF:
 	case ITEM_ATM:
-	case ITEM_PARAPH:
-	case ITEM_DRUGS:
 	case ITEM_TELEPORT:
 	case ITEM_TREASURE:
 	case ITEM_WARP_STONE:
@@ -2960,11 +2929,9 @@ void *alloc_mem(unsigned int sMem)
 	void *pMem;
 	int iList;
 
-#if !defined(WIN32)
 	int *magic;
 
 	sMem += sizeof(*magic);
-#endif
 
 	for (iList = 0; iList < MAX_MEM_LIST; iList++)
 		if ((unsigned int)sMem <= rgSizeList[iList])
@@ -2982,11 +2949,9 @@ void *alloc_mem(unsigned int sMem)
 		rgFreeList[iList] = *((void **)rgFreeList[iList]);
 	}
 
-#if !defined(WIN32)
 	magic = (int *)pMem;
 	*magic = MAGIC_NUM;
 	pMem += sizeof(*magic);
-#endif
 
 	return pMem;
 }
@@ -3001,7 +2966,6 @@ void free_mem(void *pMem, unsigned int sMem)
 {
 	int iList;
 
-#if !defined(WIN32)
 	int *magic;
 
 	pMem -= sizeof(*magic);
@@ -3015,7 +2979,6 @@ void free_mem(void *pMem, unsigned int sMem)
 
 	*magic = 0;
 	sMem += sizeof(*magic);
-#endif
 
 	for (iList = 0; iList < MAX_MEM_LIST; iList++)
 		if (sMem <= rgSizeList[iList])

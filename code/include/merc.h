@@ -979,8 +979,6 @@ struct kill_data {
 #define ITEM_ATM                          37
 #define ITEM_INVITATION 38
 #define ITEM_SCARAB                     39
-#define ITEM_PARAPH                     40
-#define ITEM_DRUGS                      41
 #define ITEM_FAERIE_FOG 42
 #define ITEM_DUST                         43
 #define ITEM_DOLL                         44

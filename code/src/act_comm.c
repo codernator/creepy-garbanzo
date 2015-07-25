@@ -2207,23 +2207,22 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
 	}
 
 	if (auction->item != NULL && ((ch == auction->buyer) || (ch == auction->seller))) {
-		(void)snprintf(buf, 2 * MIL, "Wait until the auctioning of %s is over.\n\r",
-			       auction->item->short_descr);
+		(void)snprintf(buf, 2 * MIL, "Wait until the auctioning of %s is over.\n\r", auction->item->short_descr);
 		send_to_char(buf, ch);
 		return;
 	}
 
 	furniture_check(ch);
 
-	send_to_char("`@Don't let the door hit-cha where the good lord splitcha...... Bitch!``\n\r", ch);
+	send_to_char("`@Disconnected.``\n\r", ch);
 	act("```@$n ```Ohas ```^left ```#the ```!game.``", ch, NULL, NULL, TO_ROOM);
 	(void)snprintf(log_buf, 2 * MIL, "%s has quit.", ch->name);
 	log_string(log_buf);
 	wiznet("$N rejoins the real world.", ch, NULL, WIZ_LOGINS, 0, get_trust(ch));
 
-/*
- * After extract_char the ch is no longer valid!
- */
+    /*
+     * After extract_char the ch is no longer valid!
+     */
 	if (IS_SET(ch->act, PLR_LINKDEAD))
 		REMOVE_BIT(ch->act, PLR_LINKDEAD);
 	affect_strip(ch, gsp_deft);
@@ -2243,7 +2242,7 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
 	if (d != NULL)
 		close_socket(d);
 
-/* toast evil cheating bastards */
+    /* toast evil cheating bastards */
 	for (d = descriptor_list; d != NULL; d = d_next) {
 		CHAR_DATA *tch;
 
@@ -2273,7 +2272,7 @@ void do_save(CHAR_DATA *ch, /*@unused@*/ char *argument)
 
 void do_follow(CHAR_DATA *ch, char *argument)
 {
-/* RT changed to allow unlimited following and follow the NOFOLLOW rules */
+    /* RT changed to allow unlimited following and follow the NOFOLLOW rules */
 	CHAR_DATA *victim;
 	char arg[MIL];
 

@@ -119,8 +119,7 @@ void save_char_obj(CHAR_DATA *ch)
 	if (ch->desc != NULL && ch->desc->original != NULL)
 		ch = ch->desc->original;
 
-#if defined(unix)
-/* create god log */
+    /* create god log */
 	if (IS_IMMORTAL(ch) || ch->level >= LEVEL_IMMORTAL) {
 		fclose(fpReserve);
 		sprintf(strsave, "%s%s", GOD_DIR, capitalize(ch->name));
@@ -135,7 +134,6 @@ void save_char_obj(CHAR_DATA *ch)
 		fclose(fp);
 		fpReserve = fopen(NULL_FILE, "r");
 	}
-#endif
 
 	fclose(fpReserve);
 	sprintf(strsave, "%s%s", PLAYER_DIR, capitalize(ch->name));
@@ -155,9 +153,6 @@ void save_char_obj(CHAR_DATA *ch)
 	}
 	fclose(fp);
 
-#if defined(WIN32)
-	unlink(strsave);
-#endif
 	rename(TEMP_FILE, strsave);
 	fpReserve = fopen(NULL_FILE, "r");
 	impnet("$N is saved.", ch, NULL, IMN_SAVES, 0, 0);
@@ -739,9 +734,7 @@ bool load_char_obj(DESCRIPTOR_DATA *d, char *name)
 	bool found;
 	int stat;
 
-#if defined(unix)
 	char buf[100];
-#endif
 
 	ch = new_char();
 	ch->pcdata = new_pcdata();
@@ -817,14 +810,12 @@ bool load_char_obj(DESCRIPTOR_DATA *d, char *name)
 
 
 	fclose(fpReserve);
-#if defined(unix)
 	sprintf(strsave, "%s%s%s", PLAYER_DIR, capitalize(name), ".gz");
 	if ((fp = fopen(strsave, "r")) != NULL) {
 		fclose(fp);
 		sprintf(buf, "gzip -dfq %s", strsave);
 		system(buf);
 	}
-#endif
 
 	sprintf(strsave, "%s%s", PLAYER_DIR, capitalize(name));
 	if ((fp = fopen(strsave, "r")) != NULL) {
@@ -930,12 +921,12 @@ bool load_char_obj(DESCRIPTOR_DATA *d, char *name)
 #undef KEY
 #endif
 
-#define KEY(literal, field, value)              \
-	if (!str_cmp(word, literal))                     \
-	{                                                                               \
-		field = value;                                         \
-		fMatch = TRUE;                                          \
-		break;                                                          \
+#define KEY(literal, field, value)           \
+	if (!str_cmp(word, literal))             \
+	{                                        \
+		field = value;                       \
+		fMatch = TRUE;                       \
+		break;                               \
 	}
 
 
@@ -947,11 +938,11 @@ bool load_char_obj(DESCRIPTOR_DATA *d, char *name)
 #undef KEYS
 #endif
 
-#define KEYS(literal, field, value)                                   \
-	if (!str_cmp(word, literal))        \
+#define KEYS(literal, field, value)         \
+	if (!str_cmp(word, literal))            \
 	{                                       \
 		free_string(field);                 \
-		field = value;                     \
+		field = value;                      \
 		fMatch = TRUE;                      \
 		bug(word, 0);                       \
 		break;                              \
@@ -974,7 +965,7 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 	sprintf(buf, "Loading %s.", ch->name);
 	log_string(buf);
 
-	for (;; ) {
+	for (;;) {
 		word = feof(fp) ? "End" : fread_word(fp);
 		fMatch = FALSE;
 
