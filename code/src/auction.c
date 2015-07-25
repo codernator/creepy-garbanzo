@@ -28,19 +28,7 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#if defined(WIN32)
-#include <sys/timeb.h>
-#include <time.h>
-#else
 #include <sys/time.h>
-#endif
-#endif
-
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -53,13 +41,13 @@
 extern bool is_digit(const char test);
 extern unsigned int parse_unsigned_int(char *string);
 
-void talk_auction args((char *argument));
-extern void recursive_clone args((CHAR_DATA * ch, OBJ_DATA * obj, OBJ_DATA * clone));
+void talk_auction(char *argument);
+extern void recursive_clone(CHAR_DATA * ch, OBJ_DATA * obj, OBJ_DATA * clone);
 
-bool check_bid args((CHAR_DATA * ch, unsigned int bid, int type));
-void credit_player_bid  args((CHAR_DATA * ch, long bid, int type));
-int auction_type_lookup args((int type));
-int auction_name_lookup     args((char *name));
+bool check_bid(CHAR_DATA * ch, unsigned int bid, int type);
+void credit_player_bid(CHAR_DATA * ch, long bid, int type);
+int auction_type_lookup(int type);
+int auction_name_lookup(char *name);
 
 /***************************************************************************
 *	auction_type_table

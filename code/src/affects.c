@@ -27,18 +27,7 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#if defined(WIN32)
-#include <sys/timeb.h>
-#else
 #include <sys/time.h>
-#endif
-#endif
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -54,8 +43,7 @@
 /***************************************************************************
 *	external functions
 ***************************************************************************/
-void dam_message                     args((CHAR_DATA * ch, CHAR_DATA * victim,
-					   int dam, int dt, bool immune));
+void dam_message(CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt, bool immune);
 
 extern int number_range_long(long from, long to);
 

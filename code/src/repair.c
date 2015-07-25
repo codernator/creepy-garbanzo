@@ -28,17 +28,7 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#if defined(WIN32)
-#include <sys/timeb.h>
-#else
 #include <sys/time.h>
-#endif
-#endif
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -47,16 +37,10 @@
 #include "interp.h"
 #include "recycle.h"
 
-#define CD CHAR_DATA
-#define OD OBJ_DATA
-
-extern CD * find_keeper args((CHAR_DATA * ch));
-extern int get_cost args((CHAR_DATA * keeper, OBJ_DATA * obj, bool fbuy));
-extern OD *get_obj_keeper args((CHAR_DATA * ch, CHAR_DATA * keeper, char *argument));
-extern void obj_to_keeper args((OBJ_DATA * obj, CHAR_DATA * ch));
-
-#undef OD
-#undef CD
+extern CHAR_DATA * find_keeper(CHAR_DATA * ch);
+extern int get_cost(CHAR_DATA * keeper, OBJ_DATA * obj, bool fbuy);
+extern OBJ_DATA * get_obj_keeper(CHAR_DATA * ch, CHAR_DATA * keeper, char *argument);
+extern void obj_to_keeper(OBJ_DATA * obj, CHAR_DATA * ch);
 
 
 /***************************************************************************

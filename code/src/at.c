@@ -28,18 +28,8 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#if defined(WIN32)
-#include <sys/timeb.h>
-#else
 #include <sys/time.h>
 #include <unistd.h>
-#endif
-#endif
-
 #include <math.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -59,8 +49,8 @@
 /***************************************************************************
 *	function prototypes used
 ***************************************************************************/
-ROOM_INDEX_DATA * find_location  args((CHAR_DATA * ch, char *arg));
-bool expand_cmd args((CHAR_DATA * vch, char *arg, char *buf, char find));
+ROOM_INDEX_DATA * find_location(CHAR_DATA * ch, char *arg);
+bool expand_cmd(CHAR_DATA * vch, char *arg, char *buf, char find);
 
 
 /***************************************************************************

@@ -28,30 +28,22 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
 #include <sys/types.h>
-#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include "merc.h"
 
+
+ROOM_INDEX_DATA *get_scan_room(ROOM_INDEX_DATA * room, int direction, int distance);
+
+
 /***************************************************************************
 *	local declarations
 ***************************************************************************/
 /* local functions */
-static void scan_list args((ROOM_INDEX_DATA * scan_room,
-			    CHAR_DATA * ch,
-			    int depth,
-			    int door,
-			    char *argument));
-
-ROOM_INDEX_DATA *get_scan_room args((ROOM_INDEX_DATA * room,
-				     int direction,
-				     int distance));
+static void scan_list(ROOM_INDEX_DATA * scan_room, CHAR_DATA * ch, int depth, int door, char *argument);
 
 /*
  * Right Here

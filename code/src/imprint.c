@@ -36,18 +36,7 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#if defined(WIN32)
-#include <sys/timeb.h>
-#else
 #include <sys/time.h>
-#endif
-#endif
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -63,7 +52,7 @@
 /***************************************************************************
 *	local functions
 ***************************************************************************/
-int count_slots         args((OBJ_DATA * obj));
+int count_slots(OBJ_DATA * obj);
 
 
 /***************************************************************************

@@ -28,17 +28,11 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
 #include <sys/types.h>
-#endif
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-
-
 #include "merc.h"
 #include "recycle.h"
 #include "interp.h"
@@ -46,7 +40,7 @@
 #include "lookup.h"
 #include "skills.h"
 
-extern int _filbuf args((FILE *));
+extern int _filbuf(FILE *);
 extern unsigned int fread_uint(FILE *fp);
 extern long fread_long(FILE *fp);
 extern void bug_long(const char *str, long param);
@@ -59,24 +53,24 @@ extern void bug_long(const char *str, long param);
 static OBJ_DATA *rgObjNest[MAX_NEST];
 
 
-void fread_char                 args((CHAR_DATA * ch, FILE * fp));
-extern int message_type_lookup     args((char *name));
+void fread_char(CHAR_DATA * ch, FILE * fp);
+extern int message_type_lookup(char *name);
 
-extern char *fread_norm_string       args((FILE * fp));
-int rename                          args((const char *oldfname, const char *newfname));
-static bool load_rdesc                      args((ROOM_INDEX_DATA * location, char *name));
+extern char *fread_norm_string(FILE * fp);
+int rename(const char *oldfname, const char *newfname);
+static bool load_rdesc(ROOM_INDEX_DATA * location, char *name);
 
 
 /***************************************************************************
 *	local functions
 ***************************************************************************/
-static void fwrite_char  args((CHAR_DATA * ch, FILE * fp));
-static void fwrite_obj   args((CHAR_DATA * ch, OBJ_DATA * obj, FILE * fp, int iNest));
-static void fwrite_pet   args((CHAR_DATA * pet, FILE * fp));
-static void fwrite_rdesc args((ROOM_INDEX_DATA * location, FILE * fp));
-static void fread_pet    args((CHAR_DATA * ch, FILE * fp));
-static void fread_obj    args((CHAR_DATA * ch, FILE * fp));
-static void fread_rdesc  args((ROOM_INDEX_DATA * location, FILE * fp));
+static void fwrite_char(CHAR_DATA * ch, FILE * fp);
+static void fwrite_obj(CHAR_DATA * ch, OBJ_DATA * obj, FILE * fp, int iNest);
+static void fwrite_pet(CHAR_DATA * pet, FILE * fp);
+static void fwrite_rdesc(ROOM_INDEX_DATA * location, FILE * fp);
+static void fread_pet(CHAR_DATA * ch, FILE * fp);
+static void fread_obj(CHAR_DATA * ch, FILE * fp);
+static void fread_rdesc(ROOM_INDEX_DATA * location, FILE * fp);
 
 
 

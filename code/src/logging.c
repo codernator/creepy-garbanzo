@@ -9,12 +9,12 @@
 #include <string.h>
 #include "merc.h"
 
-static void lastCommands args((const char *str));
-static void cmdLogAlways args((const char *str));
-static void cmdLogALL args((const char *str));
-static void cmdLogPlayer args((const char *str, char username[]));
-static char *logStamp args((void));
-static void write_file args((char *fileName, char *mode, char *text));
+static void lastCommands(const char *str);
+static void cmdLogAlways(const char *str);
+static void cmdLogALL(const char *str);
+static void cmdLogPlayer(const char *str, char username[]);
+static char *logStamp(void);
+static void write_file(char *fileName, char *mode, char *text);
 
 static int numCmds = 1;
 

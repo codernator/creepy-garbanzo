@@ -28,17 +28,7 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#if defined(WIN32)
-#include <sys/timeb.h>
-#else
 #include <sys/time.h>
-#endif
-#endif
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -93,15 +83,15 @@ const struct battlefield_set_data battlefield_set_cmds[] =
 /***************************************************************************
 *	function declarations
 ***************************************************************************/
-void battlefield_set         args((CHAR_DATA * ch, char *arg));
-void battlefield_show        args((CHAR_DATA * ch));
-void battlefield_trans       args((CHAR_DATA * ch, ROOM_INDEX_DATA * loc));
-void battlefield_open        args((CHAR_DATA * ch));
-void battlefield_close       args((CHAR_DATA * ch));
-void battlefield_cancel      args((CHAR_DATA * ch));
-void battlefield_enter       args((CHAR_DATA * ch));
-void battlefield_clear       args((void));
-void battlefield_special     args((CHAR_DATA * ch));
+void battlefield_set(CHAR_DATA * ch, char *arg);
+void battlefield_show(CHAR_DATA * ch);
+void battlefield_trans(CHAR_DATA * ch, ROOM_INDEX_DATA * loc);
+void battlefield_open(CHAR_DATA * ch);
+void battlefield_close(CHAR_DATA * ch);
+void battlefield_cancel(CHAR_DATA * ch);
+void battlefield_enter(CHAR_DATA * ch);
+void battlefield_clear(void);
+void battlefield_special(CHAR_DATA * ch);
 
 
 /***************************************************************************

@@ -50,17 +50,17 @@
 /***************************************************************************
 *	random functions
 ***************************************************************************/
-typedef void RANDOM_FN args ((long vnum));
+typedef void RANDOM_FN(long vnum);
 
 static RANDOM_FN random_drop_item;
 static RANDOM_FN random_drop_gold;
 static RANDOM_FN random_drop_unique;
 
-static ROOM_INDEX_DATA *random_drop_room        args((void));
-CHAR_DATA *random_unique_mob                       args((void));
-void format_obj                      args((OBJ_DATA * obj));
-void name_obj                        args((CHAR_DATA * mob, OBJ_DATA * obj));
-void apply_random_affect     args((OBJ_DATA * obj, bool positive));
+static ROOM_INDEX_DATA *random_drop_room(void);
+CHAR_DATA *random_unique_mob(void);
+void format_obj(OBJ_DATA * obj);
+void name_obj(CHAR_DATA * mob, OBJ_DATA * obj);
+void apply_random_affect(OBJ_DATA * obj, bool positive);
 
 /***************************************************************************
 *	random drop table

@@ -10,14 +10,7 @@
 *  all the previous coders who released their source code.                *
 *                                                                         *
 ***************************************************************************/
-
-
-
-#if defined(macintosh)
-#include <types.h>
-#else
 #include <sys/types.h>
-#endif
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,9 +43,9 @@ HELP_DATA *help_free;
 HELP_DATA *help_last;
 
 
-void free_extra_descr   args((EXTRA_DESCR_DATA * extra));
-void free_affect                args((AFFECT_DATA * af));
-void free_mprog                 args((MPROG_LIST * mp));
+void free_extra_descr(EXTRA_DESCR_DATA * extra);
+void free_affect(AFFECT_DATA * af);
+void free_mprog(MPROG_LIST * mp);
 
 
 

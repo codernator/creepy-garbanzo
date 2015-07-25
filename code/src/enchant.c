@@ -28,18 +28,8 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#if defined(WIN32)
-#include <sys/timeb.h>
-#else
 #include <sys/time.h>
 #include <unistd.h>
-#endif
-#endif
-
 #include <math.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -47,11 +37,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <assert.h>
-
-
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include "merc.h"
 #include "magic.h"
 #include "interp.h"
@@ -62,9 +47,9 @@
 /***************************************************************************
 * Repair code - 08-09-2002
 ***************************************************************************/
-static bool is_negative_affect          args((AFFECT_DATA * paf));
-static unsigned int repair_cost                 args((OBJ_DATA * obj, char *stat));
-static void enchant_item                        args((OBJ_DATA * obj));
+static bool is_negative_affect(AFFECT_DATA * paf);
+static unsigned int repair_cost(OBJ_DATA * obj, char *stat);
+static void enchant_item(OBJ_DATA * obj);
 
 /***************************************************************************
 *	item_affect_stats

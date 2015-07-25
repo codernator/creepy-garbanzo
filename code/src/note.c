@@ -57,17 +57,7 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#if defined(WIN32)
-#include <sys/timeb.h>
-#else
 #include <sys/time.h>
-#endif
-#endif
-
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
@@ -82,7 +72,7 @@
 /***************************************************************************
 *	globals
 ***************************************************************************/
-extern int _filbuf         args((FILE *));
+extern int _filbuf(FILE *);
 extern FILE *fp_area;
 extern char area_file[MIL];
 extern bool is_space(const char test);
@@ -93,22 +83,22 @@ extern bool is_space(const char test);
 /***************************************************************************
 *	local procedures
 ***************************************************************************/
-static void load_thread         args((char *name, NOTE_DATA * *list, int type, time_t free_time));
-static void parse_message               args((CHAR_DATA * ch, char *argument, int type));
-static bool is_message_hidden   args((CHAR_DATA * ch, NOTE_DATA * pnote));
-static int count_thread            args((CHAR_DATA * ch, NOTE_DATA * spool));
-static void list_thread         args((CHAR_DATA * ch, int type, char *argument, bool search));
+static void load_thread(char *name, NOTE_DATA * *list, int type, time_t free_time);
+static void parse_message(CHAR_DATA * ch, char *argument, int type);
+static bool is_message_hidden(CHAR_DATA * ch, NOTE_DATA * pnote);
+static int count_thread(CHAR_DATA * ch, NOTE_DATA * spool);
+static void list_thread(CHAR_DATA * ch, int type, char *argument, bool search);
 
 /***************************************************************************
 *	lookup functions
 ***************************************************************************/
-int message_type_lookup                         args((char *name));
-static int get_message_index                            args((int type));
-static char *get_message_file                          args((int type));
-static char *get_message_name                          args((int type));
-static NOTE_DATA **get_message_thread          args((int type));
-static NOTE_DATA *get_message                          args((CHAR_DATA * ch, int *msg_num, int type));
-static NOTE_DATA *clone_message                        args((NOTE_DATA * src));
+int message_type_lookup(char *name);
+static int get_message_index(int type);
+static char *get_message_file(int type);
+static char *get_message_name(int type);
+static NOTE_DATA **get_message_thread(int type);
+static NOTE_DATA *get_message(CHAR_DATA * ch, int *msg_num, int type);
+static NOTE_DATA *clone_message(NOTE_DATA * src);
 
 
 /***************************************************************************
@@ -559,7 +549,7 @@ static void update_read(CHAR_DATA *ch, NOTE_DATA *note)
 /***************************************************************************
 *	note functions
 ***************************************************************************/
-typedef void NOTE_FN args ((CHAR_DATA * ch, char *argument, int type));
+typedef void NOTE_FN(CHAR_DATA * ch, char *argument, int type);
 
 static NOTE_FN message_read;
 static NOTE_FN message_list;

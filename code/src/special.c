@@ -98,9 +98,9 @@ static DECLARE_SPEC_FUN(spec_huge_guard);
 static DECLARE_SPEC_FUN(spec_dealer_smurf);
 static DECLARE_SPEC_FUN(spec_intelligent);
 
-extern bool remove_obj  args((CHAR_DATA * ch, int iWear, bool fReplace));
-extern void wear_obj            args((CHAR_DATA * ch, OBJ_DATA * obj, bool fReplace));
-extern int check_dir           args((CHAR_DATA * ch, int dir));
+extern bool remove_obj(CHAR_DATA * ch, int iWear, bool fReplace);
+extern void wear_obj(CHAR_DATA * ch, OBJ_DATA * obj, bool fReplace);
+extern int check_dir(CHAR_DATA * ch, int dir);
 
 /* the function table */
 const struct spec_type spec_table[] =

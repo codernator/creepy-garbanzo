@@ -45,33 +45,33 @@ extern void fill_combat_roll(COMBAT_ROLL_BOX *crb, bool defense, int bonus_die_s
 #define MAX_DAMAGE_MESSAGE 58
 
 ONE_ATTACK_RESULT one_attack(CHAR_DATA *ch, CHAR_DATA *victim, int dt, OBJ_DATA *attacker_wield);
-bool is_safe args((CHAR_DATA * ch, CHAR_DATA * victim));
-bool one_hit args((CHAR_DATA * ch, CHAR_DATA * victim, int dt, OBJ_DATA * wield));
-void set_fighting args((CHAR_DATA * ch, CHAR_DATA * victim));
-bool check_dispel args((int dis_level, CHAR_DATA * victim, SKILL * skill));
-void raze_affect args((CHAR_DATA * ch));
-void carnage_affect args((CHAR_DATA * ch));
-void check_killer args((CHAR_DATA * ch, CHAR_DATA * victim));
-void dam_message args((CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt, bool immune));
-void make_corpse args((CHAR_DATA * ch));
-bool check_shield_block args((CHAR_DATA * ch, CHAR_DATA * victim));
-void disarm args((CHAR_DATA * ch, CHAR_DATA * victim));
+bool is_safe(CHAR_DATA * ch, CHAR_DATA * victim);
+bool one_hit(CHAR_DATA * ch, CHAR_DATA * victim, int dt, OBJ_DATA * wield);
+void set_fighting(CHAR_DATA * ch, CHAR_DATA * victim);
+bool check_dispel(int dis_level, CHAR_DATA * victim, SKILL * skill);
+void raze_affect(CHAR_DATA * ch);
+void carnage_affect(CHAR_DATA * ch);
+void check_killer(CHAR_DATA * ch, CHAR_DATA * victim);
+void dam_message(CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt, bool immune);
+void make_corpse(CHAR_DATA * ch);
+bool check_shield_block(CHAR_DATA * ch, CHAR_DATA * victim);
+void disarm(CHAR_DATA * ch, CHAR_DATA * victim);
 
 
 /*
  * Local functions.
  */
-static void check_assist args((CHAR_DATA * ch, CHAR_DATA * victim));
-static bool check_dodge args((CHAR_DATA * ch, CHAR_DATA * victim));
-static bool check_parry args((CHAR_DATA * ch, CHAR_DATA * victim));
-static bool check_evade args((CHAR_DATA * ch, CHAR_DATA * victim));
-static void death_cry args((CHAR_DATA * ch, CHAR_DATA * killer));
-static void group_gain args((CHAR_DATA * ch, CHAR_DATA * victim));
-static int xp_compute args((CHAR_DATA * gch, CHAR_DATA * victim, int total_levels));
-static void use_magical_item args((CHAR_DATA * ch));
-static int max_damage args((CHAR_DATA * ch, CHAR_DATA * victim, int dt, int amt));
-static void mob_hit args((CHAR_DATA * ch, CHAR_DATA * victim, int dt));
-static void check_deathdrop         args((CHAR_DATA * ch));
+static void check_assist(CHAR_DATA * ch, CHAR_DATA * victim);
+static bool check_dodge(CHAR_DATA * ch, CHAR_DATA * victim);
+static bool check_parry(CHAR_DATA * ch, CHAR_DATA * victim);
+static bool check_evade(CHAR_DATA * ch, CHAR_DATA * victim);
+static void death_cry(CHAR_DATA * ch, CHAR_DATA * killer);
+static void group_gain(CHAR_DATA * ch, CHAR_DATA * victim);
+static int xp_compute(CHAR_DATA * gch, CHAR_DATA * victim, int total_levels);
+static void use_magical_item(CHAR_DATA * ch);
+static int max_damage(CHAR_DATA * ch, CHAR_DATA * victim, int dt, int amt);
+static void mob_hit(CHAR_DATA * ch, CHAR_DATA * victim, int dt);
+static void check_deathdrop(CHAR_DATA * ch);
 
 
 /***************************************************************************

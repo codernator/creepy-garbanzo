@@ -29,10 +29,9 @@
 #define __MAGIC_H
 
 
-bool check_dispel       args((int dis_level, CHAR_DATA * victim, SKILL * skill));
-bool saves_dispel       args((int dis_level, int spell_level, int duration));
-
-void cast_spell         args((CHAR_DATA * ch, SKILL * skill, int level, void *vo, int target, char *argument));
+bool check_dispel(int dis_level, CHAR_DATA * victim, SKILL * skill);
+bool saves_dispel(int dis_level, int spell_level, int duration);
+void cast_spell(CHAR_DATA * ch, SKILL * skill, int level, void *vo, int target, char *argument);
 
 /***************************************************************************
 *	spell functions

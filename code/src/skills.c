@@ -28,23 +28,11 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#if defined(WIN32)
-#include <sys/timeb.h>
-#else
 #include <sys/time.h>
-#endif
-#endif
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-
-
 #include "merc.h"
 #include "magic.h"
 #include "recycle.h"
@@ -52,8 +40,6 @@
 #include "skills.h"
 #include "lookup.h"
 #include "interp.h"
-
-
 
 
 /***************************************************************************
@@ -1711,12 +1697,12 @@ void add_group_level(GROUP *group, LEVEL_INFO *level)
 /***************************************************************************
 *	command functitons
 ***************************************************************************/
-static void gain_list    args((CHAR_DATA * ch, CHAR_DATA * trainer));
-static void gain_convert args((CHAR_DATA * ch, CHAR_DATA * trainer));
-static void gain_study   args((CHAR_DATA * ch, CHAR_DATA * trainer));
-static void gain_points  args((CHAR_DATA * ch, CHAR_DATA * trainer));
-static void gain_group   args((CHAR_DATA * ch, CHAR_DATA * trainer, GROUP * group));
-static void gain_skill   args((CHAR_DATA * ch, CHAR_DATA * trainer, SKILL * skill));
+static void gain_list(CHAR_DATA * ch, CHAR_DATA * trainer);
+static void gain_convert(CHAR_DATA * ch, CHAR_DATA * trainer);
+static void gain_study(CHAR_DATA * ch, CHAR_DATA * trainer);
+static void gain_points(CHAR_DATA * ch, CHAR_DATA * trainer);
+static void gain_group(CHAR_DATA * ch, CHAR_DATA * trainer, GROUP * group);
+static void gain_skill(CHAR_DATA * ch, CHAR_DATA * trainer, SKILL * skill);
 
 
 /***************************************************************************

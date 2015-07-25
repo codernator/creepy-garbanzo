@@ -44,12 +44,7 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
 #include <sys/types.h>
-#endif
-
 #include <stdio.h>
 #include <string.h>
 
@@ -62,11 +57,8 @@
 /***************************************************************************
 *	declarations
 ***************************************************************************/
-CHAR_DATA * get_char_scan       args((CHAR_DATA * ch, char *argument));
-
-ROOM_INDEX_DATA *get_scan_room   args((ROOM_INDEX_DATA * room,
-				       int direction,
-				       int distance));
+CHAR_DATA * get_char_scan(CHAR_DATA * ch, char *argument);
+ROOM_INDEX_DATA *get_scan_room(ROOM_INDEX_DATA * room, int direction, int distance);
 
 
 

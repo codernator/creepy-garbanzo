@@ -44,12 +44,12 @@
 #include "interp.h"
 
 extern void bug_long(const char *str, long param);
-extern char *flag_string             args((const struct flag_type *flag_table, long bits));
-extern void affect_modify               args((CHAR_DATA * ch, AFFECT_DATA * paf, bool fAdd));
-extern void blood_rage                  args((CHAR_DATA * ch));
+extern char *flag_string(const struct flag_type *flag_table, long bits);
+extern void affect_modify(CHAR_DATA * ch, AFFECT_DATA * paf, bool fAdd);
+extern void blood_rage(CHAR_DATA * ch);
 
 /* external functions */
-extern void affect_join_obj args((OBJ_DATA * obj, AFFECT_DATA * paf));
+extern void affect_join_obj(OBJ_DATA * obj, AFFECT_DATA * paf);
 
 
 /***************************************************************************

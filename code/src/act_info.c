@@ -48,9 +48,9 @@
 extern byte parse_byte(char *string);
 extern byte parse_byte2(char *string, byte min, byte max);
 extern bool is_space(const char test);
-void do_at                              args((CHAR_DATA * ch, char *argument));
-HELP_DATA *find_help   args((CHAR_DATA * ch, char *name));
-void print_weather              args((CHAR_DATA * ch));
+void do_at(CHAR_DATA * ch, char *argument);
+HELP_DATA *find_help(CHAR_DATA * ch, char *name);
+void print_weather(CHAR_DATA * ch);
 
 static struct {
 	int	wear_loc;
@@ -91,17 +91,16 @@ static struct {
 /*
  * Local functions.
  */
-char *format_obj_to_char args((OBJ_DATA * obj, CHAR_DATA * ch, bool fShort));
-void show_char_to_char_0 args((CHAR_DATA * victim, CHAR_DATA * ch));
-void show_char_to_char_1 args((CHAR_DATA * victim, CHAR_DATA * ch));
-void show_char_to_char_2 args((CHAR_DATA * victim, CHAR_DATA * ch));
-void show_char_to_char args((CHAR_DATA * list, CHAR_DATA * ch));
-bool check_blind args((CHAR_DATA * ch));
-char *crypt args((const char *key, const char *salt));
+char *format_obj_to_char(OBJ_DATA * obj, CHAR_DATA * ch, bool fShort);
+void show_char_to_char_0(CHAR_DATA * victim, CHAR_DATA * ch);
+void show_char_to_char_1(CHAR_DATA * victim, CHAR_DATA * ch);
+void show_char_to_char_2(CHAR_DATA * victim, CHAR_DATA * ch);
+void show_char_to_char(CHAR_DATA * list, CHAR_DATA * ch);
+bool check_blind(CHAR_DATA * ch);
 
 #define MAX_NEST        100
 static OBJ_DATA *rgObjNest[MAX_NEST];
-extern void fread_char args((CHAR_DATA * ch, FILE * fp));
+extern void fread_char(CHAR_DATA * ch, FILE * fp);
 
 
 /*
@@ -606,28 +605,6 @@ void do_scroll(CHAR_DATA *ch, char *argument)
 	send_to_char(buf, ch);
 	ch->lines = lines - 2;
 }
-
-/* RT does socials */
-void do_socials(CHAR_DATA *ch, char *argument)
-{
-	SOCIAL *social;
-	int col;
-
-	col = 0;
-
-	for (social = social_list; social != NULL; social = social->next) {
-		printf_to_char(ch, "%-12s", social->name);
-		if (++col % 6 == 0)
-			send_to_char("\n\r", ch);
-	}
-
-	if (col % 6 != 0)
-		send_to_char("\n\r", ch);
-
-	return;
-}
-
-
 
 /* RT Commands to replace news, motd, imotd, etc from ROM */
 

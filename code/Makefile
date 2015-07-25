@@ -1,6 +1,7 @@
-IDIR=../include
-ODIR=../obj
-BDIR=../bin
+IDIR=include
+ODIR=obj
+BDIR=bin
+SDIR=src
 CC      = /usr/bin/gcc
 PROF    = -DLINUX
 NOCRYPT =
@@ -23,10 +24,10 @@ _OBJ=act_comm.o act_combat.o act_enter.o act_info.o act_move.o act_obj.o act_wiz
      magic.o master.o mem.o mob_cmds.o mob_prog.o mobs.o \
      nanny.o nickname.o note.o \
      olc.o olc_areas.o olc_groups.o olc_helps.o olc_mobs.o \
-     olc_objects.o olc_progs.o olc_rooms.o olc_save.o olc_skills.o olc_socials.o ovnum.o \
+     olc_objects.o olc_progs.o olc_rooms.o olc_save.o olc_skills.o ovnum.o \
      race.o random.o recycle.o repair.o restring.o \
      save.o scan.o set.o skills.o special.o spells.o stat.o string.o \
-     tables.o teleport.o temp.o th.o \
+     tables.o teleport.o temp.o \
      unique.o update.o variant.o who.o
 		  
 OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
@@ -34,7 +35,7 @@ OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
 $(EXE): $(OBJ) $(DEPS)
 	$(CC) $(L_FLAGS) -o $@ $(OBJ) $(LIBS) -I$(IDIR)
 
-$(ODIR)/%.o: %.c $(DEPS)
+$(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(C_FLAGS)
 
 clean:

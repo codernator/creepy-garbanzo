@@ -33,10 +33,10 @@
 /***************************************************************************
 *	utility functions
 ***************************************************************************/
-bool cmp_fn_number      args((long val, char *arg));
-bool cmp_fn_string      args((char *name, char *arg));
-bool cmp_fn_flag          args((long bit, char *arg, const struct flag_type *table, BUFFER * buf));
-bool cmp_fn_index         args((long bit, char *arg, const struct flag_type *table, BUFFER * buf));
+bool cmp_fn_number(long val, char *arg);
+bool cmp_fn_string(char *name, char *arg);
+bool cmp_fn_flag(long bit, char *arg, const struct flag_type *table, BUFFER * buf);
+bool cmp_fn_index(long bit, char *arg, const struct flag_type *table, BUFFER * buf);
 
 
 /***************************************************************************
@@ -53,17 +53,17 @@ struct cmp_vars_obj_data {
 };
 
 
-bool obj_cmp_vnum                  args((OBJ_DATA * obj, char *arg, BUFFER * buf));
-bool obj_cmp_name                  args((OBJ_DATA * obj, char *arg, BUFFER * buf));
-bool obj_cmp_short         args((OBJ_DATA * obj, char *arg, BUFFER * buf));
-bool obj_cmp_long                  args((OBJ_DATA * obj, char *arg, BUFFER * buf));
-bool obj_cmp_type                  args((OBJ_DATA * obj, char *arg, BUFFER * buf));
-bool obj_cmp_extra         args((OBJ_DATA * obj, char *arg, BUFFER * buf));
-bool obj_cmp_wear                  args((OBJ_DATA * obj, char *arg, BUFFER * buf));
-bool obj_cmp_location  args((OBJ_DATA * obj, char *arg, BUFFER * buf));
-bool obj_cmp_weight        args((OBJ_DATA * obj, char *arg, BUFFER * buf));
-bool obj_cmp_cost                  args((OBJ_DATA * obj, char *arg, BUFFER * buf));
-bool obj_cmp_level         args((OBJ_DATA * obj, char *arg, BUFFER * buf));
+bool obj_cmp_vnum(OBJ_DATA * obj, char *arg, BUFFER * buf);
+bool obj_cmp_name(OBJ_DATA * obj, char *arg, BUFFER * buf);
+bool obj_cmp_short(OBJ_DATA * obj, char *arg, BUFFER * buf);
+bool obj_cmp_long(OBJ_DATA * obj, char *arg, BUFFER * buf);
+bool obj_cmp_type(OBJ_DATA * obj, char *arg, BUFFER * buf);
+bool obj_cmp_extra(OBJ_DATA * obj, char *arg, BUFFER * buf);
+bool obj_cmp_wear(OBJ_DATA * obj, char *arg, BUFFER * buf);
+bool obj_cmp_location(OBJ_DATA * obj, char *arg, BUFFER * buf);
+bool obj_cmp_weight(OBJ_DATA * obj, char *arg, BUFFER * buf);
+bool obj_cmp_cost(OBJ_DATA * obj, char *arg, BUFFER * buf);
+bool obj_cmp_level(OBJ_DATA * obj, char *arg, BUFFER * buf);
 
 
 /***************************************************************************
@@ -76,26 +76,26 @@ struct cmp_vars_char_data {
 	CHAR_CMP_FN *	fn;
 };
 
-bool char_cmp_vnum              args((CHAR_DATA * vch, char *arg, BUFFER * buf));
-bool char_cmp_name              args((CHAR_DATA * vch, char *arg, BUFFER * buf));
-bool char_cmp_short             args((CHAR_DATA * vch, char *arg, BUFFER * buf));
-bool char_cmp_long              args((CHAR_DATA * vch, char *arg, BUFFER * buf));
-bool char_cmp_spec              args((CHAR_DATA * vch, char *arg, BUFFER * buf));
-bool char_cmp_race      args((CHAR_DATA * vch, char *arg, BUFFER * buf));
-bool char_cmp_level         args((CHAR_DATA * vch, char *arg, BUFFER * buf));
-bool char_cmp_sex       args((CHAR_DATA * vch, char *arg, BUFFER * buf));
-bool char_cmp_hit       args((CHAR_DATA * vch, char *arg, BUFFER * buf));
-bool char_cmp_mana      args((CHAR_DATA * vch, char *arg, BUFFER * buf));
-bool char_cmp_move                args((CHAR_DATA * vch, char *arg, BUFFER * buf));
-bool char_cmp_max_hit   args((CHAR_DATA * vch, char *arg, BUFFER * buf));
-bool char_cmp_max_mana  args((CHAR_DATA * vch, char *arg, BUFFER * buf));
-bool char_cmp_max_move  args((CHAR_DATA * vch, char *arg, BUFFER * buf));
-bool char_cmp_gold              args((CHAR_DATA * vch, char *arg, BUFFER * buf));
-bool char_cmp_silver    args((CHAR_DATA * vch, char *arg, BUFFER * buf));
-bool char_cmp_offense   args((CHAR_DATA * vch, char *arg, BUFFER * buf));
-bool char_cmp_form              args((CHAR_DATA * vch, char *arg, BUFFER * buf));
-bool char_cmp_act               args((CHAR_DATA * vch, char *arg, BUFFER * buf));
-bool char_cmp_player    args((CHAR_DATA * vch, char *arg, BUFFER * buf));
+bool char_cmp_vnum(CHAR_DATA * vch, char *arg, BUFFER * buf);
+bool char_cmp_name(CHAR_DATA * vch, char *arg, BUFFER * buf);
+bool char_cmp_short(CHAR_DATA * vch, char *arg, BUFFER * buf);
+bool char_cmp_long(CHAR_DATA * vch, char *arg, BUFFER * buf);
+bool char_cmp_spec(CHAR_DATA * vch, char *arg, BUFFER * buf);
+bool char_cmp_race(CHAR_DATA * vch, char *arg, BUFFER * buf);
+bool char_cmp_level(CHAR_DATA * vch, char *arg, BUFFER * buf);
+bool char_cmp_sex(CHAR_DATA * vch, char *arg, BUFFER * buf);
+bool char_cmp_hit(CHAR_DATA * vch, char *arg, BUFFER * buf);
+bool char_cmp_mana(CHAR_DATA * vch, char *arg, BUFFER * buf);
+bool char_cmp_move(CHAR_DATA * vch, char *arg, BUFFER * buf);
+bool char_cmp_max_hit(CHAR_DATA * vch, char *arg, BUFFER * buf);
+bool char_cmp_max_mana(CHAR_DATA * vch, char *arg, BUFFER * buf);
+bool char_cmp_max_move(CHAR_DATA * vch, char *arg, BUFFER * buf);
+bool char_cmp_gold(CHAR_DATA * vch, char *arg, BUFFER * buf);
+bool char_cmp_silver(CHAR_DATA * vch, char *arg, BUFFER * buf);
+bool char_cmp_offense(CHAR_DATA * vch, char *arg, BUFFER * buf);
+bool char_cmp_form(CHAR_DATA * vch, char *arg, BUFFER * buf);
+bool char_cmp_act(CHAR_DATA * vch, char *arg, BUFFER * buf);
+bool char_cmp_player(CHAR_DATA * vch, char *arg, BUFFER * buf);
 
 
 
@@ -112,15 +112,15 @@ struct cmp_vars_obj_index_data {
 	OBJ_IDX_CMP_FN *fn;
 };
 
-bool obj_idx_cmp_name           args((OBJ_INDEX_DATA * obj, char *arg, BUFFER * buf));
-bool obj_idx_cmp_short  args((OBJ_INDEX_DATA * obj, char *arg, BUFFER * buf));
-bool obj_idx_cmp_long           args((OBJ_INDEX_DATA * obj, char *arg, BUFFER * buf));
-bool obj_idx_cmp_type           args((OBJ_INDEX_DATA * obj, char *arg, BUFFER * buf));
-bool obj_idx_cmp_extra  args((OBJ_INDEX_DATA * obj, char *arg, BUFFER * buf));
-bool obj_idx_cmp_wear           args((OBJ_INDEX_DATA * obj, char *arg, BUFFER * buf));
-bool obj_idx_cmp_weight args((OBJ_INDEX_DATA * obj, char *arg, BUFFER * buf));
-bool obj_idx_cmp_cost           args((OBJ_INDEX_DATA * obj, char *arg, BUFFER * buf));
-bool obj_idx_cmp_level  args((OBJ_INDEX_DATA * obj, char *arg, BUFFER * buf));
+bool obj_idx_cmp_name(OBJ_INDEX_DATA * obj, char *arg, BUFFER * buf);
+bool obj_idx_cmp_short(OBJ_INDEX_DATA * obj, char *arg, BUFFER * buf);
+bool obj_idx_cmp_long(OBJ_INDEX_DATA * obj, char *arg, BUFFER * buf);
+bool obj_idx_cmp_type(OBJ_INDEX_DATA * obj, char *arg, BUFFER * buf);
+bool obj_idx_cmp_extra(OBJ_INDEX_DATA * obj, char *arg, BUFFER * buf);
+bool obj_idx_cmp_wear(OBJ_INDEX_DATA * obj, char *arg, BUFFER * buf);
+bool obj_idx_cmp_weight(OBJ_INDEX_DATA * obj, char *arg, BUFFER * buf);
+bool obj_idx_cmp_cost(OBJ_INDEX_DATA * obj, char *arg, BUFFER * buf);
+bool obj_idx_cmp_level(OBJ_INDEX_DATA * obj, char *arg, BUFFER * buf);
 
 
 /***************************************************************************
@@ -133,14 +133,14 @@ struct cmp_vars_mob_index_data {
 	MOB_IDX_CMP_FN *fn;
 };
 
-bool mob_idx_cmp_name           args((MOB_INDEX_DATA * vch, char *arg, BUFFER * buf));
-bool mob_idx_cmp_short          args((MOB_INDEX_DATA * vch, char *arg, BUFFER * buf));
-bool mob_idx_cmp_long           args((MOB_INDEX_DATA * vch, char *arg, BUFFER * buf));
-bool mob_idx_cmp_spec           args((MOB_INDEX_DATA * vch, char *arg, BUFFER * buf));
-bool mob_idx_cmp_race           args((MOB_INDEX_DATA * vch, char *arg, BUFFER * buf));
-bool mob_idx_cmp_level          args((MOB_INDEX_DATA * vch, char *arg, BUFFER * buf));
-bool mob_idx_cmp_sex            args((MOB_INDEX_DATA * vch, char *arg, BUFFER * buf));
-bool mob_idx_cmp_wealth         args((MOB_INDEX_DATA * vch, char *arg, BUFFER * buf));
-bool mob_idx_cmp_offense        args((MOB_INDEX_DATA * vch, char *arg, BUFFER * buf));
-bool mob_idx_cmp_form           args((MOB_INDEX_DATA * vch, char *arg, BUFFER * buf));
-bool mob_idx_cmp_act            args((MOB_INDEX_DATA * vch, char *arg, BUFFER * buf));
+bool mob_idx_cmp_name(MOB_INDEX_DATA * vch, char *arg, BUFFER * buf);
+bool mob_idx_cmp_short(MOB_INDEX_DATA * vch, char *arg, BUFFER * buf);
+bool mob_idx_cmp_long(MOB_INDEX_DATA * vch, char *arg, BUFFER * buf);
+bool mob_idx_cmp_spec(MOB_INDEX_DATA * vch, char *arg, BUFFER * buf);
+bool mob_idx_cmp_race(MOB_INDEX_DATA * vch, char *arg, BUFFER * buf);
+bool mob_idx_cmp_level(MOB_INDEX_DATA * vch, char *arg, BUFFER * buf);
+bool mob_idx_cmp_sex(MOB_INDEX_DATA * vch, char *arg, BUFFER * buf);
+bool mob_idx_cmp_wealth(MOB_INDEX_DATA * vch, char *arg, BUFFER * buf);
+bool mob_idx_cmp_offense(MOB_INDEX_DATA * vch, char *arg, BUFFER * buf);
+bool mob_idx_cmp_form(MOB_INDEX_DATA * vch, char *arg, BUFFER * buf);
+bool mob_idx_cmp_act(MOB_INDEX_DATA * vch, char *arg, BUFFER * buf);

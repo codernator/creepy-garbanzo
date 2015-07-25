@@ -65,17 +65,17 @@ extern bool is_space(const char test);
 /***************************************************************************
 *	local functions
 ***************************************************************************/
-ROOM_INDEX_DATA *find_location   args((CHAR_DATA * ch, char *arg));
+ROOM_INDEX_DATA *find_location(CHAR_DATA * ch, char *arg);
 
-void reset_area              args((AREA_DATA * pArea));
-void fry_char                args((CHAR_DATA * ch, char *argument));
-void immkiss_char    args((CHAR_DATA * ch, CHAR_DATA * vch));
-bool add_alias               args((CHAR_DATA * ch, char *alias, char *cmd));
+void reset_area(AREA_DATA * pArea);
+void fry_char(CHAR_DATA * ch, char *argument);
+void immkiss_char(CHAR_DATA * ch, CHAR_DATA * vch);
+bool add_alias(CHAR_DATA * ch, char *alias, char *cmd);
 
-bool set_char_hunger         args((CHAR_DATA * ch, CHAR_DATA * vch, char *argument));
-bool set_char_thirst         args((CHAR_DATA * ch, CHAR_DATA * vch, char *argument));
-bool set_char_feed             args((CHAR_DATA * ch, CHAR_DATA * vch, char *argument));
-bool write_to_descriptor     args((int desc, char *txt, int length));
+bool set_char_hunger(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
+bool set_char_thirst(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
+bool set_char_feed(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
+bool write_to_descriptor(int desc, char *txt, int length);
 
 void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is, const char *message);
 
@@ -4061,11 +4061,7 @@ void do_rename(CHAR_DATA *ch, char *argument)
 	}
 
 /* First, check if there is a player named that off-line */
-#if !defined(machintosh) && !defined(MSDOS)
 	sprintf(strsave, "%s%s", PLAYER_DIR, capitalize(new_name));
-#else
-	sprintf(strsave, "%s%s", PLAYER_DIR, capitalize(new_name));
-#endif
 
 	fclose(fpReserve);              /* close the reserve file */
 	file = fopen(strsave, "r");     /* attempt to to open pfile */
@@ -4080,11 +4076,7 @@ void do_rename(CHAR_DATA *ch, char *argument)
 	fpReserve = fopen(NULL_FILE, "r");      /* reopen the extra file */
 
 /* Check .gz file ! */
-#if !defined(machintosh) && !defined(MSDOS)
 	sprintf(strsave, "%s%s.gz", PLAYER_DIR, capitalize(new_name));
-#else
-	sprintf(strsave, "%s%s.gz", PLAYER_DIR, capitalize(new_name));
-#endif
 
 	fclose(fpReserve);              /* close the reserve file */
 	file = fopen(strsave, "r");     /* attempt to to open pfile */
@@ -4105,11 +4097,7 @@ void do_rename(CHAR_DATA *ch, char *argument)
 
 /* Save the filename of the old name */
 
-#if !defined(machintosh) && !defined(MSDOS)
 	sprintf(strsave, "%s%s", PLAYER_DIR, capitalize(victim->name));
-#else
-	sprintf(strsave, "%s%s", PLAYER_DIR, capitalize(victim->name));
-#endif
 
 	unlink(strsave);
 

@@ -15,11 +15,7 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
 #include <sys/types.h>
-#endif
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,9 +37,6 @@ static char *string_line_delete(char *, int);
 static char *string_line_insert(char *, char *, int);
 static char *number_lines(char *);
 char *repeater(char *s, int i);
-
-
-
 
 #define MAX_LINE_LENGTH         72
 

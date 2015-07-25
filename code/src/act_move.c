@@ -28,18 +28,7 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#if defined(WIN32)
-#include <sys/timeb.h>
 #include <time.h>
-#else
-#include <time.h>
-#endif
-#endif
-
 #include <stdio.h>
 #include <string.h>
 #include "merc.h"
@@ -70,9 +59,9 @@ const int movement_loss[SECT_MAX] =
 /***************************************************************************
 *	local functions
 ***************************************************************************/
-bool has_key                    args((CHAR_DATA * ch, long key));
-int check_dir                   args((CHAR_DATA * ch, int dir));
-int direction_lookup    args((char *name));
+bool has_key(CHAR_DATA * ch, long key);
+int check_dir(CHAR_DATA * ch, int dir);
+int direction_lookup(char *name);
 
 
 /***************************************************************************

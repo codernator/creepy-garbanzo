@@ -28,11 +28,7 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
 #include <sys/types.h>
-#endif
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -59,17 +55,17 @@ extern void bug_long(const char *str, long param);
 
 extern int port;        /* from comm.c, what port are we running on */
 
-void gain_object_exp args((CHAR_DATA * ch, OBJ_DATA * obj, int gain));
-extern void talk_auction        args((char *argument));
-extern void blood_rage          args((CHAR_DATA * ch));
-extern void random_drop args((void));
-void update_pktimer     args((CHAR_DATA * ch));
-static void add_cache_affect    args((OBJ_DATA * obj, int bit, int sn, int level, int mod));
-char *who_string        args((CHAR_DATA * ch));
+void gain_object_exp(CHAR_DATA * ch, OBJ_DATA * obj, int gain);
+extern void talk_auction(char *argument);
+extern void blood_rage(CHAR_DATA * ch);
+extern void random_drop(void);
+void update_pktimer(CHAR_DATA * ch);
+static void add_cache_affect(OBJ_DATA * obj, int bit, int sn, int level, int mod);
+char *who_string(CHAR_DATA * ch);
 
 /* auction stuff */
-extern void credit_player_bid   args((CHAR_DATA * ch, long bid, int type));
-extern int auction_type_lookup  args((int type));
+extern void credit_player_bid(CHAR_DATA * ch, long bid, int type);
+extern int auction_type_lookup(int type);
 extern AFFECT_DATA *new_affect(void);
 
 /***************************************************************************
@@ -81,18 +77,18 @@ static int save_number = 0;
 /***************************************************************************
 *	local functions
 ***************************************************************************/
-static void mobile_update args((void));
-static void weather_update args((void));
-static int hit_gain args((CHAR_DATA * ch));
-static int mana_gain args((CHAR_DATA * ch));
-static int move_gain args((CHAR_DATA * ch));
-static void char_update args((void));
-static void advance_level_object args((CHAR_DATA * ch, OBJ_DATA * obj));
-static void obj_update args((void));
-static void aggr_update args((void));
-static void auction_update args((void));
-static void room_update args((void));
-static void underwater_update  args((void));
+static void mobile_update(void);
+static void weather_update(void);
+static int hit_gain(CHAR_DATA * ch);
+static int mana_gain(CHAR_DATA * ch);
+static int move_gain(CHAR_DATA * ch);
+static void char_update(void);
+static void advance_level_object(CHAR_DATA * ch, OBJ_DATA * obj);
+static void obj_update(void);
+static void aggr_update(void);
+static void auction_update(void);
+static void room_update(void);
+static void underwater_update(void);
 
 
 

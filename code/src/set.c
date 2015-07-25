@@ -28,18 +28,9 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
 #include <sys/types.h>
-#if defined(WIN32)
-#include <sys/timeb.h>
-#else
 #include <sys/time.h>
 #include <unistd.h>
-#endif
-#endif
-
 #include <math.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -47,8 +38,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <assert.h>
-
-
 #include "merc.h"
 #include "db.h"
 #include "recycle.h"
@@ -65,19 +54,19 @@ extern unsigned int parse_unsigned_int(char *string);
 /***************************************************************************
 *	local functions
 ***************************************************************************/
-static bool set_integer_arg                     args((int *value, char *argument));
-static bool set_uint_arg        args((unsigned int *value, char *argument));
-static bool set_long_arg                                args((long *value, char *argument));
-static bool set_obj_value_idx           args((OBJ_DATA * obj, int idx, char *argument));
-static void item_type_help                      args((CHAR_DATA * ch, int item_type));
+static bool set_integer_arg(int *value, char *argument);
+static bool set_uint_arg(unsigned int *value, char *argument);
+static bool set_long_arg(long *value, char *argument);
+static bool set_obj_value_idx(OBJ_DATA * obj, int idx, char *argument);
+static void item_type_help(CHAR_DATA * ch, int item_type);
 
 /***************************************************************************
 *	set functions
 ***************************************************************************/
-typedef void SET_FN args ((CHAR_DATA * ch, char *argument));
-typedef bool SET_ROOM_FN args ((CHAR_DATA * ch, ROOM_INDEX_DATA * room, char *argument));
-typedef bool SET_CHAR_FN args ((CHAR_DATA * ch, CHAR_DATA * vch, char *argument));
-typedef bool SET_OBJ_FN args ((CHAR_DATA * ch, OBJ_DATA * obj, char *argument));
+typedef void SET_FN(CHAR_DATA * ch, char *argument);
+typedef bool SET_ROOM_FN(CHAR_DATA * ch, ROOM_INDEX_DATA * room, char *argument);
+typedef bool SET_CHAR_FN(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
+typedef bool SET_OBJ_FN(CHAR_DATA * ch, OBJ_DATA * obj, char *argument);
 
 static SET_FN set_character;
 static SET_FN set_object;

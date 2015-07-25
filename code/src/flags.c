@@ -28,17 +28,7 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#if defined(WIN32)
-#include <sys/timeb.h>
-#else
 #include <sys/time.h>
-#endif
-#endif
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -49,8 +39,8 @@
 #include "olc.h"
 
 
-extern int flag_value              args((const struct flag_type *flag_table, char *argument));
-extern char *flag_string             args((const struct flag_type *flag_table, long bits));
+extern int flag_value(const struct flag_type *flag_table, char *argument);
+extern char *flag_string(const struct flag_type *flag_table, long bits);
 
 /***************************************************************************
 *	declarations
@@ -65,46 +55,45 @@ struct flag_cmd_map {
 };
 
 /* utility functions */
-static void flag_list                   args((CHAR_DATA * ch, const struct flag_cmd_map *flag_table));
-static void flag_list_value     args((CHAR_DATA * ch, const struct flag_type *flag_table));
+static void flag_list(CHAR_DATA * ch, const struct flag_cmd_map *flag_table);
+static void flag_list_value(CHAR_DATA * ch, const struct flag_type *flag_table);
 
-static void flag_set                    args((CHAR_DATA * ch, void *target, char *title,
-					      const struct flag_cmd_map *table, char *argument));
+static void flag_set(CHAR_DATA * ch, void *target, char *title, const struct flag_cmd_map *table, char *argument);
 
 /* top-level functions */
-static void flag_set_char               args((CHAR_DATA * ch, char *argument));
-static void flag_set_room               args((CHAR_DATA * ch, char *argument));
-static void flag_set_obj                args((CHAR_DATA * ch, char *argument));
+static void flag_set_char(CHAR_DATA * ch, char *argument);
+static void flag_set_room(CHAR_DATA * ch, char *argument);
+static void flag_set_obj(CHAR_DATA * ch, char *argument);
 
 
 /* mob specific flag functions */
-static void flag_char_act                       args((CHAR_DATA * ch, void *target, char *argument));
-static void flag_char_off                       args((CHAR_DATA * ch, void *target, char *argument));
-static void flag_char_form                      args((CHAR_DATA * ch, void *target, char *argument));
-static void flag_char_part                      args((CHAR_DATA * ch, void *target, char *argument));
+static void flag_char_act(CHAR_DATA * ch, void *target, char *argument);
+static void flag_char_off(CHAR_DATA * ch, void *target, char *argument);
+static void flag_char_form(CHAR_DATA * ch, void *target, char *argument);
+static void flag_char_part(CHAR_DATA * ch, void *target, char *argument);
 
 /* shared between mob and char */
-static void flag_char_aff                       args((CHAR_DATA * ch, void *target, char *argument));
-static void flag_char_imm                       args((CHAR_DATA * ch, void *target, char *argument));
-static void flag_char_res                       args((CHAR_DATA * ch, void *target, char *argument));
-static void flag_char_vuln                      args((CHAR_DATA * ch, void *target, char *argument));
+static void flag_char_aff(CHAR_DATA * ch, void *target, char *argument);
+static void flag_char_imm(CHAR_DATA * ch, void *target, char *argument);
+static void flag_char_res(CHAR_DATA * ch, void *target, char *argument);
+static void flag_char_vuln(CHAR_DATA * ch, void *target, char *argument);
 
 /* char specific flag functions */
-static void flag_char_plr                       args((CHAR_DATA * ch, void *target, char *argument));
-static void flag_char_comm                      args((CHAR_DATA * ch, void *target, char *argument));
-static void flag_char_deathroom args((CHAR_DATA * ch, void *target, char *argument));
+static void flag_char_plr(CHAR_DATA * ch, void *target, char *argument);
+static void flag_char_comm(CHAR_DATA * ch, void *target, char *argument);
+static void flag_char_deathroom(CHAR_DATA * ch, void *target, char *argument);
 
 /* room flag functions */
-static void flag_room_room                      args((CHAR_DATA * ch, void *target, char *argument));
+static void flag_room_room(CHAR_DATA * ch, void *target, char *argument);
 
 /* object flag functions */
-static void flag_obj_type                       args((CHAR_DATA * ch, void *target, char *argument));
-static void flag_obj_wear                       args((CHAR_DATA * ch, void *target, char *argument));
-static void flag_obj_extra                      args((CHAR_DATA * ch, void *target, char *argument));
-static void flag_obj_extra2             args((CHAR_DATA * ch, void *target, char *argument));
-static void flag_obj_wpn_class          args((CHAR_DATA * ch, void *target, char *argument));
-static void flag_obj_wpn_flags          args((CHAR_DATA * ch, void *target, char *argument));
-static void flag_obj_wpn_damage args((CHAR_DATA * ch, void *target, char *argument));
+static void flag_obj_type(CHAR_DATA * ch, void *target, char *argument);
+static void flag_obj_wear(CHAR_DATA * ch, void *target, char *argument);
+static void flag_obj_extra(CHAR_DATA * ch, void *target, char *argument);
+static void flag_obj_extra2(CHAR_DATA * ch, void *target, char *argument);
+static void flag_obj_wpn_class(CHAR_DATA * ch, void *target, char *argument);
+static void flag_obj_wpn_flags(CHAR_DATA * ch, void *target, char *argument);
+static void flag_obj_wpn_damage(CHAR_DATA * ch, void *target, char *argument);
 
 
 static const struct flag_cmd_map mob_set_flags[] =

@@ -50,21 +50,21 @@
 extern DECLARE_DO_FUN(do_wear);
 
 
-CHAR_DATA *random_unique_mob                       args((void));
-void format_obj                      args((OBJ_DATA * obj));
-extern int wear_bit                        args((int loc));
-void name_obj                        args((CHAR_DATA * mob, OBJ_DATA * obj));
-void apply_random_affect     args((OBJ_DATA * obj, bool positive));
+CHAR_DATA *random_unique_mob(void);
+void format_obj(OBJ_DATA * obj);
+extern int wear_bit(int loc);
+void name_obj(CHAR_DATA * mob, OBJ_DATA * obj);
+void apply_random_affect(OBJ_DATA * obj, bool positive);
 
 
 /***************************************************************************
 *	local function declarations
 ***************************************************************************/
-static void format_obj_weapon args((OBJ_DATA * obj));
-static void format_obj_armor args((OBJ_DATA * obj));
-static char *weapon_type_name args((OBJ_DATA * obj));
-static char *armor_type_name args((OBJ_DATA * obj));
-static int random_location args((void));
+static void format_obj_weapon(OBJ_DATA * obj);
+static void format_obj_armor(OBJ_DATA * obj);
+static char *weapon_type_name(OBJ_DATA * obj);
+static char *armor_type_name(OBJ_DATA * obj);
+static int random_location(void);
 
 
 

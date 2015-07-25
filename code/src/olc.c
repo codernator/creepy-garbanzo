@@ -15,18 +15,12 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
 #include <sys/types.h>
-#endif
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
-
 #include "merc.h"
 #include "tables.h"
 #include "olc.h"
@@ -35,14 +29,14 @@
 
 
 
-extern int flag_value              args((const struct flag_type *flag_table, char *argument));
-extern char *flag_string             args((const struct flag_type *flag_table, long bits));
-extern char *mprog_type_to_name      args((int type));
+extern int flag_value(const struct flag_type *flag_table, char *argument);
+extern char *flag_string(const struct flag_type *flag_table, long bits);
+extern char *mprog_type_to_name(int type);
 
 /***************************************************************************
 *	local defines
 ***************************************************************************/
-AREA_DATA *get_area_data           args((long vnum));
+AREA_DATA *get_area_data(long vnum);
 
 struct olc_help_type {
 	char *		applies_to;
@@ -52,13 +46,13 @@ struct olc_help_type {
 };
 
 
-static bool show_version                args((CHAR_DATA * ch, char *argument));
-static void show_liqlist            args((CHAR_DATA * ch));
-static void show_damlist            args((CHAR_DATA * ch));
-static void aedit           args((CHAR_DATA * ch, char *argument));
-static void redit           args((CHAR_DATA * ch, char *argument));
-static void medit           args((CHAR_DATA * ch, char *argument));
-static void oedit           args((CHAR_DATA * ch, char *argument));
+static bool show_version(CHAR_DATA * ch, char *argument);
+static void show_liqlist(CHAR_DATA * ch);
+static void show_damlist(CHAR_DATA * ch);
+static void aedit(CHAR_DATA * ch, char *argument);
+static void redit(CHAR_DATA * ch, char *argument);
+static void medit(CHAR_DATA * ch, char *argument);
+static void oedit(CHAR_DATA * ch, char *argument);
 
 
 
@@ -268,9 +262,6 @@ bool run_olc_editor(DESCRIPTOR_DATA *d)
 	case ED_GROUP:
 		gredit(d->character, d->incomm);
 		break;
-	case ED_SOCIAL:
-		scedit(d->character, d->incomm);
-		break;
 	default:
 		success = FALSE;
 	}
@@ -315,9 +306,6 @@ char *olc_ed_name(CHAR_DATA *ch)
 	case ED_GROUP:
 		sprintf(buf, "GREdit");
 		break;
-	case ED_SOCIAL:
-		sprintf(buf, "SKEdit");
-		break;
 	default:
 		sprintf(buf, " ");
 		break;
@@ -340,7 +328,6 @@ char *olc_ed_vnum(CHAR_DATA *ch)
 	HELP_DATA *pHelp;
 	SKILL *pSkill;
 	GROUP *pGroup;
-	SOCIAL *pSocial;
 	static char buf[MIL];
 
 	buf[0] = '\0';
@@ -376,10 +363,6 @@ char *olc_ed_vnum(CHAR_DATA *ch)
 	case ED_GROUP:
 		pGroup = (GROUP *)ch->desc->ed_data;
 		sprintf(buf, "%s", pGroup ? pGroup->name : "");
-	case ED_SOCIAL:
-		pSocial = (SOCIAL *)ch->desc->ed_data;
-		sprintf(buf, "%s", pSocial ? pSocial->name : "");
-		break;
 	default:
 		sprintf(buf, " ");
 		break;
@@ -452,9 +435,6 @@ bool show_commands(CHAR_DATA *ch, char *argument)
 		break;
 	case ED_GROUP:
 		show_olc_cmds(ch, gredit_table);
-		break;
-	case ED_SOCIAL:
-		show_olc_cmds(ch, scedit_table);
 		break;
 	}
 

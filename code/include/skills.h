@@ -55,8 +55,8 @@ typedef struct spell_list SPELL_LIST;
 typedef struct affect_list AFFECT_LIST;
 typedef struct argument_type ARGUMENT;
 
-typedef void SPELL_FUN args ((SKILL * skill, int level, CHAR_DATA * ch, void *vo, int target, char *argument));
-typedef void AFFECT_FUN args ((SKILL * skill, void *target, int type, AFFECT_DATA * paf));
+typedef void SPELL_FUN(SKILL * skill, int level, CHAR_DATA * ch, void *vo, int target, char *argument);
+typedef void AFFECT_FUN(SKILL * skill, void *target, int type, AFFECT_DATA * paf);
 
 
 /***************************************************************************
@@ -209,29 +209,29 @@ SKILL *skill_free;
 SKILL *skill_list;
 
 
-LEVEL_INFO *new_level_info             args((void));
-void free_level_info                    args((LEVEL_INFO * li));
+LEVEL_INFO *new_level_info(void);
+void free_level_info(LEVEL_INFO * li);
 
-LEARNED *new_learned                     args((void));
-void free_learned                               args((LEARNED * learned));
+LEARNED *new_learned(void);
+void free_learned(LEARNED * learned);
 
-SKILL_LIST *new_skill_list             args((void));
-void free_skill_list                    args((SKILL_LIST * list));
+SKILL_LIST *new_skill_list(void);
+void free_skill_list(SKILL_LIST * list);
 
-SKILL *new_skill                               args((void));
-void free_skill                                 args((SKILL * skill));
+SKILL *new_skill(void);
+void free_skill(SKILL * skill);
 
-GROUP *new_group                               args((void));
-void free_group                                 args((GROUP * group));
+GROUP *new_group(void);
+void free_group(GROUP * group);
 
-SPELL_LIST *new_spell_list             args((void));
-void free_spell_list                    args((SPELL_LIST * spells));
+SPELL_LIST *new_spell_list(void);
+void free_spell_list(SPELL_LIST * spells);
 
-AFFECT_LIST *new_affect_list   args((void));
-void free_affect_list                   args((AFFECT_LIST * affects));
+AFFECT_LIST *new_affect_list(void);
+void free_affect_list(AFFECT_LIST * affects);
 
-ARGUMENT *new_argument                 args((void));
-void free_argument                              args((ARGUMENT * argument));
+ARGUMENT *new_argument(void);
+void free_argument(ARGUMENT * argument);
 
 /***************************************************************************
 *	lookup data
@@ -253,60 +253,60 @@ extern const struct affect_lookup_type affect_lookup_table[];
 /***************************************************************************
 *	save functions
 ***************************************************************************/
-void load_skills                args((void));
-void save_skills                args((void));
-void load_groups                args((void));
-void save_groups                args((void));
-void assign_skill_helps args((void));
+void load_skills(void);
+void save_skills(void);
+void load_groups(void);
+void save_groups(void);
+void assign_skill_helps(void);
 
 
-SKILL *skill_lookup                    args((char *name));
-GROUP *group_lookup                    args((char *name));
+SKILL *skill_lookup(char *name);
+GROUP *group_lookup(char *name);
 
-SKILL *resolve_skill_sn                args((int sn));
-SKILL *resolve_skill_affect    args((AFFECT_DATA * paf));
-int get_skill_number                    args((char *name));
+SKILL *resolve_skill_sn(int sn);
+SKILL *resolve_skill_affect(AFFECT_DATA * paf);
+int get_skill_number(char *name);
 
-void add_learned                                args((CHAR_DATA * ch, LEARNED * learned));
-void add_learned_group                  args((CHAR_DATA * ch, LEARNED * learned));
-void add_learned_skill                  args((CHAR_DATA * ch, LEARNED * learned));
-void remove_learned                             args((CHAR_DATA * ch, LEARNED * learned));
-void add_skill_level                    args((SKILL * skill, LEVEL_INFO * level));
-void add_group_level                    args((GROUP * group, LEVEL_INFO * level));
-void add_group_skill                    args((GROUP * group, SKILL * skill));
+void add_learned(CHAR_DATA * ch, LEARNED * learned);
+void add_learned_group(CHAR_DATA * ch, LEARNED * learned);
+void add_learned_skill(CHAR_DATA * ch, LEARNED * learned);
+void remove_learned(CHAR_DATA * ch, LEARNED * learned);
+void add_skill_level(SKILL * skill, LEVEL_INFO * level);
+void add_group_level(GROUP * group, LEVEL_INFO * level);
+void add_group_skill(GROUP * group, SKILL * skill);
 
-LEARNED *create_learned_skill  args((char *name, int percent));
-LEARNED *create_learned_group  args((char *name));
+LEARNED *create_learned_skill(char *name, int percent);
+LEARNED *create_learned_group(char *name);
 
-LEVEL_INFO *get_skill_level    args((CHAR_DATA * ch, SKILL * skill));
-LEVEL_INFO *get_group_level    args((GROUP * group, int cls));
-
-
-LEARNED *get_learned                   args((CHAR_DATA * ch, char *name));
-LEARNED *get_learned_group             args((CHAR_DATA * ch, GROUP * group));
-LEARNED *get_learned_skill             args((CHAR_DATA * ch, SKILL * skill));
-
-int get_learned_percent                     args((CHAR_DATA * ch, SKILL * skill));
-bool check_affected                             args((CHAR_DATA * ch, char *name));
+LEVEL_INFO *get_skill_level(CHAR_DATA * ch, SKILL * skill);
+LEVEL_INFO *get_group_level(GROUP * group, int cls);
 
 
-SPELL_FUN *spell_fn_lookup         args((char *name));
-char *spell_fn_name           args((SPELL_FUN * fn));
+LEARNED *get_learned(CHAR_DATA * ch, char *name);
+LEARNED *get_learned_group(CHAR_DATA * ch, GROUP * group);
+LEARNED *get_learned_skill(CHAR_DATA * ch, SKILL * skill);
 
-AFFECT_FUN *affect_fn_lookup        args((char *name));
-char *affect_fn_name          args((AFFECT_FUN * fn));
+int get_learned_percent(CHAR_DATA * ch, SKILL * skill);
+bool check_affected(CHAR_DATA * ch, char *name);
+
+
+SPELL_FUN *spell_fn_lookup(char *name);
+char *spell_fn_name(SPELL_FUN * fn);
+
+AFFECT_FUN *affect_fn_lookup(char *name);
+char *affect_fn_name(AFFECT_FUN * fn);
 
 
 /* functions used for spell/affect chaining */
-void add_spell                                  args((SKILL * skill, SPELL_FUN * spell));
-void add_affect                                 args((SKILL * skill, AFFECT_FUN * affect));
-void add_argument                               args((SKILL * skill, ARGUMENT * argument));
+void add_spell(SKILL * skill, SPELL_FUN * spell);
+void add_affect(SKILL * skill, AFFECT_FUN * affect);
+void add_argument(SKILL * skill, ARGUMENT * argument);
 
-VARIANT *find_argument                 args((ARGUMENT * argument, char *key));
+VARIANT *find_argument(ARGUMENT * argument, char *key);
 
 /* functions used for global caching of spells */
-void resolve_global_skills      args((void));
-void resolve_global_hash        args((void));
+void resolve_global_skills(void);
+void resolve_global_hash(void);
 
 
 #endif

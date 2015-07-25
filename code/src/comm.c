@@ -60,35 +60,9 @@
 #include "recycle.h"
 #include "interp.h"
 
-extern char *color_table[];
-extern bool is_space(const char test);
-
-
-
-/***************************************************************************
-* Command tracking stuff.
-***************************************************************************/
-void init_signals       args((void));
-void auto_shutdown      args((void));
-
-
-
-/***************************************************************************
-* Signal handling.
-* Apollo has a problem with __attribute(atomic) in signal.h,
-*   I dance around it.
-***************************************************************************/
-#if defined(unix) || defined(WIN32)
-#include <signal.h>
-#endif
-
-
-
 /***************************************************************************
 *  Socket and TCP/IP stuff.
 ***************************************************************************/
-
-#if     defined(unix)
 #include <fcntl.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -98,30 +72,33 @@ void auto_shutdown      args((void));
 #if !defined(STDOUT_FILENO)
 #define STDOUT_FILENO 1
 #endif
-#endif
 
+
+extern char *color_table[];
+extern bool is_space(const char test);
+
+/***************************************************************************
+* Command tracking stuff.
+***************************************************************************/
+void init_signals(void);
+void auto_shutdown(void);
 
 /***************************************************************************
 * OS-dependent declarations.
 ***************************************************************************/
 
-#if     defined(linux)
-int close                   args((int fd));
-char *crypt                   args((const char *key, const char *salt));
-int gettimeofday    args((struct timeval *tp, struct timezone *tzp));
+int close(int fd);
+int gettimeofday(struct timeval *tp, struct timezone *tzp);
 
-int select                  args((int width, fd_set * readfds, fd_set * writefds,
-				  fd_set * exceptfds, struct timeval *timeout));
-int socket                  args((int domain, int type, int protocol));
+int select(int width, fd_set * readfds, fd_set * writefds, fd_set * exceptfds, struct timeval *timeout);
+int socket(int domain, int type, int protocol);
 
-pid_t waitpid                 args((pid_t pid, int *status, int options));
-pid_t fork                    args((void));
-int kill                    args((pid_t pid, int sig));
-int pipe                    args((int filedes[2]));
-int dup2                    args((int oldfd, int newfd));
-int execl                   args((const char *path, const char *arg, ...));
-#endif
-
+pid_t waitpid(pid_t pid, int *status, int options);
+pid_t fork(void);
+int kill(pid_t pid, int sig);
+int pipe(int filedes[2]);
+int dup2(int oldfd, int newfd);
+int execl(const char *path, const char *arg, ...);
 
 
 
@@ -143,66 +120,26 @@ int port;
 int control;
 int max_on = 0;
 
-/***************************************************************************
-* OS-dependent local functions.
-***************************************************************************/
-
-#if defined(unix) || defined(WIN32)
-void game_loop                               args((int control));
-int init_socket                             args((int port));
-void init_descriptor                 args((int control));
-bool read_from_descriptor    args((DESCRIPTOR_DATA * d));
-bool write_to_descriptor             args((int desc, char *txt, int length));
-#endif
-
+void game_loop(int control);
+int init_socket(int port);
+void init_descriptor(int control);
+bool read_from_descriptor(DESCRIPTOR_DATA * d);
+bool write_to_descriptor(int desc, char *txt, int length);
 
 
 /***************************************************************************
 * Other local functions(OS-independent).
 ***************************************************************************/
-int main                            args((int argc, char **argv));
-bool process_output          args((DESCRIPTOR_DATA * d, bool fPrompt));
-void read_from_buffer        args((DESCRIPTOR_DATA * d));
-void check_afk                       args((CHAR_DATA * ch));
-void bust_a_prompt           args((CHAR_DATA * ch));
-bool is_host_exception       args((char *host));
-void init_signals            args((void));
-extern void do_auto_shutdown        args((void));
+int main(int argc, char **argv);
+bool process_output(DESCRIPTOR_DATA * d, bool fPrompt);
+void read_from_buffer(DESCRIPTOR_DATA * d);
+void check_afk(CHAR_DATA * ch);
+void bust_a_prompt(CHAR_DATA * ch);
+bool is_host_exception(char *host);
+void init_signals(void);
+extern void do_auto_shutdown(void);
 
 
-/***************************************************************************
-* sig_handler
-***************************************************************************/
-/*
- * void sig_handler(int sig)
- * {
- * #if defined(__USE_SIGNALS)
- *  switch(sig)
- *  {
- *      case SIGTERM:
- *          log_string("Sig handler SIGTERM.");
- *          do_auto_shutdown();
- *          break;
- *      case SIGABRT:
- *          log_string("Sig handler SIGABRT.");
- *          do_auto_shutdown();
- *          break;
- *      case SIGSEGV:
- *          log_string("Sig handler SIGSEGV.");
- *          break;
- *  }
- * #endif
- * }*/
-
-/*
- * void init_signals()
- * {
- * #if defined(__USE_SIGNALS)
- *  signal(SIGTERM, sig_handler);
- *  signal(SIGABRT, sig_handler);
- *  signal(SIGSEGV, sig_handler);
- * #endif
- * }*/
 int main(int argc, char **argv)
 {
 	struct timeval now_time;
@@ -255,7 +192,6 @@ int main(int argc, char **argv)
  * Run the game.
  */
 
-#if defined(unix) || defined(WIN32)
 	if (!fCopyOver)
 		control = init_socket(port);
 
@@ -268,7 +204,6 @@ int main(int argc, char **argv)
 
 	game_loop(control);
 	close(control);
-#endif
 
 
 	log_string("Normal termination of game.");
@@ -276,7 +211,6 @@ int main(int argc, char **argv)
 }
 
 
-#if defined(unix) || defined(WIN32)
 int init_socket(int port)
 {
 	static struct sockaddr_in sa_zero;
@@ -329,9 +263,7 @@ int init_socket(int port)
 
 	return fd;
 }
-#endif
 
-#if defined(unix) || defined(WIN32)
 void game_loop(int control)
 {
 	static struct timeval null_time;
@@ -486,7 +418,6 @@ void game_loop(int control)
 		}
 
 
-#if !defined(WIN32)
 		/*
 		 * Synchronize to a clock.
 		 * Sleep(last_time + 1/PULSE_PER_SECOND - now).
@@ -524,37 +455,13 @@ void game_loop(int control)
 
 		gettimeofday(&last_time, NULL);
 		current_time = (time_t)last_time.tv_sec;
-#else
-		gettimeofday(&last_time, NULL);
-		_ftime(&temp_time);
-		last_time.tv_usec = temp_time.millitm;
-		current_time = (time_t)last_time.tv_sec;
-
-		times_up = 0;
-		while (times_up == 0) {
-			gettimeofday(&end_time, NULL);
-			_ftime(&temp_time);
-			end_time.tv_usec = temp_time.millitm;
-
-			if ((wait_time = (int)(1000 * (double)(((int)end_time.tv_sec - (int)start_time.tv_sec)
-							       + ((double)((int)end_time.tv_usec - (int)start_time.tv_usec) / 1000.0))))
-			    >= (double)(1000 / PULSE_PER_SECOND)) {
-				times_up = 1;
-			} else {
-				Sleep((int)((double)(1000 / PULSE_PER_SECOND) - (double)wait_time));
-				times_up = 1;
-			}
-		}
-#endif
 	}
 
 	return;
 }
-#endif
 
 
 
-#if defined(unix) || defined(WIN32)
 void init_descriptor(int control)
 {
 	DESCRIPTOR_DATA *dnew;
@@ -575,17 +482,10 @@ void init_descriptor(int control)
 #define FNDELAY O_NDELAY
 #endif
 
-#if defined(WIN32)
-	if (ioctlsocket(desc, FIONBIO, &scmd) == -1) {
-		perror("new_descriptor: ioctlsocket: FIONBIO");
-		return;
-	}
-#else
 	if (fcntl(desc, F_SETFL, FNDELAY) == -1) {
 		perror("new_descriptor: fcntl: FNDELAY");
 		return;
 	}
-#endif
 
 	/*
 	 * Cons a new descriptor.
@@ -660,7 +560,6 @@ void init_descriptor(int control)
 
 	return;
 }
-#endif
 
 
 
@@ -737,7 +636,6 @@ bool read_from_descriptor(DESCRIPTOR_DATA *d)
 	}
 
 
-#if defined(MSDOS) || defined(unix) || defined(WIN32)
 	for (;; ) {
 		int nRead;
 
@@ -751,21 +649,14 @@ bool read_from_descriptor(DESCRIPTOR_DATA *d)
 			log_string("EOF encountered on read.");
 			return FALSE;
 		}
-#if defined(WIN32)
-		else if (WSAGetLastError() == WSAEWOULDBLOCK) {
-			break;
-		}
-#else
 		else if (errno == EWOULDBLOCK) {
 			break;
 		}
-#endif
 		else {
 			perror("Read_from_descriptor");
 			return FALSE;
 		}
 	}
-#endif
 
 	d->inbuf[iStart] = '\0';
 	return TRUE;
@@ -1268,17 +1159,10 @@ bool write_to_descriptor(int desc, char *txt, int length)
 
 	for (iStart = 0; iStart < length; iStart += nWrite) {
 		nBlock = UMIN(length - iStart, 8192);
-#if defined(WIN32)
-		if ((nWrite = send(desc, txt + iStart, nBlock, 0)) < 0) {
-			perror("Write_to_descriptor");
-			return FALSE;
-		}
-#else
 		if ((nWrite = (int)write(desc, txt + iStart, (size_t)nBlock)) < 0) {
 			perror("Write_to_descriptor");
 			return FALSE;
 		}
-#endif
 	}
 
 	return TRUE;

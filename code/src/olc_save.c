@@ -23,11 +23,7 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
 #include <sys/types.h>
-#endif
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,9 +41,8 @@
  *  may aid in debugging.
  */
 
-extern int max_social;
 extern void bug_long(const char *str, long param);
-static void save_area           args((AREA_DATA * area));
+static void save_area(AREA_DATA * area);
 
 /***************************************************************************
 *	fix_string
@@ -867,39 +862,6 @@ static void save_area(AREA_DATA *area)
 
 
 /***************************************************************************
-*	save_socials
-*
-*	save the social list
-***************************************************************************/
-void save_socials()
-{
-	FILE *fp;
-	SOCIAL *social;
-
-	fp = fopen(SOCIAL_FILE, "w");
-
-	if (!fp) {
-		bug("Could not open " SOCIAL_FILE " for writing.", 0);
-		return;
-	}
-
-	fprintf(fp, "%d\n", max_social);
-
-	for (social = social_list; social != NULL; social = social->next) {
-		fprintf(fp, "%s~\n", (social->name != NULL) ? social->name : "");
-		fprintf(fp, "%s~\n", (social->char_no_arg != NULL) ? social->char_no_arg : "");
-		fprintf(fp, "%s~\n", (social->others_no_arg != NULL) ? social->others_no_arg : "");
-		fprintf(fp, "%s~\n", (social->char_found != NULL) ? social->char_found : "");
-		fprintf(fp, "%s~\n", (social->others_found != NULL) ? social->others_found : "");
-		fprintf(fp, "%s~\n", (social->vict_found != NULL) ? social->vict_found : "");
-		fprintf(fp, "%s~\n", (social->char_auto != NULL) ? social->char_auto : "");
-		fprintf(fp, "%s~\n", (social->others_auto != NULL) ? social->others_auto : "");
-	}
-
-	fclose(fp);
-}
-
-/***************************************************************************
 *	do_asave
 *
 *	initiate an OLC save function
@@ -1079,12 +1041,6 @@ void do_asave(CHAR_DATA *ch, char *argument)
 		save_skills();
 		save_groups();
 		send_to_char("Skills saved.\n\r", ch);
-		return;
-	}
-
-	if (!str_prefix(arg, "socials")) {
-		save_socials();
-		send_to_char("Socials saved.\n\r", ch);
 		return;
 	}
 

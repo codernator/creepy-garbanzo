@@ -120,12 +120,12 @@ struct script_stack {
 /***************************************************************************
 *	function declarations
 ***************************************************************************/
-void reset_script                    args((SCRIPT * script));
-int script_line_type                args((char *key));
-void compile_script                  args((SCRIPT * script));
+void reset_script(SCRIPT * script);
+int script_line_type(char *key);
+void compile_script(SCRIPT * script);
 
-SCRIPT *script_lookup   args((char *arg));
-SCRIPT_LINE *get_next_ifjump args((SCRIPT_LINE * line));
+SCRIPT *script_lookup(char *arg);
+SCRIPT_LINE *get_next_ifjump(SCRIPT_LINE * line);
 
 
 
@@ -137,14 +137,14 @@ SCRIPT_EVENT *script_event_free;
 SCRIPT *script_free;
 
 
-SCRIPT_LINE *new_script_line   args((char *code));
-void free_script_line                   args((SCRIPT_LINE * line));
+SCRIPT_LINE *new_script_line(char *code);
+void free_script_line(SCRIPT_LINE * line);
 
-SCRIPT_EVENT *new_script_event args((void));
-void free_script_event                  args((SCRIPT_EVENT * event));
+SCRIPT_EVENT *new_script_event(void);
+void free_script_event(SCRIPT_EVENT * event);
 
-SCRIPT *new_script                             args((void));
-void free_script                                args((SCRIPT * script));
+SCRIPT *new_script(void);
+void free_script(SCRIPT * script);
 
 
 #endif

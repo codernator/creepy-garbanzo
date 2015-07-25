@@ -47,8 +47,8 @@
 
 
 extern long flag_lookup(const char *word, const struct flag_type *flag_table);
-extern int _filbuf args((FILE *));
-extern void init_mm     args((void));
+extern int _filbuf(FILE *);
+extern void init_mm(void);
 extern unsigned int fread_uint(FILE *fp);
 extern long fread_long(FILE *fp);
 extern bool is_space(const char test);
@@ -166,33 +166,33 @@ static char area_file[MIL];
 /***************************************************************************
 *	local functions used in boot process
 ***************************************************************************/
-static void load_area                           args((FILE * fp));
-static void load_helps                          args((FILE * fp, char *fname));
-static void load_mobiles                        args((FILE * fp));
-static void load_objects                        args((FILE * fp));
-static void load_resets                 args((FILE * fp));
-static void load_rooms                          args((FILE * fp));
-static void load_shops                          args((FILE * fp));
-static void load_specials                       args((FILE * fp));
-void load_threads                       args((void));
-extern void load_bans                           args((void));
-static void load_mobprogs                       args((FILE * fp));
-static void load_mobprogs_new           args((FILE * fp));
-extern void load_trivia     args((void));
-void resolve_global_skills      args((void));
+static void load_area(FILE * fp);
+static void load_helps(FILE * fp, char *fname);
+static void load_mobiles(FILE * fp);
+static void load_objects(FILE * fp);
+static void load_resets(FILE * fp);
+static void load_rooms(FILE * fp);
+static void load_shops(FILE * fp);
+static void load_specials(FILE * fp);
+void load_threads(void);
+extern void load_bans(void);
+static void load_mobprogs(FILE * fp);
+static void load_mobprogs_new(FILE * fp);
+extern void load_trivia(void);
+void resolve_global_skills(void);
 
-static void fix_exits                           args((void));
-static void fix_mobprogs                        args((void));
-static void reset_areas                 args((void));
-void reset_area                         args((AREA_DATA * area));
+static void fix_exits(void);
+static void fix_mobprogs(void);
+static void reset_areas(void);
+void reset_area(AREA_DATA * area);
 
-extern void battlefield_clear           args((void));
+extern void battlefield_clear(void);
 
 /***************************************************************************
 *	copyover
 ***************************************************************************/
-extern bool write_to_descriptor     args((int desc, char *txt, int length));
-extern int close        args((int fd));
+extern bool write_to_descriptor(int desc, char *txt, int length);
+extern int close(int fd);
 
 
 
@@ -373,10 +373,6 @@ void boot_db()
 		exit(1);
 	}
 	auction->item = NULL;   /* nothing is being sold */
-
-	/* load socials */
-	log_string("Loading Socials..");
-	load_socials();
 
 	/* load host exceptions */
 	/*

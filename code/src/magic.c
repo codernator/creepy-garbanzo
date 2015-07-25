@@ -27,18 +27,7 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#if defined(WIN32)
-#include <sys/timeb.h>
-#else
 #include <sys/time.h>
-#endif
-#endif
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -55,16 +44,15 @@
 /***************************************************************************
 *	local functions
 ***************************************************************************/
-static void say_spell args((CHAR_DATA * ch, SKILL * skill));
-
+static void say_spell(CHAR_DATA * ch, SKILL * skill);
 
 
 /***************************************************************************
 *	imported functions
 ***************************************************************************/
-extern bool remove_obj args((CHAR_DATA * ch, int iWear, bool fReplace));
-extern void wear_obj args((CHAR_DATA * ch, OBJ_DATA * obj, bool fReplace));
-extern void dam_message args((CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt, bool immune));
+extern bool remove_obj(CHAR_DATA * ch, int iWear, bool fReplace);
+extern void wear_obj(CHAR_DATA * ch, OBJ_DATA * obj, bool fReplace);
+extern void dam_message(CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt, bool immune);
 extern void bug_long(const char *str, long param);
 
 

@@ -41,9 +41,6 @@ extern int top_ed;
 extern AREA_DATA *area_first;
 
 
-/* from db2.c */
-extern int social_count;
-
 /* macro for flag swapping */
 #define GET_UNSET(flag1, flag2)  (~(flag1) & ((flag1) | (flag2)))
 

@@ -28,17 +28,8 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#if defined(WIN32)
-#include <sys/timeb.h>
-#else
 #include <sys/time.h>
-#endif
-#endif
-
+#include <sys/types.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -226,7 +217,6 @@ void do_who(CHAR_DATA *ch, char *argument)
 
 
 	output = new_buf();
-	/* set default args */
 	iLevelLower = 0;
 	iLevelUpper = MAX_LEVEL;
 	for (iClass = 0; iClass < MAX_CLASS; iClass++)
@@ -380,7 +370,6 @@ void do_ewho(CHAR_DATA *ch, char *argument)
 	bool race_restrict = FALSE;
 	bool immortal_restrict = FALSE;
 
-	/* set default args */
 	iLevelLower = 0;
 	iLevelUpper = MAX_LEVEL;
 	for (iClass = 0; iClass < MAX_CLASS; iClass++)

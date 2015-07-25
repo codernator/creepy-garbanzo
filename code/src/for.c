@@ -36,20 +36,8 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-
-#if defined(WIN32)
-#include <sys/timeb.h>
-#include <signal.h>
-#else
 #include <sys/time.h>
-#endif
-
-#endif
-
+#include <sys/types.h>
 #include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
@@ -57,11 +45,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdarg.h>
-
-#if !defined(WIN32)
 #include <unistd.h>
-#endif
-
 #include "merc.h"
 #include "interp.h"
 #include "recycle.h"
@@ -73,20 +57,18 @@
 ***************************************************************************/
 typedef void FOR_CMD (CHAR_DATA *ch, char *name, char *argument);
 
-static void for_all                     args((CHAR_DATA * ch, char *name, char *argument));
-static void for_gods                    args((CHAR_DATA * ch, char *name, char *argument));
-static void for_morts                   args((CHAR_DATA * ch, char *name, char *argument));
-static void for_idiots                  args((CHAR_DATA * ch, char *name, char *argument));
-static void for_room                    args((CHAR_DATA * ch, char *name, char *argument));
-static void for_name                    args((CHAR_DATA * ch, char *name, char *argument));
-static void for_count                   args((CHAR_DATA * ch, char *name, char *argument));
+static void for_all(CHAR_DATA * ch, char *name, char *argument);
+static void for_gods(CHAR_DATA * ch, char *name, char *argument);
+static void for_morts(CHAR_DATA * ch, char *name, char *argument);
+static void for_idiots(CHAR_DATA * ch, char *name, char *argument);
+static void for_room(CHAR_DATA * ch, char *name, char *argument);
+static void for_name(CHAR_DATA * ch, char *name, char *argument);
+static void for_count(CHAR_DATA * ch, char *name, char *argument);
 
 static const struct for_cmds {
 	char *		cmd;
 	FOR_CMD *	fn;
-}
-fcmd_table [] =
-{
+} fcmd_table [] = {
 	{ "all",     for_all	},
 	{ "gods",    for_gods	},
 	{ "mortals", for_morts	},
@@ -98,11 +80,9 @@ fcmd_table [] =
 /***************************************************************************
 *	utility functions
 ***************************************************************************/
-bool vaild_cmd                  args((CHAR_DATA * vcn, char *cmd));
-bool expand_cmd                 args((CHAR_DATA * vch, char *arg,
-				      char *buf, char find));
-
-static const char *get_name        args((CHAR_DATA * vch));
+bool vaild_cmd(CHAR_DATA * vcn, char *cmd);
+bool expand_cmd(CHAR_DATA * vch, char *arg, char *buf, char find);
+static const char *get_name(CHAR_DATA * vch);
 
 #define MAX_TARGETS             100
 #define FOR_WAIT                36

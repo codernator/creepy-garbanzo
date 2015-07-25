@@ -6,18 +6,14 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
+#include <dirent.h>
+#include <unistd.h>
 #include <sys/types.h>
-#if defined(WIN32)
-#include <sys/timeb.h>
-#else
+#include <sys/stat.h>
+#include <sys/resource.h>
+#include <sys/types.h>
 #include <sys/time.h>
 #include <unistd.h>
-#endif
-#endif
-
 #include <math.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -35,19 +31,14 @@
 #include "interp.h"
 #include "olc.h"
 
-#include <dirent.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/resource.h>
 
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern int flag_value(const struct flag_type *flag_table, char *argument);
 
 
-void do_findflags    args((CHAR_DATA * ch, char *argument));
-void do_worldflag    args((CHAR_DATA * ch, char *argument));
-void do_spellflags   args((CHAR_DATA * ch, char *argument));
+void do_findflags(CHAR_DATA * ch, char *argument);
+void do_worldflag(CHAR_DATA * ch, char *argument);
+void do_spellflags(CHAR_DATA * ch, char *argument);
 
 DECLARE_DO_FUN(do_findflags);
 DECLARE_DO_FUN(do_worldflag);

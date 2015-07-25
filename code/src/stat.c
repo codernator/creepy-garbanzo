@@ -28,18 +28,8 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#if defined(WIN32)
-#include <sys/timeb.h>
-#else
 #include <sys/time.h>
 #include <unistd.h>
-#endif
-#endif
-
 #include <math.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -59,7 +49,7 @@
 /***************************************************************************
 *	function definitions
 ***************************************************************************/
-extern ROOM_INDEX_DATA * find_location   args((CHAR_DATA * ch, char *arg));
+extern ROOM_INDEX_DATA * find_location(CHAR_DATA * ch, char *arg);
 
 /***************************************************************************
 *	do_stat

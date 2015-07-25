@@ -1,20 +1,20 @@
-/***************************************************************************
-*  File: olc.h                                                            *
-*                                                                         *
-*  Much time and thought has gone into this software and you are          *
-*  benefitting.  We hope that you share your changes too.  What goes      *
-*  around, comes around.                                                  *
-*                                                                         *
-*  This code was freely distributed with the The Isles 1.1 source code,   *
-*  and has been used here for OLC - OLC would not be what it is without   *
-*  all the previous coders who released their source code.                *
-*                                                                         *
-***************************************************************************/
-/***************************************************************************
-*	This is a header file for all the OLC files.  Feel free to copy it into
-*	merc.h if you wish.  Many of these routines may be handy elsewhere in
-*	the code.  -Jason Dinkel
-***************************************************************************/
+/****************************************************************************
+*  File: olc.h                                                              *
+*                                                                           *
+*  Much time and thought has gone into this software and you are            *
+*  benefitting.  We hope that you share your changes too.  What goes        *
+*  around, comes around.                                                    *
+*                                                                           *
+*  This code was freely distributed with the The Isles 1.1 source code,     *
+*  and has been used here for OLC - OLC would not be what it is without     *
+*  all the previous coders who released their source code.                  *
+*                                                                           *
+****************************************************************************/
+/****************************************************************************
+*	This is a header file for all the OLC files.  Feel free to copy it into *
+*	merc.h if you wish.  Many of these routines may be handy elsewhere in   *
+*	the code.  -Jason Dinkel                                                *
+****************************************************************************/
 
 
 /***************************************************************************
@@ -42,7 +42,7 @@
 /*
  * New typedefs.
  */
-typedef bool OLC_FUN args ((CHAR_DATA * ch, char *argument));
+typedef bool OLC_FUN(CHAR_DATA * ch, char *argument);
 #define DECLARE_OLC_FUN(fn)     OLC_FUN fn
 
 
@@ -62,7 +62,6 @@ typedef bool OLC_FUN args ((CHAR_DATA * ch, char *argument));
 #define ED_HELP         6
 #define ED_SKILL        7
 #define ED_GROUP        8
-#define ED_SOCIAL       9
 
 
 /* general constants */
@@ -70,12 +69,12 @@ typedef bool OLC_FUN args ((CHAR_DATA * ch, char *argument));
 
 
 /* eidting interpreter entry functions */
-void mpedit                  args((CHAR_DATA * ch, char *argument));
-void hedit                   args((CHAR_DATA * ch, char *argument));
-void skedit                  args((CHAR_DATA * ch, char *argument));
-void gredit                  args((CHAR_DATA * ch, char *argument));
-void scedit                  args((CHAR_DATA * ch, char *argument));
-void muedit                  args((CHAR_DATA * ch, char *argument));
+void mpedit(CHAR_DATA * ch, char *argument);
+void hedit(CHAR_DATA * ch, char *argument);
+void skedit(CHAR_DATA * ch, char *argument);
+void gredit(CHAR_DATA * ch, char *argument);
+void scedit(CHAR_DATA * ch, char *argument);
+void muedit(CHAR_DATA * ch, char *argument);
 
 
 /*
@@ -100,10 +99,10 @@ enum medit_auto_config_type { mact_easy, mact_normal, mact_hard, mact_insane };
 
 
 /* utility functions */
-AREA_DATA *get_vnum_area        args((long vnum));
-AREA_DATA *get_area_data        args((long vnum));
-void add_reset               args((ROOM_INDEX_DATA * room, RESET_DATA * pReset, long index));
-char *mprog_type_to_name      args((int type));
+AREA_DATA *get_vnum_area(long vnum);
+AREA_DATA *get_area_data(long vnum);
+void add_reset(ROOM_INDEX_DATA * room, RESET_DATA * pReset, long index);
+char *mprog_type_to_name(int type);
 
 
 
@@ -136,9 +135,9 @@ extern const struct olc_cmd_type muedit_table[];
  * General Functions
  */
 /* general functions */
-bool show_commands              args((CHAR_DATA * ch, char *argument));
-bool show_help                  args((CHAR_DATA * ch, char *argument));
-bool edit_done                  args((CHAR_DATA * ch));
+bool show_commands(CHAR_DATA * ch, char *argument);
+bool show_help(CHAR_DATA * ch, char *argument);
+bool edit_done(CHAR_DATA * ch);
 
 
 /* area editor */
@@ -307,18 +306,6 @@ DECLARE_OLC_FUN(gredit_help);
 DECLARE_OLC_FUN(gredit_skills);
 DECLARE_OLC_FUN(gredit_cost);
 
-/* social editor */
-DECLARE_OLC_FUN(scedit_new);
-DECLARE_OLC_FUN(scedit_delete);
-DECLARE_OLC_FUN(scedit_show);
-DECLARE_OLC_FUN(scedit_char_auto);
-DECLARE_OLC_FUN(scedit_char_found);
-DECLARE_OLC_FUN(scedit_char_no_arg);
-DECLARE_OLC_FUN(scedit_others_auto);
-DECLARE_OLC_FUN(scedit_others_found);
-DECLARE_OLC_FUN(scedit_others_no_arg);
-DECLARE_OLC_FUN(scedit_vict_found);
-
 DECLARE_OLC_FUN(muedit_show);
 DECLARE_OLC_FUN(muedit_new);
 DECLARE_OLC_FUN(muedit_delete);
@@ -327,77 +314,49 @@ DECLARE_OLC_FUN(muedit_artist);
 DECLARE_OLC_FUN(muedit_text);
 
 
-
 /* Return pointers to what is being edited. */
-#define EDIT_MOB(ch, mob)               (mob = (MOB_INDEX_DATA *)ch->desc->ed_data)
-#define EDIT_OBJ(ch, obj)               (obj = (OBJ_INDEX_DATA *)ch->desc->ed_data)
-#define EDIT_ROOM(ch, room)             (room = ch->in_room)
-#define EDIT_AREA(ch, area)             (area = (AREA_DATA *)ch->desc->ed_data)
+#define EDIT_MOB(ch, mob)       (mob = (MOB_INDEX_DATA *)ch->desc->ed_data)
+#define EDIT_OBJ(ch, obj)       (obj = (OBJ_INDEX_DATA *)ch->desc->ed_data)
+#define EDIT_ROOM(ch, room)     (room = ch->in_room)
+#define EDIT_AREA(ch, area)     (area = (AREA_DATA *)ch->desc->ed_data)
 #define EDIT_MPCODE(ch, code)   (code = (MPROG_CODE *)ch->desc->ed_data)
-#define EDIT_HELP(ch, help)             (help = (HELP_DATA *)ch->desc->ed_data)
+#define EDIT_HELP(ch, help)     (help = (HELP_DATA *)ch->desc->ed_data)
 #define EDIT_SKILL(ch, skill)   (skill = (SKILL *)ch->desc->ed_data)
 #define EDIT_GROUP(ch, group)   (group = (GROUP *)ch->desc->ed_data)
-#define EDIT_SOCIAL(ch, social) (social = (SOCIAL *)ch->desc->ed_data)
-#define EDIT_SONG(ch, song)             (song = (SONG *)ch->desc->ed_data)
+#define EDIT_SONG(ch, song)     (song = (SONG *)ch->desc->ed_data)
 
-/*
- * Prototypes
- */
-/* mem.c - memory prototypes. */
-#define RID ROOM_INDEX_DATA
-#define MID     MOB_INDEX_DATA
-#define OID     OBJ_INDEX_DATA
-#define ED      EXTRA_DESCR_DATA
-#define AD      AREA_DATA
-#define RD      RESET_DATA
-#define EX      EXIT_DATA
-#define AF      AFFECT_DATA
-#define SD      SHOP_DATA
-#define MPL     MPROG_LIST
-#define MPC     MPROG_CODE
 
 /* rooms */
-RID * new_room_index          args((void));
-void free_room_index         args((ROOM_INDEX_DATA * pRoom));
+ROOM_INDEX_DATA * new_room_index(void);
+void free_room_index(ROOM_INDEX_DATA * pRoom);
 /* mob indexes */
-MID *new_mob_index           args((void));
-void free_mob_index          args((MOB_INDEX_DATA * pMob));
+MOB_INDEX_DATA *new_mob_index(void);
+void free_mob_index(MOB_INDEX_DATA * pMob);
 /* object indexes */
-OID *new_obj_index           args((void));
-void free_obj_index          args((OBJ_INDEX_DATA * pObj));
+OBJ_INDEX_DATA *new_obj_index(void);
+void free_obj_index(OBJ_INDEX_DATA * pObj);
 /* extra descriptions */
-extern ED *new_extra_descr         args((void));
-extern void free_extra_descr        args((ED * pExtra));
+extern EXTRA_DESCR_DATA *new_extra_descr(void);
+extern void free_extra_descr(EXTRA_DESCR_DATA * pExtra);
 /* area data */
-AD *new_area                        args((void));
-void free_area                       args((AREA_DATA * pArea));
+AREA_DATA *new_area(void);
+void free_area(AREA_DATA * pArea);
 /* reset data */
-RD *new_reset_data          args((void));
-void free_reset_data         args((RESET_DATA * pReset));
+RESET_DATA *new_reset_data(void);
+void free_reset_data(RESET_DATA * pReset);
 /* exit data */
-EX *new_exit                        args((void));
-void free_exit                       args((EXIT_DATA * pExit));
+EXIT_DATA *new_exit(void);
+void free_exit(EXIT_DATA * pExit);
 /* affect data */
-extern AF *new_affect                      args((void));
-extern void free_affect                     args((AFFECT_DATA * pAf));
+extern AFFECT_DATA *new_affect(void);
+extern void free_affect(AFFECT_DATA * pAf);
 /* shop data */
-SD *new_shop                        args((void));
-void free_shop                       args((SHOP_DATA * pShop));
+SHOP_DATA *new_shop(void);
+void free_shop(SHOP_DATA * pShop);
 
-extern MPL *new_mprog                       args((void));
-extern void free_mprog                      args((MPROG_LIST * mp));
+extern MPROG_LIST *new_mprog(void);
+extern void free_mprog(MPROG_LIST * mp);
 
-MPC *new_mpcode                      args((void));
-void free_mpcode                     args((MPROG_CODE * pMcode));
+MPROG_CODE *new_mpcode(void);
+void free_mpcode(MPROG_CODE * pMcode);
 
-#undef RID
-#undef MID
-#undef OID
-#undef ED
-#undef AD
-#undef RD
-#undef EX
-#undef AF
-#undef SD
-#undef MPL
-#undef MPC

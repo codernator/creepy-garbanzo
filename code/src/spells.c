@@ -28,17 +28,8 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
 #include <sys/types.h>
-#if defined(WIN32)
-#include <sys/timeb.h>
-#else
 #include <sys/time.h>
-#endif
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -4402,15 +4393,13 @@ void spell_shatter_curse(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 	OBJ_DATA *obj;
 	bool found = FALSE;
 
-/* do object cases first */
+    /* do object cases first */
 	if (target == TARGET_OBJ) {
 		obj = (OBJ_DATA *)vo;
 
 		if (IS_OBJ_STAT(obj, ITEM_NODROP) || IS_OBJ_STAT(obj, ITEM_NOREMOVE)) {
-			if (!IS_OBJ_STAT(obj, ITEM_NOUNCURSE)
-			    && !saves_dispel(level + 2, obj->level, 0)) {
-				act("You convulse as you toss $p to the ground, destroying it.",
-				    ch, obj, NULL, TO_CHAR);
+			if (!IS_OBJ_STAT(obj, ITEM_NOUNCURSE) && !saves_dispel(level + 2, obj->level, 0)) {
+				act("You convulse as you toss $p to the ground, destroying it.", ch, obj, NULL, TO_CHAR);
 				extract_obj(obj);
 				return;
 			}
@@ -4429,10 +4418,8 @@ void spell_shatter_curse(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 		    && !IS_OBJ_STAT(obj, ITEM_NOUNCURSE)) {
 			if (!saves_dispel(level, obj->level, 0)) {
 				found = TRUE;
-				act("You convulse as you toss $p to the ground, destroying it.",
-				    victim, obj, NULL, TO_CHAR);
-				act("$n convulses as $e tosses $p to the ground, destroying it.",
-				    victim, obj, NULL, TO_ROOM);
+				act("You convulse as you toss $p to the ground, destroying it.", victim, obj, NULL, TO_CHAR);
+				act("$n convulses as $e tosses $p to the ground, destroying it.", victim, obj, NULL, TO_ROOM);
 				extract_obj(obj);
 			}
 		}
@@ -4558,7 +4545,7 @@ void spell_winds(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, c
 *		add - magic.h
 *			DECLARE_SPELL_FUN(	spell_web	);
 *		add - fight.c
-*			bool	check_dispel		args((int dis_level, CHAR_DATA *victim, int sn));
+*			bool	check_dispel(int dis_level, CHAR_DATA *victim, int sn);
 *
 *		add - in multi-hit
 *			if(is_affected(ch, gsn_web))

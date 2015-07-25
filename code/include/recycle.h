@@ -1,7 +1,7 @@
 /***************************************************************************
 *   Original Diku Mud copyright (C) 1990, 1991 by Sebastian Hammer,        *
 *   Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
-*                                                                              *
+*                                                                          *
 *   Merc Diku Mud improvments copyright (C) 1992, 1993 by Michael          *
 *   Chastain, Michael Quan, and Mitchell Tse.                              *
 *	                                                                       *
@@ -9,7 +9,7 @@
 *   both the original Diku license in 'license.doc' as well the Merc	   *
 *   license in 'license.txt'.  In particular, you may not remove either of *
 *   these copyright notices.                                               *
-*                                                                              *
+*                                                                          *
 *   Much time and thought has gone into this software and you are          *
 *   benefitting.  We hope that you share your changes too.  What goes      *
 *   around, comes around.                                                  *
@@ -41,87 +41,63 @@ extern int mobile_count;
 #define BUFFER_FREED            2
 
 /* note recycling */
-#define ND NOTE_DATA
-ND * new_note                        args((void));
-void free_note                       args((NOTE_DATA * note));
-
-#undef ND
+NOTE_DATA * new_note(void);
+void free_note(NOTE_DATA * note);
 
 /* ban data recycling */
-#define BD BAN_DATA
-BD * new_ban                         args((void));
-void free_ban                        args((BAN_DATA * ban));
-
-#undef BD
+BAN_DATA * new_ban(void);
+void free_ban(BAN_DATA * ban);
 
 /* descriptor recycling */
-#define DD DESCRIPTOR_DATA
-DD * new_descriptor          args((void));
-void free_descriptor         args((DESCRIPTOR_DATA * d));
-
-#undef DD
+DESCRIPTOR_DATA * new_descriptor(void);
+void free_descriptor(DESCRIPTOR_DATA * d);
 
 
 /* extra descr recycling */
-#define ED EXTRA_DESCR_DATA
-ED * new_extra_descr         args((void));
-void free_extra_descr        args((EXTRA_DESCR_DATA * ed));
-
-#undef ED
+EXTRA_DESCR_DATA * new_extra_descr(void);
+void free_extra_descr(EXTRA_DESCR_DATA * ed);
 
 /* affect recycling */
-#define AD AFFECT_DATA
-AD * new_affect                      args((void));
-void free_affect                     args((AFFECT_DATA * af));
-
-#undef AD
+AFFECT_DATA * new_affect(void);
+void free_affect(AFFECT_DATA * af);
 
 /* object recycling */
-#define OD OBJ_DATA
-OD * new_obj                         args((void));
-void free_obj                        args((OBJ_DATA * obj));
+OBJ_DATA * new_obj(void);
+void free_obj(OBJ_DATA * obj);
 
-#undef OD
 
 /* character recyling */
-#define CD CHAR_DATA
-#define PD PC_DATA
-CD * new_char                        args((void));
-void free_char                       args((CHAR_DATA * ch));
-PD *new_pcdata                      args((void));
-void free_pcdata                     args((PC_DATA * pcdata));
-
-#undef PD
-#undef CD
+CHAR_DATA * new_char(void);
+void free_char(CHAR_DATA * ch);
+PC_DATA *new_pcdata(void);
+void free_pcdata(PC_DATA * pcdata);
 
 
 /* mob id and memory procedures */
-#define MD MEM_DATA
-long get_pc_id                       args((void));
-long get_mob_id                      args((void));
-MD *new_mem_data            args((void));
-void free_mem_data           args((MEM_DATA * memory));
-MD *find_memory                     args((MEM_DATA * memory, long id));
-
-#undef MD
+long get_pc_id(void);
+long get_mob_id(void);
+MEM_DATA *new_mem_data(void);
+void free_mem_data(MEM_DATA * memory);
+MEM_DATA *find_memory(MEM_DATA * memory, long id);
 
 /* buffer procedures */
 
-BUFFER * new_buf                        args((void));
-BUFFER *new_buf_size           args((int size));
-void free_buf                       args((BUFFER * buffer));
-bool add_buf                        args((BUFFER * buffer, char *string));
-void clear_buf                      args((BUFFER * buffer));
-char *buf_string                     args((BUFFER * buffer));
-void printf_buf                     args((BUFFER * buffer, char *fmt, ...));
+BUFFER * new_buf(void);
+BUFFER *new_buf_size(int size);
+void free_buf(BUFFER * buffer);
+bool add_buf(BUFFER * buffer, char *string);
+void clear_buf(BUFFER * buffer);
+char *buf_string(BUFFER * buffer);
+void printf_buf(BUFFER * buffer, char *fmt, ...);
 
-HELP_AREA *new_had                 args((void));
-HELP_DATA *new_help                args((void));
-void free_help               args((HELP_DATA * help));
+HELP_AREA *new_had(void);
+HELP_DATA *new_help(void);
+void free_help(HELP_DATA * help);
 
 
 /***************************************************************************
 *	mob program recycling
 ***************************************************************************/
-MPROG_LIST *new_mprog       args((void));
-void free_mprog      args((MPROG_LIST * mp));
+MPROG_LIST *new_mprog(void);
+void free_mprog(MPROG_LIST * mp);
+

@@ -62,13 +62,13 @@
 *	function prototypes
 ***************************************************************************/
 /*
- * DISABLED_DATA *	new_disabled	args(());
- * void			free_disabled	args((DISABLED_DATA * disabled));
+ * DISABLED_DATA *	new_disabled());
+ * void			free_disabled(DISABLED_DATA * disabled));
  *
- * void disable_cmd	args((CHAR_DATA * ch, char * argument, DISABLED_DATA * disabled_list));
- * void disable_spell	args((CHAR_DATA * ch, char * argument, DISABLED_DATA * disabled_list));
- * void disable_all	args((CHAR_DATA * ch, char * argument, DISABLED_DATA * disabled_list));
- * void disable_show	args((CHAR_DATA * ch, DISABLED_DATA * list));
+ * void disable_cmd(CHAR_DATA * ch, char * argument, DISABLED_DATA * disabled_list);
+ * void disable_spell(CHAR_DATA * ch, char * argument, DISABLED_DATA * disabled_list);
+ * void disable_all(CHAR_DATA * ch, char * argument, DISABLED_DATA * disabled_list);
+ * void disable_show(CHAR_DATA * ch, DISABLED_DATA * list);
  */
 
 /***************************************************************************

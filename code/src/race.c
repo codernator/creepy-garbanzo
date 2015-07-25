@@ -33,12 +33,7 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
 #include <sys/types.h>
-#endif
-
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -55,10 +50,10 @@
 /***************************************************************************
 *	local function declarations
 ***************************************************************************/
-extern bool remove_obj         args((CHAR_DATA * ch, int iWear, bool fReplace));
-extern void set_fighting       args((CHAR_DATA * ch, CHAR_DATA * victim));
-extern bool one_attack                                   args((CHAR_DATA * ch, CHAR_DATA * victim, int dt, OBJ_DATA * wield));
-bool check_shield_block args((CHAR_DATA * ch, CHAR_DATA * victim));
+extern bool remove_obj(CHAR_DATA * ch, int iWear, bool fReplace);
+extern void set_fighting(CHAR_DATA * ch, CHAR_DATA * victim);
+extern bool one_attack(CHAR_DATA * ch, CHAR_DATA * victim, int dt, OBJ_DATA * wield);
+bool check_shield_block(CHAR_DATA * ch, CHAR_DATA * victim);
 
 
 

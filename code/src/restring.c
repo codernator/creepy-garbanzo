@@ -28,18 +28,8 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#if defined(WIN32)
-#include <sys/timeb.h>
-#else
 #include <sys/time.h>
 #include <unistd.h>
-#endif
-#endif
-
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
@@ -57,13 +47,13 @@
 /***************************************************************************
 *	local functions
 ***************************************************************************/
-static void string_room    args((CHAR_DATA * ch, char *arg));
-static void string_char    args((CHAR_DATA * ch, char *arg));
-static void string_obj     args((CHAR_DATA * ch, char *arg));
-static void realloc_string args((char **src, char *str));
+static void string_room(CHAR_DATA * ch, char *arg);
+static void string_char(CHAR_DATA * ch, char *arg);
+static void string_obj(CHAR_DATA * ch, char *arg);
+static void realloc_string(char **src, char *str);
 
 extern bool is_space(const char test);
-extern ROOM_INDEX_DATA *find_location   args((CHAR_DATA * ch, char *arg));
+extern ROOM_INDEX_DATA *find_location(CHAR_DATA * ch, char *arg);
 
 
 

@@ -49,7 +49,6 @@
 #define BL      (int)(MAX_LEVEL - 2)    /* standard builder */
 #define MP      (int)(MAX_LEVEL - 2)    /* mob-prog coder */
 #define HP      (int)LEVEL_IMMORTAL     /* help editor */
-#define SC      (int)MAX_LEVEL          /* social editor */
 #define SK      (int)MAX_LEVEL          /* skill editor */
 #define GR      (int)MAX_LEVEL          /* groups editor */
 
@@ -70,7 +69,7 @@ typedef struct cmd_type {
 	int		show;
 }CMD;
 
-const CMD *cmd_lookup  args((CHAR_DATA * ch, char *argument));
+const CMD *cmd_lookup(CHAR_DATA * ch, char *argument);
 
 extern const struct cmd_type cmd_table[];
 
@@ -342,7 +341,6 @@ DECLARE_DO_FUN(do_smote);
 DECLARE_DO_FUN(do_sneak);
 DECLARE_DO_FUN(do_snoop);
 DECLARE_DO_FUN(do_snlist);
-DECLARE_DO_FUN(do_socials);
 DECLARE_DO_FUN(do_south);
 DECLARE_DO_FUN(do_sockets);
 DECLARE_DO_FUN(do_spells);

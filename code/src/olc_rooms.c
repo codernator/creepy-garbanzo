@@ -15,11 +15,7 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#if defined(macintosh)
-#include <types.h>
-#else
 #include <sys/types.h>
-#endif
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,7 +31,7 @@
 /***************************************************************************
 *	external functions
 ***************************************************************************/
-extern int wear_bit     args((int loc));
+extern int wear_bit(int loc);
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern int flag_value(const struct flag_type *flag_table, char *argument);
 
