@@ -160,20 +160,12 @@ DECLARE_SPELL_FUN(spell_black_plague);
 DECLARE_SPELL_FUN(spell_black_mantle);   /*  recreated 4/02 Shez  */
 DECLARE_SPELL_FUN(spell_equipment_invis);
 DECLARE_SPELL_FUN(spell_noremove);
-DECLARE_SPELL_FUN(spell_wall_of_water);
-DECLARE_SPELL_FUN(spell_wall_of_fire);
-DECLARE_SPELL_FUN(spell_wall_of_ice);
-DECLARE_SPELL_FUN(spell_wall_of_acid);
 DECLARE_SPELL_FUN(spell_cure_blood);
 DECLARE_SPELL_FUN(spell_fear);
 DECLARE_SPELL_FUN(spell_shatter_curse);
-DECLARE_SPELL_FUN(spell_bloody_tears);
 DECLARE_SPELL_FUN(spell_web);
 
 
-DECLARE_SPELL_FUN(spell_firebomb);
-DECLARE_SPELL_FUN(spell_sanatorium);
-DECLARE_SPELL_FUN(spell_deathtrap);
 DECLARE_SPELL_FUN(spell_displacement);
 DECLARE_SPELL_FUN(spell_haven);
 DECLARE_SPELL_FUN(spell_parasitic_cloud);
@@ -185,10 +177,7 @@ DECLARE_SPELL_FUN(spell_mana_vortex);
 /*******************************************************************************
 *	room affects
 *******************************************************************************/
-DECLARE_AFFECT_FUN(affect_firebomb);
-DECLARE_AFFECT_FUN(affect_sanatorium);
 DECLARE_AFFECT_FUN(affect_displacement);
-DECLARE_AFFECT_FUN(affect_deathtrap);
 DECLARE_AFFECT_FUN(affect_parasitic_cloud);
 
 /*******************************************************************************

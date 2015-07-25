@@ -683,14 +683,8 @@ char *room_affect(AFFECT_DATA *paf)
 	static char buf[512];
 
 	buf[0] = '\0';
-	if (paf->type == get_skill_number("firebomb"))
-		sprintf(buf, "An `1a`!u`#r`!a`` of `1b`!r`#i`!m`1s`!t`#o`!n`!e`` permeates the air.\n\r");
-	else if (paf->type == get_skill_number("sanatorium"))
-		sprintf(buf, "A `#b`7r`&i`7g`&h`#t, `1w`3a`#r`1m`` aura fills the room.\n\r");
-	else if (paf->type == get_skill_number("displacement"))
+	if (paf->type == get_skill_number("displacement"))
 		sprintf(buf, "The room is `4d`Oi`^z`6z`4y`` and `4d`Oi`^s`Oo`4r`Oi`6e`On`4t`Oi`^n`Og``.\n\r");
-	else if (paf->type == get_skill_number("deathtrap"))
-		sprintf(buf, "A `1d`!e`8a`7d`!l`7y `1t`!r`8a`!p`` lies hidden in the room.\n\r");
 	else if (paf->type == get_skill_number("haven"))
 		sprintf(buf, "A wave of `#p`7e`&a`7c`#e`` and `!c`&a`7l`!m`` fills the room.\n\r");
 	else if (paf->type == get_skill_number("mana vortex"))
@@ -711,73 +705,6 @@ char *room_affect(AFFECT_DATA *paf)
 /***************************************************************************
 *	room affects
 ***************************************************************************/
-/***************************************************************************
-*	affect_firebomb
-*
-*	do the firebomb affect for a room
-***************************************************************************/
-void affect_firebomb(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
-{
-	ROOM_INDEX_DATA *room = (ROOM_INDEX_DATA *)target;
-	CHAR_DATA *vch;
-	CHAR_DATA *vch_next;
-	int dam;
-
-	if ((type = AFFECT_TYPE_ROOM) && paf != NULL) {
-		for (vch = room->people; vch != NULL; vch = vch_next) {
-			vch_next = vch->next_in_room;
-			if (!IS_NPC(vch) && !IS_IMMORTAL(vch)) {
-				dam = number_range(paf->level * 5, paf->level * 30);
-				act("The room bursts into `1f`!l`#a`!m`#e`!s`` engulfing you!!", vch, NULL, NULL, TO_CHAR);
-				act("$n bursts into `1f`!l`#a`!m`#e`!s``!!", vch, NULL, NULL, TO_ROOM);
-
-				if ((dam = damage(vch, vch, dam, skill->sn, DAM_FIRE, FALSE)) > 0)
-					dam_message(vch, NULL, dam, skill->sn, FALSE);
-			}
-		}
-	}
-}
-
-
-/***************************************************************************
-*	affect_sanatorium
-*
-*	do the sanatorium affect for one room
-***************************************************************************/
-void affect_sanatorium(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
-{
-	ROOM_INDEX_DATA *room = (ROOM_INDEX_DATA *)target;
-	CHAR_DATA *vch;
-	int gain;
-	int iter;
-	char *affs[] = { "plague",
-			 "black_plague",
-			 "blindness",
-			 "poison",
-			 "curse",
-			 "" };
-
-	if ((type = AFFECT_TYPE_ROOM) && paf != NULL) {
-		for (vch = room->people; vch != NULL; vch = vch->next_in_room) {
-			if (!IS_NPC(vch) && !IS_IMMORTAL(vch)) {
-				gain = number_range(paf->level, paf->level * 3);
-				vch->hit = UMIN(vch->max_hit, vch->hit + number_fuzzy(gain));
-				vch->mana = UMIN(vch->max_mana, vch->mana + number_fuzzy(gain));
-				vch->move = UMIN(vch->max_move, vch->move + number_fuzzy(gain));
-
-				for (iter = 0; affs[iter] != 0; iter++) {
-					skill = skill_lookup(affs[iter]);
-
-					if (skill != NULL
-					    && is_affected(vch, skill)
-					    && number_range(0, 5) == 0)
-						affect_strip(vch, skill);
-				}
-				send_to_char("You feel `#b`@e`#t`@t`#e`@r``!\n\r", vch);
-			}
-		}
-	}
-}
 
 
 
@@ -826,34 +753,6 @@ void affect_displacement(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
 	}
 }
 
-
-/***************************************************************************
-*	affect_deathtrap
-*
-*	to be used in the vault and in the battlefield
-***************************************************************************/
-void affect_deathtrap(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
-{
-	ROOM_INDEX_DATA *room = (ROOM_INDEX_DATA *)target;
-	CHAR_DATA *vch;
-	CHAR_DATA *vch_next;
-
-	if ((type = AFFECT_TYPE_ROOM) && paf != NULL) {
-		for (vch = room->people; vch != NULL; vch = vch_next) {
-			vch_next = vch->next_in_room;
-			if (!IS_IMMORTAL(vch) && !IS_NPC(vch)) {
-				int dam;
-
-				dam = number_range(paf->level * 10, paf->level * 30);
-				if ((dam = damage(vch, vch, dam, skill->sn, DAM_PIERCE, FALSE)) > 0) {
-					dam_message(vch, NULL, dam, skill->sn, FALSE);
-					send_to_char("You better get out of here `1f`!a`#s`1t``!!!!\n\r", vch);
-					vch->position = POS_RESTING;
-				}
-			}
-		}
-	}
-}
 
 
 /***************************************************************************

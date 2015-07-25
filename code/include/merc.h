@@ -723,7 +723,6 @@ struct kill_data {
 #define IMM_SILVER              (Y)
 #define IMM_IRON                (Z)
 #define IMM_ILLUSION            (aa)
-#define IMM_RAZE                (bb)
 
 /* RES bits for mobs */
 #define RES_SUMMON              (A)
@@ -750,7 +749,6 @@ struct kill_data {
 #define RES_SILVER              (Y)
 #define RES_IRON                (Z)
 #define RES_ILLUSION            (aa)
-#define RES_RAZE                (bb)
 
 /* VULN bits for mobs */
 #define VULN_SUMMON             (A)
@@ -777,7 +775,6 @@ struct kill_data {
 #define VULN_SILVER             (Y)
 #define VULN_IRON               (Z)
 #define VULN_ILLUSION           (aa)
-#define VULN_RAZE               (bb)
 
 /* body form */
 #define FORM_EDIBLE             (A)
@@ -2206,17 +2203,9 @@ extern SKILL *gsp_veil;
 extern SKILL *gsp_anti_magic_aura;
 extern SKILL *gsp_dream;
 
-/* master skills */
-extern SKILL *gsp_retribution;
-extern SKILL *gsp_raze;
-extern SKILL *gsp_carnage;
-extern SKILL *gsp_leech;
-extern SKILL *gsp_displace;
 
 /* room affects */
 extern SKILL *gsp_haven;
-extern SKILL *gsp_firebomb;
-extern SKILL *gsp_deathtrap;
 extern SKILL *gsp_mana_vortex;
 
 

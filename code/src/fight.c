@@ -49,8 +49,6 @@ bool is_safe(CHAR_DATA * ch, CHAR_DATA * victim);
 bool one_hit(CHAR_DATA * ch, CHAR_DATA * victim, int dt, OBJ_DATA * wield);
 void set_fighting(CHAR_DATA * ch, CHAR_DATA * victim);
 bool check_dispel(int dis_level, CHAR_DATA * victim, SKILL * skill);
-void raze_affect(CHAR_DATA * ch);
-void carnage_affect(CHAR_DATA * ch);
 void check_killer(CHAR_DATA * ch, CHAR_DATA * victim);
 void dam_message(CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt, bool immune);
 void make_corpse(CHAR_DATA * ch);
@@ -88,13 +86,6 @@ void violence_update(void)
 
 	for (ch = char_list; ch != NULL; ch = ch_next) {
 		ch_next = ch->next;
-
-		if (is_affected(ch, gsp_raze)) {
-			raze_affect(ch);
-			raze_affect(ch);
-		}
-
-		carnage_affect(ch);
 
 		if ((victim = ch->fighting) == NULL || ch->in_room == NULL) {
 			ch->phased = FALSE;
@@ -1017,7 +1008,6 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
 	OBJ_DATA *corpse;
 	int race;
 	bool immune;
-	int ret_dam;
 	char buf[MAX_STRING_LENGTH];
 
 	if (victim->position == POS_DEAD)
@@ -1093,13 +1083,6 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
 		dam += random;
 	}
 
-	ret_dam = 0;
-	if (dam > 1 && is_affected(victim, gsp_retribution)
-	    && victim->in_room == ch->in_room && dt != gsp_retribution->sn && dt > 0) {
-		ret_dam = dam / 2;
-		dam -= dam / 4;
-	}
-
 	if (dam > 1
 	    && ((IS_AFFECTED(victim, AFF_PROTECT_EVIL) && IS_EVIL(ch))
 		|| (IS_AFFECTED(victim, AFF_PROTECT_GOOD) && IS_GOOD(ch))))
@@ -1147,10 +1130,6 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
 
 	dam = max_damage(ch, victim, dt, dam);
 
-	if (ret_dam > 0
-	    && is_affected(victim, gsp_retribution)
-	    && victim->in_room == ch->in_room)
-		damage(victim, ch, ret_dam, gsp_retribution->sn, dam_type, TRUE);
 
 	if (show)
 		dam_message(ch, victim, dam, dt, immune);

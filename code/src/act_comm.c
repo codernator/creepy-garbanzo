@@ -3090,42 +3090,6 @@ void do_tagstop(CHAR_DATA *ch, char *argument)
 }
 
 
-void do_wishto(CHAR_DATA *ch, char *argument)
-{
-	char arg[MIL];
-	char buf[MSL];
-	CHAR_DATA *victim;
-
-	argument = one_argument(argument, arg);
-
-	if (arg[0] == '\0' || argument[0] == '\0') {
-		send_to_char("Syntax: wishto <player> <text>\n\r", ch);
-		return;
-	}
-
-	victim = get_char_world(ch, arg);
-
-	if (victim == NULL) {
-		send_to_char("They aren't playing.\n\r", ch);
-		return;
-	}
-	if (IS_NPC(victim)) {
-		send_to_char("Not on NPCs.\n\r", ch);
-		return;
-	}
-	if (victim->desc == NULL) {
-		send_to_char("They seem to have lost their link.\n\r", ch);
-		return;
-	}
-	(void)snprintf(buf, 2 * MIL, "You `Owish`7 to %s: %s\n\r", victim->name, argument);
-	send_to_char(buf, ch);
-
-	(void)snprintf(buf, 2 * MIL, "%s `Owishes`7 to you: %s\n\r", PERS(ch, victim), argument);
-	send_to_char(buf, victim);
-
-	return;
-}
-
 void do_rpswitch(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
 	if (IS_NPC(ch))

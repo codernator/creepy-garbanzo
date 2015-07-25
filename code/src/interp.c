@@ -193,7 +193,6 @@ const struct cmd_type cmd_table[] =
 	{ "delet",	      do_delet,	       POS_DEAD,     0,	 LOG_ALWAYS, 0 },
 	{ "delete",	      do_delete,       POS_STANDING, 0,	 LOG_NORMAL, 1 },
 	{ "disable",	  do_disable,      POS_DEAD,     L7, LOG_ALWAYS, 1 },
-	{ "displace",	  do_displace,     POS_STANDING, 0,	 LOG_NORMAL, 1 },
 	{ "nickname",	  do_nickname,     POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "nofollow",	  do_nofollow,     POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "noloot",	      do_noloot,       POS_DEAD,     0,	 LOG_NORMAL, 1 },
@@ -243,7 +242,6 @@ const struct cmd_type cmd_table[] =
 	{ "unread",	      do_unread,       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "wish",	      do_wish,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "yell",	      do_yell,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
-	{ "wishto",	      do_wishto,       POS_DEAD,     IM, LOG_NORMAL, 0 },
 
 	/*  Object manipulation commands. */
 
@@ -256,7 +254,6 @@ const struct cmd_type cmd_table[] =
 	{ "envenom",	  do_envenom,      POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "evaluate",	  do_objident,     POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "fixscreen",	  do_fixscreen,    POS_RESTING,  0,	 LOG_NORMAL, 1 },
-	{ "vorpalize",	  do_vorpalize,    POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "fill",	      do_fill,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "give",	      do_give,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "heal",	      do_heal,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
@@ -276,8 +273,6 @@ const struct cmd_type cmd_table[] =
 	{ "take",	      do_get,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "sacrifice",	  do_sacrifice,    POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "junk",	      do_sacrifice,    POS_RESTING,  0,	 LOG_NORMAL, 0 },
-/*	{ "tap",		do_sacrifice,		POS_RESTING,	0,		LOG_NORMAL,		0       }, */
-/*	{ "unlock",		do_unlock,		POS_RESTING,	0,		LOG_NORMAL,		1       }, */
 	{ "value",	      do_value,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "wear",	      do_wear,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "zap",	      do_zap,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },

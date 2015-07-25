@@ -162,7 +162,6 @@ DECLARE_DO_FUN(do_echo);
 DECLARE_DO_FUN(do_emote);
 DECLARE_DO_FUN(do_enter);
 DECLARE_DO_FUN(do_envenom);
-DECLARE_DO_FUN(do_vorpalize);
 DECLARE_DO_FUN(do_equipment);
 DECLARE_DO_FUN(do_examine);
 DECLARE_DO_FUN(do_exits);
@@ -522,9 +521,3 @@ DECLARE_DO_FUN(do_skedit);
 DECLARE_DO_FUN(do_gredit);
 DECLARE_DO_FUN(do_scedit);
 
-
-/***************************************************************************
-*	master skills
-***************************************************************************/
-DECLARE_DO_FUN(do_displace);
-DECLARE_DO_FUN(do_wishto);

@@ -4460,70 +4460,7 @@ void spell_web(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, cha
 
 
 
-/***************************************************************************
-*	spell_firebomb
-*
-*	firebomb affect the room
-***************************************************************************/
-void spell_firebomb(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	ROOM_INDEX_DATA *room;
-	AFFECT_DATA af;
 
-	if ((room = ch->in_room) == NULL)
-		return;
-
-	if (is_affected_room(room, skill)) {
-		send_to_char("This room is already trapped.\n\r", ch);
-		return;
-	}
-
-	af.where = TO_AFFECTS;
-	af.type = skill->sn;
-	af.skill = skill;
-	af.level = level;
-	af.duration = number_range(3, 5);
-	af.location = 0;
-	af.modifier = 0;
-	af.bitvector = 0;
-	affect_to_room(room, &af);
-
-	send_to_char("You set a `1f`!i`#r`!e`1b`!o`3m`!b``.\n\r", ch);
-	return;
-}
-
-
-/***************************************************************************
-*	spell_sanatorium
-*
-*	sanatorium affect the room
-***************************************************************************/
-void spell_sanatorium(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	ROOM_INDEX_DATA *room;
-	AFFECT_DATA af;
-
-	if ((room = ch->in_room) == NULL)
-		return;
-
-	if (is_affected_room(room, skill)) {
-		send_to_char("This room cannot heal any faster.\n\r", ch);
-		return;
-	}
-
-	af.where = TO_AFFECTS;
-	af.type = skill->sn;
-	af.skill = skill;
-	af.level = level;
-	af.duration = number_range(10, 25);
-	af.location = 0;
-	af.modifier = 0;
-	af.bitvector = 0;
-	affect_to_room(room, &af);
-
-	send_to_char("You `#e`&n`7c`&h`7a`&n`#t`` the room for `#h`7e`&a`7l`&i`7n`#g``.\n\r", ch);
-	return;
-}
 
 
 
@@ -4561,37 +4498,6 @@ void spell_displacement(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 
 
 
-/***************************************************************************
-*	spell_deathtrap
-*
-*	deathtrap affect the room
-***************************************************************************/
-void spell_deathtrap(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	ROOM_INDEX_DATA *room;
-	AFFECT_DATA af;
-
-	if ((room = ch->in_room) == NULL)
-		return;
-
-	if (is_affected_room(room, skill)) {
-		send_to_char("This room is already trapped.\n\r", ch);
-		return;
-	}
-
-	af.where = TO_AFFECTS;
-	af.type = skill->sn;
-	af.skill = skill;
-	af.level = level;
-	af.duration = number_range(3, 5);
-	af.location = 0;
-	af.modifier = 0;
-	af.bitvector = 0;
-	affect_to_room(room, &af);
-
-	send_to_char("You set a `8d`7e`&a`8t`7h`8t`7r`&a`7p``.\n\r", ch);
-	return;
-}
 
 /***************************************************************************
 *	spell_haven
@@ -5463,70 +5369,6 @@ void spell_negative_shield(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int
 }
 
 
-/***************************************************************************
-*	spell_bloody_tears
-***************************************************************************/
-void spell_bloody_tears(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	CHAR_DATA *victim = (CHAR_DATA *)vo;
-	AFFECT_DATA af;
-	char buf[MSL];
-	long counter;
-
-	if (saves_spell(level, victim, DAM_OTHER)) {
-		sprintf(buf, "%s resists your attempt!\n\r", victim->name);
-		send_to_char(buf, ch);
-		return;
-	}
-
-	act("$n's eyes start bleeding!", victim, NULL, NULL, TO_ROOM);
-	send_to_char("Your eyes start bleeding!\n\r", victim);
-
-	damage(ch, victim, (level / 2), skill->sn, DAM_OTHER, TRUE);
-	if (gsp_blindness != NULL)
-		cast_spell(ch, gsp_blindness, level + (level / 20), vo, TARGET_CHAR, argument);
-
-	if (is_affected(victim, skill)) {
-		AFFECT_DATA *paf;
-
-		for (paf = victim->affected; paf != NULL; paf = paf->next) {
-			if (paf->type == skill->sn && paf->modifier <= 125) {
-				counter = paf->modifier;
-				counter += 25;
-
-				affect_strip(victim, skill);
-				af.where = TO_AFFECTS;
-				af.type = skill->sn;
-				af.skill = skill;
-				af.level = ch->level;
-				af.duration = (ch->level / 15);
-				af.modifier = counter;
-				af.bitvector = 0;
-				af.location = APPLY_SAVING_SPELL;
-
-				affect_to_char(victim, &af);
-				act("More blood flows into $n's eyes!", victim, NULL, NULL, TO_ROOM);
-				send_to_char("Your eyes bleed more heavily!\n\r", victim);
-			} else if (paf->type == skill->sn && paf->modifier > 125) {
-				send_to_char("Your eyes are already full of blood.\n\r", victim);
-				act("$n's eyes are full of blood!", victim, NULL, NULL, TO_ROOM);
-			}
-		}
-	} else {
-		af.where = TO_AFFECTS;
-		af.type = skill->sn;
-		af.skill = skill;
-		af.level = ch->level;
-		af.duration = (ch->level / 15);
-		af.modifier = 25;
-		af.bitvector = 0;
-
-		af.location = APPLY_SAVING_SPELL;
-		affect_to_char(victim, &af);
-	}
-
-	return;
-}
 
 
 /***************************************************************************

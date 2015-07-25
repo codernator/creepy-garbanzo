@@ -120,17 +120,9 @@ SKILL *gsp_veil;
 SKILL *gsp_anti_magic_aura;
 SKILL *gsp_dream;
 
-/* master skills */
-SKILL *gsp_retribution;
-SKILL *gsp_raze;
-SKILL *gsp_carnage;
-SKILL *gsp_leech;
-SKILL *gsp_displace;
 
 /* room affects */
 SKILL *gsp_haven;
-SKILL *gsp_firebomb;
-SKILL *gsp_deathtrap;
 SKILL *gsp_mana_vortex;
 
 
@@ -210,17 +202,9 @@ static const struct skill_resolve_type {
 	{ "veil",		&gsp_veil		},
 	{ "anti-magic aura",	&gsp_anti_magic_aura	},
 
-	/* master skills */
-	{ "retribution",	&gsp_retribution	},
-	{ "raze",		&gsp_raze		},
-	{ "carnage",		&gsp_carnage		},
-	{ "leech",		&gsp_leech		},
-	{ "displace",		&gsp_displace		},
 
 	/* room affects */
 	{ "haven",		&gsp_haven		},
-	{ "firebomb",		&gsp_firebomb		},
-	{ "deathtrap",		&gsp_deathtrap		},
 	{ "mana vortex",	&gsp_mana_vortex	},
 
 	{ "",			NULL			}
@@ -894,20 +878,10 @@ const struct spell_lookup_type spell_lookup_table[] =
 	{ "black mantle",      spell_black_mantle      },
 	{ "equipment invis",   spell_equipment_invis   },
 	{ "noremove",	       spell_noremove	       },
-	/*
-	 * { "wall of water",		spell_wall_of_water		},
-	 * { "wall of fire",		spell_wall_of_fire		},
-	 * { "wall of ice",		spell_wall_of_ice		},
-	 * { "wall of acid",		spell_wall_of_acid		},
-	 */
 	{ "cure blood",	       spell_cure_blood	       },
 	{ "fear",	       spell_fear	       },
 	{ "shatter curse",     spell_shatter_curse     },
-	{ "bloody tears",      spell_bloody_tears      },
 	{ "web",	       spell_web	       },
-	{ "firebomb",	       spell_firebomb	       },
-	{ "sanatorium",	       spell_sanatorium	       },
-	{ "deathtrap",	       spell_deathtrap	       },
 	{ "displacement",      spell_displacement      },
 	{ "haven",	       spell_haven	       },
 	{ "parasitic cloud",   spell_parasitic_cloud   },
@@ -921,10 +895,7 @@ const struct spell_lookup_type spell_lookup_table[] =
 ***************************************************************************/
 const struct affect_lookup_type affect_lookup_table[] =
 {
-	{ "firebomb",	     affect_firebomb	    },
-	{ "sanatorium",	     affect_sanatorium	    },
 	{ "displacement",    affect_displacement    },
-	{ "deathtrap",	     affect_deathtrap	    },
 	{ "parasitic cloud", affect_parasitic_cloud },
 	{ "black plague",    affect_black_plague    },
 	{ "disease",	     affect_disease	    },

@@ -1,7 +1,10 @@
 # spells
 elemental walls
+elemental strikes
 invisibility (partial, intermittent, full)
 
 # races
 faeries
  - faerie dust
+
+

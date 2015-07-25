@@ -576,21 +576,15 @@ void battlefield_special(CHAR_DATA *ch)
 
 				switch (rand) {
 				default:
-					skill = skill_lookup("firebomb");
-					level = (int)UMAX((battlefield.ulevel * 6) / 5, 300);
+					skill = skill_lookup("mana vortex");
+					level = battlefield.ulevel;
 					break;
 				case 0:
-				case 2:
-				case 3:
 				case 4:
 					skill = skill_lookup("displacement");
 					level = (int)UMAX((battlefield.ulevel * 6) / 5, 300);
 					break;
 				case 5:
-				case 6:
-					skill = skill_lookup("deathtrap");
-					level = battlefield.ulevel;
-					break;
 				case 7:
 					skill = skill_lookup("haven");
 					level = (int)battlefield.ulevel;
@@ -598,18 +592,9 @@ void battlefield_special(CHAR_DATA *ch)
 					break;
 				case 8:
 				case 9:
+				case 12:
 					skill = skill_lookup("parasitic cloud");
 					level = battlefield.ulevel;
-					break;
-				case 10:
-				case 11:
-					skill = skill_lookup("mana vortex");
-					level = battlefield.ulevel;
-					break;
-				case 12:
-					skill = skill_lookup("sanatorium");
-					level = battlefield.ulevel;
-					duration = (int)number_range(10, 15);
 					break;
 				}
 
