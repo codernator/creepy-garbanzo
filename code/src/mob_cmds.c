@@ -44,6 +44,7 @@
 #include "merc.h"
 #include "mob_cmds.h"
 #include "magic.h"
+#include "libstring.h"
 
 /*
  * Command functions.

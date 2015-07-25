@@ -35,6 +35,7 @@
 #include "interp.h"
 #include "tables.h"
 #include "lookup.h"
+#include "libstring.h"
 
 /***************************************************************************
 *	external commands

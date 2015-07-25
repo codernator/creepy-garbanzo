@@ -42,9 +42,8 @@
 #include "lookup.h"
 #include "db.h"
 #include "find.h"
+#include "libstring.h"
 
-extern bool is_space(const char test);
-extern bool is_digit(const char test);
 
 const struct cmp_vars_obj_index_data obj_idx_flags[] =
 {

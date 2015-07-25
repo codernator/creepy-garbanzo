@@ -49,6 +49,7 @@ extern void log_new(const char *log, const char *str, char username[]);
 extern bool is_space(const char test);
 extern bool is_digit(const char test);
 extern bool is_alpha(const char test);
+extern bool is_number(const char *test);
 char *repeater(char *s, int i);
 
 
@@ -724,23 +725,6 @@ void interpret(CHAR_DATA *ch, char *argument)
 }
 
 
-/*
- * return TRUE if an argument is completely numeric.
- */
-bool is_number(char *arg)
-{
-	if (*arg == '\0')
-		return FALSE;
-
-	if (*arg == '+' || *arg == '-')
-		arg++;
-
-	for (; *arg != '\0'; arg++)
-		if (!is_digit(*arg))
-			return FALSE;
-
-	return TRUE;
-}
 
 
 

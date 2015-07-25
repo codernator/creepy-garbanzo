@@ -42,6 +42,7 @@
 #include "tables.h"
 #include "olc.h"
 #include "interp.h"
+#include "libstring.h"
 
 extern void bug_long(const char *str, long param);
 extern char *flag_string(const struct flag_type *flag_table, long bits);

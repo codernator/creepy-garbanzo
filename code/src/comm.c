@@ -59,6 +59,7 @@
 #include "merc.h"
 #include "recycle.h"
 #include "interp.h"
+#include "libstring.h"
 
 /***************************************************************************
 *  Socket and TCP/IP stuff.
@@ -147,26 +148,25 @@ int main(int argc, char **argv)
 
 	init_signals();
 
-
-/*
- * Init time.
- */
+    /*
+     * Init time.
+     */
 	gettimeofday(&now_time, NULL);
 	current_time = (time_t)now_time.tv_sec;
 	strcpy(boot_time, (char *)ctime(&current_time));
 
 
-/*
- * Reserve one channel for our use.
- */
+    /*
+     * Reserve one channel for our use.
+     */
 	if ((fpReserve = fopen(NULL_FILE, "r")) == NULL) {
 		perror(NULL_FILE);
 		exit(1);
 	}
 
-/*
- * Get the port number.
- */
+    /*
+     * Get the port number.
+     */
 	port = 7778;
 	if (argc > 1) {
 		if (!is_number(argv[1])) {
@@ -188,23 +188,23 @@ int main(int argc, char **argv)
 
 
 
-/*
- * Run the game.
- */
-
-	if (!fCopyOver)
+    /*
+     * Run the game.
+     */
+	if (!fCopyOver) {
 		control = init_socket(port);
+    }
 
 	boot_db();
 	sprintf(log_buf, "BT is ready to rock on port %d.", port);
 	log_string(log_buf);
 
-	if (fCopyOver)
+	if (fCopyOver) {
 		copyover_recover();
+    }
 
 	game_loop(control);
 	close(control);
-
 
 	log_string("Normal termination of game.");
 	exit(0);

@@ -61,6 +61,7 @@ DECLARE_DO_FUN(do_rrestore);
 extern long top_mob_index;
 extern long top_obj_index;
 extern bool is_space(const char test);
+extern bool is_number(const char *test);
 
 /***************************************************************************
 *	local functions

@@ -26,6 +26,7 @@
 #include "tables.h"
 #include "olc.h"
 #include "recycle.h"
+#include "libstring.h"
 
 
 extern void do_help(CHAR_DATA *ch, char *argument);

@@ -26,6 +26,7 @@
 #include "olc.h"
 #include "recycle.h"
 #include "lookup.h"
+#include "libstring.h"
 
 
 /***************************************************************************
@@ -35,7 +36,6 @@ extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern int flag_value(const struct flag_type *flag_table, char *argument);
 extern unsigned int parse_unsigned_int(char *string);
 extern void mob_auto_hit_dice(MOB_INDEX_DATA *mix, enum medit_auto_config_type auto_config_type);
-extern bool is_digit(const char test);
 
 
 /*****************************************************************************

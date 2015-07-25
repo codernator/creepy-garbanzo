@@ -96,37 +96,6 @@ void spell_armor(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, c
 	return;
 }
 
-/***************************************************************************
-*	spell_bad_trip
-***************************************************************************/
-void spell_bad_trip(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	CHAR_DATA *victim = (CHAR_DATA *)vo;
-	AFFECT_DATA af;
-
-	if (is_affected(victim, skill)) {
-		if (victim == ch)
-			send_to_char("But you're already `5T`Prippin`5' `2B`@alls`2'``!\n\r", ch);
-		else
-			act("$N is already `5T`Prippin`5' `2B`@alls`2'``!", ch, NULL, victim, TO_CHAR);
-		return;
-	}
-
-	af.where = TO_AFFECTS;
-	af.type = skill->sn;
-	af.skill = skill;
-	af.level = level;
-	af.duration = level / 10;
-	af.location = APPLY_NONE;
-	af.modifier = 0;
-	af.bitvector = 0;
-	affect_to_char(victim, &af);
-
-	act("$n`8'``s eyes `Og`7l`&a`7z`Oe`` over.", victim, NULL, NULL, TO_ROOM);
-	send_to_char("Everything around you explodes in a world of `1c`#o`&l`2o`6r``!\n\r", victim);
-
-	return;
-}
 
 /***************************************************************************
 *	spell_black_plague
@@ -5789,8 +5758,6 @@ void spell_acidic_rain(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int tar
 
 
 	send_to_char("You call `!A`&c`!i`&d`!i`&c rain from the heavens!\n\r", ch);
-	if (gsp_bad_trip != NULL && gsp_bad_trip->spells != NULL)
-		cast_spell(ch, gsp_bad_trip, level, ch, TARGET_CHAR, argument);
 
 	for (vch = char_list; vch != NULL; vch = vch_next) {
 		vch_next = vch->next;
@@ -5800,11 +5767,6 @@ void spell_acidic_rain(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int tar
 
 		if (vch->in_room->area == ch->in_room->area) {
 			send_to_char("`!A`&c`!i`&d`!i`&c rain pours down from above!\n\r", vch);
-
-			if (!IS_NPC(vch)) {
-				if (gsp_bad_trip != NULL && gsp_bad_trip->spells != NULL)
-					cast_spell(ch, gsp_bad_trip, level, vch, TARGET_CHAR, argument);
-			}
 
 			if (vch != ch && !is_safe_spell(ch, vch, TRUE)) {
 				if (is_same_group(vch, ch))

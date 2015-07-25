@@ -40,6 +40,7 @@
 #include "lookup.h"
 #include "recycle.h"
 #include "skills.h"
+#include "libstring.h"
 
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern int flag_value(const struct flag_type *flag_table, char *argument);

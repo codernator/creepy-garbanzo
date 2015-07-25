@@ -2190,7 +2190,6 @@ extern SKILL *gsp_dash;
 extern SKILL *gsp_black_mantle;
 extern SKILL *gsp_fast_healing;
 extern SKILL *gsp_meditation;
-extern SKILL *gsp_bad_trip;
 extern SKILL *gsp_black_plague;
 extern SKILL *gsp_burning_flames;
 extern SKILL *gsp_peek;
@@ -2654,7 +2653,6 @@ char *room_affect(AFFECT_DATA * paf);
 
 /*	interp.c */
 void interpret(CHAR_DATA * ch, char *argument);
-bool is_number(char *arg);
 int number_argument(char *argument, char *arg);
 int mult_argument(char *argument, char *arg);
 char *one_argument(char *argument, /*@out@*/ char *arg_first);

@@ -38,6 +38,7 @@
 #include "lookup.h"
 #include "interp.h"
 #include "magic.h"
+#include "libstring.h"
 
 
 

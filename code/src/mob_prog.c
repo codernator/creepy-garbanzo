@@ -44,10 +44,10 @@
 #include "merc.h"
 #include "tables.h"
 #include "lookup.h"
+#include "libstring.h"
 
 extern long flag_lookup(const char *word, const struct flag_type *flag_table);
 extern void bug_long(const char *str, long param);
-extern bool is_space(const char test);
 
 /*
  * These defines correspond to the entries in fn_keyword[] table.

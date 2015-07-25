@@ -39,6 +39,7 @@
 #include "olc.h"
 #include "lookup.h"
 #include "recycle.h"
+#include "libstring.h"
 
 
 

@@ -1182,7 +1182,6 @@ static void char_update(void)
 {
 	CHAR_DATA *ch;
 	CHAR_DATA *ch_next;
-	int foo;
 
 	save_number++;
 	if (save_number > 29)
@@ -1277,45 +1276,6 @@ static void char_update(void)
 
 		if (ch->position == POS_STUNNED)
 			update_pos(ch);
-
-		if (is_affected(ch, gsp_bad_trip)) {
-			foo = number_range(1, 10);
-			switch (foo) {
-			case 0:
-				send_to_char("Things don't look quite right..\n", ch);
-				break;
-			case 1:
-				send_to_char("The walls breathe slowly.\n", ch);
-				break;
-			case 2:
-				send_to_char("The clouds wink at you.\n", ch);
-				break;
-			case 3:
-				send_to_char("You hear your name whispered by the wind.\n", ch);
-				break;
-			case 4:
-				send_to_char("Everyone is looking at you!\n", ch);
-				break;
-			case 5:
-				send_to_char("Everyone looks more colorful than usual..\n", ch);
-				break;
-			case 6:
-				send_to_char("Your sanity seems to be missing..\n", ch);
-				break;
-			case 7:
-				send_to_char("Why is everyone melting like that?\n", ch);
-				break;
-			case 8:
-				send_to_char("The shapes coalesce into a blur.\n", ch);
-				break;
-			case 9:
-				send_to_char("Oh, wowwwww, maaaaan..!\n", ch);
-				break;
-			default:
-				send_to_char("Neon letters fall from the sky..\n", ch);
-				break;
-			}
-		}
 
 		if (!IS_NPC(ch) && ch->level < LEVEL_IMMORTAL) {
 			OBJ_DATA *obj;

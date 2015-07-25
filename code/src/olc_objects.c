@@ -27,6 +27,7 @@
 #include "recycle.h"
 #include "lookup.h"
 #include "interp.h"
+#include "libstring.h"
 
 
 extern char *flag_string(const struct flag_type *flag_table, long bits);

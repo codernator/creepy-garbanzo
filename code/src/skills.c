@@ -40,6 +40,7 @@
 #include "skills.h"
 #include "lookup.h"
 #include "interp.h"
+#include "libstring.h"
 
 
 /***************************************************************************
@@ -103,7 +104,6 @@ SKILL *gsp_black_mantle;
 SKILL *gsp_fast_healing;
 SKILL *gsp_black_plague;
 SKILL *gsp_meditation;
-SKILL *gsp_bad_trip;
 SKILL *gsp_burning_flames;
 SKILL *gsp_peek;
 SKILL *gsp_detect_magic;
@@ -197,7 +197,6 @@ static const struct skill_resolve_type {
 	{ "fast healing",	&gsp_fast_healing	},
 	{ "black plague",	&gsp_black_plague	},
 	{ "meditation",		&gsp_meditation		},
-	{ "bad trip",		&gsp_bad_trip		},
 	{ "black plague",	&gsp_black_plague	},
 	{ "burning flames",	&gsp_burning_flames	},
 	{ "peek",		&gsp_peek		},
@@ -898,7 +897,6 @@ const struct spell_lookup_type spell_lookup_table[] =
 	{ "create feast",      spell_create_feast      },
 	{ "blood boil",	       spell_blood_boil	       },
 	{ "make bag",	       spell_make_bag	       },
-	{ "bad trip",	       spell_bad_trip	       },
 	{ "black plague",      spell_black_plague      },
 	{ "black mantle",      spell_black_mantle      },
 	{ "equipment invis",   spell_equipment_invis   },

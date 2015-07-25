@@ -47,6 +47,7 @@
 #include "lookup.h"
 #include "db.h"
 #include "find.h"
+#include "libstring.h"
 
 /* from olc_areas.c */
 extern AREA_DATA *get_vnum_area(long vnum);

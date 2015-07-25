@@ -41,11 +41,12 @@
 #include "tables.h"
 #include "lookup.h"
 #include "interp.h"
+#include "libstring.h"
+
 
 /***************************************************************************
 *	function declaration
 ***************************************************************************/
-extern void capitalize_into(const char *source, /*@out@*/ char *initialized_target, size_t string_length);
 extern unsigned int parse_unsigned_int(char *string);
 
 

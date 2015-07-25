@@ -44,10 +44,12 @@
 #include "lookup.h"
 #include "ansi.h"
 #include "interp.h"
+#include "libstring.h"
 
 extern byte parse_byte(char *string);
 extern byte parse_byte2(char *string, byte min, byte max);
-extern bool is_space(const char test);
+
+
 void do_at(CHAR_DATA * ch, char *argument);
 HELP_DATA *find_help(CHAR_DATA * ch, char *name);
 void print_weather(CHAR_DATA * ch);

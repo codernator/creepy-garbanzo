@@ -39,6 +39,7 @@
 #include "recycle.h"
 #include "lookup.h"
 #include "tables.h"
+#include "libstring.h"
 
 
 /***************************************************************************

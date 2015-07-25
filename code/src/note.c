@@ -68,6 +68,7 @@
 #include "interp.h"
 #include "recycle.h"
 #include "tables.h"
+#include "libstring.h"
 
 /***************************************************************************
 *	globals
@@ -75,7 +76,6 @@
 extern int _filbuf(FILE *);
 extern FILE *fp_area;
 extern char area_file[MIL];
-extern bool is_space(const char test);
 
 #define MAX_MESSAGE_LENGTH              4096
 #define MIN_MESSAGE_LEVEL               10

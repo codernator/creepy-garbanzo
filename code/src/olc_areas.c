@@ -26,10 +26,10 @@
 #include "olc.h"
 #include "recycle.h"
 #include "lookup.h"
+#include "libstring.h"
 
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern int flag_value(const struct flag_type *flag_table, char *argument);
-extern bool is_alnum(const char test);
 
 /*****************************************************************************
  *      Name:		check_range(lower vnum, upper vnum)
