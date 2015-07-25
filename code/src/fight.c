@@ -1818,7 +1818,6 @@ void set_fighting(CHAR_DATA *ch, CHAR_DATA *victim)
 
 	if (IS_AFFECTED(ch, AFF_SLEEP)) {
 		affect_strip(ch, gsp_sleep);
-		affect_strip(ch, gsp_bludgeon);
 	}
 
 	ch->fighting = victim;

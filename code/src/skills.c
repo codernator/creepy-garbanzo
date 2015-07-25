@@ -68,7 +68,6 @@ SKILL *gsp_whip;
 /* skill lookup return values for frequently  used skills */
 SKILL *gsp_hand_to_hand;
 SKILL *gsp_aggressive_parry;
-SKILL *gsp_assassinate;
 SKILL *gsp_second_attack;
 SKILL *gsp_third_attack;
 SKILL *gsp_fourth_attack;
@@ -83,7 +82,6 @@ SKILL *gsp_darkness;
 SKILL *gsp_invisibility;
 SKILL *gsp_mass_invisibility;
 SKILL *gsp_sleep;
-SKILL *gsp_bludgeon;
 SKILL *gsp_voodoo;
 SKILL *gsp_hide;
 SKILL *gsp_sneak;
@@ -155,7 +153,6 @@ static const struct skill_resolve_type {
 	{ "dodge",		&gsp_dodge		},
 	{ "evade",		&gsp_evade		},
 	{ "aggressive parry",	&gsp_aggressive_parry	},
-	{ "assassinate",	&gsp_assassinate	},
 	{ "second attack",	&gsp_second_attack	},
 	{ "third attack",	&gsp_third_attack	},
 	{ "fourth attack",	&gsp_fourth_attack	},
@@ -169,7 +166,6 @@ static const struct skill_resolve_type {
 	{ "invisibility",	&gsp_invisibility	},
 	{ "mass invisibility",	&gsp_mass_invisibility	},
 	{ "sleep",		&gsp_sleep		},
-	{ "bludgeon",		&gsp_bludgeon		},
 	{ "voodoo",		&gsp_voodoo		},
 	{ "hide",		&gsp_hide		},
 	{ "sneak",		&gsp_sneak		},

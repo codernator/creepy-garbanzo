@@ -690,7 +690,6 @@ struct kill_data {
 #define ASSIST_PLAYERS          (S)
 #define ASSIST_GUARD            (T)
 #define ASSIST_VNUM             (U)
-#define OFF_ASSASSINATE         (V)
 
 /* return values for check_imm */
 #define IS_NORMAL               0
@@ -2147,7 +2146,6 @@ extern SKILL *gsp_whip;
 /* pointers to frequently used skills */
 extern SKILL *gsp_hand_to_hand;
 extern SKILL *gsp_aggressive_parry;
-extern SKILL *gsp_assassinate;
 extern SKILL *gsp_second_attack;
 extern SKILL *gsp_third_attack;
 extern SKILL *gsp_fourth_attack;
@@ -2165,7 +2163,6 @@ extern SKILL *gsp_darkness;
 extern SKILL *gsp_invisibility;
 extern SKILL *gsp_mass_invisibility;
 extern SKILL *gsp_sleep;
-extern SKILL *gsp_bludgeon;
 extern SKILL *gsp_voodoo;
 extern SKILL *gsp_hide;
 extern SKILL *gsp_sneak;

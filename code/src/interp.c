@@ -285,8 +285,6 @@ const struct cmd_type cmd_table[] =
 
 	/* Combat commands.*/
 
-	{ "assassinate",  do_assassinate,  POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
-	{ "bludgeon",	  do_bludgeon,     POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
 	{ "bash",	      do_bash,	       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
 	{ "bite",	      do_bite,	       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
 	{ "berserk",	  do_berserk,      POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
@@ -308,7 +306,6 @@ const struct cmd_type cmd_table[] =
 	{ "throw",	      do_throw,	       POS_FIGHTING, 0,	 LOG_NORMAL, 0 },
 	{ "trip",	      do_trip,	       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
 	{ "shriek",	      do_shriek,       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
-/*	{ "shadow",		do_shadow,		POS_STANDING,	0,		LOG_NORMAL,		1	}, */
 
 /*  Mob command interpreter(placed here for faster scan...)  */
 
@@ -565,19 +562,6 @@ void interpret(CHAR_DATA *ch, char *argument)
 		}
 	}
 
-/*
- * VERY IMPORTANT! alright shadow is basically hide with
- * the bonus of being able to move around without losing it
- * what i did was see that all the move cmds are the
- * first 6(0-5) in the cmd table so came up
- * with this little check. if YOU MOVE THE
- * MOVEMENT COMMANDS AROUND IN THE CMD TABLE YOU
- * WILL HAVE TO CHANGE this.
- */
-
-	/*
-	 * if(IS_SET(ch->affected_by, AFF_HIDE) &&	!is_affected(ch, gsp_shadow))
-	 */
 	if (IS_SET(ch->affected_by, AFF_HIDE)) {
 		if (ch->class == class_lookup("thief")) {
 			if (cmd_table[cmd].position <= POS_RESTING || cmd < 6) {
@@ -590,16 +574,6 @@ void interpret(CHAR_DATA *ch, char *argument)
 			REMOVE_BIT(ch->affected_by, AFF_HIDE);
 		}
 	}
-
-	/*
-	 * if(cmd > 5 && is_affected(ch, skill_shadow))
-	 * {
-	 *  if(check_dispel(310, ch, skill_shadow))
-	 *  {
-	 *          act("$n steps out from out of the shadows.", ch, NULL, NULL, TO_ROOM);
-	 *  }
-	 * }
-	 */
 
 	/* Log and snoop. */
 

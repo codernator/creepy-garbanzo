@@ -253,7 +253,6 @@ const struct flag_type off_flags[] =
 	{ "assist_players", S, TRUE },
 	{ "assist_guard",   T, TRUE },
 	{ "assist_vnum",    U, TRUE },
-	{ "assassinate",    V, TRUE },
 	{ NULL,		    0, 0    }
 };
 
