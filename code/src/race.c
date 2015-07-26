@@ -41,12 +41,10 @@
 #include "interp.h"
 #include "recycle.h"
 
-/***************************************************************************
-*	local function declarations
-***************************************************************************/
 extern bool remove_obj(CHAR_DATA * ch, int iWear, bool fReplace);
 extern void set_fighting(CHAR_DATA * ch, CHAR_DATA * victim);
-extern bool one_attack(CHAR_DATA * ch, CHAR_DATA * victim, int dt, OBJ_DATA * wield);
+
+
 bool check_shield_block(CHAR_DATA * ch, CHAR_DATA * victim);
 
 

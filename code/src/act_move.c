@@ -1591,117 +1591,28 @@ void do_visible(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_sit(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj = NULL;
-	OBJ_DATA *obj_on = NULL;
+    OBJ_DATA *on = NULL;
 
-	if (ch->position == POS_FIGHTING) {
-		send_to_char("Maybe you should finish this fight first?\n\r", ch);
-		return;
-	}
+    if (argument[0] != '\0') {
+        on = get_obj_list(ch, argument, ch->in_room->contents);
+        if (on == NULL) {
+            send_to_char("You don't see that here.\n\r", ch);
+            return;
+        }
+    } else {
+        OBJ_DATA *obj = NULL;
+        /* Try to pull a sittable object from inventory. */
+        for (obj = ch->carrying; obj != NULL; obj = obj->next_content) {
+            if (is_situpon(obj)
+                && can_see_obj(ch, obj)
+                && can_drop_obj(ch, obj)) {
+                on = obj;
+                break;
+            }
+        }
+    }
 
-	for (obj_on = ch->carrying; obj_on != NULL; obj_on = obj_on->next_content) {
-		if ((obj_on->item_type == ITEM_FURNITURE)
-		    && (IS_SET(obj_on->value[2], SIT_ON)
-			|| IS_SET(obj_on->value[2], SIT_IN)
-			|| IS_SET(obj_on->value[2], SIT_AT))
-		    && can_see_obj(ch, obj_on)
-		    && can_drop_obj(ch, obj_on)) {
-			obj_from_char(obj_on);
-			obj_to_room(obj_on, ch->in_room);
-			obj = obj_on;
-			break;
-		}
-	}
-
-	if (obj != NULL) {
-		if (argument[0] != '\0') {
-			obj = get_obj_list(ch, argument, ch->in_room->contents);
-			if (obj == NULL) {
-				send_to_char("You don't see that here.\n\r", ch);
-				return;
-			}
-		} else {
-			if (obj_on != NULL)
-				obj = obj_on;
-			else
-				obj = ch->on;
-
-		}
-	}
-
-
-	if (obj != NULL) {
-		if (!IS_SET(obj->item_type, ITEM_FURNITURE)
-		    || (!IS_SET(obj->value[2], SIT_ON)
-			&& !IS_SET(obj->value[2], SIT_IN)
-			&& !IS_SET(obj->value[2], SIT_AT))) {
-			send_to_char("You can't sit on that.\n\r", ch);
-			return;
-		}
-
-		if (obj != NULL && ch->on != obj && (long)count_users(obj) >= obj->value[0]) {
-			act_new("There's no more room on $p.", ch, obj, NULL, TO_CHAR, POS_DEAD, FALSE);
-			return;
-		}
-
-		if (obj_on != NULL)
-			ch->on = obj_on;
-	}
-
-	switch (ch->position) {
-	case POS_SLEEPING:
-		if (IS_AFFECTED(ch, AFF_SLEEP)) {
-			send_to_char("You can't wake up!\n\r", ch);
-			return;
-		}
-		if (obj == NULL) {
-			send_to_char("You wake and sit up.\n\r", ch);
-			act("$n wakes and sits up.", ch, NULL, NULL, TO_ROOM);
-		} else if (IS_SET(obj->value[2], SIT_AT)) {
-			act_new("You wake and sit at $p.", ch, obj, NULL, TO_CHAR, POS_DEAD, FALSE);
-			act("$n wakes and sits at $p.", ch, obj, NULL, TO_ROOM);
-		} else if (IS_SET(obj->value[2], SIT_ON)) {
-			act_new("You wake and sit on $p.", ch, obj, NULL, TO_CHAR, POS_DEAD, FALSE);
-			act("$n wakes and sits at $p.", ch, obj, NULL, TO_ROOM);
-		} else {
-			act_new("You wake and sit in $p.", ch, obj, NULL, TO_CHAR, POS_DEAD, FALSE);
-			act("$n wakes and sits in $p.", ch, obj, NULL, TO_ROOM);
-		}
-
-		ch->position = POS_SITTING;
-		break;
-	case POS_RESTING:
-		if (obj == NULL) {
-			send_to_char("You stop resting.\n\r", ch);
-		} else if (IS_SET(obj->value[2], SIT_AT)) {
-			act("You sit at $p.", ch, obj, NULL, TO_CHAR);
-			act("$n sits at $p.", ch, obj, NULL, TO_ROOM);
-		} else if (IS_SET(obj->value[2], SIT_ON)) {
-			act("You sit on $p.", ch, obj, NULL, TO_CHAR);
-			act("$n sits on $p.", ch, obj, NULL, TO_ROOM);
-		}
-		ch->position = POS_SITTING;
-		break;
-	case POS_SITTING:
-		send_to_char("You are already sitting down.\n\r", ch);
-		break;
-	case POS_STANDING:
-		if (obj == NULL) {
-			send_to_char("You sit down.\n\r", ch);
-			act("$n sits down on the ground.", ch, NULL, NULL, TO_ROOM);
-		} else if (IS_SET(obj->value[2], SIT_AT)) {
-			act("You sit down at $p.", ch, obj, NULL, TO_CHAR);
-			act("$n sits down at $p.", ch, obj, NULL, TO_ROOM);
-		} else if (IS_SET(obj->value[2], SIT_ON)) {
-			act("You sit on $p.", ch, obj, NULL, TO_CHAR);
-			act("$n sits on $p.", ch, obj, NULL, TO_ROOM);
-		} else {
-			act("You sit down in $p.", ch, obj, NULL, TO_CHAR);
-			act("$n sits down in $p.", ch, obj, NULL, TO_ROOM);
-		}
-		ch->position = POS_SITTING;
-		break;
-	}
+    sit(ch, on);
 
 	return;
 }
@@ -1712,105 +1623,20 @@ void do_sit(CHAR_DATA *ch, char *argument)
 void do_stand(CHAR_DATA *ch, char *argument)
 {
 	OBJ_DATA *obj = NULL;
-	OBJ_DATA *obj_on = NULL;
 
-
-	if (ch->on != NULL)
-		obj_on = ch->on;
 	if (argument[0] != '\0') {
-		if (ch->position == POS_FIGHTING) {
-			send_to_char("Maybe you should finish fighting first?\n\r", ch);
-			return;
-		}
-
 		obj = get_obj_list(ch, argument, ch->in_room->contents);
 		if (obj == NULL) {
 			send_to_char("You don't see that here.\n\r", ch);
 			return;
 		}
+	} else {
+        // implicitly stand on whatever already on.
+        obj = ch->on;
+    }
 
-		if (obj->item_type != ITEM_FURNITURE
-		    || (!IS_SET(obj->value[2], STAND_AT)
-			&& !IS_SET(obj->value[2], STAND_ON)
-			&& !IS_SET(obj->value[2], STAND_IN))) {
-			send_to_char("You can't seem to find a place to stand.\n\r", ch);
-			return;
-		}
+    stand(ch, obj);
 
-		if (IS_AFFECTED(ch, AFF_SLEEP)) {
-			send_to_char("You can't wake up!\n\r", ch);
-			return;
-		}
-
-		if (ch->on != obj && (long)count_users(obj) >= obj->value[0]) {
-			act_new("There's no room to stand on $p.", ch, obj, NULL, TO_ROOM, POS_DEAD, FALSE);
-			return;
-		}
-	}
-
-	switch (ch->position) {
-	case POS_SLEEPING:
-		if (IS_AFFECTED(ch, AFF_SLEEP)) {
-			send_to_char("You can't wake up!\n\r", ch);
-			return;
-		}
-
-		if (obj == NULL) {
-			send_to_char("You wake and stand up.\n\r", ch);
-			act("$n wakes and stands up.", ch, NULL, NULL, TO_ROOM);
-		} else if (IS_SET(obj->value[2], STAND_AT)) {
-			act_new("You wake and stand at $p.", ch, obj, NULL, TO_CHAR, POS_DEAD, FALSE);
-			act("$n wakes and stands at $p.", ch, obj, NULL, TO_ROOM);
-		} else if (IS_SET(obj->value[2], STAND_ON)) {
-			act_new("You wake and stand on $p.", ch, obj, NULL, TO_CHAR, POS_DEAD, FALSE);
-			act("$n wakes and stands on $p.", ch, obj, NULL, TO_ROOM);
-		} else {
-			act_new("You wake and stand in $p.", ch, obj, NULL, TO_CHAR, POS_DEAD, FALSE);
-			act("$n wakes and stands in $p.", ch, obj, NULL, TO_ROOM);
-		}
-		ch->position = POS_STANDING;
-
-		if (ch->on != NULL)
-			ch->on = NULL;
-		do_look(ch, "auto");
-		break;
-
-	case POS_RESTING:
-	case POS_SITTING:
-		if (obj == NULL) {
-			send_to_char("You stand up.\n\r", ch);
-			act("$n stands up.", ch, NULL, NULL, TO_ROOM);
-		} else if (IS_SET(obj->value[2], STAND_AT)) {
-			act("You stand at $p.", ch, obj, NULL, TO_CHAR);
-			act("$n stands at $p.", ch, obj, NULL, TO_ROOM);
-		} else if (IS_SET(obj->value[2], STAND_ON)) {
-			act("You stand on $p.", ch, obj, NULL, TO_CHAR);
-			act("$n stands on $p.", ch, obj, NULL, TO_ROOM);
-		} else {
-			act("You stand in $p.", ch, obj, NULL, TO_CHAR);
-			act("$n stands on $p.", ch, obj, NULL, TO_ROOM);
-		}
-		ch->position = POS_STANDING;
-		if (ch->on != NULL)
-			ch->on = NULL;
-		break;
-	case POS_STANDING:
-		send_to_char("You are already standing.\n\r", ch);
-		break;
-
-	case POS_FIGHTING:
-		send_to_char("You are already fighting!\n\r", ch);
-		break;
-	}
-
-	if (ch->dream != NULL && ch->position != POS_SLEEPING) {
-		send_to_char("Your dreams are interrupted\n\r", ch);
-		ch->dream = NULL;
-	}
-
-
-	if (obj_on != NULL && can_see_obj(ch, obj_on))
-		get_obj(ch, obj_on, NULL);
 	return;
 }
 

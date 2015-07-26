@@ -44,12 +44,10 @@ extern bool in_battlefield(CHAR_DATA * ch);
 
 #define MAX_DAMAGE_MESSAGE 58
 
-ONE_ATTACK_RESULT one_attack(CHAR_DATA *ch, CHAR_DATA *victim, int dt, OBJ_DATA *attacker_wield);
 bool is_safe(CHAR_DATA * ch, CHAR_DATA * victim);
 bool one_hit(CHAR_DATA * ch, CHAR_DATA * victim, int dt, OBJ_DATA * wield);
 void set_fighting(CHAR_DATA * ch, CHAR_DATA * victim);
 bool check_dispel(int dis_level, CHAR_DATA * victim, SKILL * skill);
-void check_killer(CHAR_DATA * ch, CHAR_DATA * victim);
 void dam_message(CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt, bool immune);
 void make_corpse(CHAR_DATA * ch);
 bool check_shield_block(CHAR_DATA * ch, CHAR_DATA * victim);

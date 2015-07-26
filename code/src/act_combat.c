@@ -27,6 +27,7 @@
 
 #include <stdio.h>
 #include "merc.h"
+#include "mob_cmds.h"
 
 
 extern void do_sit(CHAR_DATA *ch, char *);
@@ -36,152 +37,9 @@ extern void make_corpse(CHAR_DATA *ch);
 extern bool check_shield_block(CHAR_DATA *ch, CHAR_DATA *victim);
 extern void disarm(CHAR_DATA *ch, CHAR_DATA *victim);
 extern void spell_charm_person(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument);
-extern bool one_attack(CHAR_DATA *ch, CHAR_DATA *victim, int dt, OBJ_DATA *wield);
 extern void set_fighting(CHAR_DATA *ch, CHAR_DATA *victim);
-extern bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
 extern int battlefield_count(void);
 
-
-/***************************************************************************
-*	do_banzai
-***************************************************************************/
-void do_banzai(CHAR_DATA *ch, char *argument)
-{
-	AFFECT_DATA af;
-	SKILL *skill;
-	int percent;
-
-	if ((skill = skill_lookup("banzai")) == NULL) {
-		send_to_char("Huh?", ch);
-		return;
-	}
-
-
-	if ((percent = get_learned_percent(ch, skill)) <= 0) {
-		send_to_char("`!WHAT``\n\r`PTHE``\n\r`OFUCK?``\n\r", ch);
-		return;
-	}
-
-	if (is_affected(ch, skill)) {
-		/*affect_strip(ch, gsn_banzai);*/
-		send_to_char("You can't get any crazier!\n\r", ch);
-		return;
-	}
-
-	if ((number_percent() < percent)) {
-		send_to_char("`!B`1AAAAAAAAAAAAN`!Z`1AAAAAAAAAAIIIIIIIIII!!!``\n\r", ch);
-		act("$n looks ready to take on the world!\n\r", ch, NULL, NULL, TO_ROOM);
-		check_improve(ch, skill, TRUE, 3);
-		af.where = TO_AFFECTS;
-		af.type = skill->sn;
-		af.skill = skill;
-		af.level = ch->level;
-		af.duration = (int)(ch->level * 10);
-		af.modifier = (ch->level * 10);
-		af.bitvector = 0;
-		af.location = APPLY_HITROLL;
-		affect_to_char(ch, &af);
-
-		af.location = APPLY_DAMROLL;
-		affect_to_char(ch, &af);
-	} else {
-		send_to_char("You can't seem to find your motivation.\n\r", ch);
-		check_improve(ch, skill, FALSE, 3);
-	}
-
-	return;
-}
-
-
-/***************************************************************************
-*	do_berserk
-***************************************************************************/
-void do_berserk(CHAR_DATA *ch, char *argument)
-{
-	SKILL *skill;
-	int chance;
-	int hp_percent;
-
-	if ((skill = skill_lookup("berserk")) == NULL) {
-		send_to_char("Huh?!?", ch);
-		return;
-	}
-
-	if ((chance = get_learned_percent(ch, skill)) == 0
-	    || (IS_NPC(ch) && !IS_SET(ch->off_flags, OFF_BERSERK))) {
-		send_to_char("You turn red in the face, but nothing happens.\n\r", ch);
-		return;
-	}
-
-	if (IS_AFFECTED(ch, AFF_BERSERK)
-	    || is_affected(ch, skill)
-	    || is_affected(ch, skill_lookup("frenzy"))) {
-		send_to_char("You get a little madder.\n\r", ch);
-		return;
-	}
-
-	if (IS_AFFECTED(ch, AFF_CALM)) {
-		send_to_char("You're feeling too mellow to berserk.\n\r", ch);
-		return;
-	}
-
-	if (ch->mana < 50) {
-		send_to_char("You can't get up enough energy.\n\r", ch);
-		return;
-	}
-
-/* modifiers */
-
-/* fighting */
-	if (ch->position == POS_FIGHTING)
-		chance += 10;
-
-/* damage -- below 50% of hp helps, above hurts */
-	hp_percent = 100 * ch->hit / ch->max_hit;
-	chance += 25 - hp_percent / 2;
-
-	if (number_percent() < chance) {
-		AFFECT_DATA af;
-
-		WAIT_STATE(ch, PULSE_VIOLENCE);
-		ch->mana -= 50;
-		ch->move -= 50;
-
-		/* heal a little damage */
-		ch->hit += ch->level * 2;
-		ch->hit = UMIN(ch->hit, ch->max_hit);
-
-		send_to_char("Your pulse races as you are consumed by rage!\n\r", ch);
-		act("$n gets a wild look in $s eyes.", ch, NULL, NULL, TO_ROOM);
-		check_improve(ch, skill, TRUE, 2);
-
-		af.where = TO_AFFECTS;
-		af.type = skill->sn;
-		af.skill = skill;
-		af.level = ch->level;
-		af.duration = (int)number_fuzzy(ch->level / 8);
-		af.modifier = UMAX(1, ch->level / 5);
-		af.bitvector = AFF_BERSERK;
-
-		af.location = APPLY_HITROLL;
-		affect_to_char(ch, &af);
-
-		af.location = APPLY_DAMROLL;
-		affect_to_char(ch, &af);
-
-		af.modifier = UMAX(10, 10 * (ch->level / 5));
-		af.location = APPLY_AC;
-		affect_to_char(ch, &af);
-	} else {
-		WAIT_STATE(ch, PULSE_VIOLENCE);
-		ch->mana -= 25;
-		ch->move -= 25;
-
-
-		send_to_char("Your pulse speeds up, but nothing happens.\n\r", ch);
-		check_improve(ch, skill, FALSE, 2);
-	}
-}
 
 void do_bash(CHAR_DATA *ch, char *argument)
 {
@@ -198,7 +56,7 @@ void do_bash(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	one_argument(argument, arg);
+	(void)one_argument(argument, arg);
 
 	if ((chance = get_learned_percent(ch, skill)) == 0
 	    || (IS_NPC(ch) && !IS_SET(ch->off_flags, OFF_BASH))) {
@@ -321,9 +179,9 @@ void do_bash(CHAR_DATA *ch, char *argument)
 
 		total = (total > 0) ? total / modifier : total;
 
-		damage(ch, victim, total, skill->sn, DAM_BASH, FALSE);
+		(void)damage(ch, victim, total, skill->sn, DAM_BASH, FALSE);
 	} else {
-		damage(ch, victim, 0, skill->sn, DAM_BASH, FALSE);
+		(void)damage(ch, victim, 0, skill->sn, DAM_BASH, FALSE);
 
 		act("You fall flat on your face!", ch, NULL, victim, TO_CHAR);
 		act("$n falls flat on $s face.", ch, NULL, victim, TO_NOTVICT);
@@ -349,7 +207,7 @@ void do_dirt(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	one_argument(argument, arg);
+	(void)one_argument(argument, arg);
 
 	if ((chance = get_learned_percent(ch, skill)) == 0
 	    || (IS_NPC(ch) && !IS_SET(ch->off_flags, OFF_KICK_DIRT))) {
@@ -456,7 +314,7 @@ void do_dirt(CHAR_DATA *ch, char *argument)
 		act("$n kicks dirt in your eyes!", ch, NULL, victim, TO_VICT);
 		send_to_char("You can't see a thing!\n\r", victim);
 
-		damage(ch, victim, number_range(2, 5), skill->sn, DAM_NONE, FALSE);
+		(void)damage(ch, victim, number_range(2, 5), skill->sn, DAM_NONE, FALSE);
 		check_improve(ch, skill, TRUE, 2);
 		WAIT_STATE(ch, skill->wait);
 
@@ -471,7 +329,7 @@ void do_dirt(CHAR_DATA *ch, char *argument)
 
 		affect_to_char(victim, &af);
 	} else {
-		damage(ch, victim, 0, skill->sn, DAM_NONE, TRUE);
+		(void)damage(ch, victim, 0, skill->sn, DAM_NONE, TRUE);
 		check_improve(ch, skill, FALSE, 2);
 
 		WAIT_STATE(ch, skill->wait);
@@ -491,7 +349,7 @@ void do_trip(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	one_argument(argument, arg);
+	(void)one_argument(argument, arg);
 
 	if ((chance = get_learned_percent(ch, skill)) <= 0
 	    || (IS_NPC(ch) && !IS_SET(ch->off_flags, OFF_TRIP))) {
@@ -569,11 +427,11 @@ void do_trip(CHAR_DATA *ch, char *argument)
 
 		WAIT_STATE(ch, skill->wait);
 		victim->position = POS_RESTING;
-		damage(ch, victim, number_range(2, 2 + 2 * victim->size), skill->sn, DAM_BASH, TRUE);
+		(void)damage(ch, victim, number_range(2, 2 + 2 * victim->size), skill->sn, DAM_BASH, TRUE);
 	} else {
 		WAIT_STATE(ch, skill->wait * 2 / 3);
 
-		damage(ch, victim, 0, skill->sn, DAM_BASH, TRUE);
+		(void)damage(ch, victim, 0, skill->sn, DAM_BASH, TRUE);
 		check_improve(ch, skill, FALSE, 1);
 	}
 	check_killer(ch, victim);
@@ -586,7 +444,7 @@ void do_kill(CHAR_DATA *ch, char *argument)
 	char arg[MIL];
 	CHAR_DATA *victim;
 
-	one_argument(argument, arg);
+	(void)one_argument(argument, arg);
 
 	if (arg[0] == '\0') {
 		send_to_char("Kill whom?\n\r", ch);
@@ -624,8 +482,7 @@ void do_kill(CHAR_DATA *ch, char *argument)
 	}
 
 	if (!IS_NPC(victim)) {
-		sprintf(log_buf, "%s is attempting to kill %s",
-			ch->name, victim->name);
+		(void)snprintf(log_buf, LOG_BUF_LENGTH, "%s is attempting to kill %s", ch->name, victim->name);
 		log_string(log_buf);
 	}
 
@@ -637,7 +494,7 @@ void do_kill(CHAR_DATA *ch, char *argument)
 }
 
 
-void do_murde(CHAR_DATA *ch, char *argument)
+void do_murde(CHAR_DATA *ch, /*@unused@*/char *argument)
 {
 	send_to_char("If you want to MURDER, spell it out.\n\r", ch);
 	return;
@@ -651,7 +508,7 @@ void do_murder(CHAR_DATA *ch, char *argument)
 	char buf[MSL];
 	char arg[MIL];
 
-	one_argument(argument, arg);
+	(void)one_argument(argument, arg);
 	if (arg[0] == '\0') {
 		send_to_char("Murder whom?\n\r", ch);
 		return;
@@ -689,15 +546,15 @@ void do_murder(CHAR_DATA *ch, char *argument)
 	}
 
 	if (!IS_NPC(victim)) {
-		sprintf(log_buf, "%s is attempting to murder %s", ch->name, victim->name);
+		(void)snprintf(log_buf, LOG_BUF_LENGTH, "%s is attempting to murder %s", ch->name, victim->name);
 		log_string(log_buf);
 	}
 
 	WAIT_STATE(ch, 1 * PULSE_VIOLENCE);
 	if (IS_NPC(ch))
-		sprintf(buf, "Help! I am being attacked by %s!", ch->short_descr);
+		(void)snprintf(buf, MSL, "Help! I am being attacked by %s!", ch->short_descr);
 	else
-		sprintf(buf, "Help!  I am being attacked by %s!", ch->name);
+		(void)snprintf(buf, MSL, "Help! I am being attacked by %s!", ch->name);
 
 	do_yell(victim, buf);
 	check_killer(ch, victim);
@@ -705,7 +562,7 @@ void do_murder(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-void do_flee(CHAR_DATA *ch, char *argument)
+void do_flee(/*@dependent@*/CHAR_DATA *ch, /*@unused@*/char *argument)
 {
 	ROOM_INDEX_DATA *was_in;
 	ROOM_INDEX_DATA *now_in;
@@ -758,8 +615,7 @@ void do_flee(CHAR_DATA *ch, char *argument)
 		if (!IS_NPC(ch))
 			return;
 
-		if (IS_NPC(victim)
-		    && (victim->max_hit <= (victim->max_hit / 2))) {
+		if (IS_NPC(victim) && (victim->max_hit <= (victim->max_hit / 2))) {
 			send_to_char("Perhaps you should avoid that opponent..\n\r", ch);
 			victim->mobmem = ch;
 			return;
@@ -790,7 +646,7 @@ void do_rescue(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	one_argument(argument, arg);
+	(void)one_argument(argument, arg);
 	if (arg[0] == '\0') {
 		send_to_char("Rescue whom?\n\r", ch);
 		return;
@@ -856,7 +712,7 @@ void do_rescue(CHAR_DATA *ch, char *argument)
 
 
 
-void do_kick(CHAR_DATA *ch, char *argument)
+void do_kick(CHAR_DATA *ch, /*@unused@*/char *argument)
 {
 	CHAR_DATA *victim;
 	SKILL *skill;
@@ -907,7 +763,7 @@ void do_kick(CHAR_DATA *ch, char *argument)
 						if (ch->move < 25) {
 							return;
 						} else {
-							damage(ch, victim, number_range(ch->level * 2, ch->level * 9) + mod, skill->sn, DAM_BASH, TRUE);
+							(void)damage(ch, victim, number_range(ch->level * 2, ch->level * 9) + mod, skill->sn, DAM_BASH, TRUE);
 							check_improve(ch, skill, TRUE, 1);
 							ch->move -= 25;
 						}
@@ -921,7 +777,7 @@ void do_kick(CHAR_DATA *ch, char *argument)
 						if (ch->move < 25) {
 							return;
 						} else {
-							damage(ch, victim, number_range(ch->level, ch->level * 6) + mod, skill->sn, DAM_BASH, TRUE);
+							(void)damage(ch, victim, number_range(ch->level, ch->level * 6) + mod, skill->sn, DAM_BASH, TRUE);
 							check_improve(ch, skill, TRUE, 1);
 							ch->move -= 25;
 						}
@@ -929,12 +785,12 @@ void do_kick(CHAR_DATA *ch, char *argument)
 				}
 			}
 		} else {
-			damage(ch, victim, number_range(ch->level + 50, ch->level * 12) + mod, skill->sn, DAM_BASH, TRUE);
+			(void)damage(ch, victim, number_range(ch->level + 50, ch->level * 12) + mod, skill->sn, DAM_BASH, TRUE);
 			check_improve(ch, skill, TRUE, 1);
 			ch->move -= 50;
 		}
 	} else {
-		damage(ch, victim, 0, skill->sn, DAM_BASH, TRUE);
+		(void)damage(ch, victim, 0, skill->sn, DAM_BASH, TRUE);
 		check_improve(ch, skill, FALSE, 1);
 		ch->move -= 25;
 	}
@@ -945,7 +801,7 @@ void do_kick(CHAR_DATA *ch, char *argument)
 
 
 
-void do_disarm(CHAR_DATA *ch, char *argument)
+void do_disarm(CHAR_DATA *ch, /*@unused@*/char *argument)
 {
 	CHAR_DATA *victim;
 	OBJ_DATA *obj;
@@ -1027,7 +883,7 @@ void do_disarm(CHAR_DATA *ch, char *argument)
 
 
 
-void do_surrender(CHAR_DATA *ch, char *argument)
+void do_surrender(CHAR_DATA *ch, /*@unused@*/char *argument)
 {
 	CHAR_DATA *mob;
 
@@ -1048,7 +904,7 @@ void do_surrender(CHAR_DATA *ch, char *argument)
 }
 
 
-void do_sla(CHAR_DATA *ch, char *argument)
+void do_sla(CHAR_DATA *ch, /*@unused@*/char *argument)
 {
 	send_to_char("If you want to SLAY, spell it out.\n\r", ch);
 	return;
@@ -1061,7 +917,7 @@ void do_slay(CHAR_DATA *ch, char *argument)
 	CHAR_DATA *victim;
 	char arg[MIL];
 
-	one_argument(argument, arg);
+	(void)one_argument(argument, arg);
 	if (arg[0] == '\0') {
 		send_to_char("Slay whom?\n\r", ch);
 		return;
@@ -1092,7 +948,7 @@ void do_slay(CHAR_DATA *ch, char *argument)
 }
 
 
-void do_suicid(CHAR_DATA *ch, char *argument)
+void do_suicid(CHAR_DATA *ch, /*@unused@*/char *argument)
 {
 	send_to_char("Type it ALL if you want to kill yourself..\n\r", ch);
 }
@@ -1109,11 +965,6 @@ void do_suicide(CHAR_DATA *ch, char *argument)
 			ch->pcdata->confirm_suicide = FALSE;
 			return;
 		} else {
-			if ((ch->in_room->vnum < 20930) && (ch->in_room->vnum > 20924)) {
-				send_to_char("You don't get out of jail that easily.\n\r", ch);
-				return;
-			}
-
 			if (ch->pk_timer > 0) {
 				send_to_char("You cannot suicide with a timer!\n\r", ch); return;
 			}
@@ -1121,7 +972,6 @@ void do_suicide(CHAR_DATA *ch, char *argument)
 			act("`!$n`7 has commited suicide!", ch, NULL, NULL, TO_ROOM);
 			wiznet("`!$N`7 has commited suicide!", ch, NULL, 0, 0, 0);
 			raw_kill(ch, NULL);
-			do_suicide(ch, "help meeee!");
 			return;
 		}
 	}
@@ -1215,7 +1065,7 @@ void do_intimidate(CHAR_DATA *ch, char *argument)
 	} else {
 		ch->move -= 80;
 		send_to_char("You are unable to muster up enough influence.\n\r", ch);
-		sprintf(buf, "%s tries to bully you and look intimidating.\n\r", ch->name);
+		(void)snprintf(buf, MSL, "%s tries to bully you and look intimidating.\n\r", ch->name);
 		send_to_char(buf, victim);
 		if IS_NPC(victim){
 			if (number_percent() < 50) {
@@ -1261,15 +1111,15 @@ void do_ravage(CHAR_DATA *ch, char *argument)
 
 	if (chance > number_percent()) {
 		if (number_percent() < 5)
-			damage(ch, victim, number_range(ch->level * 3, ch->level * 7), skill->sn, DAM_BASH, TRUE);
-		damage(ch, victim, number_range(ch->level * 2, ch->level * 5), skill->sn, DAM_BASH, TRUE);
+			(void)damage(ch, victim, number_range(ch->level * 3, ch->level * 7), skill->sn, DAM_BASH, TRUE);
+		(void)damage(ch, victim, number_range(ch->level * 2, ch->level * 5), skill->sn, DAM_BASH, TRUE);
 		check_improve(ch, skill, TRUE, 1);
 
-		damage(ch, victim, number_range(ch->level * 2, ch->level * 5), skill->sn, DAM_BASH, TRUE);
+		(void)damage(ch, victim, number_range(ch->level * 2, ch->level * 5), skill->sn, DAM_BASH, TRUE);
 		check_improve(ch, skill, TRUE, 1);
 		WAIT_STATE(victim, PULSE_VIOLENCE / 2);
 	} else {
-		damage(ch, victim, 0, skill->sn, DAM_BASH, TRUE);
+		(void)damage(ch, victim, 0, skill->sn, DAM_BASH, TRUE);
 		check_improve(ch, skill, FALSE, 1);
 	}
 
@@ -1288,7 +1138,7 @@ void do_ravage(CHAR_DATA *ch, char *argument)
  *
  * Implemented for BT by Monrick, March 2008
  * ******************************************************************** */
-void do_familiar(CHAR_DATA *ch, char *argument)
+void do_familiar(/*@dependent@*/CHAR_DATA *ch, /*@unused@*/char *argument)
 {
 	MOB_INDEX_DATA *pMobIndex;
 	CHAR_DATA *mount;
@@ -1397,14 +1247,14 @@ void do_familiar(CHAR_DATA *ch, char *argument)
 		break;
 	}
 	/* player seen stuff here */
-	do_sit(ch, "");
+	sit(ch, NULL);
 	char_to_room(mount, ch->in_room);
 	act("You knell to the ground and begin to carve dark symbols into the ground. You prepar the spell to call a $N!.", ch, NULL, mount, TO_CHAR);
 	act("$n knells to the ground and begins carving dark symbols into the ground. $n calls to a $N!", ch, NULL, mount, TO_ROOM);     WAIT_STATE(ch, 2 * PULSE_MOBILE);
 	add_follower(mount, ch);
 	mount->leader = ch;
 	ch->pet = mount;
-	do_stand(ch, "");
+	stand(ch, NULL);
 
 	SET_BIT(mount->act, ACT_PET);
 	SET_BIT(mount->affected_by, AFF_CHARM);
@@ -1413,7 +1263,7 @@ void do_familiar(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-void do_whirlwind(CHAR_DATA *ch, char *argument)
+void do_whirlwind(CHAR_DATA *ch, /*@unused@*/char *argument)
 {
 	CHAR_DATA *pChar;
 	CHAR_DATA *pChar_next;
@@ -1446,12 +1296,12 @@ void do_whirlwind(CHAR_DATA *ch, char *argument)
 	act("You hold $p firmly, and start spinning around...", ch, wield, NULL, TO_CHAR);
 
 	pChar_next = NULL;
-	for (pChar = ch->in_room->people; pChar; pChar = pChar_next) {
+	for (pChar = ch->in_room->people; pChar != NULL; pChar = pChar_next) {
 		pChar_next = pChar->next_in_room;
 		if (IS_NPC(pChar)) {
 			found = TRUE;
 			act("$n turns towards YOU!", ch, NULL, pChar, TO_VICT);
-			one_attack(ch, pChar, skill->sn, NULL);
+			(void)one_attack(ch, pChar, skill->sn, NULL);
 		}
 	}
 

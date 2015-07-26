@@ -82,8 +82,8 @@ NOTE_DATA *note_free;
 KILL_DATA kill_table[MAX_LEVEL];
 
 
-char bug_buf[2 * MIL];
-char log_buf[2 * MIL];
+char bug_buf[LOG_BUF_LENGTH];
+char log_buf[LOG_BUF_LENGTH];
 
 char *help_greeting;
 static char *ahelp_greeting;

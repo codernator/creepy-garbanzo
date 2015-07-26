@@ -260,7 +260,7 @@ void save_groups(void);
 void assign_skill_helps(void);
 
 
-SKILL *skill_lookup(char *name);
+/*@shared@*/SKILL *skill_lookup(char *name);
 GROUP *group_lookup(char *name);
 
 SKILL *resolve_skill_sn(int sn);

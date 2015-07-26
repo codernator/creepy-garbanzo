@@ -873,12 +873,9 @@ static void mobile_update(void)
 				pissed_next = pissed->next_in_room;
 
 				if (ch->mobmem == pissed) {
-					act("$n glares at $N and says, '`!Came back for more, eh?!``'",
-					    ch, NULL, ch->mobmem, TO_NOTVICT);
-					act("$n glares at you and says, '`!Came back for more, eh?!``'",
-					    ch, NULL, ch->mobmem, TO_VICT);
-					act("You glare at $N and say, '`!Came back for more, eh?!``'",
-					    ch, NULL, ch->mobmem, TO_CHAR);
+					act("$n glares at $N and says, '`!Came back for more, eh?!``'", ch, NULL, ch->mobmem, TO_NOTVICT);
+					act("$n glares at you and says, '`!Came back for more, eh?!``'", ch, NULL, ch->mobmem, TO_VICT);
+					act("You glare at $N and say, '`!Came back for more, eh?!``'", ch, NULL, ch->mobmem, TO_CHAR);
 
 					multi_hit(ch, pissed, TYPE_UNDEFINED);
 					ch->mob_wuss = NULL;
