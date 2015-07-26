@@ -15,19 +15,14 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/types.h>
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
-
 #include "merc.h"
 #include "tables.h"
 #include "olc.h"
 #include "recycle.h"
 #include "libstring.h"
-
 
 extern void do_help(CHAR_DATA *ch, char *argument);
 
@@ -38,6 +33,7 @@ static char *string_line_delete(char *, int);
 static char *string_line_insert(char *, char *, int);
 static char *number_lines(char *);
 char *repeater(char *s, int i);
+char *format_string(char *oldstring);
 
 #define MAX_LINE_LENGTH         72
 
@@ -371,101 +367,6 @@ char *format_string(char *orig)
 				ptr--;
 			}
 		/* fall through to end of the word - the line feeds go along */
-		case ' ':
-			if (word_idx > 0) {
-				word[word_idx] = '\0';
-
-				if (line_len + word_len > MAX_LINE_LENGTH) {
-					add_buf(buf, "\n\r");
-					line_len = 0;
-				}
-
-				if (line_len > 0) {
-					add_buf(buf, " ");
-					word_len++;
-				}
-
-				line_len += word_len;
-				add_buf(buf, word);
-				word_idx = 0;
-				word_len = 0;
-			}
-			break;
-		case '.':
-		case '!':
-		case '?':
-			word[word_idx++] = *ptr;
-			word_len++;
-			if (*ptr != *(ptr + 1)
-			    && *ptr != *(ptr - 1)) {
-				int idx;
-
-				for (idx = 0; idx < 1; idx++) {
-					/* put some spaces in */
-					if (line_len + 1 < MAX_LINE_LENGTH) {
-						word[word_idx++] = ' ';
-						word_len++;
-					}
-				}
-			}
-
-			break;
-		case '\r':
-			/* completely ignore */
-			break;
-		case '`':
-			word[word_idx++] = *ptr++;
-			word[word_idx++] = *ptr;
-			break;
-		default:
-			word[word_idx++] = *ptr;
-			word_len++;
-			break;
-		}
-
-		ptr++;
-	}
-
-
-	if (line_len > 0)
-		add_buf(buf, "\n\r");
-	ptr = str_dup(buf_string(buf));
-
-	free_buf(buf);
-	free_string(orig);
-
-	return ptr;
-}
-
-
-/***************************************************************************
-*	format_string
-*
-*	format a string to conform to width standards - replacement
-*	for the one that comes stock with OLC which wasnt working for
-*	us due to the fact that it did not ignore color codes in the
-*	width calculation.  The old one did a lot of formatting surrounding
-*	punctuation that I just dont care to do - people using it should
-*	be okay without the punctuation
-***************************************************************************/
-char *format_string_sav(char *orig)
-{
-	BUFFER *buf;
-	char *ptr;
-	char word[MSL];
-	int line_len;
-	int word_len;
-	int word_idx;
-
-	word[0] = '\0';
-	buf = new_buf();
-	ptr = orig;
-	line_len = 0;
-	word_len = 0;
-	word_idx = 0;
-	while (*ptr != '\0') {
-		switch (*ptr) {
-		case '\n':
 		case ' ':
 			if (word_idx > 0) {
 				word[word_idx] = '\0';

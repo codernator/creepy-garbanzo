@@ -15,12 +15,8 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/types.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <time.h>
+#include <stdio.h>
 #include "merc.h"
 #include "tables.h"
 #include "olc.h"
@@ -33,6 +29,7 @@
 extern int flag_value(const struct flag_type *flag_table, char *argument);
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern char *mprog_type_to_name(int type);
+extern int parse_int(char *test);
 
 /***************************************************************************
 *	local defines
@@ -770,7 +767,7 @@ void do_aedit(CHAR_DATA *ch, char *argument)
 	argument = one_argument(argument, arg);
 
 	if (is_number(arg)) {
-		value = atoi(arg);
+		value = parse_int(arg);
 		if (!(pArea = get_area_data(value))) {
 			send_to_char("That area vnum does not exist.\n\r", ch);
 			return;
@@ -1066,7 +1063,7 @@ void do_resets(CHAR_DATA *ch, char *argument)
 		ROOM_INDEX_DATA *pRoom = ch->in_room;
 
 		if (!str_cmp(arg2, "delete")) {
-			int insert_loc = atoi(arg1);
+			int insert_loc = parse_int(arg1);
 
 			if (!ch->in_room->reset_first) {
 				send_to_char("No resets in this area.\n\r", ch);
@@ -1108,29 +1105,29 @@ void do_resets(CHAR_DATA *ch, char *argument)
 			send_to_char("Reset deleted.\n\r", ch);
 		} else {
 			if (!str_cmp(arg2, "mob")) {
-				if (get_mob_index(is_number(arg3) ? atoi(arg3) : 1) == NULL) {
+				if (get_mob_index(is_number(arg3) ? parse_int(arg3) : 1) == NULL) {
 					send_to_char("Mob does not exist.\n\r", ch);
 					return;
 				}
 
 				pReset = new_reset_data();
 				pReset->command = 'M';
-				pReset->arg1 = atoi(arg3);
-				pReset->arg2 = is_number(arg4) ? atoi(arg4) : 1;
+				pReset->arg1 = parse_int(arg3);
+				pReset->arg2 = is_number(arg4) ? parse_int(arg4) : 1;
 				pReset->arg3 = ch->in_room->vnum;
-				pReset->arg4 = is_number(arg5) ? atoi(arg5) : 1;
+				pReset->arg4 = is_number(arg5) ? parse_int(arg5) : 1;
 
-				add_reset(ch->in_room, pReset, atoi(arg1));
+				add_reset(ch->in_room, pReset, parse_int(arg1));
 				SET_BIT(ch->in_room->area->area_flags, AREA_CHANGED);
 				send_to_char("Mobile reset added.\n\r", ch);
 			} else if (!str_cmp(arg2, "obj")) {
 				pReset = new_reset_data();
-				pReset->arg1 = atoi(arg3);
+				pReset->arg1 = parse_int(arg3);
 
 				if (!str_prefix(arg4, "inside")) {
 					OBJ_INDEX_DATA *temp;
 
-					temp = get_obj_index(is_number(arg5) ? atoi(arg5) : 1);
+					temp = get_obj_index(is_number(arg5) ? parse_int(arg5) : 1);
 					if (temp == NULL
 					    || ((temp->item_type != ITEM_CONTAINER)
 						&& (temp->item_type != ITEM_CORPSE_NPC))) {
@@ -1138,11 +1135,11 @@ void do_resets(CHAR_DATA *ch, char *argument)
 						return;
 					}
 					pReset->command = 'P';
-					pReset->arg2 = is_number(arg6) ? atoi(arg6) : 1;
-					pReset->arg3 = is_number(arg5) ? atoi(arg5) : 1;
-					pReset->arg4 = is_number(arg7) ? atoi(arg7) : 1;
+					pReset->arg2 = is_number(arg6) ? parse_int(arg6) : 1;
+					pReset->arg3 = is_number(arg5) ? parse_int(arg5) : 1;
+					pReset->arg4 = is_number(arg7) ? parse_int(arg7) : 1;
 				} else if (!str_cmp(arg4, "room")) {
-					if (get_obj_index(atoi(arg3)) == NULL) {
+					if (get_obj_index(parse_int(arg3)) == NULL) {
 						send_to_char("Vnum doest not exist.\n\r", ch);
 						return;
 					}
@@ -1155,11 +1152,11 @@ void do_resets(CHAR_DATA *ch, char *argument)
 						send_to_char("Resets: '? wear-loc'\n\r", ch);
 						return;
 					}
-					if (get_obj_index(atoi(arg3)) == NULL) {
+					if (get_obj_index(parse_int(arg3)) == NULL) {
 						send_to_char("Vnum does not exist.\n\r", ch);
 						return;
 					}
-					pReset->arg1 = atoi(arg3);
+					pReset->arg1 = parse_int(arg3);
 					pReset->arg3 = flag_value(wear_loc_flags, arg4);
 					if (pReset->arg3 == WEAR_NONE)
 						pReset->command = 'G';
@@ -1167,19 +1164,19 @@ void do_resets(CHAR_DATA *ch, char *argument)
 						pReset->command = 'E';
 				}
 
-				add_reset(ch->in_room, pReset, atoi(arg1));
+				add_reset(ch->in_room, pReset, parse_int(arg1));
 				SET_BIT(ch->in_room->area->area_flags, AREA_CHANGED);
 				send_to_char("Object reset added.\n\r", ch);
 			} else if (!str_cmp(arg2, "random") && is_number(arg3)) {
-				if (atoi(arg3) < 1 || atoi(arg3) > 6) {
+				if (parse_int(arg3) < 1 || parse_int(arg3) > 6) {
 					send_to_char("Invalid argument.\n\r", ch);
 					return;
 				}
 				pReset = new_reset_data();
 				pReset->command = 'R';
 				pReset->arg1 = ch->in_room->vnum;
-				pReset->arg2 = atoi(arg3);
-				add_reset(ch->in_room, pReset, atoi(arg1));
+				pReset->arg2 = parse_int(arg3);
+				add_reset(ch->in_room, pReset, parse_int(arg1));
 				SET_BIT(ch->in_room->area->area_flags, AREA_CHANGED);
 				send_to_char("Random exits reset added.\n\r", ch);
 			} else {

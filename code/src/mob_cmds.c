@@ -36,15 +36,20 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/types.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+//#include <sys/types.h>
+//#include <string.h>
+//#include <stdlib.h>
 
+#include <stdio.h>
 #include "merc.h"
 #include "mob_cmds.h"
 #include "magic.h"
 #include "libstring.h"
+
+extern long parse_long(char *test);
+extern int parse_int(char *test);
+
+void mob_interpret(CHAR_DATA * ch, char *argument);
 
 /*
  * Command functions.
@@ -257,7 +262,7 @@ void do_mpdump(CHAR_DATA *ch, char *argument)
 
 	one_argument(argument, buf);
 
-	if ((mprg = get_mprog_index(atoi(buf))) == NULL) {
+	if ((mprg = get_mprog_index(parse_long(buf))) == NULL) {
 		send_to_char("No such MOBprogram.\n\r", ch);
 		return;
 	}
@@ -518,7 +523,7 @@ void do_mpmload(CHAR_DATA *ch, char *argument)
 	if (ch->in_room == NULL || arg[0] == '\0' || !is_number(arg))
 		return;
 
-	vnum = atoi(arg);
+	vnum = parse_long(arg);
 	if ((pMobIndex = get_mob_index(vnum)) == NULL) {
 		printf_bug("Mpmload: bad mob index(%d) from mob %d", vnum, IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
@@ -554,7 +559,7 @@ void do_mpoload(CHAR_DATA *ch, char *argument)
 		min_vnum = 0;
 		max_vnum = 0;
 		if (is_number(mm_buf))
-			min_vnum = atoi(mm_buf);
+			min_vnum = parse_long(mm_buf);
 
 		if (min_vnum <= 0) {
 			bug_long("mpoload - bad minimum number for random range %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
@@ -563,7 +568,7 @@ void do_mpoload(CHAR_DATA *ch, char *argument)
 
 		argument = one_argument(argument, mm_buf);
 		if (is_number(mm_buf))
-			max_vnum = atoi(mm_buf);
+			max_vnum = parse_long(mm_buf);
 		max_vnum = UMAX(min_vnum, max_vnum);
 
 		vnum = number_range(min_vnum, max_vnum);
@@ -573,7 +578,7 @@ void do_mpoload(CHAR_DATA *ch, char *argument)
 			return;
 		}
 
-		vnum = atoi(arg);
+		vnum = parse_long(arg);
 	}
 
 	argument = one_argument(argument, arg);
@@ -586,7 +591,7 @@ void do_mpoload(CHAR_DATA *ch, char *argument)
 			return;
 		}
 
-		level = atoi(arg);
+		level = parse_int(arg);
 		if (level < 0 || level > get_trust(ch)) {
 			bug_long("mpoload - bad level from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 			return;
@@ -955,7 +960,7 @@ void do_mpvforce(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	vnum = atoi(arg);
+	vnum = parse_long(arg);
 
 	for (victim = char_list; victim; victim = victim_next) {
 		victim_next = victim->next;
@@ -1058,13 +1063,13 @@ void do_mpdamage(CHAR_DATA *ch, char *argument)
 		return;
 
 	if (is_number(min)) {
-		low = atoi(min);
+		low = parse_int(min);
 	} else {
 		bug_long("MpDamage - Bad damage min vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 	if (is_number(max)) {
-		high = atoi(max);
+		high = parse_int(max);
 	} else {
 		bug_long("MpDamage - Bad damage max vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
@@ -1140,7 +1145,7 @@ void do_mpdelay(CHAR_DATA *ch, char *argument)
 		bug_long("MpDelay: invalid arg from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
-	ch->mprog_delay = atoi(arg);
+	ch->mprog_delay = parse_int(arg);
 }
 
 /*
@@ -1175,7 +1180,7 @@ void do_mpcall(CHAR_DATA *ch, char *argument)
 		bug_long("MpCall: missing arguments from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
-	if ((prg = get_mprog_index(atoi(arg))) == NULL) {
+	if ((prg = get_mprog_index(parse_long(arg))) == NULL) {
 		bug_long("MpCall: invalid prog from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
@@ -1316,7 +1321,7 @@ void do_mpremove(CHAR_DATA *ch, char *argument)
 		bug_long("MpRemove: Invalid object from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	} else {
-		vnum = atoi(arg);
+		vnum = parse_long(arg);
 	}
 
 	for (obj = victim->carrying; obj; obj = obj_next) {

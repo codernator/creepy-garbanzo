@@ -28,9 +28,6 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/time.h>
-#include <stdio.h>
-#include <time.h>
 #include "merc.h"
 #include "magic.h"
 #include "interp.h"

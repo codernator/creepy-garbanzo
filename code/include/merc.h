@@ -28,6 +28,8 @@
 #if !defined(__MERC_H)
 #define __MERC_H
 
+#include <time.h>
+
 #define DECLARE_DO_FUN(fun)             DO_FUN fun
 #define DECLARE_SPEC_FUN(fun)           SPEC_FUN fun
 #define DECLARE_SPELL_FUN(fun)          SPELL_FUN fun
@@ -154,25 +156,40 @@ typedef bool SPEC_FUN(CHAR_DATA * ch);
 #define PULSE_BATTLEFIELD       (40 * PULSE_PER_SECOND)
 #define PULSE_UNDERWATER        (5 * PULSE_PER_SECOND)
 
-#define IMPLEMENTOR     MAX_LEVEL
+#define IMPLEMENTOR             MAX_LEVEL
 #define CREATOR                 (MAX_LEVEL - 1)
 #define SUPREME                 (MAX_LEVEL - 2)
-#define DEITY                     (MAX_LEVEL - 3)
+#define DEITY                   (MAX_LEVEL - 3)
 #define GOD                     (MAX_LEVEL - 4)
 #define IMMORTAL                (MAX_LEVEL - 5)
-#define DEMI                      (MAX_LEVEL - 6)
-#define ANGEL                     (MAX_LEVEL - 7)
+#define DEMI                    (MAX_LEVEL - 6)
+#define ANGEL                   (MAX_LEVEL - 7)
 #define AVATAR                  (MAX_LEVEL - 8)
-#define HERO                LEVEL_HERO
+#define HERO                    LEVEL_HERO
 #define MAX_VNUMS               2147483647l
 
+/* Player Security */
+#define PLAYER_ROLE_PLAYER     0l
+#define PLAYER_ROLE_ADVOCATE   1l
+#define PLAYER_ROLE_CODER      2l
+#define PLAYER_ROLE_BUILDER    3l
+#define PLAYER_ROLE_QUESTOR    4l
+
+/* determine if player is assigned a role at a minimum trust. 
+ * player: not null
+ * role_flag: any value from the PLAYER_ROLE_[A-Z]+ definitions.
+ * trust: any integer
+ */
+bool is_trusted_role(PC_DATA *player, long role_flag, int min_trust);
+void assign_role(PC_DATA *player, long role_flag, int trust);
+void remove_role(PC_DATA *player, long role_flag);
 
 /* Site ban structure. */
 
-#define BAN_SUFFIX        (int)A
-#define BAN_PREFIX        (int)B
-#define BAN_NEWBIES       (int)C
-#define BAN_ALL             (int)D
+#define BAN_SUFFIX      (int)A
+#define BAN_PREFIX      (int)B
+#define BAN_NEWBIES     (int)C
+#define BAN_ALL         (int)D
 #define BAN_PERMIT      (int)E
 #define BAN_PERMANENT   (int)F
 
@@ -267,40 +284,40 @@ struct nickname_data {
 
 /* Descriptor (channel) structure. */
 struct descriptor_data {
-	DESCRIPTOR_DATA *	next;
-	DESCRIPTOR_DATA *	previous;
-	DESCRIPTOR_DATA *	snoop_by;
+	DESCRIPTOR_DATA *next;
+	DESCRIPTOR_DATA *previous;
+	DESCRIPTOR_DATA *snoop_by;
 	CHAR_DATA *		character;
 	CHAR_DATA *		original;
 	bool			valid;
 	char *			host;
 	SOCKET			descriptor;
-	int			connected;
+	int			    connected;
 	bool			fcommand;
 	char			inbuf[4 * MIL];
 	char			incomm[MIL];
 	char			inlast[MIL];
-	int			repeat;
+	int			    repeat;
 	char *			outbuf;
-	int			outsize;
-	int			outtop;
+	int			    outsize;
+	int			    outtop;
 	char *			showstr_head;
 	char *			showstr_point;
-	int			ifd;
+	int			    ifd;
 	pid_t			ipid;
 	char *			ident;
-	int			port;
-	int			ip;
-	int			auth_inc;
-	int			auth_state;
+	int			    port;
+	int			    ip;
+	int			    auth_inc;
+	int			    auth_state;
 	char			abuf[256];
-	int			auth_fd;
+	int			    auth_fd;
 	char *			user;
-	int			atimes;
+	int			    atimes;
 	void *			ed_data;
 	char **			ed_string;
-	int			editor;
-	int			idle; /* Kyndig: get rid of idlers */
+	int			    editor;
+	int			    idle;
 };
 
 
@@ -309,11 +326,11 @@ struct descriptor_data {
 
 struct disabled_data {
 	DISABLED_DATA * next;
-	char *		command;
-	char *		disabled_by;
-	int		level;
-	int		type;
-	bool		valid;
+	char *command;
+	char *disabled_by;
+	int	level;
+	int	type;
+	bool valid;
 };
 
 /* TO types for act. */
@@ -327,9 +344,9 @@ struct disabled_data {
 struct help_data {
 	HELP_DATA *	next;
 	HELP_DATA *	next_area;
-	int		level;
-	char *		keyword;
-	char *		text;
+	int	level;
+	char * keyword;
+	char * text;
 };
 
 struct help_area_data {
@@ -337,8 +354,8 @@ struct help_area_data {
 	HELP_DATA *	first;
 	HELP_DATA *	last;
 	AREA_DATA *	area;
-	char *		filename;
-	bool		changed;
+	char * filename;
+	bool changed;
 };
 
 
@@ -348,13 +365,13 @@ struct help_area_data {
 #define MAX_TRADE       5
 
 struct shop_data {
-	SHOP_DATA *	next;                           /* Next shop in list            */
-	long		keeper;                         /* Vnum of shop keeper mob      */
-	int		buy_type[MAX_TRADE];            /* Item types shop will buy     */
-	int		profit_buy;                     /* Cost multiplier for buying   */
-	int		profit_sell;                    /* Cost multiplier for selling  */
-	int		open_hour;                      /* First opening hour           */
-	int		close_hour;                     /* First closing hour           */
+	SHOP_DATA *	next;                   /* Next shop in list            */
+	long keeper;                        /* Vnum of shop keeper mob      */
+	int	buy_type[MAX_TRADE];            /* Item types shop will buy     */
+	int	profit_buy;                     /* Cost multiplier for buying   */
+	int	profit_sell;                    /* Cost multiplier for selling  */
+	int	open_hour;                      /* First opening hour           */
+	int	close_hour;                     /* First closing hour           */
 };
 
 
@@ -535,16 +552,16 @@ extern const struct message_types message_type_table[];
 /*	affect_data*/
 
 struct affect_data {
-	AFFECT_DATA *	next;
-	bool		valid;
-	SKILL *		skill;
-	int		where;
-	int		type;
-	int		level;
-	int		duration;
-	int		location;
-	long		modifier;
-	long		bitvector;
+	AFFECT_DATA * next;
+	bool valid;
+	SKILL *	skill;
+	int	where;
+	int	type;
+	int	level;
+	int	duration;
+	int	location;
+	long modifier;
+	long bitvector;
 };
 
 /* where definitions */
@@ -2268,7 +2285,6 @@ extern DISABLED_DATA *disabled_first;
 extern char bug_buf[];
 extern time_t current_time;
 extern bool log_all;
-extern FILE *fpReserve;
 extern KILL_DATA kill_table[];
 extern char log_buf[];
 extern TIME_INFO_DATA time_info;
@@ -2340,21 +2356,6 @@ extern ROOM_INDEX_DATA *room_index_hash [MAX_KEY_HASH];
 
 #define END_MARKER     "END"                   /* for load_disabled() and save_disabled() */
 
-/***************************************************************************
-*	host exception kludge
-***************************************************************************/
-typedef struct host_exception {
-	struct host_exception * next;
-	char *host;
-} EXCEPTION;
-
-
-#define HOST_FILE       "host_exceptions.txt"
-
-bool is_host_exception(char *host);
-void add_exception(EXCEPTION * exception);
-EXCEPTION *find_exception(char *host);
-void load_host_exceptions(void);
 
 /***************************************************************************
 *	global function declarations
@@ -2364,7 +2365,6 @@ void load_host_exceptions(void);
 /***************************************************************************
 *	act_comm.c
 ***************************************************************************/
-void check_sex(CHAR_DATA * ch);
 void add_follower(CHAR_DATA * ch, CHAR_DATA * master);
 void stop_follower(CHAR_DATA * ch);
 void nuke_pets(CHAR_DATA * ch);
@@ -2446,15 +2446,6 @@ MOB_INDEX_DATA *get_mob_index(long vnum);
 OBJ_INDEX_DATA *get_obj_index(long vnum);
 ROOM_INDEX_DATA *get_room_index(long vnum);
 
-/*	file loading		*/
-char fread_letter(FILE * fp);
-int fread_number(FILE * fp);
-long fread_flag(FILE * fp);
-char *fread_string(FILE * fp);
-char *fread_string_eol(FILE * fp);
-void fread_to_eol(FILE * fp);
-char *fread_word(FILE * fp);
-long flag_convert(char letter);
 
 /*	memory management	*/
 void *alloc_mem(unsigned int sMem);
@@ -2678,15 +2669,6 @@ void restore_char(CHAR_DATA * ch);
 void strip_negative_affects(CHAR_DATA * ch);
 
 
-/*	string.c */
-void string_edit(CHAR_DATA * ch, char **string);
-void string_append(CHAR_DATA * ch, char **string);
-char *string_replace(char *orig, char *old, char *new);
-void string_add(CHAR_DATA * ch, char *argument);
-char *format_string(char *oldstring);
-extern char *first_arg(char *argument, char *arg_first, bool fCase);
-char *string_unpad(char *argument);
-char *string_proper(char *argument);
 
 
 
@@ -2701,51 +2683,12 @@ bool check_disabled(CHAR_DATA * ch, int type, char *cmd);
 void load_disabled(void);
 void save_disabled(void);
 
-/*	bfield.c */
-int battlefield_count(void);
-bool in_battlefield(CHAR_DATA * ch);
-bool battlefield_check_disabled(CHAR_DATA * ch, int type, char *name);
-void battlefield_notify(char *buf);
-int battlefield_participants(void);
-void battlefield_update(void);
-
-
-/*	team.c */
-bool team_check_disabled(CHAR_DATA * ch, int type, char *name);
 
 /*	olc */
 void printf_to_char(CHAR_DATA *, char *, ...);
 void printf_bug(char *, ...);
 void printf_log(char *fmt, ...);
 
-/*	mob_prog.c */
-void program_flow(long vnum, char *source, CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2);
-void mp_act_trigger(char *argument, CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
-bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
-void mp_bribe_trigger(CHAR_DATA * mob, CHAR_DATA * ch, long amount);
-bool mp_exit_trigger(CHAR_DATA * ch, int dir);
-void mp_give_trigger(CHAR_DATA * mob, CHAR_DATA * ch, OBJ_DATA * obj);
-void mp_greet_trigger(CHAR_DATA * ch);
-void mp_hprct_trigger(CHAR_DATA * mob, CHAR_DATA * ch);
-
-
-/*	mob_cmds.c */
-void mob_interpret(CHAR_DATA * ch, char *argument);
-
-/*	string.c */
-extern void string_edit(CHAR_DATA * ch, char **string);
-extern void string_append(CHAR_DATA * ch, char **string);
-extern char *string_replace(char *orig, char *old, char *new);
-extern void string_add(CHAR_DATA * ch, char *argument);
-extern char *format_string(char *oldstring /*, bool fSpace */);
-extern char *first_arg(char *argument, char *arg_first, bool fCase);
-extern char *string_unpad(char *argument);
-extern char *string_proper(char *argument);
-
-/*	olc.c */
-bool run_olc_editor(DESCRIPTOR_DATA * d);
-char *olc_ed_name(CHAR_DATA * ch);
-char *olc_ed_vnum(CHAR_DATA * ch);
 
 /*	lookup.c */
 int race_lookup(const char *name);
@@ -2753,6 +2696,5 @@ int item_lookup(const char *name);
 int liq_lookup(const char *name);
 
 
-void add_apply(OBJ_DATA * obj, int loc, int mod, int where, int type, int dur, long vector, int level);
-
 #endif  /* __MERC_H */
+

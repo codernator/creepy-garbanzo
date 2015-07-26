@@ -17,12 +17,7 @@
  * implementing a system like below with such functions. -Jason Dinkel
  */
 
-
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include "merc.h"
 #include "tables.h"
 #include "lookup.h"

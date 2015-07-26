@@ -28,28 +28,26 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/time.h>
-#include <unistd.h>
-#include <ctype.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include "merc.h"
 #include "interp.h"
 #include "magic.h"
 #include "recycle.h"
 
 
-char last_command[MSL];
-
-DISABLED_DATA *disabled_first;
-
 extern void log_new(const char *log, const char *str, char username[]);
 extern bool is_space(const char test);
 extern bool is_digit(const char test);
 extern bool is_alpha(const char test);
 extern bool is_number(const char *test);
+extern int parse_int(char *test);
+
+
+char last_command[MSL];
+
+DISABLED_DATA *disabled_first;
+
 char *repeater(char *s, int i);
 
 
@@ -229,7 +227,6 @@ const struct cmd_type cmd_table[] =
 
 	{ "ooc",	      do_ooc,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "at",		      do_at,	       POS_DEAD,     L7, LOG_NORMAL, 1 },
-	{ "pose",	      do_pose,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "quiet",	      do_quiet,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "reply",	      do_reply,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "replay",	      do_replay,       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
@@ -401,7 +398,6 @@ const struct cmd_type cmd_table[] =
 	{ "ffry",	      do_ffry,	       POS_DEAD,     L1, LOG_ALWAYS, 1 },
 	{ "load",	      do_load,	       POS_DEAD,     L4, LOG_ALWAYS, 1 },
 	{ "newlock",	  do_newlock,      POS_DEAD,     ML, LOG_ALWAYS, 1 },
-	{ "listgods",	  do_listgods,     POS_DEAD,     IM, LOG_NORMAL, 1 },
 	{ "chown",	      do_chown,	       POS_DEAD,     L6, LOG_ALWAYS, 1 },
 	{ "mode",	      do_mode,	       POS_DEAD,     ML, LOG_ALWAYS, 1 },
 	{ "noauction",	  do_noauction,    POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
@@ -708,7 +704,7 @@ int number_argument(char *argument, char *arg)
 	for (pdot = argument; *pdot != '\0'; pdot++) {
 		if (*pdot == '.') {
 			*pdot = '\0';
-			number = atoi(argument);
+			number = parse_int(argument);
 			*pdot = '.';
 			strcpy(arg, pdot + 1);
 			return number;
@@ -731,7 +727,7 @@ int mult_argument(char *argument, char *arg)
 	for (pdot = argument; *pdot != '\0'; pdot++) {
 		if (*pdot == '*') {
 			*pdot = '\0';
-			number = atoi(argument);
+			number = parse_int(argument);
 			*pdot = '*';
 			strcpy(arg, pdot + 1);
 			return number;

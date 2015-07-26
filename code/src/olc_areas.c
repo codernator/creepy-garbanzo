@@ -15,12 +15,8 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/types.h>
-#include <ctype.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include "merc.h"
 #include "tables.h"
 #include "olc.h"
@@ -30,6 +26,12 @@
 
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern int flag_value(const struct flag_type *flag_table, char *argument);
+extern char *string_replace(char *orig, char *old, char *new);
+extern char *string_unpad(char *argument);
+extern void string_append(CHAR_DATA * ch, char **string);
+extern char *string_proper(char *argument);
+extern int parse_int(char *test);
+extern long parse_long(char *test);
 
 /*****************************************************************************
  *      Name:		check_range(lower vnum, upper vnum)
@@ -274,7 +276,7 @@ EDIT(aedit_age){
 		return FALSE;
 	}
 
-	pArea->age = atoi(age);
+	pArea->age = parse_int(age);
 
 	send_to_char("Age set.\n\r", ch);
 	return TRUE;
@@ -299,7 +301,7 @@ EDIT(aedit_security){
 		return FALSE;
 	}
 
-	value = atoi(sec);
+	value = parse_int(sec);
 	if (value > ch->pcdata->security || value < 0) {
 		if (ch->pcdata->security != 0) {
 			sprintf(buf, "Security is 0-%d.\n\r", ch->pcdata->security);
@@ -391,8 +393,8 @@ EDIT(aedit_vnum){
 	}
 
 
-	iLower = atol(lower);
-	iUpper = atol(upper);
+	iLower = parse_long(lower);
+	iUpper = parse_long(upper);
 
 	if (iLower > iUpper) {
 		send_to_char("AEdit:  Upper must be larger then lower.\n\r", ch);
@@ -444,7 +446,7 @@ EDIT(aedit_lvnum){
 		return FALSE;
 	}
 
-	if ((ilower = atoi(lower)) > (iupper = pArea->max_vnum)) {
+	if ((ilower = parse_int(lower)) > (iupper = pArea->max_vnum)) {
 		send_to_char("AEdit:  Value must be less than the max_vnum.\n\r", ch);
 		return FALSE;
 	}
@@ -485,7 +487,7 @@ EDIT(aedit_uvnum){
 		return FALSE;
 	}
 
-	if ((ilower = pArea->min_vnum) > (iupper = atoi(upper))) {
+	if ((ilower = pArea->min_vnum) > (iupper = parse_int(upper))) {
 		send_to_char("AEdit:  Upper must be larger then lower.\n\r", ch);
 		return FALSE;
 	}
@@ -525,7 +527,7 @@ EDIT(aedit_llevel){
 		return FALSE;
 	}
 
-	pArea->llevel = atoi(level);
+	pArea->llevel = parse_int(level);
 	send_to_char("Lower-level set.\n\r", ch);
 	return TRUE;
 }
@@ -548,7 +550,7 @@ EDIT(aedit_ulevel){
 		return FALSE;
 	}
 
-	pArea->ulevel = atoi(level);
+	pArea->ulevel = parse_int(level);
 	send_to_char("Upper-level set.\n\r", ch);
 	return TRUE;
 }

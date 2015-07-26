@@ -28,12 +28,13 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/time.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include "merc.h"
 #include "recycle.h"
+#include "libfile.h"
+
+extern FILE *fpReserve;
 
 BAN_DATA *ban_list;
 

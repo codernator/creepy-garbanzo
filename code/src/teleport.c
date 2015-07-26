@@ -31,17 +31,12 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/types.h>
-#include <sys/time.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <time.h>
 #include "merc.h"
 #include "recycle.h"
 
 extern DECLARE_DO_FUN(do_look);
 extern DECLARE_DO_FUN(do_help);
+extern int parse_int(char *test);
 
 
 #define _MAX_FOUND              200
@@ -139,7 +134,7 @@ void do_teleport(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	temp = atoi(arg);
+	temp = parse_int(arg);
 	if (temp < 0)
 		return;
 

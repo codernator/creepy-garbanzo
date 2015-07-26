@@ -28,10 +28,6 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/time.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include "merc.h"
 #include "tables.h"
 #include "interp.h"
@@ -41,6 +37,7 @@
 
 extern int flag_value(const struct flag_type *flag_table, char *argument);
 extern char *flag_string(const struct flag_type *flag_table, long bits);
+extern long parse_long(char *test);
 
 /***************************************************************************
 *	declarations
@@ -246,12 +243,12 @@ void flag_set_room(CHAR_DATA *ch, char *argument)
 {
 	ROOM_INDEX_DATA *room;
 	char index[MIL];
-	int vnum;
+	long vnum;
 
 	one_argument(argument, index);
 
 	if (is_number(index)
-	    && ((vnum = atoi(index)) > 0)
+	    && ((vnum = parse_long(index)) > 0)
 	    && ((room = get_room_index(vnum)) != NULL))
 		argument = one_argument(argument, index);
 	else
@@ -555,7 +552,7 @@ void flag_char_deathroom(CHAR_DATA *ch, void *target, char *argument)
 	}
 
 
-	value = atoi(argument);
+	value = parse_long(argument);
 	if (is_number(argument) && value > 0) {
 		if ((room = get_room_index(value)) != NULL) {
 			vch->deathroom = value;

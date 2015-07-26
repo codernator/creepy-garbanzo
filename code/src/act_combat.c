@@ -25,13 +25,7 @@
  *   ROM license, in the file Rom24/doc/rom.license                         *
  ****************************************************************************/
 
-#include <sys/types.h>
-#include <sys/resource.h>
-#include <time.h>
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
 #include "merc.h"
 
 
@@ -44,6 +38,8 @@ extern void disarm(CHAR_DATA *ch, CHAR_DATA *victim);
 extern void spell_charm_person(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument);
 extern bool one_attack(CHAR_DATA *ch, CHAR_DATA *victim, int dt, OBJ_DATA *wield);
 extern void set_fighting(CHAR_DATA *ch, CHAR_DATA *victim);
+extern bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
+extern int battlefield_count(void);
 
 
 /***************************************************************************

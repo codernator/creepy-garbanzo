@@ -28,11 +28,10 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/time.h>
-#include <stdlib.h>
+//#include <sys/time.h>
+//#include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
-#include <time.h>
+//#include <string.h>
 #include "merc.h"
 #include "tables.h"
 #include "lookup.h"
@@ -41,6 +40,7 @@
 #include "libstring.h"
 
 
+extern int parse_int(char *test);
 
 /***************************************************************************
 *	definitions
@@ -84,15 +84,22 @@ const struct battlefield_set_data battlefield_set_cmds[] =
 /***************************************************************************
 *	function declarations
 ***************************************************************************/
-void battlefield_set(CHAR_DATA * ch, char *arg);
-void battlefield_show(CHAR_DATA * ch);
-void battlefield_trans(CHAR_DATA * ch, ROOM_INDEX_DATA * loc);
-void battlefield_open(CHAR_DATA * ch);
-void battlefield_close(CHAR_DATA * ch);
-void battlefield_cancel(CHAR_DATA * ch);
-void battlefield_enter(CHAR_DATA * ch);
+int battlefield_count(void);
+bool in_battlefield(CHAR_DATA * ch);
+bool battlefield_check_disabled(CHAR_DATA * ch, int type, char *name);
+void battlefield_notify(char *buf);
+int battlefield_participants(void);
+void battlefield_update(void);
 void battlefield_clear(void);
-void battlefield_special(CHAR_DATA * ch);
+
+static void battlefield_set(CHAR_DATA * ch, char *arg);
+static void battlefield_show(CHAR_DATA * ch);
+static void battlefield_trans(CHAR_DATA * ch, ROOM_INDEX_DATA * loc);
+static void battlefield_open(CHAR_DATA * ch);
+static void battlefield_close(CHAR_DATA * ch);
+static void battlefield_cancel(CHAR_DATA * ch);
+static void battlefield_enter(CHAR_DATA * ch);
+static void battlefield_special(CHAR_DATA * ch);
 
 
 /***************************************************************************
@@ -670,7 +677,7 @@ bool battlefield_set_llevel(CHAR_DATA *ch, char *arg)
 		send_to_char("The battlefield is already open.\n\r", ch);
 	} else {
 		if (arg[0] != '\0' && is_number(arg)) {
-			level = atoi(arg);
+			level = parse_int(arg);
 
 			if (level > battlefield.ulevel) {
 				send_to_char("The lower level must be lower than the upper level.\n\r", ch);
@@ -702,7 +709,7 @@ bool battlefield_set_ulevel(CHAR_DATA *ch, char *arg)
 		send_to_char("The battlefield is already open.\n\r", ch);
 	} else {
 		if (arg[0] != '\0' && is_number(arg)) {
-			level = atoi(arg);
+			level = parse_int(arg);
 
 			if (level < battlefield.llevel) {
 				send_to_char("The upper level must be higher than the lower level.\n\r", ch);
@@ -761,7 +768,7 @@ bool battlefield_set_openticks(CHAR_DATA *ch, char *arg)
 	} else {
 		int count;
 
-		count = atoi(arg);
+		count = parse_int(arg);
 		if (count > 0) {
 			printf_to_char(ch, "Battlefield open ticks set: %d\n\r", count);
 			battlefield.open_ticks = count;

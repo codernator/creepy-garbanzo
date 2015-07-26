@@ -28,12 +28,12 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/time.h>
-#include <ctype.h>
-#include <stdio.h>
+//#include <sys/time.h>
+//#include <ctype.h>
+//#include <time.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
-#include <time.h>
 #include "merc.h"
 #include "tables.h"
 #include "olc.h"
@@ -41,7 +41,10 @@
 #include "recycle.h"
 #include "skills.h"
 #include "libstring.h"
+#include "libfile.h"
 
+
+extern int parse_int(char *test);
 
 
 /***************************************************************************
@@ -426,7 +429,7 @@ EDIT(gredit_cost){
 	cost = -1;
 
 	if (is_number(argument))
-		cost = atoi(argument);
+		cost = parse_int(argument);
 
 	/*
 	 * we have a valid class and a level - see if a
@@ -548,7 +551,7 @@ void load_groups()
 		} else {
 			if (group == NULL) {
 				printf_bug("load_groups: No group loaded - invalid file syntax. %s", word);
-				exit(1);
+				_Exit(1);
 			}
 
 			KEY("Name", group->name, fread_string(fp));
@@ -593,7 +596,7 @@ void load_groups()
 
 		if (!found) {
 			printf_bug("load_groups: No group loaded - invalid file syntax. %s", word);
-			exit(1);
+			_Exit(1);
 		}
 
 		word = fread_word(fp);

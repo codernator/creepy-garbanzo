@@ -25,11 +25,8 @@
 *   ROM license, in the file Rom24/doc/rom.license                         *
 ***************************************************************************/
 
-#include <sys/types.h>
-#include <time.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include "merc.h"
 #include "magic.h"
 #include "interp.h"
@@ -43,6 +40,8 @@
 
 extern void bug_long(const char *str, long param);
 extern unsigned int parse_unsigned_int(char *string);
+extern void mp_bribe_trigger(CHAR_DATA * mob, CHAR_DATA * ch, long amount);
+extern void mp_give_trigger(CHAR_DATA * mob, CHAR_DATA * ch, OBJ_DATA * obj);
 
 /*
  * Local functions.

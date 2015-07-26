@@ -25,35 +25,37 @@
  *   ROM license, in the file Rom24/doc/rom.license                         *
  ****************************************************************************/
 
-#include <sys/types.h>
-#include <sys/resource.h>
-#include <time.h>
-#include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-#include <ctype.h>
+#include <stdio.h>
 #include "merc.h"
-
+#include "libfile.h"
 
 extern bool is_space(const char test);
 extern bool is_digit(const char test);
 
 
-/***************************************************************************
-* PUBLIC INTERFACE
-***************************************************************************/
-char fread_letter(FILE *fp);
-long fread_long(FILE *fp);
-unsigned int fread_uint(FILE *fp);
-long fread_flag(FILE *fp);
-int fread_number(FILE *fp);
-void fread_to_eol(FILE *fp);
-char *fread_word(FILE *fp);
-
 
 /***************************************************************************
 * IMPLEMENTATION
 ***************************************************************************/
+long flag_convert(char letter)
+{
+	long bitsum = 0;
+	int i;
+
+	if ('A' <= letter && letter <= 'Z') {
+		bitsum = 1;
+		for (i = (int)letter; i > (int)'A'; i--)
+			bitsum *= 2;
+	} else if ('a' <= letter && letter <= 'z') {
+		bitsum = 67108864; /* 2^26 */
+		for (i = (int)letter; i > (int)'a'; i--)
+			bitsum *= 2;
+	}
+
+	return bitsum;
+}
+
 /*
  * Read a letter from a file.
  */
@@ -91,7 +93,7 @@ long fread_long(FILE *fp)
 
 	if (!is_digit(c)) {
 		bug("Fread_long: bad format.", 0);
-		exit(1);
+		_Exit(1);
 	}
 
 	while (is_digit(c)) {
@@ -133,7 +135,7 @@ unsigned int fread_uint(FILE *fp)
 
 	if (!is_digit(c)) {
 		bug("Fread_uint: bad format.", 0);
-		exit(1);
+		_Exit(1);
 	}
 
 	while (is_digit(c)) {
@@ -179,7 +181,7 @@ int fread_number(FILE *fp)
 
 	if (!is_digit(c)) {
 		bug("Fread_number: bad format.", 0);
-		exit(1);
+		_Exit(1);
 	}
 
 	while (is_digit(c)) {
@@ -294,5 +296,5 @@ char *fread_word(FILE *fp)
 	}
 
 	bug("Fread_word: word too long.", 0);
-	exit(1);
+	_Exit(1);
 }

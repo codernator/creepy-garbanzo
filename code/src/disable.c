@@ -25,20 +25,16 @@
 *   ROM license, in the file Rom24/doc/rom.license                         *
 ***************************************************************************/
 
-#include <sys/types.h>
-#include <sys/time.h>
-
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <time.h>
 #include "merc.h"
 #include "interp.h"
 #include "magic.h"
 #include "recycle.h"
 #include "tables.h"
 #include "lookup.h"
+#include "libfile.h"
+
+extern int parse_int(char *test);
 
 /***************************************************************************
 *  merc.h:
@@ -70,6 +66,8 @@
  * void disable_all(CHAR_DATA * ch, char * argument, DISABLED_DATA * disabled_list);
  * void disable_show(CHAR_DATA * ch, DISABLED_DATA * list);
  */
+
+extern bool battlefield_check_disabled(CHAR_DATA * ch, int type, char *name);
 
 /***************************************************************************
 *	memory functions
@@ -230,7 +228,7 @@ void disable_cmd(CHAR_DATA *ch, char *argument, DISABLED_DATA **disabled_list)
 			return;
 		}
 
-		level = atoi(argument);
+		level = parse_int(argument);
 		if (level <= LEVEL_IMMORTAL || level > MAX_LEVEL)
 			level = get_trust(ch);
 
@@ -296,7 +294,7 @@ void disable_spell(CHAR_DATA *ch, char *argument, DISABLED_DATA **disabled_list)
 			return;
 		}
 
-		level = atoi(argument);
+		level = parse_int(argument);
 		if (level <= LEVEL_IMMORTAL || level > MAX_LEVEL)
 			level = get_trust(ch);
 

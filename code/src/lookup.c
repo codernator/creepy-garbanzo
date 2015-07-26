@@ -28,10 +28,6 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/time.h>
-#include <stdio.h>
-#include <time.h>
-#include <string.h>
 #include "merc.h"
 #include "tables.h"
 

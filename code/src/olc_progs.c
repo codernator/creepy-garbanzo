@@ -16,20 +16,20 @@
 ***************************************************************************/
 
 
+
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/types.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include "merc.h"
 #include "tables.h"
 #include "olc.h"
 #include "recycle.h"
 #include "libstring.h"
+
+
+extern void string_append(CHAR_DATA * ch, char **string);
+extern int parse_int (char *test);
 
 /***************************************************************************
 *	local defines
@@ -125,7 +125,7 @@ void do_mpedit(CHAR_DATA *ch, char *argument)
 
 	argument = one_argument(argument, command);
 	if (is_number(command)) {
-		int vnum = atoi(command);
+		int vnum = parse_int(command);
 		AREA_DATA *ad;
 
 		if ((mpcode = get_mprog_index(vnum)) == NULL) {
@@ -188,7 +188,7 @@ void do_mpedit(CHAR_DATA *ch, char *argument)
 MPEDIT(mpedit_create){
 	MPROG_CODE *mpcode;
 	AREA_DATA *ad;
-	int value = atoi(argument);
+	int value = parse_int(argument);
 
 	if (IS_NULLSTR(argument) || value < 1) {
 		send_to_char("Syntax:  mpedit create [vnum]\n\r", ch);
@@ -235,7 +235,7 @@ MPEDIT(mpedit_clone){
 	int value;
 
 	EDIT_MPCODE(ch, mpcode);
-	value = atoi(argument);
+	value = parse_int(argument);
 	if (argument[0] == '\0'
 	    || value == 0) {
 		send_to_char("Syntax:  clone [existing vnum]\n\r", ch);

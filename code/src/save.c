@@ -28,18 +28,16 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/types.h>
-#include <ctype.h>
 #include <stdio.h>
-#include <string.h>
-#include <time.h>
 #include "merc.h"
 #include "recycle.h"
 #include "interp.h"
 #include "tables.h"
 #include "lookup.h"
 #include "skills.h"
+#include "libfile.h"
 
+extern FILE *fpReserve;
 extern int _filbuf(FILE *);
 extern unsigned int fread_uint(FILE *fp);
 extern long fread_long(FILE *fp);

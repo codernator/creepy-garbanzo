@@ -34,12 +34,7 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/time.h>
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <time.h>
-#include <ctype.h>
 #include "merc.h"
 #include "interp.h"
 #include "recycle.h"
@@ -53,6 +48,7 @@
 extern AREA_DATA *get_vnum_area(long vnum);
 /* from olc.c */
 extern AREA_DATA *get_area_data(long vnum);
+extern long parse_long(char *test);
 
 
 AREA_DATA *grok_area(CHAR_DATA *ch, char *arg, BUFFER *out_buffer);
@@ -67,7 +63,7 @@ AREA_DATA *grok_area(CHAR_DATA *ch, char *arg, BUFFER *out_buffer)
 		if (arg[0] == '?') {
 			arg = arg + 1;
 			if (is_number(arg)) {
-				ad = get_vnum_area(atol(arg));
+				ad = get_vnum_area(parse_long(arg));
 				if (ad == NULL)
 					add_buf(out_buffer, "No area found containing that vnum.\n\r");
 			} else {
@@ -75,7 +71,7 @@ AREA_DATA *grok_area(CHAR_DATA *ch, char *arg, BUFFER *out_buffer)
 			}
 		} else {
 			if (is_number(arg)) {
-				ad = get_area_data(atol(arg));
+				ad = get_area_data(parse_long(arg));
 				if (ad == NULL)
 					add_buf(out_buffer, "No area found with that vnum.\n\r");
 			} else {

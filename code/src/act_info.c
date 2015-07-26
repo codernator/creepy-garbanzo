@@ -28,14 +28,8 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/types.h>
-#include <sys/time.h>
-
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <time.h>
 
 #include "merc.h"
 #include "magic.h"
@@ -45,9 +39,12 @@
 #include "ansi.h"
 #include "interp.h"
 #include "libstring.h"
+#include "libfile.h"
 
 extern byte parse_byte(char *string);
 extern byte parse_byte2(char *string, byte min, byte max);
+extern int parse_int(char *string);
+extern void string_append(CHAR_DATA * ch, char **string);
 
 
 void do_at(CHAR_DATA * ch, char *argument);
@@ -589,7 +586,7 @@ void do_scroll(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	lines = atoi(arg);
+	lines = parse_int(arg);
 
 	if (lines == 0) {
 		send_to_char("Paging disabled.\n\r", ch);
@@ -2692,7 +2689,7 @@ void do_wimpy(CHAR_DATA *ch, char *argument)
 	if (arg[0] == '\0')
 		wimpy = ch->max_hit / 5;
 	else
-		wimpy = atoi(arg);
+		wimpy = parse_int(arg);
 
 	if (wimpy < 0) {
 		send_to_char("Your courage exceeds your wisdom.\n\r", ch);

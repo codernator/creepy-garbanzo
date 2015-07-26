@@ -15,12 +15,8 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/types.h>
-#include <ctype.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include "merc.h"
 #include "tables.h"
 #include "olc.h"
@@ -35,6 +31,10 @@
 extern int wear_bit(int loc);
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern int flag_value(const struct flag_type *flag_table, char *argument);
+extern char *format_string(char *oldstring /*, bool fSpace */);
+extern void string_append(CHAR_DATA * ch, char **string);
+extern int parse_int(char *test);
+extern long parse_long(char *test);
 
 
 /***************************************************************************
@@ -127,7 +127,7 @@ static bool change_exit(CHAR_DATA *ch, char *argument, int door)
 			return FALSE;
 		}
 
-		value = atoi(arg);
+		value = parse_int(arg);
 
 		if (!(toRoom = get_room_index(value))) {
 			send_to_char("REdit:  Cannot link to non-existant room.\n\r", ch);
@@ -181,7 +181,7 @@ static bool change_exit(CHAR_DATA *ch, char *argument, int door)
 			send_to_char("Syntax:  [direction] room [vnum]\n\r", ch);
 			return FALSE;
 		}
-		value = atoi(arg);
+		value = parse_int(arg);
 
 		if (!(toRoom = get_room_index(value))) {
 			send_to_char("REdit:  Cannot link to non-existant room.\n\r", ch);
@@ -211,7 +211,7 @@ static bool change_exit(CHAR_DATA *ch, char *argument, int door)
 			return FALSE;
 		}
 
-		value = atoi(arg);
+		value = parse_int(arg);
 
 		if (!(key = get_obj_index(value))) {
 			send_to_char("REdit:  Key doesn't exist.\n\r", ch);
@@ -299,7 +299,7 @@ void do_redit(CHAR_DATA *ch, char *argument)
 		return;
 	} else {
 		if (!str_cmp(arg, "create")) {   /* redit create <vnum> */
-			if (argument[0] == '\0' || atoi(argument) == 0) {
+			if (argument[0] == '\0' || parse_int(argument) == 0) {
 				send_to_char("Syntax:  edit room create [vnum]\n\r", ch);
 				return;
 			}
@@ -331,7 +331,7 @@ void do_redit(CHAR_DATA *ch, char *argument)
 
 			return;
 		} else if (!IS_NULLSTR(arg)) {  /* redit <vnum> */
-			room = get_room_index(atoi(arg));
+			room = get_room_index(parse_int(arg));
 
 			if (!room) {
 				send_to_char("REdit : room does not exist.\n\r", ch);
@@ -375,7 +375,7 @@ EDIT(redit_create){
 	long hash_idx;
 
 	EDIT_ROOM(ch, room);
-	value = atol(argument);
+	value = parse_long(argument);
 	if (argument[0] == '\0' || value <= 0) {
 		send_to_char("Syntax:  create [vnum > 0]\n\r", ch);
 		return FALSE;
@@ -431,7 +431,7 @@ EDIT(redit_clone){
 		return FALSE;
 	}
 
-	room_idx = atol(argument);
+	room_idx = parse_long(argument);
 	if (argument[0] == '\0') {
 		send_to_char("REdit: Syntax:  clone [existing vnum]\n\r", ch);
 		return FALSE;
@@ -645,7 +645,7 @@ EDIT(redit_mshow){
 	}
 
 	if (is_number(argument)) {
-		value = atoi(argument);
+		value = parse_int(argument);
 		if (!(mob = get_mob_index(value))) {
 			send_to_char("REdit:  That mobile does not exist.\n\r", ch);
 			return FALSE;
@@ -681,7 +681,7 @@ EDIT(redit_oshow){
 	}
 
 	if (is_number(argument)) {
-		value = atoi(argument);
+		value = parse_int(argument);
 		if (!(obj = get_obj_index(value))) {
 			send_to_char("REdit:  That object does not exist.\n\r", ch);
 			return FALSE;
@@ -1063,7 +1063,7 @@ EDIT(redit_heal){
 
 	EDIT_ROOM(ch, room);
 	if (is_number(argument)) {
-		room->heal_rate = atoi(argument);
+		room->heal_rate = parse_int(argument);
 		send_to_char("Heal rate set.\n\r", ch);
 		return TRUE;
 	}
@@ -1082,7 +1082,7 @@ EDIT(redit_mana){
 
 	EDIT_ROOM(ch, room);
 	if (is_number(argument)) {
-		room->mana_rate = atoi(argument);
+		room->mana_rate = parse_int(argument);
 		send_to_char("Mana rate set.\n\r", ch);
 		return TRUE;
 	}
@@ -1189,7 +1189,7 @@ EDIT(redit_addaffect){
 	af.where = TO_AFFECTS;
 	af.type = skill->sn;
 	af.skill = skill;
-	af.level = atoi(arg);
+	af.level = parse_int(arg);
 	af.duration = -1;
 	af.location = 0;
 	af.modifier = 0;
@@ -1221,7 +1221,7 @@ EDIT(redit_delaffect){
 		return FALSE;
 	}
 
-	number = atoi(arg);
+	number = parse_int(arg);
 	count = 0;
 	for (paf = room->affected; paf != NULL; paf = paf_next) {
 		paf_next = paf->next;
@@ -1276,7 +1276,7 @@ EDIT(redit_mreset){
 		return FALSE;
 	}
 
-	if (!(mob = get_mob_index(atoi(arg)))) {
+	if (!(mob = get_mob_index(parse_int(arg)))) {
 		send_to_char("REdit: No mobile has that vnum.\n\r", ch);
 		return FALSE;
 	}
@@ -1292,9 +1292,9 @@ EDIT(redit_mreset){
 	pReset = new_reset_data();
 	pReset->command = 'M';
 	pReset->arg1 = mob->vnum;
-	pReset->arg2 = is_number(arg2) ? atoi(arg2) : MAX_MOB;
+	pReset->arg2 = is_number(arg2) ? parse_int(arg2) : MAX_MOB;
 	pReset->arg3 = room->vnum;
-	pReset->arg4 = is_number(argument) ? atoi(argument) : 1;
+	pReset->arg4 = is_number(argument) ? parse_int(argument) : 1;
 	add_reset(room, pReset, 0);
 
 	/*
@@ -1341,7 +1341,7 @@ EDIT(redit_oreset){
 		return FALSE;
 	}
 
-	if (!(obj = get_obj_index(atoi(arg1)))) {
+	if (!(obj = get_obj_index(parse_int(arg1)))) {
 		send_to_char("REdit: No object has that vnum.\n\r", ch);
 		return FALSE;
 	}

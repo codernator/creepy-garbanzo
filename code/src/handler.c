@@ -28,14 +28,7 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/types.h>
-#include <ctype.h>
 #include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include <stdlib.h>
-
-
 #include "merc.h"
 #include "magic.h"
 #include "recycle.h"
@@ -48,6 +41,7 @@ extern void bug_long(const char *str, long param);
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern void affect_modify(CHAR_DATA * ch, AFFECT_DATA * paf, bool fAdd);
 extern void blood_rage(CHAR_DATA * ch);
+extern long parse_long(char *test);
 
 /* external functions */
 extern void affect_join_obj(OBJ_DATA * obj, AFFECT_DATA * paf);
@@ -405,7 +399,7 @@ ROOM_INDEX_DATA *find_location(CHAR_DATA *ch, char *arg)
 	OBJ_DATA *obj;
 
 	if (is_number(arg))
-		return get_room_index(atoi(arg));
+		return get_room_index(parse_long(arg));
 
 	if ((victim = get_char_world(ch, arg)) != NULL)
 		return victim->in_room;
@@ -2842,25 +2836,3 @@ int get_session_seconds(CHAR_DATA *ch)
 	return (int)(current_time - ch->logon) % 60;
 }
 
-void add_apply(OBJ_DATA *obj, int loc, int mod, int where, int type, int dur, long vector, int level)
-{
-	AFFECT_DATA pAf;
-
-	if (obj == NULL)
-		return;
-
-	if (!obj->enchanted)
-		affect_enchant(obj);
-
-	pAf.location = loc;
-	pAf.modifier = mod;
-	pAf.where = where;
-	pAf.type = type;
-	pAf.duration = dur;
-	pAf.bitvector = vector;
-	pAf.level = level;
-	affect_join_obj(obj, &pAf);
-/*    affect_to_obj(obj, &pAf);*/
-
-	return;
-}

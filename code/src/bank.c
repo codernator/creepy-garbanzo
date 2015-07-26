@@ -34,10 +34,8 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <time.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include "merc.h"
 #include "magic.h"
 #include "interp.h"
@@ -47,6 +45,7 @@
 extern OBJ_DATA *get_object_by_itemtype_and_room(int item_type, ROOM_INDEX_DATA *room, CHAR_DATA *ch);
 extern void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is, const char *message);
 extern int number_range(int from, int to);
+extern long parse_long(char *test);
 
 
 static void complete_transaction(CHAR_DATA *ch, bool withdraw, unsigned int amount, unsigned int *purse, unsigned int *drawer, const char *tender, OBJ_DATA *atm);
@@ -126,7 +125,7 @@ void evaluate_transaction(CHAR_DATA *ch, bool withdraw, char *arg_amount, char *
 			return;
 		}
 
-		parsed_arg = atol(arg_amount);
+		parsed_arg = parse_long(arg_amount);
 		if (parsed_arg <= 0) {
 			snprintf(buf, MIL, "If you want to %s money, use the %s command, Jackass.",
 				 withdraw ? "deposit" : "withdraw",

@@ -10,12 +10,7 @@
 *  all the previous coders who released their source code.                *
 *                                                                         *
 ***************************************************************************/
-#include <sys/types.h>
-#include <ctype.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 #include "merc.h"
 
 /*

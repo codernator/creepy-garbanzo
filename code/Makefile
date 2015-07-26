@@ -2,11 +2,10 @@ IDIR=include
 ODIR=obj
 BDIR=bin
 SDIR=src
-CC      = /usr/bin/gcc
-PROF    = -DLINUX
-NOCRYPT =
-C_FLAGS =  -O2 -g2 -Wall -pedantic -std=gnu99 -I$(IDIR)
-L_FLAGS =  $(PROF)
+CC= /usr/bin/gcc
+PROF= -DLINUX
+C_FLAGS= -O2 -g2 -Wall -pedantic -std=gnu99 -I$(IDIR)
+L_FLAGS=  $(PROF)
 LIBS=-lm
 _DEPS=merc.h
 DEPS=$(patsubst %,$(IDIR)/%,$(_DEPS))

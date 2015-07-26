@@ -23,12 +23,8 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/types.h>
-#include <ctype.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include "merc.h"
 #include "tables.h"
 #include "olc.h"
@@ -42,8 +38,10 @@
  *  may aid in debugging.
  */
 
+extern FILE *fpReserve;
 extern void bug_long(const char *str, long param);
 static void save_area(AREA_DATA * area);
+extern int parse_int(char *test);
 
 /***************************************************************************
 *	fix_string
@@ -896,7 +894,7 @@ void do_asave(CHAR_DATA *ch, char *argument)
 	 * save the area it corresponds to
 	 */
 	if (is_number(arg)) {
-		value = atoi(arg);
+		value = parse_int(arg);
 
 		if ((area = get_area_data(value)) == NULL) {
 			if (ch != NULL)

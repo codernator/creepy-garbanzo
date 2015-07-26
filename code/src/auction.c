@@ -28,10 +28,8 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/time.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include "merc.h"
 #include "tables.h"
 #include "lookup.h"
@@ -40,6 +38,7 @@
 
 extern bool is_digit(const char test);
 extern unsigned int parse_unsigned_int(char *string);
+extern int parse_int(char *string);
 
 void talk_auction(char *argument);
 extern void recursive_clone(CHAR_DATA * ch, OBJ_DATA * obj, OBJ_DATA * clone);
@@ -84,7 +83,7 @@ unsigned int advatoi(const char *s)
 
 	while (is_digit(*stringptr)) { /* as long as the current character is a digit */
 		strncpy(tempstring, stringptr, 1);                              /* copy first digit */
-		number = (number * 10) + (unsigned int)atol(tempstring);        /* add to current number */
+		number = (number * 10) + parse_unsigned_int(tempstring);        /* add to current number */
 		stringptr++;                                                    /* advance */
 	}
 
@@ -108,7 +107,7 @@ unsigned int advatoi(const char *s)
 	while (is_digit(*stringptr) && (multiplier > 1)) {      /* if any digits follow k/m, add those too */
 		strncpy(tempstring, stringptr, 1);              /* copy first digit */
 		multiplier = multiplier / 10;                   /* the further we get to right, the less are the digit 'worth' */
-		number = number + (atoi(tempstring) * multiplier);
+		number = number + (parse_unsigned_int(tempstring) * multiplier);
 		stringptr++;
 	}
 
@@ -139,13 +138,13 @@ unsigned int parsebet(const unsigned int currentbet, const char *argument)
 			if (strlen(stringptr) == 1)                                                             /* only + specified, assume default */
 				newbet = (currentbet * 125) / 100;                                              /* default: add 25% */
 			else
-				newbet = (currentbet * (100u + (unsigned int)atol(++stringptr))) / 100u;        /* cut off the first char */
+				newbet = (currentbet * (100u + parse_unsigned_int(++stringptr))) / 100u;        /* cut off the first char */
 		} else {
 			if ((*stringptr == '*') || (*stringptr == 'x')) {                                       /* multiply */
 				if (strlen(stringptr) == 1)                                                     /* only x specified, assume default */
 					newbet = currentbet * 2u;                                               /* default: twice */
 				else                                                                            /* user specified a number */
-					newbet = currentbet * (unsigned int)atol(++stringptr);                  /* cut off the first char */
+					newbet = currentbet * parse_unsigned_int(++stringptr);                  /* cut off the first char */
 			}
 		}
 	}

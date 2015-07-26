@@ -28,13 +28,12 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/time.h>
-#include <stdint.h>
+//#include <sys/time.h>
+//#include <stdint.h>
+//#include <string.h>
+//#include <stdlib.h>
+//#include <ctype.h>
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <time.h>
-#include <ctype.h>
 #include "merc.h"
 #include "interp.h"
 #include "recycle.h"
@@ -44,6 +43,8 @@
 #include "find.h"
 #include "libstring.h"
 
+extern int parse_int(char *test);
+extern long parse_long(char *test);
 
 const struct cmp_vars_obj_index_data obj_idx_flags[] =
 {
@@ -1433,19 +1434,19 @@ bool cmp_fn_number(long val, char *arg)
 			arg++;
 
 		if (is_number(arg))
-			return val > atoi(arg);
+			return val > parse_int(arg);
 	} else if (arg[0] == '<') {
 		while (is_space(*arg) || arg[0] == '<')
 			arg++;
 
 		if (is_number(arg))
-			return val < atoi(arg);
+			return val < parse_int(arg);
 	} else {
 		while (is_space(*arg) || arg[0] == '=')
 			arg++;
 
 		if (is_number(arg))
-			return val == atoi(arg);
+			return val == parse_int(arg);
 	}
 
 	return FALSE;
@@ -1481,7 +1482,7 @@ bool cmp_fn_flag(long				bit,
 			arg++;
 
 		if (is_number(arg)) {
-			return IS_SET(bit, atol(arg)) > 0;
+			return IS_SET(bit, parse_long(arg)) > 0;
 		} else {
 			for (iter = 0; table[iter].name != NULL; iter++)
 				if (!str_prefix(arg, table[iter].name))
@@ -1521,7 +1522,7 @@ bool cmp_fn_index(long				bit,
 			arg++;
 
 		if (is_number(arg)) {
-			return IS_SET(bit, atol(arg)) > 0;
+			return IS_SET(bit, parse_long(arg)) > 0;
 		} else {
 			for (iter = 0; table[iter].name != NULL; iter++)
 				if (!str_prefix(arg, table[iter].name))

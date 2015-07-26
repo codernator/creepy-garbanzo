@@ -57,25 +57,29 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/time.h>
-#include <ctype.h>
+//#include <sys/time.h>
+//#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <time.h>
+//#include <time.h>
 
 #include "merc.h"
 #include "interp.h"
 #include "recycle.h"
 #include "tables.h"
 #include "libstring.h"
+#include "libfile.h"
 
 /***************************************************************************
 *	globals
 ***************************************************************************/
 extern int _filbuf(FILE *);
+extern FILE *fpReserve;
 extern FILE *fp_area;
 extern char area_file[MIL];
+extern void string_append(CHAR_DATA * ch, char **string);
+extern int parse_int(char *test);
 
 #define MAX_MESSAGE_LENGTH              4096
 #define MIN_MESSAGE_LEVEL               10
@@ -362,7 +366,7 @@ static void load_thread(char *name, NOTE_DATA **list, int type, time_t free_time
 	}
 
 	bug("load_threads: bad key word.", 0);
-	exit(1);
+	_Exit(1);
 }
 
 /***************************************************************************
@@ -682,7 +686,7 @@ static void message_read(CHAR_DATA *ch, char *argument, int type)
 	} else if (!str_cmp(argument, "all") || !str_prefix(argument, "first")) {
 		msg_num = 1;
 	} else if (is_number(argument)) {
-		msg_num = atoi(argument);
+		msg_num = parse_int(argument);
 	} else {
 		send_to_char("Read which number?\n\r", ch);
 		return;
@@ -755,7 +759,7 @@ static void message_remove(CHAR_DATA *ch, char *argument, int type)
 		return;
 	}
 
-	msg_num = atoi(argument);
+	msg_num = parse_int(argument);
 
 	if ((note = get_message(ch, &msg_num, type)) != NULL) {
 		if (!str_cmp(note->sender, ch->name)) {
@@ -796,7 +800,7 @@ static void message_delete(CHAR_DATA *ch, char *argument, int type)
 		return;
 	}
 
-	msg_num = atoi(argument);
+	msg_num = parse_int(argument);
 
 	if ((note = get_message(ch, &msg_num, type)) != NULL) {
 		remove_message(note);
@@ -1101,7 +1105,7 @@ static void message_recall(CHAR_DATA *ch, char *argument, int type)
 		return;
 	}
 
-	msg_num = atoi(argument);
+	msg_num = parse_int(argument);
 	if ((note = get_message(ch, &msg_num, type)) == NULL
 	    || str_cmp(note->sender, ch->name)) {
 		send_to_char("You can only recall messages that you have written.\n\r", ch);
@@ -1141,7 +1145,7 @@ static void message_reply(CHAR_DATA *ch, char *argument, int type)
 		return;
 	}
 
-	msg_num = atoi(argument);
+	msg_num = parse_int(argument);
 	if ((note = get_message(ch, &msg_num, type)) == NULL
 	    || !str_cmp(note->sender, ch->name)) {
 		send_to_char("You cannot reply to messages that you have written.  Use 'recall'.\n\r", ch);
@@ -1207,7 +1211,7 @@ static void message_forward(CHAR_DATA *ch, char *argument, int type)
 		return;
 	}
 
-	msg_num = atoi(argument);
+	msg_num = parse_int(argument);
 	if ((note = get_message(ch, &msg_num, type)) == NULL
 	    || (clone_msg = clone_message(note)) == NULL) {
 		send_to_char("You cannot forward that message.\n\r", ch);

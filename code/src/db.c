@@ -28,14 +28,11 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/types.h>
 #include <sys/resource.h>
-#include <time.h>
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <ctype.h>
-
+#include <stdio.h>
+#include "libfile.h"
 #include "merc.h"
 #include "db.h"
 #include "recycle.h"
@@ -46,6 +43,7 @@
 #include "skills.h"
 
 
+extern FILE *fpReserve;
 extern long flag_lookup(const char *word, const struct flag_type *flag_table);
 extern int _filbuf(FILE *);
 extern void init_mm(void);
@@ -271,7 +269,7 @@ static void init_areas()
 
 	if ((fpList = fopen(AREA_LIST, "r")) == NULL) {
 		perror(AREA_LIST);
-		exit(1);
+		_Exit(1);
 	}
 
 
@@ -286,7 +284,7 @@ static void init_areas()
 		} else {
 			if ((fp_area = fopen(area_file, "r")) == NULL) {
 				perror(area_file);
-				exit(1);
+				_Exit(1);
 			}
 		}
 
@@ -297,7 +295,7 @@ static void init_areas()
 
 			if (fread_letter(fp_area) != '#') {
 				bug("Boot_db: # not found.", 0);
-				exit(1);
+				_Exit(1);
 			}
 
 			word = fread_word(fp_area);
@@ -326,7 +324,7 @@ static void init_areas()
 				load_specials(fp_area);
 			} else {
 				bug("Boot_db: bad section name.", 0);
-				exit(1);
+				_Exit(1);
 			}
 		}
 
@@ -354,7 +352,7 @@ void boot_db()
 	/* init string space */
 	if ((string_space = calloc(1, MAX_STRING)) == NULL) {
 		bug("Boot_db: can't alloc %d string space.", MAX_STRING);
-		exit(1);
+		_Exit(1);
 	}
 
 	top_string = string_space;
@@ -368,15 +366,9 @@ void boot_db()
 	auction = (AUCTION_DATA *)malloc(sizeof(AUCTION_DATA));  /* DOH!!! */
 	if (auction == NULL) {
 		bug("Cannot allocate memory for the AUCTION_DATA structure - could note allocate %d bytes", (int)sizeof(AUCTION_DATA));
-		exit(1);
+		_Exit(1);
 	}
 	auction->item = NULL;   /* nothing is being sold */
-
-	/* load host exceptions */
-	/*
-	 * log_string("Loading host exceptions ..");
-	 * load_host_exceptions();
-	 */
 
 	/* load skills */
 	log_string("Loading Skills..");
@@ -688,7 +680,7 @@ void load_resets(FILE *fp)
 
 	if (!area_last) {
 		bug("Load_resets: no #AREA seen yet.", 0);
-		exit(1);
+		_Exit(1);
 	}
 
 	for (;; ) {
@@ -742,7 +734,7 @@ void load_resets(FILE *fp)
 			    || !(pexit = room_idx->exit[reset->arg2])
 			    || !IS_SET(pexit->rs_flags, EX_ISDOOR)) {
 				printf_bug("Load_resets: 'D': exit %d, room %d not door.", reset->arg2, reset->arg1);
-				exit(1);
+				_Exit(1);
 			}
 
 			switch (reset->arg3) {
@@ -762,7 +754,7 @@ void load_resets(FILE *fp)
 
 		if (rVnum == -1) {
 			printf_bug("load_resets : rVnum == -1");
-			exit(1);
+			_Exit(1);
 		}
 
 		if (reset->command != 'D')
@@ -783,7 +775,7 @@ void load_rooms(FILE *fp)
 
 	if (area_last == NULL) {
 		bug("Load_rooms: no #AREA seen yet.", 0);
-		exit(1);
+		_Exit(1);
 	}
 
 	for (;; ) {
@@ -795,7 +787,7 @@ void load_rooms(FILE *fp)
 		letter = fread_letter(fp);
 		if (letter != '#') {
 			bug("Load_rooms: # not found.", 0);
-			exit(1);
+			_Exit(1);
 		}
 
 		vnum = (long)fread_number(fp);
@@ -805,7 +797,7 @@ void load_rooms(FILE *fp)
 		db_loading = FALSE;
 		if (get_room_index(vnum) != NULL) {
 			bug_long("Load_rooms: vnum %d duplicated.", vnum);
-			exit(1);
+			_Exit(1);
 		}
 		db_loading = TRUE;
 
@@ -851,7 +843,7 @@ void load_rooms(FILE *fp)
 				door = fread_number(fp);
 				if (door < 0 || door > 5) {
 					bug_long("Fread_rooms: vnum %d has bad door number.", vnum);
-					exit(1);
+					_Exit(1);
 				}
 
 				pexit = alloc_perm((unsigned int)sizeof(*pexit));
@@ -898,7 +890,7 @@ void load_rooms(FILE *fp)
 			} else if (letter == 'O') {
 				if (room_idx->owner[0] != '\0') {
 					bug("Load_rooms: duplicate owner.", 0);
-					exit(1);
+					_Exit(1);
 				}
 
 				room_idx->owner = fread_string(fp);
@@ -919,7 +911,7 @@ void load_rooms(FILE *fp)
 				}
 			} else {
 				bug_long("Load_rooms: vnum %d has flag not 'HMDEOS'.", vnum);
-				exit(1);
+				_Exit(1);
 			}
 		}
 
@@ -988,7 +980,7 @@ void load_specials(FILE *fp)
 		switch (letter = fread_letter(fp)) {
 		default:
 			bug("Load_specials: letter '%c' not *MS.", (int)letter);
-			exit(1);
+			_Exit(1);
 
 		case 'S':
 			return;
@@ -1001,7 +993,7 @@ void load_specials(FILE *fp)
 			mob_idx->spec_fun = spec_lookup(fread_word(fp));
 			if (mob_idx->spec_fun == 0) {
 				bug_long("Load_specials: 'M': vnum %d.", mob_idx->vnum);
-				exit(1);
+				_Exit(1);
 			}
 			break;
 		}
@@ -1020,7 +1012,7 @@ void load_mobiles(FILE *fp)
 
 	if (!area_last) {
 		bug("Load_mobiles: no #AREA seen yet.", 0);
-		exit(1);
+		_Exit(1);
 	}
 
 	for (;; ) {
@@ -1031,7 +1023,7 @@ void load_mobiles(FILE *fp)
 		letter = fread_letter(fp);
 		if (letter != '#') {
 			bug("Load_mobiles: # not found.", 0);
-			exit(1);
+			_Exit(1);
 		}
 
 		vnum = (long)fread_number(fp);
@@ -1041,7 +1033,7 @@ void load_mobiles(FILE *fp)
 		db_loading = FALSE;
 		if (get_mob_index(vnum) != NULL) {
 			bug_long("Load_mobiles: vnum %d duplicated.", vnum);
-			exit(1);
+			_Exit(1);
 		}
 		db_loading = TRUE;
 
@@ -1148,7 +1140,7 @@ void load_mobiles(FILE *fp)
 					REMOVE_BIT(mob_idx->parts, vector);
 				} else {
 					bug("Flag remove: flag not found.", 0);
-					exit(1);
+					_Exit(1);
 				}
 			} else if (letter == 'M') {
 				MPROG_LIST *mprog;
@@ -1160,7 +1152,7 @@ void load_mobiles(FILE *fp)
 
 				if ((trigger = (int)flag_lookup(word, mprog_flags)) == NO_FLAG) {
 					bug("MOBprogs: invalid trigger.", 0);
-					exit(1);
+					_Exit(1);
 				}
 
 				SET_BIT(mob_idx->mprog_flags, trigger);
@@ -1200,7 +1192,7 @@ void load_objects(FILE *fp)
 
 	if (!area_last) {
 		bug("Load_objects: no #AREA seen yet.", 0);
-		exit(1);
+		_Exit(1);
 	}
 
 	for (;; ) {
@@ -1211,7 +1203,7 @@ void load_objects(FILE *fp)
 		letter = fread_letter(fp);
 		if (letter != '#') {
 			bug("Load_objects: # not found.", 0);
-			exit(1);
+			_Exit(1);
 		}
 
 		vnum = fread_number(fp);
@@ -1221,7 +1213,7 @@ void load_objects(FILE *fp)
 		db_loading = FALSE;
 		if (get_obj_index(vnum) != NULL) {
 			bug_long("Load_objects: vnum %d duplicated.", vnum);
-			exit(1);
+			_Exit(1);
 		}
 		db_loading = TRUE;
 
@@ -1381,7 +1373,7 @@ void load_objects(FILE *fp)
 					break;
 				default:
 					bug("Load_objects: Bad where on flag set.", 0);
-					exit(1);
+					_Exit(1);
 				}
 				paf->type = -1;
 				paf->level = obj_idx->level;
@@ -1456,7 +1448,7 @@ void fix_exits(void)
 				switch (reset->command) {
 				default:
 					printf_log("fix_exits : room %d with reset cmd %c", room_idx->vnum, reset->command);
-					exit(1);
+					_Exit(1);
 
 				case 'M':
 					get_mob_index(reset->arg1);
@@ -1472,7 +1464,7 @@ void fix_exits(void)
 					get_obj_index(reset->arg1);
 					if (ilast_obj == NULL) {
 						printf_log("fix_exits : reset in room %d con ilast_obj NULL", room_idx->vnum);
-						exit(1);
+						_Exit(1);
 					}
 					break;
 
@@ -1481,7 +1473,7 @@ void fix_exits(void)
 					get_obj_index(reset->arg1);
 					if (iLastRoom == NULL) {
 						printf_bug("fix_exits : reset in room %d with iLastRoom NULL", room_idx->vnum);
-						exit(1);
+						_Exit(1);
 					}
 					ilast_obj = iLastRoom;
 					break;
@@ -1494,7 +1486,7 @@ void fix_exits(void)
 					get_room_index(reset->arg1);
 					if (reset->arg2 < 0 || reset->arg2 > MAX_DIR) {
 						printf_bug("fix_exits : reset in room %d with arg2 %d >= MAX_DIR", room_idx->vnum, reset->arg2);
-						exit(1);
+						_Exit(1);
 					}
 					break;
 				}       /* switch */
@@ -1550,7 +1542,7 @@ void load_mobprogs(FILE *fp)
 
 	if (area_last == NULL) {
 		bug("Load_mobprogs: no #AREA seen yet.", 0);
-		exit(1);
+		_Exit(1);
 	}
 
 	for (;; ) {
@@ -1560,7 +1552,7 @@ void load_mobprogs(FILE *fp)
 		letter = fread_letter(fp);
 		if (letter != '#') {
 			bug("Load_mobprogs: # not found.", 0);
-			exit(1);
+			_Exit(1);
 		}
 
 		vnum = fread_number(fp);
@@ -1570,7 +1562,7 @@ void load_mobprogs(FILE *fp)
 		db_loading = FALSE;
 		if (get_mprog_index(vnum) != NULL) {
 			bug_long("Load_mobprogs: vnum %d duplicated.", vnum);
-			exit(1);
+			_Exit(1);
 		}
 		db_loading = TRUE;
 
@@ -1599,7 +1591,7 @@ void load_mobprogs_new(FILE *fp)
 
 	if (area_last == NULL) {
 		bug("load_mobprogs: no #AREA seen yet.", 0);
-		exit(1);
+		_Exit(1);
 	}
 
 	mprog = NULL;
@@ -1638,7 +1630,7 @@ void load_mobprogs_new(FILE *fp)
 			db_loading = FALSE;
 			if (get_mprog_index(vnum) != NULL) {
 				bug("load_mobprogs: vnum %d duplicated.", vnum);
-				exit(1);
+				_Exit(1);
 			}
 			db_loading = TRUE;
 
@@ -1679,7 +1671,7 @@ void fix_mobprogs(void)
 					list->code = prog->code;
 				} else {
 					bug_long("fix_mobprogs: code vnum %d not found.", list->vnum);
-					exit(1);
+					_Exit(1);
 				}
 			}
 		}
@@ -2040,7 +2032,7 @@ CHAR_DATA *create_mobile(MOB_INDEX_DATA *mob_idx)
 
 	if (mob_idx == NULL) {
 		bug("Create_mobile: NULL mob_idx.", 0);
-		exit(1);
+		_Exit(1);
 	}
 
 	mob = new_char();
@@ -2386,7 +2378,7 @@ OBJ_DATA *create_object(OBJ_INDEX_DATA *obj_idx, int level)
 
 	if (obj_idx == NULL) {
 		bug("Create_object: NULL obj_idx.", 0);
-		exit(1);
+		_Exit(1);
 	}
 
 	obj = new_obj();
@@ -2632,7 +2624,7 @@ MOB_INDEX_DATA *get_mob_index(long vnum)
 
 	if (db_loading) {
 		bug_long("Get_mob_index: bad vnum %d.", vnum);
-		exit(1);
+		_Exit(1);
 	}
 
 	return NULL;
@@ -2656,7 +2648,7 @@ OBJ_INDEX_DATA *get_obj_index(long vnum)
 
 	if (db_loading) {
 		bug_long("Get_obj_index: bad vnum %d.", vnum);
-		exit(1);
+		_Exit(1);
 	}
 
 	return NULL;
@@ -2680,7 +2672,7 @@ ROOM_INDEX_DATA *get_room_index(long vnum)
 
 	if (db_loading) {
 		bug_long("Get_room_index: bad vnum %d.", vnum);
-		exit(1);
+		_Exit(1);
 	}
 
 	return NULL;
@@ -2699,24 +2691,6 @@ MPROG_CODE *get_mprog_index(long vnum)
 
 
 
-
-long flag_convert(char letter)
-{
-	long bitsum = 0;
-	int i;
-
-	if ('A' <= letter && letter <= 'Z') {
-		bitsum = 1;
-		for (i = (int)letter; i > (int)'A'; i--)
-			bitsum *= 2;
-	} else if ('a' <= letter && letter <= 'z') {
-		bitsum = 67108864; /* 2^26 */
-		for (i = (int)letter; i > (int)'a'; i--)
-			bitsum *= 2;
-	}
-
-	return bitsum;
-}
 
 
 
@@ -2738,7 +2712,7 @@ char *fread_string(FILE *fp)
 
 	if (plast > &string_space[MAX_STRING - MAX_STRING_LENGTH]) {
 		bug("Fread_string: MAX_STRING %d exceeded.", MAX_STRING);
-		exit(1);
+		_Exit(1);
 	}
 
 /*
@@ -2768,7 +2742,7 @@ char *fread_string(FILE *fp)
 			/* temp fix */
 			bug("Fread_string: EOF", 0);
 			return NULL;
-		/* exit(1); */
+		/* _Exit(1); */
 
 		case '\n':
 			plast++;
@@ -2842,7 +2816,7 @@ char *fread_string_eol(FILE *fp)
 
 	if (plast > &string_space[MAX_STRING - MAX_STRING_LENGTH]) {
 		bug("Fread_string: MAX_STRING %d exceeded.", MAX_STRING);
-		exit(1);
+		_Exit(1);
 	}
 
 /*
@@ -2939,7 +2913,7 @@ void *alloc_mem(unsigned int sMem)
 
 	if (iList == MAX_MEM_LIST) {
 		bug_long("Alloc_mem: size %d too large.", (long)sMem);
-		exit(1);
+		_Exit(1);
 	}
 
 	if (rgFreeList[iList] == NULL) {
@@ -2986,7 +2960,7 @@ void free_mem(void *pMem, unsigned int sMem)
 
 	if (iList == MAX_MEM_LIST) {
 		bug_long("Free_mem: size %d too large.", (long)sMem);
-		exit(1);
+		_Exit(1);
 	}
 
 	*((void **)pMem) = rgFreeList[iList];
@@ -3012,14 +2986,14 @@ void *alloc_perm(unsigned int sMem)
 
 	if (sMem > MAX_PERM_BLOCK) {
 		bug_long("Alloc_perm: %d too large.", (long)sMem);
-		exit(1);
+		_Exit(1);
 	}
 
 	if (pMemPerm == NULL || iMemPerm + sMem > MAX_PERM_BLOCK) {
 		iMemPerm = 0;
 		if ((pMemPerm = calloc(1, MAX_PERM_BLOCK)) == NULL) {
 			perror("Alloc_perm");
-			exit(1);
+			_Exit(1);
 		}
 	}
 

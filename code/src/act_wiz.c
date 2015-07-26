@@ -25,17 +25,9 @@
 *   ROM license, in the file Rom24/doc/rom.license                         *
 ***************************************************************************/
 
-#include <sys/types.h>
-#include <sys/time.h>
 #include <unistd.h>
-#include <math.h>
-#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <time.h>
-#include <assert.h>
 #include "merc.h"
 #include "db.h"
 #include "recycle.h"
@@ -44,11 +36,6 @@
 #include "magic.h"
 #include "interp.h"
 
-#include <dirent.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/resource.h>
 
 /***************************************************************************
 *	command procedures needed
@@ -58,10 +45,12 @@ DECLARE_DO_FUN(do_gftell);
 DECLARE_DO_FUN(do_grestore);
 DECLARE_DO_FUN(do_rrestore);
 
+extern FILE *fpReserve;
 extern long top_mob_index;
 extern long top_obj_index;
 extern bool is_space(const char test);
 extern bool is_number(const char *test);
+extern int parse_int(char *test);
 
 /***************************************************************************
 *	local functions
@@ -377,7 +366,7 @@ void do_jail(CHAR_DATA *ch, char *argument)
 		send_to_char("Only on players.\n\r", ch);
 		return;
 	}
-	value = atoi(duration);
+	value = parse_int(duration);
 
 	if (value < 0) {
 		send_to_char("Jail time must be positive.\n\r", ch);
@@ -910,7 +899,7 @@ void do_bounty(CHAR_DATA *ch, char *argument)
 	if (is_number(arg2)) {
 		int parsed_arg;
 		unsigned int amount;
-		parsed_arg = atoi(arg2);
+		parsed_arg = parse_int(arg2);
 
 		amount = parsed_arg <= 0 ? 1u : (unsigned int)parsed_arg;
 
@@ -978,28 +967,6 @@ void do_disconnect(CHAR_DATA *ch, char *argument)
 		send_to_char("Disconnect whom?\n\r", ch);
 		return;
 	}
-#if 0
-	if (is_number(arg)) {
-		int desc;
-
-		desc = atoi(arg);
-		for (d = descriptor_list; d != NULL; d = d->next) {
-			if (ch->level <= victim->level) {
-				send_to_char("You failed.\n\r", ch);
-				return;
-			}
-			if (victim->desc == NULL) {
-				act("$N doesn't have a descriptor.", ch, NULL, victim, TO_CHAR);
-				return;
-			}
-			if (d->descriptor == desc) {
-				close_socket(d);
-				send_to_char("Ok.\n\r", ch);
-				return;
-			}
-		}
-	}
-#endif
 
 	victim = get_char_world(ch, arg);
 	if (victim == NULL) {
@@ -1008,7 +975,7 @@ void do_disconnect(CHAR_DATA *ch, char *argument)
 	} else if (is_number(arg)) {
 		int desc;
 
-		desc = atoi(arg);
+		desc = parse_int(arg);
 		for (d = descriptor_list; d != NULL; d = d->next) {
 			if ((d->descriptor == (SOCKET)desc) && (ch->level > victim->level)) {
 				close_socket(d);
@@ -2355,7 +2322,7 @@ void do_mload(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if ((pMobIndex = get_mob_index(atoi(arg))) == NULL) {
+	if ((pMobIndex = get_mob_index(parse_int(arg))) == NULL) {
 		send_to_char("No mob has that vnum.\n\r", ch);
 		return;
 	}
@@ -2398,7 +2365,7 @@ void do_oload(CHAR_DATA *ch, char *argument)
 			return;
 		}
 
-		level = atoi(arg2);
+		level = parse_int(arg2);
 
 		if (level < 0
 		    || (get_trust(ch) != MAX_LEVEL
@@ -2408,7 +2375,7 @@ void do_oload(CHAR_DATA *ch, char *argument)
 		}
 	}
 
-	if ((pObjIndex = get_obj_index(atoi(arg1))) == NULL) {
+	if ((pObjIndex = get_obj_index(parse_int(arg1))) == NULL) {
 		send_to_char("No object has that vnum.\n\r", ch);
 		return;
 	}
@@ -2541,21 +2508,21 @@ void do_advance(CHAR_DATA *ch, char *argument)
 		if (victim->level >= LEVEL_HERO - 1)
 			return;
 
-		if (arg3[0] != '\0' && atoi(arg2) == 0)
-			level = UMIN(victim->level + atoi(arg3), LEVEL_HERO - 1);
+		if (arg3[0] != '\0' && parse_int(arg2) == 0)
+			level = UMIN(victim->level + parse_int(arg3), LEVEL_HERO - 1);
 		else
-			level = UMIN(victim->level + atoi(arg2), LEVEL_HERO - 1);
+			level = UMIN(victim->level + parse_int(arg2), LEVEL_HERO - 1);
 	} else if (arg2[0] == '-') {
 		if (victim->level >= LEVEL_HERO || victim->level <= 1)
 			return;
 
-		if (arg3[0] != '\0' && atoi(arg2) == 0)
-			level = UMAX(victim->level - atoi(arg3), 1);
+		if (arg3[0] != '\0' && parse_int(arg2) == 0)
+			level = UMAX(victim->level - parse_int(arg3), 1);
 		else
-			level = UMAX(victim->level + atoi(arg2), 1);
+			level = UMAX(victim->level + parse_int(arg2), 1);
 
 	} else {
-		level = atoi(arg2);
+		level = parse_int(arg2);
 	}
 
 	if (level < 1 || level > MAX_LEVEL) {
@@ -2636,7 +2603,7 @@ void do_trust(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	level = atoi(arg2);
+	level = parse_int(arg2);
 	if (level > MAX_LEVEL) {
 		send_to_char("Level must be 0(reset) or 1 to 610.\n\r", ch);
 		return;
@@ -3674,7 +3641,7 @@ void do_winvis(CHAR_DATA *ch, char *argument)
 		}
 	} else {
 		/* do the level thing */
-		level = atoi(arg);
+		level = parse_int(arg);
 		if (level < 2 || level > get_trust(ch)) {
 			send_to_char("Invis level must be between 2 and your level.\n\r", ch);
 			return;
@@ -3713,7 +3680,7 @@ void do_incognito(CHAR_DATA *ch, char *argument)
 		}
 	} else {
 		/* do the level thing */
-		level = atoi(arg);
+		level = parse_int(arg);
 		if (level < 2 || level > get_trust(ch)) {
 			send_to_char("Incog level must be between 2 and your level.\n\r", ch);
 			return;
@@ -3893,7 +3860,7 @@ void copyover_recover()
 	if (!fp) { /* there are some descriptors open which will hang forever then ? */
 		perror("copyover_recover:fopen");
 /*		logf ("Copyover file not found. Exitting.\n\r");*/
-		exit(1);
+		_exit(1);
 	}
 
 	unlink(COPYOVER_FILE);  /* In case something crashes - doesn't prevent reading	*/
@@ -3997,7 +3964,7 @@ void copyover_recover()
  *  aff->bitvector = 0;
  *  aff->type = aff->location = get_item_apply_val(affect);
  *  if(mod[0] != '\0')
- *      aff->modifier = atoi(mod);
+ *      aff->modifier = parse_int(mod);
  *  else
  *      aff->modifier = ch->level;
  *
@@ -4667,7 +4634,7 @@ void do_olevel(CHAR_DATA *ch, char *argument)
 		send_to_char("Syntax: olevel [level]\n\r", ch);
 		return;
 	}
-	level = atoi(arg);
+	level = parse_int(arg);
 	buffer = new_buf();
 	found = FALSE;
 	nMatch = 0;
@@ -4712,7 +4679,7 @@ void do_mlevel(CHAR_DATA *ch, char *argument)
 		send_to_char("Syntax: mlevel [level]\n\r", ch);
 		return;
 	}
-	level = atoi(arg);
+	level = parse_int(arg);
 	buffer = new_buf();
 	found = FALSE;
 	nMatch = 0;
@@ -5321,57 +5288,6 @@ void immkiss_char(CHAR_DATA *ch, CHAR_DATA *vch)
 	}
 }
 
-void do_listgods(CHAR_DATA *ch, char *argument)
-{
-	DESCRIPTOR_DATA *d;
-	BUFFER *gbuf;
-	struct dirent *Dir;
-	DIR *Directory;
-	char FName[80];
-	char buf[MSL];
-	int nMatch, list1, list4;
-	char list[MSL];
-	char list2[MSL];
-	char list3[MSL];
-
-	nMatch = 0;
-
-	gbuf = new_buf();
-	d = new_descriptor();
-	Directory = opendir(GOD_DIR);
-	Dir = readdir(Directory);
-	send_to_char("`^                      GOD LIST                      ``\n\r", ch);
-	send_to_char(" `#Name          `@Lvl   `ORace         `&Class         `PTrust``\n\r", ch);
-	send_to_char("`!=======================================================``\n\r", ch);
-	while (Dir != NULL) {
-		snprintf(FName, 80, "%s%s", GOD_DIR, Dir->d_name);
-		{
-			if (Dir->d_name[0] >= 'A' && Dir->d_name[0] <= 'Z') {
-				nMatch++;
-				load_char_obj(d, Dir->d_name);
-				if (d->character->level <= ML) {
-					sprintf(list, "%s", Dir->d_name);
-					list1 = d->character->level;
-					sprintf(list2, "%s", capitalize(race_table[d->character->race].name));
-					sprintf(list3, "%s", capitalize(class_table[d->character->class].name));
-					list4 = d->character->trust;
-
-
-					sprintf(buf, "[`#%-12s``][`@%-2d`` ][`O%-10s`` ][`&%-12s`` ][`P%-3d`` ]\n\r", list, list1, list2, list3, list4);
-					add_buf(gbuf, buf);
-				}
-			}
-		}
-		Dir = readdir(Directory);
-	}
-	closedir(Directory);
-	page_to_char(buf_string(gbuf), ch);
-	free_buf(gbuf);
-	sprintf(buf, "\n\r`!Players found: `&%d``\n\r", nMatch);
-	send_to_char(buf, ch);
-	return;
-}
-
 /***************************************************************************
 *	do_gobstopper
 *
@@ -5481,7 +5397,7 @@ void do_auto_shutdown()
 			close_socket(d);
 		}
 
-		exit(1);
+		_exit(1);
 	}
 
 	if ((cmdLog = fopen(LAST_COMMANDS, "r")) == NULL) {
@@ -5526,7 +5442,7 @@ void do_auto_shutdown()
 	sprintf(buf, "%d", port);
 	sprintf(buf2, "%d", control);
 	execl(EXE_FILE, "rom", buf, "copyover", buf2, (char *)NULL);
-	exit(1);
+	_exit(1);
 }
 
 void do_mrelic(CHAR_DATA *ch, char *argument)

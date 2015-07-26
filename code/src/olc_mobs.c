@@ -15,12 +15,8 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/types.h>
-#include <ctype.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include "merc.h"
 #include "tables.h"
 #include "olc.h"
@@ -36,6 +32,9 @@ extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern int flag_value(const struct flag_type *flag_table, char *argument);
 extern unsigned int parse_unsigned_int(char *string);
 extern void mob_auto_hit_dice(MOB_INDEX_DATA *mix, enum medit_auto_config_type auto_config_type);
+extern void string_append(CHAR_DATA * ch, char **string);
+extern long parse_long(char *test);
+extern int parse_int(char *test);
 
 
 /*****************************************************************************
@@ -54,7 +53,7 @@ void do_medit(CHAR_DATA *ch, char *argument)
 
 	argument = one_argument(argument, arg);
 	if (is_number(arg)) {
-		value = atol(arg);
+		value = parse_long(arg);
 
 		if (!(mob_idx = get_mob_index(value))) {
 			send_to_char("MEdit: That vnum does not exist.\n\r", ch);
@@ -71,7 +70,7 @@ void do_medit(CHAR_DATA *ch, char *argument)
 		return;
 	} else {
 		if (!str_cmp(arg, "create")) {
-			value = atoi(argument);
+			value = parse_int(argument);
 			if (arg[0] == '\0' || value == 0) {
 				send_to_char("MEdit: Syntax: edit mobile create [vnum]\n\r", ch);
 				return;
@@ -97,7 +96,7 @@ void do_medit(CHAR_DATA *ch, char *argument)
 
 		if (!str_cmp(arg, "clone")) {
 			one_argument(argument, arg);
-			value = atoi(arg);
+			value = parse_int(arg);
 			if (argument[0] == '\0' || arg[0] == '\0' || value == 0) {
 				send_to_char("MEdit: Syntax: medit clone [new vnum] [existing vnum]\n\r", ch);
 				return;
@@ -290,7 +289,7 @@ EDIT(medit_create){
 	long value;
 	long hash_idx;
 
-	value = atol(argument);
+	value = parse_long(argument);
 	if (argument[0] == '\0' || value == 0) {
 		send_to_char("Syntax:  medit create [vnum]\n\r", ch);
 		return FALSE;
@@ -342,7 +341,7 @@ EDIT(medit_clone){
 	int iter;
 
 	EDIT_MOB(ch, mob_idx);
-	value = atoi(argument);
+	value = parse_int(argument);
 	if (argument[0] == '\0'
 	    || value == 0) {
 		send_to_char("Syntax:  clone [existing vnum]\n\r", ch);
@@ -472,7 +471,7 @@ EDIT(medit_align){
 		return FALSE;
 	}
 
-	mob_idx->alignment = atoi(argument);
+	mob_idx->alignment = parse_int(argument);
 	send_to_char("Alignment set.\n\r", ch);
 	return TRUE;
 }
@@ -492,7 +491,7 @@ EDIT(medit_level){
 		return FALSE;
 	}
 
-	mob_idx->level = atoi(argument);
+	mob_idx->level = parse_int(argument);
 	send_to_char("Level set.\n\r", ch);
 	return TRUE;
 }
@@ -624,8 +623,8 @@ EDIT(medit_shop){
 			return FALSE;
 		}
 
-		mob_idx->shop->open_hour = atoi(arg);
-		mob_idx->shop->close_hour = atoi(argument);
+		mob_idx->shop->open_hour = parse_int(arg);
+		mob_idx->shop->close_hour = parse_int(argument);
 
 		send_to_char("Shop hours set.\n\r", ch);
 		return TRUE;
@@ -646,8 +645,8 @@ EDIT(medit_shop){
 			return FALSE;
 		}
 
-		mob_idx->shop->profit_buy = atoi(arg);
-		mob_idx->shop->profit_sell = atoi(argument);
+		mob_idx->shop->profit_buy = parse_int(arg);
+		mob_idx->shop->profit_sell = parse_int(argument);
 		send_to_char("Shop profit set.\n\r", ch);
 		return TRUE;
 	}
@@ -663,7 +662,7 @@ EDIT(medit_shop){
 			return FALSE;
 		}
 
-		if (atoi(arg) >= MAX_TRADE) {
+		if (parse_int(arg) >= MAX_TRADE) {
 			printf_to_char(ch, "MEdit:  May sell %d items max.\n\r", MAX_TRADE);
 			return FALSE;
 		}
@@ -678,7 +677,7 @@ EDIT(medit_shop){
 			return FALSE;
 		}
 
-		mob_idx->shop->buy_type[atoi(arg)] = value;
+		mob_idx->shop->buy_type[parse_int(arg)] = value;
 		send_to_char("Shop type set.\n\r", ch);
 		return TRUE;
 	}
@@ -838,13 +837,13 @@ EDIT(medit_ac){
 
 		if (!is_number(arg))
 			break;
-		pierce = atol(arg);
+		pierce = parse_long(arg);
 		argument = one_argument(argument, arg);
 
 		if (arg[0] != '\0') {
 			if (!is_number(arg))
 				break;
-			bash = atol(arg);
+			bash = parse_long(arg);
 			argument = one_argument(argument, arg);
 		} else {
 			bash = mob_idx->ac[AC_BASH];
@@ -853,7 +852,7 @@ EDIT(medit_ac){
 		if (arg[0] != '\0') {
 			if (!is_number(arg))
 				break;
-			slash = atol(arg);
+			slash = parse_long(arg);
 			argument = one_argument(argument, arg);
 		} else {
 			slash = mob_idx->ac[AC_SLASH];
@@ -862,7 +861,7 @@ EDIT(medit_ac){
 		if (arg[0] != '\0') {
 			if (!is_number(arg))
 				break;
-			exotic = atol(arg);
+			exotic = parse_long(arg);
 		} else {
 			exotic = mob_idx->ac[AC_EXOTIC];
 		}
@@ -1120,14 +1119,14 @@ EDIT(medit_hitdice){
 		if (*cp != '\0')
 			*cp = '\0';
 
-		if ((!is_number(num) || atoi(num) < 1)
-		    || (!is_number(type) || atoi(type) < 1)
-		    || (!is_number(bonus) || atoi(bonus) < 0))
+		if ((!is_number(num) || parse_int(num) < 1)
+		    || (!is_number(type) || parse_int(type) < 1)
+		    || (!is_number(bonus) || parse_int(bonus) < 0))
 			return ShowMEditHitdiceSyntax(ch);
 
-		mob_idx->hit[DICE_NUMBER] = atoi(num);
-		mob_idx->hit[DICE_TYPE] = atoi(type);
-		mob_idx->hit[DICE_BONUS] = atoi(bonus);
+		mob_idx->hit[DICE_NUMBER] = parse_int(num);
+		mob_idx->hit[DICE_TYPE] = parse_int(type);
+		mob_idx->hit[DICE_BONUS] = parse_int(bonus);
 
 		send_to_char("Hitdice set.\n\r", ch);
 		return TRUE;
@@ -1214,16 +1213,16 @@ EDIT(medit_manadice){
 		return FALSE;
 	}
 
-	if ((!is_number(num) || atoi(num) < 1)
-	    || (!is_number(type) || atoi(type) < 1)
-	    || (!is_number(bonus) || atoi(bonus) < 0)) {
+	if ((!is_number(num) || parse_int(num) < 1)
+	    || (!is_number(type) || parse_int(type) < 1)
+	    || (!is_number(bonus) || parse_int(bonus) < 0)) {
 		send_to_char("Syntax:  manadice <number> d <type> + <bonus>\n\r", ch);
 		return FALSE;
 	}
 
-	mob_idx->mana[DICE_NUMBER] = atoi(num);
-	mob_idx->mana[DICE_TYPE] = atoi(type);
-	mob_idx->mana[DICE_BONUS] = atoi(bonus);
+	mob_idx->mana[DICE_NUMBER] = parse_int(num);
+	mob_idx->mana[DICE_TYPE] = parse_int(type);
+	mob_idx->mana[DICE_BONUS] = parse_int(bonus);
 	send_to_char("Manadice set.\n\r", ch);
 	return TRUE;
 }
@@ -1278,16 +1277,16 @@ EDIT(medit_damdice){
 		return FALSE;
 	}
 
-	if ((!is_number(num) || atoi(num) < 1)
-	    || (!is_number(type) || atoi(type) < 1)
-	    || (!is_number(bonus) || atoi(bonus) < 0)) {
+	if ((!is_number(num) || parse_int(num) < 1)
+	    || (!is_number(type) || parse_int(type) < 1)
+	    || (!is_number(bonus) || parse_int(bonus) < 0)) {
 		send_to_char("Syntax:  damdice <number> d <type> + <bonus>\n\r", ch);
 		return FALSE;
 	}
 
-	mob_idx->damage[DICE_NUMBER] = atoi(num);
-	mob_idx->damage[DICE_TYPE] = atoi(type);
-	mob_idx->damage[DICE_BONUS] = atoi(bonus);
+	mob_idx->damage[DICE_NUMBER] = parse_int(num);
+	mob_idx->damage[DICE_TYPE] = parse_int(type);
+	mob_idx->damage[DICE_BONUS] = parse_int(bonus);
 	send_to_char("Damdice set.\n\r", ch);
 	return TRUE;
 }
@@ -1416,7 +1415,7 @@ EDIT(medit_hitroll){
 		return FALSE;
 	}
 
-	mob_idx->hitroll = atoi(argument);
+	mob_idx->hitroll = parse_int(argument);
 	send_to_char("Hitroll set.\n\r", ch);
 	return TRUE;
 }
@@ -1444,14 +1443,14 @@ EDIT(medit_group){
 	}
 
 	if (is_number(argument)) {
-		mob_idx->group = atoi(argument);
+		mob_idx->group = parse_int(argument);
 		send_to_char("Group set.\n\r", ch);
 		return TRUE;
 	}
 
 	argument = one_argument(argument, arg);
 	if (!strcmp(arg, "show") && is_number(argument)) {
-		if (atoi(argument) == 0) {
+		if (parse_int(argument) == 0) {
 			send_to_char("Are you crazy?\n\r", ch);
 			return FALSE;
 		}
@@ -1460,7 +1459,7 @@ EDIT(medit_group){
 
 		for (temp = 0; temp < 65536; temp++) {
 			pMTemp = get_mob_index(temp);
-			if (pMTemp && (pMTemp->group == atoi(argument))) {
+			if (pMTemp && (pMTemp->group == parse_int(argument))) {
 				found = TRUE;
 				sprintf(buf, "[%7ld] %s\n\r", pMTemp->vnum, pMTemp->player_name);
 				add_buf(buffer, buf);
@@ -1510,13 +1509,13 @@ EDIT(medit_addmprog){
 		return FALSE;
 	}
 
-	if ((code = get_mprog_index(atoi(num))) == NULL) {
+	if ((code = get_mprog_index(parse_int(num))) == NULL) {
 		send_to_char("No such MOBProgram.\n\r", ch);
 		return FALSE;
 	}
 
 	list = new_mprog();
-	list->vnum = atoi(num);
+	list->vnum = parse_int(num);
 	list->trig_type = value;
 	list->trig_phrase = str_dup(phrase);
 	list->code = code->code;
@@ -1550,7 +1549,7 @@ EDIT(medit_delmprog){
 		return FALSE;
 	}
 
-	value = atoi(mprog);
+	value = parse_int(mprog);
 	if (value < 0) {
 		send_to_char("Only non-negative mprog-numbers allowed.\n\r", ch);
 		return FALSE;

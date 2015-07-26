@@ -28,13 +28,12 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/types.h>
-#include <sys/time.h>
+//#include <sys/types.h>
+//#include <sys/time.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
-
 #include "merc.h"
 #include "recycle.h"
 
@@ -712,7 +711,7 @@ BUFFER *new_buf_size(int size)
 
 	if (buffer->size == -1) {
 		bug("new_buf: buffer size %d too large.", size);
-		exit(1);
+		_Exit(1);
 	}
 
 	buffer->string = alloc_mem((unsigned int)buffer->size);

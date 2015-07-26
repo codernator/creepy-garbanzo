@@ -36,22 +36,16 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/time.h>
-#include <sys/types.h>
-#include <ctype.h>
-#include <errno.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
-#include <time.h>
-#include <stdarg.h>
-#include <unistd.h>
 #include "merc.h"
 #include "interp.h"
 #include "recycle.h"
 #include "tables.h"
 #include "lookup.h"
 #include "libstring.h"
+
+extern int parse_int(char *test);
 
 /***************************************************************************
 *	declarations
@@ -414,7 +408,7 @@ static void for_name(CHAR_DATA *ch, char *name, char *argument)
 /***************************************************************************
 *	for_count
 *
-*	do a command atoi(name) times
+*	do a command parse_int(name) times
 ***************************************************************************/
 static void for_count(CHAR_DATA *ch, char *name, char *argument)
 {
@@ -423,7 +417,7 @@ static void for_count(CHAR_DATA *ch, char *name, char *argument)
 	int iter;
 
 	if (is_number(name)) {
-		number = atoi(name);
+		number = parse_int(name);
 		if (number > 201) {
 			send_to_char("There is a maximum of 200 targets when using the for command.\n\r", ch);
 			return;

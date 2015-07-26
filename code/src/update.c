@@ -28,10 +28,8 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/types.h>
 #include <stdio.h>
 #include <string.h>
-#include <time.h>
 #include "merc.h"
 #include "magic.h"
 
@@ -48,6 +46,8 @@ extern DECLARE_DO_FUN(do_reboot);
 extern DECLARE_DO_FUN(do_copyover);
 
 extern void bug_long(const char *str, long param);
+extern bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
+extern void battlefield_update(void);
 
 /***************************************************************************
 *	external variables
@@ -131,20 +131,11 @@ static void advance_level_object(CHAR_DATA *ch, OBJ_DATA *obj)
 	pbonus = UMAX(6, pbonus);
 	bonus = UMAX(1, bonus);
 
-/*
- *  add_apply(obj, APPLY_DAMROLL, pbonus, TO_OBJECT, 0, -1, 0, obj->plevel * 5);
- *  add_apply(obj, APPLY_HITROLL, pbonus, TO_OBJECT, 0, -1, 0, obj->plevel * 5);
- *  add_apply(obj, APPLY_HIT, pbonus, TO_OBJECT, 0, -1, 0, obj->plevel * 5);
- *  add_apply(obj, APPLY_MANA, pbonus, TO_OBJECT, 0, -1, 0, obj->plevel * 5);
- *  add_apply(obj, APPLY_MOVE, pbonus, TO_OBJECT, 0, -1, 0, obj->plevel * 5);
- */
-
 	add_cache_affect(obj, APPLY_DAMROLL, 0, obj->plevel * 5, number_range(1, 2));
 	add_cache_affect(obj, APPLY_HITROLL, 0, obj->plevel * 5, number_range(1, 2));
 	add_cache_affect(obj, APPLY_HIT, 0, obj->plevel * 5, number_range(1, 2));
 	add_cache_affect(obj, APPLY_MANA, 0, obj->plevel * 5, number_range(1, 2));
 	add_cache_affect(obj, APPLY_MOVE, 0, obj->plevel * 5, (number_range(10, 30)));
-
 
 	if (obj->item_type == ITEM_WEAPON) {
 		obj->value[1] += bonus / 4;

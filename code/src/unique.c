@@ -27,11 +27,8 @@
  * unique objects in the world currently.
  */
 
-#include <sys/types.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include "merc.h"
 #include "magic.h"
 #include "interp.h"
@@ -48,6 +45,7 @@
 
 
 extern DECLARE_DO_FUN(do_wear);
+extern int parse_int(char *test);
 
 
 CHAR_DATA *random_unique_mob(void);
@@ -165,7 +163,7 @@ void do_cuo(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	number_objects = UMAX(1, atoi(argument));
+	number_objects = UMAX(1, parse_int(argument));
 	for (idx = 0; idx < number_objects; idx++) {
 		if ((obj = create_object(get_obj_index(OBJ_UNIQUE_DUMMY), 0)) == NULL) {
 			send_to_char("Bug with OBJ_UNIQUE_DUMMY\n\r", ch);

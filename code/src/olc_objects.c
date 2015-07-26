@@ -15,12 +15,7 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/types.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include "merc.h"
 #include "tables.h"
 #include "olc.h"
@@ -33,6 +28,9 @@
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern int flag_value(const struct flag_type *flag_table, char *argument);
 extern unsigned int parse_unsigned_int(char *string);
+extern char *format_string(char *oldstring /*, bool fSpace */);
+extern void string_append(CHAR_DATA * ch, char **string);
+extern int parse_int(char *test);
 
 /*****************************************************************************
 *	show_obj_values
@@ -221,7 +219,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 			return FALSE;
 		case 2:
 			send_to_char("Hours of Light set.\n\r\n\r", ch);
-			pObj->value[2] = atoi(argument);
+			pObj->value[2] = parse_int(argument);
 			break;
 		}
 		break;
@@ -234,15 +232,15 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 			return FALSE;
 		case 0:
 			send_to_char("Spell level set.\n\r\n\r", ch);
-			pObj->value[0] = atoi(argument);
+			pObj->value[0] = parse_int(argument);
 			break;
 		case 1:
 			send_to_char("Total number of charges set.\n\r\n\r", ch);
-			pObj->value[1] = atoi(argument);
+			pObj->value[1] = parse_int(argument);
 			break;
 		case 2:
 			send_to_char("Current number of charges set.\n\r\n\r", ch);
-			pObj->value[2] = atoi(argument);
+			pObj->value[2] = parse_int(argument);
 			break;
 		case 3:
 			send_to_char("Spell type set.\n\r", ch);
@@ -261,7 +259,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 			return FALSE;
 		case 0:
 			send_to_char("Spell level set.\n\r\n\r", ch);
-			pObj->value[0] = atoi(argument);
+			pObj->value[0] = parse_int(argument);
 			break;
 		case 1:
 			send_to_char("Spell type 1 set.\n\r\n\r", ch);
@@ -293,19 +291,19 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 			return FALSE;
 		case 0:
 			send_to_char("AC pierce set.\n\r\n\r", ch);
-			pObj->value[0] = atoi(argument);
+			pObj->value[0] = parse_int(argument);
 			break;
 		case 1:
 			send_to_char("AC bash set.\n\r\n\r", ch);
-			pObj->value[1] = atoi(argument);
+			pObj->value[1] = parse_int(argument);
 			break;
 		case 2:
 			send_to_char("AC slash set.\n\r\n\r", ch);
-			pObj->value[2] = atoi(argument);
+			pObj->value[2] = parse_int(argument);
 			break;
 		case 3:
 			send_to_char("AC exotic set.\n\r\n\r", ch);
-			pObj->value[3] = atoi(argument);
+			pObj->value[3] = parse_int(argument);
 			break;
 		}
 		break;
@@ -321,11 +319,11 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 			break;
 		case 1:
 			send_to_char("Number of dice set.\n\r\n\r", ch);
-			pObj->value[1] = atoi(argument);
+			pObj->value[1] = parse_int(argument);
 			break;
 		case 2:
 			send_to_char("Type of dice set.\n\r\n\r", ch);
-			pObj->value[2] = atoi(argument);
+			pObj->value[2] = parse_int(argument);
 			break;
 		case 3:
 			send_to_char("Weapon type set.\n\r\n\r", ch);
@@ -345,7 +343,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 			return FALSE;
 		case 0:
 			send_to_char("Charges set.\n\r\n\r", ch);
-			pObj->value[0] = atoi(argument);
+			pObj->value[0] = parse_int(argument);
 			break;
 		case 1:
 			send_to_char("Exit flags set.\n\r\n\r", ch);
@@ -357,7 +355,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 			break;
 		case 3:
 			send_to_char("Exit vnum set.\n\r\n\r", ch);
-			pObj->value[3] = atoi(argument);
+			pObj->value[3] = parse_int(argument);
 			break;
 		}
 		break;
@@ -369,11 +367,11 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 			return FALSE;
 		case 0:
 			send_to_char("Number of people set.\n\r\n\r", ch);
-			pObj->value[0] = atoi(argument);
+			pObj->value[0] = parse_int(argument);
 			break;
 		case 1:
 			send_to_char("Max weight set.\n\r\n\r", ch);
-			pObj->value[1] = atoi(argument);
+			pObj->value[1] = parse_int(argument);
 			break;
 		case 2:
 			send_to_char("Furniture flags toggled.\n\r\n\r", ch);
@@ -381,11 +379,11 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 			break;
 		case 3:
 			send_to_char("Heal bonus set.\n\r\n\r", ch);
-			pObj->value[3] = atoi(argument);
+			pObj->value[3] = parse_int(argument);
 			break;
 		case 4:
 			send_to_char("Mana bonus set.\n\r\n\r", ch);
-			pObj->value[4] = atoi(argument);
+			pObj->value[4] = parse_int(argument);
 			break;
 		}
 		break;
@@ -393,11 +391,11 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 	case ITEM_DICE:
 		switch (value_num) {
 		case 0:
-			pObj->value[0] = atoi(argument);
+			pObj->value[0] = parse_int(argument);
 			send_to_char("Number of dice set.\n\r\n\r", ch);
 			break;
 		case 1:
-			pObj->value[1] = atoi(argument);
+			pObj->value[1] = parse_int(argument);
 			send_to_char("Number of sides set.\n\r\n\r", ch);
 			break;
 		default:
@@ -412,7 +410,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 			return FALSE;
 		case 0:
 			send_to_char("Weight capacity set.\n\r\n\r", ch);
-			pObj->value[0] = atoi(argument);
+			pObj->value[0] = parse_int(argument);
 			break;
 		case 1:
 			if ((value = flag_value(container_flags, argument)) != NO_FLAG) {
@@ -424,27 +422,27 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 			send_to_char("Container type set.\n\r\n\r", ch);
 			break;
 		case 2:
-			if (atoi(argument) != 0) {
-				if (!get_obj_index(atoi(argument))) {
+			if (parse_int(argument) != 0) {
+				if (!get_obj_index(parse_int(argument))) {
 					send_to_char("There is no such item.\n\r\n\r", ch);
 					return FALSE;
 				}
 
-				if (get_obj_index(atoi(argument))->item_type != ITEM_KEY) {
+				if (get_obj_index(parse_int(argument))->item_type != ITEM_KEY) {
 					send_to_char("That item is not a key.\n\r\n\r", ch);
 					return FALSE;
 				}
 			}
 			send_to_char("Container key set.\n\r\n\r", ch);
-			pObj->value[2] = atoi(argument);
+			pObj->value[2] = parse_int(argument);
 			break;
 		case 3:
 			send_to_char("Container max weight set.\n\r", ch);
-			pObj->value[3] = atoi(argument);
+			pObj->value[3] = parse_int(argument);
 			break;
 		case 4:
 			send_to_char("Weight multiplier set.\n\r\n\r", ch);
-			pObj->value[4] = atoi(argument);
+			pObj->value[4] = parse_int(argument);
 			break;
 		}
 		break;
@@ -456,11 +454,11 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 			return FALSE;
 		case 0:
 			send_to_char("Maximum amount of liquid hours set.\n\r\n\r", ch);
-			pObj->value[0] = atoi(argument);
+			pObj->value[0] = parse_int(argument);
 			break;
 		case 1:
 			send_to_char("Current amount of liquid hours set.\n\r\n\r", ch);
-			pObj->value[1] = atoi(argument);
+			pObj->value[1] = parse_int(argument);
 			break;
 		case 2:
 			send_to_char("Liquid type set.\n\r\n\r", ch);
@@ -480,11 +478,11 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 			return FALSE;
 		case 0:
 			send_to_char("Maximum amount of liquid hours set.\n\r\n\r", ch);
-			pObj->value[0] = atoi(argument);
+			pObj->value[0] = parse_int(argument);
 			break;
 		case 1:
 			send_to_char("Current amount of liquid hours set.\n\r\n\r", ch);
-			pObj->value[1] = atoi(argument);
+			pObj->value[1] = parse_int(argument);
 			break;
 		case 2:
 			send_to_char("Liquid type set.\n\r\n\r", ch);
@@ -500,11 +498,11 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 			return FALSE;
 		case 0:
 			send_to_char("Hours of food set.\n\r\n\r", ch);
-			pObj->value[0] = atoi(argument);
+			pObj->value[0] = parse_int(argument);
 			break;
 		case 1:
 			send_to_char("Hours of full set.\n\r\n\r", ch);
-			pObj->value[1] = atoi(argument);
+			pObj->value[1] = parse_int(argument);
 			break;
 		case 3:
 			send_to_char("Poison value toggled.\n\r\n\r", ch);
@@ -520,11 +518,11 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 			return FALSE;
 		case 0:
 			send_to_char("Gold amount set.\n\r\n\r", ch);
-			pObj->value[0] = atoi(argument);
+			pObj->value[0] = parse_int(argument);
 			break;
 		case 1:
 			send_to_char("Silver amount set.\n\r\n\r", ch);
-			pObj->value[1] = atoi(argument);
+			pObj->value[1] = parse_int(argument);
 			break;
 		}
 		break;
@@ -544,7 +542,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 			break;
 		case 1:
 			send_to_char("Token value set.\n\r\n\r", ch);
-			pObj->value[1] = atoi(argument);
+			pObj->value[1] = parse_int(argument);
 			break;
 		}
 		break;
@@ -614,7 +612,7 @@ void do_oedit(CHAR_DATA *ch, char *argument)
 
 	argument = one_argument(argument, arg);
 	if (is_number(arg)) {
-		value = atoi(arg);
+		value = parse_int(arg);
 		if (!(pObj = get_obj_index(value))) {
 			send_to_char("OEdit:  That vnum does not exist.\n\r", ch);
 			return;
@@ -630,7 +628,7 @@ void do_oedit(CHAR_DATA *ch, char *argument)
 		return;
 	} else {
 		if (!str_cmp(arg, "create")) {
-			value = atoi(argument);
+			value = parse_int(argument);
 			if (argument[0] == '\0' || value == 0) {
 				send_to_char("Syntax:  edit object create [vnum]\n\r", ch);
 				return;
@@ -656,7 +654,7 @@ void do_oedit(CHAR_DATA *ch, char *argument)
 		}
 
 		if (!str_cmp(arg, "clone")) {
-			value = atoi(argument);
+			value = parse_int(argument);
 			if (argument[0] == '\0' || value == 0) {
 				send_to_char("Syntax:  edit object create [vnum]\n\r", ch);
 				return;
@@ -801,7 +799,7 @@ EDIT(oedit_create){
 	long value;
 	long iHash;
 
-	value = atoi(argument);
+	value = parse_int(argument);
 	if (argument[0] == '\0' || value == 0) {
 		send_to_char("Syntax:  oedit create [vnum]\n\r", ch);
 		return FALSE;
@@ -854,7 +852,7 @@ EDIT(oedit_clone){
 	int iter;
 
 	EDIT_OBJ(ch, pObj);
-	value = atoi(argument);
+	value = parse_int(argument);
 	if (argument[0] == '\0' || value == 0) {
 		send_to_char("Syntax:  clone [existing vnum]\n\r", ch);
 		return FALSE;
@@ -932,7 +930,7 @@ EDIT(oedit_addaffect){
 
 	pAff = new_affect();
 	pAff->location = value;
-	pAff->modifier = atoi(mod);
+	pAff->modifier = parse_int(mod);
 	pAff->where = TO_OBJECT;
 	pAff->type = -1;
 	pAff->duration = -1;
@@ -1008,7 +1006,7 @@ EDIT(oedit_addapply){
 
 	pAff = new_affect();
 	pAff->location = value;
-	pAff->modifier = atoi(mod);
+	pAff->modifier = parse_int(mod);
 	pAff->where = (int)apply_types[typ].bit;
 	pAff->type = -1;
 	pAff->duration = -1;
@@ -1043,7 +1041,7 @@ EDIT(oedit_delaffect){
 		return FALSE;
 	}
 
-	value = atoi(affect);
+	value = parse_int(affect);
 	if (value < 0) {
 		send_to_char("Only non-negative affect-numbers allowed.\n\r", ch);
 		return FALSE;
@@ -1220,7 +1218,7 @@ EDIT(oedit_weight){
 		return FALSE;
 	}
 
-	pObj->weight = atoi(argument);
+	pObj->weight = parse_int(argument);
 	send_to_char("Weight set.\n\r", ch);
 	return TRUE;
 }
@@ -1498,7 +1496,7 @@ EDIT(oedit_timer){
 		return FALSE;
 	}
 
-	pObj->timer = atoi(argument);
+	pObj->timer = parse_int(argument);
 	send_to_char("Timer set.\n\r", ch);
 	return TRUE;
 }
@@ -1517,7 +1515,7 @@ EDIT(oedit_level){
 		return FALSE;
 	}
 
-	pObj->level = atoi(argument);
+	pObj->level = parse_int(argument);
 	send_to_char("Level set.\n\r", ch);
 	return TRUE;
 }
@@ -1534,7 +1532,7 @@ EDIT(oedit_condition){
 
 	EDIT_OBJ(ch, pObj);
 	if (argument[0] != '\0'
-	    && (value = atoi(argument)) >= 0
+	    && (value = parse_int(argument)) >= 0
 	    && (value <= 100)) {
 		pObj->condition = value;
 		send_to_char("Condition set.\n\r", ch);
@@ -1558,14 +1556,14 @@ EDIT(oedit_xptolevel){
 		return FALSE;
 	}
 
-	amount = atoi(argument);
+	amount = parse_int(argument);
 
 	if (amount < 0 || amount > 5000) {
 		send_to_char("Please choose an amount between 0 and 5000\n\r", ch);
 		return FALSE;
 	}
 
-	pObj->xp_tolevel = atoi(argument);
+	pObj->xp_tolevel = parse_int(argument);
 
 	send_to_char("Exp to level set.\n\r", ch);
 	return TRUE;

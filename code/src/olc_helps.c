@@ -28,12 +28,8 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/time.h>
-#include <ctype.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include "merc.h"
 #include "tables.h"
 #include "olc.h"
@@ -42,11 +38,14 @@
 #include "libstring.h"
 
 
+extern void string_append(CHAR_DATA * ch, char **string);
+extern int parse_int(char *test);
+extern HELP_AREA *had_list;
+
 
 /***************************************************************************
 *	local defines
 ***************************************************************************/
-extern HELP_AREA *had_list;
 
 const struct olc_cmd_type hedit_table[] =
 {
@@ -215,7 +214,7 @@ EDIT(hedit_level){
 		return FALSE;
 	}
 
-	lev = atoi(argument);
+	lev = parse_int(argument);
 	if (lev < -1 || lev > MAX_LEVEL) {
 		printf_to_char(ch, "HEdit : levels between -1 and %d only.\n\r", MAX_LEVEL);
 		return FALSE;

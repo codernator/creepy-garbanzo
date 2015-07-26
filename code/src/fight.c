@@ -25,11 +25,7 @@
  *       ROM license, in the file Rom24/doc/rom.license                     *
  ****************************************************************************/
 
-#include <sys/types.h>
 #include <stdio.h>
-#include <string.h>
-#include <time.h>
-
 #include "merc.h"
 #include "tables.h"
 #include "lookup.h"
@@ -39,8 +35,12 @@
 
 
 extern void fill_combat_roll(COMBAT_ROLL_BOX *crb, bool defense, int bonus_die_skill);
-
-
+extern bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
+extern void mp_hprct_trigger(CHAR_DATA * mob, CHAR_DATA * ch);
+extern int battlefield_count(void);
+extern void battlefield_notify(char *buf);
+extern int battlefield_participants(void);
+extern bool in_battlefield(CHAR_DATA * ch);
 
 #define MAX_DAMAGE_MESSAGE 58
 

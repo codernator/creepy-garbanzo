@@ -28,21 +28,15 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/time.h>
-#include <unistd.h>
-#include <math.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-#include <time.h>
-#include <assert.h>
+#include <math.h>
 #include "merc.h"
 #include "magic.h"
 #include "interp.h"
 #include "recycle.h"
 #include "tables.h"
 
+extern int parse_int(char *test);
 
 /***************************************************************************
 * Repair code - 08-09-2002
@@ -153,7 +147,7 @@ void do_enchant(CHAR_DATA *ch, char *argument)
 	if (apply_to >= 0) {
 		/* get the modifier value */
 		if (mod[0] != '\0')
-			modifier = (mod[0] != '\0') ? atoi(mod) : ch->level;
+			modifier = (mod[0] != '\0') ? parse_int(mod) : ch->level;
 
 		/* make sure the item is listed as enchanted */
 		enchant_item(obj);

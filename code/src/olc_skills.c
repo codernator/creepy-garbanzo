@@ -28,22 +28,21 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/time.h>
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include "merc.h"
 #include "tables.h"
 #include "olc.h"
 #include "lookup.h"
 #include "recycle.h"
 #include "skills.h"
+#include "libfile.h"
 #include "libstring.h"
 
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern int flag_value(const struct flag_type *flag_table, char *argument);
+extern int parse_int(char *test);
 
 
 /***************************************************************************
@@ -418,14 +417,14 @@ EDIT(skedit_level){
 		level = -1;
 		difficulty = -1;
 		if (is_number(arg)) {
-			level = atoi(arg);
+			level = parse_int(arg);
 		} else {
 			send_to_char("The level must be a number or 'none'.\n\r", ch);
 			return FALSE;
 		}
 
 		if (is_number(argument))
-			difficulty = atoi(argument);
+			difficulty = parse_int(argument);
 	}
 
 	/*
@@ -509,7 +508,7 @@ EDIT(skedit_min_mana){
 		return FALSE;
 	}
 
-	skill->min_mana = atoi(argument);
+	skill->min_mana = parse_int(argument);
 
 	send_to_char("Ok.\n\r", ch);
 	return TRUE;
@@ -532,7 +531,7 @@ EDIT(skedit_wait){
 		return FALSE;
 	}
 
-	skill->wait = atoi(argument);
+	skill->wait = parse_int(argument);
 
 	send_to_char("Ok.\n\r", ch);
 	return TRUE;
@@ -1055,7 +1054,7 @@ EDIT(skedit_difficulty){
 		return FALSE;
 	}
 
-	value = atoi(argument);
+	value = parse_int(argument);
 	if (value < 1 || value > 10) {
 		send_to_char("The number must be between 1 and 10.\n\r", ch);
 		return FALSE;
@@ -1088,7 +1087,7 @@ EDIT(skedit_percent){
 		return FALSE;
 	}
 
-	skill->percent = atoi(argument);
+	skill->percent = parse_int(argument);
 
 	send_to_char("Ok.\n\r", ch);
 	return TRUE;
@@ -1206,7 +1205,7 @@ void load_skills()
 		} else {
 			if (skill == NULL) {
 				printf_bug("load_skills: No skill loaded - invalid file syntax. %s", word);
-				exit(1);
+				_Exit(1);
 			}
 
 			KEY("Name", skill->name, fread_string(fp));
@@ -1285,7 +1284,7 @@ void load_skills()
 
 		if (!found) {
 			printf_bug("load_skills: No skill loaded - invalid file syntax. %s", word);
-			exit(1);
+			_Exit(1);
 		}
 
 		word = fread_word(fp);

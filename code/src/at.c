@@ -28,15 +28,6 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/time.h>
-#include <unistd.h>
-#include <math.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <time.h>
-#include <assert.h>
 #include "merc.h"
 #include "db.h"
 #include "recycle.h"

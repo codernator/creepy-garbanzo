@@ -77,6 +77,12 @@
 
 extern char *color_table[];
 extern bool is_space(const char test);
+extern bool run_olc_editor(DESCRIPTOR_DATA * d);
+extern char *olc_ed_name(CHAR_DATA * ch);
+extern char *olc_ed_vnum(CHAR_DATA * ch);
+extern void mp_act_trigger(char *argument, CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
+extern void string_add(CHAR_DATA * ch, char *argument);
+extern char *string_replace(char *orig, char *old, char *new);
 
 /***************************************************************************
 * Command tracking stuff.
@@ -136,7 +142,6 @@ bool process_output(DESCRIPTOR_DATA * d, bool fPrompt);
 void read_from_buffer(DESCRIPTOR_DATA * d);
 void check_afk(CHAR_DATA * ch);
 void bust_a_prompt(CHAR_DATA * ch);
-bool is_host_exception(char *host);
 void init_signals(void);
 extern void do_auto_shutdown(void);
 
@@ -527,9 +532,7 @@ void init_descriptor(int control)
 		sprintf(log_buf, "Sock.sinaddr:  %s", buf);
 
 		log_string(log_buf);
-		from = NULL;
-		if (FALSE) /*!is_host_exception(buf))*/
-			from = gethostbyaddr((char *)&sock.sin_addr, sizeof(sock.sin_addr), AF_INET);
+        from = gethostbyaddr((char *)&sock.sin_addr, sizeof(sock.sin_addr), AF_INET);
 		dnew->host = str_dup(from ? from->h_name : buf);
 	}
 

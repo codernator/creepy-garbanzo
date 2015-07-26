@@ -28,16 +28,9 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <sys/types.h>
-#include <sys/time.h>
-#include <unistd.h>
-#include <math.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-#include <time.h>
-#include <assert.h>
+#include <string.h>
+#include <stdio.h>
 #include "merc.h"
 #include "db.h"
 #include "recycle.h"
@@ -51,6 +44,8 @@
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern int flag_value(const struct flag_type *flag_table, char *argument);
 extern unsigned int parse_unsigned_int(char *string);
+extern long parse_long(char *string);
+extern int parse_int(char *string);
 
 /***************************************************************************
 *	local functions
@@ -964,7 +959,7 @@ static bool set_char_full(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
 		return FALSE;
 	}
 
-	value = atoi(argument);
+	value = parse_int(argument);
 
 	if (value < -151 || value > 100) {
 		send_to_char("The value must be between -151 and 100.\n\r", ch);
@@ -1004,7 +999,7 @@ bool set_char_hunger(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
 		return FALSE;
 	}
 
-	value = atoi(argument);
+	value = parse_int(argument);
 	if (value < -151 || value > 100) {
 		send_to_char("The value must be between -151 and 100.\n\r", ch);
 		return FALSE;
@@ -1043,7 +1038,7 @@ bool set_char_thirst(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
 		return FALSE;
 	}
 
-	value = atoi(argument);
+	value = parse_int(argument);
 	if (value < -151 || value > 100) {
 		send_to_char("The value must be between -151 and 100.\n\r", ch);
 		return FALSE;
@@ -1081,7 +1076,7 @@ static bool set_char_drunk(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
 		return FALSE;
 	}
 
-	value = atoi(argument);
+	value = parse_int(argument);
 	if (value < -1 || value > 100) {
 		send_to_char("The value must be between -1 and 100.\n\r", ch);
 		return FALSE;
@@ -1115,7 +1110,7 @@ bool set_char_feed(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
 		return FALSE;
 	}
 
-	value = atoi(argument);
+	value = parse_int(argument);
 	if (value < -151 || value > 100) {
 		send_to_char("The value must be between -151 and 100.\n\r", ch);
 		return FALSE;
@@ -1216,7 +1211,7 @@ static bool set_char_deathroom(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
 		return FALSE;
 	}
 
-	value = atoi(argument);
+	value = parse_int(argument);
 	if (value != 0
 	    && (room = get_room_index(value)) == NULL) {
 		send_to_char("That room does not exist.\n\r", ch);
@@ -1246,7 +1241,7 @@ static bool set_char_security(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
 		return FALSE;
 	}
 
-	value = atoi(argument);
+	value = parse_int(argument);
 	if (value < 0 || value > 9) {
 		send_to_char("Security must be between 0 and 9.\n\r", ch);
 		return FALSE;
@@ -1301,7 +1296,7 @@ static bool set_char_extendedexp(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
 	else if (arg2[0] == '-')
 		plusminus = -1;
 
-	value = atoi(arg1);
+	value = parse_int(arg1);
 
 	if (plusminus != 0)
 		vch->pcdata->extendedexp += (plusminus * value);
@@ -1334,7 +1329,7 @@ static bool set_char_level(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
 		return FALSE;
 	}
 
-	value = atoi(argument);
+	value = parse_int(argument);
 	if (value <= 0) {
 		send_to_char("The level must be a positive number.\n\r", ch);
 		return FALSE;
@@ -1610,7 +1605,7 @@ static bool set_obj_extra(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
 	}
 
 	if (is_number(argument)) {
-		obj->extra_flags = atol(argument);
+		obj->extra_flags = parse_long(argument);
 	} else {
 		long value;
 
@@ -1654,7 +1649,7 @@ static bool set_obj_extra2(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
 	}
 
 	if (is_number(argument)) {
-		obj->extra2_flags = atol(argument);
+		obj->extra2_flags = parse_long(argument);
 	} else {
 		long value;
 
@@ -1700,7 +1695,7 @@ static bool set_obj_wear(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
 	}
 
 	if (is_number(argument)) {
-		obj->wear_flags = atol(argument);
+		obj->wear_flags = parse_long(argument);
 	} else {
 		long value;
 
@@ -1855,7 +1850,7 @@ static void set_room(CHAR_DATA *ch, char *argument)
 
 	one_argument(argument, arg);
 	if (is_number(arg)
-	    && (room = get_room_index(atoi(arg))) != NULL)
+	    && (room = get_room_index(parse_int(arg))) != NULL)
 		argument = one_argument(argument, arg);
 	else
 		room = ch->in_room;
@@ -2060,7 +2055,7 @@ static void set_skill(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	percent = atoi(argument);
+	percent = parse_int(argument);
 	if (percent < 0 || percent > 100) {
 		send_to_char("Value range is 0 to 100.\n\r", ch);
 		return;
@@ -2114,7 +2109,7 @@ static void set_reboot(CHAR_DATA *ch, char *argument)
 
 	one_argument(argument, arg);
 	if (is_number(arg)) {
-		num_ticks = atoi(arg);
+		num_ticks = parse_int(arg);
 
 		if (num_ticks > 0) {
 			if ((ch->invis_level == ch->level) || (ch->incog_level == ch->level))
@@ -2163,7 +2158,7 @@ static void set_copyover(CHAR_DATA *ch, char *argument)
 
 	one_argument(argument, arg);
 	if (is_number(arg)) {
-		num_ticks = atoi(arg);
+		num_ticks = parse_int(arg);
 
 		if (num_ticks > 0) {
 			if ((ch->invis_level == ch->level) || (ch->incog_level == ch->level))
@@ -2208,15 +2203,15 @@ static bool set_integer_arg(int *value, char *argument)
 	switch (argument[0]) {
 	case '+':
 		argument++;
-		*value += atoi(argument);
+		*value += parse_int(argument);
 		return TRUE;
 	case '-':
 		argument++;
-		*value -= atoi(argument);
+		*value -= parse_int(argument);
 		return TRUE;
 	default:
 		if (is_number(argument)) {
-			*value = atoi(argument);
+			*value = parse_int(argument);
 			return TRUE;
 		}
 	}
@@ -2229,11 +2224,11 @@ static bool set_uint_arg(unsigned int *value, char *argument)
 	switch (argument[0]) {
 	case '+':
 		argument++;
-		*value += atol(argument);
+		*value += parse_long(argument);
 		return TRUE;
 	case '-':
 		argument++;
-		*value -= atol(argument);
+		*value -= parse_long(argument);
 		return TRUE;
 	default:
 		if (is_number(argument)) {
@@ -2257,17 +2252,17 @@ static bool set_long_arg(long *value, char *argument)
 	switch (argument[0]) {
 	case '+':
 		argument++;
-		*value += atol(argument);
+		*value += parse_long(argument);
 		return TRUE;
 
 	case '-':
 		argument++;
-		*value -= atol(argument);
+		*value -= parse_long(argument);
 		return TRUE;
 
 	default:
 		if (is_number(argument)) {
-			*value = atol(argument);
+			*value = parse_long(argument);
 			return TRUE;
 		} else {
 			return FALSE;
@@ -2287,7 +2282,7 @@ static bool set_obj_value_idx(OBJ_DATA *obj, int idx, char *argument)
 	int value;
 
 	if (is_number(argument)) {
-		obj->value[idx] = atoi(argument);
+		obj->value[idx] = parse_int(argument);
 		return TRUE;
 	} else {
 		switch (obj->item_type) {

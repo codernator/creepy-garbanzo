@@ -28,13 +28,14 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <time.h>
 #include <stdio.h>
-#include <string.h>
 #include "merc.h"
 #include "tables.h"
 #include "interp.h"
 
+extern bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
+extern bool mp_exit_trigger(CHAR_DATA * ch, int dir);
+extern void mp_greet_trigger(CHAR_DATA * ch);
 
 /***************************************************************************
 *	direction constants

@@ -24,9 +24,6 @@
 *   By using this code, you have agreed to follow the terms of the         *
 *   ROM license, in the file Rom24/doc/rom.license                         *
 ***************************************************************************/
-#include <sys/types.h>
-#include <stdio.h>
-#include <time.h>
 #include "merc.h"
 #include "tables.h"
 

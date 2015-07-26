@@ -3,25 +3,7 @@
  *			added by Monrick 2/2008
  */
 
-/***************************************************************************
-*	includes
-***************************************************************************/
-#include <dirent.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/resource.h>
-#include <sys/types.h>
-#include <sys/time.h>
-#include <unistd.h>
-#include <math.h>
-#include <ctype.h>
-#include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <time.h>
-#include <assert.h>
 #include "merc.h"
 #include "db.h"
 #include "recycle.h"

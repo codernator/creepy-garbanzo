@@ -35,12 +35,8 @@
 *                                                                         *
 ***************************************************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <time.h>
-#include <sys/types.h>
-#include <ctype.h>
+#include <stdio.h>
 #include "merc.h"
 #include "tables.h"
 #include "lookup.h"
@@ -48,6 +44,16 @@
 
 extern long flag_lookup(const char *word, const struct flag_type *flag_table);
 extern void bug_long(const char *str, long param);
+extern void mob_interpret(CHAR_DATA * ch, char *argument);
+extern int parse_int(char *test);
+extern long parse_long(char *test);
+
+bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
+void mp_bribe_trigger(CHAR_DATA * mob, CHAR_DATA * ch, long amount);
+bool mp_exit_trigger(CHAR_DATA * ch, int dir);
+void mp_give_trigger(CHAR_DATA * mob, CHAR_DATA * ch, OBJ_DATA * obj);
+void mp_greet_trigger(CHAR_DATA * ch);
+void mp_hprct_trigger(CHAR_DATA * mob, CHAR_DATA * ch);
 
 /*
  * These defines correspond to the entries in fn_keyword[] table.
@@ -391,15 +397,15 @@ static bool cmd_eval(long vnum, char *line, int check,
 	 * Case 1: keyword and value
 	 */
 	case CHK_RAND:
-		return atoi(buf) < number_percent();
+		return parse_int(buf) < number_percent();
 	case CHK_MOBHERE:
 		if (is_number(buf))
-			return get_mob_vnum_room(mob, (int)atoi(buf));
+			return get_mob_vnum_room(mob, parse_long(buf));
 		else
 			return (bool)(get_char_room(mob, buf) != NULL);
 	case CHK_OBJHERE:
 		if (is_number(buf))
-			return get_obj_vnum_room(mob, (int)atoi(buf));
+			return get_obj_vnum_room(mob, parse_long(buf));
 		else
 			return (bool)(get_obj_here(mob, buf) != NULL);
 	case CHK_MOBEXISTS:
@@ -437,7 +443,7 @@ static bool cmd_eval(long vnum, char *line, int check,
 		}
 		one_argument(line, buf);
 		lval = rval;
-		rval = atoi(buf);
+		rval = parse_int(buf);
 		return num_eval(lval, oper, rval);
 	}
 
@@ -545,12 +551,12 @@ static bool cmd_eval(long vnum, char *line, int check,
 		       && IS_SET(lval_char->off_flags, flag_lookup(buf, off_flags));
 	case CHK_CARRIES:
 		if (is_number(buf))
-			return lval_char != NULL && has_item(lval_char, (int)atoi(buf), -1, FALSE);
+			return lval_char != NULL && has_item(lval_char, parse_int(buf), -1, FALSE);
 		else
 			return lval_char != NULL && (get_obj_carry(lval_char, buf) != NULL);
 	case CHK_WEARS:
 		if (is_number(buf))
-			return lval_char != NULL && has_item(lval_char, (int)atoi(buf), -1, TRUE);
+			return lval_char != NULL && has_item(lval_char, parse_int(buf), -1, TRUE);
 		else
 			return lval_char != NULL && (get_obj_wear(lval_char, buf) != NULL);
 	case CHK_HAS:
@@ -591,7 +597,7 @@ static bool cmd_eval(long vnum, char *line, int check,
 		return FALSE;
 	}
 	one_argument(line, buf);
-	rval = atoi(buf);
+	rval = parse_int(buf);
 
 	switch (check) {
 	case CHK_VNUM:
@@ -1058,7 +1064,7 @@ bool mp_percent_trigger(
 
 	for (prg = mob->mob_idx->mprogs; prg != NULL; prg = prg->next) {
 		if (prg->trig_type == type
-		    && number_percent() < atoi(prg->trig_phrase)) {
+		    && number_percent() < parse_int(prg->trig_phrase)) {
 			program_flow(prg->vnum, prg->code, mob, ch, arg1, arg2);
 			return TRUE;
 		}
@@ -1077,7 +1083,7 @@ void mp_bribe_trigger(CHAR_DATA *mob, CHAR_DATA *ch, long amount)
 	 * handle it just fine.
 	 */
 	for (prg = mob->mob_idx->mprogs; prg; prg = prg->next) {
-		parsed = (long)atoi(prg->trig_phrase);
+		parsed = parse_long(prg->trig_phrase);
 
 		if (prg->trig_type == TRIG_BRIBE && amount >= parsed) {
 			program_flow(prg->vnum, prg->code, mob, ch, NULL, NULL);
@@ -1103,14 +1109,14 @@ bool mp_exit_trigger(CHAR_DATA *ch, int dir)
 				 * are caught, use ExAll trigger
 				 */
 				if (prg->trig_type == TRIG_EXIT
-				    && dir == atoi(prg->trig_phrase)
+				    && dir == parse_int(prg->trig_phrase)
 				    && mob->position == mob->mob_idx->default_pos
 				    && can_see(mob, ch)) {
 					program_flow(prg->vnum, prg->code, mob, ch, NULL, NULL);
 					return TRUE;
 				} else
 				if (prg->trig_type == TRIG_EXALL
-				    && dir == atoi(prg->trig_phrase)) {
+				    && dir == parse_int(prg->trig_phrase)) {
 					program_flow(prg->vnum, prg->code, mob, ch, NULL, NULL);
 					return TRUE;
 				}
@@ -1132,7 +1138,7 @@ void mp_give_trigger(CHAR_DATA *mob, CHAR_DATA *ch, OBJ_DATA *obj)
 			 * Vnum argument
 			 */
 			if (is_number(p)) {
-				if (obj->obj_idx->vnum == atoi(p)) {
+				if (obj->obj_idx->vnum == parse_long(p)) {
 					program_flow(prg->vnum, prg->code, mob, ch, (void *)obj, NULL);
 					return;
 				}
@@ -1185,7 +1191,7 @@ void mp_hprct_trigger(CHAR_DATA *mob, CHAR_DATA *ch)
 
 	for (prg = mob->mob_idx->mprogs; prg != NULL; prg = prg->next)
 		if ((prg->trig_type == TRIG_HPCNT)
-		    && ((100 * mob->hit / mob->max_hit) < atoi(prg->trig_phrase))) {
+		    && ((100 * mob->hit / mob->max_hit) < parse_int(prg->trig_phrase))) {
 			program_flow(prg->vnum, prg->code, mob, ch, NULL, NULL);
 			break;
 		}
