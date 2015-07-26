@@ -1,7 +1,7 @@
 #PLAYER
 Name Codernator~
 Id   1253990350
-LogO 1437791916
+LogO 1437954665
 Vers 5
 Vernew 6
 Prom %r (%R) [%z]> ~
@@ -11,13 +11,13 @@ Sex  1
 Cla  3
 Levl 610
 Sec  9
-Plyd 49848
+Plyd 50196
 Msg 'note' 0
 Scro 22
-Room 1
+Room 2
 HMV  8576 8576 6817 6817 5377 5377
 Gold 10004
-Silv 1365
+Silv 1366
 Silver_in_bank 90
 Gold_in_bank 10
 Exp  610000

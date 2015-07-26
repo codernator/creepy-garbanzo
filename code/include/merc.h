@@ -2329,30 +2329,33 @@ extern ROOM_INDEX_DATA *room_index_hash [MAX_KEY_HASH];
 ***************************************************************************/
 
 
-#define LAST_COMMAND   "./db/last_command.txt"  /* Tracking commands */
-#define PLAYER_DIR     "./db/player/"           /* Player files */
-#define GOD_DIR        "./db/gods/"             /* list of gods */
-#define TEMP_FILE      "./db/player/romtmp"
-#define NULL_FILE      "/dev/null"          /* To reserve one stream */
-#define RDESC_DIR      "./db/rdesc/"
-#define MEMLOG_FILE    "./log/"
-#define EXE_FILE       "./badtrip.exe"
+#define LAST_COMMAND     "./db/last_command.txt"  /* Tracking commands */
+#define PLAYER_DIR       "./db/player/"           /* Player files */
+#define GOD_DIR          "./db/gods/"             /* list of gods */
+#define TEMP_FILE        "./db/player/romtmp"
+#define NULL_FILE        "/dev/null"              /* To reserve one stream */
+#define RDESC_DIR        "./db/rdesc/"
+#define MEMLOG_FILE      "./log/"
+#define EXE_FILE         "./badtrip.exe"
 
-#define BUG_FILE       "./log/bug.txt"  /* For 'bug' and bug() */
-#define TYPO_FILE      "./log/typo.txt" /* For 'typo' */
-#define LAST_COMMANDS  "./log/command/lastCMDs.txt"
-#define AREA_FOLDER    "./db/area/"
-#define AREA_LIST      "./db/area.lst"          /* List of areas */
-#define BAN_FILE       "./db/ban.txt"
-#define DISABLED_FILE  "./db/disabled.txt"      /* disabled commands */
-#define HEADLINE_FILE  "./db/headline.txt"
-#define HELP_FILE      "./db/area/help.are"
-#define SOCIAL_FILE    "./db/SOCIALS.TXT"
-#define NOTE_FILE      "./db/notes.not"     /* note thread */
-#define SHUTDOWN_FILE  "./shutdown.txt"         /* For 'shutdown' */
-#define COPYOVER_FILE  "./copyover.txt"
+#define BUG_FILE         "./log/bug.txt"  /* For 'bug' and bug() */
+#define TYPO_FILE        "./log/typo.txt" /* For 'typo' */
+#define LAST_COMMANDS    "./log/command/lastCMDs.txt"
+#define LOG_ALWAYS_FILE  "./log/command/logAlways.txt"
+#define LOG_ALL_CMDS_FILE "./log/command/logALLCommands.txt" 
+#define LOG_PLAYER_FILE  "./log/player/%s.txt" 
+#define AREA_FOLDER      "./db/area/"
+#define AREA_LIST        "./db/area.lst"          /* List of areas */
+#define BAN_FILE         "./db/ban.txt"
+#define DISABLED_FILE    "./db/disabled.txt"      /* disabled commands */
+#define HEADLINE_FILE    "./db/headline.txt"
+#define HELP_FILE        "./db/area/help.are"
+#define SOCIAL_FILE      "./db/SOCIALS.TXT"
+#define NOTE_FILE        "./db/notes.not"         /* note thread */
+#define SHUTDOWN_FILE    "./shutdown.txt"         /* For 'shutdown' */
+#define COPYOVER_FILE    "./copyover.txt"
 
-#define END_MARKER     "END"                   /* for load_disabled() and save_disabled() */
+#define END_MARKER       "END"                    /* for load_disabled() and save_disabled() */
 
 
 /***************************************************************************

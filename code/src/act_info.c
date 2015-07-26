@@ -808,6 +808,7 @@ void do_look(CHAR_DATA *ch, char *argument)
 
 	if (arg1[0] == '\0' || !str_cmp(arg1, "auto")) {
         look_room(ch, ch->in_room);
+        return;
 	}
 
 	if (!str_cmp(arg1, "i") || !str_cmp(arg1, "in") || !str_cmp(arg1, "on")) {
@@ -851,7 +852,6 @@ void do_look(CHAR_DATA *ch, char *argument)
         look_direction(ch, door);
     } else {
         look_extras(ch, arg3, number);
-		return;
     }
 
 	return;

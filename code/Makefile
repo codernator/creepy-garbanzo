@@ -13,7 +13,7 @@ EXE=$(BDIR)/badtrip
 _OBJ=act_comm.o act_combat.o act_enter.o act_info.o act_move.o act_obj.o act_wiz.o \
      affects.o alias.o at.o auction.o \
      ban.o bank.o bfield.o bit.o \
-     character_api.o combat_roll.o comm.o const.o \
+     combat_roll.o comm.o const.o \
      db.o disable.o \
      effects.o enchant.o \
      fight.o find.o flags.o for.o \
@@ -22,12 +22,14 @@ _OBJ=act_comm.o act_combat.o act_enter.o act_info.o act_move.o act_obj.o act_wiz
      libfile.o librandom.o libstring.o libutils.o logging.o lookup.o \
      magic.o mem.o mob_cmds.o mob_prog.o mobs.o \
      nanny.o nickname.o note.o \
-     object_api.o olc.o olc_areas.o olc_groups.o olc_helps.o olc_mobs.o \
-     olc_objects.o olc_progs.o olc_rooms.o olc_save.o olc_skills.o ovnum.o \
+     ovnum.o \
      race.o random.o recycle.o repair.o restring.o \
      save.o scan.o set.o skills.o special.o spells.o stat.o string.o \
      tables.o teleport.o temp.o \
-     unique.o update.o variant.o who.o
+     unique.o update.o variant.o who.o \
+     olc/olc.o olc/olc_areas.o olc/olc_groups.o olc/olc_helps.o olc/olc_mobs.o \
+     olc/olc_objects.o olc/olc_progs.o olc/olc_rooms.o olc/olc_save.o olc/olc_skills.o  \
+	 services/character_service.o services/object_service.o
 		  
 OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
 
@@ -38,7 +40,7 @@ $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(C_FLAGS)
 
 clean:
-	rm -f $(ODIR)/*.o $(EXE)
+	rm -f $(ODIR)/*.o $(ODIR)/services/*.o $(ODIR)/olc/*.o $(EXE)
 
 install:
 	cp $(EXE) ../.

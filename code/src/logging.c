@@ -13,7 +13,7 @@ static void cmdLogAlways(const char *str);
 static void cmdLogALL(const char *str);
 static void cmdLogPlayer(const char *str, char username[]);
 static char *logStamp(void);
-static void write_file(char *fileName, char *mode, char *text);
+static void write_file(const char *fileName, char *mode, char *text);
 
 static int numCmds = 1;
 
@@ -51,58 +51,52 @@ static char *logStamp(void)
 
 static void cmdLogAlways(const char *str)
 {
-	char *fileName = "../log/command/logAlways.txt";
-	char buf[MSL];
-
-	sprintf(buf, "[%s] %s\n", logStamp(), str);
-	write_file(fileName, "a+", buf);
+	static char buf[LOG_BUF_LENGTH];
+	(void)snprintf(buf, LOG_BUF_LENGTH, "[%s] %s\n", logStamp(), str);
+	write_file(LOG_ALWAYS_FILE, "a+", buf);
 }
 
 static void cmdLogALL(const char *str)
 {
-	char *fileName = "../log/command/logALLCommands.txt";
-	char buf[MSL];
-
-	sprintf(buf, "[%s] %s\n", logStamp(), str);
-	write_file(fileName, "a+", buf);
+	static char buf[LOG_BUF_LENGTH];
+	(void)snprintf(buf, LOG_BUF_LENGTH, "[%s] %s\n", logStamp(), str);
+	write_file(LOG_ALL_CMDS_FILE, "a+", buf);
 }
 
 static void cmdLogPlayer(const char *str, char username[])
 {
-	char buf[MSL];
-	char bff[MSL];
+	static char log_file_name[2*MIL];
+	static char bff[LOG_BUF_LENGTH];
 
-	sprintf(buf, "../log/player/%s.txt", username);
-
-	sprintf(bff, "[%s] %s\n", logStamp(), str);
-	write_file(buf, "a+", bff);
+	(void)snprintf(log_file_name, 2*MIL, LOG_PLAYER_FILE, username);
+	(void)snprintf(bff, LOG_BUF_LENGTH, "[%s] %s\n", logStamp(), str);
+	write_file(log_file_name, "a+", bff);
 }
 
 static void lastCommands(const char *str)
 {
-	char *fileName = "../log/command/lastCMDs.txt";
-	char buf[MSL];
+	static char buf[LOG_BUF_LENGTH];
 
 	if (numCmds < 51) {
-		sprintf(buf, "[%d][%s] %s\n", numCmds, logStamp(), str);
-		write_file(fileName, "a+", buf);
+		(void)snprintf(buf, LOG_BUF_LENGTH, "[%d][%s] %s\n", numCmds, logStamp(), str);
+		write_file(LAST_COMMANDS, "a+", buf);
 		numCmds++;
 	} else {
 		numCmds = 1;
-		sprintf(buf, "[%d][%s] %s\n", numCmds, logStamp(), str);
-		write_file(fileName, "w+", buf);
+		(void)snprintf(buf, LOG_BUF_LENGTH, "[%d][%s] %s\n", numCmds, logStamp(), str);
+		write_file(LAST_COMMANDS, "w+", buf);
 		numCmds++;
 	}
 	return;
 }
 
-static void write_file(char *fileName, char *mode, char *text)
+static void write_file(const char *fileName, char *mode, char *text)
 {
-	char buf[MSL];
+	static char buf[LOG_BUF_LENGTH];
 	FILE *thisFile;
 
 	if ((thisFile = fopen(fileName, mode)) == NULL) {
-		sprintf(buf, "Error - log_new - cannot open file '%s' in mode %s", fileName, mode);
+		(void)snprintf(buf, LOG_BUF_LENGTH, "Error - log_new - cannot open file '%s' in mode %s", fileName, mode);
 		log_string(buf);
 	} else {
 		fprintf(thisFile, "%s", text);
