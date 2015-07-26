@@ -1,29 +1,29 @@
-/**************************************************************************
- *   Original Diku Mud copyright(C) 1990, 1991 by Sebastian Hammer,        *
+/****************************************************************************
+ *   Original Diku Mud copyright(C) 1990, 1991 by Sebastian Hammer,         *
  *   Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
- *                                                                             *
- *   Merc Diku Mud improvments copyright(C) 1992, 1993 by Michael          *
+ *                                                                          *
+ *   Merc Diku Mud improvments copyright(C) 1992, 1993 by Michael           *
  *   Chastain, Michael Quan, and Mitchell Tse.                              *
- *	                                                                       *
+ *	                                                                        *
  *   In order to use any part of this Merc Diku Mud, you must comply with   *
- *   both the original Diku license in 'license.doc' as well the Merc	   *
+ *   both the original Diku license in 'license.doc' as well the Merc	    *
  *   license in 'license.txt'.  In particular, you may not remove either of *
  *   these copyright notices.                                               *
- *                                                                             *
+ *                                                                          *
  *   Much time and thought has gone into this software and you are          *
  *   benefitting.  We hope that you share your changes too.  What goes      *
  *   around, comes around.                                                  *
  ***************************************************************************/
 
-/***************************************************************************
-*   ROM 2.4 is copyright 1993-1998 Russ Taylor                             *
-*   ROM has been brought to you by the ROM consortium                      *
-*       Russ Taylor(rtaylor@hypercube.org)                                *
-*       Gabrielle Taylor(gtaylor@hypercube.org)                           *
-*       Brian Moore(zump@rom.org)                                         *
-*   By using this code, you have agreed to follow the terms of the         *
-*   ROM license, in the file Rom24/doc/rom.license                         *
-***************************************************************************/
+/****************************************************************************
+*   ROM 2.4 is copyright 1993-1998 Russ Taylor                              *
+*   ROM has been brought to you by the ROM consortium                       *
+*       Russ Taylor(rtaylor@hypercube.org)                                  *
+*       Gabrielle Taylor(gtaylor@hypercube.org)                             *
+*       Brian Moore(zump@rom.org)                                           *
+*   By using this code, you have agreed to follow the terms of the          *
+*   ROM license, in the file Rom24/doc/rom.license                          *
+****************************************************************************/
 
 /***************************************************************************
 * This file contains all of the OS-dependent stuff:
@@ -40,22 +40,14 @@
 * -- Furey  26 Jan 1993
 ***************************************************************************/
 
-/***************************************************************************
-*	includes
-***************************************************************************/
-#include <sys/types.h>
 #include <sys/time.h>
-#include <unistd.h>
-#include <strings.h>
-
 #include <ctype.h>
 #include <errno.h>
-#include <stdio.h>
+#include <unistd.h>
+#include <stdarg.h>
 #include <string.h>
 #include <stdlib.h>
-#include <time.h>
-#include <stdarg.h>
-
+#include <stdio.h>
 #include "merc.h"
 #include "recycle.h"
 #include "interp.h"
@@ -66,8 +58,6 @@
 ***************************************************************************/
 #include <fcntl.h>
 #include <netdb.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
 #include "telnet.h"
 #include <signal.h>
 #if !defined(STDOUT_FILENO)
@@ -166,7 +156,7 @@ int main(int argc, char **argv)
      */
 	if ((fpReserve = fopen(NULL_FILE, "r")) == NULL) {
 		perror(NULL_FILE);
-		exit(1);
+		_Exit(1);
 	}
 
     /*
@@ -176,10 +166,10 @@ int main(int argc, char **argv)
 	if (argc > 1) {
 		if (!is_number(argv[1])) {
 			fprintf(stderr, "Usage: %s [port #]\n", argv[0]);
-			exit(1);
+			_Exit(1);
 		} else if ((port = atoi(argv[1])) <= 1024) {
 			fprintf(stderr, "Port number must be above 1024.\n");
-			exit(1);
+			_Exit(1);
 		}
 
 		/* Are we recovering from a copyover? */
@@ -212,7 +202,7 @@ int main(int argc, char **argv)
 	close(control);
 
 	log_string("Normal termination of game.");
-	exit(0);
+	_Exit(0);
 }
 
 
@@ -225,13 +215,13 @@ int init_socket(int port)
 
 	if ((fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		perror("Init_socket: socket");
-		exit(1);
+		_Exit(1);
 	}
 
 	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&x, sizeof(x)) < 0) {
 		perror("Init_socket: SO_REUSEADDR");
 		close(fd);
-		exit(1);
+		_Exit(1);
 	}
 
 #if defined(SO_DONTLINGER) && !defined(SYSV)
@@ -244,7 +234,7 @@ int init_socket(int port)
 		if (setsockopt(fd, SOL_SOCKET, SO_DONTLINGER, (char *)&ld, sizeof(ld)) < 0) {
 			perror("Init_socket: SO_DONTLINGER");
 			close(fd);
-			exit(1);
+			_Exit(1);
 		}
 	}
 #endif
@@ -256,14 +246,14 @@ int init_socket(int port)
 	if (bind(fd, (struct sockaddr *)&sa, sizeof(sa)) < 0) {
 		perror("Init socket: bind");
 		close(fd);
-		exit(1);
+		_Exit(1);
 	}
 
 
 	if (listen(fd, 3) < 0) {
 		perror("Init socket: listen");
 		close(fd);
-		exit(1);
+		_Exit(1);
 	}
 
 	return fd;
@@ -304,7 +294,7 @@ void game_loop(int control)
 
 		if (select(maxdesc + 1, &in_set, &out_set, &exc_set, &null_time) < 0) {
 			perror("Game_loop: select: poll");
-			exit(1);
+			_Exit(1);
 		}
 
 		/*
@@ -453,7 +443,7 @@ void game_loop(int control)
 				stall_time.tv_sec = secDelta;
 				if (select(0, NULL, NULL, NULL, &stall_time) < 0) {
 					perror("Game_loop: select: stall");
-					exit(1);
+					_Exit(1);
 				}
 			}
 		}
@@ -536,23 +526,24 @@ void init_descriptor(int control)
 		dnew->host = str_dup(from ? from->h_name : buf);
 	}
 
-/*
- * Swiftest: I added the following to ban sites.  I don't
- * endorse banning of sites, but Copper has few descriptors now
- * and some people from certain sites keep abusing access by
- * using automated 'autodialers' and leaving connections hanging.
- *
- * Furey: added suffix check by request of Nickel of HiddenWorlds.
- */
+    /*
+     * Swiftest: I added the following to ban sites.  I don't
+     * endorse banning of sites, but Copper has few descriptors now
+     * and some people from certain sites keep abusing access by
+     * using automated 'autodialers' and leaving connections hanging.
+     *
+     * Furey: added suffix check by request of Nickel of HiddenWorlds.
+     */
 	if (check_ban(dnew->host, BAN_ALL)) {
 		write_to_descriptor(desc, "Your site has been banned from this mud.\n\r", 0);
 		close(desc);
 		free_descriptor(dnew);
 		return;
 	}
-/*
- * Init descriptor data.
- */
+
+    /*
+     * Init descriptor data.
+     */
 	dnew->next = descriptor_list;
 	descriptor_list = dnew;
 

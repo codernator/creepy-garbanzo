@@ -18,30 +18,23 @@
  *  around, comes around.                                                  *
  ***************************************************************************/
 
-
-
-#include <sys/types.h>
-#include <sys/time.h>
-#include <ctype.h>
-#include <errno.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
-#include <time.h>
-#include <stdarg.h>
-
 #include "merc.h"
 #include "recycle.h"
 #include "interp.h"
 #include "telnet.h"
 
-const unsigned char echo_off_str [] = { (unsigned char)IAC, (unsigned char)WILL, (unsigned char)TELOPT_ECHO, (unsigned char)'\0' };
-const unsigned char echo_on_str  [] = { (unsigned char)IAC, (unsigned char)WONT, (unsigned char)TELOPT_ECHO, (unsigned char)'\0' };
-const unsigned char go_ahead_str [] = { (unsigned char)IAC, (unsigned char)GA, (unsigned char)'\0' };
 
 extern bool is_space(const char test);
 extern bool is_alpha(const char test);
 extern bool is_upper(const char test);
+
+
+const unsigned char echo_off_str [] = { (unsigned char)IAC, (unsigned char)WILL, (unsigned char)TELOPT_ECHO, (unsigned char)'\0' };
+const unsigned char echo_on_str  [] = { (unsigned char)IAC, (unsigned char)WONT, (unsigned char)TELOPT_ECHO, (unsigned char)'\0' };
+const unsigned char go_ahead_str [] = { (unsigned char)IAC, (unsigned char)GA, (unsigned char)'\0' };
+
 
 void nanny(DESCRIPTOR_DATA *d, char *argument)
 {
