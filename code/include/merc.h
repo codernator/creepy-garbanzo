@@ -2336,7 +2336,7 @@ extern ROOM_INDEX_DATA *room_index_hash [MAX_KEY_HASH];
 #define NULL_FILE        "/dev/null"              /* To reserve one stream */
 #define RDESC_DIR        "./db/rdesc/"
 #define MEMLOG_FILE      "./log/"
-#define EXE_FILE         "./badtrip.exe"
+#define EXE_FILE         "./badtrip"
 
 #define BUG_FILE         "./log/bug.txt"  /* For 'bug' and bug() */
 #define TYPO_FILE        "./log/typo.txt" /* For 'typo' */

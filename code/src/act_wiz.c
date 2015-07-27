@@ -27,6 +27,7 @@
 
 #include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "merc.h"
 #include "db.h"
@@ -3820,8 +3821,8 @@ void do_copyover(CHAR_DATA *ch, char *argument)
 
 		time(&rawtime);
 		timeinfo = localtime(&rawtime);
-		strftime(buf, 128, "../log/command/lastCMDs-%m%d-%H%M.txt", timeinfo);
-		sprintf(cmd, "mv ../log/command/lastCMDs.txt %s", buf);
+		strftime(buf, 128, "./log/command/lastCMDs-%m%d-%H%M.txt", timeinfo);
+		sprintf(cmd, "mv ./log/command/lastCMDs.txt %s", buf);
 		if (system(cmd) == -1) {
             log_string("System command failed: ");
             log_string(cmd);
@@ -3860,7 +3861,7 @@ void copyover_recover()
 	if (!fp) { /* there are some descriptors open which will hang forever then ? */
 		perror("copyover_recover:fopen");
 /*		logf ("Copyover file not found. Exitting.\n\r");*/
-		_exit(1);
+		_Exit(1);
 	}
 
 	unlink(COPYOVER_FILE);  /* In case something crashes - doesn't prevent reading	*/
@@ -5397,7 +5398,7 @@ void do_auto_shutdown()
 			close_socket(d);
 		}
 
-		_exit(1);
+		_Exit(1);
 	}
 
 	if ((cmdLog = fopen(LAST_COMMANDS, "r")) == NULL) {
@@ -5410,8 +5411,8 @@ void do_auto_shutdown()
 
 		time(&rawtime);
 		timeinfo = localtime(&rawtime);
-		strftime(buf, 128, "../log/command/lastCMDs-%m%d-%H%M.txt", timeinfo);
-		sprintf(cmd, "mv ../log/command/lastCMDs.txt %s", buf);
+		strftime(buf, 128, "./log/command/lastCMDs-%m%d-%H%M.txt", timeinfo);
+		sprintf(cmd, "mv ./log/command/lastCMDs.txt %s", buf);
 		if (system(cmd) == -1) {
             log_string("System command failed: ");
             log_string(cmd);
@@ -5441,8 +5442,8 @@ void do_auto_shutdown()
 	fclose(fpReserve);
 	sprintf(buf, "%d", port);
 	sprintf(buf2, "%d", control);
-	execl(EXE_FILE, "rom", buf, "copyover", buf2, (char *)NULL);
-	_exit(1);
+	execl(EXE_FILE, "Badtrip", buf, "copyover", buf2, (char *)NULL);
+	_Exit(1);
 }
 
 void do_mrelic(CHAR_DATA *ch, char *argument)
