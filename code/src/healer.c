@@ -119,10 +119,6 @@ void do_heal(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if (!IS_NPC(ch) && IS_SET(ch->act, PLR_IDIOT)) {
-		act("$N says 'You're an `#idiot`7!  I don't want your gold!'", ch, NULL, mob, TO_CHAR);
-		return;
-	}
 
 	if (cost > ((unsigned int)(ch->gold * 100) + ch->silver)) {
 		if ((ch->gold > 20000000u) || (ch->silver > 20000000u)) {

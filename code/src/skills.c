@@ -840,7 +840,6 @@ const struct spell_lookup_type spell_lookup_table[] =
 	{ "ray of truth",      spell_ray_of_truth      },
 	{ "recharge",	       spell_recharge	       },
 	{ "refresh",	       spell_refresh	       },
-	{ "reverse align",     spell_reverse_align     },
 	{ "remove curse",      spell_remove_curse      },
 	{ "revive",	       spell_revive	       },
 	{ "ring of fire",      spell_ring_of_fire      },

@@ -421,8 +421,7 @@ void do_push(CHAR_DATA *ch, char *argument)
 	}
 
 	if (IS_SET(ch->in_room->room_flags, ROOM_NO_PUSH_NO_DRAG)
-	    && (victim->ticks_since_last_fight > 3)
-	    && !IS_SET(victim->act, PLR_IDIOT)) {
+	    && (victim->ticks_since_last_fight > 3)) {
 		send_to_char("You can't do that here.\n\r", ch);
 		return;
 	}
@@ -523,8 +522,7 @@ void do_drag(CHAR_DATA *ch, char *argument)
 	}
 
 	if (IS_SET(ch->in_room->room_flags, ROOM_NO_PUSH_NO_DRAG)
-	    && (victim->ticks_since_last_fight > 3)
-	    && !IS_SET(victim->act, PLR_IDIOT)) {
+	    && (victim->ticks_since_last_fight > 3)) {
 		send_to_char("You can't do that here.\n\r", ch);
 		return;
 	}

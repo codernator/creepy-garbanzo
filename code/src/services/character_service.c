@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "merc.h"
+#include "character.h"
 
 // TODO - used by look
 extern DO_FUN do_exits;
@@ -13,7 +14,6 @@ extern DO_FUN do_split;
 
 extern void print_weather(CHAR_DATA * ch);
 
-bool check_blind(CHAR_DATA * ch);
 void show_char_to_char(CHAR_DATA * list, CHAR_DATA * ch);
 void show_char_to_char_2(CHAR_DATA * victim, CHAR_DATA * ch);
 
@@ -673,9 +673,10 @@ bool validate_look(CHAR_DATA *ch) {
         return false;
     }
 
-    if (!check_blind(ch)) {
-        return false;
-    }
+	if (character_is_blind(ch)) {
+		send_to_char("You can't see a thing!  You're blind!!!\n\r", ch);
+		return false;
+	}
 
     return true;
 }
@@ -732,7 +733,6 @@ void show_char_to_char_0(CHAR_DATA *victim, CHAR_DATA *ch)
 
 	if (!IS_NPC(victim) && IS_SET(victim->act, PLR_KILLER)) strcat(buf, "-```1K```!i```1LLER``- ");
 	if (!IS_NPC(victim) && IS_SET(victim->act, PLR_THIEF)) strcat(buf, "-```8TH``i```8EF``- ");
-	if (!IS_NPC(victim) && IS_SET(victim->act, PLR_IDIOT)) strcat(buf, "`7[`PIDIOT`7] ");
 	if (!IS_NPC(victim) && IS_SET(victim->act, PLR_LINKDEAD)) strcat(buf, "`7[`8LINKDEAD`7] ");
 	if (!IS_NPC(victim) && IS_SET(victim->act, PLR_IT)) strcat(buf, "`8[`&IT!`8]``");
 	if ((victim == ch->target)) strcat(buf, "`&[`7TARGET`&]`7 ");
@@ -943,18 +943,6 @@ void show_char_to_char_2(CHAR_DATA *victim, CHAR_DATA *ch)
 	return;
 }
 
-bool check_blind(CHAR_DATA *ch)
-{
-	if (!IS_NPC(ch) && IS_SET(ch->act, PLR_HOLYLIGHT))
-		return TRUE;
-
-	if (IS_AFFECTED(ch, AFF_BLIND)) {
-		send_to_char("You can't see a thing!  You're blind!!!\n\r", ch);
-		return FALSE;
-	}
-
-	return TRUE;
-}
 /*
  * Show a list to a character.
  * Can coalesce duplicated items.

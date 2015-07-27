@@ -156,7 +156,6 @@ static SET_CHAR_FN set_char_mobdeaths;
 static SET_CHAR_FN set_char_full;
 SET_CHAR_FN set_char_hunger;
 SET_CHAR_FN set_char_thirst;
-static SET_CHAR_FN set_char_drunk;
 SET_CHAR_FN set_char_feed;
 /* battlefield info */
 static SET_CHAR_FN set_char_bfield_enter;
@@ -206,7 +205,6 @@ set_char_cmd_table[] =
 	{ "full",	  set_char_full		},
 	{ "hunger",	  set_char_hunger	},
 	{ "thirst",	  set_char_thirst	},
-	{ "drunk",	  set_char_drunk	},
 	{ "feed",	  set_char_feed		},
 	/* battlefield info */
 	{ "bfield_enter", set_char_bfield_enter },
@@ -1049,40 +1047,6 @@ bool set_char_thirst(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
 		return FALSE;
 	}
 	vch->pcdata->condition[COND_THIRST] = value;
-	return TRUE;
-}
-
-/***************************************************************************
-*	set_char_drunk
-*
-*	set the drunk condition of a player
-***************************************************************************/
-static bool set_char_drunk(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
-{
-	int value;
-
-	if (is_help(argument)) {
-		send_to_char("`#SYNTAX``: drunk [+/-]<number of ticks>\n\r", ch);
-		return FALSE;
-	}
-
-	if (IS_NPC(vch)) {
-		send_to_char("Not on mobs.\n\r", ch);
-		return FALSE;
-	}
-
-	if (!is_number(argument)) {
-		send_to_char("The supplied value must be numeric.\n\r", ch);
-		return FALSE;
-	}
-
-	value = parse_int(argument);
-	if (value < -1 || value > 100) {
-		send_to_char("The value must be between -1 and 100.\n\r", ch);
-		return FALSE;
-	}
-
-	vch->pcdata->condition[COND_DRUNK] = value;
 	return TRUE;
 }
 

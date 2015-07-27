@@ -1,37 +1,35 @@
 /***************************************************************************
 *   Original Diku Mud copyright(C) 1990, 1991 by Sebastian Hammer,         *
 *   Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
-*                                                                              *
+*                                                                          *
 *   Merc Diku Mud improvments copyright(C) 1992, 1993 by Michael           *
 *   Chastain, Michael Quan, and Mitchell Tse.                              *
-*	                                                                         *
+*	                                                                       *
 *   In order to use any part of this Merc Diku Mud, you must comply with   *
-*   both the original Diku license in 'license.doc' as well the Merc	     *
+*   both the original Diku license in 'license.doc' as well the Merc	   *
 *   license in 'license.txt'.  In particular, you may not remove either of *
 *   these copyright notices.                                               *
-*                                                                              *
+*                                                                          *
 *   Much time and thought has gone into this software and you are          *
 *   benefitting.  We hope that you share your changes too.  What goes      *
 *   around, comes around.                                                  *
 ***************************************************************************/
 
 /***************************************************************************
- *   ROM 2.4 is copyright 1993-1998 Russ Taylor                             *
- *   ROM has been brought to you by the ROM consortium                      *
- *       Russ Taylor(rtaylor@hypercube.org)                                 *
- *       Gabrielle Taylor(gtaylor@hypercube.org)                            *
- *       Brian Moore(zump@rom.org)                                          *
- *   By using this code, you have agreed to follow the terms of the         *
- *   ROM license, in the file Rom24/doc/rom.license                         *
- ****************************************************************************/
+ *   ROM 2.4 is copyright 1993-1998 Russ Taylor                            *
+ *   ROM has been brought to you by the ROM consortium                     *
+ *       Russ Taylor(rtaylor@hypercube.org)                                *
+ *       Gabrielle Taylor(gtaylor@hypercube.org)                           *
+ *       Brian Moore(zump@rom.org)                                         *
+ *   By using this code, you have agreed to follow the terms of the        *
+ *   ROM license, in the file Rom24/doc/rom.license                        *
+ ***************************************************************************/
 
 #include <stdio.h>
 #include "merc.h"
 #include "mob_cmds.h"
 
 
-extern void do_sit(CHAR_DATA *ch, char *);
-extern void do_stand(CHAR_DATA *ch, char *);
 extern void do_yell(CHAR_DATA *ch, char *);
 extern void make_corpse(CHAR_DATA *ch);
 extern bool check_shield_block(CHAR_DATA *ch, CHAR_DATA *victim);
@@ -1249,8 +1247,8 @@ void do_familiar(/*@dependent@*/CHAR_DATA *ch, /*@unused@*/char *argument)
 	/* player seen stuff here */
 	sit(ch, NULL);
 	char_to_room(mount, ch->in_room);
-	act("You knell to the ground and begin to carve dark symbols into the ground. You prepar the spell to call a $N!.", ch, NULL, mount, TO_CHAR);
-	act("$n knells to the ground and begins carving dark symbols into the ground. $n calls to a $N!", ch, NULL, mount, TO_ROOM);     WAIT_STATE(ch, 2 * PULSE_MOBILE);
+	act("You kneel to the ground and begin to carve dark symbols into the ground. You prepare the spell to call a $N!.", ch, NULL, mount, TO_CHAR);
+	act("$n kneles to the ground and begins carving dark symbols into the ground. $n calls to a $N!", ch, NULL, mount, TO_ROOM);     WAIT_STATE(ch, 2 * PULSE_MOBILE);
 	add_follower(mount, ch);
 	mount->leader = ch;
 	ch->pet = mount;

@@ -1,0 +1,8 @@
+src/db.c: In function ‘alloc_mem’:
+src/db.c:2928:7: warning: pointer of type ‘void *’ used in arithmetic [-Wpedantic]
+  pMem += sizeof(*magic);
+       ^
+src/db.c: In function ‘free_mem’:
+src/db.c:2945:7: warning: pointer of type ‘void *’ used in arithmetic [-Wpedantic]
+  pMem -= sizeof(*magic);
+       ^

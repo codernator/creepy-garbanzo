@@ -169,21 +169,6 @@ typedef bool SPEC_FUN(/*@partial@*/CHAR_DATA * ch);
 #define HERO                    LEVEL_HERO
 #define MAX_VNUMS               2147483647l
 
-/* Player Security */
-#define PLAYER_ROLE_PLAYER     0l
-#define PLAYER_ROLE_ADVOCATE   1l
-#define PLAYER_ROLE_CODER      2l
-#define PLAYER_ROLE_BUILDER    3l
-#define PLAYER_ROLE_QUESTOR    4l
-
-/* determine if player is assigned a role at a minimum trust. 
- * player: not null
- * role_flag: any value from the PLAYER_ROLE_[A-Z]+ definitions.
- * trust: any integer
- */
-bool is_trusted_role(PC_DATA *player, long role_flag, int min_trust);
-void assign_role(PC_DATA *player, long role_flag, int trust);
-void remove_role(PC_DATA *player, long role_flag);
 
 /* Site ban structure. */
 
@@ -1301,7 +1286,6 @@ struct kill_data {
 
 
 /* Conditions. */
-#define COND_DRUNK              0
 #define COND_FULL               1
 #define COND_THIRST             2
 #define COND_HUNGER             3
@@ -1331,7 +1315,6 @@ struct kill_data {
 #define PLR_AUTOSAC             (F)
 #define PLR_AUTOGOLD            (G)
 #define PLR_AUTOSPLIT           (H)
-#define PLR_IDIOT               (I)
 #define PLR_PUNISHMENT          (J)
 #define PLR_LINKDEAD            (L)
 #define PLR_BATTLE              (M)
@@ -1642,99 +1625,98 @@ struct char_data {
 * data specific to a player
 ***************************************************************************/
 struct pc_data {
- PC_DATA * next;
- CHAR_DATA * tagged_by;
- BUFFER * buffer;
- bool  valid;
- char *  pwd;
- char *  bamfin;
- char *  bamfout;
- char *  title;
- char *  grestore_string;
- char *  rrestore_string;
- char *  immkiss_string;
- time_t  last_note;
- time_t  last_idea;
- time_t  last_penalty;
- time_t  last_news;
- time_t  last_changes;
- time_t  last_rpnote;
- time_t  last_aucnote;
- time_t  last_build;
- time_t  last_read[NOTE_MAX];
- char *  who_thing;
- char *  filter[MAX_FORGET];
- int  perm_hit;
- int  perm_mana;
- int  perm_move;
- int  true_sex;
- int  last_level;
- int  tag_ticks;
- long  condition[COND_MAX];
- LEARNED * skills;
- int  points;
- bool  confirm_delete;
- bool  confirm_suicide;
- bool  confirm_pkills;
- int  jail_time;
- long  jail_release;
- char *  alias[MAX_ALIAS];
- char *  alias_sub[MAX_ALIAS];
- char *  ignore[MAX_IGNORE];
- byte  color_combat_s;
- byte  color_combat_condition_s;
- byte  color_combat_condition_o;
- byte  color_invis;
- byte  color_wizi;
- byte  color_hp;
- byte  color_combat_o;
- byte  color_hidden;
- byte  color_charmed;
- byte  color_mana;
- byte  color_move;
- byte  color_say;
- byte  color_tell;
- byte  color_reply;
- unsigned int silver_in_bank;
- unsigned int gold_in_bank;
- long  wiznet;
- long  impnet;
- char *  prefix;
- long  pkills;
- long  pdeaths;
- long  mobkills;
- long  mobdeaths;
- char *  deathcry;
- int  practice;
- int  train;
- time_t  idiot_time;
- time_t  killer_time;
- time_t  thief_time;
- char *  afk_message;
- time_t  last_bank;
- int  security;
- int  rank;
- unsigned int twohundred;
- unsigned int tenten;
- unsigned int armorclass;
- unsigned int fireproof;
- unsigned int weaponflag;
- unsigned int restring;
- unsigned int damnoun;
- unsigned int immtrivia;
- unsigned int immhidden;
- unsigned int immwild;
- unsigned int imp;
- unsigned int bounty;
- unsigned int skillset;
- unsigned int rp;
- unsigned int extendedlevel;
- long  extendedexp;
- bool  confirm_pk;
- char *  restring_name;
- char *  restring_short;
- char *  restring_long;
- char *  history;
+    /*@shared@*/PC_DATA * next;
+    /*@shared@*/CHAR_DATA * tagged_by;
+    /*@shared@*/BUFFER * buffer;
+    bool  valid;
+    /*@shared@*/char *  pwd;
+    /*@shared@*/char *  bamfin;
+    /*@shared@*/char *  bamfout;
+    /*@shared@*/char *  title;
+    /*@shared@*/char *  grestore_string;
+    /*@shared@*/char *  rrestore_string;
+    /*@shared@*/char *  immkiss_string;
+    time_t  last_note;
+    time_t  last_idea;
+    time_t  last_penalty;
+    time_t  last_news;
+    time_t  last_changes;
+    time_t  last_rpnote;
+    time_t  last_aucnote;
+    time_t  last_build;
+    time_t  last_read[NOTE_MAX];
+    /*@shared@*/char *  who_thing;
+    /*@shared@*/char *  filter[MAX_FORGET];
+    int  perm_hit;
+    int  perm_mana;
+    int  perm_move;
+    int  true_sex;
+    int  last_level;
+    int  tag_ticks;
+    long  condition[COND_MAX];
+    /*@shared@*/LEARNED * skills;
+    int  points;
+    bool  confirm_delete;
+    bool  confirm_suicide;
+    bool  confirm_pkills;
+    int  jail_time;
+    long  jail_release;
+    /*@shared@*/char *  alias[MAX_ALIAS];
+    /*@shared@*/char *  alias_sub[MAX_ALIAS];
+    /*@shared@*/char *  ignore[MAX_IGNORE];
+    byte  color_combat_s;
+    byte  color_combat_condition_s;
+    byte  color_combat_condition_o;
+    byte  color_invis;
+    byte  color_wizi;
+    byte  color_hp;
+    byte  color_combat_o;
+    byte  color_hidden;
+    byte  color_charmed;
+    byte  color_mana;
+    byte  color_move;
+    byte  color_say;
+    byte  color_tell;
+    byte  color_reply;
+    unsigned int silver_in_bank;
+    unsigned int gold_in_bank;
+    long  wiznet;
+    long  impnet;
+    /*@shared@*/char *  prefix;
+    long  pkills;
+    long  pdeaths;
+    long  mobkills;
+    long  mobdeaths;
+    /*@shared@*/char *  deathcry;
+    int  practice;
+    int  train;
+    time_t  killer_time;
+    time_t  thief_time;
+    /*@shared@*/char *  afk_message;
+    time_t  last_bank;
+    int  security;
+    int  rank;
+    unsigned int twohundred;
+    unsigned int tenten;
+    unsigned int armorclass;
+    unsigned int fireproof;
+    unsigned int weaponflag;
+    unsigned int restring;
+    unsigned int damnoun;
+    unsigned int immtrivia;
+    unsigned int immhidden;
+    unsigned int immwild;
+    unsigned int imp;
+    unsigned int bounty;
+    unsigned int skillset;
+    unsigned int rp;
+    unsigned int extendedlevel;
+    long  extendedexp;
+    bool  confirm_pk;
+    /*@shared@*/char *  restring_name;
+    /*@shared@*/char *  restring_short;
+    /*@shared@*/char *  restring_long;
+    /*@shared@*/char *  history;
 };
 
 
@@ -2092,7 +2074,6 @@ enum e_harvey_proctor_is { hp_pissed_off, hp_irritated, hp_off_his_rocker, hp_ag
 
 
 /* character macros*/
-#define IS_DRUNK(ch)            (ch->pcdata->condition[COND_DRUNK] > 10)
 #define IS_NPC(ch)              (IS_SET((ch)->act, ACT_IS_NPC) && (ch)->mob_idx != NULL)
 #define IS_IMMORTAL(ch)         (get_trust(ch) >= LEVEL_IMMORTAL)
 #define IS_IMP(ch)              (get_trust(ch) >= MAX_LEVEL)
@@ -2371,7 +2352,6 @@ void stop_follower(CHAR_DATA * ch);
 void nuke_pets(CHAR_DATA * ch);
 void die_follower(CHAR_DATA * ch);
 char *emote_parse(CHAR_DATA *ch, char *argument);
-void idiot_speech(CHAR_DATA * ch, CHAR_DATA * victim, char *message, char *output);
 bool is_same_group(CHAR_DATA * ach, CHAR_DATA * bch);
 int get_item_apply_val(char *name);
 void set_wait(CHAR_DATA * ch, int pulse);
@@ -2696,7 +2676,7 @@ int race_lookup(const char *name);
 int item_lookup(const char *name);
 int liq_lookup(const char *name);
 
-/* character_api.c */
+/* character_service.c */
 void sit(/*@partial@*/CHAR_DATA *ch, /*@nulL@*//*@partial@*/OBJ_DATA *on);
 void stand(/*@partial@*/CHAR_DATA *ch, /*@nulL@*//*@partial@*/OBJ_DATA *on);
 void look_room(/*@partial@*/CHAR_DATA *ch, /*@partial@*/ROOM_INDEX_DATA *room);
@@ -2707,7 +2687,7 @@ void look_direction(/*@partial@*/CHAR_DATA *ch, int door);
 void look_equipment(/*@partial@*/CHAR_DATA *ch);
 void get_obj(CHAR_DATA * ch, OBJ_DATA * obj, OBJ_DATA * container);
 
-/* object_api.c */
+/* object_service.c */
 bool is_situpon(/*@partial@*/OBJ_DATA *obj);
 bool is_standupon(/*@partial@*/OBJ_DATA *obj);
 

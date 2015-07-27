@@ -110,7 +110,6 @@ void mp_hprct_trigger(CHAR_DATA * mob, CHAR_DATA * ch);
 #define CHK_OBJVAL3     (49)
 #define CHK_OBJVAL4     (50)
 #define CHK_GRPSIZE     (51)
-#define CHK_ISIDIOT             (52)
 /*
  * These defines correspond to the entries in fn_evals[] table.
  */
@@ -186,7 +185,6 @@ static const char *fn_keyword[] =
 	"objval3",
 	"objval4",
 	"grpsize",      /* if grpsize $n > 6	- group size check */
-	"isidiot",      /* checks to see if someone is an idiot */
 
 	"\n"            /* Table terminator */
 };
@@ -499,8 +497,6 @@ static bool cmd_eval(long vnum, char *line, int check,
 		return lval_char != NULL && IS_EVIL(lval_char);
 	case CHK_ISNEUTRAL:
 		return lval_char != NULL && IS_NEUTRAL(lval_char);
-	case CHK_ISIDIOT:
-		return lval_char != NULL && !IS_NPC(lval_char) && IS_SET(lval_char->act, PLR_IDIOT);
 	case CHK_ISIMMORT:
 		return lval_char != NULL && IS_IMMORTAL(lval_char);
 	case CHK_ISCHARM: /* A relic from MERC 2.2 MOBprograms */

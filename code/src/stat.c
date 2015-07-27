@@ -630,13 +630,12 @@ void do_mstat(CHAR_DATA *ch, char *argument)
 	printf_to_char(ch, "Fighting: %s\n\r", victim->fighting ? victim->fighting->name : "(none)");
 
 	if (!IS_NPC(victim)) {
-		printf_to_char(ch, "Thirst: %d  Hunger: %d  Feed: %d  Drained: %d  Full: %d  Drunk: %d\n\r",
+		printf_to_char(ch, "Thirst: %d  Hunger: %d  Feed: %d  Drained: %d  Full: %d\n\r",
 			       victim->pcdata->condition[COND_THIRST],
 			       victim->pcdata->condition[COND_HUNGER],
 			       victim->pcdata->condition[COND_FEED],
 			       victim->drained,
-			       victim->pcdata->condition[COND_FULL],
-			       victim->pcdata->condition[COND_DRUNK]);
+			       victim->pcdata->condition[COND_FULL]);
 	}
 
 	if (IS_NPC(victim))

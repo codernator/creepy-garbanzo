@@ -373,7 +373,6 @@ const struct cmd_type cmd_table[] =
 	{ "disconnect",	  do_disconnect,   POS_DEAD,     L2, LOG_ALWAYS, 1 },
 	{ "flag",	      do_flag,	       POS_DEAD,     L4, LOG_ALWAYS, 1 },
 	{ "freeze",	      do_freeze,       POS_DEAD,     L2, LOG_ALWAYS, 1 },
-	{ "idiot",	      do_idiot,	       POS_DEAD,     L8, LOG_ALWAYS, 1 },
 	{ "norestore",	  do_norestore,    POS_DEAD,     L8, LOG_ALWAYS, 1 },
 	{ "permban",	  do_permban,      POS_DEAD,     L1, LOG_ALWAYS, 1 },
 	{ "protect",	  do_protect,      POS_DEAD,     L1, LOG_ALWAYS, 1 },

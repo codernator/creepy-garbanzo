@@ -136,7 +136,6 @@ const struct flag_type plr_flags[] =
 	{ "autosac",	F,  FALSE },
 	{ "autogold",	G,  FALSE },
 	{ "autosplit",	H,  FALSE },
-	{ "idiot",	I,  FALSE },
 	{ "punishment", J,  FALSE },
 	{ "holylight",	N,  FALSE },
 	{ "can_loot",	P,  FALSE },

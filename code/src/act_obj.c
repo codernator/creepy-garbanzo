@@ -1847,10 +1847,6 @@ void do_drink(CHAR_DATA *ch, char *argument)
 		}
 	}
 
-	if (!IS_NPC(ch) && ch->pcdata->condition[COND_DRUNK] > 10) {
-		send_to_char("You fail to reach your mouth.  *Hic*\n\r", ch);
-		return;
-	}
 
 	switch (obj->item_type) {
 	default:
@@ -1912,7 +1908,6 @@ void do_drink(CHAR_DATA *ch, char *argument)
 	act("$n drinks $T from $p.", ch, obj, liq_table[liquid].liq_name, TO_ROOM);
 	act("You drink $T from $p.", ch, obj, liq_table[liquid].liq_name, TO_CHAR);
 
-	gain_condition(ch, COND_DRUNK, amount * liq_table[liquid].liq_affect[COND_DRUNK] / 36);
 	gain_condition(ch, COND_FULL, amount * liq_table[liquid].liq_affect[COND_FULL] / 4);
 	if (ch->pcdata->condition[COND_THIRST] < 0
 	    && ch->pcdata->condition[COND_THIRST] > -151)
@@ -1920,9 +1915,6 @@ void do_drink(CHAR_DATA *ch, char *argument)
 	gain_condition(ch, COND_THIRST, amount * liq_table[liquid].liq_affect[COND_THIRST] / 10);
 	if (ch->pcdata->condition[COND_HUNGER] >= 0)
 		gain_condition(ch, COND_HUNGER, amount * liq_table[liquid].liq_affect[COND_HUNGER] / 2);
-
-	if (!IS_NPC(ch) && ch->pcdata->condition[COND_DRUNK] > 10)
-		send_to_char("You feel drunk.\n\r", ch);
 
 	if (!IS_NPC(ch) && ch->pcdata->condition[COND_FULL] > 35)
 		send_to_char("You are full.\n\r", ch);

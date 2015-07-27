@@ -1,2 +1,2 @@
 clear
-splint -DLINUX -Iinclude +unixlib -exportlocal -macroparams src/act_combat.c
+splint -DLINUX -Iinclude +unixlib -exportlocal -macroparams src/act_comm.c

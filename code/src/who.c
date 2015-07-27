@@ -124,7 +124,7 @@ char *who_string(CHAR_DATA *ch)
 
 
 	sprintf(tmp,
-		"``%s%s%s%s%s%s%s%s%s%s%s%s%s``",
+		"``%s%s%s%s%s%s%s%s%s%s%s%s``",
 		IS_SET(ch->comm2, COMM2_RP) ? "`8[`!RP`8]`` " : "",
 		IS_SET(ch->comm2, COMM2_OOC) ? "`8[`#OOC`8]`` " : "",
 		ch->incog_level >= LEVEL_HERO ? "`6(`^Incog`6) ``" : "",
@@ -135,7 +135,6 @@ char *who_string(CHAR_DATA *ch)
 		IS_SET(ch->comm2, COMM2_BUSY) ? "[`1BUSY``] " : "",
 		IS_SET(ch->act, PLR_KILLER) ? "-`1K`!i`1LLER``- " : "",
 		IS_SET(ch->act, PLR_THIEF) ? "-`8TH``i`8EF``- " : "",
-		IS_SET(ch->act, PLR_IDIOT) ? "`7[`PIDIOT`7]`` " : "",
 		IS_SET(ch->comm2, COMM2_TARGET) ? "`7[`PTARGET`7]`` " : "",
 		ch->name);
 

@@ -277,8 +277,6 @@ void game_loop(int control)
 		DESCRIPTOR_DATA *d;
 		int maxdesc;
 
-
-
 		FD_ZERO(&in_set);
 		FD_ZERO(&out_set);
 		FD_ZERO(&exc_set);

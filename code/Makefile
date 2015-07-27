@@ -13,7 +13,7 @@ EXE=$(BDIR)/badtrip
 _OBJ=act_comm.o act_combat.o act_enter.o act_info.o act_move.o act_obj.o act_wiz.o \
      affects.o alias.o at.o auction.o \
      ban.o bank.o bfield.o bit.o \
-     combat_roll.o comm.o const.o \
+     character.o combat_roll.o comm.o const.o \
      db.o disable.o \
      effects.o enchant.o \
      fight.o find.o flags.o for.o \

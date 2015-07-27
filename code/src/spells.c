@@ -3340,42 +3340,6 @@ void spell_ray_of_truth(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 		cast_spell(ch, gsp_blindness, (3 * level / 4), victim, TARGET_CHAR, argument);
 }
 
-/************************* reverse **************************/
-void spell_reverse_align(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	CHAR_DATA *victim = (CHAR_DATA *)vo;
-	int dam;
-	int casteralign;
-	int targetalign;
-
-
-	casteralign = ch->alignment;
-	targetalign = victim->alignment;
-
-	if (IS_NPC(victim)) {
-		send_to_char("Mobs dont get drunk that easy.\n\r", ch);
-		return;
-	}
-
-
-	if (ch->level >= victim->level) {
-		ch->alignment = targetalign;
-		victim->alignment = casteralign;
-		dam = victim->hit / 5;
-
-		if (saves_spell(level, victim, DAM_ILLUSION))
-			dam /= 2;
-
-		damage(ch, victim, dam, skill->sn, DAM_ILLUSION, TRUE);
-		act("$n gasps in horror!", victim, NULL, NULL, TO_ROOM);
-		send_to_char("You gasp in complete horror!!!.\n\r", ch);
-		ch->mana = ch->mana - 500;
-		return;
-	} else {
-		send_to_char("You failed.\n\r", ch);
-		return;
-	}
-}
 
 void spell_recharge(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {

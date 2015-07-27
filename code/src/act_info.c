@@ -32,6 +32,7 @@
 #include <string.h>
 
 #include "merc.h"
+#include "character.h"
 #include "magic.h"
 #include "recycle.h"
 #include "tables.h"
@@ -58,7 +59,6 @@ void print_weather(CHAR_DATA * ch);
  */
 extern void show_char_to_char(CHAR_DATA * list, CHAR_DATA * ch);
 extern void show_char_to_char_2(CHAR_DATA * victim, CHAR_DATA * ch);
-extern bool check_blind(CHAR_DATA * ch);
 
 #define MAX_NEST        100
 static OBJ_DATA *rgObjNest[MAX_NEST];
@@ -760,8 +760,10 @@ void do_glance(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if (!check_blind(ch))
+	if (character_is_blind(ch)) {
+        send_to_char("You are blind!", ch);
 		return;
+    }
 
 	if (!IS_NPC(ch)
 	    && !IS_SET(ch->act, PLR_HOLYLIGHT)
@@ -928,8 +930,10 @@ void do_exits(CHAR_DATA *ch, char *argument)
 
 	fAuto = !str_cmp(argument, "auto");
 
-	if (!check_blind(ch))
+	if (character_is_blind(ch)) {
+        send_to_char("You are blind!", ch);
 		return;
+    }
 
 	if (fAuto)
 		sprintf(buf, "`6[`^Exits`6:``");
@@ -1168,16 +1172,11 @@ void do_score(CHAR_DATA *ch, char *argument)
 	send_to_char(buf, ch);
 
 	if (!IS_NPC(ch) && (ch->race != (race = race_lookup("vampire")))
-	    && ch->pcdata->condition[COND_DRUNK] > 10)
-		send_to_char("You are ```2d```3r```2u```3n```2k``.\n\r", ch);
-	if (!IS_NPC(ch) && (ch->race != (race = race_lookup("vampire")))
 	    && ch->pcdata->condition[COND_THIRST] == 0)
 		send_to_char("You are thirsty.\n\r", ch);
 	if (!IS_NPC(ch) && (ch->race == (race = race_lookup("vampire")))
 	    && ch->pcdata->condition[COND_HUNGER] == 0)
 		send_to_char("You must `1feed`7.\n\r", ch);
-	if (!IS_NPC(ch) && IS_SET(ch->act, PLR_IDIOT))
-		send_to_char("You are an `Pidiot``.\n\r", ch);
 
 	switch (ch->position) {
 	case POS_DEAD:
@@ -1660,8 +1659,10 @@ void do_here(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if (!check_blind(ch))
+	if (character_is_blind(ch)) {
+        send_to_char("You are blind!", ch);
 		return;
+    }
 
 	if (!IS_NPC(ch)
 	    && !IS_SET(ch->act, PLR_HOLYLIGHT)

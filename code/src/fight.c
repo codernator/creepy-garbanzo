@@ -1065,8 +1065,6 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
 
 
 	/* damage modifiers */
-	if (dam > 1 && !IS_NPC(victim) && victim->pcdata->condition[COND_DRUNK] > 10)
-		dam = 9 * dam / 10;
 
 	if (dam > 1 && IS_AFFECTED(victim, AFF_SANCTUARY))
 		dam /= 2;

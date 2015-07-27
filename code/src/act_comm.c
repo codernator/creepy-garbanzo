@@ -146,7 +146,7 @@ void do_fixscreen(CHAR_DATA *ch, char *argument)
 *
 *	send an ASNI clear screen
 ***************************************************************************/
-void do_clearscreen(CHAR_DATA *ch, char *argument)
+void do_clearscreen(CHAR_DATA *ch, /*@unused@*/char *argument)
 {
 	send_to_char("\033[0H\033[2J\n", ch);
 	return;
@@ -158,7 +158,7 @@ void do_clearscreen(CHAR_DATA *ch, char *argument)
 *
 *	list all of the channels and the status for the player
 ***************************************************************************/
-void do_channels(CHAR_DATA *ch, char *argument)
+void do_channels(CHAR_DATA *ch, /*@unused@*/char *argument)
 {
 	if (IS_NPC(ch))
 		return;
@@ -261,50 +261,6 @@ void do_channels(CHAR_DATA *ch, char *argument)
 		send_to_char("You cannot show emotions.\n\r", ch);
 }
 
-#define NUM_DRUNK_WORDS 6
-
-/***************************************************************************
-*	drunk_speech
-*
-*	put some funk on some text to make it look like a drunkard
-***************************************************************************/
-static void drunk_speech(char *text)
-{
-	const char *drunk_words[NUM_DRUNK_WORDS * 2] =
-	{
-		/* drunk word           translation */
-		"s",   "sh",
-		"r",   "rr",
-		"ing", "in'",
-		"x",   "xsh",
-		"S",   "SH",            /* 5 */
-		"R",   "RR"
-	};
-	char *orig;
-	char tmp[1000];
-	char buf[1000];
-	size_t diff;
-	int curr;
-
-	orig = text;
-	for (curr = 0; curr < (NUM_DRUNK_WORDS * 2); curr += 2) {
-		tmp[0] = '\0';
-		if (strstr(orig, drunk_words[curr])) {
-			while (strstr(orig, drunk_words[curr])) {
-				diff = strlen(orig) - strlen((char *)strstr(orig, drunk_words[curr]));
-
-				strncat(tmp, orig, diff);
-				strcat(tmp, drunk_words[curr + 1]);
-
-				orig += diff + strlen(drunk_words[curr]);
-			}
-		}
-		strcat(tmp, orig);
-		orig = strcpy(buf, tmp);
-	}
-
-	strcpy(text, orig);
-}
 
 
 
@@ -387,122 +343,6 @@ void do_replay(CHAR_DATA *ch, /*@unused@*/ char *argument)
 
 
 /***************************************************************************
-*	idiot_speech
-*
-*	change text into garbledy-gook
-***************************************************************************/
-void idiot_speech(CHAR_DATA *ch, CHAR_DATA *victim,
-		  char *message, char *output)
-{
-	char buf[MSL];
-	char *tmp;
-	int idx;
-	int length;
-
-	static const struct syl_type {
-		char *	old;
-		char *	new;
-	}
-	idiot_table[] =
-	{
-		{ "a", "a" },
-		{ "b", "b" },
-		{ "c", "q" },
-		{ "d", "e" },
-		{ "e", "z" },
-		{ "f", "y" },
-		{ "g", "o" },
-		{ "h", "p" },
-		{ "i", "u" },
-		{ "j", "y" },
-		{ "k", "t" },
-		{ "l", "r" },
-		{ "m", "w" },
-		{ "n", "i" },
-		{ "o", "a" },
-		{ "p", "s" },
-		{ "q", "d" },
-		{ "r", "f" },
-		{ "s", "g" },
-		{ "t", "h" },
-		{ "u", "j" },
-		{ "v", "z" },
-		{ "w", "x" },
-		{ "x", "n" },
-		{ "y", "l" },
-		{ "z", "k" },           /*    Lower Case Ends    */
-		{ "1", "1" },
-		{ "2", "2" },
-		{ "3", "3" },
-		{ "4", "4" },
-		{ "5", "5" },
-		{ "6", "6" },
-		{ "7", "7" },
-		{ "8", "8" },
-		{ "9", "9" },
-		{ "0", "0" },           /*      Numbers End      */
-		{ ".", "." },
-		{ "!", "!" },
-		{ "@", "@" },
-		{ "#", "#" },
-		{ "$", "$" },
-		{ "%", "%" },
-		{ "^", "^" },
-		{ "&", "&" },
-		{ "*", "*" },
-		{ ")", "(" },
-		{ ")", "(" },
-		{ "-", "_" },
-		{ "=", "=" },
-		{ "[", "]" },
-		{ "]", "[" },
-		{ "'", "'" },
-		{ "/", "/" },
-		{ "+", "+" },
-		{ "_", "-" },
-		{ ";", ";" },
-		{ ",", "," },
-		{ ":", ":" },
-		{ "?", "?" },
-		{ "<", ">" },
-		{ ">", "<" },
-		{ "|", "|" },
-		{ "{", "}" },
-		{ "}", "{" },
-		{ " ", " " },
-		{ "",  ""  }
-	};
-
-
-	buf[0] = '\0';
-	length = 0;
-	if (IS_SET(ch->act, PLR_IDIOT)
-	    && (!IS_SET(ch->act, PLR_HOLYLIGHT))
-	    && (!IS_SET(victim->act, PLR_HOLYLIGHT)
-		&& !IS_NPC(ch)
-		&& !IS_NPC(victim))) {
-		for (tmp = message; *tmp != '\0'; tmp += length) {
-			for (idx = 0; idiot_table[idx].old[0] != '\0'; idx++) {
-				if (!str_prefix(idiot_table[idx].old, tmp)) {
-					strcat(buf, idiot_table[idx].new);
-					break;
-				}
-			}
-
-			if (length == 0)
-				length = 1;
-		}
-
-		strcpy(output, buf);
-	} else {
-		strcpy(output, message);
-	}
-
-	return;
-}
-
-
-/***************************************************************************
 *	can_talk
 *
 *	make sure a player is able to use channels
@@ -556,9 +396,6 @@ void do_auctalk(CHAR_DATA *ch, char *argument)
 			return;
 		REMOVE_BIT(ch->comm, COMM_NOAUCTION);
 
-		if (!IS_NPC(ch) && IS_DRUNK(ch))
-			drunk_speech(argument);
-
 		printf_to_char(ch, "`3You `#(`3AucTalk`#)`3 '`#%s`3'``\n\r", argument);
 
 		for (d = descriptor_list; d != NULL; d = d->next) {
@@ -570,7 +407,6 @@ void do_auctalk(CHAR_DATA *ch, char *argument)
 			    && d->character != ch
 			    && !IS_SET(victim->comm, COMM_NOAUCTION)
 			    && !IS_SET(victim->comm, COMM_QUIET)) {
-				idiot_speech(ch, d->character, argument, buf);
 				act_new("`3$n `#(`3AucTalks`#)`3 '`#$t`3'``", ch, buf, d->character, TO_VICT, POS_DEAD, FALSE);
 			}
 		}
@@ -616,9 +452,6 @@ void do_gossip(CHAR_DATA *ch, char *argument)
 
 
 		REMOVE_BIT(ch->comm, COMM_NOGOSSIP);
-		if (!IS_NPC(ch))
-			if (IS_DRUNK(ch))
-				drunk_speech(argument);
 
 		(void)snprintf(buf, 2 * MIL, "```^(`6In Character`^) `6You say `8*`7*`&*```^%s```&*`7*`8*``\n\r", argument);
 		send_to_char(buf, ch);
@@ -631,12 +464,7 @@ void do_gossip(CHAR_DATA *ch, char *argument)
 			    d->character != ch &&
 			    !IS_SET(victim->comm, COMM_NOGOSSIP) &&
 			    !IS_SET(victim->comm, COMM_QUIET)) {
-				if (IS_SET(ch->act, PLR_IDIOT)) {
-					idiot_speech(ch, d->character, argument, buf);
-					act_new("`^(`6In Character`^) `6$n says `8*`7*`&*`^$t`&*`7*`8*``", ch, buf, d->character, TO_VICT, POS_DEAD, FALSE);
-				} else {
 					act_new("`^(`6In Character`^) `6$n says `8*`7*`&*`^$t`&*`7*`8*``", ch, argument, d->character, TO_VICT, POS_DEAD, FALSE);
-				}
 			}
 		}
 	}
@@ -680,9 +508,6 @@ void do_grats(CHAR_DATA *ch, char *argument)
 
 
 		REMOVE_BIT(ch->comm, COMM_NOGRATS);
-		if (!IS_NPC(ch))
-			if (IS_DRUNK(ch))
-				drunk_speech(argument);
 
 		(void)snprintf(buf, 2 * MIL, "```OYou grats `4*`O*`&*```O%s```&*`O*`4*``\n\r", argument);
 		send_to_char(buf, ch);
@@ -695,12 +520,7 @@ void do_grats(CHAR_DATA *ch, char *argument)
 			    d->character != ch &&
 			    !IS_SET(victim->comm, COMM_NOGRATS) &&
 			    !IS_SET(victim->comm, COMM_QUIET)) {
-				if (IS_SET(ch->act, PLR_IDIOT)) {
-					idiot_speech(ch, d->character, argument, buf);
-					act_new("`O$n grats `4*`O*`&*`O$t`&*`O*`4*``", ch, buf, d->character, TO_VICT, POS_DEAD, FALSE);
-				} else {
 					act_new("`O$n grats `4*`O*`&*`O$t`&*`O*`4*``", ch, argument, d->character, TO_VICT, POS_DEAD, FALSE);
-				}
 			}
 		}
 	}
@@ -745,9 +565,6 @@ void do_ooc(CHAR_DATA *ch, char *argument)
 
 
 		REMOVE_BIT(ch->comm, COMM_NOOOC);
-		if (!IS_NPC(ch))
-			if (IS_DRUNK(ch))
-				drunk_speech(argument);
 
 		(void)snprintf(buf, 2 * MIL, "`7You `#OOC`7: '`#%s`7'\n\r", argument);
 		send_to_char(buf, ch);
@@ -761,13 +578,8 @@ void do_ooc(CHAR_DATA *ch, char *argument)
 			    d->character != ch &&
 			    !IS_SET(victim->comm, COMM_NOOOC) &&
 			    !IS_SET(victim->comm, COMM_QUIET)) {
-				if (IS_SET(ch->act, PLR_IDIOT)) {
-					idiot_speech(ch, d->character, argument, buf);
-					act_new("`7$n `#OOC`7: `#'$t`7'", ch, buf, d->character, TO_VICT, POS_DEAD, FALSE);
-				} else {
 					act_new("`7$n `#OOC`7: '`#$t`7'",
 						ch, argument, d->character, TO_VICT, POS_DEAD, FALSE);
-				}
 			}
 		}
 	}
@@ -903,7 +715,6 @@ void do_wish(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_say(CHAR_DATA *ch, char *argument)
 {
-	CHAR_DATA *vch;
 	char buf[MSL];
 
 	if (argument[0] == '\0') {
@@ -916,24 +727,9 @@ void do_say(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if (!IS_NPC(ch)) {
-		if (IS_DRUNK(ch))
-			drunk_speech(argument);
-	}
 
 	buf[0] = '\0';
 
-	if (IS_SET(ch->act, PLR_IDIOT)) {
-		for (vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room) {
-			if (vch != ch) {
-				idiot_speech(ch, vch, argument, buf);
-				act("$N says '`P$t``'", vch, buf, ch, TO_CHAR);
-			}
-		}
-
-		act("You say '`P$t``'", ch, argument, NULL, TO_CHAR);
-		return;
-	} else {
 		(void)snprintf(buf, 2 * MIL, "`7You %s '`s$T`7'``",
 			       argument[strlen(argument) - 1] == '!' ? "exclaim" :
 			       argument[strlen(argument) - 1] == '?' ? "ask" : "say");
@@ -953,7 +749,6 @@ void do_say(CHAR_DATA *ch, char *argument)
 					mp_act_trigger(argument, mob, ch, NULL, NULL, TRIG_SPEECH);
 			}
 		}
-	}
 
 	return;
 }
@@ -1021,10 +816,6 @@ void do_shout(CHAR_DATA *ch, char *argument)
 	}
 
 	REMOVE_BIT(ch->comm, COMM_SHOUTSOFF);
-	if (!IS_NPC(ch)) {
-		if (IS_DRUNK(ch))
-			drunk_speech(argument);
-	}
 
 /*    WAIT_STATE(ch, 12);*/
 
@@ -1038,15 +829,7 @@ void do_shout(CHAR_DATA *ch, char *argument)
 		    && d->character != ch
 		    && !IS_SET(victim->comm, COMM_SHOUTSOFF)
 		    && !IS_SET(victim->comm, COMM_QUIET)) {
-			if (IS_SET(ch->act, PLR_IDIOT)) {
-				char buf[MSL];
-
-				idiot_speech(ch, d->character, argument, buf);
-				act("`1$n shouts '`!$t`1'``", ch, buf, d->character, TO_VICT);
-				return;
-			} else {
 				act("`1$n shouts '`!$t`1'``", ch, argument, d->character, TO_VICT);
-			}
 		}
 	}
 
@@ -1371,15 +1154,7 @@ void do_yell(CHAR_DATA *ch, char *argument)
 		    && d->character->in_room != NULL
 		    && d->character->in_room->area == ch->in_room->area
 		    && !IS_SET(d->character->comm, COMM_QUIET)) {
-			if (IS_SET(ch->act, PLR_IDIOT)) {
-				char buf[MSL];
-
-				idiot_speech(ch, d->character, argument, buf);
-				act("`1$n yells '`!$t`1'``", ch, buf, d->character, TO_VICT);
-				return;
-			} else {
 				act("`1$n yells '`!$t`1'``", ch, argument, d->character, TO_VICT);
-			}
 		}
 	}
 
@@ -1399,10 +1174,6 @@ void do_emote(CHAR_DATA *ch, char *argument)
 	}
 
 
-	if (IS_SET(ch->act, PLR_IDIOT)) {
-		send_to_char("Like anyone really cares?", ch);
-		return;
-	}
 
 	if (argument[0] == '\0') {
 		send_to_char("Emote what?\n\r", ch);
@@ -1435,10 +1206,6 @@ void do_pmote(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if (IS_SET(ch->act, PLR_IDIOT)) {
-		send_to_char("Like anyone really cares?", ch);
-		return;
-	}
 
 	if (argument[0] == '\0') {
 		send_to_char("Emote what?\n\r", ch);
@@ -1858,14 +1625,6 @@ void do_order(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if (!str_cmp(arg2, "ooc") || !str_cmp(arg2, "gossip") || !str_cmp(arg2, "gos") || !str_cmp(arg2, "say") || !str_cmp(arg2, "'")
-	    || !str_cmp(arg2, ".")
-	    || !str_cmp(arg2, "shit") || !str_cmp(arg2, "shittalk")) {
-		if (IS_SET(ch->act, PLR_IDIOT)) {
-			send_to_char("Don't try and use mobs to circumvent your flag, dumbass.  Even if you managed, its CHEATING.\n\r", ch);
-			return;
-		}
-	}
 
 	if (arg[0] == '\0' || argument[0] == '\0') {
 		send_to_char("Order whom to do what?\n\r", ch);
@@ -2134,9 +1893,6 @@ void do_gtell(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if (!IS_NPC(ch))
-		if (IS_DRUNK(ch))
-			drunk_speech(argument);
 
 /*
  * Note use of send_to_char, so gtell works on sleepers.

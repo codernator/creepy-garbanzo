@@ -55,7 +55,6 @@ typedef void FOR_CMD (CHAR_DATA *ch, char *name, char *argument);
 static void for_all(CHAR_DATA * ch, char *name, char *argument);
 static void for_gods(CHAR_DATA * ch, char *name, char *argument);
 static void for_morts(CHAR_DATA * ch, char *name, char *argument);
-static void for_idiots(CHAR_DATA * ch, char *name, char *argument);
 static void for_room(CHAR_DATA * ch, char *name, char *argument);
 static void for_name(CHAR_DATA * ch, char *name, char *argument);
 static void for_count(CHAR_DATA * ch, char *name, char *argument);
@@ -67,7 +66,6 @@ static const struct for_cmds {
 	{ "all",     for_all	},
 	{ "gods",    for_gods	},
 	{ "mortals", for_morts	},
-	{ "idiot",   for_idiots },
 	{ "room",    for_room	},
 	{ NULL,	     NULL	}
 };
@@ -306,54 +304,6 @@ static void for_room(CHAR_DATA *ch, char *name, char *argument)
 	}
 }
 
-
-/***************************************************************************
-*	for_idiots
-*
-*	for all idiots
-***************************************************************************/
-static void for_idiots(CHAR_DATA *ch, char *name, char *argument)
-{
-	DESCRIPTOR_DATA *d;
-	ROOM_INDEX_DATA *origin;
-	AREA_DATA *area;
-	char cmd[MSL];
-	int count;
-	char check[MIL];
-
-	origin = ch->in_room;
-	area = NULL;
-	one_argument(argument, check);
-	if (!str_prefix(check, "area")) {
-		argument = one_argument(argument, check);
-		area = ch->in_room->area;
-	}
-
-	count = 0;
-	for (d = descriptor_list; d != NULL; d = d->next) {
-		if (d->connected == CON_PLAYING
-		    && d->character != NULL
-		    && d->character != ch
-		    && IS_SET(d->character->act, PLR_IDIOT)
-		    && d->character->in_room != NULL
-		    && !room_is_private(d->character->in_room)
-		    && (area == NULL || d->character->in_room->area == area)) {
-			if (++count > MAX_TARGETS) {
-				send_to_char("Maximum number of targets exceeded.\n\r", ch);
-				break;
-			}
-
-			char_from_room(ch);
-			char_to_room(ch, d->character->in_room);
-
-			if (expand_cmd(d->character, argument, cmd, '#'))
-				interpret(ch, cmd);
-		}
-	}
-
-	char_from_room(ch);
-	char_to_room(ch, origin);
-}
 
 /***************************************************************************
 *	for_name

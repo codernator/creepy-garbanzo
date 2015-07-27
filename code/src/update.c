@@ -416,14 +416,6 @@ void do_extend(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void restore_char(CHAR_DATA *ch)
 {
-	if (IS_SET(ch->act, PLR_NORESTORE)
-	    || IS_SET(ch->act, PLR_IDIOT)
-	    || is_affected(ch, gsp_black_mantle)) {
-		send_to_char("You don't get restored.\n\r", ch);
-		return;
-	}
-
-
 	ch->hit = ch->max_hit;
 	ch->mana = ch->max_mana;
 	ch->move = ch->max_move;
@@ -730,15 +722,6 @@ void gain_condition(CHAR_DATA *ch, int condition_idx, long value)
 				send_to_char("You lust for `1blood``.\n\r", ch);
 				break;
 			}
-		}
-	}
-
-	if (ch->pcdata->condition[condition_idx] == 0) {
-		switch (condition_idx) {
-		case COND_DRUNK:
-			if (condition != 0)
-				send_to_char("You are sober.\n\r", ch);
-			break;
 		}
 	}
 
@@ -1310,8 +1293,6 @@ static void char_update(void)
 				}
 			}
 
-			if (ch->pcdata->condition[COND_DRUNK] >= 0)
-				gain_condition(ch, COND_DRUNK, -1);
 			gain_condition(ch, COND_FULL, ch->size > SIZE_MEDIUM ? -4 : -2);
 
 			if (ch->pcdata->condition[COND_THIRST] >= 0)
