@@ -208,12 +208,9 @@ const struct cmd_type cmd_table[] =
 	{ "deaf",	      do_deaf,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "emote",	      do_emote,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "pmote",	      do_pmote,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
-	{ ".",		      do_gossip,       POS_SLEEPING, IM, LOG_NORMAL, 0 },
-	{ "gossip",	      do_gossip,       POS_SLEEPING, IM, LOG_NORMAL, 1 },
 	{ "go_pk",	      do_gopk,	       POS_SLEEPING, 0,	 LOG_ALWAYS, 1 },
 	{ "rp",		      do_rpswitch,     POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ ",",		      do_emote,	       POS_RESTING,  0,	 LOG_NORMAL, 0 },
-	{ "grats",	      do_grats,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "gtell",	      do_gtell,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ ";",		      do_gtell,	       POS_DEAD,     0,	 LOG_NORMAL, 0 },
 

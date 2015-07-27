@@ -30,6 +30,7 @@
 ***************************************************************************/
 #include <stdio.h>
 #include "merc.h"
+#include "character.h"
 #include "magic.h"
 #include "recycle.h"
 #include "tables.h"

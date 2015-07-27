@@ -1344,7 +1344,6 @@ struct kill_data {
 #define COMM_DEAF               (B)
 #define COMM_NOWIZ              (C)
 #define COMM_NOAUCTION          (D)
-#define COMM_NOGOSSIP           (E)
 #define COMM_NOQUOTE            (I)
 #define COMM_SHOUTSOFF          (J)
 #define COMM_NOOOC              (K)
@@ -1357,8 +1356,6 @@ struct kill_data {
 #define COMM_COMBINE            (R)
 #define COMM_TELNET_GA          (S)
 #define COMM_SHOW_AFFECTS       (T)
-#define COMM_NOGRATS            (U)
-#define COMM_NOSHITTALK         (V)
 #define COMM_NOSHOUT            (W)
 #define COMM_NOTELL             (X)
 #define COMM_NOCHANNELS         (Y)
@@ -2399,7 +2396,7 @@ void send_to_char(char *txt, /*@partial@*/CHAR_DATA * ch);
 void send_to_char_ascii(char *txt, /*@partial@*/CHAR_DATA * ch);
 void page_to_char(char *txt, /*@partial@*/CHAR_DATA * ch);
 void act(const char *format, /*@partial@*/CHAR_DATA * ch, /*@null@*/const void *arg1, /*@null@*/const void *arg2, int type);
-void act_new(const char *format, CHAR_DATA * ch, const void *arg1, const void *arg2, int type, int min_pos, bool mob_trigger);
+void act_new(const char *format, /*@partial@*/CHAR_DATA * ch, /*@null@*/const void *arg1, /*@null@*/const void *arg2, int type, int min_pos, bool mob_trigger);
 
 /* nanny.c */
 void nanny(DESCRIPTOR_DATA * d, char *argument);
@@ -2675,17 +2672,6 @@ void printf_log(char *fmt, ...);
 int race_lookup(const char *name);
 int item_lookup(const char *name);
 int liq_lookup(const char *name);
-
-/* character_service.c */
-void sit(/*@partial@*/CHAR_DATA *ch, /*@nulL@*//*@partial@*/OBJ_DATA *on);
-void stand(/*@partial@*/CHAR_DATA *ch, /*@nulL@*//*@partial@*/OBJ_DATA *on);
-void look_room(/*@partial@*/CHAR_DATA *ch, /*@partial@*/ROOM_INDEX_DATA *room);
-void look_object(/*@partial@*/CHAR_DATA *ch, /*@partial@*/OBJ_DATA *obj, char *argument);
-void look_character(/*@partial@*/CHAR_DATA *ch, /*@partial@*/CHAR_DATA *victim);
-void look_extras(/*@partial@*/CHAR_DATA *ch, char *name, int number);
-void look_direction(/*@partial@*/CHAR_DATA *ch, int door);
-void look_equipment(/*@partial@*/CHAR_DATA *ch);
-void get_obj(CHAR_DATA * ch, OBJ_DATA * obj, OBJ_DATA * container);
 
 /* object_service.c */
 bool is_situpon(/*@partial@*/OBJ_DATA *obj);

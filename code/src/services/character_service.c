@@ -6,7 +6,7 @@
 // TODO - used by look
 extern DO_FUN do_exits;
 
-// TODO - used by look_in (weird show exits logic)
+// TODO - used by look_object (weird show exits logic when looking at portals)
 extern DO_FUN do_at;
 
 // TODO - used by get_obj
@@ -23,7 +23,7 @@ static char *format_obj_to_char(OBJ_DATA * obj, CHAR_DATA * ch, bool fShort);
 
 
 static bool validate_look(CHAR_DATA *ch);
-static struct { int	wear_loc; char *	desc; } where_name[] =
+static struct { int	wear_loc; char *desc; } where_name[] =
 {
 	{ WEAR_LIGHT,	  "<used as light>     " },
 	{ WEAR_FINGER_L,  "<worn on finger>    " },
@@ -54,6 +54,53 @@ static struct { int	wear_loc; char *	desc; } where_name[] =
 	{ WEAR_TATTOO,	  "<worn as a tattoo>  " },
 	{ -1,		  ""			 }
 };
+
+static struct { long flag; char *name; } channel_names[] = 
+{
+    { COMM_NOAUCTION, "`3Auction`` channel" },
+    { COMM_DEAF, "Tells channel" },
+    { COMM_QUIET, "Quiet mode" },
+    { -1, "" }
+};
+
+static char *get_channel_name(long commflag) {
+    int i;
+    for (i = 0; channel_names[i].flag > 0; i++) {
+        if (channel_names[i].flag == commflag)
+            return channel_names[i].name;
+    }
+    return "UNKNOWN";
+}
+
+void toggle_comm(CHAR_DATA *ch, long commflag) {
+    static char buf[MIL];
+    bool now_on;
+    char *channel_name;
+
+    channel_name = get_channel_name(commflag);
+    now_on = character_toggle_comm(ch, commflag);
+
+    (void)snprintf(buf, MIL, "%s is now %s.\n\r", channel_name, now_on ? "ON" : "OFF");
+    send_to_char(buf, ch);
+}
+
+void toggle_afk(CHAR_DATA *ch, char *message)
+{
+    bool now_on;
+    now_on = character_toggle_comm(ch, COMM2_AFK);
+
+	if (now_on) {
+		send_to_char("You are now in `!A`@F`OK`` mode.\n\r", ch);
+		if (message != NULL && message[0] != '\0') {
+			act("$n is `!A`@F`OK`7: `O(`7$T`O)``", ch, NULL, message, TO_ROOM);
+			ch->pcdata->afk_message = str_dup(message);
+		} else {
+			ch->pcdata->afk_message = str_dup("");
+		}
+	} else {
+		send_to_char("`!A`@F`OK`` mode removed. Type 'replay' to see tells.\n\r", ch);
+	}
+}
 
 void look_equipment(CHAR_DATA *ch) {
 	OBJ_DATA *obj;

@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "merc.h"
+#include "character.h"
 #include "magic.h"
 #include "interp.h"
 #include "tables.h"

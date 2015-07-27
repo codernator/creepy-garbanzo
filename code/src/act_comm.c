@@ -31,6 +31,8 @@
 #include <stdio.h>
 #include <string.h>
 #include "merc.h"
+#include "character.h"
+#include "channels.h"
 #include "recycle.h"
 #include "tables.h"
 #include "lookup.h"
@@ -166,12 +168,6 @@ void do_channels(CHAR_DATA *ch, /*@unused@*/char *argument)
 	send_to_char("CHANNEL        STATUS\n\r", ch);
 	send_to_char("```&---------------------``\n\r", ch);
 
-	printf_to_char(ch, "`^RP             %s``\n\r",
-		       !IS_SET(ch->comm, COMM_NOGOSSIP) ? "`#ON" : "`1OFF");
-
-	printf_to_char(ch, "`3Shit`OTalk       %s``\n\r",
-		       !IS_SET(ch->comm, COMM_NOSHITTALK) ? "`#ON" : "`1OFF");
-
 	printf_to_char(ch, "`![Info]         %s``\n\r",
 		       IS_SET(ch->comm2, COMM2_INFO) ? "`#ON" : "`1OFF");
 
@@ -183,9 +179,6 @@ void do_channels(CHAR_DATA *ch, /*@unused@*/char *argument)
 
 	printf_to_char(ch, "`1Shouts         %s``\n\r",
 		       !IS_SET(ch->comm, COMM_SHOUTSOFF) ? "`#ON" : "`1OFF");
-
-	printf_to_char(ch, "`OGrats          %s``\n\r",
-		       !IS_SET(ch->comm, COMM_NOGRATS) ? "`#ON" : "`1OFF");
 
 	printf_to_char(ch, "`#OOC            %s``\n\r",
 		       !IS_SET(ch->comm, COMM_NOOOC) ? "`#ON" : "`1OFF");
@@ -268,61 +261,31 @@ void do_channels(CHAR_DATA *ch, /*@unused@*/char *argument)
 *	channel control functions
 ***************************************************************************/
 /***************************************************************************
-*	do_deaf
-*
-*	turns off shouts
+* turns off shouts
 ***************************************************************************/
 void do_deaf(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
-	if (IS_SET(ch->comm, COMM_DEAF)) {
-		send_to_char("You can now hear tells again.\n\r", ch);
-		REMOVE_BIT(ch->comm, COMM_DEAF);
-	} else {
-		send_to_char("From now on, you won't hear tells.\n\r", ch);
-		SET_BIT(ch->comm, COMM_DEAF);
-	}
+    toggle_comm(ch, COMM_DEAF);
 }
 
 
 /***************************************************************************
-*	do_quiet
-*
-*	turns off all communication functions besides "say" and "emote"
+* turns off all communication functions besides "say" and "emote"
 ***************************************************************************/
 void do_quiet(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
-	if (IS_SET(ch->comm, COMM_QUIET)) {
-		send_to_char("Quiet mode removed.\n\r", ch);
-		REMOVE_BIT(ch->comm, COMM_QUIET);
-	} else {
-		send_to_char("From now on, you will only hear says and emotes.\n\r", ch);
-		SET_BIT(ch->comm, COMM_QUIET);
-	}
+    toggle_comm(ch, COMM_QUIET);
 }
 
 /***************************************************************************
-*	do_afk
-*
-*	set a character to AFK status
+* set a character to AFK status
 ***************************************************************************/
 void do_afk(CHAR_DATA *ch, char *argument)
 {
 	if (IS_NPC(ch))
 		return;
 
-	if (IS_SET(ch->comm2, COMM2_AFK)) {
-		send_to_char("`!A`@F`OK`` mode removed. Type 'replay' to see tells.\n\r", ch);
-		REMOVE_BIT(ch->comm2, COMM2_AFK);
-	} else {
-		send_to_char("You are now in `!A`@F`OK`` mode.\n\r", ch);
-		SET_BIT(ch->comm2, COMM2_AFK);
-		if (argument[0] != '\0') {
-			act("$n is `!A`@F`OK`7: `O(`7$T`O)``", ch, NULL, argument, TO_ROOM);
-			ch->pcdata->afk_message = str_dup(argument);
-		} else {
-			ch->pcdata->afk_message = str_dup("");
-		}
-	}
+    toggle_afk(ch, argument);
 }
 
 /***************************************************************************
@@ -342,189 +305,23 @@ void do_replay(CHAR_DATA *ch, /*@unused@*/ char *argument)
 }
 
 
-/***************************************************************************
-*	can_talk
-*
-*	make sure a player is able to use channels
-***************************************************************************/
-static bool can_talk(CHAR_DATA *ch)
-{
-	if (IS_SET(ch->comm, COMM_QUIET)) {
-		send_to_char("You must turn off quiet mode first.\n\r", ch);
-		return FALSE;
-	}
-
-	if (IS_SET(ch->comm, COMM_NOCHANNELS)) {
-		send_to_char("The gods have revoked your channel priviliges.\n\r", ch);
-		return FALSE;
-	}
-
-	if ((ch->in_room->vnum > 20924)
-	    && (ch->in_room->vnum < 20930)
-	    && (ch->level < LEVEL_IMMORTAL)) {
-		send_to_char("Not in jail....\n\r", ch);
-		return FALSE;
-	}
-
-
-	return TRUE;
-}
 
 /***************************************************************************
 *	channel implementation
 ***************************************************************************/
 /***************************************************************************
-*	do_auctalk
-*
 *	say something over the auctalk channel
 ***************************************************************************/
 void do_auctalk(CHAR_DATA *ch, char *argument)
 {
-	DESCRIPTOR_DATA *d;
-	char buf[MSL];
-
 	if (argument[0] == '\0') {
-		if (IS_SET(ch->comm, COMM_NOAUCTION)) {
-			send_to_char("`3Auction`` channel is now ON.\n\r", ch);
-			REMOVE_BIT(ch->comm, COMM_NOAUCTION);
-		} else {
-			send_to_char("`3Auction`` channel is now OFF.\n\r", ch);
-			SET_BIT(ch->comm, COMM_NOAUCTION);
-		}
+        toggle_comm(ch, COMM_NOAUCTION);
 	} else {
-		if (!can_talk(ch))
-			return;
-		REMOVE_BIT(ch->comm, COMM_NOAUCTION);
-
-		printf_to_char(ch, "`3You `#(`3AucTalk`#)`3 '`#%s`3'``\n\r", argument);
-
-		for (d = descriptor_list; d != NULL; d = d->next) {
-			CHAR_DATA *victim;
-
-			victim = d->original ? d->original : d->character;
-
-			if (d->connected == CON_PLAYING
-			    && d->character != ch
-			    && !IS_SET(victim->comm, COMM_NOAUCTION)
-			    && !IS_SET(victim->comm, COMM_QUIET)) {
-				act_new("`3$n `#(`3AucTalks`#)`3 '`#$t`3'``", ch, buf, d->character, TO_VICT, POS_DEAD, FALSE);
-			}
-		}
+        broadcast_auctalk(ch, argument);
 	}
 }
 
 
-/***************************************************************************
-*	do_gossip
-*
-*	use the RP channel
-***************************************************************************/
-void do_gossip(CHAR_DATA *ch, char *argument)
-{
-	char buf[MSL];
-	DESCRIPTOR_DATA *d;
-
-	if (argument[0] == '\0') {
-		if (IS_SET(ch->comm, COMM_NOGOSSIP)) {
-			send_to_char("```^RP`` channel is now ON.\n\r", ch);
-			REMOVE_BIT(ch->comm, COMM_NOGOSSIP);
-		} else {
-			send_to_char("```^RP`` channel is now OFF.\n\r", ch);
-			SET_BIT(ch->comm, COMM_NOGOSSIP);
-		}
-	} else {
-		/* gossip message sent, turn gossip on if it isn't already */
-		if (IS_SET(ch->comm, COMM_QUIET)) {
-			send_to_char("You must turn off quiet mode first.\n\r", ch);
-			return;
-		}
-
-		if (IS_SET(ch->comm, COMM_NOCHANNELS)) {
-			send_to_char("The gods have revoked your channel privileges.\n\r", ch);
-			return;
-		}
-
-		if ((ch->in_room->vnum > 20924) && (ch->in_room->vnum < 20930)
-		    && (ch->level < LEVEL_IMMORTAL)) {
-			send_to_char("Not in jail....\n\r", ch);
-			return;
-		}
-
-
-		REMOVE_BIT(ch->comm, COMM_NOGOSSIP);
-
-		(void)snprintf(buf, 2 * MIL, "```^(`6In Character`^) `6You say `8*`7*`&*```^%s```&*`7*`8*``\n\r", argument);
-		send_to_char(buf, ch);
-		for (d = descriptor_list; d != NULL; d = d->next) {
-			CHAR_DATA *victim;
-
-			victim = d->original ? d->original : d->character;
-
-			if (d->connected == CON_PLAYING &&
-			    d->character != ch &&
-			    !IS_SET(victim->comm, COMM_NOGOSSIP) &&
-			    !IS_SET(victim->comm, COMM_QUIET)) {
-					act_new("`^(`6In Character`^) `6$n says `8*`7*`&*`^$t`&*`7*`8*``", ch, argument, d->character, TO_VICT, POS_DEAD, FALSE);
-			}
-		}
-	}
-}
-
-/***************************************************************************
-*	do_grats
-*
-*	use the grats channel
-***************************************************************************/
-void do_grats(CHAR_DATA *ch, char *argument)
-{
-	char buf[MSL];
-	DESCRIPTOR_DATA *d;
-
-	if (argument[0] == '\0') {
-		if (IS_SET(ch->comm, COMM_NOGRATS)) {
-			send_to_char("```OGrats`` channel is now ON.\n\r", ch);
-			REMOVE_BIT(ch->comm, COMM_NOGRATS);
-		} else {
-			send_to_char("```OGrats`` channel is now OFF.\n\r", ch);
-			SET_BIT(ch->comm, COMM_NOGRATS);
-		}
-	} else {
-		/* grats message sent, turn grats on if it isn't already */
-		if (IS_SET(ch->comm, COMM_QUIET)) {
-			send_to_char("You must turn off quiet mode first.\n\r", ch);
-			return;
-		}
-
-		if (IS_SET(ch->comm, COMM_NOCHANNELS)) {
-			send_to_char("The gods have revoked your channel priviliges.\n\r", ch);
-			return;
-		}
-
-		if ((ch->in_room->vnum > 20924) && (ch->in_room->vnum < 20930)
-		    && (ch->level < LEVEL_IMMORTAL)) {
-			send_to_char("Not in jail....\n\r", ch);
-			return;
-		}
-
-
-		REMOVE_BIT(ch->comm, COMM_NOGRATS);
-
-		(void)snprintf(buf, 2 * MIL, "```OYou grats `4*`O*`&*```O%s```&*`O*`4*``\n\r", argument);
-		send_to_char(buf, ch);
-		for (d = descriptor_list; d != NULL; d = d->next) {
-			CHAR_DATA *victim;
-
-			victim = d->original ? d->original : d->character;
-
-			if (d->connected == CON_PLAYING &&
-			    d->character != ch &&
-			    !IS_SET(victim->comm, COMM_NOGRATS) &&
-			    !IS_SET(victim->comm, COMM_QUIET)) {
-					act_new("`O$n grats `4*`O*`&*`O$t`&*`O*`4*``", ch, argument, d->character, TO_VICT, POS_DEAD, FALSE);
-			}
-		}
-	}
-}
 
 
 /***************************************************************************
@@ -678,31 +475,12 @@ void do_imptalk(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_wish(CHAR_DATA *ch, char *argument)
 {
-	DESCRIPTOR_DATA *d;
-	char buf[2*MIL];
-
 	if (argument[0] == '\0') {
 		send_to_char("`OWish`7 for what?\n\r", ch);
 		return;
 	}
 
-	if (!can_talk(ch))
-		return;
-
-	if (IS_SET(ch->comm, COMM_NOWISH)) {
-		send_to_char("The gods are deaf to your wishes.\n\r", ch);
-		return;
-	}
-
-	(void)snprintf(buf, 2 * MIL, "`7$n `Owishes`7: ``%s", argument);
-	act_new("`7$n `Owishes`7: $t", ch, argument, NULL, TO_CHAR, POS_DEAD, FALSE);
-	for (d = descriptor_list; d != NULL; d = d->next) {
-		if (d->connected == CON_PLAYING
-		    && IS_IMMORTAL(d->character)
-		    && !IS_SET(d->character->comm, COMM_NOWISH))
-			act_new("`7$n `Owishes`7: $t", ch, argument, d->character, TO_VICT, POS_DEAD, FALSE);
-	}
-
+    broadcast_wish(ch, argument);
 	return;
 }
 

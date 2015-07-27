@@ -27,6 +27,7 @@
 
 #include <stdio.h>
 #include "merc.h"
+#include "character.h"
 #include "mob_cmds.h"
 
 

@@ -30,6 +30,7 @@
 ***************************************************************************/
 #include <stdio.h>
 #include "merc.h"
+#include "character.h"
 #include "tables.h"
 #include "interp.h"
 
