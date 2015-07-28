@@ -66,7 +66,6 @@ typedef enum e_one_attack_result {
 
 
 /*Structure types. */
-/*  added to cycle through jails*/
 typedef struct affect_data AFFECT_DATA;
 typedef struct area_data AREA_DATA;
 typedef struct ban_data BAN_DATA;
@@ -1177,9 +1176,6 @@ struct kill_data {
 #define ROOM_VNUM_BF_START      800l /* battlefield */
 #define ROOM_VNUM_BF_END        891l
 #define ROOM_VNUM_WARPREP       899l
-#define ROOM_VNUM_JAIL_START    20924l
-#define ROOM_VNUM_JAIL_END      20930l
-
 
 /* Room flags. * Used in #ROOMS. */
 #define ROOM_DARK               (A)
@@ -1656,8 +1652,6 @@ struct pc_data {
     bool  confirm_delete;
     bool  confirm_suicide;
     bool  confirm_pkills;
-    int  jail_time;
-    long  jail_release;
     /*@shared@*/char *  alias[MAX_ALIAS];
     /*@shared@*/char *  alias_sub[MAX_ALIAS];
     /*@shared@*/char *  ignore[MAX_IGNORE];

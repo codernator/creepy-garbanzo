@@ -192,13 +192,6 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 	fprintf(fp, "Race %s~\n", pc_race_table[ch->race].name);
 	fprintf(fp, "Inote %s~\n", ch->inote);
 
-	if (ch->pcdata->jail_time != 0) {
-		ROOM_INDEX_DATA *pRoom;
-
-		if ((pRoom = get_room_index(ch->pcdata->jail_release)) != NULL)
-			fprintf(fp, "Jail %d %ld\n", ch->pcdata->jail_time,
-				ch->pcdata->jail_release);
-	}
 	fprintf(fp, "Sex  %d\n", ch->sex);
 	fprintf(fp, "Cla  %d\n", ch->class);
 	fprintf(fp, "Levl %d\n", ch->level);
@@ -1322,12 +1315,7 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 			break;
 
 		case 'J':
-			if (!str_cmp(word, "Jail")) {
-				ch->pcdata->jail_time = fread_number(fp);
-				ch->pcdata->jail_release = fread_number(fp);
-				fMatch = TRUE;
-				break;
-			}
+            break;
 
 		case 'K':
 			KEY("Killer_time", ch->pcdata->killer_time, (time_t)fread_long(fp));

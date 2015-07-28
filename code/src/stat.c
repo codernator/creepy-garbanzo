@@ -570,14 +570,7 @@ void do_mstat(CHAR_DATA *ch, char *argument)
 		       get_curr_stat(victim, STAT_CON),
 		       victim->perm_stat[STAT_LUCK],
 		       get_curr_stat(victim, STAT_LUCK));
-	if (!IS_NPC(victim)) {
-		if ((victim->pcdata->jail_time != 0) &&
-		    (victim->pcdata->jail_release != 0)) {
-			printf_to_char(ch, "Remaining jail time: %d ticks, then to %d.\n\r",
-				       victim->pcdata->jail_time,
-				       victim->pcdata->jail_release);
-		}
-	}
+
 	printf_to_char(ch, "Hp: %d/%d  Mana: %d/%d  Move: %d/%d\n\r",
 		       victim->hit, victim->max_hit,
 		       victim->mana, victim->max_mana,

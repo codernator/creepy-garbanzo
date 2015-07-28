@@ -120,7 +120,6 @@ const struct cmd_type cmd_table[] =
 	{ "wield",	      do_wear,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "wizhelp",	  do_wizhelp,      POS_DEAD,     HE, LOG_NORMAL, 1 },
 	{ "wizcommands",  do_wizcommands,  POS_DEAD,     HE, LOG_NORMAL, 1 },
-	{ "jail",	      do_jail,	       POS_DEAD,     L7, LOG_ALWAYS, 1 },
 
 	/*  Informational commands.  */
 	{ "affects",	  do_affects,      POS_DEAD,     0,	 LOG_NORMAL, 1 },

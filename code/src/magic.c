@@ -379,13 +379,6 @@ void do_cast(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if (ch->in_room->vnum >= 20924
-	    && ch->in_room->vnum <= 20930
-	    && ch->level < LEVEL_IMMORTAL) {
-		send_to_char("Not in jail....\n\r", ch);
-		return;
-	}
-
 	skill = spell_lookup(ch, spell);
 	if (skill == NULL || skill->spells == NULL) {
 		send_to_char("You don`8'``t know that `1s`!p`&e`!l`1l``!\n\r", ch);

@@ -1283,13 +1283,9 @@ static void char_update(void)
 					send_to_char("`1F`!i`#e`!r`1y flames`` engulf you.\n\r", ch);
 					if (ch->level > 1)
 						save_char_obj(ch);
-					if (!IS_NPC(ch) && ch->pcdata->jail_time >= 1) {
-						ch->pcdata->jail_time += 100;
-						do_quit(ch, "");
-					} else {
-						char_from_room(ch);
-						char_to_room(ch, get_room_index(ROOM_VNUM_LIMBO));
-					}
+
+                    char_from_room(ch);
+                    char_to_room(ch, get_room_index(ROOM_VNUM_LIMBO));
 				}
 			}
 
@@ -1395,27 +1391,6 @@ static void char_update(void)
 
 		if (IS_SET(ch->comm2, COMM2_TICKS))
 			send_to_char("`7-- `#TICK!`7\n\r", ch);
-#if 1
-		if (!IS_NPC(ch) && ch->pcdata->jail_time > 0 && !IS_SET(ch->act, PLR_LINKDEAD)) {
-			ch->pcdata->jail_time--;
-
-			if ((ch->pcdata->jail_time == 0)
-			    && (ch->pcdata->jail_release != 0)) {
-				ROOM_INDEX_DATA *pRoom;
-
-				if ((pRoom = get_room_index(ch->pcdata->jail_release)) == NULL) {
-					bug_long("Invalid room %d.", ch->pcdata->jail_release);
-					pRoom = get_room_index(3054);
-				}
-
-				char_from_room(ch);
-				char_to_room(ch, get_room_index(ch->pcdata->jail_release));
-				send_to_char("You have finished serving your jail time\n\r", ch);
-				do_look(ch, "auto");
-			}
-			save_char_obj(ch);
-		}
-#endif
 	}
 	return;
 }

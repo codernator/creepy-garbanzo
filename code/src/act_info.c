@@ -1076,25 +1076,6 @@ void do_score(CHAR_DATA *ch, char *argument)
 	send_to_char(buf, ch);
 
 	sprintf(buf,
-		"`O=================================================================``\n\r");
-
-	send_to_char(buf, ch);
-
-
-
-	if (!IS_NPC(ch)) {
-		sprintf(buf, "You have %d hours left in `!jail``.\n\r",
-			ch->pcdata->jail_time);
-		send_to_char(buf, ch);
-	}
-
-	sprintf(buf,
-		"`O=================================================================``\n\r");
-
-	send_to_char(buf, ch);
-
-
-	sprintf(buf,
 		"You have ```!%d``/```1%d ``hit, ```@%d``/```2%d ``mana, ```O%d``/```4%d ``movement.\n\r",
 		ch->hit, ch->max_hit,
 		ch->mana, ch->max_mana,
@@ -2435,13 +2416,6 @@ void do_history(CHAR_DATA *ch, char *argument)
 
 	if (IS_NPC(ch))
 		return;
-
-	if ((ch->in_room->vnum > ROOM_VNUM_JAIL_START)
-	    && (ch->in_room->vnum < ROOM_VNUM_JAIL_END)
-	    && (!IS_IMMORTAL(ch))) {
-		send_to_char("Not in jail...\n\r", ch);
-		return;
-	}
 
 	if (argument[0] == '\0') {
 print_hist_help:

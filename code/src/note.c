@@ -615,17 +615,7 @@ static void parse_message(CHAR_DATA *ch, char *argument, int type)
 	char cmd[MSL];
 	int idx;
 
-	if (IS_NPC(ch))
-		return;
-
-	if (ch->in_room != NULL
-	    && (ch->in_room->vnum > ROOM_VNUM_JAIL_START)
-	    && (ch->in_room->vnum < ROOM_VNUM_JAIL_END)
-	    && (ch->level < LEVEL_IMMORTAL)) {
-		send_to_char("Not in jail....\n\r", ch);
-		return;
-	}
-
+    DENY_NPC(ch);
 
 	if (ch->level < MIN_MESSAGE_LEVEL) {
 		printf_to_char(ch, "You must be level `#%d`` to use the note system.\n\r", MIN_MESSAGE_LEVEL);

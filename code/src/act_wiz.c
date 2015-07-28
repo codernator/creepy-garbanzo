@@ -318,107 +318,6 @@ void impnet(char *string, CHAR_DATA *ch, OBJ_DATA *obj, long flag, long flag_ski
 	return;
 }
 
-
-
-
-
-
-/***************************************************************************
-*	do_jail
-*
-*	put a character in jail
-***************************************************************************/
-void do_jail(CHAR_DATA *ch, char *argument)
-{
-	CHAR_DATA *victim;
-	char target[MIL];
-	char duration[MIL];
-	int location;
-	int value;
-	static int jail = 20925;
-
-	if ((jail < 20925) || (jail > 20929))
-		jail = 20925;
-
-	location = jail;
-	if (jail == 20929)
-		jail = 20925;
-	else
-		jail++;
-
-	argument = one_argument(argument, target);
-	argument = one_argument(argument, duration);
-	if ((target[0] == '\0') || (duration[0] == '\0')) {
-		send_to_char("Syntax: jail <target> <BadTrip days>\n\r", ch);
-		return;
-	}
-
-	if ((victim = get_char_world(ch, target)) == NULL) {
-		send_to_char("They aren't here.\n\r", ch);
-		return;
-	}
-
-	if (!is_number(duration)) {
-		send_to_char("Jail time must be a numeric representation of days.\n\r", ch);
-		return;
-	}
-
-	if (IS_NPC(victim)) {
-		send_to_char("Only on players.\n\r", ch);
-		return;
-	}
-	value = parse_int(duration);
-
-	if (value < 0) {
-		send_to_char("Jail time must be positive.\n\r", ch);
-		return;
-	}
-
-	if (value == 0) {
-		if (victim->pcdata->jail_release != 0) {
-			victim->pcdata->jail_time = 0;
-			send_to_char("Removing character from jail.\n\r", ch);
-			send_to_char("You have been freed from jail.\n\r", victim);
-			char_from_room(victim);
-			char_to_room(victim, get_room_index(victim->pcdata->jail_release));
-			return;
-		} else {
-			send_to_char("Character return room not found.\n\r", ch);
-			return;
-		}
-	}
-
-	sprintf(log_buf, "JAIL: %s jailed by %s for %d days.", victim->name, ch->name, value);
-	log_string(log_buf);
-	if (victim->fighting != NULL)
-		stop_fighting(victim, TRUE);
-	act("$n disappears in a mushroom cloud.", victim, NULL, NULL, TO_ROOM);
-
-	if ((victim->in_room->vnum < 20925) || (victim->in_room->vnum > 20929))
-		victim->pcdata->jail_release = victim->in_room->vnum;
-	else if (victim->pcdata->jail_release == 0)
-		victim->pcdata->jail_release = 1;
-
-	victim->pcdata->jail_time = value * 24;
-	char_from_room(victim);
-	char_to_room(victim, get_room_index(location));
-	act("$n arrives from a puff of smoke.", victim, NULL, NULL, TO_ROOM);
-	if (ch != victim)
-		act("$n has jailed you.", ch, NULL, victim, TO_VICT);
-
-	do_look(victim, "auto");
-	send_to_char("Ok.\n\r", ch);
-	save_char_obj(victim);
-	return;
-}
-
-
-
-/***************************************************************************
-*	do_tick
-*
-*	force a tick
-***************************************************************************/
 void do_tick(CHAR_DATA *ch, char *argument)
 {
 	extern bool tickset;
@@ -1355,9 +1254,6 @@ void do_pardon(CHAR_DATA *ch, char *argument)
 	send_to_char("Syntax: pardon <character> <killer|thief|target>.\n\r", ch);
 	return;
 }
-
-
-
 
 /***************************************************************************
 *       do_target

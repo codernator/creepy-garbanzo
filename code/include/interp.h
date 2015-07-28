@@ -211,7 +211,6 @@ DECLARE_DO_FUN(do_impnet);
 DECLARE_DO_FUN(do_imptalk);
 DECLARE_DO_FUN(do_incognito);
 DECLARE_DO_FUN(do_intimidate);
-DECLARE_DO_FUN(do_jail);
 DECLARE_DO_FUN(do_enchant);
 DECLARE_DO_FUN(do_imotd);
 DECLARE_DO_FUN(do_inventory);

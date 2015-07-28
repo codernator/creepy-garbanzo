@@ -610,8 +610,6 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 			send_to_char("\n\r", ch);
 			do_help(ch, "NEWBIE INFO");
 			send_to_char("\n\r", ch);
-		} else if (ch->pcdata->jail_time != 0) {
-			char_to_room(ch, get_room_index(20925));
 		} else if (ch->in_room != NULL) {
 			char_to_room(ch, ch->in_room);
 		} else if (IS_IMMORTAL(ch)) {
