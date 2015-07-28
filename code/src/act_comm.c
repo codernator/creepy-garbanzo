@@ -1,35 +1,3 @@
-/**************************************************************************
- *   Original Diku Mud copyright(C) 1990, 1991 by Sebastian Hammer,        *
- *   Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
- *                                                                             *
- *   Merc Diku Mud improvments copyright(C) 1992, 1993 by Michael          *
- *   Chastain, Michael Quan, and Mitchell Tse.                              *
- *	                                                                       *
- *   In order to use any part of this Merc Diku Mud, you must comply with   *
- *   both the original Diku license in 'license.doc' as well the Merc	   *
- *   license in 'license.txt'.  In particular, you may not remove either of *
- *   these copyright notices.                                               *
- *                                                                             *
- *   Much time and thought has gone into this software and you are          *
- *   benefitting.  We hope that you share your changes too.  What goes      *
- *   around, comes around.                                                  *
- ***************************************************************************/
-
-/***************************************************************************
-*   ROM 2.4 is copyright 1993-1998 Russ Taylor                             *
-*   ROM has been brought to you by the ROM consortium                      *
-*       Russ Taylor(rtaylor@hypercube.org)                                *
-*       Gabrielle Taylor(gtaylor@hypercube.org)                           *
-*       Brian Moore(zump@rom.org)                                         *
-*   By using this code, you have agreed to follow the terms of the         *
-*   ROM license, in the file Rom24/doc/rom.license                         *
-***************************************************************************/
-
-/***************************************************************************
-*	includes
-***************************************************************************/
-#include <stdio.h>
-#include <string.h>
 #include "merc.h"
 #include "character.h"
 #include "channels.h"
@@ -39,39 +7,27 @@
 #include "interp.h"
 #include "libstring.h"
 
+#include <stdio.h>
+#include <string.h>
 
-/***************************************************************************
-*	function declaration
-***************************************************************************/
+
 extern unsigned int parse_unsigned_int(char *string);
 extern void mp_act_trigger(char *argument, CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
 extern int parse_int(char *string);
 
 
-/***************************************************************************
-*	do_delet
-***************************************************************************/
 void do_delet(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
 	send_to_char("You must type the full command to delete yourself.\n\r", ch);
+
+    return;
 }
 
-
-/***************************************************************************
-*	do_delete
-***************************************************************************/
 void do_delete(CHAR_DATA *ch, char *argument)
 {
 	char strsave[MIL];
 
 	DENY_NPC(ch);
-
-	if ((ch->in_room->vnum > 20924)
-	    && (ch->in_room->vnum < 20930)
-	    && (ch->level < LEVEL_IMMORTAL)) {
-		send_to_char("You don't get out of jail that easily....\n\r", ch);
-		return;
-	}
 
 	if (ch->pcdata->confirm_delete) {
 		if (argument[0] != '\0') {
@@ -115,17 +71,14 @@ void do_delete(CHAR_DATA *ch, char *argument)
 	wiznet("$N is contemplating deletion.", ch, NULL, 0, 0, get_trust(ch));
 	(void)snprintf(log_buf, MAX_NAME_LENGTH + 64, "DELETE: %s .. %s's thinking about it ..", ch->name, ch->sex == 0 ? "It" : ch->sex == 1 ? "He" : "She");
 	log_string(log_buf);
+
+    return;
 }
 
 
-
-/***************************************************************************
-*	do_fixscreen
-*
-*	fix the screen....send clear screen and set the numbe of lines
-***************************************************************************/
 void do_fixscreen(CHAR_DATA *ch, char *argument)
 {
+	// fix the screen....send clear screen and set the number of lines
 	int lines;
 
 	if (argument[0] == '\0' || !is_number(argument))
@@ -142,24 +95,12 @@ void do_fixscreen(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-/***************************************************************************
-*	do_clearscreen
-*
-*	send an ASNI clear screen
-***************************************************************************/
 void do_clearscreen(CHAR_DATA *ch, /*@unused@*/char *argument)
 {
 	send_to_char("\033[0H\033[2J\n", ch);
 	return;
 }
 
-
-/***************************************************************************
-*	do_channels
-*
-*	list all of the channels and the status for the player
-***************************************************************************/
 void do_channels(CHAR_DATA *ch, /*@unused@*/char *argument)
 {
 	if (IS_NPC(ch))
@@ -213,7 +154,6 @@ void do_channels(CHAR_DATA *ch, /*@unused@*/char *argument)
 		printf_to_char(ch, "`2I`8M`2P            %s``\n\r",
 			       !IS_SET(ch->comm2, COMM2_IMPTALK) ? "`#ON" : "`1OFF");
 
-
 	send_to_char("\n\r", ch);
 	if (IS_SET(ch->comm2, COMM2_AFK))
 		send_to_char("You are ```!A```@F```OK``.\n\r", ch);
@@ -240,7 +180,6 @@ void do_channels(CHAR_DATA *ch, /*@unused@*/char *argument)
 	if (ch->prompt != NULL)
 		printf_to_char(ch, "Your current prompt is: %s\n\r", ch->prompt);
 
-
 	if (IS_SET(ch->comm, COMM_NOSHOUT))
 		send_to_char("You cannot ```1shout``.\n\r", ch);
 
@@ -252,47 +191,33 @@ void do_channels(CHAR_DATA *ch, /*@unused@*/char *argument)
 
 	if (IS_SET(ch->comm2, COMM2_NOEMOTE))
 		send_to_char("You cannot show emotions.\n\r", ch);
+
+    return;
 }
 
 
-
-
-/***************************************************************************
-*	channel control functions
-***************************************************************************/
-/***************************************************************************
-* turns off shouts
-***************************************************************************/
 void do_deaf(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
     toggle_comm(ch, COMM_DEAF);
+
+    return;
 }
 
-
-/***************************************************************************
-* turns off all communication functions besides "say" and "emote"
-***************************************************************************/
 void do_quiet(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
     toggle_comm(ch, COMM_QUIET);
+
+    return;
 }
 
-/***************************************************************************
-* set a character to AFK status
-***************************************************************************/
 void do_afk(CHAR_DATA *ch, char *argument)
 {
-	if (IS_NPC(ch))
-		return;
-
+    DENY_NPC(ch);
     toggle_afk(ch, argument);
+
+    return;
 }
 
-/***************************************************************************
-*	do_replay
-*
-*	show the replay buffer
-***************************************************************************/
 void do_replay(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
 	if (IS_NPC(ch)) {
@@ -302,16 +227,10 @@ void do_replay(CHAR_DATA *ch, /*@unused@*/ char *argument)
 
 	page_to_char(buf_string(ch->pcdata->buffer), ch);
 	clear_buf(ch->pcdata->buffer);
+
+    return;
 }
 
-
-
-/***************************************************************************
-*	channel implementation
-***************************************************************************/
-/***************************************************************************
-*	say something over the auctalk channel
-***************************************************************************/
 void do_auctalk(CHAR_DATA *ch, char *argument)
 {
 	if (argument[0] == '\0') {
@@ -319,299 +238,78 @@ void do_auctalk(CHAR_DATA *ch, char *argument)
 	} else {
         broadcast_auctalk(ch, argument);
 	}
+    return;
 }
 
-
-
-
-/***************************************************************************
-*	do_ooc
-*
-*	use the out of character channel
-***************************************************************************/
 void do_ooc(CHAR_DATA *ch, char *argument)
 {
-	char buf[MSL];
-	DESCRIPTOR_DATA *d;
-
 	if (argument[0] == '\0') {
-		if (IS_SET(ch->comm, COMM_NOOOC)) {
-			send_to_char("`#OOC`7 channel is now ON.\n\r", ch);
-			REMOVE_BIT(ch->comm, COMM_NOOOC);
-		} else {
-			send_to_char("`#OOC`7 channel is now OFF.\n\r", ch);
-			SET_BIT(ch->comm, COMM_NOOOC);
-		}
+        toggle_comm(ch, COMM_NOOOC);
 	} else {
-		/* OOC sent, turn OOC on if it isn't already */
-		if (IS_SET(ch->comm, COMM_QUIET)) {
-			send_to_char("You must turn off quiet mode first.\n\r", ch);
-			return;
-		}
-
-		if (IS_SET(ch->comm, COMM_NOCHANNELS)) {
-			send_to_char("The gods have revoked your channel priviliges.\n\r", ch);
-			return;
-		}
-
-		if ((ch->in_room->vnum > 20924) && (ch->in_room->vnum < 20930)
-		    && (ch->level < LEVEL_IMMORTAL)) {
-			send_to_char("Not in jail....\n\r", ch);
-			return;
-		}
-
-
-		REMOVE_BIT(ch->comm, COMM_NOOOC);
-
-		(void)snprintf(buf, 2 * MIL, "`7You `#OOC`7: '`#%s`7'\n\r", argument);
-		send_to_char(buf, ch);
-		(void)snprintf(buf, 2 * MIL, "\n\r`7$n `#OOC`7: '`#%s`7'", argument);
-		for (d = descriptor_list; d != NULL; d = d->next) {
-			CHAR_DATA *victim;
-
-			victim = d->original ? d->original : d->character;
-
-			if (d->connected == CON_PLAYING &&
-			    d->character != ch &&
-			    !IS_SET(victim->comm, COMM_NOOOC) &&
-			    !IS_SET(victim->comm, COMM_QUIET)) {
-					act_new("`7$n `#OOC`7: '`#$t`7'",
-						ch, argument, d->character, TO_VICT, POS_DEAD, FALSE);
-			}
-		}
+        broadcast_ooc(ch, argument);
 	}
+    return;
 }
 
-
-/***************************************************************************
-*	do_immtalk
-*
-*	talk on the imm channel
-***************************************************************************/
 void do_immtalk(CHAR_DATA *ch, char *argument)
 {
-	char buf[MSL];
-	DESCRIPTOR_DATA *d;
-
 	if (argument[0] == '\0') {
-		if (IS_SET(ch->comm, COMM_NOWIZ)) {
-			send_to_char("```!Immortal`` channel is now ON\n\r", ch);
-			REMOVE_BIT(ch->comm, COMM_NOWIZ);
-		} else {
-			send_to_char("```!Immortal`` channel is now OFF\n\r", ch);
-			SET_BIT(ch->comm, COMM_NOWIZ);
-		}
-		return;
-	}
-
-	REMOVE_BIT(ch->comm, COMM_NOWIZ);
-
-	(void)snprintf(buf, 2 * MIL, "```!$n `8: ```7%s``", argument);
-	act_new("```!$n `8: ```7$t``", ch, argument, NULL, TO_CHAR, POS_DEAD, FALSE);
-	for (d = descriptor_list; d != NULL; d = d->next) {
-		if (d->connected == CON_PLAYING &&
-		    IS_IMMORTAL(d->character) &&
-		    !IS_SET(d->character->comm, COMM_NOWIZ))
-			act_new("```!$n `8: ```7$t``", ch, argument, d->character, TO_VICT, POS_DEAD, FALSE);
-	}
-
+        toggle_comm(ch, COMM_NOWIZ);
+	} else {
+        broadcast_immtalk(ch, argument);
+    }
 	return;
 }
 
-
-/***************************************************************************
-*	do_imptalk
-*
-*	talk on the imp channel
-***************************************************************************/
 void do_imptalk(CHAR_DATA *ch, char *argument)
 {
-	char buf[MSL];
-	DESCRIPTOR_DATA *d;
-
-	if ((ch->level < 310)
-	    && (!IS_SET(ch->comm2, COMM2_IMPTALKM))) {
-		send_to_char("Huh?\n\r", ch); return;
-	}
-
 	if (argument[0] == '\0') {
-		if (IS_SET(ch->comm2, COMM2_IMPTALK)) {
-			send_to_char("`2I`8M`2P`` channel is now ON\n\r", ch);
-			REMOVE_BIT(ch->comm2, COMM2_IMPTALK);
-		} else {
-			send_to_char("`2I`8M`2P`` channel is now OFF\n\r", ch);
-			SET_BIT(ch->comm2, COMM2_IMPTALK);
-		}
-		return;
-	}
-
-	REMOVE_BIT(ch->comm2, COMM2_IMPTALK);
-
-	(void)snprintf(buf, 2 * MIL, "``$n `2I`8M`2P`8:`` %s``", argument);
-	act_new("$n `2I`8M`2P`8:`` $t``", ch, argument, NULL, TO_CHAR, POS_DEAD, FALSE);
-	for (d = descriptor_list; d != NULL; d = d->next) {
-		if ((d->connected == CON_PLAYING) &&
-		    (d->character->level == IMPLEMENTOR) &&
-		    (!IS_SET(d->character->comm2, COMM2_IMPTALK)))
-/*           && (!IS_SET(d->character->comm2, COMM2_IMPTALKM)))*/
-			act_new("``$n `2I`8M`2P`8:`` $t", ch, argument, d->character, TO_VICT, POS_DEAD, FALSE);
-	}
-
-
-	for (d = descriptor_list; d != NULL; d = d->next) {
-		if ((d->connected == CON_PLAYING) &&
-		    (IS_SET(d->character->comm2, COMM2_IMPTALKM)))
-			act_new("``$n `2I`8M`2P`8:`` $t", ch, argument, d->character, TO_VICT, POS_DEAD, FALSE);
-	}
+		toggle_comm(ch, COMM2_IMPTALK);
+	} else {
+        broadcast_imptalk(ch, argument);
+    }
 	return;
 }
 
-
-
-/***************************************************************************
-*	do_wish
-*
-*	say a wish heard by immortals
-***************************************************************************/
 void do_wish(CHAR_DATA *ch, char *argument)
 {
 	if (argument[0] == '\0') {
 		send_to_char("`OWish`7 for what?\n\r", ch);
-		return;
-	}
-
-    broadcast_wish(ch, argument);
+	} else {
+        broadcast_wish(ch, argument);
+    }
 	return;
 }
 
-
-
-/***************************************************************************
-*	do_say
-*
-*	say a message in a room
-***************************************************************************/
 void do_say(CHAR_DATA *ch, char *argument)
 {
-	char buf[MSL];
-
 	if (argument[0] == '\0') {
 		send_to_char("```&Say`` what?\n\r", ch);
-		return;
-	}
-
-	if (IS_SET(ch->comm, COMM_NOCHANNELS)) {
-		send_to_char("The Gods have revoked your channel priviledges.\n\r", ch);
-		return;
-	}
-
-
-	buf[0] = '\0';
-
-		(void)snprintf(buf, 2 * MIL, "`7You %s '`s$T`7'``",
-			       argument[strlen(argument) - 1] == '!' ? "exclaim" :
-			       argument[strlen(argument) - 1] == '?' ? "ask" : "say");
-		act(buf, ch, NULL, argument, TO_CHAR);
-
-		(void)snprintf(buf, 2 * MIL, "`7$n %s '`s$T`7'``",
-			       argument[strlen(argument) - 1] == '!' ? "exclaims" :
-			       argument[strlen(argument) - 1] == '?' ? "asks" : "says");
-		act(buf, ch, NULL, argument, TO_ROOM);
-
-		if (!IS_NPC(ch)) {
-			CHAR_DATA *mob, *mob_next;
-			for (mob = ch->in_room->people; mob != NULL; mob = mob_next) {
-				mob_next = mob->next_in_room;
-				if (IS_NPC(mob) && HAS_TRIGGER(mob, TRIG_SPEECH)
-				    && mob->position == mob->mob_idx->default_pos)
-					mp_act_trigger(argument, mob, ch, NULL, NULL, TRIG_SPEECH);
-			}
-		}
+	} else {
+        broadcast_say(ch, argument);
+    }
 
 	return;
 }
 
-
-/*  Do an osay - out of character say*/
 void do_osay(CHAR_DATA *ch, char *argument)
 {
 	if (argument[0] == '\0') {
 		send_to_char("Say what?\n\r", ch);
-		return;
-	}
-	act("`6$n says (`&ooc`6) '`7$T`6'`7", ch, NULL, argument, TO_ROOM);
-	act("`6You say (`&ooc`6) '`7$T`6'`7", ch, NULL, argument, TO_CHAR);
-
-	if (!IS_NPC(ch)) {
-		CHAR_DATA *mob, *mob_next;
-		for (mob = ch->in_room->people; mob != NULL; mob = mob_next) {
-			mob_next = mob->next_in_room;
-			if (IS_NPC(mob) && HAS_TRIGGER(mob, TRIG_SPEECH)
-			    && mob->position == mob->mob_idx->default_pos)
-				mp_act_trigger(argument, mob, ch, NULL, NULL, TRIG_SPEECH);
-		}
-	}
+	} else {
+        broadcast_osay(ch, argument);
+    }
 	return;
 }
-/*End*/
 
-
-
-/***************************************************************************
-*	do_shout
-*
-*	shout a message
-***************************************************************************/
 void do_shout(CHAR_DATA *ch, char *argument)
 {
-	DESCRIPTOR_DATA *d;
-
 	if (argument[0] == '\0') {
-		if (IS_SET(ch->comm, COMM_SHOUTSOFF)) {
-			send_to_char("You can hear ```1shouts`` again.\n\r", ch);
-			REMOVE_BIT(ch->comm, COMM_SHOUTSOFF);
-		} else {
-			send_to_char("You will no longer hear ```1shouts``.\n\r", ch);
-			SET_BIT(ch->comm, COMM_SHOUTSOFF);
-		}
-		return;
-	}
-
-	if (IS_SET(ch->comm, COMM_NOCHANNELS)) {
-		send_to_char("The Gods have revoked your channel priviledges.\n\r", ch);
-		return;
-	}
-
-	if (IS_SET(ch->comm, COMM_NOSHOUT)) {
-		send_to_char("You can't ```1shout``.\n\r", ch);
-		return;
-	}
-
-	if ((ch->in_room->vnum > 20924) && (ch->in_room->vnum < 20930)
-	    && (ch->level < LEVEL_IMMORTAL)) {
-		send_to_char("Not in jail....\n\r", ch);
-		return;
-	}
-
-	REMOVE_BIT(ch->comm, COMM_SHOUTSOFF);
-
-/*    WAIT_STATE(ch, 12);*/
-
-	act("`1You shout '`!$T`1'``", ch, NULL, argument, TO_CHAR);
-	for (d = descriptor_list; d != NULL; d = d->next) {
-		CHAR_DATA *victim;
-
-		victim = CH(d);
-
-		if (d->connected == CON_PLAYING
-		    && d->character != ch
-		    && !IS_SET(victim->comm, COMM_SHOUTSOFF)
-		    && !IS_SET(victim->comm, COMM_QUIET)) {
-				act("`1$n shouts '`!$t`1'``", ch, argument, d->character, TO_VICT);
-		}
-	}
-
-	return;
+        toggle_comm(ch, COMM_SHOUTSOFF);
+	} else {
+        broadcast_shout(ch, argument);
+    }
+    return;
 }
 
 
@@ -622,39 +320,15 @@ void do_shout(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_info(CHAR_DATA *ch, char *argument)
 {
-	DESCRIPTOR_DATA *d;
-
 	if (argument[0] == '\0') {
-		if (IS_SET(ch->comm2, COMM2_INFO)) {
-			send_to_char("`![Info]`` channel is now OFF.\n\r", ch);
-			REMOVE_BIT(ch->comm2, COMM2_INFO);
-		} else {
-			send_to_char("`![Info]`` channel is now ON.\n\r", ch);
-			SET_BIT(ch->comm2, COMM2_INFO);
-		}
-		return;
-	}
-
-	if (!IS_IMMORTAL(ch)) {
-		send_to_char("Use '`#info``' to turn the info channel on or off.", ch);
-		return;
-	}
-
-	act("``You `![Info]:`` `&$T``'", ch, NULL, argument, TO_CHAR);
-	SET_BIT(ch->comm2, COMM2_INFO);
-	for (d = descriptor_list; d != NULL; d = d->next) {
-		CHAR_DATA *victim;
-
-		victim = CH(d);
-
-		if (d->connected == CON_PLAYING
-		    && d->character != ch
-		    && IS_SET(victim->comm2, COMM2_INFO)
-		    && !IS_SET(victim->comm, COMM_QUIET))
-			act("`![Info]:`& $t``", ch, argument, d->character, TO_VICT);
-
-	}
-
+        toggle_comm(ch, COMM2_INFO);
+	} else {
+        if (!IS_IMMORTAL(ch)) {
+            send_to_char("Use '`#info``' to turn the info channel on or off.", ch);
+            return;
+        }
+        broadcast_info(ch, argument);
+    }
 	return;
 }
 
@@ -666,143 +340,34 @@ void do_info(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_tell(CHAR_DATA *ch, char *argument)
 {
+	static char arg[MIL];
+	static char buf[MSL];
 	CHAR_DATA *victim;
-	char arg[MIL];
-	char buf[MSL];
-	int pos;
-	bool found = FALSE;
-
-	if (IS_SET(ch->comm, COMM_NOTELL)) {
-		send_to_char("Your message didn't get through.\n\r", ch);
-		return;
-	}
-
-	if ((IS_SET(ch->comm, COMM_QUIET) && !IS_IMMORTAL(ch))) {
-		send_to_char("You must turn off quiet mode first.\n\r", ch);
-		return;
-	}
-
-	if ((ch->in_room->vnum > 20924) && (ch->in_room->vnum < 20930)
-	    && (ch->level < LEVEL_IMMORTAL)) {
-		send_to_char("Not in jail....\n\r", ch);
-		return;
-	}
 
 	argument = one_argument(argument, arg);
 
 	if (arg[0] == '\0' || argument[0] == '\0') {
 		send_to_char("```@Tell`` whom what?\n\r", ch);
-		return;
-	}
+	} else {
+        /* Can tell to PC's anywhere, but NPC's only in same room.
+         *    -- Furey
+         */
+        if ((victim = get_char_world(ch, arg)) == NULL
+               || (IS_NPC(victim) && victim->in_room != ch->in_room)) {
+            send_to_char("They aren't here.\n\r", ch);
+            return;
+        }
 
-/*
- * Can tell to PC's anywhere, but NPC's only in same room.
- * -- Furey
- */
-	if ((victim = get_char_world(ch, arg)) == NULL
-	    || (IS_NPC(victim) && victim->in_room != ch->in_room)) {
-		send_to_char("They aren't here.\n\r", ch);
-		return;
-	}
-
-	if (victim->desc == NULL && !IS_NPC(victim)) {
-		act("$N seems to have misplaced $S link...try again later.", ch, NULL, victim, TO_CHAR);
-		(void)snprintf(buf, 2 * MIL, "```@%s tells you '`t%s```@'``\n\r", PERS(ch, victim), argument);
-		buf[0] = UPPER(buf[0]);
-		add_buf(victim->pcdata->buffer, buf);
-		return;
-	}
-
-	if (!IS_NPC(victim)) {
-		for (pos = 0; pos < MAX_IGNORE; pos++) {
-			if (victim->pcdata->ignore[pos] == NULL)
-				break;
-			if (!str_cmp(ch->name, victim->pcdata->ignore[pos]))
-				found = TRUE;
-		}
-	}
-
-	if (found) {
-		act("$N seems to be ignoring you.", ch, NULL, victim, TO_CHAR);
-		return;
-	}
-
-
-	if (!(IS_IMMORTAL(ch) && ch->level > LEVEL_IMMORTAL) && !IS_AWAKE(victim)) {
-		act("$E can't hear you.", ch, 0, victim, TO_CHAR);
-		return;
-	}
-
-	if ((IS_SET(victim->comm, COMM_QUIET) || IS_SET(victim->comm, COMM_DEAF))
-	    && !IS_IMMORTAL(ch)) {
-		act("$E is not receiving ```@tells``.", ch, 0, victim, TO_CHAR);
-		return;
-	}
-
-	if (IS_SET(victim->comm2, COMM2_AFK)) {
-		if (IS_NPC(victim)) {
-			act("$E is ```!A```@F```OK``, and not receiving tells.", ch, NULL, victim, TO_CHAR);
-			return;
-		}
-
-		act("$E is ```!A```@F```OK``, but your tell will go through when $E returns.", ch, NULL, victim, TO_CHAR);
-		(void)snprintf(buf, 2 * MIL, "```@%s tells you '`t%s```@'``\n\r", PERS(ch, victim), argument);
-		buf[0] = UPPER(buf[0]);
-		add_buf(victim->pcdata->buffer, buf);
-		return;
-	}
-	act("`@You tell $N '`t$t`@'``", ch, argument, victim, TO_CHAR);
-	act_new("`@$n tells you '`t$t`@'``", ch, argument, victim, TO_VICT, POS_DEAD, FALSE);
-	victim->reply = ch;
-
-	if (IS_SET(victim->comm2, COMM2_BUSY)) {
-		if (IS_NPC(victim)) {
-			act("$E is Busy, and not receiving tells.", ch, NULL, victim,
-			    TO_CHAR);
-			return;
-		}
-
-		act("$E is `1Busy``, but your tell will go through when $E returns.",
-		    ch, NULL, victim, TO_CHAR);
-		(void)snprintf(buf, 2 * MIL, "```@%s tells you '`t%s```@'``\n\r", PERS(ch, victim),
-			       argument);
-		buf[0] = UPPER(buf[0]);
-		add_buf(victim->pcdata->buffer, buf);
-/*        act ("```@You tell $N '`1$t```@'``", ch, argument, victim, TO_CHAR);
- *      act_new ("`@$n tells you '`t$t`@'``", ch, argument, victim, TO_VICT, POS_DEAD, FALSE);*/
-		return;
-	}
-
-	if (IS_SET(victim->comm2, COMM2_CODING)) {
-		if (IS_NPC(victim)) {
-			act("$E is coding, and not receiving tells.\n\r", ch, NULL, victim, TO_CHAR);
-			return;
-		}
-
-		act("$E is coding, but your tell will go through when $E returns.\n\r", ch, NULL, victim, TO_CHAR);
-		(void)snprintf(buf, 2 * MIL, "%s tells you '%s'\n\r", PERS(ch, victim), argument);
-		buf[0] = UPPER(buf[0]);
-		add_buf(victim->pcdata->buffer, buf);
-		return;
-	}
-
-	if (IS_SET(victim->comm2, COMM2_BUILD)) {
-		if (IS_NPC(victim)) {
-			act("$E is building, and not receiving tells.\n\r", ch, NULL, victim, TO_CHAR);
-			return;
-		}
-
-		act("$E is building, but your tell will go through when $E returns.\n\r", ch, NULL, victim, TO_CHAR);
-		(void)snprintf(buf, 2 * MIL, "%s tells you '%s'\n\r", PERS(ch, victim), argument);
-		buf[0] = UPPER(buf[0]);
-		add_buf(victim->pcdata->buffer, buf);
-		return;
-	}
-
-	if (!IS_NPC(ch) && IS_NPC(victim) && HAS_TRIGGER(victim, TRIG_SPEECH))
-		mp_act_trigger(argument, victim, ch, NULL, NULL, TRIG_SPEECH);
-
-	return;
+        if (victim->desc == NULL && !IS_NPC(victim)) {
+            act("$N seems to have misplaced $S link...try again later.", ch, NULL, victim, TO_CHAR);
+            (void)snprintf(buf, 2 * MIL, "```@%s tells you '`t%s```@'``\n\r", PERS(ch, victim), argument);
+            buf[0] = UPPER(buf[0]);
+            add_buf(victim->pcdata->buffer, buf);
+            return;
+        }
+        broadcast_tell(ch, victim, argument);
+    }
+    return;
 }
 
 

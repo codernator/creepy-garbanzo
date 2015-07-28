@@ -60,6 +60,11 @@ static struct { long flag; char *name; } channel_names[] =
     { COMM_NOAUCTION, "`3Auction`` channel" },
     { COMM_DEAF, "Tells channel" },
     { COMM_QUIET, "Quiet mode" },
+    { COMM_NOOOC, "`#OOC`7 channel" },
+    { COMM_NOWIZ, "```!Immortal`` channel" },
+    { COMM_SHOUTSOFF, "Shouts channel" },
+    { COMM2_IMPTALK, "`2I`8M`2P`` channel" },
+    { COMM2_INFO, "`![Info]`` channel" },
     { -1, "" }
 };
 
