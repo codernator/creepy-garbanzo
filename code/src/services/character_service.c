@@ -13,6 +13,7 @@ extern DO_FUN do_at;
 extern DO_FUN do_split;
 
 extern void print_weather(CHAR_DATA * ch);
+extern void bug_long(const char *str, long param);
 
 void show_char_to_char(CHAR_DATA * list, CHAR_DATA * ch);
 void show_char_to_char_2(CHAR_DATA * victim, CHAR_DATA * ch);
@@ -55,44 +56,50 @@ static struct { int	wear_loc; char *desc; } where_name[] =
 	{ -1,		  ""			 }
 };
 
-static struct { long flag; char *name; } channel_names[] = 
+static struct { long flag; char *name; int location; } channel_names[] = 
 {
-    { COMM_NOAUCTION, "`3Auction`` channel" },
-    { COMM_DEAF, "Tells channel" },
-    { COMM_QUIET, "Quiet mode" },
-    { COMM_NOOOC, "`#OOC`7 channel" },
-    { COMM_NOWIZ, "```!Immortal`` channel" },
-    { COMM_SHOUTSOFF, "Shouts channel" },
-    { COMM2_IMPTALK, "`2I`8M`2P`` channel" },
-    { COMM2_INFO, "`![Info]`` channel" },
+    { COMM_NOAUCTION, "`3Auction`` channel", 1 },
+    { COMM_DEAF, "Tells channel", 1 },
+    { COMM_QUIET, "Quiet mode", 1 },
+    { COMM_NOOOC, "`#OOC`7 channel", 1 },
+    { COMM_NOWIZ, "```!Immortal`` channel", 1 },
+    { COMM_SHOUTSOFF, "Shouts channel", 1 },
+    { COMM2_IMPTALK, "`2I`8M`2P`` channel", 2 },
+    { COMM2_INFO, "`![Info]`` channel", 2 },
     { -1, "" }
 };
 
-static char *get_channel_name(long commflag) {
+static int get_channel_index(long commflag) {
     int i;
     for (i = 0; channel_names[i].flag > 0; i++) {
         if (channel_names[i].flag == commflag)
-            return channel_names[i].name;
+            return i;
     }
-    return "UNKNOWN";
+    return -1;
 }
 
 void toggle_comm(CHAR_DATA *ch, long commflag) {
     static char buf[MIL];
     bool now_on;
-    char *channel_name;
+    int channel_index;
 
-    channel_name = get_channel_name(commflag);
-    now_on = character_toggle_comm(ch, commflag);
+    channel_index = get_channel_index(commflag);
+    if (channel_index == -1) {
+        send_to_char("Bug logged.", ch);
+        bug_long("Bad channel", commflag);
+        return;
+    }
 
-    (void)snprintf(buf, MIL, "%s is now %s.\n\r", channel_name, now_on ? "ON" : "OFF");
+    now_on = character_toggle_comm(ch, commflag, channel_names[channel_index].location);
+
+    (void)snprintf(buf, MIL, "%s is now %s.\n\r", channel_names[channel_index].name, now_on ? "ON" : "OFF");
     send_to_char(buf, ch);
 }
 
 void toggle_afk(CHAR_DATA *ch, char *message)
 {
     bool now_on;
-    now_on = character_toggle_comm(ch, COMM2_AFK);
+    now_on = character_toggle_comm(ch, COMM2_AFK, 2);
 
 	if (now_on) {
 		send_to_char("You are now in `!A`@F`OK`` mode.\n\r", ch);

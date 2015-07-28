@@ -9,11 +9,10 @@ bool character_is_blind(CHAR_DATA *ch)
 	return (IS_AFFECTED(ch, AFF_BLIND));
 }
 
-bool character_toggle_comm(CHAR_DATA *ch, long commflag) 
+bool character_toggle_comm(CHAR_DATA *ch, long commflag, int location) 
 {
-    switch(commflag) {
-        case COMM2_IMPTALK:
-        case COMM2_INFO:
+    switch(location) {
+        case 2:
             if (IS_SET(ch->comm2, commflag)) {
                 REMOVE_BIT(ch->comm2, commflag);
                 return true;

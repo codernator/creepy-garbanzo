@@ -16,6 +16,20 @@ extern void mp_act_trigger(char *argument, CHAR_DATA * mob, CHAR_DATA * ch, cons
 extern int parse_int(char *string);
 
 
+void do_bug(CHAR_DATA *ch, char *argument)
+{
+	append_file(ch, BUG_FILE, argument);
+	send_to_char("Bug logged.\n\r", ch);
+	return;
+}
+
+void do_typo(CHAR_DATA *ch, char *argument)
+{
+	append_file(ch, TYPO_FILE, argument);
+	send_to_char("Typo logged.\n\r", ch);
+	return;
+}
+
 void do_delet(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
 	send_to_char("You must type the full command to delete yourself.\n\r", ch);
@@ -241,16 +255,6 @@ void do_auctalk(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_ooc(CHAR_DATA *ch, char *argument)
-{
-	if (argument[0] == '\0') {
-        toggle_comm(ch, COMM_NOOOC);
-	} else {
-        broadcast_ooc(ch, argument);
-	}
-    return;
-}
-
 void do_immtalk(CHAR_DATA *ch, char *argument)
 {
 	if (argument[0] == '\0') {
@@ -271,16 +275,6 @@ void do_imptalk(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-void do_wish(CHAR_DATA *ch, char *argument)
-{
-	if (argument[0] == '\0') {
-		send_to_char("`OWish`7 for what?\n\r", ch);
-	} else {
-        broadcast_wish(ch, argument);
-    }
-	return;
-}
-
 void do_say(CHAR_DATA *ch, char *argument)
 {
 	if (argument[0] == '\0') {
@@ -289,16 +283,6 @@ void do_say(CHAR_DATA *ch, char *argument)
         broadcast_say(ch, argument);
     }
 
-	return;
-}
-
-void do_osay(CHAR_DATA *ch, char *argument)
-{
-	if (argument[0] == '\0') {
-		send_to_char("Say what?\n\r", ch);
-	} else {
-        broadcast_osay(ch, argument);
-    }
 	return;
 }
 
@@ -313,11 +297,6 @@ void do_shout(CHAR_DATA *ch, char *argument)
 }
 
 
-/***************************************************************************
-*	do_info
-*
-*	turn the info channel on/off - imms can use info for messages
-***************************************************************************/
 void do_info(CHAR_DATA *ch, char *argument)
 {
 	if (argument[0] == '\0') {
@@ -325,19 +304,14 @@ void do_info(CHAR_DATA *ch, char *argument)
 	} else {
         if (!IS_IMMORTAL(ch)) {
             send_to_char("Use '`#info``' to turn the info channel on or off.", ch);
-            return;
+        } else {
+            broadcast_info(ch, argument);
         }
-        broadcast_info(ch, argument);
     }
 	return;
 }
 
 
-/***************************************************************************
-*	do_tell
-*
-*	sent a private message to a character
-***************************************************************************/
 void do_tell(CHAR_DATA *ch, char *argument)
 {
 	static char arg[MIL];
@@ -378,257 +352,43 @@ void do_tell(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_reply(CHAR_DATA *ch, char *argument)
 {
-	CHAR_DATA *victim;
-	char buf[MSL];
-	int pos;
-	bool found = FALSE;
-
-	if (IS_SET(ch->comm, COMM_NOTELL)) {
-		send_to_char("Your message didn't get through.\n\r", ch);
-		return;
-	}
-
-	if ((ch->in_room->vnum > 20924) && (ch->in_room->vnum < 20930)
-	    && (ch->level < LEVEL_IMMORTAL)) {
-		send_to_char("Not in jail....\n\r", ch);
-		return;
-	}
-
-	if ((victim = ch->reply) == NULL) {
-		send_to_char("They aren't here.\n\r", ch);
-		return;
-	}
-
-	if (victim->desc == NULL && !IS_NPC(victim)) {
-		act("$N seems to have misplaced $S link...try again later.",
-		    ch, NULL, victim, TO_CHAR);
-		(void)snprintf(buf, 2 * MIL, "`@%s tells you '`r%s`@'``\n\r", PERS(ch, victim), argument);
-		buf[0] = UPPER(buf[0]);
-		add_buf(victim->pcdata->buffer, buf);
-		return;
-	}
-
-	if (!IS_NPC(victim)) {
-		for (pos = 0; pos < MAX_IGNORE; pos++) {
-			if (victim->pcdata->ignore[pos] == NULL)
-				break;
-			if (!str_cmp(ch->name, victim->pcdata->ignore[pos]))
-				found = TRUE;
-		}
-	}
-
-	if (found) {
-		act("$N seems to be ignoring you.", ch, NULL, victim, TO_CHAR);
-		return;
-	}
-
-	if (!IS_IMMORTAL(ch) && !IS_AWAKE(victim)) {
-		act("$E can't hear you.", ch, 0, victim, TO_CHAR);
-		return;
-	}
-
-	if ((IS_SET(victim->comm, COMM_QUIET) || IS_SET(victim->comm, COMM_DEAF))
-	    && !IS_IMMORTAL(ch) && !IS_IMMORTAL(victim)) {
-		act_new("$E is not receiving ```@tells``.", ch, 0, victim, TO_CHAR, POS_DEAD, FALSE);
-		return;
-	}
-
-	if (!IS_IMMORTAL(victim) && !IS_AWAKE(ch)) {
-		send_to_char("In your dreams, or what?\n\r", ch);
-		return;
-	}
-
-	if (IS_SET(victim->comm2, COMM2_AFK)) {
-		if (IS_NPC(victim)) {
-			act_new("$E is `!A`@F`OK``, and not receiving tells.", ch, NULL, victim, TO_CHAR, POS_DEAD, FALSE);
-			return;
-		}
-
-		act_new("$E is `!A`@F`OK``, but your tell will go through when $E returns.", ch, NULL, victim, TO_CHAR, POS_DEAD, FALSE);
-		(void)snprintf(buf, 2 * MIL, "`@%s tells you '`r%s`@'``\n\r", PERS(ch, victim), argument);
-		buf[0] = UPPER(buf[0]);
-		add_buf(victim->pcdata->buffer, buf);
-		return;
-	}
-
-	act("`@You tell $N '`r$t`@'``", ch, argument, victim, TO_CHAR);
-	act_new("`@$n tells you '`r$t`@'``", ch, argument, victim, TO_VICT, POS_DEAD, FALSE);
-	victim->reply = ch;
-	return;
+	if (argument[0] == '\0') {
+		send_to_char("```@Tell`` whom what?\n\r", ch);
+    } else {
+        broadcast_reply(ch, argument);
+    }
+    return;
 }
 
-
-/***************************************************************************
-*	do_yell
-*
-*	yell a message to everyone in the area
-***************************************************************************/
 void do_yell(CHAR_DATA *ch, char *argument)
 {
-	DESCRIPTOR_DATA *d;
-
-	if (IS_SET(ch->comm, COMM_NOSHOUT)) {
-		send_to_char("You can't ```1yell``.\n\r", ch);
-		return;
-	}
-
-	if (IS_SET(ch->comm, COMM_NOCHANNELS)) {
-		send_to_char("The Gods have revoked your channel priviledges.\n\r", ch);
-		return;
-	}
-
-	if ((ch->in_room->vnum > 20924)
-	    && (ch->in_room->vnum < 20930)
-	    && (ch->level < LEVEL_IMMORTAL)) {
-		send_to_char("Not in jail....\n\r", ch);
-		return;
-	}
-
 	if (argument[0] == '\0') {
 		send_to_char("```1Yell`` what?\n\r", ch);
-		return;
-	}
+	} else {
+        broadcast_yell(ch, argument);
+    }
+    return;
 
-
-	act("`1You yell '`!$t`1'``", ch, argument, NULL, TO_CHAR);
-	for (d = descriptor_list; d != NULL; d = d->next) {
-		if (d->connected == CON_PLAYING
-		    && d->character != ch
-		    && d->character->in_room != NULL
-		    && d->character->in_room->area == ch->in_room->area
-		    && !IS_SET(d->character->comm, COMM_QUIET)) {
-				act("`1$n yells '`!$t`1'``", ch, argument, d->character, TO_VICT);
-		}
-	}
-
-	return;
 }
 
-/***************************************************************************
-*	do_emote
-*
-*	kind of like a do-it-yourself social
-***************************************************************************/
 void do_emote(CHAR_DATA *ch, char *argument)
 {
-	if (!IS_NPC(ch) && IS_SET(ch->comm2, COMM2_NOEMOTE)) {
-		send_to_char("You can't show your emotions.\n\r", ch);
-		return;
-	}
-
-
-
 	if (argument[0] == '\0') {
 		send_to_char("Emote what?\n\r", ch);
-		return;
-	}
-
-	act_new("$n $T", ch, NULL, emote_parse(ch, argument), TO_ROOM, POS_RESTING, FALSE);
-	act_new("$n $T", ch, NULL, emote_parse(ch, argument), TO_CHAR, POS_RESTING, FALSE);
-
+	} else {
+        broadcast_emote(ch, argument);
+    }
 	return;
 }
 
 
-/***************************************************************************
-*	do_pmote
-*
-*	kind of like emote, but changes the targets name
-***************************************************************************/
 void do_pmote(CHAR_DATA *ch, char *argument)
 {
-	CHAR_DATA *vch;
-	char *letter;
-	char *name;
-	char last[MIL];
-	char temp[MSL];
-	int matches = 0;
-
-	if (!IS_NPC(ch) && IS_SET(ch->comm2, COMM2_NOEMOTE)) {
-		send_to_char("You can't show your emotions.\n\r", ch);
-		return;
-	}
-
-
 	if (argument[0] == '\0') {
 		send_to_char("Emote what?\n\r", ch);
-		return;
-	}
-
-	act("$n $t", ch, argument, NULL, TO_CHAR);
-
-	for (vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room) {
-		if (vch->desc == NULL || vch == ch)
-			continue;
-
-		if ((letter = strstr(argument, vch->name)) == NULL) {
-			act_new("$N $t", vch, argument, ch, TO_CHAR, POS_RESTING, FALSE);
-			continue;
-		}
-
-		strcpy(temp, argument);
-		temp[strlen(argument) - strlen(letter)] = '\0';
-		last[0] = '\0';
-		name = vch->name;
-
-		for (; *letter != '\0'; letter++) {
-			if (*letter == '\'' && matches == (int)strlen(vch->name)) {
-				strcat(temp, "r");
-				continue;
-			}
-
-			if (*letter == 's' && matches == (int)strlen(vch->name)) {
-				matches = 0;
-				continue;
-			}
-
-			if (matches == (int)strlen(vch->name))
-				matches = 0;
-
-			if (*letter == *name) {
-				matches++;
-				name++;
-				if (matches == (int)strlen(vch->name)) {
-					strcat(temp, "you");
-					last[0] = '\0';
-					name = vch->name;
-					continue;
-				}
-				strncat(last, letter, 1);
-				continue;
-			}
-
-			matches = 0;
-			strcat(temp, last);
-			strncat(temp, letter, 1);
-			last[0] = '\0';
-			name = vch->name;
-		}
-
-		act_new("$N $t", vch, temp, ch, TO_CHAR, POS_RESTING, FALSE);
-	}
-
-	return;
-}
-
-
-void do_bug(CHAR_DATA *ch, char *argument)
-{
-	append_file(ch, BUG_FILE, argument);
-	send_to_char("Bug logged.\n\r", ch);
-	return;
-}
-
-void do_typo(CHAR_DATA *ch, char *argument)
-{
-	append_file(ch, TYPO_FILE, argument);
-	send_to_char("Typo logged.\n\r", ch);
-	return;
-}
-
-void do_rent(CHAR_DATA *ch, /*@unused@*/ char *argument)
-{
-	send_to_char("There is no rent here.  Just save and quit.\n\r", ch);
+	} else {
+        broadcast_pmote(ch, argument);
+    }
 	return;
 }
 
@@ -638,8 +398,6 @@ void do_qui(CHAR_DATA *ch, /*@unused@*/ char *argument)
 	send_to_char("If you want to QUIT, you have to spell it out.\n\r", ch);
 	return;
 }
-
-
 
 void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
@@ -1672,41 +1430,6 @@ void do_sayto(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-char *emote_parse(/*@unused@*/ CHAR_DATA *ch, char *argument)
-{
-	static char target[MSL];
-	char buf[MSL];
-	int i = 0, arg_len = 0;
-	int flag = FALSE;
-
-	/* Reset target each time before use */
-	memset(target, 0x00, sizeof(target));
-	arg_len = (int)strlen(argument);
-	for (i = 0; i < arg_len; i++) {
-		if (argument[i] == '"' && flag == FALSE) {
-			flag = TRUE;
-			(void)snprintf(buf, MSL, "%c", argument[i]);
-			strcat(target, buf);
-			strcat(target, "`P");
-			continue;
-		} else if (argument[i] == '"' && flag == TRUE) {
-			flag = FALSE;
-			strcat(target, "``");
-			(void)snprintf(buf, MSL, "%c", argument[i]);
-			strcat(target, buf);
-			continue;
-		} else {
-			(void)snprintf(buf, MSL, "%c", argument[i]);
-			strcat(target, buf);
-		}
-	}
-	if (flag == TRUE) {
-		strcat(target, "``");
-		(void)snprintf(buf, MSL, "%c", '"');
-		strcat(target, buf);
-	}
-	return target;
-}
 
 void do_busy(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {

@@ -967,46 +967,6 @@ void do_esp(CHAR_DATA *ch, char *argument)
 	}
 }
 
-/***************************************************************************
-*       do_hyper
-***************************************************************************/
-void do_hyper(CHAR_DATA *ch, char *argument)
-{
-	AFFECT_DATA af;
-	SKILL *skill;
-	int level;
-
-
-	if (ch->race != race_lookup("sprite")
-	    || (skill = skill_lookup("hyper metabolism")) == NULL) {
-		send_to_char("`!WHAT``\n\r`PTHE``\n\r`OFUCK?``\n\r", ch);
-		return;
-	}
-	level = ch->level;
-
-	if (is_affected(ch, skill)) {
-		send_to_char("You are already hyperactive!\n\r", ch);
-		return;
-	}
-
-	af.where = TO_AFFECTS;
-	af.type = skill->sn;
-	af.skill = skill;
-	af.level = level;
-	af.duration = (level / 10) + number_range(3, 5);
-	af.location = APPLY_NONE;
-	af.modifier = 0;
-	af.bitvector = 0;
-	affect_to_char(ch, &af);
-
-	af.location = APPLY_SAVES;
-	af.modifier = 100;
-	affect_to_char(ch, &af);
-
-	send_to_char("You feel your pulse speed up, and strangely you feel hungry...\n\r", ch);
-	return;
-}
-
 
 
 /***************************************************************************

@@ -587,8 +587,6 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 			char_to_room(ch, get_room_index(ROOM_VNUM_SCHOOL));
 			rnd = number_range(0, 9);
 
-			do_ooc(ch, "I am new to this realm, and I could use some help (AUTOMSG)");
-
 			switch (rnd) {
 			case (0):
 				do_deathcry(ch, "Oh dear. Oswald will be rather perturbed. I am dead.");

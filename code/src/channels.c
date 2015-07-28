@@ -9,7 +9,9 @@ extern bool add_buf(BUFFER *buffer, char *string);
 
 
 static bool can_talk(CHAR_DATA *ch);
-static bool is_ignoring(CHAR_DATA *sender, CHAR_DATA *receiver);
+static bool is_ignoring(/*@partial@*/CHAR_DATA *sender, /*@partial@*/CHAR_DATA *receiver);
+static bool send_tell(/*@partial@*/CHAR_DATA *sender, /*@partial@*/CHAR_DATA *whom, char* argument);
+static char *emote_parse(char *argument);
 
 
 void broadcast_auctalk(CHAR_DATA *ch, char *argument)
@@ -33,61 +35,7 @@ void broadcast_auctalk(CHAR_DATA *ch, char *argument)
             && d->character != ch
             && !IS_SET(victim->comm, COMM_NOAUCTION)
             && !IS_SET(victim->comm, COMM_QUIET)) {
-            act_new("`3$n `#(`3AucTalks`#)`3 '`#$t`3'``", ch, argument, d->character, TO_VICT, POS_DEAD, FALSE);
-        }
-    }
-    return;
-}
-
-void broadcast_wish(CHAR_DATA *ch, char *argument)
-{
-	static char buf[2*MIL];
-	DESCRIPTOR_DATA *d;
-
-	if (!can_talk(ch)) {
-		return;
-    }
-
-	if (IS_SET(ch->comm, COMM_NOWISH)) {
-		send_to_char("The gods are deaf to your wishes.\n\r", ch);
-		return;
-	}
-
-	(void)snprintf(buf, 2 * MIL, "`7$n `Owishes`7: ``%s", argument);
-	act_new("`7$n `Owishes`7: $t", ch, argument, NULL, TO_CHAR, POS_DEAD, FALSE);
-	for (d = descriptor_list; d != NULL; d = d->next) {
-		if (d->connected == CON_PLAYING
-		    && IS_IMMORTAL(d->character)
-		    && !IS_SET(d->character->comm, COMM_NOWISH))
-			act_new("`7$n `Owishes`7: $t", ch, argument, d->character, TO_VICT, POS_DEAD, FALSE);
-	}
-    return;
-}
-
-void broadcast_ooc(/*@partial@*/CHAR_DATA *ch, char *argument)
-{
-	static char buf[2*MIL];
-	DESCRIPTOR_DATA *d;
-
-    if (!can_talk(ch)) {
-        return;
-    }
-
-    REMOVE_BIT(ch->comm, COMM_NOOOC);
-
-    (void)snprintf(buf, 2 * MIL, "`7You `#OOC`7: '`#%s`7'\n\r", argument);
-    send_to_char(buf, ch);
-    (void)snprintf(buf, 2 * MIL, "\n\r`7$n `#OOC`7: '`#%s`7'", argument);
-    for (d = descriptor_list; d != NULL; d = d->next) {
-        CHAR_DATA *victim;
-
-        victim = d->original ? d->original : d->character;
-
-        if (d->connected == CON_PLAYING &&
-            d->character != ch &&
-            !IS_SET(victim->comm, COMM_NOOOC) &&
-            !IS_SET(victim->comm, COMM_QUIET)) {
-                act_new("`7$n `#OOC`7: '`#$t`7'", ch, argument, d->character, TO_VICT, POS_DEAD, FALSE);
+            act_new("`3$n `#(`3AucTalks`#)`3 '`#$t`3'``", ch, argument, d->character, TO_VICT, POS_DEAD, false);
         }
     }
     return;
@@ -101,12 +49,12 @@ void broadcast_immtalk(/*@partial@*/CHAR_DATA *ch, char *argument)
 	REMOVE_BIT(ch->comm, COMM_NOWIZ);
 
 	(void)snprintf(buf, 2 * MIL, "```!$n `8: ```7%s``", argument);
-	act_new("```!$n `8: ```7$t``", ch, argument, NULL, TO_CHAR, POS_DEAD, FALSE);
+	act_new("```!$n `8: ```7$t``", ch, argument, NULL, TO_CHAR, POS_DEAD, false);
 	for (d = descriptor_list; d != NULL; d = d->next) {
 		if (d->connected == CON_PLAYING &&
 		    IS_IMMORTAL(d->character) &&
 		    !IS_SET(d->character->comm, COMM_NOWIZ))
-			act_new("```!$n `8: ```7$t``", ch, argument, d->character, TO_VICT, POS_DEAD, FALSE);
+			act_new("```!$n `8: ```7$t``", ch, argument, d->character, TO_VICT, POS_DEAD, false);
 	}
     return;
 }
@@ -119,20 +67,20 @@ void broadcast_imptalk(CHAR_DATA *ch, char *argument)
 	REMOVE_BIT(ch->comm2, COMM2_IMPTALK);
 
 	(void)snprintf(buf, 2 * MIL, "``$n `2I`8M`2P`8:`` %s``", argument);
-	act_new("$n `2I`8M`2P`8:`` $t``", ch, argument, NULL, TO_CHAR, POS_DEAD, FALSE);
+	act_new("$n `2I`8M`2P`8:`` $t``", ch, argument, NULL, TO_CHAR, POS_DEAD, false);
 	for (d = descriptor_list; d != NULL; d = d->next) {
 		if ((d->connected == CON_PLAYING) &&
 		    (d->character->level == IMPLEMENTOR) &&
 		    (!IS_SET(d->character->comm2, COMM2_IMPTALK)))
 /*           && (!IS_SET(d->character->comm2, COMM2_IMPTALKM)))*/
-			act_new("``$n `2I`8M`2P`8:`` $t", ch, argument, d->character, TO_VICT, POS_DEAD, FALSE);
+			act_new("``$n `2I`8M`2P`8:`` $t", ch, argument, d->character, TO_VICT, POS_DEAD, false);
 	}
 
 
 	for (d = descriptor_list; d != NULL; d = d->next) {
 		if ((d->connected == CON_PLAYING) &&
 		    (IS_SET(d->character->comm2, COMM2_IMPTALKM)))
-			act_new("``$n `2I`8M`2P`8:`` $t", ch, argument, d->character, TO_VICT, POS_DEAD, FALSE);
+			act_new("``$n `2I`8M`2P`8:`` $t", ch, argument, d->character, TO_VICT, POS_DEAD, false);
 	}
     return;
 }
@@ -164,23 +112,6 @@ void broadcast_say(CHAR_DATA *ch, char *argument)
                 mp_act_trigger(argument, mob, ch, NULL, NULL, TRIG_SPEECH);
         }
     }
-    return;
-}
-
-void broadcast_osay(CHAR_DATA *ch, char *argument)
-{
-	act("`6$n says (`&ooc`6) '`7$T`6'`7", ch, NULL, argument, TO_ROOM);
-	act("`6You say (`&ooc`6) '`7$T`6'`7", ch, NULL, argument, TO_CHAR);
-
-	if (!IS_NPC(ch)) {
-		CHAR_DATA *mob, *mob_next;
-		for (mob = ch->in_room->people; mob != NULL; mob = mob_next) {
-			mob_next = mob->next_in_room;
-			if (IS_NPC(mob) && HAS_TRIGGER(mob, TRIG_SPEECH)
-			    && mob->position == mob->mob_idx->default_pos)
-				mp_act_trigger(argument, mob, ch, NULL, NULL, TRIG_SPEECH);
-		}
-	}
     return;
 }
 
@@ -238,94 +169,138 @@ void broadcast_info(CHAR_DATA *ch, char *argument)
 
 void broadcast_tell(CHAR_DATA *ch, CHAR_DATA *whom, char *argument)
 {
-	static char buf[MSL];
+    if (send_tell(ch, whom, argument)) {
+        if (!IS_NPC(ch) && IS_NPC(whom) && HAS_TRIGGER(whom, TRIG_SPEECH)) {
+            mp_act_trigger(argument, whom, ch, NULL, NULL, TRIG_SPEECH);
+        }
+    }
+	return;
+}
+
+void broadcast_reply(CHAR_DATA *ch, char *argument)
+{
+	CHAR_DATA *whom;
+
+	if ((whom = ch->reply) == NULL) {
+		send_to_char("They aren't here.\n\r", ch);
+		return;
+	}
+
+    if (send_tell(ch, whom, argument)) {
+        whom->reply = ch;
+    }
+
+	return;
+}
+
+void broadcast_yell(CHAR_DATA *ch, char *argument)
+{
+	DESCRIPTOR_DATA *d;
 
     if (!can_talk(ch)) {
         return;
     }
 
-	if (IS_SET(ch->comm, COMM_NOTELL)) {
-		send_to_char("Your message didn't get through.\n\r", ch);
+	if (IS_SET(ch->comm, COMM_NOSHOUT)) {
+		send_to_char("You can't ```1yell``.\n\r", ch);
 		return;
 	}
 
-	if (is_ignoring(ch, whom)) {
-		act("$N seems to be ignoring you.", ch, NULL, whom, TO_CHAR);
-		return;
-	}
-
-	if (!(IS_IMMORTAL(ch) && ch->level > LEVEL_IMMORTAL) && !IS_AWAKE(whom)) {
-		act("$E can't hear you.", ch, 0, whom, TO_CHAR);
-		return;
-	}
-
-	if ((IS_SET(whom->comm, COMM_QUIET) || IS_SET(whom->comm, COMM_DEAF))
-	    && !IS_IMMORTAL(ch)) {
-		act("$E is not receiving ```@tells``.", ch, 0, whom, TO_CHAR);
-		return;
-	}
-
-	if (IS_SET(whom->comm2, COMM2_AFK)) {
-		if (IS_NPC(whom)) {
-			act("$E is ```!A```@F```OK``, and not receiving tells.", ch, NULL, whom, TO_CHAR);
-			return;
+	act("`1You yell '`!$t`1'``", ch, argument, NULL, TO_CHAR);
+	for (d = descriptor_list; d != NULL; d = d->next) {
+		if (d->connected == CON_PLAYING
+		    && d->character != ch
+		    && d->character->in_room != NULL
+		    && d->character->in_room->area == ch->in_room->area
+		    && !IS_SET(d->character->comm, COMM_QUIET)) {
+				act("`1$n yells '`!$t`1'``", ch, argument, d->character, TO_VICT);
 		}
-
-		act("$E is ```!A```@F```OK``, but your tell will go through when $E returns.", ch, NULL, whom, TO_CHAR);
-		(void)snprintf(buf, 2 * MIL, "```@%s tells you '`t%s```@'``\n\r", PERS(ch, whom), argument);
-		buf[0] = UPPER(buf[0]);
-		add_buf(whom->pcdata->buffer, buf);
-		return;
 	}
-	act("`@You tell $N '`t$t`@'``", ch, argument, whom, TO_CHAR);
-	act_new("`@$n tells you '`t$t`@'``", ch, argument, whom, TO_VICT, POS_DEAD, FALSE);
-	whom->reply = ch;
-
-	if (IS_SET(whom->comm2, COMM2_BUSY)) {
-		if (IS_NPC(whom)) {
-			act("$E is Busy, and not receiving tells.", ch, NULL, whom, TO_CHAR);
-			return;
-		}
-
-		act("$E is `1Busy``, but your tell will go through when $E returns.", ch, NULL, whom, TO_CHAR);
-		(void)snprintf(buf, 2 * MIL, "```@%s tells you '`t%s```@'``\n\r", PERS(ch, whom), argument);
-		buf[0] = UPPER(buf[0]);
-		add_buf(whom->pcdata->buffer, buf);
-		return;
-	}
-
-	if (IS_SET(whom->comm2, COMM2_CODING)) {
-		if (IS_NPC(whom)) {
-			act("$E is coding, and not receiving tells.\n\r", ch, NULL, whom, TO_CHAR);
-			return;
-		}
-
-		act("$E is coding, but your tell will go through when $E returns.\n\r", ch, NULL, whom, TO_CHAR);
-		(void)snprintf(buf, 2 * MIL, "%s tells you '%s'\n\r", PERS(ch, whom), argument);
-		buf[0] = UPPER(buf[0]);
-		add_buf(whom->pcdata->buffer, buf);
-		return;
-	}
-
-	if (IS_SET(whom->comm2, COMM2_BUILD)) {
-		if (IS_NPC(whom)) {
-			act("$E is building, and not receiving tells.\n\r", ch, NULL, whom, TO_CHAR);
-			return;
-		}
-
-		act("$E is building, but your tell will go through when $E returns.\n\r", ch, NULL, whom, TO_CHAR);
-		(void)snprintf(buf, 2 * MIL, "%s tells you '%s'\n\r", PERS(ch, whom), argument);
-		buf[0] = UPPER(buf[0]);
-		add_buf(whom->pcdata->buffer, buf);
-		return;
-	}
-
-	if (!IS_NPC(ch) && IS_NPC(whom) && HAS_TRIGGER(whom, TRIG_SPEECH)) {
-		mp_act_trigger(argument, whom, ch, NULL, NULL, TRIG_SPEECH);
-    }
 
 	return;
 }
+
+void broadcast_emote(CHAR_DATA *ch, char *argument)
+{
+	if (!IS_NPC(ch) && IS_SET(ch->comm2, COMM2_NOEMOTE)) {
+		send_to_char("You can't show your emotions.\n\r", ch);
+		return;
+	}
+	act_new("$n $T", ch, NULL, emote_parse(argument), TO_ROOM, POS_RESTING, false);
+	act_new("$n $T", ch, NULL, emote_parse(argument), TO_CHAR, POS_RESTING, false);
+    return;
+}
+
+void broadcast_pmote(CHAR_DATA *ch, char *argument)
+{
+	CHAR_DATA *vch;
+	char *letter;
+	char *name;
+	char last[MIL];
+	char temp[MSL];
+	int matches = 0;
+
+	if (!IS_NPC(ch) && IS_SET(ch->comm2, COMM2_NOEMOTE)) {
+		send_to_char("You can't show your emotions.\n\r", ch);
+		return;
+	}
+
+	act("$n $t", ch, argument, NULL, TO_CHAR);
+
+	for (vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room) {
+		if (vch->desc == NULL || vch == ch)
+			continue;
+
+		if ((letter = strstr(argument, vch->name)) == NULL) {
+			act_new("$N $t", vch, argument, ch, TO_CHAR, POS_RESTING, false);
+			continue;
+		}
+
+		strcpy(temp, argument);
+		temp[strlen(argument) - strlen(letter)] = '\0';
+		last[0] = '\0';
+		name = vch->name;
+
+		for (; *letter != '\0'; letter++) {
+			if (*letter == '\'' && matches == (int)strlen(vch->name)) {
+				strcat(temp, "r");
+				continue;
+			}
+
+			if (*letter == 's' && matches == (int)strlen(vch->name)) {
+				matches = 0;
+				continue;
+			}
+
+			if (matches == (int)strlen(vch->name))
+				matches = 0;
+
+			if (*letter == *name) {
+				matches++;
+				name++;
+				if (matches == (int)strlen(vch->name)) {
+					strcat(temp, "you");
+					last[0] = '\0';
+					name = vch->name;
+					continue;
+				}
+				strncat(last, letter, 1);
+				continue;
+			}
+
+			matches = 0;
+			strcat(temp, last);
+			strncat(temp, letter, 1);
+			last[0] = '\0';
+			name = vch->name;
+		}
+
+		act_new("$N $t", vch, temp, ch, TO_CHAR, POS_RESTING, false);
+	}
+    return;
+}
+
+
 
 bool is_ignoring(CHAR_DATA *sender, CHAR_DATA *receiver) 
 {
@@ -352,14 +327,145 @@ bool can_talk(CHAR_DATA *ch)
 {
 	if (IS_SET(ch->comm, COMM_NOCHANNELS)) {
 		send_to_char("The gods have revoked your channel priviliges.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (IS_SET(ch->comm, COMM_QUIET)) {
 		send_to_char("You must turn off quiet mode first.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
-	return TRUE;
+	return true;
+}
+
+bool send_tell(CHAR_DATA *sender, CHAR_DATA *whom, char* argument)
+{
+	static char buf[MSL];
+
+	if (IS_SET(sender->comm, COMM_NOCHANNELS)) {
+		send_to_char("The gods have revoked your channel priviliges.\n\r", sender);
+		return false;
+	}
+
+	if (IS_SET(sender->comm, COMM_NOTELL)) {
+		send_to_char("Your message didn't get through.\n\r", sender);
+		return false;
+	}
+
+	if (!IS_IMMORTAL(whom) && !IS_AWAKE(sender)) {
+		send_to_char("In your dreams, or what?\n\r", sender);
+		return false;
+	}
+
+	if (is_ignoring(sender, whom)) {
+		act("$N seems to be ignoring you.", sender, NULL, whom, TO_CHAR);
+		return false;
+	}
+
+	if (!(IS_IMMORTAL(sender)) && !IS_AWAKE(whom)) {
+		act("$E can't hear you.", sender, 0, whom, TO_CHAR);
+		return false;
+	}
+
+	if (IS_SET(whom->comm, COMM_DEAF)) {
+		act("$E is not receiving ```@tells``.", sender, 0, whom, TO_CHAR);
+		return false;
+	}
+
+	if (IS_SET(whom->comm2, COMM2_AFK)) {
+		if (IS_NPC(whom)) {
+			act("$E is ```!A```@F```OK``, and not receiving tells.", sender, NULL, whom, TO_CHAR);
+			return false;
+		}
+
+		act("$E is ```!A```@F```OK``, but your tell will go through when $E returns.", sender, NULL, whom, TO_CHAR);
+		(void)snprintf(buf, 2 * MIL, "```@%s tells you '`t%s```@'``\n\r", PERS(sender, whom), argument);
+		buf[0] = UPPER(buf[0]);
+		add_buf(whom->pcdata->buffer, buf);
+		return true;
+	}
+	act("`@You tell $N '`t$t`@'``", sender, argument, whom, TO_CHAR);
+	act_new("`@$n tells you '`t$t`@'``", sender, argument, whom, TO_VICT, POS_DEAD, false);
+	whom->reply = sender;
+
+	if (IS_SET(whom->comm2, COMM2_BUSY)) {
+		if (IS_NPC(whom)) {
+			act("$E is Busy, and not receiving tells.", sender, NULL, whom, TO_CHAR);
+			return false;
+		}
+
+		act("$E is `1Busy``, but your tell will go through when $E returns.", sender, NULL, whom, TO_CHAR);
+		(void)snprintf(buf, 2 * MIL, "```@%s tells you '`t%s```@'``\n\r", PERS(sender, whom), argument);
+		buf[0] = UPPER(buf[0]);
+		add_buf(whom->pcdata->buffer, buf);
+		return true;
+	}
+
+	if (IS_SET(whom->comm2, COMM2_CODING)) {
+		if (IS_NPC(whom)) {
+			act("$E is coding, and not receiving tells.\n\r", sender, NULL, whom, TO_CHAR);
+			return false;
+		}
+
+		act("$E is coding, but your tell will go through when $E returns.\n\r", sender, NULL, whom, TO_CHAR);
+		(void)snprintf(buf, 2 * MIL, "%s tells you '%s'\n\r", PERS(sender, whom), argument);
+		buf[0] = UPPER(buf[0]);
+		add_buf(whom->pcdata->buffer, buf);
+		return true;
+	}
+
+	if (IS_SET(whom->comm2, COMM2_BUILD)) {
+		if (IS_NPC(whom)) {
+			act("$E is building, and not receiving tells.\n\r", sender, NULL, whom, TO_CHAR);
+			return false;
+		}
+
+		act("$E is building, but your tell will go through when $E returns.\n\r", sender, NULL, whom, TO_CHAR);
+		(void)snprintf(buf, 2 * MIL, "%s tells you '%s'\n\r", PERS(sender, whom), argument);
+		buf[0] = UPPER(buf[0]);
+		add_buf(whom->pcdata->buffer, buf);
+		return true;
+	}
+
+
+	act("`@You tell $N '`r$t`@'``", sender, argument, whom, TO_CHAR);
+	act_new("`@$n tells you '`r$t`@'``", sender, argument, whom, TO_VICT, POS_DEAD, false);
+    return true;
+}
+
+char *emote_parse(char *argument)
+{
+	static char target[MSL];
+	char buf[MSL];
+	int i = 0, arg_len = 0;
+	int flag = false;
+
+	/* Reset target each time before use */
+	memset(target, 0x00, sizeof(target));
+	arg_len = (int)strlen(argument);
+	for (i = 0; i < arg_len; i++) {
+		if (argument[i] == '"' && flag == false) {
+			flag = true;
+			(void)snprintf(buf, MSL, "%c", argument[i]);
+			strcat(target, buf);
+			strcat(target, "`P");
+			continue;
+		} else if (argument[i] == '"' && flag == true) {
+			flag = false;
+			strcat(target, "``");
+			(void)snprintf(buf, MSL, "%c", argument[i]);
+			strcat(target, buf);
+			continue;
+		} else {
+			(void)snprintf(buf, MSL, "%c", argument[i]);
+			strcat(target, buf);
+		}
+	}
+	if (flag) {
+		strcat(target, "``");
+		(void)snprintf(buf, MSL, "%c", '"');
+		strcat(target, buf);
+	}
+	return target;
 }
 

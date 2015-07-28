@@ -2348,7 +2348,6 @@ void add_follower(CHAR_DATA * ch, CHAR_DATA * master);
 void stop_follower(CHAR_DATA * ch);
 void nuke_pets(CHAR_DATA * ch);
 void die_follower(CHAR_DATA * ch);
-char *emote_parse(CHAR_DATA *ch, char *argument);
 bool is_same_group(CHAR_DATA * ach, CHAR_DATA * bch);
 int get_item_apply_val(char *name);
 void set_wait(CHAR_DATA * ch, int pulse);
