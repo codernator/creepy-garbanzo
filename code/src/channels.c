@@ -4,234 +4,235 @@
 #include <stdio.h>
 #include <string.h>
 
-extern void mp_act_trigger(char *argument, CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
+extern void mp_act_trigger(char *argument, CHAR_DATA * mob, CHAR_DATA * sender, const void *arg1, const void *arg2, int type);
 extern bool add_buf(BUFFER *buffer, char *string);
 
 
-static bool can_talk(CHAR_DATA *ch);
+static bool can_talk(CHAR_DATA *sender);
 static bool is_ignoring(/*@partial@*/CHAR_DATA *sender, /*@partial@*/CHAR_DATA *receiver);
 static bool send_tell(/*@partial@*/CHAR_DATA *sender, /*@partial@*/CHAR_DATA *whom, char* argument);
 static char *emote_parse(char *argument);
 
 
-void broadcast_auctalk(CHAR_DATA *ch, char *argument)
+void broadcast_auctalk(CHAR_DATA *sender, char *argument)
 {
 	DESCRIPTOR_DATA *d;
 
-    if (!can_talk(ch)) {
+    if (!can_talk(sender)) {
         return;
     }
 
-    REMOVE_BIT(ch->comm, COMM_NOAUCTION);
+    REMOVE_BIT(sender->comm, COMM_NOAUCTION);
 
-    printf_to_char(ch, "`3You `#(`3AucTalk`#)`3 '`#%s`3'``\n\r", argument);
+    printf_to_char(sender, "`3You `#(`3AucTalk`#)`3 '`#%s`3'``\n\r", argument);
 
     for (d = descriptor_list; d != NULL; d = d->next) {
-        CHAR_DATA *victim;
+        CHAR_DATA *receiver;
 
-        victim = d->original ? d->original : d->character;
+        receiver = d->original ? d->original : d->character;
 
         if (d->connected == CON_PLAYING
-            && d->character != ch
-            && !IS_SET(victim->comm, COMM_NOAUCTION)
-            && !IS_SET(victim->comm, COMM_QUIET)) {
-            act_new("`3$n `#(`3AucTalks`#)`3 '`#$t`3'``", ch, argument, d->character, TO_VICT, POS_DEAD, false);
+            && d->character != sender
+            && !IS_SET(receiver->comm, COMM_NOAUCTION)
+            && !IS_SET(receiver->comm, COMM_QUIET)) {
+            act_new("`3$n `#(`3AucTalks`#)`3 '`#$t`3'``", sender, argument, d->character, TO_VICT, POS_DEAD, false);
         }
     }
     return;
 }
 
-void broadcast_immtalk(/*@partial@*/CHAR_DATA *ch, char *argument)
+void broadcast_immtalk(/*@partial@*/CHAR_DATA *sender, char *argument)
 {
 	static char buf[2*MIL];
 	DESCRIPTOR_DATA *d;
 
-	REMOVE_BIT(ch->comm, COMM_NOWIZ);
+	REMOVE_BIT(sender->comm, COMM_NOWIZ);
 
 	(void)snprintf(buf, 2 * MIL, "```!$n `8: ```7%s``", argument);
-	act_new("```!$n `8: ```7$t``", ch, argument, NULL, TO_CHAR, POS_DEAD, false);
+	act_new("```!$n `8: ```7$t``", sender, argument, NULL, TO_CHAR, POS_DEAD, false);
 	for (d = descriptor_list; d != NULL; d = d->next) {
 		if (d->connected == CON_PLAYING &&
 		    IS_IMMORTAL(d->character) &&
 		    !IS_SET(d->character->comm, COMM_NOWIZ))
-			act_new("```!$n `8: ```7$t``", ch, argument, d->character, TO_VICT, POS_DEAD, false);
+			act_new("```!$n `8: ```7$t``", sender, argument, d->character, TO_VICT, POS_DEAD, false);
 	}
     return;
 }
 
-void broadcast_imptalk(CHAR_DATA *ch, char *argument)
+void broadcast_imptalk(CHAR_DATA *sender, char *argument)
 {
 	static char buf[2*MIL];
 	DESCRIPTOR_DATA *d;
 
-	REMOVE_BIT(ch->comm2, COMM2_IMPTALK);
+	REMOVE_BIT(sender->comm2, COMM2_IMPTALK);
 
 	(void)snprintf(buf, 2 * MIL, "``$n `2I`8M`2P`8:`` %s``", argument);
-	act_new("$n `2I`8M`2P`8:`` $t``", ch, argument, NULL, TO_CHAR, POS_DEAD, false);
+	act_new("$n `2I`8M`2P`8:`` $t``", sender, argument, NULL, TO_CHAR, POS_DEAD, false);
 	for (d = descriptor_list; d != NULL; d = d->next) {
 		if ((d->connected == CON_PLAYING) &&
 		    (d->character->level == IMPLEMENTOR) &&
 		    (!IS_SET(d->character->comm2, COMM2_IMPTALK)))
 /*           && (!IS_SET(d->character->comm2, COMM2_IMPTALKM)))*/
-			act_new("``$n `2I`8M`2P`8:`` $t", ch, argument, d->character, TO_VICT, POS_DEAD, false);
+			act_new("``$n `2I`8M`2P`8:`` $t", sender, argument, d->character, TO_VICT, POS_DEAD, false);
 	}
 
 
 	for (d = descriptor_list; d != NULL; d = d->next) {
 		if ((d->connected == CON_PLAYING) &&
 		    (IS_SET(d->character->comm2, COMM2_IMPTALKM)))
-			act_new("``$n `2I`8M`2P`8:`` $t", ch, argument, d->character, TO_VICT, POS_DEAD, false);
+			act_new("``$n `2I`8M`2P`8:`` $t", sender, argument, d->character, TO_VICT, POS_DEAD, false);
 	}
     return;
 }
 
-void broadcast_say(CHAR_DATA *ch, char *argument)
+void broadcast_say(CHAR_DATA *sender, char *argument)
 {
 	static char buf[2*MIL];
 
-	if (can_talk(ch)) {
+	if (can_talk(sender)) {
 		return;
 	}
 
     (void)snprintf(buf, 2 * MIL, "`7You %s '`s$T`7'``",
                argument[strlen(argument) - 1] == '!' ? "exclaim" :
                argument[strlen(argument) - 1] == '?' ? "ask" : "say");
-    act(buf, ch, NULL, argument, TO_CHAR);
+    act(buf, sender, NULL, argument, TO_CHAR);
 
     (void)snprintf(buf, 2 * MIL, "`7$n %s '`s$T`7'``",
                argument[strlen(argument) - 1] == '!' ? "exclaims" :
                argument[strlen(argument) - 1] == '?' ? "asks" : "says");
-    act(buf, ch, NULL, argument, TO_ROOM);
+    act(buf, sender, NULL, argument, TO_ROOM);
 
-    if (!IS_NPC(ch)) {
+    if (!IS_NPC(sender)) {
         CHAR_DATA *mob, *mob_next;
-        for (mob = ch->in_room->people; mob != NULL; mob = mob_next) {
+        for (mob = sender->in_room->people; mob != NULL; mob = mob_next) {
             mob_next = mob->next_in_room;
             if (IS_NPC(mob) && HAS_TRIGGER(mob, TRIG_SPEECH)
                 && mob->position == mob->mob_idx->default_pos)
-                mp_act_trigger(argument, mob, ch, NULL, NULL, TRIG_SPEECH);
+                mp_act_trigger(argument, mob, sender, NULL, NULL, TRIG_SPEECH);
         }
     }
     return;
 }
 
-void broadcast_shout(CHAR_DATA *ch, char *argument)
+void broadcast_shout(CHAR_DATA *sender, char *argument)
 {
 	DESCRIPTOR_DATA *d;
     
-    if (!can_talk(ch)) {
+    if (!can_talk(sender)) {
         return;
     }
 
-	if (IS_SET(ch->comm, COMM_NOSHOUT)) {
-		send_to_char("You can't ```1shout``.\n\r", ch);
+	if (IS_SET(sender->comm, COMM_NOSHOUT)) {
+		send_to_char("You can't ```1shout``.\n\r", sender);
 		return;
 	}
 
-	REMOVE_BIT(ch->comm, COMM_SHOUTSOFF);
+	REMOVE_BIT(sender->comm, COMM_SHOUTSOFF);
 
-	act("`1You shout '`!$T`1'``", ch, NULL, argument, TO_CHAR);
+	act("`1You shout '`!$T`1'``", sender, NULL, argument, TO_CHAR);
 	for (d = descriptor_list; d != NULL; d = d->next) {
-		CHAR_DATA *victim;
+		CHAR_DATA *receiver;
 
-		victim = CH(d);
+		receiver = CH(d);
 
 		if (d->connected == CON_PLAYING
-		    && d->character != ch
-		    && !IS_SET(victim->comm, COMM_SHOUTSOFF)
-		    && !IS_SET(victim->comm, COMM_QUIET)) {
-				act("`1$n shouts '`!$t`1'``", ch, argument, d->character, TO_VICT);
+		    && d->character != sender
+		    && !IS_SET(receiver->comm, COMM_SHOUTSOFF)
+		    && !IS_SET(receiver->comm, COMM_QUIET)) {
+				act("`1$n shouts '`!$t`1'``", sender, argument, d->character, TO_VICT);
 		}
 	}
 	return;
 }
 
-void broadcast_info(CHAR_DATA *ch, char *argument)
+void broadcast_info(CHAR_DATA *sender, char *argument)
 {
 	DESCRIPTOR_DATA *d;
 
-	SET_BIT(ch->comm2, COMM2_INFO);
-	act("``You `![Info]:`` `&$T``'", ch, NULL, argument, TO_CHAR);
+	SET_BIT(sender->comm2, COMM2_INFO);
+	act("``You `![Info]:`` `&$T``'", sender, NULL, argument, TO_CHAR);
 	for (d = descriptor_list; d != NULL; d = d->next) {
-		CHAR_DATA *victim;
+		CHAR_DATA *receiver;
 
-		victim = CH(d);
+		receiver = CH(d);
 
 		if (d->connected == CON_PLAYING
-		    && d->character != ch
-		    && IS_SET(victim->comm2, COMM2_INFO)
-		    && !IS_SET(victim->comm, COMM_QUIET))
-			act("`![Info]:`& $t``", ch, argument, d->character, TO_VICT);
+		    && d->character != sender
+		    && IS_SET(receiver->comm2, COMM2_INFO)
+		    && !IS_SET(receiver->comm, COMM_QUIET))
+			act("`![Info]:`& $t``", sender, argument, d->character, TO_VICT);
 
 	}
     return;
 }
 
-void broadcast_tell(CHAR_DATA *ch, CHAR_DATA *whom, char *argument)
+void broadcast_tell(CHAR_DATA *sender, CHAR_DATA *whom, char *argument)
 {
-    if (send_tell(ch, whom, argument)) {
-        if (!IS_NPC(ch) && IS_NPC(whom) && HAS_TRIGGER(whom, TRIG_SPEECH)) {
-            mp_act_trigger(argument, whom, ch, NULL, NULL, TRIG_SPEECH);
+    if (send_tell(sender, whom, argument)) {
+        whom->reply = sender;
+        if (!IS_NPC(sender) && IS_NPC(whom) && HAS_TRIGGER(whom, TRIG_SPEECH)) {
+            mp_act_trigger(argument, whom, sender, NULL, NULL, TRIG_SPEECH);
         }
     }
 	return;
 }
 
-void broadcast_reply(CHAR_DATA *ch, char *argument)
+void broadcast_reply(CHAR_DATA *sender, char *argument)
 {
 	CHAR_DATA *whom;
 
-	if ((whom = ch->reply) == NULL) {
-		send_to_char("They aren't here.\n\r", ch);
+	if ((whom = sender->reply) == NULL) {
+		send_to_char("They aren't here.\n\r", sender);
 		return;
 	}
 
-    if (send_tell(ch, whom, argument)) {
-        whom->reply = ch;
+    if (send_tell(sender, whom, argument)) {
+        whom->reply = sender;
     }
 
 	return;
 }
 
-void broadcast_yell(CHAR_DATA *ch, char *argument)
+void broadcast_yell(CHAR_DATA *sender, char *argument)
 {
 	DESCRIPTOR_DATA *d;
 
-    if (!can_talk(ch)) {
+    if (!can_talk(sender)) {
         return;
     }
 
-	if (IS_SET(ch->comm, COMM_NOSHOUT)) {
-		send_to_char("You can't ```1yell``.\n\r", ch);
+	if (IS_SET(sender->comm, COMM_NOSHOUT)) {
+		send_to_char("You can't ```1yell``.\n\r", sender);
 		return;
 	}
 
-	act("`1You yell '`!$t`1'``", ch, argument, NULL, TO_CHAR);
+	act("`1You yell '`!$t`1'``", sender, argument, NULL, TO_CHAR);
 	for (d = descriptor_list; d != NULL; d = d->next) {
 		if (d->connected == CON_PLAYING
-		    && d->character != ch
+		    && d->character != sender
 		    && d->character->in_room != NULL
-		    && d->character->in_room->area == ch->in_room->area
+		    && d->character->in_room->area == sender->in_room->area
 		    && !IS_SET(d->character->comm, COMM_QUIET)) {
-				act("`1$n yells '`!$t`1'``", ch, argument, d->character, TO_VICT);
+				act("`1$n yells '`!$t`1'``", sender, argument, d->character, TO_VICT);
 		}
 	}
 
 	return;
 }
 
-void broadcast_emote(CHAR_DATA *ch, char *argument)
+void broadcast_emote(CHAR_DATA *sender, char *argument)
 {
-	if (!IS_NPC(ch) && IS_SET(ch->comm2, COMM2_NOEMOTE)) {
-		send_to_char("You can't show your emotions.\n\r", ch);
+	if (!IS_NPC(sender) && IS_SET(sender->comm2, COMM2_NOEMOTE)) {
+		send_to_char("You can't show your emotions.\n\r", sender);
 		return;
 	}
-	act_new("$n $T", ch, NULL, emote_parse(argument), TO_ROOM, POS_RESTING, false);
-	act_new("$n $T", ch, NULL, emote_parse(argument), TO_CHAR, POS_RESTING, false);
+	act_new("$n $T", sender, NULL, emote_parse(argument), TO_ROOM, POS_RESTING, false);
+	act_new("$n $T", sender, NULL, emote_parse(argument), TO_CHAR, POS_RESTING, false);
     return;
 }
 
-void broadcast_pmote(CHAR_DATA *ch, char *argument)
+void broadcast_pmote(CHAR_DATA *sender, char *argument)
 {
 	CHAR_DATA *vch;
 	char *letter;
@@ -240,19 +241,19 @@ void broadcast_pmote(CHAR_DATA *ch, char *argument)
 	char temp[MSL];
 	int matches = 0;
 
-	if (!IS_NPC(ch) && IS_SET(ch->comm2, COMM2_NOEMOTE)) {
-		send_to_char("You can't show your emotions.\n\r", ch);
+	if (!IS_NPC(sender) && IS_SET(sender->comm2, COMM2_NOEMOTE)) {
+		send_to_char("You can't show your emotions.\n\r", sender);
 		return;
 	}
 
-	act("$n $t", ch, argument, NULL, TO_CHAR);
+	act("$n $t", sender, argument, NULL, TO_CHAR);
 
-	for (vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room) {
-		if (vch->desc == NULL || vch == ch)
+	for (vch = sender->in_room->people; vch != NULL; vch = vch->next_in_room) {
+		if (vch->desc == NULL || vch == sender)
 			continue;
 
 		if ((letter = strstr(argument, vch->name)) == NULL) {
-			act_new("$N $t", vch, argument, ch, TO_CHAR, POS_RESTING, false);
+			act_new("$N $t", vch, argument, sender, TO_CHAR, POS_RESTING, false);
 			continue;
 		}
 
@@ -295,7 +296,7 @@ void broadcast_pmote(CHAR_DATA *ch, char *argument)
 			name = vch->name;
 		}
 
-		act_new("$N $t", vch, temp, ch, TO_CHAR, POS_RESTING, false);
+		act_new("$N $t", vch, temp, sender, TO_CHAR, POS_RESTING, false);
 	}
     return;
 }
@@ -323,15 +324,15 @@ bool is_ignoring(CHAR_DATA *sender, CHAR_DATA *receiver)
     return found;
 }
 
-bool can_talk(CHAR_DATA *ch)
+bool can_talk(CHAR_DATA *sender)
 {
-	if (IS_SET(ch->comm, COMM_NOCHANNELS)) {
-		send_to_char("The gods have revoked your channel priviliges.\n\r", ch);
+	if (IS_SET(sender->comm, COMM_NOCHANNELS)) {
+		send_to_char("The gods have revoked your channel priviliges.\n\r", sender);
 		return false;
 	}
 
-	if (IS_SET(ch->comm, COMM_QUIET)) {
-		send_to_char("You must turn off quiet mode first.\n\r", ch);
+	if (IS_SET(sender->comm, COMM_QUIET)) {
+		send_to_char("You must turn off quiet mode first.\n\r", sender);
 		return false;
 	}
 
@@ -384,9 +385,14 @@ bool send_tell(CHAR_DATA *sender, CHAR_DATA *whom, char* argument)
 		add_buf(whom->pcdata->buffer, buf);
 		return true;
 	}
-	act("`@You tell $N '`t$t`@'``", sender, argument, whom, TO_CHAR);
-	act_new("`@$n tells you '`t$t`@'``", sender, argument, whom, TO_VICT, POS_DEAD, false);
-	whom->reply = sender;
+
+    if (whom->desc == NULL && !IS_NPC(whom)) {
+        act("$N seems to have misplaced $S link...try again later.", sender, NULL, whom, TO_CHAR);
+        (void)snprintf(buf, 2 * MIL, "```@%s tells you '`t%s```@'``\n\r", PERS(sender, whom), argument);
+        buf[0] = UPPER(buf[0]);
+        add_buf(whom->pcdata->buffer, buf);
+        return true;
+    }
 
 	if (IS_SET(whom->comm2, COMM2_BUSY)) {
 		if (IS_NPC(whom)) {
@@ -426,6 +432,7 @@ bool send_tell(CHAR_DATA *sender, CHAR_DATA *whom, char* argument)
 		add_buf(whom->pcdata->buffer, buf);
 		return true;
 	}
+
 
 
 	act("`@You tell $N '`r$t`@'``", sender, argument, whom, TO_CHAR);

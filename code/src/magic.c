@@ -406,17 +406,9 @@ void do_cast(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if ((ch->in_room->vnum == ROOM_VNUM_ALTAR) && (!IS_IMMORTAL(ch)) && ch->pk_timer < 0) {
-		send_to_char("You can't cast in this room!\n\r", ch);
-		return;
-	}
-
-
-
-
-/*
- * Locate targets.
- */
+    /*
+     * Locate targets.
+     */
 	victim = NULL;
 	obj = NULL;
 	vo = NULL;

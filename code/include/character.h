@@ -5,6 +5,8 @@ bool character_toggle_comm(/*@partial@*/CHAR_DATA *ch, long commflag, int locati
 /* character_service.c */
 void toggle_comm(/*@partial@*/CHAR_DATA *ch, long commflag);
 void toggle_afk(/*@partial@*/CHAR_DATA *ch, /*@null@*/char *message);
+void replay(/*@partial@*/CHAR_DATA *ch);
+void show_channels(/*@partial@*/CHAR_DATA *ch);
 void sit(/*@partial@*/CHAR_DATA *ch, /*@nulL@*//*@partial@*/OBJ_DATA *on);
 void stand(/*@partial@*/CHAR_DATA *ch, /*@nulL@*//*@partial@*/OBJ_DATA *on);
 void look_room(/*@partial@*/CHAR_DATA *ch, /*@partial@*/ROOM_INDEX_DATA *room);

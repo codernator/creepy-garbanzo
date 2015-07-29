@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "merc.h"
 #include "character.h"
+#include "recycle.h"
 
 // TODO - used by look
 extern DO_FUN do_exits;
@@ -14,6 +15,7 @@ extern DO_FUN do_split;
 
 extern void print_weather(CHAR_DATA * ch);
 extern void bug_long(const char *str, long param);
+
 
 void show_char_to_char(CHAR_DATA * list, CHAR_DATA * ch);
 void show_char_to_char_2(CHAR_DATA * victim, CHAR_DATA * ch);
@@ -112,6 +114,12 @@ void toggle_afk(CHAR_DATA *ch, char *message)
 	} else {
 		send_to_char("`!A`@F`OK`` mode removed. Type 'replay' to see tells.\n\r", ch);
 	}
+}
+
+void replay(CHAR_DATA *ch) {
+	page_to_char(buf_string(ch->pcdata->buffer), ch);
+	clear_buf(ch->pcdata->buffer);
+    return;
 }
 
 void look_equipment(CHAR_DATA *ch) {
@@ -422,6 +430,97 @@ void look_object(CHAR_DATA *ch, OBJ_DATA *obj, char *argument) {
         }
         break;
     }
+}
+
+void show_channels(CHAR_DATA *ch)
+{
+	send_to_char("CHANNEL        STATUS\n\r", ch);
+	send_to_char("```&---------------------``\n\r", ch);
+
+	printf_to_char(ch, "`![Info]         %s``\n\r",
+		       IS_SET(ch->comm2, COMM2_INFO) ? "`#ON" : "`1OFF");
+
+	printf_to_char(ch, "`3Auction        %s``\n\r",
+		       !IS_SET(ch->comm, COMM_NOAUCTION) ? "`#ON" : "`1OFF");
+
+	printf_to_char(ch, "`4Quote          %s``\n\r",
+		       !IS_SET(ch->comm, COMM_NOQUOTE) ? "`#ON" : "`1OFF");
+
+	printf_to_char(ch, "`1Shouts         %s``\n\r",
+		       !IS_SET(ch->comm, COMM_SHOUTSOFF) ? "`#ON" : "`1OFF");
+
+	printf_to_char(ch, "`#OOC            %s``\n\r",
+		       !IS_SET(ch->comm, COMM_NOOOC) ? "`#ON" : "`1OFF");
+
+	printf_to_char(ch, "`#QChat          %s``\n\r",
+		       !IS_SET(ch->comm2, COMM2_NOQCHAT) ? "`#ON" : "`1OFF");
+
+	printf_to_char(ch, "`!Trivia         %s``\n\r",
+		       (!IS_SET(ch->comm, COMM_NOTRIVIA) && !IS_SET(ch->comm, COMM_TRIVIAOFF)) ? "`#ON" : "`1OFF");
+
+	printf_to_char(ch, "`!Auto Trivia    %s``\n\r",
+		       (!IS_SET(ch->comm2, COMM_TTRIV) && !IS_SET(ch->comm2, COMM_TTRIV)) ? "`#ON" : "`1OFF");
+
+	printf_to_char(ch, "`@Tells          %s``\n\r",
+		       !IS_SET(ch->comm, COMM_DEAF) ? "`#ON" : "`1OFF");
+
+	printf_to_char(ch, "`^Quiet Mode     %s``\n\r",
+		       IS_SET(ch->comm, COMM_QUIET) ? "`#ON" : "`1OFF");
+
+	printf_to_char(ch, "`#Battlefield    %s``\n\r",
+		       IS_SET(ch->comm2, COMM_NOBATTLEFIELD) ? "`#ON" : "`1OFF");
+
+	if (IS_IMMORTAL(ch)) {
+		printf_to_char(ch, "`!GOD channel    %s``\n\r",
+			       !IS_SET(ch->comm, COMM_NOWIZ) ? "`#ON" : "`1OFF");
+
+		printf_to_char(ch, "`OWishes         %s``\n\r",
+			       !IS_SET(ch->comm, COMM_NOWISH) ? "`#ON" : "`1OFF");
+	}
+
+	if (ch->level == IMPLEMENTOR)
+		printf_to_char(ch, "`2I`8M`2P            %s``\n\r",
+			       !IS_SET(ch->comm2, COMM2_IMPTALK) ? "`#ON" : "`1OFF");
+
+	send_to_char("\n\r", ch);
+	if (IS_SET(ch->comm2, COMM2_AFK))
+		send_to_char("You are ```!A```@F```OK``.\n\r", ch);
+
+	if (IS_SET(ch->comm2, COMM2_BUSY))
+		send_to_char("You are Busy.\n\r", ch);
+
+	if (IS_SET(ch->comm2, COMM2_CODING))
+		send_to_char("You are `@Coding``.\n\r", ch);
+
+	if (IS_SET(ch->comm2, COMM2_BUILD))
+		send_to_char("You are `3Building``.\n\r", ch);
+
+	if (IS_SET(ch->comm, COMM_SNOOP_PROOF))
+		send_to_char("You are immune to snooping.\n\r", ch);
+
+	if (ch->lines != PAGELEN) {
+		if (ch->lines > 0)
+			printf_to_char(ch, "You display %d lines of scroll.\n\r", ch->lines + 2);
+		else
+			send_to_char("Scroll buffering is off.\n\r", ch);
+	}
+
+	if (ch->prompt != NULL)
+		printf_to_char(ch, "Your current prompt is: %s\n\r", ch->prompt);
+
+	if (IS_SET(ch->comm, COMM_NOSHOUT))
+		send_to_char("You cannot ```1shout``.\n\r", ch);
+
+	if (IS_SET(ch->comm, COMM_NOTELL))
+		send_to_char("You cannot use ```@tell``.\n\r", ch);
+
+	if (IS_SET(ch->comm, COMM_NOCHANNELS))
+		send_to_char("You cannot use channels.\n\r", ch);
+
+	if (IS_SET(ch->comm2, COMM2_NOEMOTE))
+		send_to_char("You cannot show emotions.\n\r", ch);
+
+    return;
 }
 
 void sit(CHAR_DATA *ch, OBJ_DATA *on)

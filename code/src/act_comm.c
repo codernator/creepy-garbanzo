@@ -117,95 +117,8 @@ void do_clearscreen(CHAR_DATA *ch, /*@unused@*/char *argument)
 
 void do_channels(CHAR_DATA *ch, /*@unused@*/char *argument)
 {
-	if (IS_NPC(ch))
-		return;
-
-	send_to_char("CHANNEL        STATUS\n\r", ch);
-	send_to_char("```&---------------------``\n\r", ch);
-
-	printf_to_char(ch, "`![Info]         %s``\n\r",
-		       IS_SET(ch->comm2, COMM2_INFO) ? "`#ON" : "`1OFF");
-
-	printf_to_char(ch, "`3Auction        %s``\n\r",
-		       !IS_SET(ch->comm, COMM_NOAUCTION) ? "`#ON" : "`1OFF");
-
-	printf_to_char(ch, "`4Quote          %s``\n\r",
-		       !IS_SET(ch->comm, COMM_NOQUOTE) ? "`#ON" : "`1OFF");
-
-	printf_to_char(ch, "`1Shouts         %s``\n\r",
-		       !IS_SET(ch->comm, COMM_SHOUTSOFF) ? "`#ON" : "`1OFF");
-
-	printf_to_char(ch, "`#OOC            %s``\n\r",
-		       !IS_SET(ch->comm, COMM_NOOOC) ? "`#ON" : "`1OFF");
-
-	printf_to_char(ch, "`#QChat          %s``\n\r",
-		       !IS_SET(ch->comm2, COMM2_NOQCHAT) ? "`#ON" : "`1OFF");
-
-	printf_to_char(ch, "`!Trivia         %s``\n\r",
-		       (!IS_SET(ch->comm, COMM_NOTRIVIA) && !IS_SET(ch->comm, COMM_TRIVIAOFF)) ? "`#ON" : "`1OFF");
-
-	printf_to_char(ch, "`!Auto Trivia    %s``\n\r",
-		       (!IS_SET(ch->comm2, COMM_TTRIV) && !IS_SET(ch->comm2, COMM_TTRIV)) ? "`#ON" : "`1OFF");
-
-	printf_to_char(ch, "`@Tells          %s``\n\r",
-		       !IS_SET(ch->comm, COMM_DEAF) ? "`#ON" : "`1OFF");
-
-	printf_to_char(ch, "`^Quiet Mode     %s``\n\r",
-		       IS_SET(ch->comm, COMM_QUIET) ? "`#ON" : "`1OFF");
-
-	printf_to_char(ch, "`#Battlefield    %s``\n\r",
-		       IS_SET(ch->comm2, COMM_NOBATTLEFIELD) ? "`#ON" : "`1OFF");
-
-	if (IS_IMMORTAL(ch)) {
-		printf_to_char(ch, "`!GOD channel    %s``\n\r",
-			       !IS_SET(ch->comm, COMM_NOWIZ) ? "`#ON" : "`1OFF");
-
-		printf_to_char(ch, "`OWishes         %s``\n\r",
-			       !IS_SET(ch->comm, COMM_NOWISH) ? "`#ON" : "`1OFF");
-	}
-
-	if (ch->level == IMPLEMENTOR)
-		printf_to_char(ch, "`2I`8M`2P            %s``\n\r",
-			       !IS_SET(ch->comm2, COMM2_IMPTALK) ? "`#ON" : "`1OFF");
-
-	send_to_char("\n\r", ch);
-	if (IS_SET(ch->comm2, COMM2_AFK))
-		send_to_char("You are ```!A```@F```OK``.\n\r", ch);
-
-	if (IS_SET(ch->comm2, COMM2_BUSY))
-		send_to_char("You are Busy.\n\r", ch);
-
-	if (IS_SET(ch->comm2, COMM2_CODING))
-		send_to_char("You are `@Coding``.\n\r", ch);
-
-	if (IS_SET(ch->comm2, COMM2_BUILD))
-		send_to_char("You are `3Building``.\n\r", ch);
-
-	if (IS_SET(ch->comm, COMM_SNOOP_PROOF))
-		send_to_char("You are immune to snooping.\n\r", ch);
-
-	if (ch->lines != PAGELEN) {
-		if (ch->lines > 0)
-			printf_to_char(ch, "You display %d lines of scroll.\n\r", ch->lines + 2);
-		else
-			send_to_char("Scroll buffering is off.\n\r", ch);
-	}
-
-	if (ch->prompt != NULL)
-		printf_to_char(ch, "Your current prompt is: %s\n\r", ch->prompt);
-
-	if (IS_SET(ch->comm, COMM_NOSHOUT))
-		send_to_char("You cannot ```1shout``.\n\r", ch);
-
-	if (IS_SET(ch->comm, COMM_NOTELL))
-		send_to_char("You cannot use ```@tell``.\n\r", ch);
-
-	if (IS_SET(ch->comm, COMM_NOCHANNELS))
-		send_to_char("You cannot use channels.\n\r", ch);
-
-	if (IS_SET(ch->comm2, COMM2_NOEMOTE))
-		send_to_char("You cannot show emotions.\n\r", ch);
-
+    DENY_NPC(ch);
+    show_channels(ch);
     return;
 }
 
@@ -234,19 +147,14 @@ void do_afk(CHAR_DATA *ch, char *argument)
 
 void do_replay(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
-	if (IS_NPC(ch)) {
-		send_to_char("You can't replay.\n\r", ch);
-		return;
-	}
-
-	page_to_char(buf_string(ch->pcdata->buffer), ch);
-	clear_buf(ch->pcdata->buffer);
-
+    DENY_NPC(ch);
+    replay(ch);
     return;
 }
 
 void do_auctalk(CHAR_DATA *ch, char *argument)
 {
+    DENY_NPC(ch);
 	if (argument[0] == '\0') {
         toggle_comm(ch, COMM_NOAUCTION);
 	} else {
@@ -282,7 +190,6 @@ void do_say(CHAR_DATA *ch, char *argument)
 	} else {
         broadcast_say(ch, argument);
     }
-
 	return;
 }
 
@@ -315,7 +222,6 @@ void do_info(CHAR_DATA *ch, char *argument)
 void do_tell(CHAR_DATA *ch, char *argument)
 {
 	static char arg[MIL];
-	static char buf[MSL];
 	CHAR_DATA *victim;
 
 	argument = one_argument(argument, arg);
@@ -332,24 +238,11 @@ void do_tell(CHAR_DATA *ch, char *argument)
             return;
         }
 
-        if (victim->desc == NULL && !IS_NPC(victim)) {
-            act("$N seems to have misplaced $S link...try again later.", ch, NULL, victim, TO_CHAR);
-            (void)snprintf(buf, 2 * MIL, "```@%s tells you '`t%s```@'``\n\r", PERS(ch, victim), argument);
-            buf[0] = UPPER(buf[0]);
-            add_buf(victim->pcdata->buffer, buf);
-            return;
-        }
         broadcast_tell(ch, victim, argument);
     }
     return;
 }
 
-
-/***************************************************************************
-*	do_reply
-*
-*	reply to a tell
-***************************************************************************/
 void do_reply(CHAR_DATA *ch, char *argument)
 {
 	if (argument[0] == '\0') {

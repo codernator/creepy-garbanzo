@@ -35,4 +35,12 @@ invisibility (partial, intermittent, full)
 faeries
  - faerie dust
 
+# Remove hardcoded room vnums!
+- room post-load hooks so that certain key data can be memorized
+## rooms
+does a corpse appear?
+anti magic zone
+jail?
 
+##areas
+special defines for places like battlefield, donation room, etc.
