@@ -1682,7 +1682,6 @@ struct pc_data {
     int  security;
     int  rank;
     unsigned int twohundred;
-    unsigned int tenten;
     unsigned int armorclass;
     unsigned int fireproof;
     unsigned int weaponflag;

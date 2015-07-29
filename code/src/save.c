@@ -376,7 +376,6 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 			ch->pcdata->condition[4]);
 
 
-		fprintf(fp, "Tenten %u\n", ch->pcdata->tenten);
 		fprintf(fp, "Twohundreds %u\n", ch->pcdata->twohundred);
 		fprintf(fp, "Fireproof %u\n", ch->pcdata->fireproof);
 		fprintf(fp, "ArmorC %u\n", ch->pcdata->armorclass);
@@ -1478,7 +1477,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 
 		case 'T':
 			KEY("TLag", ch->tLag, fread_number(fp));
-			KEY("Tenten", ch->pcdata->tenten, fread_uint(fp));
 			KEY("Twohundreds", ch->pcdata->twohundred, fread_uint(fp));
 			KEY("Thief_time", ch->pcdata->thief_time, (time_t)fread_long(fp));
 			KEY("TrueSex", ch->pcdata->true_sex, fread_number(fp));

@@ -637,7 +637,6 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 
 			SET_BIT(ch->comm2, COMM2_ENABLE);
 
-			ch->pcdata->tenten = 0;
 			ch->pcdata->twohundred = 0;
 			ch->pcdata->armorclass = 0;
 			ch->pcdata->restring = 0;

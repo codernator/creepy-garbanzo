@@ -333,7 +333,6 @@ void do_autotoken(CHAR_DATA *ch, char *argument)
 	if (!IS_SET(ch->comm2, COMM2_ENABLE)) {
 		send_to_char("Player File Tokens Enabled!!! You will only see this message once in your entire character life.\n\r", ch);
 		SET_BIT(ch->comm2, COMM2_ENABLE);
-		ch->pcdata->tenten = 0;
 		ch->pcdata->twohundred = 0;
 		ch->pcdata->armorclass = 0;
 		ch->pcdata->restring = 0;
@@ -1198,8 +1197,6 @@ void do_score(CHAR_DATA *ch, char *argument)
 		sprintf(buf, "You have `^%u`` AC Tokens.\n\r", ch->pcdata->armorclass);
 		send_to_char(buf, ch);
 		sprintf(buf, "You have `#%u`` 200/200 Tokens.\n\r", ch->pcdata->twohundred);
-		send_to_char(buf, ch);
-		sprintf(buf, "You have `@%u`` 10/10 Tokens.\n\r", ch->pcdata->tenten);
 		send_to_char(buf, ch);
 		sprintf(buf, "You have `O%u`` Weapon Flag Tokens.\n\r", ch->pcdata->weaponflag);
 		send_to_char(buf, ch);

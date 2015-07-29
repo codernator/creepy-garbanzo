@@ -505,7 +505,6 @@ void do_exchange(CHAR_DATA *ch, char *argument)
 		send_to_char("One `PDamagenoun`` Token   15,000,000 `#gold`` pieces\n\r", ch);
 		send_to_char("One `OWeaponflag`` Token   10,000,000 `#gold`` pieces\n\r", ch);
 		send_to_char("One `!Fireproof`` Token    10,000,000 `#gold`` pieces\n\r", ch);
-		send_to_char("One `@Tenten`` Token        8,000,000 `#gold`` pieces\n\r", ch);
 		send_to_char("One `#Twohundred`` Token    8,000,000 `#gold`` pieces\n\r", ch);
 		send_to_char("One `^AC`` Token            5,000,000 `#gold`` pieces\n\r", ch);
 		send_to_char("One `5Imp`` Token           3,000,000 `#gold`` pieces\n\r", ch);
@@ -569,16 +568,6 @@ void do_exchange(CHAR_DATA *ch, char *argument)
 			send_to_char("You exchange 8,000,000 `#gold`` pieces for one `#Twohundred`` token!.\n\r", ch);
 			ch->pcdata->gold_in_bank -= 8000000;
 			ch->pcdata->twohundred += 1;
-			return;
-		}
-		if (!str_prefix(item, "10/10") || !str_prefix(item, "tenten")) {
-			if (ch->pcdata->gold_in_bank < 8000000) {
-				send_to_char("You don't have enough gold!\n\rRemember, we only take gold from your bank account.", ch);
-				return;
-			}
-			send_to_char("You exchange 8,000,000 `#gold`` pieces for one `@Tenten`` token!.\n\r", ch);
-			ch->pcdata->gold_in_bank -= 8000000;
-			ch->pcdata->tenten += 1;
 			return;
 		}
 
