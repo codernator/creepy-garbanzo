@@ -176,7 +176,6 @@ void load_threads(void);
 extern void load_bans(void);
 static void load_mobprogs(FILE * fp);
 static void load_mobprogs_new(FILE * fp);
-extern void load_trivia(void);
 void resolve_global_skills(void);
 
 static void fix_exits(void);

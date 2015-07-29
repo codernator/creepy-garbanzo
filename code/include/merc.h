@@ -89,8 +89,6 @@ typedef struct shop_data SHOP_DATA;
 typedef struct time_info_data TIME_INFO_DATA;
 typedef struct weather_data WEATHER_DATA;
 typedef struct war_data WAR_DATA;
-typedef struct trivia_data TRIVIA_DATA;
-typedef struct trivia_engine_data TRIVIA_ENGINE;
 typedef struct disabled_data DISABLED_DATA;
 typedef struct auction_data AUCTION_DATA;
 
@@ -1158,7 +1156,6 @@ struct kill_data {
 #define TOKEN_DAMAGENOUN        64
 #define TOKEN_RESTRING          128
 #define TOKEN_SKILLSET          256
-#define TOKEN_IMMTRIVIA         1024
 #define TOKEN_IMMHIDDEN         2048
 #define TOKEN_IMMWILD           4096
 #define TOKEN_IMP               8192
@@ -1343,7 +1340,6 @@ struct kill_data {
 #define COMM_NOQUOTE            (I)
 #define COMM_SHOUTSOFF          (J)
 #define COMM_NOOOC              (K)
-#define COMM_NOTRIVIA           (L)
 #define COMM_NOWISH             (M)
 #define COMM_TRUE_TRUST         (N)
 #define COMM_COMPACT            (O)
@@ -1359,8 +1355,6 @@ struct kill_data {
 #define COMM_NOQUIT             (aa)
 #define COMM_CLEADER            (bb)
 #define COMM_NOBATTLEFIELD      (cc)
-#define COMM_TRIVIAOFF          (dd)
-#define COMM_TTRIV              (ee)
 #define COMM2_AFK               (A)
 #define COMM2_INFO              (B)
 #define COMM2_NOEMOTE           (C)
@@ -1694,7 +1688,6 @@ struct pc_data {
     unsigned int weaponflag;
     unsigned int restring;
     unsigned int damnoun;
-    unsigned int immtrivia;
     unsigned int immhidden;
     unsigned int immwild;
     unsigned int imp;

@@ -33,3 +33,14 @@ bool character_toggle_comm(CHAR_DATA *ch, long commflag, int location)
     }
 }
 
+bool character_has_comm(CHAR_DATA *ch, long commflag, int location) 
+{
+    switch(location) {
+        case 2:
+            return (IS_SET(ch->comm2, commflag)); 
+        default:
+            return (IS_SET(ch->comm, commflag)); 
+    }
+}
+
+

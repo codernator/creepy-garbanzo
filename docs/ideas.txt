@@ -44,3 +44,18 @@ jail?
 
 ##areas
 special defines for places like battlefield, donation room, etc.
+
+
+			ch->pcdata->tenten = 0;
+			ch->pcdata->twohundred = 0;
+			ch->pcdata->armorclass = 0;
+			ch->pcdata->restring = 0;
+			ch->pcdata->weaponflag = 0;
+			ch->pcdata->fireproof = 0;
+			ch->pcdata->damnoun = 0;
+			ch->pcdata->immhidden = 0;
+			ch->pcdata->immwild = 0;
+			ch->pcdata->imp = 0;
+			ch->pcdata->skillset = 0;
+			ch->pcdata->rp = 0;
+

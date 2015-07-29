@@ -393,7 +393,6 @@ const struct cmd_type cmd_table[] =
 	{ "noquit",	      do_noquit,       POS_DEAD,     L7, LOG_ALWAYS, 1 },
 	{ "noshout",	  do_noshout,      POS_DEAD,     L7, LOG_ALWAYS, 1 },
 	{ "notell",	      do_notell,       POS_DEAD,     L7, LOG_ALWAYS, 1 },
-	{ "notrivia",	  do_notrivia,     POS_DEAD,     L7, LOG_ALWAYS, 1 },
 	{ "nowish",	      do_nowish,       POS_DEAD,     L7, LOG_ALWAYS, 1 },
 	{ "pecho",	      do_pecho,	       POS_DEAD,     L7, LOG_ALWAYS, 1 },
 	{ "pardon",	      do_pardon,       POS_DEAD,     L7, LOG_ALWAYS, 1 },

@@ -2832,52 +2832,6 @@ void do_noemote(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-void do_notrivia(CHAR_DATA *ch, char *argument)
-{
-	char arg[MIL], buf[MSL];
-	CHAR_DATA *victim;
-
-	one_argument(argument, arg);
-
-	if (ch) {
-		if (IS_NPC(ch)) {
-			send_to_char("Mobs can't use this command.\n\r", ch);
-			return;
-		}
-	}
-
-	if (arg[0] == '\0') {
-		send_to_char("No`!trivia`` whom?\n\r", ch);
-		return;
-	}
-
-	if ((victim = get_char_world(ch, arg)) == NULL) {
-		send_to_char("They aren't here.\n\r", ch);
-		return;
-	}
-
-
-	if (get_trust(victim) >= get_trust(ch)) {
-		send_to_char("You failed.\n\r", ch);
-		return;
-	}
-
-	if (IS_SET(victim->comm, COMM_TRIVIAOFF)) {
-		REMOVE_BIT(victim->comm, COMM_TRIVIAOFF);
-		send_to_char("You can use the `!trivia`` channel again.\n\r", victim);
-		send_to_char("NOTRIVIA removed.\n\r", ch);
-		sprintf(buf, "$N restores the trivia channel to %s.", victim->name);
-		wiznet(buf, ch, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
-	} else {
-		SET_BIT(victim->comm, COMM_TRIVIAOFF);
-		send_to_char("You can't use the `!trivia`` channel!\n\r", victim);
-		send_to_char("NOTRIVIA set.\n\r", ch);
-		sprintf(buf, "$N revokes %s's trivia privileges.", victim->name);
-		wiznet(buf, ch, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
-	}
-
-	return;
-}
 void do_nowish(CHAR_DATA *ch, char *argument)
 {
 	char arg[MIL], buf[MSL];

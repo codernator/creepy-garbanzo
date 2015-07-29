@@ -644,7 +644,6 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 			ch->pcdata->weaponflag = 0;
 			ch->pcdata->fireproof = 0;
 			ch->pcdata->damnoun = 0;
-			ch->pcdata->immtrivia = 0;
 			ch->pcdata->immhidden = 0;
 			ch->pcdata->immwild = 0;
 			ch->pcdata->imp = 0;
