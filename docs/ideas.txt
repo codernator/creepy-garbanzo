@@ -4,7 +4,7 @@
  *                                                                          *
  *   Merc Diku Mud improvments copyright(C) 1992, 1993 by Michael           *
  *   Chastain, Michael Quan, and Mitchell Tse.                              *
- *	                                                                        *
+ *                                                                          *
  *   In order to use any part of this Merc Diku Mud, you must comply with   *
  *   both the original Diku license in 'license.doc' as well the Merc	    *
  *   license in 'license.txt'.  In particular, you may not remove either of *
@@ -46,14 +46,4 @@ jail?
 special defines for places like battlefield, donation room, etc.
 
 
-			ch->pcdata->armorclass = 0;
-			ch->pcdata->restring = 0;
-			ch->pcdata->weaponflag = 0;
-			ch->pcdata->fireproof = 0;
-			ch->pcdata->damnoun = 0;
-			ch->pcdata->immhidden = 0;
-			ch->pcdata->immwild = 0;
-			ch->pcdata->imp = 0;
-			ch->pcdata->skillset = 0;
-			ch->pcdata->rp = 0;
 

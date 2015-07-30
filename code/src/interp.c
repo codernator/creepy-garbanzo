@@ -271,7 +271,6 @@ const struct cmd_type cmd_table[] =
 	{ "bite",	      do_bite,	       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
 	{ "feed",	      do_feed,	       POS_STANDING, 0,	 LOG_NORMAL, 1 },
 	{ "crush",	      do_crush,	       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
-	{ "dirt",	      do_dirt,	       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
 	{ "disarm",	      do_disarm,       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
 	{ "deft",	      do_deft,	       POS_STANDING, 0,	 LOG_NORMAL, 1 },
 	{ "dash",	      do_dash,	       POS_STANDING, 0,	 LOG_NORMAL, 1 },
@@ -285,7 +284,6 @@ const struct cmd_type cmd_table[] =
 	{ "ravage",	      do_ravage,       POS_FIGHTING, 0,	 LOG_NORMAL, 0 },
 	{ "rescue",	      do_rescue,       POS_FIGHTING, 0,	 LOG_NORMAL, 0 },
 	{ "throw",	      do_throw,	       POS_FIGHTING, 0,	 LOG_NORMAL, 0 },
-	{ "trip",	      do_trip,	       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
 	{ "shriek",	      do_shriek,       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
 
 /*  Mob command interpreter(placed here for faster scan...)  */
