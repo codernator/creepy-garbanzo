@@ -1307,22 +1307,20 @@ struct kill_data {
 #define COMM_NOTELL             (X)
 #define COMM_NOCHANNELS         (Y)
 #define COMM_NOQUIT             (aa)
-#define COMM_CLEADER            (bb)
 #define COMM_NOBATTLEFIELD      (cc)
 #define COMM2_AFK               (A)
 #define COMM2_INFO              (B)
 #define COMM2_NOEMOTE           (C)
 #define COMM2_IMPTALK           (E)
 #define COMM2_TICKS             (F)
-#define COMM2_PRIV              (G)
 #define COMM2_ENABLE            (K)
 #define COMM2_TARGET            (L)
 #define COMM2_LOCKREPLY         (M)
+// grant player ability to talk on IMP channel (a "tester" role is better suited, no?)
 #define COMM2_IMPTALKM          (N)
 #define COMM2_RP                (O)
 #define COMM2_CODING            (P)
 #define COMM2_BUILD             (Q)
-#define COMM2_NOQCHAT           (R)
 #define COMM2_BUSY              (T)
 
 
@@ -1569,7 +1567,6 @@ struct pc_data {
     /*@shared@*/char *  title;
     /*@shared@*/char *  grestore_string;
     /*@shared@*/char *  rrestore_string;
-    /*@shared@*/char *  immkiss_string;
     time_t  last_note;
     time_t  last_idea;
     time_t  last_penalty;

@@ -471,7 +471,6 @@ void free_pcdata(PC_DATA *pcdata)
 	free_string(pcdata->bamfout);
 	free_string(pcdata->grestore_string);
 	free_string(pcdata->rrestore_string);
-	free_string(pcdata->immkiss_string);
 	free_string(pcdata->title);
 	free_string(pcdata->prefix);
 	free_string(pcdata->who_thing);

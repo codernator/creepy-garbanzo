@@ -23,15 +23,13 @@ extern long top_obj_index;
 extern bool is_space(const char test);
 extern bool is_number(const char *test);
 extern int parse_int(char *test);
+extern AFFECT_DATA *affect_free;
 
-/***************************************************************************
-*	local functions
-***************************************************************************/
+
 ROOM_INDEX_DATA *find_location(CHAR_DATA * ch, char *arg);
 
 void reset_area(AREA_DATA * pArea);
 void fry_char(CHAR_DATA * ch, char *argument);
-void immkiss_char(CHAR_DATA * ch, CHAR_DATA * vch);
 bool add_alias(CHAR_DATA * ch, char *alias, char *cmd);
 
 bool set_char_hunger(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
@@ -41,16 +39,8 @@ bool write_to_descriptor(int desc, char *txt, int length);
 
 void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is, const char *message);
 
-/*
- * External vars
- */
-extern AFFECT_DATA *affect_free;
 
 
-
-/***************************************************************************
-*	do_wiznet
-***************************************************************************/
 void do_wiznet(CHAR_DATA *ch, char *argument)
 {
 	BUFFER *buf;
@@ -140,9 +130,6 @@ void do_wiznet(CHAR_DATA *ch, char *argument)
 	}
 }
 
-/***************************************************************************
-*	wiznet
-***************************************************************************/
 void wiznet(char *string, /*@null@*/ CHAR_DATA *ch, /*@null@*/ OBJ_DATA *obj, long flag, long flag_skip, int min_level)
 {
 	DESCRIPTOR_DATA *d;
@@ -166,14 +153,6 @@ void wiznet(char *string, /*@null@*/ CHAR_DATA *ch, /*@null@*/ OBJ_DATA *obj, lo
 	return;
 }
 
-
-/***************************************************************************
-*	do_impnet
-*
-*	bw[00]p!  ..  IMPNet -- aka Ripped and Mod'd Wiznet .. .
-*	dont have a clue why this was imped vs. just adding more wiznet
-*	flags, but here it is -- it is bug-free(?) and non-harmful.
-***************************************************************************/
 void do_impnet(CHAR_DATA *ch, char *argument)
 {
 	BUFFER *buf;
@@ -262,9 +241,6 @@ void do_impnet(CHAR_DATA *ch, char *argument)
 	}
 }
 
-/***************************************************************************
-*	impnet
-***************************************************************************/
 void impnet(char *string, CHAR_DATA *ch, OBJ_DATA *obj, long flag, long flag_skip, int min_level)
 {
 	DESCRIPTOR_DATA *d;
@@ -302,11 +278,6 @@ void do_tick(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-/***************************************************************************
-*	do_grant
-*
-*	grant a skill/spell to a player
-***************************************************************************/
 void do_grant(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *victim;
@@ -379,14 +350,6 @@ void do_grant(CHAR_DATA *ch, char *argument)
 	}
 }
 
-
-
-
-/***************************************************************************
-*	do_outfit
-*
-*	equips a character
-***************************************************************************/
 void do_outfit(CHAR_DATA *ch, char *argument)
 {
 	OBJ_DATA *obj;
@@ -478,12 +441,6 @@ void do_outfit(CHAR_DATA *ch, char *argument)
 		printf_to_char(vch, "You have been equipped by %s.\n\r", ch->name);
 }
 
-
-/***************************************************************************
-*	do_nochannels
-*
-*	restricts channel access to a character
-***************************************************************************/
 void do_nochannels(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *victim;
@@ -527,11 +484,6 @@ void do_nochannels(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-/***************************************************************************
-*	do_smote
-*
-*	emote with some personal funk to it
-***************************************************************************/
 void do_smote(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *vch;
@@ -617,9 +569,6 @@ void do_smote(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-/***************************************************************************
-*	do_bamfin
-***************************************************************************/
 void do_bamfin(CHAR_DATA *ch, char *argument)
 {
 	char buf[MSL];
@@ -643,10 +592,6 @@ void do_bamfin(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-/***************************************************************************
-*	do_bamfout
-***************************************************************************/
 void do_bamfout(CHAR_DATA *ch, char *argument)
 {
 	char buf[MSL];
@@ -670,10 +615,6 @@ void do_bamfout(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-/***************************************************************************
-*	do_deny
-***************************************************************************/
 void do_deny(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *victim;
@@ -814,11 +755,6 @@ void do_chown(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-
-/***************************************************************************
-*	do_echo
-***************************************************************************/
 void do_echo(CHAR_DATA *ch, char *argument)
 {
 	DESCRIPTOR_DATA *d;
@@ -847,10 +783,6 @@ void do_echo(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-/***************************************************************************
-*	do_recho
-***************************************************************************/
 void do_recho(CHAR_DATA *ch, char *argument)
 {
 	DESCRIPTOR_DATA *d;
@@ -879,9 +811,6 @@ void do_recho(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-/***************************************************************************
-*	do_zecho
-***************************************************************************/
 void do_zecho(CHAR_DATA *ch, char *argument)
 {
 	DESCRIPTOR_DATA *d;
@@ -909,9 +838,6 @@ void do_zecho(CHAR_DATA *ch, char *argument)
 	}
 }
 
-/***************************************************************************
-*	do_pecho
-***************************************************************************/
 void do_pecho(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *victim;
@@ -945,11 +871,6 @@ void do_pecho(CHAR_DATA *ch, char *argument)
 	send_to_char("\n\r", ch);
 }
 
-
-
-/***************************************************************************
-*	do_fry
-***************************************************************************/
 void do_fry(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *victim;
@@ -1011,10 +932,6 @@ void do_fry(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-/***************************************************************************
-*	do_ffry
-***************************************************************************/
 void do_ffry(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *victim;
@@ -1057,10 +974,6 @@ void do_ffry(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-/***************************************************************************
-*	do_pardon
-***************************************************************************/
 void do_pardon(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *victim;
@@ -1119,9 +1032,6 @@ void do_pardon(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-/***************************************************************************
-*       do_target
-***************************************************************************/
 void do_target(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *victim;
@@ -1163,9 +1073,6 @@ void do_target(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-/***************************************************************************
-*	do_norestore
-***************************************************************************/
 void do_norestore(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *victim;
@@ -1207,10 +1114,6 @@ void do_norestore(CHAR_DATA *ch, char *argument)
 	SET_BIT(victim->act, PLR_NORESTORE);
 	return;
 }
-
-
-
-
 
 
 void do_transfer(CHAR_DATA *ch, char *argument)
@@ -1379,12 +1282,6 @@ void do_tarnsfer(CHAR_DATA *ch, char *argument)
 	send_to_char("Ok.\n\r", ch);
 }
 
-
-
-
-
-
-
 void do_goto(CHAR_DATA *ch, char *argument)
 {
 	ROOM_INDEX_DATA *location;
@@ -1499,8 +1396,6 @@ void do_reboo(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-
 void do_reboot(CHAR_DATA *ch, char *argument)
 {
 	DESCRIPTOR_DATA *d;
@@ -1529,8 +1424,6 @@ void do_reboot(CHAR_DATA *ch, char *argument)
 
 	return;
 }
-
-
 
 void do_shutdow(CHAR_DATA *ch, char *argument)
 {
@@ -1729,8 +1622,6 @@ void do_switch(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-
 void do_return(CHAR_DATA *ch, char *argument)
 {
 	char buf[MSL];
@@ -1787,7 +1678,6 @@ void recursive_clone(CHAR_DATA *ch, OBJ_DATA *obj, OBJ_DATA *clone)
 		}
 	}
 }
-
 
 /* command that is similar to load */
 void do_clone(CHAR_DATA *ch, char *argument)
@@ -1937,7 +1827,6 @@ void do_clone(CHAR_DATA *ch, char *argument)
 	}
 }
 
-
 void do_load(CHAR_DATA *ch, char *argument)
 {
 	char arg[MIL];
@@ -1975,7 +1864,6 @@ void do_load(CHAR_DATA *ch, char *argument)
 	do_load(ch, "");
 }
 
-
 void do_mload(CHAR_DATA *ch, char *argument)
 {
 	MOB_INDEX_DATA *pMobIndex;
@@ -2006,8 +1894,6 @@ void do_mload(CHAR_DATA *ch, char *argument)
 	send_to_char(buf, ch);
 	return;
 }
-
-
 
 void do_oload(CHAR_DATA *ch, char *argument)
 {
@@ -2062,8 +1948,6 @@ void do_oload(CHAR_DATA *ch, char *argument)
 	send_to_char(buf, ch);
 	return;
 }
-
-
 
 void do_purge(CHAR_DATA *ch, char *argument)
 {
@@ -2137,9 +2021,6 @@ void do_purge(CHAR_DATA *ch, char *argument)
 	extract_char(victim, TRUE);
 	return;
 }
-
-
-
 
 void do_advance(CHAR_DATA *ch, char *argument)
 {
@@ -2242,8 +2123,6 @@ void do_advance(CHAR_DATA *ch, char *argument)
 	save_char_obj(victim);
 	return;
 }
-
-
 
 void do_trust(CHAR_DATA *ch, char *argument)
 {
@@ -2451,7 +2330,6 @@ void do_unrestore(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
 void do_freeze(CHAR_DATA *ch, char *argument)
 {
 	char arg[MIL], buf[MSL];
@@ -2560,8 +2438,6 @@ void do_affstrip(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-
 void do_log(CHAR_DATA *ch, char *argument)
 {
 	char arg[MIL];
@@ -2610,8 +2486,6 @@ void do_log(CHAR_DATA *ch, char *argument)
 
 	return;
 }
-
-
 
 void do_noemote(CHAR_DATA *ch, char *argument)
 {
@@ -2711,8 +2585,6 @@ void do_noshout(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-
 void do_notell(CHAR_DATA *ch, char *argument)
 {
 	char arg[MIL], buf[MSL];
@@ -2759,8 +2631,6 @@ void do_notell(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-
 void do_peace(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *rch;
@@ -2797,8 +2667,6 @@ void do_wizlock(CHAR_DATA *ch, char *argument)
 
 	return;
 }
-
-/* RT anti-newbie code */
 
 void do_newlock(CHAR_DATA *ch, char *argument)
 {
@@ -2902,20 +2770,14 @@ void do_sockets(CHAR_DATA *ch, char *argument)
 	char arg[MIL];
 	char sock[MSL];
 	int count;
-	int cmd;
 
 	DENY_NPC(ch);
 
 	count = 0;
 	buf = new_buf();
 
-	for (cmd = 0; cmd_table[cmd].name[0] != '\0'; cmd++)
-		if (!str_prefix(cmd_table[cmd].name, "hidehost"))
-			break;
-
 	one_argument(argument, arg);
 	send_to_char("`$Connection state            Socket  Name           IP Address", ch);
-	send_to_char(get_trust(ch) >= cmd_table[cmd].level ? " `!(hidehost in red)``\n\r" : "\n\r", ch);
 	send_to_char("``--------------------------+-------+--------------+------------------------------\n\r", ch);
 	for (d = descriptor_list; d != NULL; d = d->next) {
 		if (d->character != NULL && can_see(ch, d->character)
@@ -2983,16 +2845,7 @@ void do_sockets(CHAR_DATA *ch, char *argument)
 				break;
 			}
 
-
-			if (IS_SET(d->character->comm2, COMM2_PRIV)) {
-				if (get_trust(ch) >= get_trust(d->character))
-					sprintf(sock, "`!%s``", d->host);
-				else
-					sprintf(sock, "-Unknown-");
-			} else {
-				sprintf(sock, "%s", d->host);
-			}
-
+            sprintf(sock, "`!%s``", d->host);
 			printf_buf(buf, "`@%-25.25s`` | `^%3d``   | %-12.12s | %s\n\r",
 				   state,
 				   d->descriptor,
@@ -3015,10 +2868,6 @@ void do_sockets(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-/*
- * Thanks to Grodyn for pointing out bugs in this function.
- */
 void do_force(CHAR_DATA *ch, char *argument)
 {
 	char buf[MSL];
@@ -3161,11 +3010,6 @@ void do_force(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-
-/*
- * new routines by Dionysos.
- */
 void do_winvis(CHAR_DATA *ch, char *argument)
 {
 	int level;
@@ -3244,8 +3088,6 @@ void do_incognito(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-
 void do_holylight(CHAR_DATA *ch, char *argument)
 {
 	if (IS_NPC(ch))
@@ -3261,8 +3103,6 @@ void do_holylight(CHAR_DATA *ch, char *argument)
 
 	return;
 }
-
-/* prefix command: it will put the string typed on each line typed */
 
 void do_prefi(CHAR_DATA *ch, char *argument)
 {
@@ -3475,53 +3315,6 @@ void copyover_recover()
 	fclose(fp);
 }
 
-/*
- * void do_enchant(CHAR_DATA * ch, char *argument)
- * {
- *  char item[MIL], affect[MIL], mod[MIL];
- *  OBJ_DATA *obj;
- *  AFFECT_DATA *aff;
- *
- *  argument = one_argument(argument, item);
- *  argument = one_argument(argument, affect);
- *  argument = one_argument(argument, mod);
- *
- *  if(ch)
- *  {
- *      if(IS_NPC(ch))
- *      {
- *          send_to_char("Mobs can't use this command.\n\r", ch);
- *          return;
- *      }
- *  }
- *
- *  if(item[0] == '\0' || affect[0] == '\0')
- *  {
- *      send_to_char("Enchant <item> <affect> [modifier]\n\r", ch);
- *      return;
- *  }
- *
- *  if((obj = get_obj_carry(ch, item)) == NULL)
- *  {
- *      send_to_char("You don't have that item.\n\r", ch);
- *      return;
- *  }
- *
- *  aff = malloc(sizeof(*aff));
- *  aff->level = ch->level;
- *  aff->duration = -1;
- *  aff->bitvector = 0;
- *  aff->type = aff->location = get_item_apply_val(affect);
- *  if(mod[0] != '\0')
- *      aff->modifier = parse_int(mod);
- *  else
- *      aff->modifier = ch->level;
- *
- *
- *  affect_to_obj(obj, aff);
- * }
- */
-
 bool check_parse_name(char *name);      /* comm.c */
 
 void do_rename(CHAR_DATA *ch, char *argument)
@@ -3637,7 +3430,6 @@ void do_rename(CHAR_DATA *ch, char *argument)
 	victim->position = POS_STANDING; /* I am laaazy */
 	act("$n has renamed you to $N!", ch, NULL, victim, TO_VICT);
 }
-
 
 void do_faketell(CHAR_DATA *ch, char *argument)
 {
@@ -3805,9 +3597,6 @@ void do_pftell(CHAR_DATA *ch, char *argument)
 	send_to_char("May your faketell cause lot's of chaos =P ..\n\r\n\r", ch);
 }
 
-/***************************************************************************
-*	do_pnlist
-***************************************************************************/
 void do_pnlist(CHAR_DATA *ch, char *argument)
 {
 	DESCRIPTOR_DATA *d;
@@ -3848,10 +3637,6 @@ void do_pnlist(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-/***************************************************************************
-*	do_pig
-***************************************************************************/
 void do_pig(CHAR_DATA *ch, char *argument)
 {
 	ROOM_INDEX_DATA *location;
@@ -3909,10 +3694,6 @@ void do_pig(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-/***************************************************************************
-*	do_repop
-***************************************************************************/
 void do_repop(CHAR_DATA *ch, char *argument)
 {
 	AREA_DATA *pArea;
@@ -3935,9 +3716,6 @@ void do_repop(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-/***************************************************************************
-*	do_omnistat
-***************************************************************************/
 void do_omnistat(CHAR_DATA *ch, char *argument)
 {
 	DESCRIPTOR_DATA *d;
@@ -4146,8 +3924,6 @@ void do_setrestore(CHAR_DATA *ch, char *argument)
 		send_to_char("  srestore room <text>  :  set restore string for rooms\n\r", ch);
 		send_to_char("                           or individual players\n\r", ch);
 		send_to_char("  srestore global <text>:  set restore string for global\n\r", ch);
-		send_to_char("                           restore\n\r", ch);
-		send_to_char("  srestore immkiss <text>: set immkiss string\n\r", ch);
 		return;
 	}
 
@@ -4249,8 +4025,6 @@ void do_review(CHAR_DATA *ch, char *argument)
 	sprintf(buf, "R. Restore :%s\n\r", ch->pcdata->rrestore_string);
 	send_to_char(buf, ch);
 
-	sprintf(buf, "Immkiss    :%s\n\r", ch->pcdata->immkiss_string);
-	send_to_char(buf, ch);
 	sprintf(buf, "Title      :%s\n\r", ch->pcdata->title);
 	send_to_char(buf, ch);
 
@@ -4346,50 +4120,6 @@ void do_noquit(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-/*
- * void do_disenchant(CHAR_DATA * ch, char *argument)
- * {
- *  char item[MIL];
- *  OBJ_DATA *obj;
- *  AFFECT_DATA *aff, *aff_next;
- *
- *
- *  argument = one_argument(argument, item);
- *
- *  if(ch)
- *  {
- *      if(IS_NPC(ch))
- *      {
- *          send_to_char("Mobs can't use this command.\n\r", ch);
- *          return;
- *      }
- *  }
- *
- *  if(item[0] == '\0')
- *  {
- *      send_to_char("Disenchant <item>\n\r", ch);
- *      return;
- *  }
- *
- *  if((obj = get_obj_carry(ch, item)) == NULL)
- *  {
- *      send_to_char("You don't have that item.\n\r", ch);
- *      return;
- *  }
- *
- *  for(aff = obj->affected; aff != NULL; aff = aff_next)
- *  {
- *      aff_next = aff->next;
- *      free_affect(aff);
- *  }
- *  obj->affected = NULL;
- *
- *  obj->extra_flags = 0;
- *  send_to_char("This object now has no enchantments upon it.\n\r", ch);
- *
- *  return;
- * }
- */
 void do_rdesc(CHAR_DATA *ch, char *argument)
 {
 	ROOM_INDEX_DATA *location;
@@ -4474,12 +4204,6 @@ void do_rdesc(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-/***************************************************************************
-*	do_addalias
-*
-*	add an alias to a characters alias list(with them knowing)
-***************************************************************************/
 void do_addalias(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *rch;
@@ -4564,15 +4288,6 @@ void do_addalias(CHAR_DATA *ch, char *argument)
 }
 
 
-
-
-
-/***************************************************************************
-*	utilities
-***************************************************************************/
-/***************************************************************************
-*	fry_char
-***************************************************************************/
 void fry_char(CHAR_DATA *ch, char *argument)
 {
 	DESCRIPTOR_DATA *d;
@@ -4609,39 +4324,6 @@ void fry_char(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-/***************************************************************************
- *	immkiss_char
- **************************************************************************/
-void immkiss_char(CHAR_DATA *ch, CHAR_DATA *vch)
-{
-	SKILL *skill;
-	char *spells[] = { "sanctuary", "shield", "bless",
-			   "fly",	"haste",  "armor","giant strength","druid call", "frenzy", "" };
-	int idx;
-
-
-	restore_char(vch);
-	if (ch->pcdata != NULL && ch->pcdata->immkiss_string[0] != '\0')
-		printf_to_char(vch, "%s\n\r", ch->pcdata->immkiss_string);
-	else
-		printf_to_char(vch, "The image of %s kisses you lightly.\n\r", PERS(ch, vch));
-
-/*	printf_to_char(vch, "The image of %s kisses you lightly.\n\r", PERS(ch, vch));*/
-
-	for (idx = 0; spells[idx][0] != '\0'; idx++) {
-		skill = skill_lookup(spells[idx]);
-		cast_spell(ch, skill, ch->level * 2, vch, TARGET_CHAR, "");
-	}
-}
-
-/***************************************************************************
-*	do_gobstopper
-*
-*	a "gobstopper" token makes it so a character never has to eat
-*	or drink again.  these are currently redeemed manually by setting
-*	the thirst and hunger properties to -151, but I am lazy
-***************************************************************************/
 void do_gobstopper(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *vch;
@@ -4666,63 +4348,6 @@ void do_gobstopper(CHAR_DATA *ch, char *argument)
 			       (IS_NPC(vch)) ? vch->short_descr : vch->name);
 	}
 }
-
-
-
-
-/***************************************************************************
-*	testing stuff
-***************************************************************************/
-
-#if defined(__TEST_ENV)
-#include "script.h"
-/***************************************************************************
-*	test_fn
-*
-*	function that can be changed for whatever code is necessary
-***************************************************************************/
-void test_fn()
-{
-	SCRIPT *script;
-	SCRIPT_LINE *line;
-	char *code = "if blah = blah\n\ror blah = blah2\n\rsay hi\n\relse\n\rsay bye\n\rendif\n\r";
-
-	script = new_script();
-	script->raw_code = str_dup(code);
-
-	compile_script(script);
-
-	if (script->error_line > 0) {
-		printf("%d: %s\n", script->error_line, script->error_desc);
-	} else {
-		int ln;
-
-		ln = 0;
-		for (line = script->code; line != NULL; line = line->next)
-			printf("%d: %s\n", ++ln, line->code);
-	}
-}
-
-/***************************************************************************
-*	do_immtest
-*
-*	code for doing testing of any recent changes
-***************************************************************************/
-void do_immtest(CHAR_DATA *ch, char *argument)
-{
-	test_fn();
-}
-#else
-/***************************************************************************
-*	do_immtest
-*
-*	code for doing testing of any recent changes
-***************************************************************************/
-void do_immtest(CHAR_DATA *ch, char *argument)
-{
-	send_to_char("This function is not available in the prodcution environment.\n\r", ch);
-}
-#endif
 
 void do_auto_shutdown()
 {
@@ -4954,7 +4579,6 @@ void do_punload(CHAR_DATA *ch, char *argument)
 	wiznet(buf, ch, NULL, WIZ_LOAD, WIZ_SECURE, get_trust(ch));
 	return;
 }
-
 
 void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is mood, const char *message)
 {

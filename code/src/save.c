@@ -352,11 +352,6 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 		if (ch->pcdata->rrestore_string[0] != '\0')
 			fprintf(fp, "Rres  %s~\n", ch->pcdata->rrestore_string);
 
-/*                if(ch->pcdata->immkiss_string[0] != '\0')*/
-/*                {*/
-		fprintf(fp, "Immk  %s~\n", ch->pcdata->immkiss_string);
-/*                }*/
-
 		if (ch->pcdata->who_thing[0] != '\0')
 			fprintf(fp, "Who  %s~\n", ch->pcdata->who_thing);
 
@@ -743,7 +738,6 @@ bool load_char_obj(DESCRIPTOR_DATA *d, char *name)
 
 	ch->pcdata->grestore_string = str_dup("");
 	ch->pcdata->rrestore_string = str_dup("");
-	ch->pcdata->immkiss_string = str_dup("");
 	ch->pcdata->who_thing = str_dup("");
 
 	ch->pcdata->restring_name = str_dup("");
@@ -1291,7 +1285,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 			KEY("InvisLevel", ch->invis_level, fread_number(fp));
 			KEY("Inco", ch->incog_level, fread_number(fp));
 			KEY("Invi", ch->invis_level, fread_number(fp));
-			KEY("Immk", ch->pcdata->immkiss_string, fread_string(fp));
 			KEY("Inote", ch->inote, fread_string(fp));
 			break;
 

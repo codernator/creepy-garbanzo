@@ -183,7 +183,6 @@ DECLARE_DO_FUN(do_target);
 DECLARE_DO_FUN(do_cuo);
 DECLARE_DO_FUN(do_tally);
 DECLARE_DO_FUN(do_untally);
-DECLARE_DO_FUN(do_qchat);
 DECLARE_DO_FUN(do_goto);
 DECLARE_DO_FUN(do_gobstopper);
 DECLARE_DO_FUN(do_group);
@@ -193,7 +192,6 @@ DECLARE_DO_FUN(do_grant);
 DECLARE_DO_FUN(do_heal);
 DECLARE_DO_FUN(do_help);
 DECLARE_DO_FUN(do_hide);
-DECLARE_DO_FUN(do_hidehost);
 DECLARE_DO_FUN(do_slot);
 DECLARE_DO_FUN(do_holylight);
 DECLARE_DO_FUN(do_immtalk);
@@ -431,16 +429,12 @@ DECLARE_DO_FUN(do_sprinkle);
 DECLARE_DO_FUN(do_veil);
 
 
-/***************************************************************************
-*	recent additions
-***************************************************************************/
 DECLARE_DO_FUN(do_die);
 DECLARE_DO_FUN(do_imprint);
 DECLARE_DO_FUN(do_ovnum);
 DECLARE_DO_FUN(do_mvnum);
 DECLARE_DO_FUN(do_raceinfo);
 DECLARE_DO_FUN(do_radio);
-DECLARE_DO_FUN(do_immtest);
 DECLARE_DO_FUN(do_ploa);
 DECLARE_DO_FUN(do_pload);
 DECLARE_DO_FUN(do_punloa);

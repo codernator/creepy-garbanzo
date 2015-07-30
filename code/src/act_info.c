@@ -232,21 +232,6 @@ void do_autolist(CHAR_DATA *ch, char *argument)
 		send_to_char("You accept followers.\n\r", ch);
 }
 
-
-void do_hidehost(CHAR_DATA *ch, char *argument)
-{
-	if (IS_NPC(ch))
-		return;
-
-	if (IS_SET(ch->comm2, COMM2_PRIV)) {
-		send_to_char("Your host name is now visible.\n\r", ch);
-		REMOVE_BIT(ch->comm2, COMM2_PRIV);
-	} else {
-		send_to_char("Your host name is now `!hidden`7.\n\r", ch);
-		SET_BIT(ch->comm2, COMM2_PRIV);
-	}
-}
-
 void do_autoassist(CHAR_DATA *ch, char *argument)
 {
 	if (IS_NPC(ch))

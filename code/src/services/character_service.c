@@ -448,9 +448,6 @@ void show_channels(CHAR_DATA *ch)
 	printf_to_char(ch, "`1Shouts         %s``\n\r",
 		       !character_has_comm(ch, COMM_SHOUTSOFF, 1) ? "`#ON" : "`1OFF");
 
-	printf_to_char(ch, "`#QChat          %s``\n\r",
-		       !character_has_comm(ch, COMM2_NOQCHAT, 2) ? "`#ON" : "`1OFF");
-
 	printf_to_char(ch, "`@Tells          %s``\n\r",
 		       !character_has_comm(ch, COMM_DEAF, 1) ? "`#ON" : "`1OFF");
 
