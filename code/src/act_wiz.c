@@ -5,6 +5,7 @@
 #include "lookup.h"
 #include "magic.h"
 #include "interp.h"
+#include "libstring.h"
 
 #include <unistd.h>
 #include <stdio.h>
@@ -40,6 +41,202 @@ bool write_to_descriptor(int desc, char *txt, int length);
 void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is, const char *message);
 
 
+void do_bug(CHAR_DATA *ch, char *argument)
+{
+	append_file(ch, BUG_FILE, argument);
+	send_to_char("Bug logged.\n\r", ch);
+}
+
+void do_typo(CHAR_DATA *ch, char *argument)
+{
+	append_file(ch, TYPO_FILE, argument);
+	send_to_char("Typo logged.\n\r", ch);
+}
+
+void do_delet(CHAR_DATA *ch, /*@unused@*/ char *argument)
+{
+	send_to_char("You must type the full command to delete yourself.\n\r", ch);
+}
+
+void do_delete(CHAR_DATA *ch, char *argument)
+{
+	char strsave[MIL];
+
+	DENY_NPC(ch);
+
+	if (ch->pcdata->confirm_delete) {
+		if (argument[0] != '\0') {
+			send_to_char("Delete status removed.\n\r", ch);
+			ch->pcdata->confirm_delete = FALSE;
+			(void)snprintf(log_buf, MAX_NAME_LENGTH + 32, "DELETE: %s just couldn't do it...", ch->name);
+			log_string(log_buf);
+
+			return;
+		} else {
+			char filename[MAX_NAME_LENGTH];
+
+			filename[0] = '\0';
+
+			capitalize_into(ch->name, (char *)filename, MAX_NAME_LENGTH);
+			(void)snprintf(strsave, MIL, "%s%s", PLAYER_DIR, filename);
+
+			wiznet("$N turns $Mself into line noise.", ch, NULL, 0, 0, 0);
+			(void)snprintf(log_buf, MAX_NAME_LENGTH + 32, "DELETE: %s is TOAST! wOOp!", ch->name);
+			log_string(log_buf);
+
+			do_quit(ch, "");
+
+			(void)unlink(strsave);
+			do_echo(NULL, "You see a flash of `&lightning``.\n\r");
+			return;
+		}
+	}
+
+	if (argument[0] != '\0') {
+		send_to_char("Just type delete. No argument.\n\r", ch);
+		return;
+	}
+
+	send_to_char("Type delete again to confirm this command.\n\r", ch);
+	send_to_char("```!WARNING``: this command is irreversible.\n\r", ch);
+	send_to_char("Typing delete with an argument will undo delete status.\n\r", ch);
+
+	ch->pcdata->confirm_delete = TRUE;
+
+	wiznet("$N is contemplating deletion.", ch, NULL, 0, 0, get_trust(ch));
+	(void)snprintf(log_buf, MAX_NAME_LENGTH + 64, "DELETE: %s .. %s's thinking about it ..", ch->name, ch->sex == 0 ? "It" : ch->sex == 1 ? "He" : "She");
+	log_string(log_buf);
+}
+
+void do_fixscreen(CHAR_DATA *ch, char *argument)
+{
+	// fix the screen....send clear screen and set the number of lines
+	int lines;
+
+	if (argument[0] == '\0' || !is_number(argument))
+		lines = 25;
+	else
+		lines = parse_int(argument);
+
+	if ((lines < 1) || (lines > 100)) {
+		send_to_char("Get real.\n\r", ch);
+		return;
+	}
+
+	printf_to_char(ch, "\033[0;37;40m\033[%d;1f\033[2J\n\rScreen fixed.\n\r", lines);
+}
+
+void do_clearscreen(CHAR_DATA *ch, /*@unused@*/char *argument)
+{
+	send_to_char("\033[0H\033[2J\n", ch);
+}
+
+void do_qui(CHAR_DATA *ch, /*@unused@*/ char *argument)
+{
+	send_to_char("If you want to QUIT, you have to spell it out.\n\r", ch);
+}
+
+void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
+{
+	char buf[MSL];
+	char strsave[2*MIL];
+	DESCRIPTOR_DATA *d, *d_next;
+	long id;
+
+	if (IS_NPC(ch))
+		return;
+
+	if (IS_SET(ch->comm, COMM_NOQUIT)) {
+		send_to_char("You're having too much fun!\n\r", ch);
+		return;
+	}
+
+	if (!IS_NPC(ch) && ch->timer < 30) {
+		if (ch->pnote != NULL) {
+			send_to_char("You have some kind of note in progress.  Please clear it or post it before quitting.\n\r", ch);
+			return;
+		}
+	}
+
+	if (ch->pk_timer < 0) {
+		send_to_char("You cannot quit with a PK timer!\n\r", ch); return;
+	}
+
+	if (ch->last_fight
+	    && (current_time - ch->last_fight < 90)
+	    && !ch->pcdata->confirm_delete) {
+		send_to_char("You must wait 90 seconds after a pfight before you can quit.\n\r", ch);
+		return;
+	}
+
+	if (ch->position == POS_FIGHTING) {
+		send_to_char("No way! You are fighting.\n\r", ch);
+		return;
+	}
+
+	if (ch->position < POS_STUNNED) {
+		send_to_char("You're not DEAD yet.\n\r", ch);
+		return;
+	}
+
+	if (auction->item != NULL && ((ch == auction->buyer) || (ch == auction->seller))) {
+		(void)snprintf(buf, 2 * MIL, "Wait until the auctioning of %s is over.\n\r", auction->item->short_descr);
+		send_to_char(buf, ch);
+		return;
+	}
+
+	furniture_check(ch);
+
+	send_to_char("`@Disconnected.``\n\r", ch);
+	act("```@$n ```Ohas ```^left ```#the ```!game.``", ch, NULL, NULL, TO_ROOM);
+	(void)snprintf(log_buf, 2 * MIL, "%s has quit.", ch->name);
+	log_string(log_buf);
+	wiznet("$N rejoins the real world.", ch, NULL, WIZ_LOGINS, 0, get_trust(ch));
+
+    /*
+     * After extract_char the ch is no longer valid!
+     */
+	if (IS_SET(ch->act, PLR_LINKDEAD))
+		REMOVE_BIT(ch->act, PLR_LINKDEAD);
+	affect_strip(ch, gsp_deft);
+	affect_strip(ch, gsp_dash);
+	affect_strip(ch, skill_lookup("blood rage"));
+
+	save_char_obj(ch);
+	id = ch->id;
+	d = ch->desc;
+
+	if ((ch->level == 1) && (!IS_SET(ch->act, PLR_DENY))) {
+		(void)snprintf(strsave, 2 * MIL, "%s%s", PLAYER_DIR, capitalize(ch->name));
+		wiznet("`!Killing`7: $N `1(`7Level 1 cleanup`1)`7", ch, NULL, 0, 0, 0);
+		unlink(strsave);
+	}
+	extract_char(ch, TRUE);
+	if (d != NULL)
+		close_socket(d);
+
+    /* toast evil cheating bastards */
+	for (d = descriptor_list; d != NULL; d = d_next) {
+		CHAR_DATA *tch;
+
+		d_next = d->next;
+		tch = d->original ? d->original : d->character;
+		if (tch && tch->id == id) {
+			extract_char(tch, TRUE);
+			close_socket(d);
+		}
+	}
+}
+
+void do_save(CHAR_DATA *ch, /*@unused@*/ char *argument)
+{
+	if (IS_NPC(ch))
+		return;
+
+	REMOVE_BIT(ch->act, PLR_LINKDEAD);
+	save_char_obj(ch);
+	send_to_char("```^You are saved... for now!!!``\n\r", ch);
+}
 
 void do_wiznet(CHAR_DATA *ch, char *argument)
 {

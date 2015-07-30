@@ -1,39 +1,12 @@
-/**************************************************************************
- *   Original Diku Mud copyright(C) 1990, 1991 by Sebastian Hammer,         *
- *   Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
- *                                                                             *
- *   Merc Diku Mud improvments copyright(C) 1992, 1993 by Michael           *
- *   Chastain, Michael Quan, and Mitchell Tse.                              *
- *	                                                                       *
- *   In order to use any part of this Merc Diku Mud, you must comply with   *
- *   both the original Diku license in 'license.doc' as well the Merc	   *
- *   license in 'license.txt'.  In particular, you may not remove either of *
- *   these copyright notices.                                               *
- *                                                                             *
- *   Much time and thought has gone into this software and you are          *
- *   benefitting.  We hope that you share your changes too.  What goes      *
- *   around, comes around.                                                  *
- ***************************************************************************/
-
-/***************************************************************************
-*   ROM 2.4 is copyright 1993-1998 Russ Taylor                             *
-*   ROM has been brought to you by the ROM consortium                      *
-*       Russ Taylor(rtaylor@hypercube.org)                                 *
-*       Gabrielle Taylor(gtaylor@hypercube.org)                            *
-*       Brian Moore(zump@rom.org)                                          *
-*   By using this code, you have agreed to follow the terms of the         *
-*   ROM license, in the file Rom24/doc/rom.license                         *
-***************************************************************************/
-
-/***************************************************************************
-*	includes
-***************************************************************************/
-#include <stdio.h>
 #include "merc.h"
 #include "character.h"
 #include "tables.h"
 #include "interp.h"
 
+#include <stdio.h>
+
+
+extern unsigned int parse_unsigned_int(char *string);
 extern bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
 extern bool mp_exit_trigger(CHAR_DATA * ch, int dir);
 extern void mp_greet_trigger(CHAR_DATA * ch);
@@ -773,6 +746,214 @@ void drag_char(CHAR_DATA *ch, CHAR_DATA *victim, int door, bool follow)
 	}
 
 	return;
+}
+
+void do_follow(CHAR_DATA *ch, char *argument)
+{
+    /* RT changed to allow unlimited following and follow the NOFOLLOW rules */
+	CHAR_DATA *victim;
+	char arg[MIL];
+
+	(void)one_argument(argument, arg);
+
+	if (arg[0] == '\0') {
+		send_to_char("Follow whom?\n\r", ch);
+		return;
+	}
+
+	if ((victim = get_char_room(ch, arg)) == NULL) {
+		send_to_char("They aren't here.\n\r", ch);
+		return;
+	}
+
+	if (IS_AFFECTED(ch, AFF_CHARM) && ch->master != NULL) {
+		act("But you'd rather follow $N!", ch, NULL, ch->master, TO_CHAR);
+		return;
+	}
+
+	if (victim == ch) {
+		if (ch->master == NULL) {
+			send_to_char("You already follow yourself.\n\r", ch);
+			return;
+		}
+		stop_follower(ch);
+		return;
+	}
+
+	if (!IS_NPC(victim) && IS_SET(victim->act, PLR_NOFOLLOW) && !IS_IMMORTAL(ch)) {
+		act("$N doesn't seem to want any followers.\n\r", ch, NULL, victim, TO_CHAR);
+		return;
+	}
+
+	REMOVE_BIT(ch->act, PLR_NOFOLLOW);
+
+	if (ch->master != NULL)
+		stop_follower(ch);
+
+	add_follower(ch, victim);
+}
+
+void do_group(CHAR_DATA *ch, char *argument)
+{
+	char buf[MSL];
+	char arg[MIL];
+	CHAR_DATA *victim;
+
+	(void)one_argument(argument, arg);
+
+	if (arg[0] == '\0') {
+		CHAR_DATA *gch;
+		CHAR_DATA *leader;
+
+		leader = (ch->leader != NULL) ? ch->leader : ch;
+		(void)snprintf(buf, MSL, "%s's group:\n\r", PERS(leader, ch));
+		send_to_char(buf, ch);
+
+		for (gch = char_list; gch != NULL; gch = gch->next) {
+			if (is_same_group(gch, ch)) {
+				(void)snprintf(buf, MSL, "%-5s `!%4d``/`1%4d`` hp `@%4d``/`2%4d`` mana `$%4d``/`4%4d`` mv `&%5d`` xp\n\r",
+					       capitalize(PERS(gch, ch)),
+					       gch->hit, gch->max_hit,
+					       gch->mana, gch->max_mana,
+					       gch->move, gch->max_move,
+					       gch->exp);
+				send_to_char(buf, ch);
+			}
+		}
+		return;
+	}
+
+	if ((victim = get_char_room(ch, arg)) == NULL) {
+		send_to_char("They aren't here.\n\r", ch);
+		return;
+	}
+
+	if (ch->master != NULL || (ch->leader != NULL && ch->leader != ch)) {
+		send_to_char("But you are following someone else!\n\r", ch);
+		return;
+	}
+
+	if (victim->master != ch && ch != victim) {
+		act("$N isn't following you.", ch, NULL, victim, TO_CHAR);
+		return;
+	}
+
+	if (IS_AFFECTED(victim, AFF_CHARM)) {
+		send_to_char("You can't remove charmed mobs from your group.\n\r", ch);
+		return;
+	}
+
+	if (IS_AFFECTED(ch, AFF_CHARM)) {
+		act("You like your master too much to leave $m!", ch, NULL, victim, TO_VICT);
+		return;
+	}
+
+	if (is_same_group(victim, ch) && ch != victim) {
+		victim->leader = NULL;
+		act("$n removes $N from $s group.", ch, NULL, victim, TO_NOTVICT);
+		act("$n removes you from $s group.", ch, NULL, victim, TO_VICT);
+		act("You remove $N from your group.", ch, NULL, victim, TO_CHAR);
+		return;
+	}
+
+	victim->leader = ch;
+	act("$N joins $n's group.", ch, NULL, victim, TO_NOTVICT);
+	act("You join $n's group.", ch, NULL, victim, TO_VICT);
+	act("$N joins your group.", ch, NULL, victim, TO_CHAR);
+}
+
+void do_split(CHAR_DATA *ch, char *argument)
+{
+	char buf[MSL];
+	char arg1[MIL], arg2[MIL];
+	CHAR_DATA *gch;
+	int members;
+	unsigned int amount_gold = 0, amount_silver = 0;
+	unsigned int share_gold, share_silver;
+	unsigned int extra_gold, extra_silver;
+
+	argument = one_argument(argument, arg1);
+	(void)one_argument(argument, arg2);
+
+	if (arg1[0] == '\0') {
+		send_to_char("Split how much?\n\r", ch);
+		return;
+	}
+
+	amount_silver = parse_unsigned_int(arg1);
+
+	if (arg2[0] != '\0')
+		amount_gold = parse_unsigned_int(arg2);
+
+	if (amount_gold == 0 && amount_silver == 0) {
+		send_to_char("You hand out zero coins, but no one notices.\n\r", ch);
+		return;
+	}
+
+	if (ch->gold < amount_gold || ch->silver < amount_silver) {
+		send_to_char("You don't have that much to split.\n\r", ch);
+		return;
+	}
+
+	members = 0;
+	for (gch = ch->in_room->people; gch != NULL; gch = gch->next_in_room)
+		if (is_same_group(gch, ch) && !IS_AFFECTED(gch, AFF_CHARM))
+			members++;
+
+	if (members < 2) {
+		send_to_char("Just keep it all.\n\r", ch);
+		return;
+	}
+
+	share_silver = amount_silver / members;
+	extra_silver = amount_silver % members;
+
+	share_gold = amount_gold / members;
+	extra_gold = amount_gold % members;
+
+	if (share_gold == 0 && share_silver == 0) {
+		send_to_char("Don't even bother, cheapskate.\n\r", ch);
+		return;
+	}
+
+	ch->silver -= amount_silver;
+	ch->silver += share_silver + extra_silver;
+	ch->gold -= amount_gold;
+	ch->gold += share_gold + extra_gold;
+
+	if (share_silver > 0) {
+		(void)snprintf(buf, 2 * MIL,
+			       "You split %u silver coins. Your share is %u silver.\n\r",
+			       amount_silver, share_silver + extra_silver);
+		send_to_char(buf, ch);
+	}
+
+	if (share_gold > 0) {
+		(void)snprintf(buf, 2 * MIL,
+			       "You split %u gold coins. Your share is %u gold.\n\r",
+			       amount_gold, share_gold + extra_gold);
+		send_to_char(buf, ch);
+	}
+
+	if (share_gold == 0) {
+		(void)snprintf(buf, 2 * MIL, "$n splits %u silver coins. Your share is %u silver.",
+			       amount_silver, share_silver);
+	} else if (share_silver == 0) {
+		(void)snprintf(buf, 2 * MIL, "$n splits %u gold coins. Your share is %u gold.",
+			       amount_gold, share_gold);
+	} else {
+		(void)snprintf(buf, 2 * MIL,
+			       "$n splits %u silver and %u gold coins, giving you %u silver and %u gold.\n\r",
+			       amount_silver, amount_gold, share_silver, share_gold);
+	}
+
+	for (gch = ch->in_room->people; gch != NULL; gch = gch->next_in_room) {
+		if (gch != ch && is_same_group(gch, ch) && !IS_AFFECTED(gch, AFF_CHARM)) {
+			act(buf, ch, NULL, gch, TO_VICT);
+			gch->gold += share_gold;
+			gch->silver += share_silver;
+		}
+	}
 }
 
 

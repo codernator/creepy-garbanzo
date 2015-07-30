@@ -389,7 +389,6 @@ DECLARE_DO_FUN(do_laston);
 DECLARE_DO_FUN(do_olevel);
 DECLARE_DO_FUN(do_mlevel);
 DECLARE_DO_FUN(do_setrestore);
-DECLARE_DO_FUN(do_page);
 DECLARE_DO_FUN(do_noauction);
 DECLARE_DO_FUN(do_ignore);
 DECLARE_DO_FUN(do_unignore);

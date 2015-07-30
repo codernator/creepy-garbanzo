@@ -184,7 +184,6 @@ const struct cmd_type cmd_table[] =
 	{ "nofollow",	  do_nofollow,     POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "noloot",	      do_noloot,       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "nosummon",	  do_nosummon,     POS_DEAD,     0,	 LOG_NORMAL, 1 },
-	{ "page",	      do_page,	       POS_DEAD,     50, LOG_NORMAL, 1 },
 	{ "password",	  do_password,     POS_DEAD,     0,	 LOG_NEVER,  1 },
 	{ "prompt",	      do_prompt,       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "scroll",	      do_scroll,       POS_DEAD,     0,	 LOG_NORMAL, 1 },
