@@ -1567,36 +1567,6 @@ void do_shutdown(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-
-void do_protect(CHAR_DATA *ch, char *argument)
-{
-	CHAR_DATA *victim;
-
-	DENY_NPC(ch)
-
-	if (argument[0] == '\0') {
-		send_to_char("Protect whom from snooping?\n\r", ch);
-		return;
-	}
-
-	if ((victim = get_char_world(ch, argument)) == NULL) {
-		send_to_char("You can't find them.\n\r", ch);
-		return;
-	}
-
-	if (IS_SET(victim->comm, COMM_SNOOP_PROOF)) {
-		act_new("$N is no longer snoop-proof.", ch, NULL, victim, TO_CHAR, POS_DEAD, FALSE);
-		REMOVE_BIT(victim->comm, COMM_SNOOP_PROOF);
-	} else {
-		act_new("$N is now snoop-proof.", ch, NULL, victim, TO_CHAR, POS_DEAD, FALSE);
-		send_to_char("You are now immune to snooping.\n\r", victim);
-		SET_BIT(victim->comm, COMM_SNOOP_PROOF);
-	}
-}
-
-
-
 void do_snoop(CHAR_DATA *ch, char *argument)
 {
 	DESCRIPTOR_DATA *d;
@@ -1643,12 +1613,6 @@ void do_snoop(CHAR_DATA *ch, char *argument)
 	if (!is_room_owner(ch, victim->in_room) && ch->in_room != victim->in_room
 	    && room_is_private(victim->in_room) && !IS_TRUSTED(ch, IMPLEMENTOR)) {
 		send_to_char("That character is in a private room.\n\r", ch);
-		return;
-	}
-
-	if (get_trust(victim) >= get_trust(ch)
-	    || IS_SET(victim->comm, COMM_SNOOP_PROOF)) {
-		send_to_char("You failed.\n\r", ch);
 		return;
 	}
 
@@ -3867,7 +3831,7 @@ void do_pnlist(CHAR_DATA *ch, char *argument)
 			continue;
 
 		printf_to_char(ch,
-			       "%-13s%-9s%-9s%-9s%-9s%-9s%-9s%-9s%-9s%-9s%-9s%-9s\n\r",
+			       "%-13s%-9s%-9s%-9s%-9s%-9s%-9s%-9s%-9s%-9s%-9s\n\r",
 			       wch->name,
 			       IS_SET(wch->act, PLR_FREEZE) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->comm, COMM_NOTELL) ? "`!X`7" : "`8-`7 ",
@@ -3876,7 +3840,6 @@ void do_pnlist(CHAR_DATA *ch, char *argument)
 			       IS_SET(wch->act, PLR_LOG) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->act, PLR_KILLER) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->act, PLR_THIEF) ? "`!X`7" : "`8-`7 ",
-			       IS_SET(wch->comm, COMM_SNOOP_PROOF) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->act, PLR_PERMIT) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->act, PLR_PUNISHMENT) ? "`!X`7" : "`8-`7 ",
 			       (wch->disabled != NULL) ? "`!X`7" : "`8-`7 ");

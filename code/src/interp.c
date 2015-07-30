@@ -354,7 +354,6 @@ const struct cmd_type cmd_table[] =
 	{ "freeze",	      do_freeze,       POS_DEAD,     L2, LOG_ALWAYS, 1 },
 	{ "norestore",	  do_norestore,    POS_DEAD,     L8, LOG_ALWAYS, 1 },
 	{ "permban",	  do_permban,      POS_DEAD,     L1, LOG_ALWAYS, 1 },
-	{ "protect",	  do_protect,      POS_DEAD,     L1, LOG_ALWAYS, 1 },
 	{ "punish",	      do_punish,       POS_DEAD,     L7, LOG_ALWAYS, 1 },
 	{ "rdesc",	      do_rdesc,	       POS_DEAD,     L5, LOG_ALWAYS, 1 },
 	{ "rload",	      do_rload,	       POS_DEAD,     L5, LOG_ALWAYS, 1 },

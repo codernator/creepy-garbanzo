@@ -486,9 +486,6 @@ void show_channels(CHAR_DATA *ch)
 	if (character_has_comm(ch, COMM2_BUILD, 2))
 		send_to_char("You are `3Building``.\n\r", ch);
 
-	if (character_has_comm(ch, COMM_SNOOP_PROOF, 1))
-		send_to_char("You are immune to snooping.\n\r", ch);
-
 	if (ch->lines != PAGELEN) {
 		if (ch->lines > 0)
 			printf_to_char(ch, "You display %d lines of scroll.\n\r", ch->lines + 2);
