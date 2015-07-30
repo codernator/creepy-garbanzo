@@ -1,36 +1,3 @@
-/*************************************************************************
- *   Original Diku Mud copyright(C) 1990, 1991 by Sebastian Hammer,         *
- *   Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
- *	                                                                       *
- *   Merc Diku Mud improvments copyright(C) 1992, 1993 by Michael           *
- *   Chastain, Michael Quan, and Mitchell Tse.                              *
- *	                                                                       *
- *   In order to use any part of this Merc Diku Mud, you must comply with   *
- *   both the original Diku license in 'license.doc' as well the Merc	   *
- *   license in 'license.txt'.  In particular, you may not remove either of *
- *   these copyright notices.                                               *
- *                                                                             *
- *   Much time and thought has gone into this software and you are          *
- *   benefitting.  We hope that you share your changes too.  What goes      *
- *   around, comes around.                                                  *
- ***************************************************************************/
-
-/***************************************************************************
-*   ROM 2.4 is copyright 1993-1998 Russ Taylor                             *
-*   ROM has been brought to you by the ROM consortium                      *
-*       Russ Taylor(rtaylor@hypercube.org)                                 *
-*       Gabrielle Taylor(gtaylor@hypercube.org)                            *
-*       Brian Moore(zump@rom.org)                                          *
-*   By using this code, you have agreed to follow the terms of the         *
-*   ROM license, in the file Rom24/doc/rom.license                         *
-***************************************************************************/
-
-/***************************************************************************
-*	includes
-***************************************************************************/
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
 #include "merc.h"
 #include "db.h"
 #include "recycle.h"
@@ -40,6 +7,10 @@
 #include "interp.h"
 #include "olc.h"
 #include "libstring.h"
+
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern int flag_value(const struct flag_type *flag_table, char *argument);
@@ -481,29 +452,6 @@ static bool set_char_race(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
 
 
 			send_to_char("    Feed successfully switched to hunger/thirst.\n\r", ch);
-		}
-
-		/* when you're not a mutant anymore, get rid of that
-		 *     third weapon */
-		if (vch->race == race_lookup("mutant")) {
-			sprintf(buf, "    Checking for third arm...");
-
-			if (IS_SET(vch->comm2, COMM2_THIRDARM)) {
-				strcat(buf, "found... Checking for third-wield weapon...");
-				if ((obj = get_eq_char(vch, WEAR_THIRD)) != NULL) {
-					strcat(buf, "found... Removing...\n\r");
-					send_to_char(buf, ch);
-					unequip_char(vch, obj);
-					act("$n stops using $p.", vch, obj, NULL, TO_ROOM);
-					act("You stop using $p.", vch, obj, NULL, TO_CHAR);
-				} else {
-					strcat(buf, "none.\n\r");
-					send_to_char(buf, ch);
-				}
-				REMOVE_BIT(vch->comm2, COMM2_THIRDARM);
-				send_to_char("    Third arm removed.\n\r", ch);
-				act("$n has surgically removed your third arm.", ch, NULL, vch, TO_VICT);
-			}
 		}
 
 		/* when you're not a human anymore, get rid of those

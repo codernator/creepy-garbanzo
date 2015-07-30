@@ -58,7 +58,7 @@ static struct { int	wear_loc; char *desc; } where_name[] =
 	{ -1,		  ""			 }
 };
 
-static struct { long flag; char *name; int location; } channel_names[] = 
+static struct { long flag; char *name; int location; } channel_names[] =
 {
     { COMM_NOAUCTION, "`3Auction`` channel", 1 },
     { COMM_DEAF, "Tells channel", 1 },
@@ -519,7 +519,7 @@ void show_channels(CHAR_DATA *ch)
 
 void sit(CHAR_DATA *ch, OBJ_DATA *on)
 {
-    // TODO - it is currently possible to defeat object pickup restrictions by 
+    // TODO - it is currently possible to defeat object pickup restrictions by
     // sitting on them. Need to extract can_get_obj from get_obj and use it!
 
     // Impassible positions.
@@ -886,7 +886,6 @@ void show_char_to_char_0(CHAR_DATA *victim, CHAR_DATA *ch)
 	if (!IS_NPC(victim) && IS_SET(victim->act, PLR_KILLER)) strcat(buf, "-```1K```!i```1LLER``- ");
 	if (!IS_NPC(victim) && IS_SET(victim->act, PLR_THIEF)) strcat(buf, "-```8TH``i```8EF``- ");
 	if (!IS_NPC(victim) && IS_SET(victim->act, PLR_LINKDEAD)) strcat(buf, "`7[`8LINKDEAD`7] ");
-	if (!IS_NPC(victim) && IS_SET(victim->act, PLR_IT)) strcat(buf, "`8[`&IT!`8]``");
 	if ((victim == ch->target)) strcat(buf, "`&[`7TARGET`&]`7 ");
 	if (victim->position == victim->start_pos && victim->long_descr[0] != '\0') {
 		strcat(buf, victim->long_descr);
@@ -1028,12 +1027,12 @@ void show_char_to_char_1(CHAR_DATA *victim, CHAR_DATA *ch)
 		sprintf(buf, "%s ", victim->name);
 		send_to_char(buf, ch);
 
-		if (victim->drained >= (9 * (victim->level / 10))) 
-            send_to_char("looks quite healthy and `!pink``.\n\r", ch); 
-        else if (victim->drained >= (7 * (victim->level / 10))) 
+		if (victim->drained >= (9 * (victim->level / 10)))
+            send_to_char("looks quite healthy and `!pink``.\n\r", ch);
+        else if (victim->drained >= (7 * (victim->level / 10)))
             send_to_char("looks slightly `&pale``.\n\r", ch);
         else if (victim->drained >= (5 * (victim->level / 10)))
-            send_to_char("looks rather pale.\n\r", ch); 
+            send_to_char("looks rather pale.\n\r", ch);
         else if (victim->drained >= (3 * (victim->level / 10)))
             send_to_char("looks quite pale.\n\r", ch);
 	}

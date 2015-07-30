@@ -1,36 +1,3 @@
-/***************************************************************************
-*   Original Diku Mud copyright(C) 1990, 1991 by Sebastian Hammer,         *
-*   Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
-*                                                                              *
-*   Merc Diku Mud improvments copyright(C) 1992, 1993 by Michael           *
-*   Chastain, Michael Quan, and Mitchell Tse.                              *
-*	                                                                       *
-*   In order to use any part of this Merc Diku Mud, you must comply with   *
-*   both the original Diku license in 'license.doc' as well the Merc	   *
-*   license in 'license.txt'.  In particular, you may not remove either of *
-*   these copyright notices.                                               *
-*                                                                              *
-*   Much time and thought has gone into this software and you are          *
-*   benefitting.  We hope that you share your changes too.  What goes      *
-*   around, comes around.                                                  *
-***************************************************************************/
-
-/***************************************************************************
-*   ROM 2.4 is copyright 1993-1998 Russ Taylor                             *
-*   ROM has been brought to you by the ROM consortium                      *
-*       Russ Taylor(rtaylor@hypercube.org)                                 *
-*       Gabrielle Taylor(gtaylor@hypercube.org)                            *
-*       Brian Moore(zump@rom.org)                                          *
-*   By using this code, you have agreed to follow the terms of the         *
-*   ROM license, in the file Rom24/doc/rom.license                         *
-***************************************************************************/
-
-/***************************************************************************
-*	includes
-***************************************************************************/
-#include <stdio.h>
-#include <string.h>
-
 #include "merc.h"
 #include "character.h"
 #include "magic.h"
@@ -40,7 +7,11 @@
 #include "ansi.h"
 #include "interp.h"
 #include "libstring.h"
+
+#include <stdio.h>
+#include <string.h>
 #include "libfile.h"
+
 
 extern byte parse_byte(char *string);
 extern byte parse_byte2(char *string, byte min, byte max);
@@ -202,13 +173,6 @@ void do_autolist(CHAR_DATA *ch, char *argument)
 		send_to_char("ON\n\r", ch);
 	else
 		send_to_char("OFF\n\r", ch);
-
-	send_to_char("autotoken      ", ch);
-	if (IS_SET(ch->comm2, COMM2_AUTOTOKEN))
-		send_to_char("ON\n\r", ch);
-	else
-		send_to_char("OFF\n\r", ch);
-
 
 	send_to_char("autoloot       ", ch);
 	if (IS_SET(ch->act, PLR_AUTOLOOT))

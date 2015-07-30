@@ -883,9 +883,6 @@ bool load_char_obj(DESCRIPTOR_DATA *d, char *name)
 			add_learned_group(ch, learned);
 	}
 
-	if (IS_SET(ch->act, PLR_IT))
-		REMOVE_BIT(ch->act, PLR_IT);
-
 	/* ream gold */
 	if (found && ch->version < 4)
 		ch->gold /= 100;

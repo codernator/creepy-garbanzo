@@ -1,33 +1,9 @@
-/***************************************************************************
-*   Original Diku Mud copyright(C) 1990, 1991 by Sebastian Hammer,        *
-*   Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
-*                                                                              *
-*   Merc Diku Mud improvments copyright(C) 1992, 1993 by Michael          *
-*   Chastain, Michael Quan, and Mitchell Tse.                              *
-*	                                                                       *
-*   In order to use any part of this Merc Diku Mud, you must comply with   *
-*   both the original Diku license in 'license.doc' as well the Merc	   *
-*   license in 'license.txt'.  In particular, you may not remove either of *
-*   these copyright notices.                                               *
-*                                                                              *
-*   Much time and thought has gone into this software and you are          *
-*   benefitting.  We hope that you share your changes too.  What goes      *
-*   around, comes around.                                                  *
-***************************************************************************/
+#include "merc.h"
+#include "recycle.h"
+#include "lookup.h"
+#include "tables.h"
+#include "libstring.h"
 
-/***************************************************************************
-*   ROM 2.4 is copyright 1993-1998 Russ Taylor                             *
-*   ROM has been brought to you by the ROM consortium                      *
-*       Russ Taylor(rtaylor@hypercube.org)                                *
-*       Gabrielle Taylor(gtaylor@hypercube.org)                           *
-*       Brian Moore(zump@rom.org)                                         *
-*   By using this code, you have agreed to follow the terms of the         *
-*   ROM license, in the file Rom24/doc/rom.license                         *
-***************************************************************************/
-
-/***************************************************************************
-*	includes
-***************************************************************************/
 #include <sys/time.h>
 #include <sys/types.h>
 #include <stdio.h>
@@ -35,32 +11,16 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <time.h>
-#include "merc.h"
-#include "recycle.h"
-#include "lookup.h"
-#include "tables.h"
-#include "libstring.h"
 
 
-/***************************************************************************
-*	is_whois_target
-***************************************************************************/
+
 static bool is_whois_target(CHAR_DATA *ch, char *arg)
 {
-	if (!str_prefix(arg, "it") && IS_SET(ch->act, PLR_IT))
-		return TRUE;
-
-	if (!str_prefix(arg, ch->name))
-		return TRUE;
-
-
-	return FALSE;
+	return (!str_prefix(arg, ch->name));
 }
 
 
-/***************************************************************************
-*	who_string
-***************************************************************************/
+
 char *who_string(CHAR_DATA *ch)
 {
 	const char *class;
@@ -106,9 +66,6 @@ char *who_string(CHAR_DATA *ch)
 		class = "`&AVA``";
 		break;
 	}
-
-	if (IS_SET(ch->act, PLR_IT))
-		class = "`&IT!``";
 
 	if (ch->pcdata->who_thing[0] != '\0') {
 		sprintf(buf, "%s", ch->pcdata->who_thing);
@@ -493,9 +450,7 @@ void do_where(CHAR_DATA *ch, char *argument)
 			    && victim->in_room->area == ch->in_room->area
 			    && can_see(ch, victim)) {
 				found = TRUE;
-				printf_to_char(ch, "%s%-28s %s``\n\r",
-					       IS_SET(victim->act, PLR_IT) ? "`&" : "",
-					       victim->name, victim->in_room->name);
+				printf_to_char(ch, "%-28s %s``\n\r", victim->name, victim->in_room->name);
 			}
 		}
 
@@ -509,9 +464,7 @@ void do_where(CHAR_DATA *ch, char *argument)
 			    && can_see(ch, victim)
 			    && is_name(arg, victim->name)) {
 				found = TRUE;
-				printf_to_char(ch, "%s%-28s %s``\n\r",
-					       IS_SET(victim->act, PLR_IT) ? "`&" : "",
-					       PERS(victim, ch), victim->in_room->name);
+				printf_to_char(ch, "%-28s %s``\n\r", PERS(victim, ch), victim->in_room->name);
 				break;
 			}
 		}

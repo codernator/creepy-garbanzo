@@ -1274,7 +1274,6 @@ struct kill_data {
 
 /* RT personal flags */
 #define PLR_HOLYLIGHT           (N)
-#define PLR_IT                  (O)
 #define PLR_CANLOOT             (P)
 #define PLR_NOSUMMON            (Q)
 #define PLR_NOFOLLOW            (R)
@@ -1318,12 +1317,9 @@ struct kill_data {
 #define COMM2_AFK               (A)
 #define COMM2_INFO              (B)
 #define COMM2_NOEMOTE           (C)
-#define COMM2_SECRETAGENT       (D)
 #define COMM2_IMPTALK           (E)
 #define COMM2_TICKS             (F)
 #define COMM2_PRIV              (G)
-#define COMM2_THIRDARM          (H)
-#define COMM2_AUTOTOKEN         (J)
 #define COMM2_ENABLE            (K)
 #define COMM2_TARGET            (L)
 #define COMM2_LOCKREPLY         (M)
@@ -1571,7 +1567,6 @@ struct char_data {
 ***************************************************************************/
 struct pc_data {
     /*@shared@*/PC_DATA * next;
-    /*@shared@*/CHAR_DATA * tagged_by;
     /*@shared@*/BUFFER * buffer;
     bool  valid;
     /*@shared@*/char *  pwd;
@@ -1597,7 +1592,6 @@ struct pc_data {
     int  perm_move;
     int  true_sex;
     int  last_level;
-    int  tag_ticks;
     long  condition[COND_MAX];
     /*@shared@*/LEARNED * skills;
     int  points;

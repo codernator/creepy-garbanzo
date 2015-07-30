@@ -1,45 +1,13 @@
-/**************************************************************************
- *  Original Diku Mud copyright(C) 1990, 1991 by Sebastian Hammer,         *
- *  Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
- *                                                                         *
- *  Merc Diku Mud improvments copyright(C) 1992, 1993 by Michael           *
- *  Chastain, Michael Quan, and Mitchell Tse.                              *
- *                                                                         *
- *  In order to use any part of this Merc Diku Mud, you must comply with   *
- *  both the original Diku license in 'license.doc' as well the Merc       *
- *  license in 'license.txt'.  In particular, you may not remove either of *
- *  these copyright notices.                                               *
- *                                                                         *
- *  Much time and thought has gone into this software and you are          *
- *  benefitting.  We hope that you share your changes too.  What goes      *
- *  around, comes around.                                                  *
- ***************************************************************************/
-
-/***************************************************************************
-*       ROM 2.4 is copyright 1993-1995 Russ Taylor                         *
-*       ROM has been brought to you by the ROM consortium                  *
-*           Russ Taylor(rtaylor@pacinfo.com)                               *
-*           Gabrielle Taylor(gtaylor@pacinfo.com)                          *
-*           Brian Moore(rom@rom.efn.org)                                   *
-*       By using this code, you have agreed to follow the terms of the     *
-*       ROM license, in the file Rom24/doc/rom.license                     *
-***************************************************************************/
-/***************************************************************************
-*	guild/class specific skills, spells and other funkified shit
-***************************************************************************/
-
-
-
-/***************************************************************************
-*	includes
-***************************************************************************/
-#include <stdio.h>
 #include "merc.h"
 #include "tables.h"
 #include "magic.h"
 #include "lookup.h"
 #include "interp.h"
 #include "recycle.h"
+
+
+#include <stdio.h>
+
 
 extern bool remove_obj(CHAR_DATA * ch, int iWear, bool fReplace);
 extern void set_fighting(CHAR_DATA * ch, CHAR_DATA * victim);
@@ -48,13 +16,6 @@ extern void set_fighting(CHAR_DATA * ch, CHAR_DATA * victim);
 bool check_shield_block(CHAR_DATA * ch, CHAR_DATA * victim);
 
 
-
-/***************************************************************************
-*	general utility functions
-***************************************************************************/
-/***************************************************************************
-*	do_raceinfo
-***************************************************************************/
 void do_raceinfo(CHAR_DATA *ch, char *argument)
 {
 	BUFFER *buf;
@@ -139,98 +100,6 @@ void do_raceinfo(CHAR_DATA *ch, char *argument)
 *	mutants
 ***************************************************************************/
 #define MIN_REGEN               5
-
-/***************************************************************************
-*	do_grow
-***************************************************************************/
-void do_grow(CHAR_DATA *ch, char *argument)
-{
-	if (IS_NPC(ch)) {
-		send_to_char("You failed.\n\r", ch);
-		return;
-	}
-
-	if (ch->race != race_lookup("mutant")) {
-		send_to_char("You should try eating your wheaties..\n\r", ch);
-		return;
-	}
-
-	if (IS_SET(ch->comm2, COMM2_THIRDARM)) {
-		send_to_char("You try hard, but fail to grow another arm.\n\r", ch);
-		return;
-	}
-
-	SET_BIT(ch->comm2, COMM2_THIRDARM);
-	ch->move = 10;
-	act("$n screams in agony as a third arm sprouts from $s shoulderblades.", ch, NULL, NULL, TO_ROOM);
-	act("You scream in agony as a third arm sprouts from your shoulderblades.", ch, NULL, NULL, TO_CHAR);
-}
-
-
-/***************************************************************************
-*	do_third
-***************************************************************************/
-void do_third(CHAR_DATA *ch, char *argument)
-{
-	OBJ_DATA *obj;
-
-	if (ch->race != race_lookup("mutant")) {
-		send_to_char("`!WHAT\n\r`PTHE\n\r`OFUCK?``\n\r", ch);
-		return;
-	}
-
-	if (!IS_SET(ch->comm2, COMM2_THIRDARM)) {
-		send_to_char("Grow a third arm before you try that.\n\r", ch);
-		return;
-	}
-
-	if (argument[0] == '\0') {
-		send_to_char("Wear which weapon in your third hand?\n\r", ch);
-		return;
-	}
-
-	obj = get_obj_carry(ch, argument);
-	if (obj == NULL) {
-		send_to_char("You have no such thing.\n\r", ch);
-		return;
-	}
-
-	if (obj->item_type != ITEM_WEAPON) {
-		send_to_char("You can only wield a WEAPON .. Bonehead.\n\r", ch);
-		return;
-	}
-
-	if (get_eq_char(ch, WEAR_SHIELD) != NULL) {
-		send_to_char("You cannot use second and third weapons while using a shield.\n\r", ch);
-		return;
-	}
-
-	if (ch->level < obj->level) {
-		printf_to_char(ch,
-			       "You must be level %d to use this object.\n\r",
-			       obj->level);
-		act("$n tries to use $p, but is too inexperienced.",
-		    ch, obj, NULL, TO_ROOM);
-		return;
-	}
-
-	if (get_eq_char(ch, WEAR_WIELD) == NULL) {
-		send_to_char("You need to wield a primary weapon, before using a third one!\n\r", ch);
-		return;
-	}
-
-	if ((get_obj_weight(obj) * 2) > get_obj_weight(get_eq_char(ch, WEAR_WIELD))) {
-		send_to_char("Your third weapon has to be considerably lighter than the primary one.\n\r", ch);
-		return;
-	}
-
-	if (!remove_obj(ch, WEAR_THIRD, TRUE))
-		return;
-
-	act("$n wields $p in $s third hand.", ch, obj, NULL, TO_ROOM);
-	act("You wield $p in your third hand.", ch, obj, NULL, TO_CHAR);
-	equip_char(ch, obj, WEAR_THIRD);
-}
 
 
 /***************************************************************************

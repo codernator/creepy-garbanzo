@@ -283,11 +283,6 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
 		send_to_char("You cannot quit with a PK timer!\n\r", ch); return;
 	}
 
-	if (IS_SET(ch->act, PLR_IT)) {
-		send_to_char("You're it! You have to tag someone before you can quit.\n\r", ch);
-		return;
-	}
-
 	if (ch->last_fight
 	    && (current_time - ch->last_fight < 90)
 	    && !ch->pcdata->confirm_delete) {
@@ -934,84 +929,6 @@ void do_unignore(CHAR_DATA *ch, char *argument)
 
 	if (!found)
 		send_to_char("You aren't ignoring anyone by that name!\n\r", ch);
-}
-
-void do_tag(CHAR_DATA *ch, char *argument)
-{
-	char arg[MIL];
-	char buf[MSL];
-	CHAR_DATA *victim;
-
-	if (!IS_SET(ch->act, PLR_IT)) {
-		send_to_char("You're not it.\n\r", ch);
-		return;
-	}
-
-	(void)one_argument(argument, arg);
-
-	if ((victim = get_char_world(ch, arg)) == NULL) {
-		send_to_char("You can't tag what's not there.\n\r", ch);
-		return;
-	}
-	if (IS_NPC(victim)) {
-		send_to_char("Can't tag NPC's, silly.\n\r", ch);
-		return;
-	}
-	if (ch->in_room != victim->in_room) {
-		send_to_char("They're not here. \n\r", ch);
-		return;
-	}
-	if (victim == ch->pcdata->tagged_by) {
-		send_to_char("No tag-backs.\n\r", ch);
-		return;
-	}
-	if (ch == victim) {
-		send_to_char("Tag yourself. Very funny. Ha ha. \n\r", ch);
-		return;
-	}
-	REMOVE_BIT(ch->act, PLR_IT);
-	SET_BIT(victim->act, PLR_IT);
-	victim->pcdata->tag_ticks = 0;
-	victim->pcdata->tagged_by = ch;
-	ch->pcdata->tag_ticks = -1;
-	ch->pcdata->tagged_by = NULL;
-	(void)snprintf(buf, 2 * MIL, "%s tags you. You're IT, buddy!\n\r", ch->name);
-	send_to_char(buf, victim);
-	(void)snprintf(buf, 2 * MIL, "You tag %s. They're IT now!\n\r", victim->name);
-	send_to_char(buf, ch);
-}
-
-/*****************************
-*      Added by Tylor        *
-*****************************/
-void do_tagstop(CHAR_DATA *ch, char *argument)
-{
-	char arg[MIL];
-	char buf[MSL];
-	CHAR_DATA *victim;
-
-	(void)one_argument(argument, arg);
-
-	if ((victim = get_char_world(ch, arg)) == NULL) {
-		send_to_char("You have to specify the person thats IT.\n\r", ch);
-		return;
-	}
-	if (ch == victim) {
-		send_to_char("That would be a bad idea. Tag someone else first.\n\r", ch);
-		return;
-	}
-	if (ch->in_room != victim->in_room) {
-		send_to_char("They're not here.\n\r", ch);
-		return;
-	}
-
-	REMOVE_BIT(victim->act, PLR_IT);
-	victim->pcdata->tag_ticks = -1;
-	victim->pcdata->tagged_by = NULL;
-	(void)snprintf(buf, 2 * MIL, "%s has saved you from being tagged any longer. Sweet!\n\r", ch->name);
-	send_to_char(buf, victim);
-	(void)snprintf(buf, 2 * MIL, "You've untagged %s. Immtag has been stopped.\n\r", victim->name);
-	send_to_char(buf, ch);
 }
 
 void do_rpswitch(CHAR_DATA *ch, /*@unused@*/ char *argument)
