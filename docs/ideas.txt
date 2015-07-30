@@ -24,6 +24,9 @@
 *   By using this code, you have agreed to follow the terms of the          *
 *   ROM license, in the file Rom24/doc/rom.license                          *
 ****************************************************************************/
+/*
+ * 'Split' originally by Gnort, God of Chaos.
+ */
 
 
 # spells

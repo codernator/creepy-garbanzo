@@ -20,21 +20,17 @@ void do_bug(CHAR_DATA *ch, char *argument)
 {
 	append_file(ch, BUG_FILE, argument);
 	send_to_char("Bug logged.\n\r", ch);
-	return;
 }
 
 void do_typo(CHAR_DATA *ch, char *argument)
 {
 	append_file(ch, TYPO_FILE, argument);
 	send_to_char("Typo logged.\n\r", ch);
-	return;
 }
 
 void do_delet(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
 	send_to_char("You must type the full command to delete yourself.\n\r", ch);
-
-    return;
 }
 
 void do_delete(CHAR_DATA *ch, char *argument)
@@ -85,10 +81,7 @@ void do_delete(CHAR_DATA *ch, char *argument)
 	wiznet("$N is contemplating deletion.", ch, NULL, 0, 0, get_trust(ch));
 	(void)snprintf(log_buf, MAX_NAME_LENGTH + 64, "DELETE: %s .. %s's thinking about it ..", ch->name, ch->sex == 0 ? "It" : ch->sex == 1 ? "He" : "She");
 	log_string(log_buf);
-
-    return;
 }
-
 
 void do_fixscreen(CHAR_DATA *ch, char *argument)
 {
@@ -106,50 +99,39 @@ void do_fixscreen(CHAR_DATA *ch, char *argument)
 	}
 
 	printf_to_char(ch, "\033[0;37;40m\033[%d;1f\033[2J\n\rScreen fixed.\n\r", lines);
-	return;
 }
 
 void do_clearscreen(CHAR_DATA *ch, /*@unused@*/char *argument)
 {
 	send_to_char("\033[0H\033[2J\n", ch);
-	return;
 }
 
 void do_channels(CHAR_DATA *ch, /*@unused@*/char *argument)
 {
     DENY_NPC(ch);
     show_channels(ch);
-    return;
 }
-
 
 void do_deaf(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
     toggle_comm(ch, COMM_DEAF);
-
-    return;
 }
 
 void do_quiet(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
     toggle_comm(ch, COMM_QUIET);
-
-    return;
 }
 
 void do_afk(CHAR_DATA *ch, char *argument)
 {
     DENY_NPC(ch);
     toggle_afk(ch, argument);
-
-    return;
 }
 
 void do_replay(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
     DENY_NPC(ch);
     replay(ch);
-    return;
 }
 
 void do_auctalk(CHAR_DATA *ch, char *argument)
@@ -160,7 +142,6 @@ void do_auctalk(CHAR_DATA *ch, char *argument)
 	} else {
         broadcast_auctalk(ch, argument);
 	}
-    return;
 }
 
 void do_immtalk(CHAR_DATA *ch, char *argument)
@@ -170,7 +151,6 @@ void do_immtalk(CHAR_DATA *ch, char *argument)
 	} else {
         broadcast_immtalk(ch, argument);
     }
-	return;
 }
 
 void do_imptalk(CHAR_DATA *ch, char *argument)
@@ -180,7 +160,6 @@ void do_imptalk(CHAR_DATA *ch, char *argument)
 	} else {
         broadcast_imptalk(ch, argument);
     }
-	return;
 }
 
 void do_say(CHAR_DATA *ch, char *argument)
@@ -190,7 +169,6 @@ void do_say(CHAR_DATA *ch, char *argument)
 	} else {
         broadcast_say(ch, argument);
     }
-	return;
 }
 
 void do_shout(CHAR_DATA *ch, char *argument)
@@ -200,9 +178,7 @@ void do_shout(CHAR_DATA *ch, char *argument)
 	} else {
         broadcast_shout(ch, argument);
     }
-    return;
 }
-
 
 void do_info(CHAR_DATA *ch, char *argument)
 {
@@ -215,9 +191,7 @@ void do_info(CHAR_DATA *ch, char *argument)
             broadcast_info(ch, argument);
         }
     }
-	return;
 }
-
 
 void do_tell(CHAR_DATA *ch, char *argument)
 {
@@ -240,7 +214,6 @@ void do_tell(CHAR_DATA *ch, char *argument)
 
         broadcast_tell(ch, victim, argument);
     }
-    return;
 }
 
 void do_reply(CHAR_DATA *ch, char *argument)
@@ -250,7 +223,6 @@ void do_reply(CHAR_DATA *ch, char *argument)
     } else {
         broadcast_reply(ch, argument);
     }
-    return;
 }
 
 void do_yell(CHAR_DATA *ch, char *argument)
@@ -260,8 +232,6 @@ void do_yell(CHAR_DATA *ch, char *argument)
 	} else {
         broadcast_yell(ch, argument);
     }
-    return;
-
 }
 
 void do_emote(CHAR_DATA *ch, char *argument)
@@ -271,9 +241,7 @@ void do_emote(CHAR_DATA *ch, char *argument)
 	} else {
         broadcast_emote(ch, argument);
     }
-	return;
 }
-
 
 void do_pmote(CHAR_DATA *ch, char *argument)
 {
@@ -282,14 +250,11 @@ void do_pmote(CHAR_DATA *ch, char *argument)
 	} else {
         broadcast_pmote(ch, argument);
     }
-	return;
 }
-
 
 void do_qui(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
 	send_to_char("If you want to QUIT, you have to spell it out.\n\r", ch);
-	return;
 }
 
 void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
@@ -387,11 +352,7 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
 			close_socket(d);
 		}
 	}
-
-	return;
 }
-
-
 
 void do_save(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
@@ -401,7 +362,6 @@ void do_save(CHAR_DATA *ch, /*@unused@*/ char *argument)
 	REMOVE_BIT(ch->act, PLR_LINKDEAD);
 	save_char_obj(ch);
 	send_to_char("```^You are saved... for now!!!``\n\r", ch);
-	return;
 }
 
 void do_follow(CHAR_DATA *ch, char *argument)
@@ -447,98 +407,7 @@ void do_follow(CHAR_DATA *ch, char *argument)
 		stop_follower(ch);
 
 	add_follower(ch, victim);
-
-	return;
 }
-
-
-void add_follower(CHAR_DATA *ch, CHAR_DATA *master)
-{
-	if (ch->master != NULL) {
-		bug("Add_follower: non-null master.", 0);
-		return;
-	}
-
-	ch->master = master;
-	ch->leader = NULL;
-
-	if (can_see(master, ch))
-		act("$n now follows you.", ch, NULL, master, TO_VICT);
-
-	act("You now follow $N.", ch, NULL, master, TO_CHAR);
-
-	return;
-}
-
-
-
-void stop_follower(CHAR_DATA *ch)
-{
-	if (ch->master == NULL) {
-		bug("Stop_follower: null master.", 0);
-		return;
-	}
-
-	if (IS_AFFECTED(ch, AFF_CHARM)) {
-		REMOVE_BIT(ch->affected_by, AFF_CHARM);
-		affect_strip(ch, skill_lookup("charm person"));
-	}
-
-	if (can_see(ch->master, ch) && ch->in_room != NULL) {
-		act("$n stops following you.", ch, NULL, ch->master, TO_VICT);
-		act("You stop following $N.", ch, NULL, ch->master, TO_CHAR);
-	}
-
-	if (ch->master->pet == ch)
-		ch->master->pet = NULL;
-
-	ch->master = NULL;
-	ch->leader = NULL;
-	return;
-}
-
-/* nukes charmed monsters and pets */
-void nuke_pets(CHAR_DATA *ch)
-{
-	CHAR_DATA *pet;
-
-	if ((pet = ch->pet) != NULL) {
-		stop_follower(pet);
-		if (pet->in_room != NULL)
-			act("$N pees on your leg and walks off.", ch, NULL, pet, TO_NOTVICT);
-
-		extract_char(pet, TRUE);
-	}
-	ch->pet = NULL;
-
-	return;
-}
-
-
-
-void die_follower(CHAR_DATA *ch)
-{
-	CHAR_DATA *fch;
-
-	if (ch->master != NULL) {
-		if (ch->master->pet == ch)
-			ch->master->pet = NULL;
-		stop_follower(ch);
-	}
-
-	ch->leader = NULL;
-
-	for (fch = char_list; fch != NULL; fch = fch->next) {
-		if (fch->master == ch)
-			stop_follower(fch);
-		if (fch->leader == ch)
-			fch->leader = fch;
-	}
-
-	return;
-}
-
-
 
 void do_order(CHAR_DATA *ch, char *argument)
 {
@@ -678,12 +547,7 @@ void do_order(CHAR_DATA *ch, char *argument)
 	} else {
 		send_to_char("You have no followers here.\n\r", ch);
 	}
-
-	return;
 }
-
-
-
 
 void do_group(CHAR_DATA *ch, char *argument)
 {
@@ -703,15 +567,6 @@ void do_group(CHAR_DATA *ch, char *argument)
 
 		for (gch = char_list; gch != NULL; gch = gch->next) {
 			if (is_same_group(gch, ch)) {
-/*  THIS IS ALL COMPLETELY USELESS.  TODO - REWRITE IF I CARE.
- *      (void)snprintf(buf, MSL, "[%2d ", gch->level);
- *      if(IS_NPC(gch))
- *        (void)snprintf(buf, MSL, "%s] ", "Mob");
- *      else if((class_table[gch->class].name == "witch") &&(gch->sex == 1))
- *        (void)snprintf(buf, MSL, "%s] ", "Warl");
- *      else
- *        (void)snprintf(buf, MSL, "%s] ", class_table[gch->class].who_name);
- */
 				(void)snprintf(buf, MSL, "%-5s `!%4d``/`1%4d`` hp `@%4d``/`2%4d`` mana `$%4d``/`4%4d`` mv `&%5d`` xp\n\r",
 					       capitalize(PERS(gch, ch)),
 					       gch->hit, gch->max_hit,
@@ -761,19 +616,8 @@ void do_group(CHAR_DATA *ch, char *argument)
 	act("$N joins $n's group.", ch, NULL, victim, TO_NOTVICT);
 	act("You join $n's group.", ch, NULL, victim, TO_VICT);
 	act("$N joins your group.", ch, NULL, victim, TO_CHAR);
-	return;
 }
 
-
-
-/*
- * 'Split' originally by Gnort, God of Chaos.
- */
-
-
-/*
- * 'Split' originally by Gnort, God of Chaos.
- */
 void do_split(CHAR_DATA *ch, char *argument)
 {
 	char buf[MSL];
@@ -866,11 +710,7 @@ void do_split(CHAR_DATA *ch, char *argument)
 			gch->silver += share_silver;
 		}
 	}
-
-	return;
 }
-
-
 
 void do_gtell(CHAR_DATA *ch, char *argument)
 {
@@ -887,10 +727,9 @@ void do_gtell(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-
-/*
- * Note use of send_to_char, so gtell works on sleepers.
- */
+    /*
+     * Note use of send_to_char, so gtell works on sleepers.
+     */
 	(void)snprintf(buf, 2 * MIL, "```5%s tells the group '```P%s```5'``\n\r", ch->name,
 		       argument);
 	for (gch = char_list; gch != NULL; gch = gch->next)
@@ -899,33 +738,6 @@ void do_gtell(CHAR_DATA *ch, char *argument)
 
 	return;
 }
-
-
-
-/*
- * It is very important that this be an equivalence relation:
- *(1) A ~ A
- *(2) if A ~ B then B ~ A
- *(3) if A ~ B  and B ~ C, then A ~ C
- */
-bool is_same_group(CHAR_DATA *ach, CHAR_DATA *bch)
-{
-	if (ach == NULL || bch == NULL)
-		return FALSE;
-
-	if (IS_NPC(ach) && IS_NPC(bch)) {
-		if (ach->group == bch->group)
-			return TRUE;
-	}
-
-	if (ach->leader != NULL)
-		ach = ach->leader;
-	if (bch->leader != NULL)
-		bch = bch->leader;
-
-	return ach == bch;
-}
-
 
 void do_noauction(CHAR_DATA *ch, char *argument)
 {
@@ -971,13 +783,11 @@ void do_page(CHAR_DATA *ch, char *argument)
 	send_to_char(buf, ch);
 	(void)snprintf(buf, 2 * MIL, "\a`O%s`7 is paging you.\n\r", ch->name);
 	send_to_char(buf, victim);
-	return;
 }
 
 void do_ignor(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
-	send_to_char("You must enter the full commanfd to ignore someone.\n\r", ch);
-	return;
+	send_to_char("You must enter the full command to ignore someone.\n\r", ch);
 }
 
 void do_ignore(CHAR_DATA *ch, char *argument)
@@ -1126,13 +936,6 @@ void do_unignore(CHAR_DATA *ch, char *argument)
 		send_to_char("You aren't ignoring anyone by that name!\n\r", ch);
 }
 
-
-
-/***************************************************************************
-*	do_tag
-*
-*	say something over the auctalk channel
-***************************************************************************/
 void do_tag(CHAR_DATA *ch, char *argument)
 {
 	char arg[MIL];
@@ -1211,7 +1014,6 @@ void do_tagstop(CHAR_DATA *ch, char *argument)
 	send_to_char(buf, ch);
 }
 
-
 void do_rpswitch(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
 	if (IS_NPC(ch))
@@ -1242,7 +1044,6 @@ void do_rpswitch(CHAR_DATA *ch, /*@unused@*/ char *argument)
 			wiznet("$N has entered `!RP`` mode.", ch, NULL, WIZ_ROLEPLAY, 0, 0);
 		}
 	}
-	return;
 }
 
 void do_sayto(CHAR_DATA *ch, char *argument)
@@ -1320,39 +1121,5 @@ void do_sayto(CHAR_DATA *ch, char *argument)
 			}
 		}
 	}
-	return;
 }
 
-
-void do_busy(CHAR_DATA *ch, /*@unused@*/ char *argument)
-{
-	if (IS_SET(ch->comm2, COMM2_BUSY)) {
-		send_to_char("Busy flag removed. Type 'replay' to see tells.\n\r", ch);
-		REMOVE_BIT(ch->comm2, COMM2_BUSY);
-	} else {
-		send_to_char("You are now marked as busy.\n\r", ch);
-		SET_BIT(ch->comm2, COMM2_BUSY);
-	}
-}
-
-void do_coding(CHAR_DATA *ch, /*@unused@*/ char *argument)
-{
-	if (IS_SET(ch->comm2, COMM2_CODING)) {
-		send_to_char("Coding flag removed. Type 'replay' to see tells.\n\r", ch);
-		REMOVE_BIT(ch->comm2, COMM2_CODING);
-	} else {
-		send_to_char("You are now marked as `@Coding``.\n\r", ch);
-		SET_BIT(ch->comm2, COMM2_CODING);
-	}
-}
-
-void do_building(CHAR_DATA *ch, /*@unused@*/ char *argument)
-{
-	if (IS_SET(ch->comm2, COMM2_BUILD)) {
-		send_to_char("Building flag removed. Type 'replay' to see tells.\n\r", ch);
-		REMOVE_BIT(ch->comm2, COMM2_BUILD);
-	} else {
-		send_to_char("You are now marked as `3Building``.\n\r", ch);
-		SET_BIT(ch->comm2, COMM2_BUILD);
-	}
-}
