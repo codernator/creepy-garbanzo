@@ -63,7 +63,6 @@ static struct { long flag; char *name; int location; } channel_names[] =
     { COMM_NOAUCTION, "`3Auction`` channel", 1 },
     { COMM_DEAF, "Tells channel", 1 },
     { COMM_QUIET, "Quiet mode", 1 },
-    { COMM_NOOOC, "`#OOC`7 channel", 1 },
     { COMM_NOWIZ, "```!Immortal`` channel", 1 },
     { COMM_SHOUTSOFF, "Shouts channel", 1 },
     { COMM2_IMPTALK, "`2I`8M`2P`` channel", 2 },
@@ -448,9 +447,6 @@ void show_channels(CHAR_DATA *ch)
 
 	printf_to_char(ch, "`1Shouts         %s``\n\r",
 		       !character_has_comm(ch, COMM_SHOUTSOFF, 1) ? "`#ON" : "`1OFF");
-
-	printf_to_char(ch, "`#OOC            %s``\n\r",
-		       !character_has_comm(ch, COMM_NOOOC, 1) ? "`#ON" : "`1OFF");
 
 	printf_to_char(ch, "`#QChat          %s``\n\r",
 		       !character_has_comm(ch, COMM2_NOQCHAT, 2) ? "`#ON" : "`1OFF");

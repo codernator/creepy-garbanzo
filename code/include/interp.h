@@ -285,7 +285,6 @@ DECLARE_DO_FUN(do_repair);
 DECLARE_DO_FUN(do_restore);
 DECLARE_DO_FUN(do_unrestore);
 DECLARE_DO_FUN(do_return);
-DECLARE_DO_FUN(do_rpswitch);
 DECLARE_DO_FUN(do_rsave);
 DECLARE_DO_FUN(do_rload);
 DECLARE_DO_FUN(do_rset);

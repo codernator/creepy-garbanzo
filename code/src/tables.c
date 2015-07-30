@@ -284,7 +284,6 @@ const struct flag_type comm_flags[] =
 	{ "noauction",	  COMM_NOAUCTION,    TRUE  },
 	{ "noquote",	  COMM_NOQUOTE,	     TRUE  },
 	{ "shoutsoff",	  COMM_SHOUTSOFF,    TRUE  },
-	{ "noooc",	  COMM_NOOOC,	     TRUE  },
 	{ "noqchat",	  COMM2_NOQCHAT,     TRUE  },
 	{ "compact",	  COMM_COMPACT,	     TRUE  },
 	{ "brief",	  COMM_BRIEF,	     TRUE  },

@@ -1297,7 +1297,6 @@ struct kill_data {
 #define COMM_NOAUCTION          (D)
 #define COMM_NOQUOTE            (I)
 #define COMM_SHOUTSOFF          (J)
-#define COMM_NOOOC              (K)
 #define COMM_COMPACT            (O)
 #define COMM_BRIEF              (P)
 #define COMM_PROMPT             (Q)
@@ -1324,7 +1323,6 @@ struct kill_data {
 #define COMM2_CODING            (P)
 #define COMM2_BUILD             (Q)
 #define COMM2_NOQCHAT           (R)
-#define COMM2_OOC               (S)
 #define COMM2_BUSY              (T)
 
 

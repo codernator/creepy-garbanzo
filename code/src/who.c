@@ -81,9 +81,7 @@ char *who_string(CHAR_DATA *ch)
 
 
 	sprintf(tmp,
-		"``%s%s%s%s%s%s%s%s%s%s%s%s``",
-		IS_SET(ch->comm2, COMM2_RP) ? "`8[`!RP`8]`` " : "",
-		IS_SET(ch->comm2, COMM2_OOC) ? "`8[`#OOC`8]`` " : "",
+		"``%s%s%s%s%s%s%s%s%s%s``",
 		ch->incog_level >= LEVEL_HERO ? "`6(`^Incog`6) ``" : "",
 		ch->invis_level >= 1 ? "`8(`@W`Pi`@Z`Pi`8) ``" : "",
 		IS_SET(ch->comm2, COMM2_AFK) ? "`!A`@F`OK`` " : "",

@@ -931,38 +931,6 @@ void do_unignore(CHAR_DATA *ch, char *argument)
 		send_to_char("You aren't ignoring anyone by that name!\n\r", ch);
 }
 
-void do_rpswitch(CHAR_DATA *ch, /*@unused@*/ char *argument)
-{
-	if (IS_NPC(ch))
-		return;
-
-	if (IS_IMMORTAL(ch)) {
-		if (IS_SET(ch->comm2, COMM2_RP)) {
-			send_to_char("You are now in `#OOC`` mode.\n\r", ch);
-			act("$n is now in `#OOC`` mode.\n\r", ch, NULL, NULL, TO_ROOM);
-			REMOVE_BIT(ch->comm2, COMM2_RP);
-		} else {
-			send_to_char("You are now in `!RP`` mode.\n\r", ch);
-			act("$n is now in `RP`` mode.\n\r", ch, NULL, NULL, TO_ROOM);
-			SET_BIT(ch->comm2, COMM2_RP);
-		}
-	} else {
-		if (IS_SET(ch->comm2, COMM2_RP)) {
-			send_to_char("You are now in `#OOC`` mode.\n\r", ch);
-			act("$n is now in `8[`#OOC`8]`` mode.\n\r", ch, NULL, NULL, TO_ROOM);
-			REMOVE_BIT(ch->comm2, COMM2_RP);
-			SET_BIT(ch->comm2, COMM2_OOC);
-			wiznet("$N has returned to `#OOC`` mode.", ch, NULL, WIZ_ROLEPLAY, 0, 0);
-		} else {
-			send_to_char("You are now in `!RP`` mode.  Enjoy your RP!\n\r", ch);
-			act("$n is now in `8[`!RP`8]`` mode.\n\r", ch, NULL, NULL, TO_ROOM);
-			REMOVE_BIT(ch->comm2, COMM2_OOC);
-			SET_BIT(ch->comm2, COMM2_RP);
-			wiznet("$N has entered `!RP`` mode.", ch, NULL, WIZ_ROLEPLAY, 0, 0);
-		}
-	}
-}
-
 void do_sayto(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *victim;
@@ -1010,13 +978,11 @@ void do_sayto(CHAR_DATA *ch, char *argument)
 		}
 		return;
 	}
-	printf_to_char(ch, "``You say %sto %s '`P%s``'\n\r",
-		       IS_SET(ch->comm2, COMM2_RP) ? "" : "`6(`&oocly`6)`` ",
+	printf_to_char(ch, "``You say to %s '`P%s``'\n\r",
 		       victim->name, argument);
 
-	printf_to_char(victim, "``%s says %sto you '`P%s``'\n\r",
+	printf_to_char(victim, "``%s says to you '`P%s``'\n\r",
 		       ch->name,
-		       IS_SET(ch->comm2, COMM2_RP) ? "" : "`6(`&oocly`6)`` ",
 		       argument);
 
 	for (d = descriptor_list; d; d = d->next) {
@@ -1026,14 +992,12 @@ void do_sayto(CHAR_DATA *ch, char *argument)
 		    && d->character->position != POS_SLEEPING
 		    && d->character != victim) {
 			if (!IS_NPC(victim)) {
-				printf_to_char(d->character, "%s says %sto %s, '`P%s``'.\n\r",
+				printf_to_char(d->character, "%s says to %s, '`P%s``'.\n\r",
 					       PERS(ch, d->character),
-					       IS_SET(ch->comm2, COMM2_RP) ? "" : "`6(`&oocly`6)`` ",
 					       PERS(victim, d->character), argument);
 			} else {
-				printf_to_char(d->character, "%s says %sto %s, '`P%s``'.\n\r",
+				printf_to_char(d->character, "%s says to %s, '`P%s``'.\n\r",
 					       PERS(ch, d->character),
-					       IS_SET(ch->comm2, COMM2_RP) ? "" : "`6(`&oocly`6)`` ",
 					       PERS(victim, d->character), argument);
 			}
 		}
