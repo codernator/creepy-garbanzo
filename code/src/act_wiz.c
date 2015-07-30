@@ -2696,50 +2696,6 @@ void do_noemote(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-void do_nowish(CHAR_DATA *ch, char *argument)
-{
-	char arg[MIL], buf[MSL];
-	CHAR_DATA *victim;
-
-	one_argument(argument, arg);
-
-	DENY_NPC(ch);
-
-	if (arg[0] == '\0') {
-		send_to_char("No`Owish`` whom?\n\r", ch);
-		return;
-	}
-
-	if ((victim = get_char_world(ch, arg)) == NULL) {
-		send_to_char("They aren't here.\n\r", ch);
-		return;
-	}
-
-	if (get_trust(victim) >= get_trust(ch)
-	    && victim != ch) {
-		send_to_char("You failed.\n\r", ch);
-		return;
-	}
-
-	if (IS_SET(victim->comm, COMM_NOWISH)) {
-		REMOVE_BIT(victim->comm, COMM_NOWISH);
-		send_to_char("You can use the `Owish`` channel again.\n\r", victim);
-		send_to_char("NOWISH removed.\n\r", ch);
-		sprintf(buf, "$N restores the wish channel to %s.", victim->name);
-		wiznet(buf, ch, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
-	} else {
-		SET_BIT(victim->comm, COMM_NOWISH);
-		send_to_char("You can't use the `Owish`` channel!\n\r", victim);
-		send_to_char("NOWISH set.\n\r", ch);
-		sprintf(buf, "$N revokes %s's wish privileges.", victim->name);
-		wiznet(buf, ch, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
-	}
-
-	return;
-}
-
-
-
 void do_noshout(CHAR_DATA *ch, char *argument)
 {
 	char arg[MIL], buf[MSL];

@@ -1,36 +1,7 @@
-/***************************************************************************
-*   Original Diku Mud copyright (C) 1990, 1991 by Sebastian Hammer,        *
-*   Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
-*                                                                              *
-*   Merc Diku Mud improvments copyright (C) 1992, 1993 by Michael          *
-*   Chastain, Michael Quan, and Mitchell Tse.                              *
-*	                                                                       *
-*   In order to use any part of this Merc Diku Mud, you must comply with   *
-*   both the original Diku license in 'license.doc' as well the Merc	   *
-*   license in 'license.txt'.  In particular, you may not remove either of *
-*   these copyright notices.                                               *
-*                                                                              *
-*   Much time and thought has gone into this software and you are          *
-*   benefitting.  We hope that you share your changes too.  What goes      *
-*   around, comes around.                                                  *
-***************************************************************************/
-
-/***************************************************************************
-*   ROM 2.4 is copyright 1993-1998 Russ Taylor                             *
-*   ROM has been brought to you by the ROM consortium                      *
-*       Russ Taylor (rtaylor@hypercube.org)                                *
-*       Gabrielle Taylor (gtaylor@hypercube.org)                           *
-*       Brian Moore (zump@rom.org)                                         *
-*   By using this code, you have agreed to follow the terms of the         *
-*   ROM license, in the file Rom24/doc/rom.license                         *
-***************************************************************************/
 #include "merc.h"
 #include "tables.h"
 
 
-/***************************************************************************
-*	bitvector_type
-***************************************************************************/
 const struct bit_type bitvector_type [] =
 {
 	{ affect_flags,	    "affect" },
@@ -45,9 +16,7 @@ const struct bit_type bitvector_type [] =
 /***************************************************************************
 *	flags used by characters (players/mobs)
 ***************************************************************************/
-/***************************************************************************
-*	position_table
-***************************************************************************/
+
 const struct position_type position_table[] =
 {
 	{ "dead",	      "dead"  },
@@ -62,10 +31,6 @@ const struct position_type position_table[] =
 	{ NULL,		      NULL    }
 };
 
-
-/***************************************************************************
-*	sex_table
-***************************************************************************/
 const struct sex_type sex_table[] =
 {
 	{ "none"   },
@@ -75,10 +40,6 @@ const struct sex_type sex_table[] =
 	{ NULL	   }
 };
 
-
-/***************************************************************************
-*	size_table
-***************************************************************************/
 const struct size_type size_table[] =
 {
 	{ "tiny"   },
@@ -90,9 +51,6 @@ const struct size_type size_table[] =
 	{ NULL	   }
 };
 
-/***************************************************************************
-*	act_flags
-***************************************************************************/
 const struct flag_type act_flags[] =
 {
 	{ "npc",	   A,	     FALSE },
@@ -122,10 +80,6 @@ const struct flag_type act_flags[] =
 	{ NULL,		   0,	     FALSE }
 };
 
-
-/***************************************************************************
-*	plr_flags
-***************************************************************************/
 const struct flag_type plr_flags[] =
 {
 	{ "npc",	A,  FALSE },
@@ -151,10 +105,6 @@ const struct flag_type plr_flags[] =
 	{ NULL,		0,  0	  }
 };
 
-
-/***************************************************************************
-*	size_flags
-***************************************************************************/
 const struct flag_type size_flags[] =
 {
 	{ "tiny",   SIZE_TINY,	 TRUE },
@@ -166,10 +116,6 @@ const struct flag_type size_flags[] =
 	{ NULL,	    0,		 0    },
 };
 
-
-/***************************************************************************
-*	position_flags
-***************************************************************************/
 const struct flag_type position_flags[] =
 {
 	{ "dead",     POS_DEAD,	    FALSE },
@@ -184,10 +130,6 @@ const struct flag_type position_flags[] =
 	{ NULL,	      0,	    0	  }
 };
 
-
-/***************************************************************************
-*	affect_flags
-***************************************************************************/
 const struct flag_type affect_flags[] =
 {
 	{ "pollen",	  A,  TRUE },
@@ -218,15 +160,11 @@ const struct flag_type affect_flags[] =
 	{ "dark_vision",  Z,  TRUE },
 	{ "berserk",	  aa, TRUE },
 	{ "slow",	  cc, TRUE },
-/*  { "druid_call",		dd,		TRUE    }, */
 	{ "banzai",	  ee, TRUE },
 	{ "calloused",	  bb, TRUE },
 	{ NULL,		  0,  0	   }
 };
 
-/***************************************************************************
-*	off_flags
-***************************************************************************/
 const struct flag_type off_flags[] =
 {
 	{ "area_attack",    A, TRUE },
@@ -252,10 +190,6 @@ const struct flag_type off_flags[] =
 	{ NULL,		    0, 0    }
 };
 
-
-/***************************************************************************
-*	imm_flags
-***************************************************************************/
 const struct flag_type imm_flags[] =
 {
 	{ "summon",    A,  TRUE },
@@ -285,10 +219,6 @@ const struct flag_type imm_flags[] =
 	{ NULL,	       0,  0	}
 };
 
-
-/***************************************************************************
-*	form_flags
-***************************************************************************/
 const struct flag_type form_flags[] =
 {
 	{ "edible",	   FORM_EDIBLE,	       TRUE },
@@ -320,10 +250,6 @@ const struct flag_type form_flags[] =
 	{ NULL,		   0,		       0    }
 };
 
-
-/***************************************************************************
-*	part_flags
-***************************************************************************/
 const struct flag_type part_flags[] =
 {
 	{ "head",	 PART_HEAD,	   TRUE },
@@ -351,10 +277,6 @@ const struct flag_type part_flags[] =
 	{ NULL,		 0,		   0	}
 };
 
-
-/***************************************************************************
-*	comm_flags
-***************************************************************************/
 const struct flag_type comm_flags[] =
 {
 	{ "quiet",	  COMM_QUIET,	     TRUE  },
@@ -365,7 +287,6 @@ const struct flag_type comm_flags[] =
 	{ "shoutsoff",	  COMM_SHOUTSOFF,    TRUE  },
 	{ "noooc",	  COMM_NOOOC,	     TRUE  },
 	{ "noqchat",	  COMM2_NOQCHAT,     TRUE  },
-	{ "wish",	  COMM_NOWISH,	     TRUE  },
 	{ "true_trust",	  COMM_TRUE_TRUST,   TRUE  },
 	{ "compact",	  COMM_COMPACT,	     TRUE  },
 	{ "brief",	  COMM_BRIEF,	     TRUE  },
@@ -386,11 +307,6 @@ const struct flag_type comm_flags[] =
 	{ NULL,		  0,		     0	   }
 };
 
-
-
-/***************************************************************************
-*	sex_flags
-***************************************************************************/
 const struct flag_type sex_flags[] =
 {
 	{ "male",    SEX_MALE,	  TRUE },
@@ -401,10 +317,6 @@ const struct flag_type sex_flags[] =
 	{ NULL,	     0,		  0    }
 };
 
-
-/***************************************************************************
-*	res_flags
-***************************************************************************/
 const struct flag_type res_flags[] =
 {
 	{ "summon",    RES_SUMMON,    TRUE },
@@ -433,10 +345,6 @@ const struct flag_type res_flags[] =
 	{ NULL,	       0,	      0	   }
 };
 
-
-/***************************************************************************
-*	vuln_flags
-***************************************************************************/
 const struct flag_type vuln_flags[] =
 {
 	{ "summon",    VULN_SUMMON,    TRUE },
@@ -465,10 +373,6 @@ const struct flag_type vuln_flags[] =
 	{ NULL,	       0,	       0    }
 };
 
-
-/***************************************************************************
-*	mprog_flags
-***************************************************************************/
 const struct flag_type mprog_flags[] =
 {
 	{ "act",    TRIG_ACT,	 TRUE },
@@ -494,9 +398,6 @@ const struct flag_type mprog_flags[] =
 /***************************************************************************
 *	flags used by areas/rooms
 ***************************************************************************/
-/***************************************************************************
-*	area_flags
-***************************************************************************/
 const struct flag_type area_flags[] =
 {
 	{ "none",    AREA_NONE,	   FALSE },
@@ -506,9 +407,6 @@ const struct flag_type area_flags[] =
 	{ NULL,	     0,		   0	 }
 };
 
-/***************************************************************************
-*	exit_flags
-***************************************************************************/
 const struct flag_type exit_flags[] =
 {
 	{ "door",	 EX_ISDOOR,	 TRUE },
@@ -524,10 +422,6 @@ const struct flag_type exit_flags[] =
 	{ NULL,		 0,		 0    }
 };
 
-
-/***************************************************************************
-*	door_resets
-***************************************************************************/
 const struct flag_type door_resets[] =
 {
 	{ "open and unlocked",	 0, TRUE },
@@ -536,11 +430,6 @@ const struct flag_type door_resets[] =
 	{ NULL,			 0, 0	 }
 };
 
-
-
-/***************************************************************************
-*	room_flags
-***************************************************************************/
 const struct flag_type room_flags[] =
 {
 	{ "bank",	  ROOM_BANK,		 TRUE  },
@@ -572,11 +461,6 @@ const struct flag_type room_flags[] =
 	{ NULL,		  0,			 0     }
 };
 
-
-
-/***************************************************************************
-*	sector_flags
-***************************************************************************/
 const struct flag_type sector_flags[] =
 {
 	{ "inside",	SECT_INSIDE,	   TRUE },
@@ -596,11 +480,6 @@ const struct flag_type sector_flags[] =
 
 /***************************************************************************
 *	flags used by objects
-***************************************************************************/
-/***************************************************************************
-*	type_flags
-*
-*	item types
 ***************************************************************************/
 const struct flag_type type_flags[] =
 {
@@ -641,12 +520,6 @@ const struct flag_type type_flags[] =
 	{ NULL,		    0,		     0	   }
 };
 
-
-/***************************************************************************
-*	extra_flags
-*
-*	item extra flags
-***************************************************************************/
 const struct flag_type extra_flags[] =
 {
 	{ "glow",	 ITEM_GLOW,	    TRUE  },
@@ -681,11 +554,6 @@ const struct flag_type extra_flags[] =
 	{ NULL,		 0,		    0	  }
 };
 
-
-
-/***************************************************************************
-*	wear_flags
-***************************************************************************/
 const struct flag_type wear_flags[] =
 {
 	{ "take",      ITEM_TAKE,	 TRUE },
@@ -712,11 +580,6 @@ const struct flag_type wear_flags[] =
 	{ NULL,	       0,		 0    }
 };
 
-
-
-/***************************************************************************
-*	apply_flags
-***************************************************************************/
 const struct flag_type apply_flags[] =
 {
 	{ "none",	  APPLY_NONE,	       TRUE  },
@@ -751,10 +614,6 @@ const struct flag_type apply_flags[] =
 	{ NULL,		  0,		       0     }
 };
 
-
-/***************************************************************************
-*	wear_loc_strings
-***************************************************************************/
 const struct flag_type wear_loc_strings[] =
 {
 	{ "in the inventory",	 WEAR_NONE,	TRUE },
@@ -782,10 +641,6 @@ const struct flag_type wear_loc_strings[] =
 	{ NULL,			 0,		0    },
 };
 
-
-/***************************************************************************
-*	wear_loc_flags
-***************************************************************************/
 const struct flag_type wear_loc_flags[] =
 {
 	{ "none",     WEAR_NONE,     TRUE },
@@ -815,10 +670,6 @@ const struct flag_type wear_loc_flags[] =
 	{ NULL,	      0,	     0	  }
 };
 
-
-/***************************************************************************
-*	container_flags
-***************************************************************************/
 const struct flag_type container_flags[] =
 {
 	{ "closeable", 1,  TRUE },
@@ -829,12 +680,6 @@ const struct flag_type container_flags[] =
 	{ NULL,	       0,  0	}
 };
 
-
-
-
-/***************************************************************************
-*	ac_type
-***************************************************************************/
 const struct flag_type ac_type[] =
 {
 	{ "pierce", AC_PIERCE, TRUE },
@@ -844,11 +689,6 @@ const struct flag_type ac_type[] =
 	{ NULL,	    0,	       0    }
 };
 
-
-
-/***************************************************************************
-*	weapon_flags
-***************************************************************************/
 const struct flag_type weapon_class[] =
 {
 	{ "exotic",  WEAPON_EXOTIC,  TRUE },
@@ -863,10 +703,6 @@ const struct flag_type weapon_class[] =
 	{ NULL,	     0,		     0	  }
 };
 
-
-/***************************************************************************
-*	weapon_flag_type
-***************************************************************************/
 const struct flag_type weapon_flag_type[] =
 {
 	{ "flaming",  WEAPON_FLAMING,	TRUE },
@@ -881,9 +717,7 @@ const struct flag_type weapon_flag_type[] =
 	{ NULL,	      0,		0    }
 };
 
-
 /***************************************************************************
-*	socket_flags
 *	**THIS TABLE IS ALL WRONG***
 ***************************************************************************/
 const struct flag_type socket_flags[] =
@@ -897,9 +731,7 @@ const struct flag_type socket_flags[] =
 	{ "",	      0,	    0	 }
 };
 
-
 /***************************************************************************
-*	socket_values
 *	**THIS TABLE IS ALL WRONG***
 ***************************************************************************/
 const struct flag_type socket_values[] =
@@ -911,10 +743,6 @@ const struct flag_type socket_values[] =
 	{ "",	      0,	    0	 }
 };
 
-
-/***************************************************************************
-*	portal_flags
-***************************************************************************/
 const struct flag_type portal_flags[] =
 {
 	{ "normal_exit", GATE_NORMAL_EXIT, TRUE },
@@ -925,10 +753,6 @@ const struct flag_type portal_flags[] =
 	{ NULL,		 0,		   0	}
 };
 
-
-/***************************************************************************
-*	furniture_flags
-***************************************************************************/
 const struct flag_type furniture_flags[] =
 {
 	{ "stand_at",	STAND_AT,   TRUE },
@@ -950,10 +774,6 @@ const struct flag_type furniture_flags[] =
 	{ NULL,		0,	    0	 }
 };
 
-
-/***************************************************************************
-*	apply_types
-***************************************************************************/
 const struct  flag_type apply_types     [] =
 {
 	{ "affects", TO_AFFECTS, TRUE },
@@ -965,10 +785,6 @@ const struct  flag_type apply_types     [] =
 	{ NULL,	     0,		 TRUE }
 };
 
-
-/***************************************************************************
-*	damage_flags
-***************************************************************************/
 const struct flag_type damage_flags[] =
 {
 	{ "slice",		1,  TRUE  },
@@ -1028,15 +844,6 @@ const struct flag_type damage_flags[] =
 	{ NULL,			0,  FALSE }
 };
 
-
-
-
-/***************************************************************************
-*	skill properties
-***************************************************************************/
-/***************************************************************************
-*	target_flags
-***************************************************************************/
 const struct flag_type target_flags[] =
 {
 	{ "ignore",	   TAR_IGNORE,	       TRUE },
@@ -1050,9 +857,6 @@ const struct flag_type target_flags[] =
 	{ NULL,		   0,		       0    }
 };
 
-/***************************************************************************
-*	skill_flags
-***************************************************************************/
 const struct flag_type skill_flags[] =
 {
 	{ "noscribe",	 SPELL_NOSCRIBE,    TRUE },

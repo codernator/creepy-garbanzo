@@ -1299,7 +1299,6 @@ struct kill_data {
 #define COMM_NOQUOTE            (I)
 #define COMM_SHOUTSOFF          (J)
 #define COMM_NOOOC              (K)
-#define COMM_NOWISH             (M)
 #define COMM_TRUE_TRUST         (N)
 #define COMM_COMPACT            (O)
 #define COMM_BRIEF              (P)

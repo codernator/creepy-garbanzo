@@ -467,9 +467,6 @@ void show_channels(CHAR_DATA *ch)
 	if (IS_IMMORTAL(ch)) {
 		printf_to_char(ch, "`!GOD channel    %s``\n\r",
 			       !character_has_comm(ch, COMM_NOWIZ, 1) ? "`#ON" : "`1OFF");
-
-		printf_to_char(ch, "`OWishes         %s``\n\r",
-			       !character_has_comm(ch, COMM_NOWISH, 1) ? "`#ON" : "`1OFF");
 	}
 
 	if (ch->level == IMPLEMENTOR)
