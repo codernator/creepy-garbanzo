@@ -609,7 +609,6 @@ const struct flag_type type_flags[] =
 	{ "wand",	    ITEM_WAND,	     TRUE  },
 	{ "staff",	    ITEM_STAFF,	     TRUE  },
 	{ "weapon",	    ITEM_WEAPON,     TRUE  },
-	{ "scratchoff",	    ITEM_SCRATCHOFF, TRUE  },
 	{ "treasure",	    ITEM_TREASURE,   TRUE  },
 	{ "armor",	    ITEM_ARMOR,	     TRUE  },
 	{ "potion",	    ITEM_POTION,     TRUE  },
@@ -631,14 +630,12 @@ const struct flag_type type_flags[] =
 	{ "warpstone",	    ITEM_WARP_STONE, TRUE  },
 	{ "gem",	    ITEM_GEM,	     TRUE  },
 	{ "jewelry",	    ITEM_JEWELRY,    TRUE  },
-	{ "token",	    ITEM_QTOKEN,     TRUE  },
 	{ "teleporter",	    ITEM_TELEPORT,   TRUE  },
 	{ "atm",	    ITEM_ATM,	     TRUE  },
 	{ "invitation",	    ITEM_INVITATION, TRUE  },
 	{ "faeriefog",	    ITEM_FAERIE_FOG, FALSE },
 	{ "dust",	    ITEM_DUST,	     FALSE },
 	{ "doll",	    ITEM_DOLL,	     TRUE  },
-	{ "newtoken",	    ITEM_QTOKEN2,    TRUE  },
 	{ "settable",	    ITEM_SOCKETS,    TRUE  },
 	{ "dice",	    ITEM_DICE,	     TRUE  },
 	{ NULL,		    0,		     0	   }
@@ -884,27 +881,6 @@ const struct flag_type weapon_flag_type[] =
 	{ NULL,	      0,		0    }
 };
 
-
-/***************************************************************************
-*	token_flags
-*	**THIS TABLE IS ALL WRONG***
-***************************************************************************/
-const struct flag_type token_flags[] =
-{
-	{ "train",	 2,	TRUE },
-	{ "200/200",	 4,	TRUE },
-	{ "10/10",	 8,	TRUE },
-	{ "Weaponflag",	 16,	TRUE },
-	{ "Fireproof",	 32,	TRUE },
-	{ "Damage Noun", 64,	TRUE },
-	{ "Restring",	 128,	TRUE },
-	{ "Skillset",	 256,	TRUE },
-	{ "Hidden",	 2048,	TRUE },
-	{ "Wild",	 4096,	TRUE },
-	{ "IMP",	 8192,	TRUE },
-	{ "armorclass",	 16384, TRUE },
-	{ NULL,		 0,	0    }
-};
 
 /***************************************************************************
 *	socket_flags

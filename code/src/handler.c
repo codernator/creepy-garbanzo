@@ -1968,9 +1968,6 @@ int get_obj_number(OBJ_DATA *obj)
 
 	if (obj->item_type == ITEM_CONTAINER
 	    || obj->item_type == ITEM_MONEY
-	    || obj->item_type == ITEM_QTOKEN
-	    || obj->item_type == ITEM_QTOKEN2
-	    || obj->item_type == ITEM_SCRATCHOFF
 	    || obj->item_type == ITEM_GEM
 	    || obj->item_type == ITEM_JEWELRY
 	    || obj->item_type == ITEM_POTION
@@ -2430,15 +2427,6 @@ char *cont_bit_name(long flags)
 	return flag_string(container_flags, flags);
 }
 
-/***************************************************************************
-*	token_bit_name
-*
-*	return a token bit string
-***************************************************************************/
-char *token_bit_name(long flags)
-{
-	return flag_string(token_flags, flags);
-}
 
 /***************************************************************************
 *	off_bit_name
@@ -2584,10 +2572,6 @@ void identify_item(CHAR_DATA *ch, OBJ_DATA *obj)
 				       obj->value[4]);
 		break;
 
-	case ITEM_QTOKEN2:
-		printf_to_char(ch, "Token Type:  %s\n\r", token_bit_name((long)obj->value[0]));
-		printf_to_char(ch, "Token Value: %ld\n\r", obj->value[1]);
-		break;
 	case ITEM_WEAPON:
 		send_to_char("Weapon type is ", ch);
 		switch (obj->value[0]) {

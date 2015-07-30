@@ -944,7 +944,6 @@ struct kill_data {
 #define ITEM_WAND                         3
 #define ITEM_STAFF                      4
 #define ITEM_WEAPON                     5
-#define ITEM_SCRATCHOFF 6
 #define ITEM_TREASURE           8
 #define ITEM_ARMOR                      9
 #define ITEM_POTION                     10
@@ -968,7 +967,6 @@ struct kill_data {
 #define ITEM_ROOM_KEY           31
 #define ITEM_GEM                          32
 #define ITEM_JEWELRY            33
-#define ITEM_QTOKEN                     35
 #define ITEM_TELEPORT           36
 #define ITEM_ATM                          37
 #define ITEM_INVITATION 38
@@ -976,7 +974,6 @@ struct kill_data {
 #define ITEM_FAERIE_FOG 42
 #define ITEM_DUST                         43
 #define ITEM_DOLL                         44
-#define ITEM_QTOKEN2            45
 #define ITEM_SOCKETS            46
 #define ITEM_DICE                         47
 #define ITEM_RELIC      48
@@ -1681,17 +1678,6 @@ struct pc_data {
     time_t  last_bank;
     int  security;
     int  rank;
-    unsigned int armorclass;
-    unsigned int fireproof;
-    unsigned int weaponflag;
-    unsigned int restring;
-    unsigned int damnoun;
-    unsigned int immhidden;
-    unsigned int immwild;
-    unsigned int imp;
-    unsigned int bounty;
-    unsigned int skillset;
-    unsigned int rp;
     unsigned int extendedlevel;
     long  extendedexp;
     bool  confirm_pk;

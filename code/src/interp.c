@@ -148,7 +148,6 @@ const struct cmd_type cmd_table[] =
 	{ "score",	      do_score,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "scan",	      do_scan,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "skills",	      do_skills,       POS_DEAD,     0,	 LOG_NORMAL, 1 },
-	{ "skillset",	  do_skillset,     POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "show",	      do_show,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "spells",	      do_spells,       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "speclist",	  do_speclist,     POS_DEAD,     L6, LOG_NORMAL, 1 },
@@ -162,8 +161,6 @@ const struct cmd_type cmd_table[] =
 	{ "whois",	      do_whois,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "wizlist",	  do_wizlist,      POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "worth",	      do_worth,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
-	{ "bounty",	      do_bounty,       POS_SLEEPING, 0,	 LOG_ALWAYS, 1 },
-	{ "bountylist",	  do_bountylist,   POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 
 	/*  Configuration commands.  */
 

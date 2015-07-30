@@ -1007,7 +1007,6 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
 	OBJ_DATA *corpse;
 	int race;
 	bool immune;
-	char buf[MAX_STRING_LENGTH];
 
 	if (victim->position == POS_DEAD)
 		return 0;
@@ -1236,13 +1235,6 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
 				} else {
 					ch->pcdata->pkills++;
 					victim->pcdata->pdeaths++;
-
-					if (victim->pcdata->bounty > 0) {
-						sprintf(buf, "`![`7Bounty Info`!]`& %s `7has taken `&%s`7's bounty of `#%u `5imp`7(s)!`n", ch->name, victim->name, victim->pcdata->bounty);
-						do_echo(NULL, buf);
-						ch->pcdata->imp += victim->pcdata->bounty;
-						victim->pcdata->bounty = 0;
-					}
 				}
 			}
 		} else {
@@ -1605,12 +1597,6 @@ void check_killer(CHAR_DATA *ch, CHAR_DATA *victim)
 	if (!IS_NPC(ch) && !IS_IMMORTAL(ch)) {
 		send_to_char("```&*```O*```8* ``You are now a ```!K```1i```!LLER!! ```8*```O*```&*``\n\r", ch);
 		SET_BIT(ch->act, PLR_KILLER);
-/*                if (number_range(1,2) == 2) {
- *              ch->pcdata->bounty += number_range(1,3);
- *    sprintf (buf, "`![`7Bounty Info`!]`& %s `7is now worth `#%d `5imp`7(s).`n", ch->name,
- *             ch->pcdata->bounty);
- *    do_echo(NULL,buf);
- *             }*/
 	}
 
 	ch->pcdata->killer_time = time(NULL);

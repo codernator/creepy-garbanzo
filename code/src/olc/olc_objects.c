@@ -180,11 +180,6 @@ static void show_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *obj)
 		printf_to_char(ch, "`1[`!v1`1]`& Silver``: [%d]\n\r", obj->value[0]);
 		break;
 
-	case ITEM_QTOKEN2:
-		printf_to_char(ch, "`1[`!v0`1]`& Type``:  [%s]\n\r", flag_string(token_flags, obj->value[0]));
-		printf_to_char(ch, "`1[`!v1`1]`& Value``: [%d]\n\r", obj->value[1]);
-		break;
-
 	case ITEM_SOCKETS:
 		printf_to_char(ch, "[v0] Type:           %s\n\r",
 			       flag_string(socket_flags, obj->value[0]));
@@ -526,26 +521,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 			break;
 		}
 		break;
-	case ITEM_QTOKEN2:
-		switch (value_num) {
-		default:
-			do_help(ch, "ITEM_QTOKEN2");
-			return FALSE;
-		case 0:
-			if ((value = flag_value(token_flags, argument)) != NO_FLAG) {
-				pObj->value[0] = value;
-			} else {
-				do_help(ch, "ITEM_QTOKEN2");
-				return FALSE;
-			}
-			send_to_char("Token type set.\n\r\n\r", ch);
-			break;
-		case 1:
-			send_to_char("Token value set.\n\r\n\r", ch);
-			pObj->value[1] = parse_int(argument);
-			break;
-		}
-		break;
+
 	case ITEM_SOCKETS:
 		switch (value_num) {
 		default:

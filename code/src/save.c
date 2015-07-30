@@ -375,7 +375,6 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 			ch->pcdata->condition[3],
 			ch->pcdata->condition[4]);
 
-		fprintf(fp, "Bounty %u\n", ch->pcdata->bounty);
 		fprintf(fp, "Color %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n",
 			ch->color,
 			(int)ch->pcdata->color_hp,
@@ -957,7 +956,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 			break;
 
 		case 'A':
-			KEY("ArmorC", ch->pcdata->armorclass, fread_uint(fp));
 			KEY("Act", ch->act, fread_flag(fp));
 			if (IS_SET(ch->act, ACT_IS_NPC));
 			{
@@ -1101,7 +1099,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 			KEY("Bkills", ch->bkills, fread_number(fp));
 			KEY("Bloss", ch->bloss, fread_number(fp));
 			KEY("Bout", ch->pcdata->bamfout, fread_string(fp));
-			KEY("Bounty", ch->pcdata->bounty, fread_uint(fp));
 			break;
 
 		case 'C':
@@ -1152,7 +1149,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 			break;
 
 		case 'D':
-			KEY("Damnoun", ch->pcdata->damnoun, fread_uint(fp));
 			KEY("Damroll", ch->damroll, fread_number(fp));
 			KEY("Dam", ch->damroll, fread_number(fp));
 			KEY("Dcry", ch->pcdata->deathcry, fread_string(fp));
@@ -1239,7 +1235,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 
 
 		case 'F':
-			KEY("Fireproof", ch->pcdata->fireproof, fread_uint(fp));
 			break;
 
 		case 'G':
@@ -1300,7 +1295,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 			KEY("Inco", ch->incog_level, fread_number(fp));
 			KEY("Invi", ch->invis_level, fread_number(fp));
 			KEY("Immk", ch->pcdata->immkiss_string, fread_string(fp));
-			KEY("Imp", ch->pcdata->imp, fread_uint(fp));
 			KEY("Inote", ch->inote, fread_string(fp));
 			break;
 
@@ -1396,12 +1390,10 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 			break;
 
 		case 'R':
-			KEY("Restring", ch->pcdata->restring, fread_uint(fp));
 			KEY("Rrestore_string", ch->pcdata->rrestore_string, fread_string(fp));
 			KEY("Rres", ch->pcdata->rrestore_string, fread_string(fp));
 			KEY("Race", ch->race, race_lookup(fread_string(fp)));
 			KEY("Rank0", ch->pcdata->rank, fread_number(fp));
-			KEY("rp", ch->pcdata->rp, fread_uint(fp));
 			if (!str_cmp(word, "Room")) {
 				ch->in_room = get_room_index(fread_number(fp));
 				if (ch->in_room == NULL)
@@ -1463,7 +1455,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 				fMatch = TRUE;
 			}
 
-			KEY("Skillset", ch->pcdata->skillset, fread_uint(fp));
 			break;
 
 		case 'T':
@@ -1502,7 +1493,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 			break;
 
 		case 'W':
-			KEY("Weaponflag", ch->pcdata->weaponflag, fread_uint(fp));
 			KEY("Wimpy", ch->wimpy, fread_number(fp));
 			KEY("Wimp", ch->wimpy, fread_number(fp));
 			KEY("Wizn", ch->pcdata->wiznet, fread_flag(fp));

@@ -2361,18 +2361,6 @@ static bool set_obj_value_idx(OBJ_DATA *obj, int idx, char *argument)
 			}
 			break;
 
-		case ITEM_QTOKEN2:
-			switch (idx) {
-			default:
-				break;
-			case 0:
-				if ((value = flag_value(token_flags, argument)) != NO_FLAG) {
-					obj->value[0] = value;
-					return TRUE;
-				}
-				break;
-			}
-			break;
 		case ITEM_SOCKETS:
 			switch (idx) {
 			default:

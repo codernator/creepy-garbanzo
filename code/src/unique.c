@@ -234,9 +234,6 @@ void do_tally(CHAR_DATA *ch, char *argument)
 {
 	OBJ_DATA *obj;
 	int unique_tally = 0;
-	int hidden_tally = 0;
-	int imp_tally = 0;
-	int odd_tally = 0;
 
 	for (obj = object_list; obj != NULL; obj = obj->next) {
 		CHAR_DATA *vch;
@@ -249,33 +246,11 @@ void do_tally(CHAR_DATA *ch, char *argument)
 				unique_tally++;
 				continue;
 			}
-
-			if (obj->item_type == ITEM_QTOKEN2) {
-				/* we have a hidden token? */
-				if (IS_SET(obj->value[0], TOKEN_IMMHIDDEN)) {
-					hidden_tally++;
-					continue;
-				}
-				/* we have an imp token? */
-				if (IS_SET(obj->value[0], TOKEN_IMP)) {
-					imp_tally++;
-					continue;
-				}
-				/* we have some other form of token */
-				odd_tally++;
-				continue;
-			}
-
-			if (obj->item_type == ITEM_QTOKEN)
-				odd_tally++;
 		}
 	}
 
 	/* need to fix colors here */
 	printf_to_char(ch, "`gUnique Items:  %d currently in the wilderness.``\n\r", unique_tally);
-	printf_to_char(ch, "`gIMP Tokens:    %d currently in the wilderness.``\n\r", imp_tally);
-	printf_to_char(ch, "`gHidden Tokens: %d currently in the wilderness.``\n\r", hidden_tally);
-	printf_to_char(ch, "`gOther Tokens:  %d currently in the wilderness.``\n\r", odd_tally);
 	return;
 }
 

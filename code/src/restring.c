@@ -518,54 +518,5 @@ void do_restring(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if (!str_prefix(cmd, "set")) {
-		OBJ_DATA *obj;
-		CHAR_DATA *mob;
-
-		if (ch->pcdata->restring > 0 || IS_IMMORTAL(ch)) {
-			if (ch->pcdata->restring_name[0] == '\0') {
-				send_to_char("You `!must`` specify a name for the restring.\n\r", ch);
-				return;
-			}
-
-			if ((obj = get_obj_carry(ch, argument)) != NULL) {
-				if (obj->item_type == ITEM_QTOKEN
-				    || obj->item_type == ITEM_QTOKEN2
-				    || obj->item_type == ITEM_SCRATCHOFF
-				    || obj->item_type == ITEM_TRASH) {
-					send_to_char("You cannot restring Quest Tokens.\n\r", ch);
-					return;
-				}
-
-				realloc_string(&obj->name, ch->pcdata->restring_name);
-				realloc_string(&obj->short_descr, ch->pcdata->restring_short);
-				realloc_string(&obj->description, ch->pcdata->restring_long);
-				if (IS_IMMORTAL(ch)) {
-					send_to_char("Item restrung.\n\r", ch);
-				} else {
-					ch->pcdata->restring--;
-					send_to_char("Object restrung.  One `#Restring`` has been removed from your total.\n\r", ch);
-				}
-			} else if (IS_IMMORTAL(ch) && ((mob = get_char_world(ch, argument)) != NULL)) {
-				char long_buf[MSL];
-
-				realloc_string(&mob->name, ch->pcdata->restring_name);
-				realloc_string(&mob->short_descr, ch->pcdata->restring_short);
-				sprintf(long_buf, "%s\n\r", ch->pcdata->restring_long);
-				realloc_string(&mob->long_descr, long_buf);
-
-				send_to_char("Mob restrung.\n\r", ch);
-			} else {
-				do_restring(ch, "");
-				return;
-			}
-
-			return;
-		} else {
-			send_to_char("You do not have any restring tokens.\n\r", ch);
-			return;
-		}
-	}
-
 	do_restring(ch, "");
 }

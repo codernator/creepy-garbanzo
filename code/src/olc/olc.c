@@ -1272,7 +1272,6 @@ static const struct olc_help_type help_table[] =
 	{ "objects",   "liquid",       liq_table,	 "Liquid types."	       },
 	{ "objects",   "apptype",      apply_types,	 "Apply types."		       },
 	{ "objects",   "weapon",       attack_table,	 "Weapon types."	       },
-	{ "objects",   "token",	       token_flags,	 "Token flags."		       },
 	{ "objects",   "socket_type",  socket_flags,	 "Inlay types."		       },
 	{ "objects",   "socket_value", socket_values,	 "Inlay quality values."       },
 

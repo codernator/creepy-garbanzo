@@ -159,28 +159,6 @@ static void scan_list(ROOM_INDEX_DATA *scan_room, CHAR_DATA *ch, int depth, int 
 				printf_to_char(ch, " - %s\n\r", PERS(rch, ch));
 			}
 		}
-
-		if (ch->race == race_lookup("dwarf")) {
-			OBJ_DATA *obj;
-
-			for (obj = scan_room->contents; obj != NULL; obj = obj->next_content) {
-/*                                if (IS_SET(obj->extra2_flags, ITEM_NOSCAN)) found = FALSE; */
-
-				if (obj->item_type == ITEM_QTOKEN
-				    || obj->item_type == ITEM_QTOKEN2
-				    || obj->item_type == ITEM_SCRATCHOFF) {
-					if (!found) {
-						/* print the header */
-						printf_to_char(ch, distance_name[depth], (direction >= 0) ? direction_name[direction] : "");
-						found = TRUE;
-					}
-
-					/*printf_to_char(ch, " - %s\n\r", obj->description); */
-					if (!IS_SET(obj->extra2_flags, ITEM2_NOSCAN))
-						send_to_char(" - `6S`^o`7m`&e`7t`&h`7i`^n`6g `8S`7h`&i`7n`8y``\n\r", ch);
-				}
-			}
-		}
 	}
 }
 

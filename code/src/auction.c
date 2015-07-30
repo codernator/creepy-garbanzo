@@ -455,10 +455,7 @@ void do_auction(CHAR_DATA *ch, char *argument)
 			send_to_char("You cannot auction that.\n\r", ch);
 			return;
 
-		case ITEM_QTOKEN:
-		case ITEM_SCRATCHOFF:
 		case ITEM_LIGHT:
-		case ITEM_QTOKEN2:
 		case ITEM_POTION:
 		case ITEM_CLOTHING:
 		case ITEM_CONTAINER:

@@ -2449,9 +2449,6 @@ OBJ_DATA *create_object(OBJ_INDEX_DATA *obj_idx, int level)
 			obj->cost /= 5;
 		break;
 
-	case ITEM_QTOKEN:
-	case ITEM_QTOKEN2:
-	case ITEM_SCRATCHOFF:
 	case ITEM_ATM:
 	case ITEM_TELEPORT:
 	case ITEM_TREASURE:
