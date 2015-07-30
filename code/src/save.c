@@ -375,15 +375,6 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 			ch->pcdata->condition[3],
 			ch->pcdata->condition[4]);
 
-
-		fprintf(fp, "Twohundreds %u\n", ch->pcdata->twohundred);
-		fprintf(fp, "Fireproof %u\n", ch->pcdata->fireproof);
-		fprintf(fp, "ArmorC %u\n", ch->pcdata->armorclass);
-		fprintf(fp, "Weaponflag %u\n", ch->pcdata->weaponflag);
-		fprintf(fp, "Damnoun %u\n", ch->pcdata->damnoun);
-		fprintf(fp, "Restring %u\n", ch->pcdata->restring);
-		fprintf(fp, "Skillset %u\n", ch->pcdata->skillset);
-		fprintf(fp, "rp %u\n", ch->pcdata->rp);
 		fprintf(fp, "Bounty %u\n", ch->pcdata->bounty);
 		fprintf(fp, "Color %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n",
 			ch->color,
@@ -1477,7 +1468,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 
 		case 'T':
 			KEY("TLag", ch->tLag, fread_number(fp));
-			KEY("Twohundreds", ch->pcdata->twohundred, fread_uint(fp));
 			KEY("Thief_time", ch->pcdata->thief_time, (time_t)fread_long(fp));
 			KEY("TrueSex", ch->pcdata->true_sex, fread_number(fp));
 			KEY("TSex", ch->pcdata->true_sex, fread_number(fp));

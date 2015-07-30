@@ -325,36 +325,6 @@ void do_autoexit(CHAR_DATA *ch, char *argument)
 	}
 }
 
-void do_autotoken(CHAR_DATA *ch, char *argument)
-{
-	if (IS_NPC(ch))
-		return;
-
-	if (!IS_SET(ch->comm2, COMM2_ENABLE)) {
-		send_to_char("Player File Tokens Enabled!!! You will only see this message once in your entire character life.\n\r", ch);
-		SET_BIT(ch->comm2, COMM2_ENABLE);
-		ch->pcdata->twohundred = 0;
-		ch->pcdata->armorclass = 0;
-		ch->pcdata->restring = 0;
-		ch->pcdata->weaponflag = 0;
-		ch->pcdata->fireproof = 0;
-		ch->pcdata->damnoun = 0;
-		ch->pcdata->immhidden = 0;
-		ch->pcdata->immwild = 0;
-		ch->pcdata->imp = 0;
-		ch->pcdata->skillset = 0;
-		ch->pcdata->rp = 0;
-	}
-
-	if (IS_SET(ch->comm2, COMM2_AUTOTOKEN)) {
-		send_to_char("Tokens in inventory screen removed.\n\r", ch);
-		REMOVE_BIT(ch->comm2, COMM2_AUTOTOKEN);
-	} else {
-		send_to_char("Token counts added to inventory screen.\n\r", ch);
-		SET_BIT(ch->comm2, COMM2_AUTOTOKEN);
-	}
-}
-
 void do_autogold(CHAR_DATA *ch, char *argument)
 {
 	if (IS_NPC(ch))
@@ -1188,31 +1158,6 @@ void do_score(CHAR_DATA *ch, char *argument)
 		"`O=================================================================``\n\r");
 
 	send_to_char(buf, ch);
-
-
-
-	if (IS_SET(ch->comm2, COMM2_AUTOTOKEN)) {
-		sprintf(buf, "You have `!%u`` Fireproof Tokens.\n\r", ch->pcdata->fireproof);
-		send_to_char(buf, ch);
-		sprintf(buf, "You have `^%u`` AC Tokens.\n\r", ch->pcdata->armorclass);
-		send_to_char(buf, ch);
-		sprintf(buf, "You have `#%u`` 200/200 Tokens.\n\r", ch->pcdata->twohundred);
-		send_to_char(buf, ch);
-		sprintf(buf, "You have `O%u`` Weapon Flag Tokens.\n\r", ch->pcdata->weaponflag);
-		send_to_char(buf, ch);
-		sprintf(buf, "You have `P%u`` Damage Noun Tokens.\n\r", ch->pcdata->damnoun);
-		send_to_char(buf, ch);
-		sprintf(buf, "You have `&%u`` Restring Tokens.\n\r", ch->pcdata->restring);
-		send_to_char(buf, ch);
-		sprintf(buf, "You have `8%u`` Skill Set Tokens. (good for one skill each)\n\r", ch->pcdata->skillset);
-		send_to_char(buf, ch);
-		sprintf(buf, "`PImpLuvin`` Tokens: `2%u`` \n\r", ch->pcdata->imp);
-		send_to_char(buf, ch);
-		sprintf(buf, "You have been nominated for Excellent Role Playing `!%u`` times!\n\r", ch->pcdata->rp);
-		send_to_char(buf, ch);
-		sprintf(buf, "`O=================================================================``\n\r");
-		send_to_char(buf, ch);
-	}
 
 /* print AC values */
 	if (ch->level >= 25) {

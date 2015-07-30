@@ -1681,7 +1681,6 @@ struct pc_data {
     time_t  last_bank;
     int  security;
     int  rank;
-    unsigned int twohundred;
     unsigned int armorclass;
     unsigned int fireproof;
     unsigned int weaponflag;

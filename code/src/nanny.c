@@ -632,25 +632,6 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 			REMOVE_BIT(ch->act, PLR_BATTLE);
         }
 
-		if (!IS_SET(ch->comm2, COMM2_ENABLE)) {
-			send_to_char("Player File Tokens Enabled!!! You will only see this message once in your entire character life.\n\r", ch);
-
-			SET_BIT(ch->comm2, COMM2_ENABLE);
-
-			ch->pcdata->twohundred = 0;
-			ch->pcdata->armorclass = 0;
-			ch->pcdata->restring = 0;
-			ch->pcdata->weaponflag = 0;
-			ch->pcdata->fireproof = 0;
-			ch->pcdata->damnoun = 0;
-			ch->pcdata->immhidden = 0;
-			ch->pcdata->immwild = 0;
-			ch->pcdata->imp = 0;
-			ch->pcdata->skillset = 0;
-			ch->pcdata->rp = 0;
-		}
-
-
 		if (ch->level > 300 && ch->vernew <= 3) {
 			if (ch->level <= 600) {
 				if (IS_IMMORTAL(ch)) {
