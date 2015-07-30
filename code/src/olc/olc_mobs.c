@@ -215,11 +215,6 @@ EDIT(medit_show){
 
 	printf_to_char(ch, "`&Wealth``:      [%5ld]\n\r", mob_idx->wealth);
 
-
-	if (mob_idx->spec_fun)
-		printf_to_char(ch, "`&Spec fun``:    [%s]\n\r",
-			       spec_name(mob_idx->spec_fun));
-
 	printf_to_char(ch, "`&Short descr``: %s\n\r`&Long descr``:\n\r%s",
 		       mob_idx->short_descr,
 		       mob_idx->long_descr);
@@ -353,7 +348,6 @@ EDIT(medit_clone){
 		return FALSE;
 	}
 
-	mob_idx->spec_fun = pClone->spec_fun;
 	mob_idx->new_format = pClone->new_format;
 
 	free_string(mob_idx->player_name);
@@ -403,37 +397,6 @@ EDIT(medit_clone){
 
 	send_to_char("Mobile Cloned.\n\r", ch);
 	return TRUE;
-}
-
-
-/*****************************************************************************
-*	medit_spec
-*
-*	set the spec_fun for a mob
-*****************************************************************************/
-EDIT(medit_spec){
-	MOB_INDEX_DATA *mob_idx;
-
-	EDIT_MOB(ch, mob_idx);
-	if (argument[0] == '\0') {
-		send_to_char("Syntax:  spec [special function]\n\r", ch);
-		return FALSE;
-	}
-
-	if (!str_cmp(argument, "none")) {
-		mob_idx->spec_fun = NULL;
-		send_to_char("Spec removed.\n\r", ch);
-		return TRUE;
-	}
-
-	if (spec_lookup(argument)) {
-		mob_idx->spec_fun = spec_lookup(argument);
-		send_to_char("Spec set.\n\r", ch);
-		return TRUE;
-	}
-
-	send_to_char("MEdit: No such special function.\n\r", ch);
-	return FALSE;
 }
 
 

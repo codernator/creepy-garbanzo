@@ -80,7 +80,6 @@ bool char_cmp_vnum(CHAR_DATA * vch, char *arg, BUFFER * buf);
 bool char_cmp_name(CHAR_DATA * vch, char *arg, BUFFER * buf);
 bool char_cmp_short(CHAR_DATA * vch, char *arg, BUFFER * buf);
 bool char_cmp_long(CHAR_DATA * vch, char *arg, BUFFER * buf);
-bool char_cmp_spec(CHAR_DATA * vch, char *arg, BUFFER * buf);
 bool char_cmp_race(CHAR_DATA * vch, char *arg, BUFFER * buf);
 bool char_cmp_level(CHAR_DATA * vch, char *arg, BUFFER * buf);
 bool char_cmp_sex(CHAR_DATA * vch, char *arg, BUFFER * buf);
@@ -136,7 +135,6 @@ struct cmp_vars_mob_index_data {
 bool mob_idx_cmp_name(MOB_INDEX_DATA * vch, char *arg, BUFFER * buf);
 bool mob_idx_cmp_short(MOB_INDEX_DATA * vch, char *arg, BUFFER * buf);
 bool mob_idx_cmp_long(MOB_INDEX_DATA * vch, char *arg, BUFFER * buf);
-bool mob_idx_cmp_spec(MOB_INDEX_DATA * vch, char *arg, BUFFER * buf);
 bool mob_idx_cmp_race(MOB_INDEX_DATA * vch, char *arg, BUFFER * buf);
 bool mob_idx_cmp_level(MOB_INDEX_DATA * vch, char *arg, BUFFER * buf);
 bool mob_idx_cmp_sex(MOB_INDEX_DATA * vch, char *arg, BUFFER * buf);

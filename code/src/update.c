@@ -755,16 +755,6 @@ static void mobile_update(void)
 		if (ch->in_room->area->empty && !IS_SET(ch->act, ACT_UPDATE_ALWAYS))
 			continue;
 
-		/* Examine call for special procedure */
-		if (ch->spec_fun != NULL) {
-			/*
-			 * do a spec fun, if it returns false, then
-			 * we move to the next mob
-			 */
-			if ((*ch->spec_fun)(ch))
-				continue;
-		}
-
 		if (IS_SHOPKEEPER(ch)) {
 			if ((ch->gold * 100 + ch->silver) < ch->mob_idx->wealth) {
 				ch->gold += ch->mob_idx->wealth * number_range(1, 20) / 5000000;

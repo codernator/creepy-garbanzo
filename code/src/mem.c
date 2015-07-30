@@ -342,7 +342,6 @@ MOB_INDEX_DATA *new_mob_index(void)
 	}
 
 	mob->next = NULL;
-	mob->spec_fun = NULL;
 	mob->shop = NULL;
 	mob->area = NULL;
 	mob->player_name = str_dup("no name");

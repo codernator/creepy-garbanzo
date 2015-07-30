@@ -186,7 +186,6 @@ static const struct olc_cmd_type medit_table[] =
 	{ "shop",      medit_shop     },
 	{ "short",     medit_short    },
 	{ "show",      medit_show     },
-	{ "spec",      medit_spec     },
 
 	{ "sex",       medit_sex      },        /* ROM */
 	{ "act",       medit_act      },        /* ROM */
@@ -1276,7 +1275,6 @@ static const struct olc_help_type help_table[] =
 	{ "objects",   "socket_value", socket_values,	 "Inlay quality values."       },
 
 	/* mobs */
-	{ "mobs",      "spec",	       spec_table,	 "Available special programs." },
 	{ "mobs",      "sex",	       sex_flags,	 "Sexes."		       },
 	{ "mobs",      "act",	       act_flags,	 "Mobile attributes."	       },
 	{ "mobs",      "affect",       affect_flags,	 "Mobile affects."	       },
@@ -1371,33 +1369,6 @@ void show_skill_cmds(CHAR_DATA *ch, int tar)
 }
 
 
-
-/***************************************************************************
-*	show_spec_cmds
-*
-*	show a list of special commands
-***************************************************************************/
-static void show_spec_cmds(CHAR_DATA *ch)
-{
-	int spec;
-	int col;
-
-	col = 0;
-	send_to_char("Preceed special functions with '`!spec_``'\n\r\n\r", ch);
-	for (spec = 0; spec_table[spec].function != NULL; spec++) {
-		printf_to_char(ch, "%-19.18s", &spec_table[spec].name[5]);
-		if (++col % 4 == 0)
-			send_to_char("\n\r", ch);
-	}
-
-	if (col % 4 != 0)
-		send_to_char("\n\r", ch);
-
-	return;
-}
-
-
-
 /***************************************************************************
 *	show_help
 *
@@ -1414,9 +1385,7 @@ bool show_help(CHAR_DATA *ch, char *argument)
 		for (cnt = 0; help_table[cnt].command[0] != '\0'; cnt++) {
 			if (argument[0] == help_table[cnt].command[0]
 			    && !str_prefix(argument, help_table[cnt].command)) {
-				if (help_table[cnt].structure == spec_table)
-					show_spec_cmds(ch);
-				else if (help_table[cnt].structure == liq_table)
+				if (help_table[cnt].structure == liq_table)
 					show_liqlist(ch);
 				else if (help_table[cnt].structure == attack_table)
 					show_damlist(ch);

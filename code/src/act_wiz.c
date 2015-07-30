@@ -2928,11 +2928,6 @@ void do_newlock(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-
-/***************************************************************************
-*	do_speclist
-***************************************************************************/
 void do_mode(CHAR_DATA *ch, char *argument)
 {
 	extern bool wizlock;
@@ -2983,32 +2978,12 @@ void do_mode(CHAR_DATA *ch, char *argument)
 	do_mode(ch, "");
 }
 
-
-/***************************************************************************
-*	do_speclist
-***************************************************************************/
-void do_speclist(CHAR_DATA *ch, char *argument)
-{
-	do_help(ch, "speclist");
-	return;
-}
-
-/***************************************************************************
-*	do_slot
-*
-*	look up a spell slot
-***************************************************************************/
 void do_slot(CHAR_DATA *ch, char *argument)
 {
 	SKILL *skill;
 	char arg[MIL];
 
-	if (ch) {
-		if (IS_NPC(ch)) {
-			send_to_char("Mobs can't use this command.\n\r", ch);
-			return;
-		}
-	}
+    DENY_NPC(ch);
 
 	smash_tilde(argument);
 	argument = one_argument(argument, arg);
@@ -3027,10 +3002,6 @@ void do_slot(CHAR_DATA *ch, char *argument)
 	printf_to_char(ch, "The spell '%s' is slot number %d.\n\r", skill->name, skill->sn);
 	return;
 }
-
-
-
-
 
 void do_sockets(CHAR_DATA *ch, char *argument)
 {

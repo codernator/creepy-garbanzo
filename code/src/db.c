@@ -171,7 +171,6 @@ static void load_objects(FILE * fp);
 static void load_resets(FILE * fp);
 static void load_rooms(FILE * fp);
 static void load_shops(FILE * fp);
-static void load_specials(FILE * fp);
 void load_threads(void);
 extern void load_bans(void);
 static void load_mobprogs(FILE * fp);
@@ -319,8 +318,6 @@ static void init_areas()
 				load_rooms(fp_area);
 			} else if (!str_cmp(word, "SHOPS")) {
 				load_shops(fp_area);
-			} else if (!str_cmp(word, "SPECIALS")) {
-				load_specials(fp_area);
 			} else {
 				bug("Boot_db: bad section name.", 0);
 				_Exit(1);
@@ -964,41 +961,6 @@ void load_shops(FILE *fp)
 	}
 
 	return;
-}
-
-
-/*
- * Snarf spec proc declarations.
- */
-void load_specials(FILE *fp)
-{
-	for (;; ) {
-		MOB_INDEX_DATA *mob_idx;
-		char letter;
-
-		switch (letter = fread_letter(fp)) {
-		default:
-			bug("Load_specials: letter '%c' not *MS.", (int)letter);
-			_Exit(1);
-
-		case 'S':
-			return;
-
-		case '*':
-			break;
-
-		case 'M':
-			mob_idx = get_mob_index(fread_number(fp));
-			mob_idx->spec_fun = spec_lookup(fread_word(fp));
-			if (mob_idx->spec_fun == 0) {
-				bug_long("Load_specials: 'M': vnum %d.", mob_idx->vnum);
-				_Exit(1);
-			}
-			break;
-		}
-
-		fread_to_eol(fp);
-	}
 }
 
 
@@ -2044,7 +2006,6 @@ CHAR_DATA *create_mobile(MOB_INDEX_DATA *mob_idx)
 	mob->long_descr = str_dup(mob_idx->long_descr);
 	mob->description = str_dup(mob_idx->description);
 
-	mob->spec_fun = mob_idx->spec_fun;
 	mob->prompt = NULL;
 	mob->mprog_target = NULL;
 
@@ -2346,7 +2307,6 @@ void clone_mobile(CHAR_DATA *parent, CHAR_DATA *clone)
 	clone->dam_type = parent->dam_type;
 	clone->start_pos = parent->start_pos;
 	clone->default_pos = parent->default_pos;
-	clone->spec_fun = parent->spec_fun;
 
 	for (i = 0; i < 4; i++)
 		clone->armor[i] = parent->armor[i];

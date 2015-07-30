@@ -32,7 +32,6 @@
 #define __MERC_H
 
 #define DECLARE_DO_FUN(fun)             DO_FUN fun
-#define DECLARE_SPEC_FUN(fun)           SPEC_FUN fun
 #define DECLARE_SPELL_FUN(fun)          SPELL_FUN fun
 #define DECLARE_AFFECT_FUN(fun)         AFFECT_FUN fun
 
@@ -105,7 +104,6 @@ typedef struct song_type SONG;
 
 /* Function types. */
 typedef void DO_FUN(/*@partial@*/CHAR_DATA * ch, char *argument);
-typedef bool SPEC_FUN(/*@partial@*/CHAR_DATA * ch);
 
 
 /*String and memory management parameters. */
@@ -457,14 +455,6 @@ struct pc_race_type {
  int max_stats[MAX_STATS];           /* maximum stats */
  int size;                           /* aff bits for the race */
 };
-
-
-
-struct spec_type {
- char *  name;                   /* special function name */
- SPEC_FUN * function;               /* the function */
-};
-
 
 
 /* Data structure for notes. */
@@ -936,7 +926,6 @@ struct kill_data {
 #define OBJ_VNUM_FIREBLADE              30l
 #define OBJ_VNUM_FAERIE_FOG             1201l
 #define OBJ_VNUM_BLANK_PILL             14241l          /* Anonplis.are */
-#define OBJ_VNUM_SHIT 8117l
 
 /* Item types. * Used in #OBJECTS. */
 #define ITEM_LIGHT                      1
@@ -1424,7 +1413,6 @@ struct liq_type {
 ***************************************************************************/
 struct mob_index_data {
  MOB_INDEX_DATA *next;
- SPEC_FUN * spec_fun;
  SHOP_DATA * shop;
  MPROG_LIST * mprogs;
  AREA_DATA * area;
@@ -1507,7 +1495,6 @@ struct char_data {
     /*@shared@*/CHAR_DATA *mprog_target;
     /*@shared@*/CHAR_DATA *symbiosis;
     /*@shared@*/MEM_DATA *memory;
-    /*@shared@*/SPEC_FUN *spec_fun;
     /*@shared@*//*@null@*/MOB_INDEX_DATA *mob_idx;
     /*@shared@*/DESCRIPTOR_DATA *desc;
     /*@shared@*/AFFECT_DATA *affected;
@@ -2092,7 +2079,6 @@ extern const struct     impnet_type impnet_table[];
 extern const struct     attack_type attack_table[];
 extern const struct     race_type race_table[];
 extern const struct     pc_race_type pc_race_table[];
-extern const struct     spec_type spec_table[];
 extern const struct     liq_type liq_table[];
 
 /* max skill number */
@@ -2212,7 +2198,6 @@ struct battlefield_data {
 /* Global Constants */
 extern char *const dir_name        [];
 extern const int rev_dir         [];                 /* int - ROM OLC */
-extern const struct  spec_type spec_table      [];
 
 
 /* Global variables. */
@@ -2597,11 +2582,6 @@ void list_group_known(CHAR_DATA * ch);
 int exp_per_level(CHAR_DATA * ch, int points);
 void check_improve(CHAR_DATA * ch, SKILL * skill, bool success, int multiplier);
 
-
-
-/* special.c */
-SPEC_FUN *spec_lookup(const char *name);
-char *spec_name(SPEC_FUN * function);
 
 /* teleport.c */
 ROOM_INDEX_DATA *room_by_name(char *target, int level, bool error);

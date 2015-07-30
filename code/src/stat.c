@@ -696,10 +696,6 @@ void do_mstat(CHAR_DATA *ch, char *argument)
 		       victim->short_descr,
 		       victim->long_descr[0] != '\0' ? victim->long_descr : "(none)\n\r");
 
-	if (IS_NPC(victim) && victim->spec_fun != 0)
-		printf_to_char(ch, "Mobile has special procedure %s.\n\r",
-			       spec_name(victim->spec_fun));
-
 	if (IS_NPC(victim) && victim->mobmem != NULL) {
 		printf_to_char(ch, "%s is `!pissed`` at: %s\n\r",
 			       victim->short_descr,

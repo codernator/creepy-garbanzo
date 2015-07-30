@@ -561,30 +561,6 @@ static void save_rooms(FILE *fp, AREA_DATA *area)
 }
 
 
-
-/***************************************************************************
-*	save_specials
-*
-*	save all of the spec funs to an area
-***************************************************************************/
-static void save_specials(FILE *fp, AREA_DATA *area)
-{
-	MOB_INDEX_DATA *mob_idx;
-	int hash_idx;
-
-	fprintf(fp, "#SPECIALS\n");
-	for (hash_idx = 0; hash_idx < MAX_KEY_HASH; hash_idx++) {
-		for (mob_idx = mob_index_hash[hash_idx]; mob_idx; mob_idx = mob_idx->next)
-			if (mob_idx && mob_idx->area == area && mob_idx->spec_fun)
-				fprintf(fp, "M %ld %s\n", mob_idx->vnum, spec_name(mob_idx->spec_fun));
-	}
-
-	fprintf(fp, "S\n\n\n\n");
-	return;
-}
-
-
-
 /***************************************************************************
 *	save_door_resets
 *
@@ -844,7 +820,6 @@ static void save_area(AREA_DATA *area)
 	save_mobiles(fp, area);
 	save_objects(fp, area);
 	save_rooms(fp, area);
-	save_specials(fp, area);
 	save_mobprogs(fp, area);
 	save_resets(fp, area);
 	save_shops(fp, area);

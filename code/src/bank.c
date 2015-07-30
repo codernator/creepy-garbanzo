@@ -174,15 +174,7 @@ bool check_for_bank(CHAR_DATA *ch, /*@out@*/ OBJ_DATA **atm)
 		temp_atm = get_object_by_itemtype_and_room(ITEM_ATM, ch->in_room, ch);
 		*atm = temp_atm;
 		if (temp_atm == NULL) {
-			OBJ_DATA *shit = NULL;
-
-			if (number_range(0, 1000) == 1)
-				shit = create_object(get_obj_index(OBJ_VNUM_SHIT), 0);
-
-			send_to_char("You shove your ATM card into a random ass and withdraw some shit.\n\r", ch);
-			if (shit != NULL)
-				obj_to_char(shit, ch);
-
+			send_to_char("There is no ATM here.\n\r", ch);
 			return FALSE;
 		} else {
 			return TRUE;

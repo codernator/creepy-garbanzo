@@ -326,7 +326,6 @@ DECLARE_DO_FUN(do_snlist);
 DECLARE_DO_FUN(do_south);
 DECLARE_DO_FUN(do_sockets);
 DECLARE_DO_FUN(do_spells);
-DECLARE_DO_FUN(do_speclist);
 DECLARE_DO_FUN(do_split);
 DECLARE_DO_FUN(do_sset);
 DECLARE_DO_FUN(do_stand);

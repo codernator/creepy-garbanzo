@@ -5574,7 +5574,6 @@ bool can_trans_room(CHAR_DATA *ch, CHAR_DATA *victim, int sn)
 	if (IS_SET(ch->in_room->room_flags, ROOM_NOTRANSPORT)) return FALSE;
 	if (!IS_IMMORTAL(ch) && IS_IMMORTAL(victim))
 		if (get_trust(ch) < get_trust(victim)) return FALSE;
-	if (!(strncmp(spec_name(victim->spec_fun), "spec_teleport", 14))) return FALSE;
 	if (!IS_IMMORTAL(ch) && IS_SET(victim->in_room->room_flags, ROOM_GODS_ONLY)) return FALSE;
 	if (get_trust(ch) < MAX_LEVEL && IS_SET(victim->in_room->room_flags, ROOM_IMP_ONLY)) return FALSE;
 

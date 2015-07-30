@@ -231,7 +231,6 @@ DECLARE_OLC_FUN(medit_shop);
 DECLARE_OLC_FUN(medit_desc);
 DECLARE_OLC_FUN(medit_level);
 DECLARE_OLC_FUN(medit_align);
-DECLARE_OLC_FUN(medit_spec);
 DECLARE_OLC_FUN(medit_sex);
 DECLARE_OLC_FUN(medit_act);
 DECLARE_OLC_FUN(medit_affect);

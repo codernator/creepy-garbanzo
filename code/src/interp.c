@@ -150,7 +150,6 @@ const struct cmd_type cmd_table[] =
 	{ "skills",	      do_skills,       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "show",	      do_show,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "spells",	      do_spells,       POS_DEAD,     0,	 LOG_NORMAL, 1 },
-	{ "speclist",	  do_speclist,     POS_DEAD,     L6, LOG_NORMAL, 1 },
 	{ "story",	      do_story,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "tick",	      do_tick,	       POS_DEAD,     L8, LOG_NORMAL, 1 },
 	{ "time",	      do_time,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },

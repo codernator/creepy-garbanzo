@@ -172,27 +172,6 @@ static void string_char(CHAR_DATA *ch, char *arg)
 		realloc_string(&victim->pcdata->who_thing, arg);
 		return;
 	}
-
-
-
-	if (!str_prefix(arg2, "spec")) {
-		if (!IS_NPC(victim)) {
-			send_to_char("Not on PC's.\n\r", ch);
-			return;
-		}
-
-		if (!str_prefix(arg, "none")) {
-			victim->spec_fun = 0;
-			return;
-		}
-
-		if ((victim->spec_fun = spec_lookup(arg)) == 0) {
-			send_to_char("No such spec fun.\n\r", ch);
-			return;
-		}
-
-		return;
-	}
 }
 
 

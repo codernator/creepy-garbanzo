@@ -65,7 +65,6 @@ const struct cmp_vars_mob_index_data mob_idx_flags[] =
 	{ "name",     &mob_idx_cmp_name	   },
 	{ "short",    &mob_idx_cmp_short   },
 	{ "long",     &mob_idx_cmp_long	   },
-	{ "spec_fun", &mob_idx_cmp_spec	   },
 	{ "race",     &mob_idx_cmp_race	   },
 	{ "level",    &mob_idx_cmp_level   },
 	{ "sex",      &mob_idx_cmp_sex	   },
@@ -399,7 +398,6 @@ const struct cmp_vars_char_data char_flags[] =
 	{ "name",     &char_cmp_name	 },
 	{ "short",    &char_cmp_short	 },
 	{ "long",     &char_cmp_long	 },
-	{ "spec_fun", &char_cmp_spec	 },
 	{ "race",     &char_cmp_race	 },
 	{ "level",    &char_cmp_level	 },
 	{ "sex",      &char_cmp_sex	 },
@@ -582,40 +580,6 @@ bool char_cmp_long(CHAR_DATA *vch, char *arg, BUFFER *buf)
 		add_buf(buf, "search by a mob's long description.\n\r");
 	return IS_NPC(vch) ? cmp_fn_string(vch->long_descr, arg) : FALSE;
 }
-
-
-/***************************************************************************
-*	char_cmp_spec
-***************************************************************************/
-bool char_cmp_spec(CHAR_DATA *vch, char *arg, BUFFER *buf)
-{
-	if (buf != NULL) {
-		char flag[MSL];
-		int col = 0;
-		int iter;
-
-		add_buf(buf, "search by a mob's specials.\n\r");
-		add_buf(buf, "available specials:\n\r");
-
-		add_buf(buf, "\n\r     ");
-		for (iter = 0; spec_table[iter].name != NULL; iter++) {
-			sprintf(flag, "%-19.18s", spec_table[iter].name);
-			add_buf(buf, flag);
-			if (++col % 2 == 0)
-				add_buf(buf, "\n\r     ");
-		}
-
-		if (col % 2 != 0)
-			add_buf(buf, "\n\r");
-
-		return FALSE;
-	}
-
-	while (is_space(*arg) || arg[0] == '=')
-		arg++;
-	return IS_NPC(vch) ? vch->spec_fun == spec_lookup(arg) : FALSE;
-}
-
 
 /***************************************************************************
 *	char_cmp_race
@@ -1215,11 +1179,6 @@ void do_mvnum(CHAR_DATA *ch, char *argument)
 	}
 }
 
-
-
-/***************************************************************************
-*	mob_idx_cmp_name
-***************************************************************************/
 bool mob_idx_cmp_name(MOB_INDEX_DATA *vch, char *arg, BUFFER *buf)
 {
 	if (buf != NULL)
@@ -1227,10 +1186,6 @@ bool mob_idx_cmp_name(MOB_INDEX_DATA *vch, char *arg, BUFFER *buf)
 	return cmp_fn_string(vch->player_name, arg);
 }
 
-
-/***************************************************************************
-*	mob_idx_cmp_short
-***************************************************************************/
 bool mob_idx_cmp_short(MOB_INDEX_DATA *vch, char *arg, BUFFER *buf)
 {
 	if (buf != NULL)
@@ -1238,9 +1193,6 @@ bool mob_idx_cmp_short(MOB_INDEX_DATA *vch, char *arg, BUFFER *buf)
 	return cmp_fn_string(vch->short_descr, arg);
 }
 
-/***************************************************************************
-*	mob_idx_cmp_long
-***************************************************************************/
 bool mob_idx_cmp_long(MOB_INDEX_DATA *vch, char *arg, BUFFER *buf)
 {
 	if (buf != NULL)
@@ -1248,43 +1200,6 @@ bool mob_idx_cmp_long(MOB_INDEX_DATA *vch, char *arg, BUFFER *buf)
 	return cmp_fn_string(vch->long_descr, arg);
 }
 
-
-/***************************************************************************
-*	mob_idx_cmp_spec
-***************************************************************************/
-bool mob_idx_cmp_spec(MOB_INDEX_DATA *vch, char *arg, BUFFER *buf)
-{
-	if (buf != NULL) {
-		char flag[MSL];
-		int col = 0;
-		int iter;
-
-		add_buf(buf, "search by a mob's specials.\n\r");
-		add_buf(buf, "available specials:\n\r");
-
-		add_buf(buf, "\n\r     ");
-		for (iter = 0; spec_table[iter].name != NULL; iter++) {
-			sprintf(flag, "%-19.18s", spec_table[iter].name);
-			add_buf(buf, flag);
-			if (++col % 2 == 0)
-				add_buf(buf, "\n\r     ");
-		}
-
-		if (col % 2 != 0)
-			add_buf(buf, "\n\r");
-
-		return FALSE;
-	}
-
-	while (is_space(*arg) || arg[0] == '=')
-		arg++;
-	return vch->spec_fun == spec_lookup(arg);
-}
-
-
-/***************************************************************************
-*	mob_idx_cmp_race
-***************************************************************************/
 bool mob_idx_cmp_race(MOB_INDEX_DATA *vch, char *arg, BUFFER *buf)
 {
 	if (buf != NULL) {
