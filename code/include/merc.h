@@ -1268,7 +1268,6 @@ struct kill_data {
 #define PLR_AUTOSAC             (F)
 #define PLR_AUTOGOLD            (G)
 #define PLR_AUTOSPLIT           (H)
-#define PLR_PUNISHMENT          (J)
 #define PLR_LINKDEAD            (L)
 #define PLR_BATTLE              (M)
 

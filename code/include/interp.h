@@ -256,7 +256,6 @@ DECLARE_DO_FUN(do_practice);
 DECLARE_DO_FUN(do_prefi);
 DECLARE_DO_FUN(do_prefix);
 DECLARE_DO_FUN(do_prompt);
-DECLARE_DO_FUN(do_punish);
 DECLARE_DO_FUN(do_purge);
 DECLARE_DO_FUN(do_push);
 DECLARE_DO_FUN(do_put);

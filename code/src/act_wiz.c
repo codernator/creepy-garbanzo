@@ -3831,7 +3831,7 @@ void do_pnlist(CHAR_DATA *ch, char *argument)
 			continue;
 
 		printf_to_char(ch,
-			       "%-13s%-9s%-9s%-9s%-9s%-9s%-9s%-9s%-9s%-9s%-9s\n\r",
+			       "%-13s%-9s%-9s%-9s%-9s%-9s%-9s%-9s%-9s%-9s\n\r",
 			       wch->name,
 			       IS_SET(wch->act, PLR_FREEZE) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->comm, COMM_NOTELL) ? "`!X`7" : "`8-`7 ",
@@ -3841,7 +3841,6 @@ void do_pnlist(CHAR_DATA *ch, char *argument)
 			       IS_SET(wch->act, PLR_KILLER) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->act, PLR_THIEF) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->act, PLR_PERMIT) ? "`!X`7" : "`8-`7 ",
-			       IS_SET(wch->act, PLR_PUNISHMENT) ? "`!X`7" : "`8-`7 ",
 			       (wch->disabled != NULL) ? "`!X`7" : "`8-`7 ");
 	}
 
@@ -4294,52 +4293,6 @@ const char *name_expand(CHAR_DATA *ch)
 	sprintf(outbuf, "%d.%s", count, name);
 	return outbuf;
 }
-
-
-void do_punish(CHAR_DATA *ch, char *argument)
-{
-	CHAR_DATA *victim;
-	char arg[MIL];
-
-
-	DENY_NPC(ch);
-
-	one_argument(argument, arg);
-	if (arg[0] == '\0') {
-		send_to_char("Punish whom?\n\r", ch);
-		return;
-	}
-
-	if ((victim = get_char_world(ch, arg)) == NULL) {
-		send_to_char("They aren't here.\n\r", ch);
-		return;
-	}
-
-	if (IS_NPC(victim)) {
-		send_to_char("Not on NPC's.\n\r", ch);
-		return;
-	}
-
-	if (get_trust(victim) >= get_trust(ch)) {
-		send_to_char("That is a good way to get spanked.\n\r", ch);
-		return;
-	}
-
-	/*
-	 * No level check, gods can punish ANYONE!  FEAR THAT!
-	 */
-	if (IS_SET(victim->act, PLR_PUNISHMENT)) {
-		REMOVE_BIT(victim->act, PLR_PUNISHMENT);
-		send_to_char("PUNISHMENT removed.\n\r", ch);
-	} else {
-		SET_BIT(victim->act, PLR_PUNISHMENT);
-		send_to_char("PUNISHMENT set.\n\r", ch);
-	}
-
-	return;
-}
-
-
 
 void do_noquit(CHAR_DATA *ch, char *argument)
 {
