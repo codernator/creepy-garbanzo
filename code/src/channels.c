@@ -89,7 +89,7 @@ void broadcast_say(CHAR_DATA *sender, char *argument)
 {
 	static char buf[2*MIL];
 
-	if (can_talk(sender)) {
+	if (!can_talk(sender)) {
 		return;
 	}
 
@@ -115,10 +115,47 @@ void broadcast_say(CHAR_DATA *sender, char *argument)
     return;
 }
 
+void broadcast_sayto(CHAR_DATA *sender, CHAR_DATA *whom, char *argument)
+{
+	DESCRIPTOR_DATA *d;
+
+	if (!can_talk(sender)) {
+		return;
+	}
+
+	if (is_ignoring(sender, whom) && !IS_IMMORTAL(sender)) {
+        act("$N is not paying attention to you right now.", sender, NULL, whom, TO_CHAR);
+        return;
+	}
+
+	if (!(IS_IMMORTAL(sender) && sender->level > LEVEL_IMMORTAL) && !IS_AWAKE(whom)) {
+		act("$E can't hear you.", sender, 0, whom, TO_CHAR);
+		return;
+	}
+
+	if (IS_SET(whom->comm2, COMM2_AFK) && IS_NPC(whom)) {
+        act("$E is `!A`@F`OK``, and is unable to pay attention.", sender, NULL, whom, TO_CHAR);
+        return;
+	}
+
+	printf_to_char(sender, "``You say to %s '`P%s``'\n\r", whom->name, argument);
+	printf_to_char(whom, "``%s says to you '`P%s``'\n\r", sender->name, argument);
+
+	for (d = descriptor_list; d; d = d->next) {
+		if (d->connected == CON_PLAYING
+                && d->character->in_room == sender->in_room
+                && d->character != sender
+                && d->character->position != POS_SLEEPING
+                && d->character != whom) {
+            printf_to_char(d->character, "%s says to %s, '`P%s``'.\n\r", PERS(sender, d->character), PERS(whom, d->character), argument);
+		}
+	}
+}
+
 void broadcast_shout(CHAR_DATA *sender, char *argument)
 {
 	DESCRIPTOR_DATA *d;
-    
+
     if (!can_talk(sender)) {
         return;
     }
@@ -301,9 +338,28 @@ void broadcast_pmote(CHAR_DATA *sender, char *argument)
     return;
 }
 
+void broadcast_gtell(CHAR_DATA *sender, char *argument)
+{
+	char buf[MSL];
+	CHAR_DATA *gch;
 
+	if (IS_SET(sender->comm, COMM_NOTELL)) {
+		send_to_char("Your message didn't get through!\n\r", sender);
+		return;
+	}
 
-bool is_ignoring(CHAR_DATA *sender, CHAR_DATA *receiver) 
+    /*
+     * Note use of send_to_char, so gtell works on sleepers.
+     */
+	(void)snprintf(buf, 2 * MIL, "```5%s tells the group '```P%s```5'``\n\r", sender->name, argument);
+	for (gch = char_list; gch != NULL; gch = gch->next) {
+		if (is_same_group(gch, sender)) {
+			send_to_char(buf, gch);
+        }
+    }
+}
+
+bool is_ignoring(CHAR_DATA *sender, CHAR_DATA *receiver)
 {
     int pos;
     bool found = false;

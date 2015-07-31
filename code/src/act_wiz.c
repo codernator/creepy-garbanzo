@@ -41,6 +41,297 @@ bool write_to_descriptor(int desc, char *txt, int length);
 void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is, const char *message);
 
 
+void do_order(CHAR_DATA *ch, char *argument)
+{
+	CHAR_DATA *victim;
+	CHAR_DATA *och;
+	CHAR_DATA *och_next;
+	char buf[MSL];
+	char arg[MIL];
+	char arg2[MIL];
+	bool found;
+	bool fAll;
+
+	argument = one_argument(argument, arg);
+	(void)one_argument(argument, arg2);
+
+	if (!str_cmp(arg2, "suicide")) {
+		send_to_char("That will not be done..\n\r", ch);
+		return;
+	}
+
+	if (!str_cmp(arg2, "bash")) {
+		send_to_char("Sorry, no way.\n\r", ch);
+		return;
+	}
+
+	if (!str_cmp(arg2, "delete") || !str_cmp(arg2, "mob")) {
+		send_to_char("That will NOT be done.\n\r", ch);
+		return;
+	}
+
+	if (!str_cmp(arg2, "quit")) {
+		send_to_char("That will NOT be done.\n\r", ch);
+		return;
+	}
+
+	if (!str_cmp(arg2, "brew")) {
+		send_to_char("Sorry pal, ain't gonna happen.\n\r", ch);
+		return;
+	}
+
+	if (!str_cmp(arg2, "scribe")) {
+		send_to_char("Mobiles are not literate enough.\n\r", ch);
+		return;
+	}
+
+	if (!str_prefix(arg2, "cast")) {
+		send_to_char("Survey says:  No!\n\r", ch);
+		return;
+	}
+
+	if (!str_prefix(arg2, "push")) {
+		send_to_char("Survey says:  No!\n\r", ch);
+		return;
+	}
+
+	if (!str_cmp(arg2, "pk")) {
+		send_to_char("Huh? .. Kill what?\n\r", ch);
+		return;
+	}
+
+	if (!str_cmp(arg2, "eat")) {
+		send_to_char("Your friend is not hungry..\n\r", ch);
+		return;
+	}
+
+	if (!str_cmp(arg2, "drink")) {
+		send_to_char("Your friend is not thirsty..\n\r", ch);
+		return;
+	}
+
+	if (!str_cmp(arg2, "enter")) {
+		send_to_char("I'm sorry Dave, but I'm afraid I can't do that.\n\r", ch);
+		return;
+	}
+
+	if (!str_cmp(arg2, "drop")) {
+		send_to_char("No.\n\r", ch);
+		return;
+	}
+
+
+	if (arg[0] == '\0' || argument[0] == '\0') {
+		send_to_char("Order whom to do what?\n\r", ch);
+		return;
+	}
+
+	if (IS_AFFECTED(ch, AFF_CHARM)) {
+		send_to_char("You feel like taking, not giving, orders.\n\r", ch);
+		return;
+	}
+
+	if (!str_cmp(arg, "all")) {
+		fAll = TRUE;
+		victim = NULL;
+	} else {
+		fAll = FALSE;
+		if ((victim = get_char_room(ch, arg)) == NULL) {
+			send_to_char("They aren't here.\n\r", ch);
+			return;
+		}
+
+		if (victim == ch) {
+			send_to_char("Aye aye, right away!\n\r", ch);
+			return;
+		}
+
+		if (!IS_AFFECTED(victim, AFF_CHARM) || victim->master != ch
+		    || (IS_IMMORTAL(victim) && victim->trust >= ch->trust)) {
+			send_to_char("Do it yourself!\n\r", ch);
+			return;
+		}
+	}
+
+	found = FALSE;
+	for (och = ch->in_room->people; och != NULL; och = och_next) {
+		och_next = och->next_in_room;
+
+		if (IS_AFFECTED(och, AFF_CHARM)
+		    && och->master == ch
+		    && (fAll || och == victim)) {
+			found = TRUE;
+
+			if (!str_infix(arg2, "rem")) {
+				send_to_char("One at a time...\n\r", ch);
+				return;
+			}
+
+			(void)snprintf(buf, 2 * MIL, "$n orders you to '%s'.", argument);
+			act(buf, ch, NULL, och, TO_VICT);
+			interpret(och, argument);
+		}
+	}
+
+	if (found) {
+		WAIT_STATE(ch, PULSE_VIOLENCE);
+		send_to_char("Ok.\n\r", ch);
+	} else {
+		send_to_char("You have no followers here.\n\r", ch);
+	}
+}
+
+void do_ignor(CHAR_DATA *ch, /*@unused@*/ char *argument)
+{
+	send_to_char("You must enter the full command to ignore someone.\n\r", ch);
+}
+
+void do_ignore(CHAR_DATA *ch, char *argument)
+{
+	CHAR_DATA *rch;
+	char arg[MIL], buf[MSL];
+	DESCRIPTOR_DATA *d;
+	int pos;
+	bool found = FALSE;
+
+	if (ch->desc == NULL)
+		rch = ch;
+	else
+		rch = ch->desc->original ? ch->desc->original : ch;
+
+	if (IS_NPC(rch))
+		return;
+
+	smash_tilde(argument);
+
+	argument = one_argument(argument, arg);
+
+	if (arg[0] == '\0') {
+		if (rch->pcdata->ignore[0] == NULL) {
+			send_to_char("You are not ignoring anyone.\n\r", ch);
+			return;
+		}
+		send_to_char("You are currently ignoring:\n\r", ch);
+
+		for (pos = 0; pos < MAX_IGNORE; pos++) {
+			if (rch->pcdata->ignore[pos] == NULL)
+				break;
+
+			(void)snprintf(buf, 2 * MIL, "    %s\n\r", rch->pcdata->ignore[pos]);
+			send_to_char(buf, ch);
+		}
+		return;
+	}
+
+	for (pos = 0; pos < MAX_IGNORE; pos++) {
+		if (rch->pcdata->ignore[pos] == NULL)
+			break;
+
+		if (!str_cmp(arg, rch->pcdata->ignore[pos])) {
+			send_to_char("You are already ignoring that person.\n\r", ch);
+			return;
+		}
+	}
+
+	for (d = descriptor_list; d != NULL; d = d->next) {
+		CHAR_DATA *wch;
+
+		if (d->connected != CON_PLAYING || !can_see(ch, d->character))
+			continue;
+
+		wch = (d->original != NULL) ? d->original : d->character;
+
+		if (!can_see(ch, wch))
+			continue;
+
+		if (!str_cmp(arg, wch->name)) {
+			found = TRUE;
+			if (wch == ch) {
+				send_to_char("You try to ignore yourself .. and fail.\n\r", ch);
+				return;
+			}
+			if (wch->level >= LEVEL_IMMORTAL) {
+				send_to_char("That person is very hard to ignore.\n\r", ch);
+				return;
+			}
+		}
+	}
+
+	if (!found) {
+		send_to_char("No one by that name is playing.\n\r", ch);
+		return;
+	}
+
+	for (pos = 0; pos < MAX_IGNORE; pos++)
+		if (rch->pcdata->ignore[pos] == NULL)
+			break;
+
+	if (pos >= MAX_IGNORE) {
+		send_to_char("Stop being so antisocial!\n\r", ch);
+		return;
+	}
+
+	rch->pcdata->ignore[pos] = str_dup(arg);
+	(void)snprintf(buf, 2 * MIL, "You are now deaf to %s.\n\r", arg);
+	send_to_char(buf, ch);
+}
+
+void do_unignore(CHAR_DATA *ch, char *argument)
+{
+	CHAR_DATA *rch;
+	char arg[MIL], buf[MSL];
+	int pos;
+	bool found = FALSE;
+
+	if (ch->desc == NULL)
+		rch = ch;
+	else
+		rch = ch->desc->original ? ch->desc->original : ch;
+
+	if (IS_NPC(rch))
+		return;
+
+	argument = one_argument(argument, arg);
+
+	if (arg[0] == '\0') {
+		if (rch->pcdata->ignore[0] == NULL) {
+			send_to_char("You are not ignoring anyone.\n\r", ch);
+			return;
+		}
+		send_to_char("You are currently ignoring:\n\r", ch);
+
+		for (pos = 0; pos < MAX_IGNORE; pos++) {
+			if (rch->pcdata->ignore[pos] == NULL)
+				break;
+
+			(void)snprintf(buf, 2 * MIL, "    %s\n\r", rch->pcdata->ignore[pos]);
+			send_to_char(buf, ch);
+		}
+		return;
+	}
+
+	for (pos = 0; pos < MAX_IGNORE; pos++) {
+		if (rch->pcdata->ignore[pos] == NULL)
+			break;
+
+		if (found) {
+			rch->pcdata->ignore[pos - 1] = rch->pcdata->ignore[pos];
+			rch->pcdata->ignore[pos] = NULL;
+			continue;
+		}
+
+		if (!str_cmp(arg, rch->pcdata->ignore[pos])) {
+			send_to_char("Ignore removed.\n\r", ch);
+			free_string(rch->pcdata->ignore[pos]);
+			rch->pcdata->ignore[pos] = NULL;
+			found = TRUE;
+		}
+	}
+
+	if (!found)
+		send_to_char("You aren't ignoring anyone by that name!\n\r", ch);
+}
+
 void do_bug(CHAR_DATA *ch, char *argument)
 {
 	append_file(ch, BUG_FILE, argument);
@@ -1311,7 +1602,6 @@ void do_norestore(CHAR_DATA *ch, char *argument)
 	SET_BIT(victim->act, PLR_NORESTORE);
 	return;
 }
-
 
 void do_transfer(CHAR_DATA *ch, char *argument)
 {
