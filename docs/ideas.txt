@@ -30,6 +30,13 @@
 /*
  * 'Split' originally by Gnort, God of Chaos.
  */
+ /*****************************
+*   Multiple Log Handler     *
+*    Written by Dalamar      *
+*  for Bad Trip MUD 4/29/09  *
+*****************************/
+
+
 
 
 # spells

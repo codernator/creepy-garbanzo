@@ -78,9 +78,7 @@ const struct cmd_type cmd_table[] =
 	/* Common other commands so one and two letter abbreviations work. */
 	{ "cast",	      do_cast,	       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
 	{ "auction",	  do_auction,      POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
-	{ "auctalk",	  do_auctalk,      POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "buy",	      do_buy,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
-	{ "channels",	  do_channels,     POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "exits",	      do_exits,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "get",	      do_get,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "goto",	      do_goto,	       POS_DEAD,     L8, LOG_NORMAL, 1 },
@@ -111,7 +109,6 @@ const struct cmd_type cmd_table[] =
 	{ "sockets",	  do_sockets,      POS_DEAD,     L2, LOG_NORMAL, 1 },
 	{ "stand",	      do_stand,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "tell",	      do_tell,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
-	{ "ftell",	      do_faketell,     POS_RESTING,  L1, LOG_NORMAL, 1 },
 	{ "veil",	      do_veil,	       POS_STANDING, 0,	 LOG_NORMAL, 1 },
 	{ "finger",	      do_finger,       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "unlock",	      do_unlock,       POS_RESTING,  0,	 LOG_NORMAL, 1 },
@@ -134,7 +131,6 @@ const struct cmd_type cmd_table[] =
 	{ "esp",	      do_esp,	       POS_STANDING, 0,	 LOG_NORMAL, 1 },
 	{ "examine",	  do_examine,      POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "help",	      do_help,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
-	{ "info",	      do_info,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 
 	{ "information",  do_groups,       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "motd",	      do_motd,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
@@ -194,13 +190,10 @@ const struct cmd_type cmd_table[] =
 	/*  Communication commands.  */
 
 	{ "afk",	      do_afk,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
-	{ "deaf",	      do_deaf,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
-	{ "emote",	      do_emote,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
-	{ "pmote",	      do_pmote,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "go_pk",	      do_gopk,	       POS_SLEEPING, 0,	 LOG_ALWAYS, 1 },
-	{ ",",		      do_emote,	       POS_RESTING,  0,	 LOG_NORMAL, 0 },
 	{ "gtell",	      do_gtell,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ ";",		      do_gtell,	       POS_DEAD,     0,	 LOG_NORMAL, 0 },
+	{ "channel",      command_channel, POS_DEAD,     0,  LOG_NORMAL, 0 },
 
 	{ "note",	      do_note,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "rpnote",	      do_rpnote,       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
@@ -213,12 +206,9 @@ const struct cmd_type cmd_table[] =
 	{ "quiet",	      do_quiet,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "reply",	      do_reply,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "replay",	      do_replay,       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
-	{ "say",	      do_say,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "sayto",	      do_sayto,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
-	{ "shout",	      do_shout,	       POS_RESTING,  3,	 LOG_NORMAL, 1 },
 	{ "catchup",	  do_catchup,      POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "unread",	      do_unread,       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
-	{ "yell",	      do_yell,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 
 	/*  Object manipulation commands. */
 
@@ -370,12 +360,9 @@ const struct cmd_type cmd_table[] =
 	{ "newlock",	  do_newlock,      POS_DEAD,     ML, LOG_ALWAYS, 1 },
 	{ "chown",	      do_chown,	       POS_DEAD,     L6, LOG_ALWAYS, 1 },
 	{ "mode",	      do_mode,	       POS_DEAD,     ML, LOG_ALWAYS, 1 },
-	{ "noauction",	  do_noauction,    POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "nochannels",	  do_nochannels,   POS_DEAD,     L7, LOG_ALWAYS, 1 },
 	{ "noemote",	  do_noemote,      POS_DEAD,     L7, LOG_ALWAYS, 1 },
 	{ "noquit",	      do_noquit,       POS_DEAD,     L7, LOG_ALWAYS, 1 },
-	{ "noshout",	  do_noshout,      POS_DEAD,     L7, LOG_ALWAYS, 1 },
-	{ "notell",	      do_notell,       POS_DEAD,     L7, LOG_ALWAYS, 1 },
 	{ "pecho",	      do_pecho,	       POS_DEAD,     L7, LOG_ALWAYS, 1 },
 	{ "pardon",	      do_pardon,       POS_DEAD,     L7, LOG_ALWAYS, 1 },
 	{ "ploa",	      do_ploa,	       POS_DEAD,     ML, LOG_NORMAL, 0 },
@@ -429,13 +416,8 @@ const struct cmd_type cmd_table[] =
 	{ "clone",	      do_clone,	       POS_DEAD,     L6, LOG_ALWAYS, 1 },
 
 	{ "wiznet",	      do_wiznet,       POS_DEAD,     IM, LOG_NORMAL, 1 },
-	{ "immtalk",	  do_immtalk,      POS_DEAD,     IM, LOG_NORMAL, 1 },
 	{ "impnet",	      do_impnet,       POS_DEAD,     IM, LOG_NORMAL, 1 },
-	{ "imptalk",	  do_imptalk,      POS_DEAD,     ML, LOG_NORMAL, 1 },
 	{ "imotd",	      do_imotd,	       POS_DEAD,     IM, LOG_NORMAL, 1 },
-	{ ":",		      do_immtalk,      POS_DEAD,     IM, LOG_NORMAL, 0 },
-	{ "]",		      do_imptalk,      POS_DEAD,     ML, LOG_NORMAL, 0 },
-	{ "smote",	      do_smote,	       POS_DEAD,     IM, LOG_NORMAL, 1 },
 	{ "prefi",	      do_prefi,	       POS_DEAD,     IM, LOG_NORMAL, 0 },
 	{ "prefix",	      do_prefix,       POS_DEAD,     IM, LOG_NORMAL, 1 },
 	{ "busy",	      do_busy,	       POS_DEAD,     IM, LOG_NORMAL, 1 },
@@ -738,8 +720,9 @@ char *one_argument(char *argument, char *arg_first)
 		argument++;
 
 	cEnd = ' ';
-	if (*argument == '\'' || *argument == '"')
+	if (*argument == '\'' || *argument == '"') {
 		cEnd = *argument++;
+    }
 
 	while (*argument != '\0') {
 		if (*argument == cEnd) {

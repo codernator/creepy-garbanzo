@@ -1,12 +1,8 @@
-/*****************************
-*   Multiple Log Handler     *
-*    Written by Dalamar      *
-*  for Bad Trip MUD 4/29/09  *
-*****************************/
+#include "merc.h"
 
 #include <stdio.h>
 #include <string.h>
-#include "merc.h"
+#include <stdarg.h>
 
 static void lastCommands(const char *str);
 static void cmdLogAlways(const char *str);
@@ -16,6 +12,24 @@ static char *logStamp(void);
 static void write_file(const char *fileName, char *mode, char *text);
 
 static int numCmds = 1;
+
+void log_bug(const char *fmt, ...)
+{
+	char *strtime;
+	char buf[MSL];
+
+	va_list args;
+
+	va_start(args, fmt);
+	vsprintf(buf, fmt, args);
+	va_end(args);
+
+
+	strtime = ctime(&current_time);
+	strtime[strlen(strtime) - 1] = '\0';
+	fprintf(stderr, "%s :: %s\n", strtime, buf);
+	return;
+}
 
 void log_new(const char *log, const char *str, char username[])
 {

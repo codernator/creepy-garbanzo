@@ -41,6 +41,7 @@
 #include "lookup.h"
 #include "olc.h"
 #include "skills.h"
+#include "channels.h"
 
 
 extern FILE *fpReserve;
@@ -2025,7 +2026,7 @@ CHAR_DATA *create_mobile(MOB_INDEX_DATA *mob_idx)
 		mob->group = mob_idx->group;
 		mob->act = mob_idx->act;
 
-		mob->comm = COMM_NOSHOUT | COMM_NOTELL;
+		mob->channels_denied = CHANNEL_SHOUT;
 		mob->affected_by = mob_idx->affected_by;
 		mob->alignment = mob_idx->alignment;
 		mob->level = mob_idx->level;

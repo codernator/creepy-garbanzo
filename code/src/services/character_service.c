@@ -14,7 +14,6 @@ extern DO_FUN do_at;
 extern DO_FUN do_split;
 
 extern void print_weather(CHAR_DATA * ch);
-extern void bug_long(const char *str, long param);
 
 
 void show_char_to_char(CHAR_DATA * list, CHAR_DATA * ch);
@@ -58,43 +57,15 @@ static struct { int	wear_loc; char *desc; } where_name[] =
 	{ -1,		  ""			 }
 };
 
-static struct { long flag; char *name; int location; } channel_names[] =
-{
-    { COMM_NOAUCTION, "`3Auction`` channel", 1 },
-    { COMM_DEAF, "Tells channel", 1 },
-    { COMM_QUIET, "Quiet mode", 1 },
-    { COMM_NOWIZ, "```!Immortal`` channel", 1 },
-    { COMM_SHOUTSOFF, "Shouts channel", 1 },
-    { COMM2_IMPTALK, "`2I`8M`2P`` channel", 2 },
-    { COMM2_INFO, "`![Info]`` channel", 2 },
-    { -1, "" }
-};
-
-static int get_channel_index(long commflag) {
-    int i;
-    for (i = 0; channel_names[i].flag > 0; i++) {
-        if (channel_names[i].flag == commflag)
-            return i;
-    }
-    return -1;
-}
-
-void toggle_comm(CHAR_DATA *ch, long commflag) {
-    static char buf[MIL];
+void toggle_quiet(CHAR_DATA *ch) {
     bool now_on;
-    int channel_index;
+    now_on = character_toggle_comm(ch, COMM_QUIET, 1);
 
-    channel_index = get_channel_index(commflag);
-    if (channel_index == -1) {
-        send_to_char("Bug logged.", ch);
-        bug_long("Bad channel", commflag);
-        return;
-    }
-
-    now_on = character_toggle_comm(ch, commflag, channel_names[channel_index].location);
-
-    (void)snprintf(buf, MIL, "%s is now %s.\n\r", channel_names[channel_index].name, now_on ? "ON" : "OFF");
-    send_to_char(buf, ch);
+	if (now_on) {
+		send_to_char("All channels are quiet.\n\r", ch);
+	} else {
+		send_to_char("Channels are no longer quiet.\n\r", ch);
+	}
 }
 
 void toggle_afk(CHAR_DATA *ch, char *message)
@@ -113,6 +84,52 @@ void toggle_afk(CHAR_DATA *ch, char *message)
 	} else {
 		send_to_char("`!A`@F`OK`` mode removed. Type 'replay' to see tells.\n\r", ch);
 	}
+}
+
+void show_channels(CHAR_DATA *ch)
+{
+	send_to_char("CHANNEL        STATUS\n\r", ch);
+	send_to_char("```&---------------------``\n\r", ch);
+
+	printf_to_char(ch, "`![Info]         %s``\n\r",
+		       character_has_comm(ch, COMM2_INFO, 2) ? "`#ON" : "`1OFF");
+
+	printf_to_char(ch, "`^Quiet Mode     %s``\n\r",
+		       character_has_comm(ch, COMM_QUIET, 1) ? "`#ON" : "`1OFF");
+
+	printf_to_char(ch, "`#Battlefield    %s``\n\r",
+		       character_has_comm(ch, COMM_NOBATTLEFIELD, 1) ? "`#ON" : "`1OFF");
+
+	send_to_char("\n\r", ch);
+	if (character_has_comm(ch, COMM2_AFK, 2))
+		send_to_char("You are ```!A```@F```OK``.\n\r", ch);
+
+	if (character_has_comm(ch, COMM2_BUSY, 2))
+		send_to_char("You are Busy.\n\r", ch);
+
+	if (character_has_comm(ch, COMM2_CODING, 2))
+		send_to_char("You are `@Coding``.\n\r", ch);
+
+	if (character_has_comm(ch, COMM2_BUILD, 2))
+		send_to_char("You are `3Building``.\n\r", ch);
+
+	if (ch->lines != PAGELEN) {
+		if (ch->lines > 0)
+			printf_to_char(ch, "You display %d lines of scroll.\n\r", ch->lines + 2);
+		else
+			send_to_char("Scroll buffering is off.\n\r", ch);
+	}
+
+	if (ch->prompt != NULL)
+		printf_to_char(ch, "Your current prompt is: %s\n\r", ch->prompt);
+
+	if (character_has_comm(ch, COMM_NOCHANNELS, 1))
+		send_to_char("You cannot use channels.\n\r", ch);
+
+	if (character_has_comm(ch, COMM2_NOEMOTE, 2))
+		send_to_char("You cannot show emotions.\n\r", ch);
+
+    return;
 }
 
 void replay(CHAR_DATA *ch) {
@@ -173,7 +190,6 @@ void look_equipment(CHAR_DATA *ch) {
 
 	send_to_char("`8", ch);
 }
-
 
 void look_direction(CHAR_DATA *ch, int door) {
 	EXIT_DATA *pexit;
@@ -429,79 +445,6 @@ void look_object(CHAR_DATA *ch, OBJ_DATA *obj, char *argument) {
         }
         break;
     }
-}
-
-void show_channels(CHAR_DATA *ch)
-{
-	send_to_char("CHANNEL        STATUS\n\r", ch);
-	send_to_char("```&---------------------``\n\r", ch);
-
-	printf_to_char(ch, "`![Info]         %s``\n\r",
-		       character_has_comm(ch, COMM2_INFO, 2) ? "`#ON" : "`1OFF");
-
-	printf_to_char(ch, "`3Auction        %s``\n\r",
-		       !character_has_comm(ch, COMM_NOAUCTION, 1) ? "`#ON" : "`1OFF");
-
-	printf_to_char(ch, "`4Quote          %s``\n\r",
-		       !character_has_comm(ch, COMM_NOQUOTE, 1) ? "`#ON" : "`1OFF");
-
-	printf_to_char(ch, "`1Shouts         %s``\n\r",
-		       !character_has_comm(ch, COMM_SHOUTSOFF, 1) ? "`#ON" : "`1OFF");
-
-	printf_to_char(ch, "`@Tells          %s``\n\r",
-		       !character_has_comm(ch, COMM_DEAF, 1) ? "`#ON" : "`1OFF");
-
-	printf_to_char(ch, "`^Quiet Mode     %s``\n\r",
-		       character_has_comm(ch, COMM_QUIET, 1) ? "`#ON" : "`1OFF");
-
-	printf_to_char(ch, "`#Battlefield    %s``\n\r",
-		       character_has_comm(ch, COMM_NOBATTLEFIELD, 1) ? "`#ON" : "`1OFF");
-
-	if (IS_IMMORTAL(ch)) {
-		printf_to_char(ch, "`!GOD channel    %s``\n\r",
-			       !character_has_comm(ch, COMM_NOWIZ, 1) ? "`#ON" : "`1OFF");
-	}
-
-	if (ch->level == IMPLEMENTOR)
-		printf_to_char(ch, "`2I`8M`2P            %s``\n\r",
-			       !character_has_comm(ch, COMM2_IMPTALK, 2) ? "`#ON" : "`1OFF");
-
-	send_to_char("\n\r", ch);
-	if (character_has_comm(ch, COMM2_AFK, 2))
-		send_to_char("You are ```!A```@F```OK``.\n\r", ch);
-
-	if (character_has_comm(ch, COMM2_BUSY, 2))
-		send_to_char("You are Busy.\n\r", ch);
-
-	if (character_has_comm(ch, COMM2_CODING, 2))
-		send_to_char("You are `@Coding``.\n\r", ch);
-
-	if (character_has_comm(ch, COMM2_BUILD, 2))
-		send_to_char("You are `3Building``.\n\r", ch);
-
-	if (ch->lines != PAGELEN) {
-		if (ch->lines > 0)
-			printf_to_char(ch, "You display %d lines of scroll.\n\r", ch->lines + 2);
-		else
-			send_to_char("Scroll buffering is off.\n\r", ch);
-	}
-
-	if (ch->prompt != NULL)
-		printf_to_char(ch, "Your current prompt is: %s\n\r", ch->prompt);
-
-	if (character_has_comm(ch, COMM_NOSHOUT, 1))
-		send_to_char("You cannot ```1shout``.\n\r", ch);
-
-	if (character_has_comm(ch, COMM_NOTELL, 1))
-		send_to_char("You cannot use ```@tell``.\n\r", ch);
-
-	if (character_has_comm(ch, COMM_NOCHANNELS, 1))
-		send_to_char("You cannot use channels.\n\r", ch);
-
-	if (character_has_comm(ch, COMM2_NOEMOTE, 2))
-		send_to_char("You cannot show emotions.\n\r", ch);
-
-    return;
 }
 
 void sit(CHAR_DATA *ch, OBJ_DATA *on)

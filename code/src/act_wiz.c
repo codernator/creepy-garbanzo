@@ -13,8 +13,6 @@
 #include <string.h>
 
 
-DECLARE_DO_FUN(do_pftell);
-DECLARE_DO_FUN(do_gftell);
 DECLARE_DO_FUN(do_grestore);
 DECLARE_DO_FUN(do_rrestore);
 
@@ -795,20 +793,6 @@ void do_grant(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if (!str_cmp(argument, "imptalk") && ch->level >= 610) {
-		if (IS_SET(victim->comm2, COMM2_IMPTALKM)) {
-			REMOVE_BIT(victim->comm2, COMM2_IMPTALKM);
-			send_to_char("You may no longer use imptalk.\n\r", victim);
-			send_to_char("You remove their imptalk abilities.\n\r", ch);
-			return;
-		} else {
-			SET_BIT(victim->comm2, COMM2_IMPTALKM);
-			send_to_char("You may now use the imptalk channel.\n\r", victim);
-			send_to_char("You enable their abilities to use imptalk.\n\r", ch);
-			return;
-		}
-	}
-
 	if ((skill = skill_lookup(argument)) == NULL) {
 		send_to_char("No such skill/spell\n\r", ch);
 		return;
@@ -967,91 +951,6 @@ void do_nochannels(CHAR_DATA *ch, char *argument)
 
 		sprintf(buf, "$N revokes %s's channels.", victim->name);
 		wiznet(buf, ch, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
-	}
-
-	return;
-}
-
-void do_smote(CHAR_DATA *ch, char *argument)
-{
-	CHAR_DATA *vch;
-	char *letter;
-	char *name;
-	char last[MIL];
-	char temp[MSL];
-	int matches = 0;
-
-	if (!IS_NPC(ch) && IS_SET(ch->comm2, COMM2_NOEMOTE)) {
-		send_to_char("You can't show your emotions.\n\r", ch);
-		return;
-	}
-
-	if (argument[0] == '\0') {
-		send_to_char("Emote what?\n\r", ch);
-		return;
-	}
-
-	if (strstr(argument, ch->name) == NULL) {
-		send_to_char("You must include your name in an smote.\n\r", ch);
-		return;
-	}
-
-	send_to_char(argument, ch);
-	send_to_char("\n\r", ch);
-
-	for (vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room) {
-		if (vch->desc == NULL || vch == ch)
-			continue;
-
-		if ((letter = strstr(argument, vch->name)) == NULL) {
-			send_to_char(argument, vch);
-			send_to_char("\n\r", vch);
-			continue;
-		}
-
-		strcpy(temp, argument);
-		temp[strlen(argument) - strlen(letter)] = '\0';
-		last[0] = '\0';
-		name = vch->name;
-
-		for (; *letter != '\0'; letter++) {
-			if (*letter == '\'' && matches == (int)strlen(vch->name)) {
-				strcat(temp, "r");
-				continue;
-			}
-
-			if (*letter == 's' && matches == (int)strlen(vch->name)) {
-				matches = 0;
-				continue;
-			}
-
-			if (matches == (int)strlen(vch->name))
-				matches = 0;
-
-			if (*letter == *name) {
-				matches++;
-				name++;
-
-				if (matches == (int)strlen(vch->name)) {
-					strcat(temp, "you");
-					last[0] = '\0';
-					name = vch->name;
-					continue;
-				}
-
-				strncat(last, letter, 1);
-				continue;
-			}
-
-			matches = 0;
-			strcat(temp, last);
-			strncat(temp, letter, 1);
-			last[0] = '\0';
-			name = vch->name;
-		}
-
-		send_to_char(temp, vch);
-		send_to_char("\n\r", vch);
 	}
 
 	return;
@@ -3021,103 +2920,6 @@ void do_noemote(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-void do_noshout(CHAR_DATA *ch, char *argument)
-{
-	char arg[MIL], buf[MSL];
-	CHAR_DATA *victim;
-
-	one_argument(argument, arg);
-
-	if (ch) {
-		if (IS_NPC(ch)) {
-			send_to_char("Mobs can't use this command.\n\r", ch);
-			return;
-		}
-	}
-
-	if (arg[0] == '\0') {
-		send_to_char("Noshout whom?\n\r", ch);
-		return;
-	}
-
-	if ((victim = get_char_world(ch, arg)) == NULL) {
-		send_to_char("They aren't here.\n\r", ch);
-		return;
-	}
-
-	if (IS_NPC(victim)) {
-		send_to_char("Not on NPC's.\n\r", ch);
-		return;
-	}
-
-	if (get_trust(victim) >= get_trust(ch)) {
-		send_to_char("You failed.\n\r", ch);
-		return;
-	}
-
-	if (IS_SET(victim->comm, COMM_NOSHOUT)) {
-		REMOVE_BIT(victim->comm, COMM_NOSHOUT);
-		send_to_char("You can shout again.\n\r", victim);
-		send_to_char("NOSHOUT removed.\n\r", ch);
-		sprintf(buf, "$N restores shouts to %s.", victim->name);
-		wiznet(buf, ch, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
-	} else {
-		SET_BIT(victim->comm, COMM_NOSHOUT);
-		send_to_char("You can't shout!\n\r", victim);
-		send_to_char("NOSHOUT set.\n\r", ch);
-		sprintf(buf, "$N revokes %s's shouts.", victim->name);
-		wiznet(buf, ch, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
-	}
-
-	return;
-}
-
-void do_notell(CHAR_DATA *ch, char *argument)
-{
-	char arg[MIL], buf[MSL];
-	CHAR_DATA *victim;
-
-	one_argument(argument, arg);
-
-	if (ch) {
-		if (IS_NPC(ch)) {
-			send_to_char("Mobs can't use this command.\n\r", ch);
-			return;
-		}
-	}
-
-	if (arg[0] == '\0') {
-		send_to_char("Notell whom?", ch);
-		return;
-	}
-
-	if ((victim = get_char_world(ch, arg)) == NULL) {
-		send_to_char("They aren't here.\n\r", ch);
-		return;
-	}
-
-	if (get_trust(victim) >= get_trust(ch)) {
-		send_to_char("You failed.\n\r", ch);
-		return;
-	}
-
-	if (IS_SET(victim->comm, COMM_NOTELL)) {
-		REMOVE_BIT(victim->comm, COMM_NOTELL);
-		send_to_char("You can tell again.\n\r", victim);
-		send_to_char("NOTELL removed.\n\r", ch);
-		sprintf(buf, "$N restores tells to %s.", victim->name);
-		wiznet(buf, ch, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
-	} else {
-		SET_BIT(victim->comm, COMM_NOTELL);
-		send_to_char("You can't tell!\n\r", victim);
-		send_to_char("NOTELL set.\n\r", ch);
-		sprintf(buf, "$N revokes %s's tells.", victim->name);
-		wiznet(buf, ch, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
-	}
-
-	return;
-}
-
 void do_peace(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *rch;
@@ -3918,171 +3720,7 @@ void do_rename(CHAR_DATA *ch, char *argument)
 	act("$n has renamed you to $N!", ch, NULL, victim, TO_VICT);
 }
 
-void do_faketell(CHAR_DATA *ch, char *argument)
-{
-	char arg[MIL];
 
-	argument = one_argument(argument, arg);
-
-	if (ch) {
-		if (IS_NPC(ch)) {
-			send_to_char("Mobs can't use this command.\n\r", ch);
-			return;
-		}
-	}
-
-	if (arg[0] == '\0') {
-		send_to_char("Syntax:(ftell)\n\r", ch);
-		send_to_char("  ftell <personal> <victim> <message>\n\r", ch);
-		send_to_char("  ftell <global> <victim> <message>\n\r", ch);
-		send_to_char("  note: See 'ftell help' for help on \n\r", ch);
-		send_to_char("        Faketell options ...\n\r", ch);
-		return;
-	}
-
-	if (!str_prefix(arg, "help")) {
-		send_to_char(" Faketell Help and stuff :\n\r", ch);
-		send_to_char("  ftell   :  For general syntax of Faketell\n\r", ch);
-		send_to_char("  global  :  Will send a Faketell to ALL\n\r", ch);
-		send_to_char("            connected players .. The victim\n\r", ch);
-		send_to_char("            will not be aware of the tell\n\r", ch);
-		send_to_char("            that was sent out ..\n\r", ch);
-		send_to_char("  personal:  Sends a faketell between two\n\r", ch);
-		send_to_char("            victims, victim1 and victim2..\n\r", ch);
-		send_to_char("            v1 is the sender, and v2 the\n\r", ch);
-		send_to_char("            receiver ..\n\r", ch);
-		send_to_char("\n\r", ch);
-		return;
-	}
-
-	if (!str_prefix(arg, "personal")) {
-		do_pftell(ch, argument);
-		return;
-	}
-
-	if (!str_prefix(arg, "global")) {
-		do_gftell(ch, argument);
-		return;
-	}
-
-	do_faketell(ch, "");
-}
-
-void do_gftell(CHAR_DATA *ch, char *argument)
-{
-	char arg1[MIL];
-	char arg2[MIL];
-	char buf[MSL];
-	CHAR_DATA *victim;
-	DESCRIPTOR_DATA *d;
-
-	argument = one_argument(argument, arg1);
-	strcpy(arg2, argument);
-
-	if (ch) {
-		if (IS_NPC(ch)) {
-			send_to_char("Mobs can't use this command.\n\r", ch);
-			return;
-		}
-	}
-
-	if (arg1[0] == '\0') {
-		send_to_char("Syntax:(global)\n\r", ch);
-		send_to_char("  ftell <victim> <message>\n\r", ch);
-		return;
-	}
-
-	victim = get_char_world(ch, arg1);
-
-	if ((victim == NULL) || (IS_NPC(victim))) {
-		send_to_char("Your victim isn't currently in the world.\n\r", ch);
-		return;
-	}
-
-	if (arg2[0] == '\0') {
-		send_to_char("Faketell your victim what?\n", ch);
-		return;
-	}
-
-	sprintf(buf, "\n\r`7Faketell(global):\n\r `@%s tells you '`t%s`@'``\n\r",
-		capitalize(arg1), arg2);
-	send_to_char(buf, ch);
-	for (d = descriptor_list; d != NULL; d = d->next) {
-		CHAR_DATA *wch;
-
-		wch = (d->original != NULL) ? d->original : d->character;
-
-		if (d->connected == CON_PLAYING &&
-		    d->character != ch &&
-		    !IS_SET(victim->comm, COMM_NOTELL) &&
-		    !IS_SET(victim->comm, COMM_QUIET)) {
-			if (wch != victim) {
-				act_new("`@$n tells you '`t$t`@'`7", victim, argument, d->character, TO_VICT, POS_SLEEPING, FALSE);
-				wch->reply = victim;
-			}
-		}
-	}
-	sprintf(buf, "%s ftell(global): `@%s tells you '`t%s`@'``\n\r",
-		ch->name, arg1, arg2);
-	wiznet(buf, ch, NULL, WIZ_SECURE, 0, 0);
-	send_to_char("May your faketell cause lots of chaos =P ..\n\r\n\r", ch);
-}
-
-void do_pftell(CHAR_DATA *ch, char *argument)
-{
-	char arg1[MIL];
-	char arg2[MIL];
-	char arg3[MIL];
-	char buf[MSL];
-	CHAR_DATA *victim;
-	CHAR_DATA *victim2;
-
-	argument = one_argument(argument, arg1);
-	argument = one_argument(argument, arg2);
-	strcpy(arg3, argument);
-
-	if (ch) {
-		if (IS_NPC(ch)) {
-			send_to_char("Mobs can't use this command.\n\r", ch);
-			return;
-		}
-	}
-
-	if (arg1[0] == '\0') {
-		send_to_char("Syntax:(personal)\n\r", ch);
-		send_to_char("  ftell <sender> <reciver> <message>\n\r", ch);
-		return;
-	}
-
-	victim = get_char_world(ch, arg1);
-	victim2 = get_char_world(ch, arg2);
-
-	if ((victim == NULL) || (IS_NPC(victim))) {
-		send_to_char("The sender of the faketell is not here..\n\r", ch);
-		return;
-	}
-
-	if ((victim2 == NULL) || (IS_NPC(victim2))) {
-		send_to_char("The recipiant of the faketell is not here..\n\r", ch);
-		return;
-	}
-
-
-	if (arg3[0] == '\0') {
-		send_to_char("Faketell your victim what?\n\r", ch);
-		return;
-	}
-
-	sprintf(buf, "\n\r`7Faketell(personal to '%s'):\n\r `@%s tells you '`t%s`@'``\n\r",
-		arg2, arg1, arg3);
-	send_to_char(buf, ch);
-	act_new("`@$n tells you '`1$t`@'`7", victim, argument, victim2, TO_VICT, POS_SLEEPING, FALSE);
-	victim2->reply = victim;
-	sprintf(buf, "%s ftell(personal to '%s'): `@%s tells you '`t%s`@'``\n\r",
-		ch->name, arg2, arg1, arg3);
-	wiznet(buf, ch, NULL, WIZ_SECURE, 0, 0);
-	send_to_char("May your faketell cause lot's of chaos =P ..\n\r\n\r", ch);
-}
 
 void do_pnlist(CHAR_DATA *ch, char *argument)
 {
@@ -4091,9 +3729,9 @@ void do_pnlist(CHAR_DATA *ch, char *argument)
 	DENY_NPC(ch);
 
 	send_to_char("Listing all connected penalized characters:\n\r", ch);
-	send_to_char("+---------------------------------------------------------------------------+\n\r", ch);
-	send_to_char("Name     | Frz| NoT| NoC| NoE| Log| Idt| Klr| Thi| SnP| Per| Pns| Dis\n\r", ch);
-	send_to_char("+---------------------------------------------------------------------------+\n\r", ch);
+	send_to_char("+----------------------------------------------------------------------+\n\r", ch);
+	send_to_char("Name     | Frz| NoC| NoE| Log| Idt| Klr| Thi| SnP| Per| Pns| Dis\n\r", ch);
+	send_to_char("+----------------------------------------------------------------------+\n\r", ch);
 
 	for (d = descriptor_list; d != NULL; d = d->next) {
 		CHAR_DATA *wch;
@@ -4107,10 +3745,9 @@ void do_pnlist(CHAR_DATA *ch, char *argument)
 			continue;
 
 		printf_to_char(ch,
-			       "%-13s%-9s%-9s%-9s%-9s%-9s%-9s%-9s%-9s%-9s\n\r",
+			       "%-13s%-9s%-9s%-9s%-9s%-9s%-9s%-9s%-9s\n\r",
 			       wch->name,
 			       IS_SET(wch->act, PLR_FREEZE) ? "`!X`7" : "`8-`7 ",
-			       IS_SET(wch->comm, COMM_NOTELL) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->comm, COMM_NOCHANNELS) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->comm, COMM2_NOEMOTE) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->act, PLR_LOG) ? "`!X`7" : "`8-`7 ",

@@ -28,11 +28,12 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <stdio.h>
-#include <string.h>
 #include "merc.h"
 #include "magic.h"
+#include "channels.h"
 
+#include <stdio.h>
+#include <string.h>
 
 /***************************************************************************
 *	function prototypes
@@ -56,7 +57,6 @@ extern void battlefield_update(void);
 extern int port;        /* from comm.c, what port are we running on */
 
 void gain_object_exp(CHAR_DATA * ch, OBJ_DATA * obj, int gain);
-extern void talk_auction(char *argument);
 extern void blood_rage(CHAR_DATA * ch);
 extern void random_drop(void);
 void update_pktimer(CHAR_DATA * ch);
@@ -1738,11 +1738,9 @@ static void auction_update(void)
 						auction->bet, auction_type_table[auction_idx].display,
 						(auction->bet > 1 && !auction_type_table[auction_idx].is_coins) ? "s" : "");
 				} else {
-					sprintf(buf, "%s going %s `!(`7no bet received yet`!)``.",
-						auction->item->short_descr,
-						((auction->going == 1) ? "once" : "twice"));
+					sprintf(buf, "%s going %s `!(`7no bet received yet`!)``.", auction->item->short_descr, ((auction->going == 1) ? "once" : "twice"));
 				}
-				talk_auction(buf);
+				broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), buf);
 				break;
 
 			case 3: /* SOLD! */
@@ -1752,7 +1750,7 @@ static void auction_update(void)
 						IS_NPC(auction->buyer) ? auction->buyer->short_descr : auction->buyer->name,
 						auction->bet, auction_type_table[auction_idx].display,
 						(auction->bet > 1 && !auction_type_table[auction_idx].is_coins) ? "s" : "");
-					talk_auction(buf);
+					broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), buf);
 					obj_to_char(auction->item, auction->buyer);
 					act("The auctioneer appears before you in a puff of smoke and hands you $p.",
 					    auction->buyer, auction->item, NULL, TO_CHAR);
@@ -1763,13 +1761,10 @@ static void auction_update(void)
 					credit_player_bid(auction->seller, (long)auction->bet, auction->type);
 					auction->item = NULL;                   /* reset item */
 				} else {
-					sprintf(buf, "No bets received for %s - object has been `!removed`7.",
-						auction->item->short_descr);
-					talk_auction(buf);
-					act("The auctioneer appears before you to return $p to you.",
-					    auction->seller, auction->item, NULL, TO_CHAR);
-					act("The auctioneer appears before $n to return $p to $m.",
-					    auction->seller, auction->item, NULL, TO_ROOM);
+					sprintf(buf, "No bets received for %s - object has been `!removed`7.", auction->item->short_descr);
+					broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), buf);
+					act("The auctioneer appears before you to return $p to you.", auction->seller, auction->item, NULL, TO_CHAR);
+					act("The auctioneer appears before $n to return $p to $m.", auction->seller, auction->item, NULL, TO_ROOM);
 					obj_to_char(auction->item, auction->seller);
 					auction->item = NULL;   /* clear auction */
 				}

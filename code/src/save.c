@@ -261,6 +261,8 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 	fprintf(fp, "Mdea %ld\n", ch->pcdata->mobdeaths);
 	fprintf(fp, "Pktm %d\n", ch->pk_timer);
 	fprintf(fp, "Sftm %d\n", ch->safe_timer);
+	fprintf(fp, "ChannelsE %s\n", print_flags(ch->channels_enabled));
+	fprintf(fp, "ChannelsD %s\n", print_flags(ch->channels_denied));
 	fprintf(fp, "Comm %s\n", print_flags(ch->comm));
 	fprintf(fp, "Comm2 %s\n", print_flags(ch->comm2));
 	fprintf(fp, "Dcry %s~\n", ch->pcdata->deathcry);
@@ -720,6 +722,8 @@ bool load_char_obj(DESCRIPTOR_DATA *d, char *name)
 	ch->id = get_pc_id();
 	ch->race = race_lookup("human");
 	ch->act = PLR_NOSUMMON;
+	ch->channels_enabled = 0;
+	ch->channels_denied = 0;
 	ch->comm = COMM_COMBINE | COMM_PROMPT;
 	ch->comm2 = 0;
 	ch->prompt = str_dup("<%hhp %mm %vmv> ");
@@ -1104,6 +1108,10 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 				fMatch = TRUE;
 				break;
 			}
+
+			KEY("ChannelsE", ch->channels_enabled, fread_flag(fp));
+			KEY("ChannelsD", ch->channels_denied, fread_flag(fp));
+
 			if (!str_cmp(word, "Cnd")) {
 				ch->pcdata->condition[0] = fread_number(fp);
 				ch->pcdata->condition[1] = fread_number(fp);

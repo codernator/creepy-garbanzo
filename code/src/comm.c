@@ -1543,15 +1543,13 @@ int espBroadcastAndCheck(CHAR_DATA *ch, char *CanSeeAct, char *CanTSeeAct)
 }
 
 
-void act(const char *format, CHAR_DATA *ch, const void *arg1,
-	 const void *arg2, int type)
+void act(const char *format, CHAR_DATA *ch, const void *arg1, const void *arg2, int type)
 {
 	/* to be compatible with older code */
 	act_new(format, ch, arg1, arg2, type, POS_RESTING, TRUE);
 }
 
-void act_new(const char *format, CHAR_DATA *ch, const void *arg1,
-	     const void *arg2, int type, int min_pos, bool mob_trigger)
+void act_new(const char *format, CHAR_DATA *ch, const void *arg1, const void *arg2, int type, int min_pos, bool mob_trigger)
 {
 	static char *const he_she[] = { "it", "he", "she" };
 	static char *const him_her[] = { "it", "him", "her" };

@@ -2,9 +2,9 @@
 #include "merc.h"
 #include "character.h"
 #include "mob_cmds.h"
+#include "channels.h"
 
 
-extern void do_yell(CHAR_DATA *ch, char *);
 extern void make_corpse(CHAR_DATA *ch);
 extern bool check_shield_block(CHAR_DATA *ch, CHAR_DATA *victim);
 extern void disarm(CHAR_DATA *ch, CHAR_DATA *victim);
@@ -282,7 +282,7 @@ void do_murder(CHAR_DATA *ch, char *argument)
 	else
 		(void)snprintf(buf, MSL, "Help! I am being attacked by %s!", ch->name);
 
-	do_yell(victim, buf);
+	broadcast_channel(victim, channels_find(CHANNEL_SHOUT), buf);
 	check_killer(ch, victim);
 	multi_hit(ch, victim, TYPE_UNDEFINED);
 	return;

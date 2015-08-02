@@ -33,6 +33,7 @@
 #include "interp.h"
 #include "tables.h"
 #include "lookup.h"
+#include "channels.h"
 #include "libstring.h"
 
 /***************************************************************************
@@ -2703,7 +2704,7 @@ void do_steal(CHAR_DATA *ch, char *argument)
 			sprintf(buf, "Keep your hands out of there, %s!", ch->name);
 			break;
 		}
-		do_yell(victim, buf);
+		broadcast_channel(victim, channels_find(CHANNEL_SHOUT), buf);
 		if (!IS_NPC(ch)) {
 			if (IS_NPC(victim)) {
 				check_improve(ch, skill_steal, FALSE, 2);
@@ -2810,17 +2811,17 @@ CHAR_DATA *find_keeper(CHAR_DATA *ch)
 	}
 
 	if (time_info.hour < shop->open_hour) {
-		do_say(keeper, "Sorry, I am closed. Come back later.");
+		broadcast_channel(keeper, channels_find(CHANNEL_SAY), "Sorry, I am closed. Come back later.");
 		return NULL;
 	}
 
 	if (time_info.hour > shop->close_hour) {
-		do_say(keeper, "Sorry, I am closed. Come back tomorrow.");
+		broadcast_channel(keeper, channels_find(CHANNEL_SAY), "Sorry, I am closed. Come back tomorrow.");
 		return NULL;
 	}
 
 	if (!can_see(keeper, ch)) {
-		do_say(keeper, "I don't trade with folks I can't see.");
+		broadcast_channel(keeper, channels_find(CHANNEL_SAY), "I don't trade with folks I can't see.");
 		return NULL;
 	}
 
@@ -3035,7 +3036,8 @@ void do_buy(CHAR_DATA *ch, char *argument)
 		SET_BIT(pet->act, ACT_PET);
 		SET_BIT(pet->affected_by, AFF_CHARM);
 
-		pet->comm = COMM_NOTELL | COMM_NOSHOUT | COMM_NOCHANNELS;
+		pet->comm = COMM_NOCHANNELS;
+		pet->channels_denied = CHANNEL_SHOUT | CHANNEL_TELL;
 		pet->zone = ch->in_room->area;
 
 		argument = one_argument(argument, arg);

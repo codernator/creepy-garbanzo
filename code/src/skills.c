@@ -36,6 +36,7 @@
 #include "lookup.h"
 #include "interp.h"
 #include "libstring.h"
+#include "channels.h"
 
 
 extern int parse_int(char *test);
@@ -1905,7 +1906,7 @@ void do_gain(CHAR_DATA *ch, char *argument)
 
 	one_argument(argument, arg);
 	if (arg[0] == '\0') {
-		do_say(trainer, "Pardon me?");
+		broadcast_channel(trainer, channels_find(CHANNEL_SAY), "Pardon me?");
 		return;
 	}
 

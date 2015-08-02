@@ -1292,32 +1292,22 @@ struct kill_data {
 
 /* RT comm flags -- may be used n both mobs and chars */
 #define COMM_QUIET              (A)
-#define COMM_DEAF               (B)
-#define COMM_NOWIZ              (C)
-#define COMM_NOAUCTION          (D)
-#define COMM_NOQUOTE            (I)
-#define COMM_SHOUTSOFF          (J)
 #define COMM_COMPACT            (O)
 #define COMM_BRIEF              (P)
 #define COMM_PROMPT             (Q)
 #define COMM_COMBINE            (R)
 #define COMM_TELNET_GA          (S)
 #define COMM_SHOW_AFFECTS       (T)
-#define COMM_NOSHOUT            (W)
-#define COMM_NOTELL             (X)
 #define COMM_NOCHANNELS         (Y)
 #define COMM_NOQUIT             (aa)
 #define COMM_NOBATTLEFIELD      (cc)
 #define COMM2_AFK               (A)
 #define COMM2_INFO              (B)
 #define COMM2_NOEMOTE           (C)
-#define COMM2_IMPTALK           (E)
 #define COMM2_TICKS             (F)
 #define COMM2_ENABLE            (K)
 #define COMM2_TARGET            (L)
 #define COMM2_LOCKREPLY         (M)
-// grant player ability to talk on IMP channel (a "tester" role is better suited, no?)
-#define COMM2_IMPTALKM          (N)
 #define COMM2_RP                (O)
 #define COMM2_CODING            (P)
 #define COMM2_BUILD             (Q)
@@ -1515,6 +1505,8 @@ struct char_data {
     int safe_timer;
     long act;
     int color;
+    unsigned long channels_enabled;
+    unsigned long channels_denied;
     long comm;   /* RT added to pad the vector */
     long comm2;  /* RT added to pad the vector */
     long imm_flags;
@@ -2586,6 +2578,9 @@ int liq_lookup(const char *name);
 /* object_service.c */
 bool is_situpon(/*@partial@*/OBJ_DATA *obj);
 bool is_standupon(/*@partial@*/OBJ_DATA *obj);
+
+/* logging.c */
+void log_bug(const char *fmt, ...);
 
 #endif  /* __MERC_H */
 

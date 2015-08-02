@@ -28,19 +28,20 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-#include <stdio.h>
-#include <string.h>
 #include "merc.h"
 #include "tables.h"
 #include "lookup.h"
 #include "magic.h"
+#include "channels.h"
+
+#include <stdio.h>
+#include <string.h>
 
 
 extern bool is_digit(const char test);
 extern unsigned int parse_unsigned_int(char *string);
 extern int parse_int(char *string);
 
-void talk_auction(char *argument);
 extern void recursive_clone(CHAR_DATA * ch, OBJ_DATA * obj, OBJ_DATA * clone);
 
 bool check_bid(CHAR_DATA * ch, unsigned int bid, int type);
@@ -150,27 +151,6 @@ unsigned int parsebet(const unsigned int currentbet, const char *argument)
 	}
 
 	return newbet;  /* return the calculated bet */
-}
-
-
-/***************************************************************************
-*	talk_auction
-***************************************************************************/
-void talk_auction(char *argument)
-{
-	DESCRIPTOR_DATA *d;
-	char buf[MSL];
-	CHAR_DATA *original;
-
-	sprintf(buf, "`#Auction`7: %s", argument);
-
-	for (d = descriptor_list; d != NULL; d = d->next) {
-		original = CH(d);
-		if ((d->connected == CON_PLAYING)
-		    && !IS_SET(original->comm, COMM_NOAUCTION))
-			act(buf, original, NULL, NULL, TO_CHAR);
-
-	}
 }
 
 /***************************************************************************
@@ -311,7 +291,7 @@ void do_auction(CHAR_DATA *ch, char *argument)
 				sprintf(buf, "Sale of %s has been stopped by %s.\n\r",
 					auction->item->short_descr,
 					ch->name);
-				talk_auction(buf);
+                broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), buf);
 				obj_to_char(auction->item, ch);
 				auction->item = NULL;
 
@@ -411,7 +391,7 @@ void do_auction(CHAR_DATA *ch, char *argument)
 				auction_type_table[auction_idx].display,
 				(bid > 1 && !auction_type_table[auction_idx].is_coins) ? "s" : "",
 				auction->item->short_descr);
-			talk_auction(buf);
+			broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), buf);
 			return;
 		} else {
 			send_to_char("There isn't anything being auctioned right now.\n\r", ch);
@@ -484,12 +464,12 @@ void do_auction(CHAR_DATA *ch, char *argument)
 			auction->reserve = auction_reserve;
 
 			sprintf(buf, "A new item has been received: %s.", obj->short_descr);
-			talk_auction(buf);
+			broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), buf);
 			sprintf(buf, "Bidding will start at `#%u`` %s%s``.",
 				auction->reserve,
 				auction_type_table[auction_idx].display,
 				(auction->reserve > 1 && !auction_type_table[auction_idx].is_coins) ? "s" : "");
-			talk_auction(buf);
+			broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), buf);
 
 			return;
 		}
