@@ -9,7 +9,7 @@ void command_channel(CHAR_DATA *ch, char *argument) {
     static char arg1[MIL];
     static char arg2[MIL];
     static char arg3[MIL];
-    CHANNEL_DEFINITION *channel;
+    const CHANNEL_DEFINITION const *channel;
 
     if (argument[0] == '\0') {
         channels_show(ch);
@@ -61,8 +61,10 @@ void command_channel(CHAR_DATA *ch, char *argument) {
         }
         default:
         {
+            CHAR_DATA *target = NULL;
+
             if (argument[0] == '\0') {
-                /** TODO - automatic "current channel"  */
+                /** TODO - automatic "current channel" */
                 send_to_char("Please specify a channel.", ch);
                 return;
             }
@@ -74,7 +76,37 @@ void command_channel(CHAR_DATA *ch, char *argument) {
                 return;
             }
 
-            broadcast_channel(ch, channel, argument);
+            switch (channel->target_requirement) {
+                case CHANNEL_TARGET_NONE:
+                    break;
+                case CHANNEL_TARGET_OPTIONAL:
+                {
+                    if (argument[0] == '-') {
+                        argument = one_argument(argument, arg3);
+                        if ((target = get_char_world(ch, arg3+1)) == NULL) {
+                            printf_to_char(ch, "There is no such victim: %s.", arg3);
+                            return;
+                        }
+                    }
+                    break;
+                }
+                case CHANNEL_TARGET_REQUIRED:
+                {
+                    if (argument[0] == '-') {
+                        argument = one_argument(argument, arg3);
+                        if ((target = get_char_world(ch, arg3+1)) == NULL) {
+                            printf_to_char(ch, "There is no such victim: %s.", arg3);
+                            return;
+                        }
+                    } else {
+                        printf_to_char(ch, "You must specify a receiver for channel: %s.", channel->name);
+                        return;
+                    }
+                    break;
+                }
+            }
+
+            broadcast_channel(ch, channel, target, argument);
             break;
         }
     }
@@ -98,64 +130,3 @@ void do_replay(CHAR_DATA *ch, /*@unused@*/ char *argument)
     DENY_NPC(ch);
     replay(ch);
 }
-
-void do_tell(CHAR_DATA *ch, char *argument)
-{
-	static char arg[MIL];
-	CHAR_DATA *victim;
-
-	argument = one_argument(argument, arg);
-
-	if (arg[0] == '\0' || argument[0] == '\0') {
-		send_to_char("```@Tell`` whom what?\n\r", ch);
-	} else {
-        /* Can tell to PC's anywhere, but NPC's only in same room.
-         *    -- Furey
-         */
-        if ((victim = get_char_world(ch, arg)) == NULL
-               || (IS_NPC(victim) && victim->in_room != ch->in_room)) {
-            send_to_char("They aren't here.\n\r", ch);
-            return;
-        }
-
-        broadcast_tell(ch, victim, argument);
-    }
-}
-
-void do_reply(CHAR_DATA *ch, char *argument)
-{
-	if (argument[0] == '\0') {
-		send_to_char("```@Reply`` what?\n\r", ch);
-    } else {
-        broadcast_reply(ch, argument);
-    }
-}
-
-void do_gtell(CHAR_DATA *ch, char *argument)
-{
-	if (argument[0] == '\0') {
-		send_to_char("Tell your group what?\n\r", ch);
-	} else {
-        broadcast_gtell(ch, argument);
-	}
-}
-
-void do_sayto(CHAR_DATA *ch, char *argument)
-{
-	CHAR_DATA *victim;
-	char arg[MIL];
-
-	argument = one_argument(argument, arg);
-	if (arg[0] == '\0' || argument[0] == '\0') {
-		send_to_char("`8Say`` what to whom?\n\r", ch);
-		return;
-	}
-	if ((victim = get_char_world(ch, arg)) == NULL
-	    || victim->in_room != ch->in_room) {
-		send_to_char("They aren't here.\n\r", ch);
-		return;
-	}
-
-    broadcast_sayto(ch, victim, argument);
-}
-

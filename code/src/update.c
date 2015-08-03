@@ -1740,7 +1740,7 @@ static void auction_update(void)
 				} else {
 					sprintf(buf, "%s going %s `!(`7no bet received yet`!)``.", auction->item->short_descr, ((auction->going == 1) ? "once" : "twice"));
 				}
-				broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), buf);
+				broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), NULL, buf);
 				break;
 
 			case 3: /* SOLD! */
@@ -1750,7 +1750,7 @@ static void auction_update(void)
 						IS_NPC(auction->buyer) ? auction->buyer->short_descr : auction->buyer->name,
 						auction->bet, auction_type_table[auction_idx].display,
 						(auction->bet > 1 && !auction_type_table[auction_idx].is_coins) ? "s" : "");
-					broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), buf);
+					broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), NULL, buf);
 					obj_to_char(auction->item, auction->buyer);
 					act("The auctioneer appears before you in a puff of smoke and hands you $p.",
 					    auction->buyer, auction->item, NULL, TO_CHAR);
@@ -1762,7 +1762,7 @@ static void auction_update(void)
 					auction->item = NULL;                   /* reset item */
 				} else {
 					sprintf(buf, "No bets received for %s - object has been `!removed`7.", auction->item->short_descr);
-					broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), buf);
+					broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), NULL, buf);
 					act("The auctioneer appears before you to return $p to you.", auction->seller, auction->item, NULL, TO_CHAR);
 					act("The auctioneer appears before $n to return $p to $m.", auction->seller, auction->item, NULL, TO_ROOM);
 					obj_to_char(auction->item, auction->seller);

@@ -282,7 +282,7 @@ void do_murder(CHAR_DATA *ch, char *argument)
 	else
 		(void)snprintf(buf, MSL, "Help! I am being attacked by %s!", ch->name);
 
-	broadcast_channel(victim, channels_find(CHANNEL_SHOUT), buf);
+	broadcast_channel(victim, channels_find(CHANNEL_SHOUT), NULL, buf);
 	check_killer(ch, victim);
 	multi_hit(ch, victim, TYPE_UNDEFINED);
 	return;

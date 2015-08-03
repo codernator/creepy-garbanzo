@@ -132,7 +132,7 @@ void check_assist(CHAR_DATA *ch, CHAR_DATA *victim)
 			if (!IS_NPC(ch) && IS_NPC(rch)
 			    && IS_SET(rch->off_flags, ASSIST_PLAYERS)
 			    && rch->level + 6 > victim->level) {
-			    broadcast_channel(rch, channels_find(CHANNEL_EMOTE), "```!screams and attacks!``");
+			    broadcast_channel(rch, channels_find(CHANNEL_EMOTE), NULL, "```!screams and attacks!``");
 				multi_hit(rch, victim, TYPE_UNDEFINED);
 				continue;
 			}
@@ -185,7 +185,7 @@ void check_assist(CHAR_DATA *ch, CHAR_DATA *victim)
 					}
 
 					if (target != NULL) {
-						broadcast_channel(rch, channels_find(CHANNEL_EMOTE), "```!screams and attacks!``");
+						broadcast_channel(rch, channels_find(CHANNEL_EMOTE), NULL, "```!screams and attacks!``");
 						multi_hit(rch, target, TYPE_UNDEFINED);
 					}
 				}
@@ -2040,7 +2040,7 @@ void raw_kill(CHAR_DATA *victim, CHAR_DATA *killer)
 
 	if (!IS_NPC(victim)) {
 		if (victim->pcdata->deathcry != NULL)
-			broadcast_channel(victim, channels_find(CHANNEL_SHOUT), victim->pcdata->deathcry);
+			broadcast_channel(victim, channels_find(CHANNEL_SHOUT), NULL, victim->pcdata->deathcry);
 	}
 
 	if (!IS_NPC(victim))

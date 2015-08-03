@@ -108,7 +108,6 @@ const struct cmd_type cmd_table[] =
 	{ "sit",	      do_sit,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "sockets",	  do_sockets,      POS_DEAD,     L2, LOG_NORMAL, 1 },
 	{ "stand",	      do_stand,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
-	{ "tell",	      do_tell,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "veil",	      do_veil,	       POS_STANDING, 0,	 LOG_NORMAL, 1 },
 	{ "finger",	      do_finger,       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "unlock",	      do_unlock,       POS_RESTING,  0,	 LOG_NORMAL, 1 },
@@ -191,8 +190,6 @@ const struct cmd_type cmd_table[] =
 
 	{ "afk",	      do_afk,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "go_pk",	      do_gopk,	       POS_SLEEPING, 0,	 LOG_ALWAYS, 1 },
-	{ "gtell",	      do_gtell,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
-	{ ";",		      do_gtell,	       POS_DEAD,     0,	 LOG_NORMAL, 0 },
 	{ "channel",      command_channel, POS_DEAD,     0,  LOG_NORMAL, 0 },
 
 	{ "note",	      do_note,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
@@ -204,9 +201,7 @@ const struct cmd_type cmd_table[] =
 
 	{ "at",		      do_at,	       POS_DEAD,     L7, LOG_NORMAL, 1 },
 	{ "quiet",	      do_quiet,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
-	{ "reply",	      do_reply,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "replay",	      do_replay,       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
-	{ "sayto",	      do_sayto,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "catchup",	  do_catchup,      POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "unread",	      do_unread,       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 

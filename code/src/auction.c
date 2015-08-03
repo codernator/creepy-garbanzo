@@ -291,7 +291,7 @@ void do_auction(CHAR_DATA *ch, char *argument)
 				sprintf(buf, "Sale of %s has been stopped by %s.\n\r",
 					auction->item->short_descr,
 					ch->name);
-                broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), buf);
+                broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), NULL, buf);
 				obj_to_char(auction->item, ch);
 				auction->item = NULL;
 
@@ -391,7 +391,7 @@ void do_auction(CHAR_DATA *ch, char *argument)
 				auction_type_table[auction_idx].display,
 				(bid > 1 && !auction_type_table[auction_idx].is_coins) ? "s" : "",
 				auction->item->short_descr);
-			broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), buf);
+			broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), NULL, buf);
 			return;
 		} else {
 			send_to_char("There isn't anything being auctioned right now.\n\r", ch);
@@ -464,12 +464,12 @@ void do_auction(CHAR_DATA *ch, char *argument)
 			auction->reserve = auction_reserve;
 
 			sprintf(buf, "A new item has been received: %s.", obj->short_descr);
-			broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), buf);
+			broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), NULL, buf);
 			sprintf(buf, "Bidding will start at `#%u`` %s%s``.",
 				auction->reserve,
 				auction_type_table[auction_idx].display,
 				(auction->reserve > 1 && !auction_type_table[auction_idx].is_coins) ? "s" : "");
-			broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), buf);
+			broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), NULL, buf);
 
 			return;
 		}

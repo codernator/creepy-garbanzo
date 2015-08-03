@@ -1906,7 +1906,7 @@ void do_gain(CHAR_DATA *ch, char *argument)
 
 	one_argument(argument, arg);
 	if (arg[0] == '\0') {
-		broadcast_channel(trainer, channels_find(CHANNEL_SAY), "Pardon me?");
+		broadcast_channel(trainer, channels_find(CHANNEL_SAY), NULL, "Pardon me?");
 		return;
 	}
 

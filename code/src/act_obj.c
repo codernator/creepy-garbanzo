@@ -2704,7 +2704,7 @@ void do_steal(CHAR_DATA *ch, char *argument)
 			sprintf(buf, "Keep your hands out of there, %s!", ch->name);
 			break;
 		}
-		broadcast_channel(victim, channels_find(CHANNEL_SHOUT), buf);
+		broadcast_channel(victim, channels_find(CHANNEL_SHOUT), NULL, buf);
 		if (!IS_NPC(ch)) {
 			if (IS_NPC(victim)) {
 				check_improve(ch, skill_steal, FALSE, 2);
@@ -2811,17 +2811,17 @@ CHAR_DATA *find_keeper(CHAR_DATA *ch)
 	}
 
 	if (time_info.hour < shop->open_hour) {
-		broadcast_channel(keeper, channels_find(CHANNEL_SAY), "Sorry, I am closed. Come back later.");
+		broadcast_channel(keeper, channels_find(CHANNEL_SAY), NULL, "Sorry, I am closed. Come back later.");
 		return NULL;
 	}
 
 	if (time_info.hour > shop->close_hour) {
-		broadcast_channel(keeper, channels_find(CHANNEL_SAY), "Sorry, I am closed. Come back tomorrow.");
+		broadcast_channel(keeper, channels_find(CHANNEL_SAY), NULL, "Sorry, I am closed. Come back tomorrow.");
 		return NULL;
 	}
 
 	if (!can_see(keeper, ch)) {
-		broadcast_channel(keeper, channels_find(CHANNEL_SAY), "I don't trade with folks I can't see.");
+		broadcast_channel(keeper, channels_find(CHANNEL_SAY), NULL, "I don't trade with folks I can't see.");
 		return NULL;
 	}
 
