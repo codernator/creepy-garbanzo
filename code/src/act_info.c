@@ -199,7 +199,7 @@ void do_autolist(CHAR_DATA *ch, char *argument)
 		send_to_char("OFF\n\r", ch);
 
 	send_to_char("autoticks      ", ch);
-	if (IS_SET(ch->comm2, COMM2_TICKS))
+	if (IS_SET(ch->comm, COMM_TICKS))
 		send_to_char("ON\n\r", ch);
 	else
 		send_to_char("OFF\n\r", ch);
@@ -363,12 +363,12 @@ void do_autoticks(CHAR_DATA *ch, char *argument)
 	if (IS_NPC(ch))
 		return;
 
-	if (IS_SET(ch->comm2, COMM2_TICKS)) {
+	if (IS_SET(ch->comm, COMM_TICKS)) {
 		send_to_char("You will no longer see ticks.\n\r", ch);
-		REMOVE_BIT(ch->comm2, COMM2_TICKS);
+		REMOVE_BIT(ch->comm, COMM_TICKS);
 	} else {
 		send_to_char("You will now see the ticks.\n\r", ch);
-		SET_BIT(ch->comm2, COMM2_TICKS);
+		SET_BIT(ch->comm, COMM_TICKS);
 	}
 }
 

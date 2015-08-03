@@ -286,12 +286,12 @@ const struct flag_type comm_flags[] =
 	{ "telnet_ga",	  COMM_TELNET_GA,    TRUE  },
 	{ "show_affects", COMM_SHOW_AFFECTS, TRUE  },
 	{ "nochannels",	  COMM_NOCHANNELS,   FALSE },
-	{ "afk",	  COMM2_AFK,	     TRUE  },
-	{ "info",	  COMM2_INFO,	     TRUE  },
-	{ "noemote",	  COMM2_NOEMOTE,     FALSE },
-	{ "busy",	  COMM2_BUSY,	     TRUE  },
-	{ "coding",	  COMM2_CODING,	     TRUE  },
-	{ "building",	  COMM2_BUILD,	     TRUE  },
+	{ "afk",	  COMM_AFK,	     TRUE  },
+	{ "info",	  COMM_INFO,	     TRUE  },
+	{ "noemote",	  COMM_NOEMOTE,     FALSE },
+	{ "busy",	  COMM_BUSY,	     TRUE  },
+	{ "coding",	  COMM_CODING,	     TRUE  },
+	{ "building",	  COMM_BUILD,	     TRUE  },
 	{ NULL,		  0,		     0	   }
 };
 

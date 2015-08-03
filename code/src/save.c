@@ -264,7 +264,7 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 	fprintf(fp, "ChannelsE %s\n", print_flags(ch->channels_enabled));
 	fprintf(fp, "ChannelsD %s\n", print_flags(ch->channels_denied));
 	fprintf(fp, "Comm %s\n", print_flags(ch->comm));
-	fprintf(fp, "Comm2 %s\n", print_flags(ch->comm2));
+	fprintf(fp, "Comm2 %s\n", print_flags(ch->comm));
 	fprintf(fp, "Dcry %s~\n", ch->pcdata->deathcry);
 
 	if (ch->pcdata->wiznet)
@@ -725,7 +725,7 @@ bool load_char_obj(DESCRIPTOR_DATA *d, char *name)
 	ch->channels_enabled = 0;
 	ch->channels_denied = 0;
 	ch->comm = COMM_COMBINE | COMM_PROMPT;
-	ch->comm2 = 0;
+	ch->comm = 0;
 	ch->prompt = str_dup("<%hhp %mm %vmv> ");
 	ch->nicknames = NULL;
 	ch->mLag = 0;
@@ -1143,7 +1143,7 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 			}
 
 			KEY("Comm", ch->comm, fread_flag(fp));
-			KEY("Comm2", ch->comm2, fread_flag(fp));
+			KEY("Comm2", ch->comm, fread_flag(fp));
 
 			break;
 

@@ -1407,8 +1407,8 @@ void do_pardon(CHAR_DATA *ch, char *argument)
 
 
 	if (!str_cmp(arg2, "target")) {
-		if (IS_SET(victim->comm2, COMM2_TARGET)) {
-			REMOVE_BIT(victim->comm2, COMM2_TARGET);
+		if (IS_SET(victim->comm, COMM_TARGET)) {
+			REMOVE_BIT(victim->comm, COMM_TARGET);
 			send_to_char("Target status removed ..\n\r", ch);
 			send_to_char("You are no longer a `Otarget`7.\n\r", victim);
 		}
@@ -1448,15 +1448,15 @@ void do_target(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if (IS_SET(victim->comm2, COMM2_TARGET)) {
+	if (IS_SET(victim->comm, COMM_TARGET)) {
 		send_to_char("They are nolonger a `#target`7..\n\r", ch);
 		send_to_char("You don't feel like such an `#target`7 anymore..\n\r", victim);
-		REMOVE_BIT(victim->comm2, COMM2_TARGET);
+		REMOVE_BIT(victim->comm, COMM_TARGET);
 		return;
 	}
 
 	send_to_char("They are now a `#target`7!..\n\r", ch);
-	SET_BIT(victim->comm2, COMM2_TARGET);
+	SET_BIT(victim->comm, COMM_TARGET);
 	return;
 }
 
@@ -2903,14 +2903,14 @@ void do_noemote(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if (IS_SET(victim->comm2, COMM2_NOEMOTE)) {
-		REMOVE_BIT(victim->comm2, COMM2_NOEMOTE);
+	if (IS_SET(victim->comm, COMM_NOEMOTE)) {
+		REMOVE_BIT(victim->comm, COMM_NOEMOTE);
 		send_to_char("You can emote again.\n\r", victim);
 		send_to_char("NOEMOTE removed.\n\r", ch);
 		sprintf(buf, "$N restores emotes to %s.", victim->name);
 		wiznet(buf, ch, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
 	} else {
-		SET_BIT(victim->comm2, COMM2_NOEMOTE);
+		SET_BIT(victim->comm, COMM_NOEMOTE);
 		send_to_char("You can't emote!\n\r", victim);
 		send_to_char("NOEMOTE set.\n\r", ch);
 		sprintf(buf, "$N revokes %s's emotes.", victim->name);
@@ -3749,7 +3749,7 @@ void do_pnlist(CHAR_DATA *ch, char *argument)
 			       wch->name,
 			       IS_SET(wch->act, PLR_FREEZE) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->comm, COMM_NOCHANNELS) ? "`!X`7" : "`8-`7 ",
-			       IS_SET(wch->comm, COMM2_NOEMOTE) ? "`!X`7" : "`8-`7 ",
+			       IS_SET(wch->comm, COMM_NOEMOTE) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->act, PLR_LOG) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->act, PLR_KILLER) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->act, PLR_THIEF) ? "`!X`7" : "`8-`7 ",
@@ -4733,33 +4733,33 @@ void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is mood, const cha
 
 void do_busy(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
-	if (IS_SET(ch->comm2, COMM2_BUSY)) {
+	if (IS_SET(ch->comm, COMM_BUSY)) {
 		send_to_char("Busy flag removed. Type 'replay' to see tells.\n\r", ch);
-		REMOVE_BIT(ch->comm2, COMM2_BUSY);
+		REMOVE_BIT(ch->comm, COMM_BUSY);
 	} else {
 		send_to_char("You are now marked as busy.\n\r", ch);
-		SET_BIT(ch->comm2, COMM2_BUSY);
+		SET_BIT(ch->comm, COMM_BUSY);
 	}
 }
 
 void do_coding(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
-	if (IS_SET(ch->comm2, COMM2_CODING)) {
+	if (IS_SET(ch->comm, COMM_CODING)) {
 		send_to_char("Coding flag removed. Type 'replay' to see tells.\n\r", ch);
-		REMOVE_BIT(ch->comm2, COMM2_CODING);
+		REMOVE_BIT(ch->comm, COMM_CODING);
 	} else {
 		send_to_char("You are now marked as `@Coding``.\n\r", ch);
-		SET_BIT(ch->comm2, COMM2_CODING);
+		SET_BIT(ch->comm, COMM_CODING);
 	}
 }
 
 void do_building(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
-	if (IS_SET(ch->comm2, COMM2_BUILD)) {
+	if (IS_SET(ch->comm, COMM_BUILD)) {
 		send_to_char("Building flag removed. Type 'replay' to see tells.\n\r", ch);
-		REMOVE_BIT(ch->comm2, COMM2_BUILD);
+		REMOVE_BIT(ch->comm, COMM_BUILD);
 	} else {
 		send_to_char("You are now marked as `3Building``.\n\r", ch);
-		SET_BIT(ch->comm2, COMM2_BUILD);
+		SET_BIT(ch->comm, COMM_BUILD);
 	}
 }

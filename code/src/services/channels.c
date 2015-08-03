@@ -491,7 +491,7 @@ void broadcast_sayto(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender,
 {
 	DESCRIPTOR_DATA *d;
 
-	if (IS_SET(whom->comm2, COMM2_AFK) && IS_NPC(whom)) {
+	if (IS_SET(whom->comm, COMM_AFK) && IS_NPC(whom)) {
         act("$E is `!A`@F`OK``, and is unable to pay attention.", sender, NULL, whom, TO_CHAR);
         return;
 	}
@@ -555,7 +555,7 @@ bool send_tell(CHAR_DATA *sender, CHAR_DATA *whom, char* argument)
 		return false;
 	}
 
-	if (IS_SET(whom->comm2, COMM2_AFK)) {
+	if (IS_SET(whom->comm, COMM_AFK)) {
 		if (IS_NPC(whom)) {
 			act("$E is ```!A```@F```OK``, and not receiving tells.", sender, NULL, whom, TO_CHAR);
 			return false;

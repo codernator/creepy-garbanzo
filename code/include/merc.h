@@ -1292,26 +1292,26 @@ struct kill_data {
 
 /* RT comm flags -- may be used n both mobs and chars */
 #define COMM_QUIET              (A)
-#define COMM_COMPACT            (O)
-#define COMM_BRIEF              (P)
-#define COMM_PROMPT             (Q)
-#define COMM_COMBINE            (R)
-#define COMM_TELNET_GA          (S)
-#define COMM_SHOW_AFFECTS       (T)
-#define COMM_NOCHANNELS         (Y)
-#define COMM_NOQUIT             (aa)
-#define COMM_NOBATTLEFIELD      (cc)
-#define COMM2_AFK               (A)
-#define COMM2_INFO              (B)
-#define COMM2_NOEMOTE           (C)
-#define COMM2_TICKS             (F)
-#define COMM2_ENABLE            (K)
-#define COMM2_TARGET            (L)
-#define COMM2_LOCKREPLY         (M)
-#define COMM2_RP                (O)
-#define COMM2_CODING            (P)
-#define COMM2_BUILD             (Q)
-#define COMM2_BUSY              (T)
+#define COMM_COMPACT            (B)
+#define COMM_BRIEF              (C)
+#define COMM_PROMPT             (D)
+#define COMM_COMBINE            (E)
+#define COMM_TELNET_GA          (F)
+#define COMM_SHOW_AFFECTS       (G)
+#define COMM_NOCHANNELS         (H)
+#define COMM_NOQUIT             (I)
+#define COMM_NOBATTLEFIELD      (J)
+#define COMM_AFK               (K)
+#define COMM_INFO              (L)
+#define COMM_NOEMOTE           (M)
+#define COMM_TICKS             (N)
+#define COMM_ENABLE            (O)
+#define COMM_TARGET            (P)
+#define COMM_LOCKREPLY         (Q)
+#define COMM_RP                (R)
+#define COMM_CODING            (S)
+#define COMM_BUILD             (T)
+#define COMM_BUSY              (U)
 
 
 /* WIZnet flags */
@@ -1508,7 +1508,6 @@ struct char_data {
     unsigned long channels_enabled;
     unsigned long channels_denied;
     long comm;   /* RT added to pad the vector */
-    long comm2;  /* RT added to pad the vector */
     long imm_flags;
     long res_flags;
     long vuln_flags;

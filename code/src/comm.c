@@ -901,7 +901,7 @@ void bust_a_prompt(CHAR_DATA *ch)
 		return;
 	}
 
-	if (IS_SET(ch->comm2, COMM2_AFK)) {
+	if (IS_SET(ch->comm, COMM_AFK)) {
 		send_to_char("<AFK> ", ch);
 		return;
 	}

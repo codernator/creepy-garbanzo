@@ -156,8 +156,8 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 		if (IS_SET(ch->act, PLR_LINKDEAD))
 			REMOVE_BIT(ch->act, PLR_LINKDEAD);
 
-		if (IS_SET(ch->comm2, COMM2_AFK))
-			REMOVE_BIT(ch->comm2, COMM2_AFK);
+		if (IS_SET(ch->comm, COMM_AFK))
+			REMOVE_BIT(ch->comm, COMM_AFK);
 
 		if (IS_SET(ch->act, PLR_BATTLE))
 			REMOVE_BIT(ch->act, PLR_BATTLE);
@@ -859,8 +859,8 @@ void check_afk(CHAR_DATA *ch)
 	    || ch->desc->connected != CON_PLAYING)
 		return;
 
-	if (IS_SET(ch->comm2, COMM2_AFK))
-		REMOVE_BIT(ch->comm2, COMM2_AFK);
+	if (IS_SET(ch->comm, COMM_AFK))
+		REMOVE_BIT(ch->comm, COMM_AFK);
 
 	return;
 }

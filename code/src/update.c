@@ -341,7 +341,7 @@ void gain_exp(CHAR_DATA *ch, int gain)
 			if (d->connected == CON_PLAYING
 			    && d->character != ch
 			    && vch != NULL
-			    && IS_SET(vch->comm2, COMM2_INFO)
+			    && IS_SET(vch->comm, COMM_INFO)
 			    && !IS_SET(vch->comm, COMM_QUIET)) {
 				if (ch->level == 300) {
 					printf_to_char(vch, "`![Info]:`& %s has made it to 300!``\n\r", ch->name);
@@ -1255,7 +1255,7 @@ static void char_update(void)
 			}
 
 			if (++ch->timer >= 6)
-				SET_BIT(ch->comm2, COMM2_AFK);
+				SET_BIT(ch->comm, COMM_AFK);
 
 			if (ch->timer >= 15) {
 				if (ch->was_in_room == NULL && ch->in_room != NULL) {
@@ -1372,14 +1372,14 @@ static void char_update(void)
 		    && (!IS_IMMORTAL(ch))) {
 			if (ch->last_fight && (current_time - ch->last_fight < 60)) {
 				impnet("`OAutomation`7: Killing [`8LINKDEAD`7] player $N", ch, NULL, IMN_AUTO, 0, 0);
-				if (IS_SET(ch->comm2, COMM2_AFK))
-					REMOVE_BIT(ch->comm2, COMM2_AFK);
+				if (IS_SET(ch->comm, COMM_AFK))
+					REMOVE_BIT(ch->comm, COMM_AFK);
 				do_quit(ch, "");
 				return;
 			}
 		}
 
-		if (IS_SET(ch->comm2, COMM2_TICKS))
+		if (IS_SET(ch->comm, COMM_TICKS))
 			send_to_char("`7-- `#TICK!`7\n\r", ch);
 	}
 	return;

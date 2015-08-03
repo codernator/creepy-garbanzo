@@ -59,7 +59,7 @@ static struct { int	wear_loc; char *desc; } where_name[] =
 
 void toggle_quiet(CHAR_DATA *ch) {
     bool now_on;
-    now_on = character_toggle_comm(ch, COMM_QUIET, 1);
+    now_on = character_toggle_comm(ch, COMM_QUIET);
 
 	if (now_on) {
 		send_to_char("All channels are quiet.\n\r", ch);
@@ -71,7 +71,7 @@ void toggle_quiet(CHAR_DATA *ch) {
 void toggle_afk(CHAR_DATA *ch, char *message)
 {
     bool now_on;
-    now_on = character_toggle_comm(ch, COMM2_AFK, 2);
+    now_on = character_toggle_comm(ch, COMM_AFK);
 
 	if (now_on) {
 		send_to_char("You are now in `!A`@F`OK`` mode.\n\r", ch);
@@ -92,25 +92,25 @@ void show_channels(CHAR_DATA *ch)
 	send_to_char("```&---------------------``\n\r", ch);
 
 	printf_to_char(ch, "`![Info]         %s``\n\r",
-		       character_has_comm(ch, COMM2_INFO, 2) ? "`#ON" : "`1OFF");
+		       character_has_comm(ch, COMM_INFO) ? "`#ON" : "`1OFF");
 
 	printf_to_char(ch, "`^Quiet Mode     %s``\n\r",
-		       character_has_comm(ch, COMM_QUIET, 1) ? "`#ON" : "`1OFF");
+		       character_has_comm(ch, COMM_QUIET) ? "`#ON" : "`1OFF");
 
 	printf_to_char(ch, "`#Battlefield    %s``\n\r",
-		       character_has_comm(ch, COMM_NOBATTLEFIELD, 1) ? "`#ON" : "`1OFF");
+		       character_has_comm(ch, COMM_NOBATTLEFIELD) ? "`#ON" : "`1OFF");
 
 	send_to_char("\n\r", ch);
-	if (character_has_comm(ch, COMM2_AFK, 2))
+	if (character_has_comm(ch, COMM_AFK))
 		send_to_char("You are ```!A```@F```OK``.\n\r", ch);
 
-	if (character_has_comm(ch, COMM2_BUSY, 2))
+	if (character_has_comm(ch, COMM_BUSY))
 		send_to_char("You are Busy.\n\r", ch);
 
-	if (character_has_comm(ch, COMM2_CODING, 2))
+	if (character_has_comm(ch, COMM_CODING))
 		send_to_char("You are `@Coding``.\n\r", ch);
 
-	if (character_has_comm(ch, COMM2_BUILD, 2))
+	if (character_has_comm(ch, COMM_BUILD))
 		send_to_char("You are `3Building``.\n\r", ch);
 
 	if (ch->lines != PAGELEN) {
@@ -123,10 +123,10 @@ void show_channels(CHAR_DATA *ch)
 	if (ch->prompt != NULL)
 		printf_to_char(ch, "Your current prompt is: %s\n\r", ch->prompt);
 
-	if (character_has_comm(ch, COMM_NOCHANNELS, 1))
+	if (character_has_comm(ch, COMM_NOCHANNELS))
 		send_to_char("You cannot use channels.\n\r", ch);
 
-	if (character_has_comm(ch, COMM2_NOEMOTE, 2))
+	if (character_has_comm(ch, COMM_NOEMOTE))
 		send_to_char("You cannot show emotions.\n\r", ch);
 
     return;
@@ -791,12 +791,12 @@ void show_char_to_char_0(CHAR_DATA *victim, CHAR_DATA *ch)
 
 	buf[0] = '\0';
 
-	if (IS_SET(victim->comm2, COMM2_AFK)) strcat(buf, "```!A```@F```OK ``");
-	if (IS_SET(victim->comm2, COMM2_BUSY))
+	if (IS_SET(victim->comm, COMM_AFK)) strcat(buf, "```!A```@F```OK ``");
+	if (IS_SET(victim->comm, COMM_BUSY))
 		strcat(buf, "[`1Busy``] ");
 
-	if (IS_SET(victim->comm2, COMM2_CODING)) strcat(buf, "[`@CODING``] ");
-	if (IS_SET(victim->comm2, COMM2_BUILD)) strcat(buf, "[`3BUILDING``] ");
+	if (IS_SET(victim->comm, COMM_CODING)) strcat(buf, "[`@CODING``] ");
+	if (IS_SET(victim->comm, COMM_BUILD)) strcat(buf, "[`3BUILDING``] ");
 	if (IS_AFFECTED(victim, AFF_INVISIBLE)) strcat(buf, "``(`iInvis``) ");
 	if (victim->invis_level >= LEVEL_HERO) strcat(buf, "`8(`wWiZi`8) ``");
 	if (!IS_NPC(victim))

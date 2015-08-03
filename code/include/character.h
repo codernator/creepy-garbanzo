@@ -1,7 +1,7 @@
 /* character.c */
 bool character_is_blind(/*@partial@*/CHAR_DATA *ch);
-bool character_toggle_comm(/*@partial@*/CHAR_DATA *ch, long commflag, int location);
-bool character_has_comm(/*@partial@*/CHAR_DATA *ch, long commflag, int location);
+bool character_toggle_comm(/*@partial@*/CHAR_DATA *ch, long commflag);
+bool character_has_comm(/*@partial@*/CHAR_DATA *ch, long commflag);
 
 /* character_service.c */
 void toggle_quiet(/*@partial@*/CHAR_DATA *ch);
