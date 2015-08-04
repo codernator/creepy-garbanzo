@@ -3,7 +3,6 @@
 #include "magic.h"
 #include "interp.h"
 #include "recycle.h"
-#include "sysinternals.h"
 
 
 extern CHAR_DATA * find_keeper(CHAR_DATA * ch);

@@ -5,7 +5,7 @@
 #include "lookup.h"
 #include "magic.h"
 #include "interp.h"
-#include "sysinternals.h"
+
 
 #include <unistd.h>
 #include <stdio.h>
@@ -19,9 +19,6 @@ DECLARE_DO_FUN(do_rrestore);
 extern FILE *fpReserve;
 extern long top_mob_index;
 extern long top_obj_index;
-extern bool is_space(const char test);
-extern bool is_number(const char *test);
-extern int parse_int(char *test);
 extern AFFECT_DATA *affect_free;
 
 
@@ -3447,7 +3444,6 @@ void do_copyover(CHAR_DATA *ch, char *argument)
 
 	if (!fp) {
 		send_to_char("Copyover file not writeable, aborted.\n\r", ch);
-/*		logf ("Could not write to copyover file: %s", COPYOVER_FILE);*/
 		perror("do_copyover:fopen");
 		return;
 	}
@@ -3537,8 +3533,8 @@ void copyover_recover()
 
 	if (!fp) { /* there are some descriptors open which will hang forever then ? */
 		perror("copyover_recover:fopen");
-/*		logf ("Copyover file not found. Exitting.\n\r");*/
 		_Exit(1);
+		return;
 	}
 
 	unlink(COPYOVER_FILE);  /* In case something crashes - doesn't prevent reading	*/
@@ -4483,6 +4479,8 @@ void do_auto_shutdown()
 	fp = fopen(COPYOVER_FILE, "w");
 
 	if (!fp) {
+		perror("do_copyover:fopen");
+
 		for (d = descriptor_list; d != NULL; d = d_next) {
 			if (d->character) {
 				do_save(d->character, "");
@@ -4494,6 +4492,7 @@ void do_auto_shutdown()
 		}
 
 		_Exit(1);
+		return;
 	}
 
 	if ((cmdLog = fopen(LAST_COMMANDS, "r")) == NULL) {

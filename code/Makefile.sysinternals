@@ -20,5 +20,6 @@ $(SYSINTERNALS): $(OBJ) $(DEPS)
 $(ODIR)/%.o: $(DIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(C_FLAGS)
 
+
 clean:
 	rm -f $(ODIR)/*.o $(EXE)

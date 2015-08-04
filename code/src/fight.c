@@ -7,10 +7,9 @@
 #include "interp.h"
 #include "combat_roll.h"
 #include "channels.h"
-#include "sysinternals.h"
 
 
-extern void fill_combat_roll(COMBAT_ROLL_BOX *crb, bool defense, int bonus_die_skill);
+
 extern bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
 extern void mp_hprct_trigger(CHAR_DATA * mob, CHAR_DATA * ch);
 extern int battlefield_count(void);

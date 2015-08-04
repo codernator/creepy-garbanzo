@@ -22,15 +22,14 @@
 #include "recycle.h"
 #include "lookup.h"
 #include "interp.h"
-#include "sysinternals.h"
+
 
 
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern int flag_value(const struct flag_type *flag_table, char *argument);
-extern unsigned int parse_unsigned_int(char *string);
 extern char *format_string(char *oldstring /*, bool fSpace */);
 extern void string_append(CHAR_DATA * ch, char **string);
-extern int parse_int(char *test);
+
 
 /*****************************************************************************
 *	show_obj_values

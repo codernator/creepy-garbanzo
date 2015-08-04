@@ -44,10 +44,7 @@
 #include "merc.h"
 #include "mob_cmds.h"
 #include "magic.h"
-#include "sysinternals.h"
 
-extern long parse_long(char *test);
-extern int parse_int(char *test);
 
 void mob_interpret(CHAR_DATA * ch, char *argument);
 

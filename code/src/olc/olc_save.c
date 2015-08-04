@@ -28,7 +28,7 @@
 #include "merc.h"
 #include "tables.h"
 #include "olc.h"
-#include "sysinternals.h"
+
 
 #define DIF(a, b)(~((~a) | (b)))
 
@@ -41,7 +41,6 @@
 extern FILE *fpReserve;
 extern void bug_long(const char *str, long param);
 static void save_area(AREA_DATA * area);
-extern int parse_int(char *test);
 
 /***************************************************************************
 *	fix_string

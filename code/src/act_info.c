@@ -6,16 +6,13 @@
 #include "lookup.h"
 #include "ansi.h"
 #include "interp.h"
-#include "sysinternals.h"
+
 
 #include <stdio.h>
 #include <string.h>
 #include "libfile.h"
 
 
-extern byte parse_byte(char *string);
-extern byte parse_byte2(char *string, byte min, byte max);
-extern int parse_int(char *string);
 extern void string_append(CHAR_DATA * ch, char **string);
 
 

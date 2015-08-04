@@ -2,7 +2,7 @@
 #include "character.h"
 #include "tables.h"
 #include "interp.h"
-#include "sysinternals.h"
+
 
 #include <stdio.h>
 

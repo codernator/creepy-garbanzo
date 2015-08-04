@@ -1,8 +1,6 @@
 #include <stdlib.h>
 #include "sysinternals.h"
 
-#define UMAX(a, b)               ((a) > (b) ? (a) : (b))
-
 
 extern void srandom(unsigned int);
 extern int getpid();

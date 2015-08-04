@@ -3,7 +3,7 @@
 #include "character.h"
 #include "mob_cmds.h"
 #include "channels.h"
-#include "sysinternals.h"
+
 
 
 extern void make_corpse(CHAR_DATA *ch);

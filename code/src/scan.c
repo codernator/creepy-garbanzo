@@ -1,5 +1,5 @@
 #include "merc.h"
-#include "sysinternals.h"
+
 
 
 ROOM_INDEX_DATA *get_scan_room(ROOM_INDEX_DATA * room, int direction, int distance);

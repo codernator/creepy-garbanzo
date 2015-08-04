@@ -1,6 +1,16 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#define LOWER(c)                 ((c) >= 'A' && (c) <= 'Z' ? (c) + 'a' - 'A' : (c))
+#define UPPER(c)                 ((c) >= 'a' && (c) <= 'z' ? (c) + 'A' - 'a' : (c))
+#define UMIN(a, b)               ((a) < (b) ? (a) : (b))
+#define UABS(a)                  ((a) < 0 ? -(a) : (a))
+#define UMAX(a, b)               ((a) > (b) ? (a) : (b))
+#define URANGE(a, b, c)          ((b) < (a) ? (a) : ((b) > (c) ? (c) : (b)))
+
+
+typedef unsigned char byte;
+
 void init_mm(void);
 
 int number_fuzzy(int number);
@@ -27,3 +37,12 @@ bool is_upper(const char test);
 bool is_alnum(const char test);
 bool is_number(const char *test);
 bool to_lower(const char test);
+
+byte parse_byte(char *string);
+byte parse_byte2(char *string, byte min, byte max);
+int parse_int(char *string);
+long parse_long(char *string);
+unsigned int parse_unsigned_int(char *string);
+unsigned long parse_unsigned_long(char *string);
+
+void critical_fail(int exit_code, char *msg_format, ...);

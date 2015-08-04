@@ -5,9 +5,7 @@
 #include "interp.h"
 #include "recycle.h"
 #include "tables.h"
-#include "sysinternals.h"
 
-extern int parse_int(char *test);
 
 /***************************************************************************
 * Repair code - 08-09-2002

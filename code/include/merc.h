@@ -1,6 +1,6 @@
 #include <time.h>
 #include <stdbool.h>
-
+#include "sysinternals.h"
 
 #if !defined(__MERC_H)
 #define __MERC_H
@@ -27,7 +27,6 @@ typedef int SOCKET;
 #endif
 
 typedef int sh_int;
-typedef unsigned char byte;
 
 typedef enum e_one_attack_result {
     oar_error = -1,
@@ -1918,12 +1917,6 @@ enum e_harvey_proctor_is { hp_pissed_off, hp_irritated, hp_off_his_rocker, hp_ag
 #define IS_VALID(data)           ((data) != NULL && (data)->valid)
 #define VALIDATE(data)           ((data)->valid = TRUE)
 #define INVALIDATE(data)         ((data)->valid = FALSE)
-#define UMIN(a, b)               ((a) < (b) ? (a) : (b))
-#define UABS(a)                  ((a) < 0 ? -(a) : (a))
-#define UMAX(a, b)               ((a) > (b) ? (a) : (b))
-#define URANGE(a, b, c)          ((b) < (a) ? (a) : ((b) > (c) ? (c) : (b)))
-#define LOWER(c)                 ((c) >= 'A' && (c) <= 'Z' ? (c) + 'a' - 'A' : (c))
-#define UPPER(c)                 ((c) >= 'a' && (c) <= 'z' ? (c) + 'A' - 'a' : (c))
 #define IS_SET(flag, bit)        ((((flag) & (bit)) == (bit)))
 #define SET_BIT(var, bit)        ((var) |= (bit))
 #define REMOVE_BIT(var, bit)     ((var) &= ~(bit))

@@ -2,7 +2,6 @@
 #include <string.h>
 #include "merc.h"
 #include "recycle.h"
-#include "sysinternals.h"
 #include "libfile.h"
 
 extern FILE *fpReserve;

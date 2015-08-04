@@ -23,7 +23,7 @@
 #include "recycle.h"
 #include "lookup.h"
 #include "interp.h"
-#include "sysinternals.h"
+
 
 /***************************************************************************
 *	external functions
@@ -33,8 +33,6 @@ extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern int flag_value(const struct flag_type *flag_table, char *argument);
 extern char *format_string(char *oldstring /*, bool fSpace */);
 extern void string_append(CHAR_DATA * ch, char **string);
-extern int parse_int(char *test);
-extern long parse_long(char *test);
 
 
 /***************************************************************************

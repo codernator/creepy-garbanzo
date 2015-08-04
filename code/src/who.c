@@ -2,7 +2,6 @@
 #include "recycle.h"
 #include "lookup.h"
 #include "tables.h"
-#include "sysinternals.h"
 
 #include <sys/time.h>
 #include <sys/types.h>

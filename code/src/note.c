@@ -68,7 +68,6 @@
 #include "interp.h"
 #include "recycle.h"
 #include "tables.h"
-#include "sysinternals.h"
 #include "libfile.h"
 
 /***************************************************************************
@@ -79,7 +78,6 @@ extern FILE *fpReserve;
 extern FILE *fp_area;
 extern char area_file[MIL];
 extern void string_append(CHAR_DATA * ch, char **string);
-extern int parse_int(char *test);
 
 #define MAX_MESSAGE_LENGTH              4096
 #define MIN_MESSAGE_LEVEL               10

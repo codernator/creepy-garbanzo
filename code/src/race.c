@@ -4,7 +4,6 @@
 #include "lookup.h"
 #include "interp.h"
 #include "recycle.h"
-#include "sysinternals.h"
 
 
 #include <stdio.h>

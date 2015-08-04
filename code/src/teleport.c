@@ -3,11 +3,10 @@
 ***************************************************************************/
 #include "merc.h"
 #include "recycle.h"
-#include "sysinternals.h"
+
 
 extern DECLARE_DO_FUN(do_look);
 extern DECLARE_DO_FUN(do_help);
-extern int parse_int(char *test);
 
 
 #define _MAX_FOUND              200

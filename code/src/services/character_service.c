@@ -3,7 +3,7 @@
 #include "merc.h"
 #include "character.h"
 #include "recycle.h"
-#include "sysinternals.h"
+
 
 
 // TODO - used by look

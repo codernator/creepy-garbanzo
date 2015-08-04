@@ -38,11 +38,10 @@
 #include "recycle.h"
 #include "skills.h"
 #include "libfile.h"
-#include "sysinternals.h"
+
 
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern int flag_value(const struct flag_type *flag_table, char *argument);
-extern int parse_int(char *test);
 
 
 /***************************************************************************

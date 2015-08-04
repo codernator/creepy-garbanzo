@@ -12,7 +12,7 @@
 #include "magic.h"
 #include "interp.h"
 #include "olc.h"
-#include "sysinternals.h"
+
 
 
 extern char *flag_string(const struct flag_type *flag_table, long bits);

@@ -1,20 +1,3 @@
-/***************************************************************************
-*  File: string.c                                                         *
-*                                                                         *
-*  Much time and thought has gone into this software and you are          *
-*  benefitting.  We hope that you share your changes too.  What goes      *
-*  around, comes around.                                                  *
-*                                                                         *
-*  This code was freely distributed with the The Isles 1.1 source code,   *
-*  and has been used here for OLC - OLC would not be what it is without   *
-*  all the previous coders who released their source code.                *
-*                                                                         *
-***************************************************************************/
-
-
-/***************************************************************************
-*	includes
-***************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,7 +5,7 @@
 #include "tables.h"
 #include "olc.h"
 #include "recycle.h"
-#include "sysinternals.h"
+
 
 extern void do_help(CHAR_DATA *ch, char *argument);
 
@@ -36,43 +19,6 @@ char *repeater(char *s, int i);
 char *format_string(char *oldstring);
 
 #define MAX_LINE_LENGTH         72
-
-
-byte parse_byte(char *string)
-{
-	int raw = atoi(string);
-
-	return (byte)UMAX(UMIN(raw, 255), 0);
-}
-
-byte parse_byte2(char *string, byte min, byte max)
-{
-	int raw = atoi(string);
-
-	return (byte)UMAX(UMIN(raw, (int)max), (int)min);
-}
-
-int parse_int(char *string)
-{
-	return atoi(string);
-}
-
-long parse_long(char *string)
-{
-	return atol(string);
-}
-
-unsigned int parse_unsigned_int(char *string)
-{
-	return (unsigned int)UMAX(0, atol(string));
-}
-
-unsigned long parse_unsigned_long(char *string)
-{
-	return UMAX(0, (unsigned long)atoll(string));
-}
-
-
 
 
 /***************************************************************************

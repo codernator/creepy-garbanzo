@@ -1,7 +1,7 @@
 #include "merc.h"
 #include "magic.h"
 #include "channels.h"
-#include "sysinternals.h"
+
 
 #include <stdio.h>
 #include <string.h>

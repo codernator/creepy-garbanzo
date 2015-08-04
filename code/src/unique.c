@@ -1,4 +1,4 @@
-#include "sysinternals.h"
+
 /***********************************************************************
  * Unique Object Generator v1.0
  *
@@ -46,7 +46,6 @@
 
 
 extern DECLARE_DO_FUN(do_wear);
-extern int parse_int(char *test);
 
 
 CHAR_DATA *random_unique_mob(void);

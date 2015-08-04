@@ -40,11 +40,9 @@
 #include "lookup.h"
 #include "recycle.h"
 #include "skills.h"
-#include "sysinternals.h"
 #include "libfile.h"
 
 
-extern int parse_int(char *test);
 
 
 /***************************************************************************

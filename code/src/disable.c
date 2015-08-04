@@ -5,10 +5,7 @@
 #include "recycle.h"
 #include "tables.h"
 #include "lookup.h"
-#include "sysinternals.h"
 #include "libfile.h"
-
-extern int parse_int(char *test);
 
 /***************************************************************************
 *  merc.h:

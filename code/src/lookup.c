@@ -1,6 +1,6 @@
 #include "merc.h"
 #include "tables.h"
-#include "sysinternals.h"
+
 
 long flag_lookup(const char *name, const struct flag_type *flag_table)
 {

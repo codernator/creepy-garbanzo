@@ -3,15 +3,13 @@
 #include "lookup.h"
 #include "magic.h"
 #include "channels.h"
-#include "sysinternals.h"
+
 
 #include <stdio.h>
 #include <string.h>
 
 
 extern bool is_digit(const char test);
-extern unsigned int parse_unsigned_int(char *string);
-extern int parse_int(char *string);
 
 extern void recursive_clone(CHAR_DATA * ch, OBJ_DATA * obj, OBJ_DATA * clone);
 

@@ -3,11 +3,9 @@
 #include "lookup.h"
 #include "interp.h"
 #include "magic.h"
-#include "sysinternals.h"
+
 
 #include <stdio.h>
-
-extern int parse_int(char *test);
 
 /***************************************************************************
 *	definitions

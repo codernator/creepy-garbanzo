@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "merc.h"
-#include "sysinternals.h"
+
 
 
 /***************************************************************************

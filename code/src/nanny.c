@@ -2,7 +2,6 @@
 #include "recycle.h"
 #include "interp.h"
 #include "telnet.h"
-#include "sysinternals.h"
 
 #include <stdio.h>
 #include <string.h>

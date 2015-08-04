@@ -6,7 +6,6 @@
 #include "tables.h"
 #include "lookup.h"
 #include "interp.h"
-#include "sysinternals.h"
 
 
 

@@ -25,11 +25,12 @@ _OBJ=act_comm.o act_combat.o act_enter.o act_info.o act_move.o act_obj.o act_wiz
      nanny.o nickname.o note.o \
      ovnum.o \
      race.o random.o recycle.o repair.o restring.o \
-     save.o scan.o set.o skills.o spells.o stat.o string.o \
+     save.o scan.o set.o skills.o spells.o stat.o \
      tables.o teleport.o temp.o \
      unique.o update.o variant.o who.o \
      olc/olc.o olc/olc_areas.o olc/olc_groups.o olc/olc_helps.o olc/olc_mobs.o \
      olc/olc_objects.o olc/olc_progs.o olc/olc_rooms.o olc/olc_save.o olc/olc_skills.o  \
+     olc/string.o \
 	 services/channels.o services/character_service.o services/follower_service.o services/object_service.o
 
 OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))

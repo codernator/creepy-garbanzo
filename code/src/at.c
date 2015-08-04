@@ -5,7 +5,7 @@
 #include "lookup.h"
 #include "magic.h"
 #include "interp.h"
-#include "sysinternals.h"
+
 
 
 /***************************************************************************

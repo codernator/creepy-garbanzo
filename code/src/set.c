@@ -6,17 +6,13 @@
 #include "magic.h"
 #include "interp.h"
 #include "olc.h"
-#include "sysinternals.h"
-
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern int flag_value(const struct flag_type *flag_table, char *argument);
-extern unsigned int parse_unsigned_int(char *string);
-extern long parse_long(char *string);
-extern int parse_int(char *string);
+
 
 /***************************************************************************
 *	local functions

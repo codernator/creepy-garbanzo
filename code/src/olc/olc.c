@@ -22,14 +22,13 @@
 #include "olc.h"
 #include "recycle.h"
 #include "interp.h"
-#include "sysinternals.h"
+
 
 
 
 extern int flag_value(const struct flag_type *flag_table, char *argument);
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern char *mprog_type_to_name(int type);
-extern int parse_int(char *test);
 
 /***************************************************************************
 *	local defines

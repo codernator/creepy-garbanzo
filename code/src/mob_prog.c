@@ -40,14 +40,11 @@
 #include "merc.h"
 #include "tables.h"
 #include "lookup.h"
-#include "sysinternals.h"
 #include "mob_cmds.h"
 
 extern long flag_lookup(const char *word, const struct flag_type *flag_table);
 extern void bug_long(const char *str, long param);
 extern void mob_interpret(CHAR_DATA * ch, char *argument);
-extern int parse_int(char *test);
-extern long parse_long(char *test);
 
 void mp_bribe_trigger(CHAR_DATA * mob, CHAR_DATA * ch, long amount);
 bool mp_exit_trigger(CHAR_DATA * ch, int dir);

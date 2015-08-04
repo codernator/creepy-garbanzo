@@ -22,7 +22,7 @@
 #include "olc.h"
 #include "recycle.h"
 #include "lookup.h"
-#include "sysinternals.h"
+
 
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern int flag_value(const struct flag_type *flag_table, char *argument);
@@ -30,8 +30,7 @@ extern char *string_replace(char *orig, char *old, char *new);
 extern char *string_unpad(char *argument);
 extern void string_append(CHAR_DATA * ch, char **string);
 extern char *string_proper(char *argument);
-extern int parse_int(char *test);
-extern long parse_long(char *test);
+
 
 /*****************************************************************************
  *      Name:		check_range(lower vnum, upper vnum)

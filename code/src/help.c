@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "merc.h"
 #include "recycle.h"
-#include "sysinternals.h"
+
 
 
 void do_help(CHAR_DATA *ch, char *argument)

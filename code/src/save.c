@@ -6,7 +6,7 @@
 #include "lookup.h"
 #include "skills.h"
 #include "libfile.h"
-#include "sysinternals.h"
+
 
 
 extern FILE *fpReserve;

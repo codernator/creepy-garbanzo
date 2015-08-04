@@ -1,7 +1,7 @@
 #include "merc.h"
 #include "magic.h"
 #include "interp.h"
-#include "sysinternals.h"
+
 
 
 static const struct heal_cmds {

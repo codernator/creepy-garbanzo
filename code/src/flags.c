@@ -33,7 +33,7 @@
 #include "interp.h"
 #include "lookup.h"
 #include "olc.h"
-#include "sysinternals.h"
+
 
 extern int flag_value(const struct flag_type *flag_table, char *argument);
 extern char *flag_string(const struct flag_type *flag_table, long bits);

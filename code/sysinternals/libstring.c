@@ -1,11 +1,7 @@
+#include "sysinternals.h"
 #include <string.h>
 #include <ctype.h>
-#include "sysinternals.h"
-
-
-
-#define LOWER(c)                 ((c) >= 'A' && (c) <= 'Z' ? (c) + 'a' - 'A' : (c))
-#define UPPER(c)                 ((c) >= 'a' && (c) <= 'z' ? (c) + 'A' - 'a' : (c))
+#include <stdlib.h>
 
 
 
@@ -195,3 +191,39 @@ void capitalize_into(const char *source, /*@out@*/ char *initialized_target, siz
 	initialized_target[i] = '\0';
 	initialized_target[0] = UPPER(initialized_target[0]);
 }
+
+
+byte parse_byte(char *string)
+{
+	int raw = atoi(string);
+
+	return (byte)UMAX(UMIN(raw, 255), 0);
+}
+
+byte parse_byte2(char *string, byte min, byte max)
+{
+	int raw = atoi(string);
+
+	return (byte)UMAX(UMIN(raw, (int)max), (int)min);
+}
+
+int parse_int(char *string)
+{
+	return atoi(string);
+}
+
+long parse_long(char *string)
+{
+	return atol(string);
+}
+
+unsigned int parse_unsigned_int(char *string)
+{
+	return (unsigned int)UMAX(0, atol(string));
+}
+
+unsigned long parse_unsigned_long(char *string)
+{
+	return UMAX(0, (unsigned long)atoll(string));
+}
+

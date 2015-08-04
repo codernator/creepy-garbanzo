@@ -35,11 +35,9 @@
 #include "olc.h"
 #include "lookup.h"
 #include "recycle.h"
-#include "sysinternals.h"
 
 
 extern void string_append(CHAR_DATA * ch, char **string);
-extern int parse_int(char *test);
 extern HELP_AREA *had_list;
 
 

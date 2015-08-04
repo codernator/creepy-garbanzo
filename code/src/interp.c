@@ -4,15 +4,10 @@
 #include "interp.h"
 #include "magic.h"
 #include "recycle.h"
-#include "sysinternals.h"
+
 
 
 extern void log_new(const char *log, const char *str, char username[]);
-extern bool is_space(const char test);
-extern bool is_digit(const char test);
-extern bool is_alpha(const char test);
-extern bool is_number(const char *test);
-extern int parse_int(char *test);
 
 
 char last_command[MSL];

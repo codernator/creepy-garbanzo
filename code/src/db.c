@@ -12,7 +12,7 @@
 #include "olc.h"
 #include "skills.h"
 #include "channels.h"
-#include "sysinternals.h"
+
 
 
 extern FILE *fpReserve;

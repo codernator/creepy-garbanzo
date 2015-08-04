@@ -41,10 +41,7 @@
 #include "lookup.h"
 #include "db.h"
 #include "find.h"
-#include "sysinternals.h"
 
-extern int parse_int(char *test);
-extern long parse_long(char *test);
 
 const struct cmp_vars_obj_index_data obj_idx_flags[] =
 {

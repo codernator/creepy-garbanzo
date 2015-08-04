@@ -1,7 +1,7 @@
 
 #include "merc.h"
 #include "interp.h"
-#include "sysinternals.h"
+
 
 extern bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
 extern void mp_greet_trigger(CHAR_DATA * ch);

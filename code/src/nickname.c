@@ -5,7 +5,6 @@
 #include "recycle.h"
 #include "tables.h"
 #include "lookup.h"
-#include "sysinternals.h"
 
 
 void add_to_nicknames(CHAR_DATA *ch, char *nickname, char *name)
