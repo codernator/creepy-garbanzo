@@ -6,7 +6,7 @@
 #include "lookup.h"
 #include "ansi.h"
 #include "interp.h"
-#include "libstring.h"
+#include "sysinternals.h"
 
 #include <stdio.h>
 #include <string.h>

@@ -35,7 +35,7 @@
 #include "skills.h"
 #include "lookup.h"
 #include "interp.h"
-#include "libstring.h"
+#include "sysinternals.h"
 #include "channels.h"
 
 

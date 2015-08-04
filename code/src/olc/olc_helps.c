@@ -35,7 +35,7 @@
 #include "olc.h"
 #include "lookup.h"
 #include "recycle.h"
-#include "libstring.h"
+#include "sysinternals.h"
 
 
 extern void string_append(CHAR_DATA * ch, char **string);

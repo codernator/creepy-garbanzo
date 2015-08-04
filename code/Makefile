@@ -1,14 +1,15 @@
 IDIR=include
 ODIR=obj
 BDIR=bin
-SDIR=src
 CC= /usr/bin/gcc
 PROF= -DLINUX
 C_FLAGS= -O2 -g2 -Wall -pedantic -std=gnu99 -I$(IDIR)
 L_FLAGS=  $(PROF)
 LIBS=-lm
+
+SDIR=src
 _DEPS=merc.h
-DEPS=$(patsubst %,$(IDIR)/%,$(_DEPS))
+DEPS=$(patsubst %,$(IDIR)/%,$(_DEPS)) $(SYSINTERNALS)
 EXE=$(BDIR)/badtrip
 _OBJ=act_comm.o act_combat.o act_enter.o act_info.o act_move.o act_obj.o act_wiz.o \
      affects.o alias.o at.o auction.o \
@@ -19,7 +20,7 @@ _OBJ=act_comm.o act_combat.o act_enter.o act_info.o act_move.o act_obj.o act_wiz
      fight.o find.o flags.o for.o \
      handler.o healer.o help.o \
      imprint.o interp.o \
-     libfile.o librandom.o libstring.o libutils.o logging.o lookup.o \
+     libfile.o logging.o lookup.o \
      magic.o mem.o mob_cmds.o mob_prog.o mobs.o \
      nanny.o nickname.o note.o \
      ovnum.o \
@@ -34,13 +35,13 @@ _OBJ=act_comm.o act_combat.o act_enter.o act_info.o act_move.o act_obj.o act_wiz
 OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(EXE): $(OBJ) $(DEPS)
-	$(CC) $(L_FLAGS) -o $@ $(OBJ) $(LIBS) -I$(IDIR)
+	$(CC) $(L_FLAGS) -o $@ $(OBJ) $(BDIR)/sysinternals.a $(LIBS) -I$(IDIR)
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(C_FLAGS)
 
 clean:
-	rm -f $(ODIR)/*.o $(ODIR)/services/*.o $(ODIR)/olc/*.o $(EXE)
+	rm -f $(ODIR)/*.o $(ODIR)/services/*.o $(ODIR)/olc/*.o  $(EXE)
 
 install:
 	cp $(EXE) ../.

@@ -28,7 +28,7 @@
 #include "merc.h"
 #include "tables.h"
 #include "olc.h"
-#include "libstring.h"
+#include "sysinternals.h"
 
 #define DIF(a, b)(~((~a) | (b)))
 

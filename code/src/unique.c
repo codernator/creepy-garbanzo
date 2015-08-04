@@ -1,3 +1,4 @@
+#include "sysinternals.h"
 /***********************************************************************
  * Unique Object Generator v1.0
  *

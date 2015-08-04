@@ -27,6 +27,18 @@
 *   By using this code, you have agreed to follow the terms of the          *
 *   ROM license, in the file Rom24/doc/rom.license                          *
 ****************************************************************************/
+/***************************************************************************
+*       Teleport code chunk, written by Eo. Completed on 08-22-1996        *
+***************************************************************************/
+/***************************************************************************
+*	Original Code for Brew and Scribe by Todd Lair.
+*	Improvements and Modification by Jason Huang(huangjac@netcom.com).
+*	Permission to use this code is granted provided this header is
+*	retained and unaltered.
+*
+*	all of which was totally screwed up and caused a bunch of freaking
+*	crashes so it was totally re-written -- *pffft*
+***************************************************************************/
 /*
  * 'Split' originally by Gnort, God of Chaos.
  */
@@ -36,6 +48,7 @@
 *  for Bad Trip MUD 4/29/09  *
 *****************************/
 
+/*  Nickname by Spaceboy    */
 
 
 

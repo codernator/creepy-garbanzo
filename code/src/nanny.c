@@ -2,13 +2,10 @@
 #include "recycle.h"
 #include "interp.h"
 #include "telnet.h"
+#include "sysinternals.h"
 
 #include <stdio.h>
 #include <string.h>
-
-extern bool is_space(const char test);
-extern bool is_alpha(const char test);
-extern bool is_upper(const char test);
 
 
 const unsigned char echo_off_str [] = { (unsigned char)IAC, (unsigned char)WILL, (unsigned char)TELOPT_ECHO, (unsigned char)'\0' };

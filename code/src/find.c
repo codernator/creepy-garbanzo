@@ -41,7 +41,7 @@
 #include "lookup.h"
 #include "db.h"
 #include "find.h"
-#include "libstring.h"
+#include "sysinternals.h"
 
 extern int parse_int(char *test);
 extern long parse_long(char *test);

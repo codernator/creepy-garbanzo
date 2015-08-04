@@ -22,7 +22,7 @@
 #include "olc.h"
 #include "recycle.h"
 #include "lookup.h"
-#include "libstring.h"
+#include "sysinternals.h"
 
 
 /***************************************************************************

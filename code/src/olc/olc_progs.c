@@ -25,7 +25,7 @@
 #include "tables.h"
 #include "olc.h"
 #include "recycle.h"
-#include "libstring.h"
+#include "sysinternals.h"
 
 
 extern void string_append(CHAR_DATA * ch, char **string);

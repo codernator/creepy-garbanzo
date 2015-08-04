@@ -1,0 +1,24 @@
+IDIR=include
+ODIR=obj/sysinternals
+BDIR=bin
+CC= /usr/bin/gcc
+PROF= -DLINUX
+C_FLAGS= -O2 -g2 -Wall -pedantic -std=gnu99 -I$(IDIR)
+L_FLAGS=  $(PROF)
+LIBS=-lm
+
+_DEPS=sysinternals.h
+DEPS=$(patsubst %,$(IDIR)/%,$(_DEPS))
+_OBJ=librandom.o libstring.o libutils.o
+OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
+DIR=sysinternals
+SYSINTERNALS=$(BDIR)/sysinternals.a
+
+$(SYSINTERNALS): $(OBJ) $(DEPS)
+	ar rcs $(SYSINTERNALS) $@ $(OBJ)
+
+$(ODIR)/%.o: $(DIR)/%.c $(DEPS)
+	$(CC) -c -o $@ $< $(C_FLAGS)
+
+clean:
+	rm -f $(ODIR)/*.o $(EXE)

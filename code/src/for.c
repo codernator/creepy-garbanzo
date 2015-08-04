@@ -43,7 +43,7 @@
 #include "recycle.h"
 #include "tables.h"
 #include "lookup.h"
-#include "libstring.h"
+#include "sysinternals.h"
 
 extern int parse_int(char *test);
 

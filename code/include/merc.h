@@ -2338,26 +2338,12 @@ void free_mem(void *pMem, unsigned int sMem);
 void free_string(char *pstr);
 
 /* number manipulation */
-int number_fuzzy(int number);
-long number_fuzzy_long(long number);
-int number_range(int from, int to);
-int number_percent(void);
 int number_door(void);
-int number_bits(unsigned int width);
-long number_mm(void);
-int dice(int number, int size);
 int interpolate(int level, int value_00, int value_32);
 void smash_tilde(char *str);
 
-/* string manipulation */
-bool str_cmp(const char *astr, const char *bstr);
-bool str_prefix(const char *astr, const char *bstr);
-bool str_infix(const char *astr, const char *bstr);
-bool str_suffix(const char *astr, const char *bstr);
-char *str_replace(char *orig, char *find, char *replace);
 
 /* misc utility func. */
-char *capitalize(const char *str);
 void append_file(CHAR_DATA * ch, char *file, char *str);
 void bug(const char *str, int param);
 void log_string(const char *str);
@@ -2533,7 +2519,6 @@ void list_group_known(CHAR_DATA * ch);
 int exp_per_level(CHAR_DATA * ch, int points);
 void check_improve(CHAR_DATA * ch, SKILL * skill, bool success, int multiplier);
 
-
 /* teleport.c */
 ROOM_INDEX_DATA *room_by_name(char *target, int level, bool error);
 
@@ -2547,10 +2532,6 @@ void update_handler(void);
 void restore_char(CHAR_DATA * ch);
 void strip_negative_affects(CHAR_DATA * ch);
 
-
-
-
-
 /* disable.c */
 DISABLED_DATA *new_disabled(void);
 void free_disabled(DISABLED_DATA * disabled);
@@ -2562,12 +2543,10 @@ bool check_disabled(CHAR_DATA * ch, int type, char *cmd);
 void load_disabled(void);
 void save_disabled(void);
 
-
 /* olc */
 void printf_to_char(CHAR_DATA *, char *, ...);
 void printf_bug(char *, ...);
 void printf_log(char *fmt, ...);
-
 
 /* lookup.c */
 int race_lookup(const char *name);
@@ -2580,6 +2559,9 @@ bool is_standupon(/*@partial@*/OBJ_DATA *obj);
 
 /* logging.c */
 void log_bug(const char *fmt, ...);
+
+/* Needs a home */
+char *capitalize(const char *str);
 
 #endif  /* __MERC_H */
 

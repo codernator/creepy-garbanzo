@@ -44,7 +44,7 @@
 #include "merc.h"
 #include "mob_cmds.h"
 #include "magic.h"
-#include "libstring.h"
+#include "sysinternals.h"
 
 extern long parse_long(char *test);
 extern int parse_int(char *test);
@@ -1239,24 +1239,6 @@ void do_mpflee(CHAR_DATA *ch, char *argument)
 		if (ch->in_room != was_in)
 			return;
 	}
-/*
- *  for(attempt = 0; attempt < 12; attempt++)
- *  {
- *      door = number_door();
- *      if((pexit = was_in->exit[door]) == 0
- ||   pexit->u1.to_room == NULL
- ||   IS_SET(pexit->exit_info, EX_CLOSED)
- ||||(IS_NPC(ch)
- ||     &&   IS_SET(pexit->u1.to_room->room_flags, ROOM_NO_MOB)))
- ||         continue;
- ||
- ||             stop_fighting(ch, TRUE);
- ||             act("$n has fled!", ch, NULL, NULL, TO_ROOM);
- ||     move_char(ch, door, FALSE);
- ||     if(ch->in_room != was_in)
- ||         return;
- || }
- */
 }
 
 /*

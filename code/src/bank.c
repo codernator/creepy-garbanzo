@@ -39,7 +39,7 @@
 #include "merc.h"
 #include "magic.h"
 #include "interp.h"
-#include "libstring.h"
+#include "sysinternals.h"
 
 
 extern OBJ_DATA *get_object_by_itemtype_and_room(int item_type, ROOM_INDEX_DATA *room, CHAR_DATA *ch);

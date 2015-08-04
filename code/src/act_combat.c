@@ -3,6 +3,7 @@
 #include "character.h"
 #include "mob_cmds.h"
 #include "channels.h"
+#include "sysinternals.h"
 
 
 extern void make_corpse(CHAR_DATA *ch);
@@ -11,6 +12,17 @@ extern void disarm(CHAR_DATA *ch, CHAR_DATA *victim);
 extern void spell_charm_person(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument);
 extern void set_fighting(CHAR_DATA *ch, CHAR_DATA *victim);
 extern int battlefield_count(void);
+
+
+
+/*
+ * Generate a random door.
+ */
+int number_door(void)
+{
+    return number_range(0, 5);
+}
+
 
 
 void do_bash(CHAR_DATA *ch, char *argument)

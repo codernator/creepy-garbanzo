@@ -23,7 +23,7 @@
 #include "recycle.h"
 #include "lookup.h"
 #include "interp.h"
-#include "libstring.h"
+#include "sysinternals.h"
 
 /***************************************************************************
 *	external functions

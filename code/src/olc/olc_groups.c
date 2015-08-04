@@ -40,7 +40,7 @@
 #include "lookup.h"
 #include "recycle.h"
 #include "skills.h"
-#include "libstring.h"
+#include "sysinternals.h"
 #include "libfile.h"
 
 

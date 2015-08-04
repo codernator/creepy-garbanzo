@@ -6,7 +6,7 @@
 #include "magic.h"
 #include "interp.h"
 #include "olc.h"
-#include "libstring.h"
+#include "sysinternals.h"
 
 #include <stdlib.h>
 #include <string.h>

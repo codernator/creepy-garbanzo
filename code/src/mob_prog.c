@@ -40,7 +40,7 @@
 #include "merc.h"
 #include "tables.h"
 #include "lookup.h"
-#include "libstring.h"
+#include "sysinternals.h"
 #include "mob_cmds.h"
 
 extern long flag_lookup(const char *word, const struct flag_type *flag_table);

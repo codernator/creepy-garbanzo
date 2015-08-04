@@ -68,7 +68,7 @@
 #include "interp.h"
 #include "recycle.h"
 #include "tables.h"
-#include "libstring.h"
+#include "sysinternals.h"
 #include "libfile.h"
 
 /***************************************************************************

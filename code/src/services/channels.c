@@ -1,6 +1,7 @@
 #include "merc.h"
 #include "channels.h"
 #include "tables.h"
+#include "sysinternals.h"
 
 #include <stdio.h>
 #include <string.h>

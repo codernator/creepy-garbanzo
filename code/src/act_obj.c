@@ -34,7 +34,7 @@
 #include "tables.h"
 #include "lookup.h"
 #include "channels.h"
-#include "libstring.h"
+#include "sysinternals.h"
 
 /***************************************************************************
 *	external commands
