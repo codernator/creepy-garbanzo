@@ -1259,10 +1259,6 @@ void do_score(CHAR_DATA *ch, char *argument)
 	if (!IS_NPC(ch)) printf_to_char(ch, "Extended Experience Points: %ld, Extended Level: %d\n\r",
 					ch->pcdata->extendedexp, ch->pcdata->extendedlevel); if (IS_SET(ch->comm, COMM_SHOW_AFFECTS))
 		do_affects(ch, "");
-	if (ch->pk_timer > 0) {
-		sprintf(buf, "`7You have `6%d `7ticks left on your pkill timer.``\n\r", ch->pk_timer);
-		send_to_char(buf, ch);
-	}
 }
 
 void do_affects(CHAR_DATA *ch, char *argument)

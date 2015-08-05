@@ -60,16 +60,12 @@ typedef struct room_index_data ROOM_INDEX_DATA;
 typedef struct shop_data SHOP_DATA;
 typedef struct time_info_data TIME_INFO_DATA;
 typedef struct weather_data WEATHER_DATA;
-typedef struct war_data WAR_DATA;
 typedef struct disabled_data DISABLED_DATA;
 typedef struct auction_data AUCTION_DATA;
 
 typedef struct mprog_list MPROG_LIST;
 typedef struct mprog_code MPROG_CODE;
 typedef struct help_area_data HELP_AREA;
-typedef struct social_type SOCIAL;
-typedef struct lyric_type LYRIC;
-typedef struct song_type SONG;
 
 
 /* required for new skill system */
@@ -99,17 +95,14 @@ typedef void DO_FUN(/*@partial@*/CHAR_DATA * ch, char *argument);
  */
 #define MAX_SKILL               285
 #define MAX_GROUP               35
-#define MAX_IN_GROUP            15
 #define MAX_ALIAS               200
 #define MAX_CLASS               15
 #define MAX_PC_RACE             15
 #define MAX_LEVEL               610
 #define MAX_GET                 30
 #define MAX_IGNORE              5
-#define MAX_RANK                11
 #define MAX_FORGET              10
 #define MIN_POINTS              76
-#define VERSION                 3
 #define LEVEL_HERO              (MAX_LEVEL - 9)
 #define LEVEL_IMMORTAL          (MAX_LEVEL - 8)
 #define LEVEL_NEWBIE            11
@@ -126,16 +119,12 @@ typedef void DO_FUN(/*@partial@*/CHAR_DATA * ch, char *argument);
 #define PULSE_UNDERWATER        (5 * PULSE_PER_SECOND)
 
 #define IMPLEMENTOR             MAX_LEVEL
-#define CREATOR                 (MAX_LEVEL - 1)
-#define SUPREME                 (MAX_LEVEL - 2)
-#define DEITY                   (MAX_LEVEL - 3)
 #define GOD                     (MAX_LEVEL - 4)
 #define IMMORTAL                (MAX_LEVEL - 5)
 #define DEMI                    (MAX_LEVEL - 6)
 #define ANGEL                   (MAX_LEVEL - 7)
 #define AVATAR                  (MAX_LEVEL - 8)
 #define HERO                    LEVEL_HERO
-#define MAX_VNUMS               2147483647l
 
 
 /* Site ban structure. */
@@ -163,20 +152,6 @@ struct buf_type {
     char * string;                 /* buffer's string */
 };
 
-
-/* Structure for a social in the socials table. */
-struct social_type {
-    SOCIAL *next;
-    char * name;
-    char * char_no_arg;
-    char * others_no_arg;
-    char * char_found;
-    char * others_found;
-    char * vict_found;
-    char * char_auto;
-    char * others_auto;
-    bool valid;
-};
 
 
 
@@ -227,7 +202,6 @@ struct weather_data {
 #define CON_BREAK_CONNECT       15
 #define CON_GET_ANSI            16
 #define CON_COPYOVER_RECOVER    17
-#define CON_PKILL_CHOICE        18
 
 struct nickname_data {
     NICKNAME_DATA * next;
@@ -344,11 +318,11 @@ struct shop_data {
 #define STAT_LUCK               5
 
 struct class_type {
- char * name;                   /* the full name of the class */
- char who_name[4];            /* three-letter name for 'who */
+ char * name;                /* the full name of the class */
+ char who_name[4];           /* three-letter name for 'who */
  int attr_prime;             /* prime attribute */
- long weapon;                 /* first weapon */
- long guild[MAX_GUILD];       /* vnum of guild rooms */
+ long weapon;                /* first weapon */
+ long guild[MAX_GUILD];      /* vnum of guild rooms */
  int skill_adept;            /* maximum skill level */
  int thac0_00;               /* thac0 for level  0 */
  int thac0_32;               /* thac0 for level 32 */
@@ -356,9 +330,9 @@ struct class_type {
  int hp_max;                 /* max hp gained on leveling */
  int mana_min;               /* min mana gained on leveling */
  int mana_max;               /* max mana gained on leveling */
- bool fMana;                  /* class gains mana on level */
- char * base_group;             /* base skills gained */
- char * default_group;          /* default skills gained */
+ bool fMana;                 /* class gains mana on level */
+ char * base_group;          /* base skills gained */
+ char * default_group;       /* default skills gained */
 
  /* New Melee Combat Math */
  float attack_rating;
@@ -367,8 +341,8 @@ struct class_type {
  float dr_improve;
 
  /* New Structure Parts, Added by Monrick 3/31/2008 */
- bool canCreate;      /* class can be chosen at creation */
- char * shortDesc;      /* description for help file */
+ bool canCreate;     /* class can be chosen at creation */
+ char * shortDesc;   /* description for help file */
  int dAlign;         /* default alignment */
 };
 
@@ -537,13 +511,8 @@ struct kill_data {
  * Defined in #MOBILES.
  */
 #define MOB_VNUM_FIDO           3090l
-#define MOB_VNUM_CITYGUARD      3060l
-#define MOB_VNUM_VAMPIRE        3404l
 #define MOB_VNUM_PIG            3167l
 #define MOB_VNUM_FAMILIAR       4l
-#define MOB_VNUM_PATROLMAN      2106l
-#define GROUP_VNUM_TROLLS       2100l
-#define GROUP_VNUM_OGRES        2101l
 
 
 /* RT ASCII conversions -- used so we can have letters in this file */
@@ -795,37 +764,37 @@ struct kill_data {
 
 
 /* Bits for 'affected_by'. * Used in #MOBILES. */
-#define AFF_POLLEN                  (A)
-#define AFF_INVISIBLE             (B)
+#define AFF_POLLEN              (A)
+#define AFF_INVISIBLE           (B)
 #define AFF_DETECT_EVIL         (C)
 #define AFF_DETECT_INVIS        (D)
 #define AFF_DETECT_MAGIC        (E)
 #define AFF_DRUID_CALL          (F)
 #define AFF_DETECT_GOOD         (G)
-#define AFF_SANCTUARY             (H)
+#define AFF_SANCTUARY           (H)
 #define AFF_FAERIE_FIRE         (I)
-#define AFF_INFRARED              (J)
-#define AFF_CURSE                     (K)
-#define AFF_BLIND                     (L)
-#define AFF_POISON                  (M)
+#define AFF_INFRARED            (J)
+#define AFF_CURSE               (K)
+#define AFF_BLIND               (L)
+#define AFF_POISON              (M)
 #define AFF_PROTECT_EVIL        (N)
 #define AFF_PROTECT_GOOD        (O)
-#define AFF_SNEAK                     (P)
-#define AFF_HIDE                      (Q)
-#define AFF_SLEEP                     (R)
-#define AFF_CHARM                     (S)
-#define AFF_FLYING                  (T)
-#define AFF_PASS_DOOR             (U)
-#define AFF_HASTE                     (V)
-#define AFF_CALM                      (W)
-#define AFF_PLAGUE                  (X)
-#define AFF_WEAKEN                  (Y)
+#define AFF_SNEAK               (P)
+#define AFF_HIDE                (Q)
+#define AFF_SLEEP               (R)
+#define AFF_CHARM               (S)
+#define AFF_FLYING              (T)
+#define AFF_PASS_DOOR           (U)
+#define AFF_HASTE               (V)
+#define AFF_CALM                (W)
+#define AFF_PLAGUE              (X)
+#define AFF_WEAKEN              (Y)
 #define AFF_DARK_VISION         (Z)
-#define AFF_BERSERK                 (aa)
-#define AFF_CALLOUSED             (bb)
-#define AFF_SLOW                      (cc)
-#define AFF_BURNING       (ff)
-#define AFF_PHASED        (hh)
+#define AFF_BERSERK             (aa)
+#define AFF_CALLOUSED           (bb)
+#define AFF_SLOW                (cc)
+#define AFF_BURNING             (ff)
+#define AFF_PHASED              (hh)
 #define AFF_STONE_SKIN          (gg)
 
 /* Sex. * Used in #MOBILES. */
@@ -860,9 +829,6 @@ struct kill_data {
 #define OBJ_VNUM_GOLD_SOME              3l
 #define OBJ_VNUM_SILVER_SOME            4l
 #define OBJ_VNUM_COINS                  5l
-#define OBJ_VNUM_SCRATCH                7l
-#define OBJ_VNUM_QTOKEN_ONE             26l
-#define OBJ_VNUM_QTOKEN_SOME            27l
 
 #define OBJ_VNUM_CORPSE_NPC             10l
 #define OBJ_VNUM_CORPSE_PC              11l
@@ -872,15 +838,10 @@ struct kill_data {
 #define OBJ_VNUM_SLICED_LEG             15l
 #define OBJ_VNUM_GUTS                   16l
 #define OBJ_VNUM_BRAINS                 17l
-#define OBJ_VNUM_MUSHROOM               20l
 #define OBJ_VNUM_LIGHT_BALL             21l
-#define OBJ_VNUM_SPRING                 22l
 #define OBJ_VNUM_DISC                   23l
 #define OBJ_VNUM_PORTAL                 25l
-#define OBJ_VNUM_WEED                   472l
-#define OBJ_VNUM_ROSE                   1001l
 #define OBJ_VNUM_PIT                    3010l
-#define OBJ_VNUM_SCROLL                 7817l
 #define OBJ_VNUM_SCHOOL_MACE            3700l
 #define OBJ_VNUM_SCHOOL_DAGGER          3701l
 #define OBJ_VNUM_SCHOOL_SWORD           3702l
@@ -894,51 +855,49 @@ struct kill_data {
 #define OBJ_VNUM_SCHOOL_SHIELD          3704l
 #define OBJ_VNUM_SCHOOL_BANNER          3716l
 #define OBJ_VNUM_MAP                    3162l
-#define OBJ_VNUM_WHISTLE                2116l
 #define OBJ_VNUM_RECEIPT                29l
 #define OBJ_VNUM_FIREBLADE              30l
-#define OBJ_VNUM_FAERIE_FOG             1201l
 #define OBJ_VNUM_BLANK_PILL             14241l          /* Anonplis.are */
 
 /* Item types. * Used in #OBJECTS. */
 #define ITEM_LIGHT                      1
 #define ITEM_SCROLL                     2
-#define ITEM_WAND                         3
+#define ITEM_WAND                       3
 #define ITEM_STAFF                      4
 #define ITEM_WEAPON                     5
-#define ITEM_TREASURE           8
+#define ITEM_TREASURE                   8
 #define ITEM_ARMOR                      9
 #define ITEM_POTION                     10
-#define ITEM_CLOTHING           11
-#define ITEM_FURNITURE  12
+#define ITEM_CLOTHING                   11
+#define ITEM_FURNITURE                  12
 #define ITEM_TRASH                      13
-#define ITEM_CONTAINER  15
-#define ITEM_DRINK_CON  17
-#define ITEM_KEY                          18
-#define ITEM_FOOD                         19
+#define ITEM_CONTAINER                  15
+#define ITEM_DRINK_CON                  17
+#define ITEM_KEY                        18
+#define ITEM_FOOD                       19
 #define ITEM_MONEY                      20
-#define ITEM_BOAT                         22
-#define ITEM_CORPSE_NPC 23
-#define ITEM_CORPSE_PC  24
-#define ITEM_FOUNTAIN           25
-#define ITEM_PILL                         26
-#define ITEM_PROTECT            27
-#define ITEM_MAP                          28
+#define ITEM_BOAT                       22
+#define ITEM_CORPSE_NPC                 23
+#define ITEM_CORPSE_PC                  24
+#define ITEM_FOUNTAIN                   25
+#define ITEM_PILL                       26
+#define ITEM_PROTECT                    27
+#define ITEM_MAP                        28
 #define ITEM_PORTAL                     29
-#define ITEM_WARP_STONE 30
-#define ITEM_ROOM_KEY           31
-#define ITEM_GEM                          32
-#define ITEM_JEWELRY            33
-#define ITEM_TELEPORT           36
-#define ITEM_ATM                          37
-#define ITEM_INVITATION 38
+#define ITEM_WARP_STONE                 30
+#define ITEM_ROOM_KEY                   31
+#define ITEM_GEM                        32
+#define ITEM_JEWELRY                    33
+#define ITEM_TELEPORT                   36
+#define ITEM_ATM                        37
+#define ITEM_INVITATION                 38
 #define ITEM_SCARAB                     39
-#define ITEM_FAERIE_FOG 42
-#define ITEM_DUST                         43
-#define ITEM_DOLL                         44
-#define ITEM_SOCKETS            46
-#define ITEM_DICE                         47
-#define ITEM_RELIC      48
+#define ITEM_FAERIE_FOG                 42
+#define ITEM_DUST                       43
+#define ITEM_DOLL                       44
+#define ITEM_SOCKETS                    46
+#define ITEM_DICE                       47
+#define ITEM_RELIC                      48
 
 /* Values for socketing items (value[0]). * Used in #OBJECTS. */
 #define SOC_SAPPHIRE    1
@@ -990,15 +949,15 @@ struct kill_data {
 #define ITEM_INLAY2             (ff)
 
 /* extra2 bits */
-#define ITEM2_GRAFT     (A)
-#define ITEM2_ETHEREAL  (B)
-#define ITEM2_NOSCAN    (C)
-#define ITEM2_RELIC     (D)
-#define ITEM2_NODONATE  (E)
+#define ITEM2_GRAFT             (A)
+#define ITEM2_ETHEREAL          (B)
+#define ITEM2_NOSCAN            (C)
+#define ITEM2_RELIC             (D)
+#define ITEM2_NODONATE          (E)
 #define ITEM2_NORESTRING        (F)
 
 /* Wear flags. * Used in #OBJECTS. */
-#define ITEM_TAKE                     (A)
+#define ITEM_TAKE               (A)
 #define ITEM_WEAR_FINGER        (B)
 #define ITEM_WEAR_NECK          (C)
 #define ITEM_WEAR_BODY          (D)
@@ -1011,11 +970,11 @@ struct kill_data {
 #define ITEM_WEAR_ABOUT         (K)
 #define ITEM_WEAR_WAIST         (L)
 #define ITEM_WEAR_WRIST         (M)
-#define ITEM_WIELD        (N)
+#define ITEM_WIELD              (N)
 #define ITEM_HOLD               (O)
-#define ITEM_NO_SAC           (P)
+#define ITEM_NO_SAC             (P)
 #define ITEM_WEAR_FLOAT         (Q)
-#define ITEM_WEAR_EAR       (R)
+#define ITEM_WEAR_EAR           (R)
 #define ITEM_WEAR_FACE          (S)
 #define ITEM_WEAR_TATTOO        (T)
 
@@ -1298,43 +1257,42 @@ struct kill_data {
 #define COMM_TELNET_GA          (F)
 #define COMM_SHOW_AFFECTS       (G)
 #define COMM_NOCHANNELS         (H)
-#define COMM_NOQUIT             (I)
 #define COMM_NOBATTLEFIELD      (J)
-#define COMM_AFK               (K)
-#define COMM_INFO              (L)
-#define COMM_NOEMOTE           (M)
-#define COMM_TICKS             (N)
-#define COMM_ENABLE            (O)
-#define COMM_TARGET            (P)
-#define COMM_LOCKREPLY         (Q)
-#define COMM_RP                (R)
-#define COMM_CODING            (S)
-#define COMM_BUILD             (T)
-#define COMM_BUSY              (U)
+#define COMM_AFK                (K)
+#define COMM_INFO               (L)
+#define COMM_NOEMOTE            (M)
+#define COMM_TICKS              (N)
+#define COMM_ENABLE             (O)
+#define COMM_TARGET             (P)
+#define COMM_LOCKREPLY          (Q)
+#define COMM_RP                 (R)
+#define COMM_CODING             (S)
+#define COMM_BUILD              (T)
+#define COMM_BUSY               (U)
 
 
 /* WIZnet flags */
-#define WIZ_ON                    (A)
-#define WIZ_TICKS                 (B)
-#define WIZ_LOGINS        (C)
-#define WIZ_SITES                 (D)
-#define WIZ_LINKS                 (E)
-#define WIZ_DEATHS        (F)
-#define WIZ_FLAGS                 (I)
-#define WIZ_PENALTIES   (J)
+#define WIZ_ON                  (A)
+#define WIZ_TICKS               (B)
+#define WIZ_LOGINS              (C)
+#define WIZ_SITES               (D)
+#define WIZ_LINKS               (E)
+#define WIZ_DEATHS              (F)
+#define WIZ_FLAGS               (I)
+#define WIZ_PENALTIES           (J)
 #define WIZ_SACCING             (K)
 #define WIZ_LEVELS              (L)
 #define WIZ_SECURE              (M)
-#define WIZ_SWITCHES    (N)
+#define WIZ_SWITCHES            (N)
 #define WIZ_SNOOPS              (O)
 #define WIZ_RESTORE             (P)
-#define WIZ_LOAD                  (Q)
+#define WIZ_LOAD                (Q)
 #define WIZ_NEWBIE              (R)
 #define WIZ_PREFIX              (S)
-#define WIZ_SPAM                  (T)
-#define WIZ_PLOG                  (U)
-#define WIZ_ALOG                  (V)
-#define WIZ_ROLEPLAY    (X)
+#define WIZ_SPAM                (T)
+#define WIZ_PLOG                (U)
+#define WIZ_ALOG                (V)
+#define WIZ_ROLEPLAY            (X)
 
 /*  IMPNet Flags  */
 #define IMN_ON                  (A)
@@ -1500,7 +1458,6 @@ struct char_data {
     int benter;
     int bkills;
     int bloss;
-    int pk_timer;
     int safe_timer;
     long act;
     int color;
@@ -2153,7 +2110,6 @@ extern AUCTION_DATA *auction;
 extern CHAR_DATA *char_list;
 extern DESCRIPTOR_DATA *descriptor_list;
 extern OBJ_DATA *object_list;
-extern SOCIAL *social_list;
 
 
 extern MPROG_CODE *mprog_list;
@@ -2227,7 +2183,6 @@ extern ROOM_INDEX_DATA *room_index_hash [MAX_KEY_HASH];
 #define DISABLED_FILE    "./db/disabled.txt"      /* disabled commands */
 #define HEADLINE_FILE    "./db/headline.txt"
 #define HELP_FILE        "./db/area/help.are"
-#define SOCIAL_FILE      "./db/SOCIALS.TXT"
 #define NOTE_FILE        "./db/notes.not"         /* note thread */
 #define SHUTDOWN_FILE    "./shutdown.txt"         /* For 'shutdown' */
 #define COPYOVER_FILE    "./copyover.txt"
@@ -2246,9 +2201,9 @@ void nuke_pets(CHAR_DATA * ch);
 void die_follower(CHAR_DATA * ch);
 bool is_same_group(CHAR_DATA * ach, CHAR_DATA * bch);
 
-/**
- * act_comm.c
- */
+
+
+/** somewhere */
 int get_item_apply_val(char *name);
 void set_wait(CHAR_DATA * ch, int pulse);
 void set_daze(CHAR_DATA * ch, int pulse);

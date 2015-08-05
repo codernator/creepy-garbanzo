@@ -1151,9 +1151,6 @@ static void char_update(void)
 			ch->dream = NULL;
 		}
 
-		if (!IS_NPC(ch) && ch->pk_timer > 0)
-			ch->pk_timer--;
-
 		/* Timers on kill+thief flags */
 		if (!IS_NPC(ch)) {
 			if (IS_SET(ch->act, PLR_KILLER)) {

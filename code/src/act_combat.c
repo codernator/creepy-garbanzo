@@ -685,64 +685,6 @@ void do_slay(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-void do_suicid(CHAR_DATA *ch, /*@unused@*/char *argument)
-{
-	send_to_char("Type it ALL if you want to kill yourself..\n\r", ch);
-}
-
-
-void do_suicide(CHAR_DATA *ch, char *argument)
-{
-	if (IS_NPC(ch))
-		return;
-
-	if (ch->pcdata->confirm_suicide) {
-		if (argument[0] != '\0') {
-			send_to_char("Your thoughts become rational again.\n\r", ch);
-			ch->pcdata->confirm_suicide = FALSE;
-			return;
-		} else {
-			if (ch->pk_timer > 0) {
-				send_to_char("You cannot suicide with a timer!\n\r", ch); return;
-			}
-
-			act("`!$n`7 has commited suicide!", ch, NULL, NULL, TO_ROOM);
-			wiznet("`!$N`7 has commited suicide!", ch, NULL, 0, 0, 0);
-			raw_kill(ch, NULL);
-			return;
-		}
-	}
-
-
-	if (IS_SET(ch->act, PLR_BATTLE)
-	    && ch->in_room != NULL
-	    && ch->in_room->vnum != ROOM_VNUM_BF_START
-	    && IS_SET(ch->in_room->room_flags, ROOM_BFIELD)) {
-		int count = battlefield_count();
-		if (count > 1) {
-			send_to_char("Grow a backbone you spineless turd.\n\r", ch);
-			return;
-		}
-	} else {
-		if (is_affected(ch, gsp_voodoo)) {
-			send_to_char("Something is preventing you from doing that.\n\r", ch);
-			return;
-		}
-	}
-
-	if (argument[0] != '\0') {
-		send_to_char("Just type 'suicide' and nothing else to become one with your god.\n\r", ch);
-		return;
-	}
-
-	send_to_char("Type '`!suicide`7' again to die quickly and painlessly.\n\r", ch);
-	send_to_char("Typing '`!suicide`7' with an argument will save you from eternal damnation.\n\r", ch);
-
-	ch->pcdata->confirm_suicide = TRUE;
-	wiznet("`!$N`7 is contemplating suicide..", ch, NULL, 0, 0, get_trust(ch));
-}
-
 void do_intimidate(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *victim;

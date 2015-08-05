@@ -834,86 +834,6 @@ void spell_control_weather(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int
 	return;
 }
 
-
-/***************************************************************************
-*	spell_create_food
-***************************************************************************/
-void spell_create_food(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	OBJ_DATA *mushroom;
-
-	mushroom = create_object(get_obj_index(OBJ_VNUM_MUSHROOM), 0);
-	mushroom->value[0] = level / 2;
-	mushroom->value[1] = level;
-
-	obj_to_room(mushroom, ch->in_room);
-	act("$p suddenly `!app`#e`!ars``.", ch, mushroom, NULL, TO_ROOM);
-	act("$p suddenly `!app`#e`!ars``.", ch, mushroom, NULL, TO_CHAR);
-	return;
-}
-
-
-/***************************************************************************
-*	spell_create_feast
-***************************************************************************/
-void spell_create_feast(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	OBJ_DATA *obj;
-	int idx;
-
-	for (idx = 1; idx < 8; idx++) {
-		obj = create_object(get_obj_index(OBJ_VNUM_MUSHROOM), 0);
-		obj->value[0] = level / 2;
-		obj->value[1] = level;
-
-		obj_to_room(obj, ch->in_room);
-	}
-
-
-	act("$N causes a small bunch of mushrooms to grow from the ground!", ch, NULL, ch, TO_ROOM);
-	act("You create a small feast!", ch, NULL, NULL, TO_CHAR);
-
-	obj = create_object(get_obj_index(OBJ_VNUM_SPRING), 0);
-	obj->timer = level;
-	obj_to_room(obj, ch->in_room);
-
-	act("$p flows from the ground.", ch, obj, NULL, TO_ROOM);
-	act("$p flows from the ground.", ch, obj, NULL, TO_CHAR);
-
-	return;
-}
-
-/***************************************************************************
-*	spell_create_rose
-***************************************************************************/
-void spell_create_rose(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	OBJ_DATA *rose;
-
-	rose = create_object(get_obj_index(OBJ_VNUM_ROSE), 0);
-	obj_to_char(rose, ch);
-
-	act("$n has created a beautiful `1r`!e`&d `&r`@o`2s`8e``.", ch, rose, NULL, TO_ROOM);
-	send_to_char("You create a beautiful `1r`!e`&d `&r`@o`2s`8e``.\n\r", ch);
-
-	return;
-}
-
-void spell_create_spring(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	OBJ_DATA *spring;
-
-	spring = create_object(get_obj_index(OBJ_VNUM_SPRING), 0);
-	spring->timer = level;
-	obj_to_room(spring, ch->in_room);
-
-	act("$p flows from the ground.", ch, spring, NULL, TO_ROOM);
-	act("$p flows from the ground.", ch, spring, NULL, TO_CHAR);
-	return;
-}
-
-
-
 void spell_create_water(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
 	OBJ_DATA *obj = (OBJ_DATA *)vo;
@@ -4618,8 +4538,6 @@ void spell_portal(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, 
 	CHAR_DATA *victim;
 	OBJ_DATA *portal;
 
-/*     if (ch->pk_timer > 0) { send_to_char("Not with a PK timer.\n\r",ch); return; } */
-
 	if ((victim = get_char_world(ch, argument)) == NULL
 	    || !can_trans_room(ch, victim, skill->sn)) {
 		send_to_char("`1You`! failed``.\n\r", ch);
@@ -4649,8 +4567,6 @@ void spell_nexus(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, c
 	ROOM_INDEX_DATA *to_room;
 	ROOM_INDEX_DATA *from_room;
 
-
-/*     if (ch->pk_timer > 0) { send_to_char("Not with a PK timer.\n\r",ch); return; } */
 
 	if ((victim = get_char_world(ch, argument)) == NULL
 	    || !can_trans_room(ch, victim, skill->sn)) {
@@ -5527,8 +5443,6 @@ void spell_super_speed(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int tar
 bool can_trans_room(CHAR_DATA *ch, CHAR_DATA *victim, int sn)
 {
 	if (victim == NULL || victim == ch || victim->in_room == NULL) return FALSE;
-
-	if (victim->pk_timer > 0 && ch->pk_timer > 0) return TRUE;
 
 	if (!can_see_room(ch, victim->in_room)) return FALSE;
 	if (room_is_private(victim->in_room)) return FALSE;

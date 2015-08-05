@@ -231,7 +231,6 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 	fprintf(fp, "Pdea %ld\n", ch->pcdata->pdeaths);
 	fprintf(fp, "Mkil %ld\n", ch->pcdata->mobkills);
 	fprintf(fp, "Mdea %ld\n", ch->pcdata->mobdeaths);
-	fprintf(fp, "Pktm %d\n", ch->pk_timer);
 	fprintf(fp, "Sftm %d\n", ch->safe_timer);
 	fprintf(fp, "ChannelsE %s\n", print_flags(ch->channels_enabled));
 	fprintf(fp, "ChannelsD %s\n", print_flags(ch->channels_denied));
@@ -1342,7 +1341,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 			KEY("Password", ch->pcdata->pwd, fread_string(fp));
 			KEY("Pass", ch->pcdata->pwd, fread_string(fp));
 			KEY("Pkil", ch->pcdata->pkills, fread_number(fp));
-			KEY("Pktm", ch->pk_timer, fread_number(fp));
 			KEY("Pdea", ch->pcdata->pdeaths, fread_number(fp));
 			KEY("Played", ch->played, fread_number(fp));
 			KEY("Plyd", ch->played, fread_number(fp));

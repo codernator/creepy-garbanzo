@@ -399,38 +399,6 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 		wiznet("Newbie alert!  $N sighted.", ch, NULL, WIZ_NEWBIE, 0, 0);
 		wiznet(log_buf, NULL, NULL, WIZ_SITES, 0, get_trust(ch));
 
-		write_to_buffer(d, "\n\r", 2);
-		write_to_buffer(d, "Will this character be a player killer?\n\r", 0);
-		write_to_buffer(d, "If you are a pkiller, you can do all sorts of neat stuff like kill other\n\r", 0);
-		write_to_buffer(d, "pkillers and be killed in turn.  Of course, if you decide not to be a pkiller,\n\r", 0);
-		write_to_buffer(d, "you are safe from pkillers.\n\r\n\r", 0);
-		write_to_buffer(d, "If you want to join a guild or get into any real roleplaying, you'll want to\n\r", 0);
-		write_to_buffer(d, "be a pkiller\n\r\n\r", 0);
-		write_to_buffer(d, "You can choose to go pk later in the game. This is suggested for players new to the mud.\n\r\n\r", 0);
-		write_to_buffer(d, "Will this character be a pkiller?(Y/N)", 0);
-		d->connected = CON_PKILL_CHOICE;
-		break;
-
-	case CON_PKILL_CHOICE:
-		write_to_buffer(d, "\n\r", 2);
-		switch (argument[0]) {
-		case 'Y':
-		case 'y':
-			write_to_buffer(d, "MOSH on!\n\r", 0);
-			write_to_buffer(d, "a PKiLLER you are\n\r", 0);
-			write_to_buffer(d, "WARNING - NO ANSWER IS NOT IMPLEMENTED.", 0);
-			break;
-		case 'N':
-		case 'n':
-			write_to_buffer(d, "Alright, you will be safe from the wrath of the pkiller\n\r", 0);
-			write_to_buffer(d, "WARNING - NO ANSWER IS NOT IMPLEMENTED.", 0);
-			break;
-		default:
-			write_to_buffer(d, "This is a yes or no question chumpskie, lets try it again\n\r", 0);
-			write_to_buffer(d, "Will this character be a pkiller?(Y/N)", 0);
-			return;
-		}
-
 		if ((learned = create_learned_group("rom basics")) != NULL)
 			add_learned_group(ch, learned);
 		if ((learned = create_learned_group(class_table[ch->class].base_group)) != NULL)

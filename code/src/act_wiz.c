@@ -432,20 +432,11 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
 	if (IS_NPC(ch))
 		return;
 
-	if (IS_SET(ch->comm, COMM_NOQUIT)) {
-		send_to_char("You're having too much fun!\n\r", ch);
-		return;
-	}
-
 	if (!IS_NPC(ch) && ch->timer < 30) {
 		if (ch->pnote != NULL) {
 			send_to_char("You have some kind of note in progress.  Please clear it or post it before quitting.\n\r", ch);
 			return;
 		}
-	}
-
-	if (ch->pk_timer < 0) {
-		send_to_char("You cannot quit with a PK timer!\n\r", ch); return;
 	}
 
 	if (ch->last_fight
@@ -3123,9 +3114,6 @@ void do_sockets(CHAR_DATA *ch, char *argument)
 			case CON_GET_ANSI:
 				state = "Choosing ANSI [Y/n]";
 				break;
-			case CON_PKILL_CHOICE:
-				state = "Newbie: Choosing PKILL";
-				break;
 			default:
 				state = "-Unknown-";
 				break;
@@ -4186,58 +4174,6 @@ const char *name_expand(CHAR_DATA *ch)
 
 	sprintf(outbuf, "%d.%s", count, name);
 	return outbuf;
-}
-
-void do_noquit(CHAR_DATA *ch, char *argument)
-{
-	char arg[MIL], buf[MSL];
-	CHAR_DATA *victim;
-
-	one_argument(argument, arg);
-
-	if (ch) {
-		if (IS_NPC(ch)) {
-			send_to_char("Mobs can't use this command.\n\r", ch);
-			return;
-		}
-	}
-
-
-	if (arg[0] == '\0') {
-		send_to_char("Noquit whom?\n\r", ch);
-		return;
-	}
-
-	if ((victim = get_char_world(ch, arg)) == NULL) {
-		send_to_char("They aren't here.\n\r", ch);
-		return;
-	}
-
-	if (IS_NPC(victim)) {
-		send_to_char("Not on NPC's.\n\r", ch);
-		return;
-	}
-
-	if (get_trust(victim) >= get_trust(ch)) {
-		send_to_char("You failed.\n\r", ch);
-		return;
-	}
-
-	if (IS_SET(victim->comm, COMM_NOQUIT)) {
-		REMOVE_BIT(victim->comm, COMM_NOQUIT);
-		send_to_char("You can quit again.\n\r", victim);
-		send_to_char("NOQUIT removed.\n\r", ch);
-		sprintf(buf, "$N restores quitting commands to %s.", victim->name);
-		wiznet(buf, ch, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
-	} else {
-		SET_BIT(victim->comm, COMM_NOQUIT);
-		send_to_char("You can't quit!\n\r", victim);
-		send_to_char("NOQUIT set.\n\r", ch);
-		sprintf(buf, "$N revokes %s's quitting ability.", victim->name);
-		wiznet(buf, ch, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
-	}
-
-	return;
 }
 
 void do_rdesc(CHAR_DATA *ch, char *argument)

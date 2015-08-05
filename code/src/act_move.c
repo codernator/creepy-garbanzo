@@ -121,10 +121,6 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
 		return;
 	}
 
-	if (room_is_private(to_room) && ch->pk_timer > 0) {
-		send_to_char("You can't enter that room with a pk timer!\n\r", ch); return;
-	}
-
 	if (IS_AFFECTED(ch, AFF_CHARM)
 	    && ch->master != NULL
 	    && in_room == ch->master->in_room) {

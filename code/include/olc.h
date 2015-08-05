@@ -322,7 +322,6 @@ DECLARE_OLC_FUN(muedit_text);
 #define EDIT_HELP(ch, help)     (help = (HELP_DATA *)ch->desc->ed_data)
 #define EDIT_SKILL(ch, skill)   (skill = (SKILL *)ch->desc->ed_data)
 #define EDIT_GROUP(ch, group)   (group = (GROUP *)ch->desc->ed_data)
-#define EDIT_SONG(ch, song)     (song = (SONG *)ch->desc->ed_data)
 
 
 /* rooms */

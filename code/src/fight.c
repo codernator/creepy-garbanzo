@@ -1181,14 +1181,6 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
 			if (victim->exp > exp_per_level(victim, victim->pcdata->points) * victim->level)
 				gain_exp(victim, (2 * (exp_per_level(victim, victim->pcdata->points)
 						       * victim->level - victim->exp) / 2) + 50);
-
-			if (IS_NPC(ch) && (victim->pk_timer > 0)) {
-				if (IS_AFFECTED(ch, AFF_CHARM) && ch->master != NULL
-				    && ch->master->fighting == victim)
-					victim->pk_timer = 0;
-			} else if (victim->pk_timer > 0) {
-				victim->pk_timer = 0;
-			}
 		}
 
 		sprintf(log_buf, "%s got toasted by %s at %s [room %ld]",
@@ -1313,9 +1305,6 @@ bool is_safe(CHAR_DATA *ch, CHAR_DATA *victim)
 		return TRUE;
 
 	if (victim->fighting == ch || victim == ch)
-		return FALSE;
-
-	if (victim->pk_timer > 0)
 		return FALSE;
 
 	/* safe room? */
@@ -1766,12 +1755,6 @@ void set_fighting(CHAR_DATA *ch, CHAR_DATA *victim)
 		bug("Set_fighting: already fighting", 0);
 		return;
 	}
-
-	if (!IS_NPC(ch) && !IS_NPC(victim) && !IS_SET(ch->act, PLR_BATTLE))
-		ch->pk_timer = 3;
-
-	if (!IS_NPC(victim) && !IS_NPC(ch) && !IS_SET(ch->act, PLR_BATTLE))
-		victim->pk_timer = 3;
 
 	if (IS_AFFECTED(ch, AFF_SLEEP)) {
 		affect_strip(ch, gsp_sleep);
