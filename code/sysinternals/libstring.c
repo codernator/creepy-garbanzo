@@ -66,7 +66,7 @@ bool is_upper(const char test)
 /**
  * wrapper around tolower for safe testing against character array.
  */
-bool to_lower(const char test)
+char to_lower(const char test)
 {
 	return tolower((int)test);
 }
@@ -98,7 +98,7 @@ bool str_cmp(const char *astr, const char *bstr)
 		return true;
 	}
 
-	for (; *astr || *bstr; astr++, bstr++) {
+	for (; *astr > '0' || *bstr > '0'; astr++, bstr++) {
 		if (LOWER(*astr) != LOWER(*bstr)) {
 			return true;
         }

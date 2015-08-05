@@ -1,2 +1,2 @@
 clear
-splint -DLINUX -Iinclude +unixlib -macroparams src/act_comm.c
+splint -DLINUX -Iinclude +skip-sys-headers -macroparams src/act_comm.c

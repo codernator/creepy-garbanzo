@@ -20,6 +20,10 @@ $(SYSINTERNALS): $(OBJ) $(DEPS)
 $(ODIR)/%.o: $(DIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(C_FLAGS)
 
+.PHONY: analyze
+analyze:
+	splint +skip-sys-headers -DLINUX -Iinclude $(DIR)/*.c >splint.out
 
+.PHONY: clean
 clean:
 	rm -f $(ODIR)/*.o $(EXE)

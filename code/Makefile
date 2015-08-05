@@ -41,8 +41,10 @@ $(EXE): $(OBJ) $(DEPS)
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(C_FLAGS)
 
+.PHONY clean
 clean:
 	rm -f $(ODIR)/*.o $(ODIR)/services/*.o $(ODIR)/olc/*.o  $(EXE)
 
+.PHONY install
 install:
 	cp $(EXE) ../.

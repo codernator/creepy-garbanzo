@@ -3,7 +3,8 @@
 
 
 extern void srandom(unsigned int);
-extern int getpid();
+extern long int random(void);
+extern pid_t getpid();
 extern time_t time(time_t *tloc);
 
 
@@ -127,7 +128,7 @@ int number_bits(unsigned int width)
 
 long number_mm(void)
 {
-	return random() >> 6;
+	return (long)((unsigned long long)random() >> 6);
 }
 
 /*
