@@ -4,8 +4,6 @@
 #include "recycle.h"
 #include "libfile.h"
 
-extern FILE *fpReserve;
-
 BAN_DATA *ban_list;
 
 void save_bans(void)
@@ -14,22 +12,19 @@ void save_bans(void)
 	FILE *fp;
 	bool found = FALSE;
 
-	fclose(fpReserve);
-	if ((fp = fopen(BAN_FILE, "w")) == NULL)
+	if ((fp = fopen(BAN_FILE, "w")) == NULL) {
 		perror(BAN_FILE);
+		return;
+    }
 
 	for (pban = ban_list; pban != NULL; pban = pban->next) {
 		if (IS_SET(pban->ban_flags, BAN_PERMANENT)) {
 			found = TRUE;
-			fprintf(fp, "%-25s %-3d %-8s\n",
-				pban->name,
-				pban->level,
-				print_flags(pban->ban_flags));
+			fprintf(fp, "%-25s %-3d %-8s\n", pban->name, pban->level, print_flags(pban->ban_flags));
 		}
 	}
 
 	fclose(fp);
-	fpReserve = fopen(NULL_FILE, "r");
 	if (!found)
 		unlink(BAN_FILE);
 }

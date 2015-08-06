@@ -38,7 +38,6 @@
  *  may aid in debugging.
  */
 
-extern FILE *fpReserve;
 extern void bug_long(const char *str, long param);
 static void save_area(AREA_DATA * area);
 
@@ -798,10 +797,10 @@ static void save_area(AREA_DATA *area)
 
 	snprintf(haf, MIL, "%s%s", AREA_FOLDER, area->file_name);
 
-	fclose(fpReserve);
 	if (!(fp = fopen(haf, "w"))) {
 		bug("Open_area: fopen", 0);
 		perror(haf);
+		return;
 	}
 
 	fprintf(fp, "#AREADATA\n");
@@ -829,8 +828,6 @@ static void save_area(AREA_DATA *area)
 	fprintf(fp, "#$\n");
 
 	fclose(fp);
-	fpReserve = fopen(NULL_FILE, "r");
-	return;
 }
 
 

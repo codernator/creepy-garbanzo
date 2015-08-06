@@ -48,7 +48,6 @@
 *	globals
 ***************************************************************************/
 extern int _filbuf(FILE *);
-extern FILE *fpReserve;
 extern FILE *fp_area;
 extern char area_file[MIL];
 extern void string_append(CHAR_DATA * ch, char **string);
@@ -221,7 +220,6 @@ static void save_thread(int type)
 		return;
 
 
-	fclose(fpReserve);
 	if ((fp = fopen(file_name, "w")) == NULL) {
 		perror(file_name);
 	} else {
@@ -234,8 +232,6 @@ static void save_thread(int type)
 			fprintf(fp, "Text\n%s~\n", note->text);
 		}
 		fclose(fp);
-		fpReserve = fopen(NULL_FILE, "r");
-		return;
 	}
 }
 
@@ -366,7 +362,6 @@ static void append_message(NOTE_DATA *note)
 		last->next = note;
 	}
 
-	fclose(fpReserve);
 	if ((fp = fopen(file_name, "a")) == NULL) {
 		perror(file_name);
 	} else {
@@ -378,7 +373,6 @@ static void append_message(NOTE_DATA *note)
 		fprintf(fp, "Text\n%s~\n", note->text);
 		fclose(fp);
 	}
-	fpReserve = fopen(NULL_FILE, "r");
 }
 
 

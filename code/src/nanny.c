@@ -811,25 +811,6 @@ bool check_playing(DESCRIPTOR_DATA *d, char *name)
 
 
 /***************************************************************************
-*	check_afk
-*
-*	check to see if a character is active - if they are
-*	remove the AFK bit
-***************************************************************************/
-void check_afk(CHAR_DATA *ch)
-{
-	if (ch == NULL
-	    || ch->desc == NULL
-	    || ch->desc->connected != CON_PLAYING)
-		return;
-
-	if (IS_SET(ch->comm, COMM_AFK))
-		REMOVE_BIT(ch->comm, COMM_AFK);
-
-	return;
-}
-
-/***************************************************************************
 *	stop_idling
 *
 *	bring a character back from the void if they have

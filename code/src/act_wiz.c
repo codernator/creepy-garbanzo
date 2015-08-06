@@ -16,9 +16,10 @@
 DECLARE_DO_FUN(do_grestore);
 DECLARE_DO_FUN(do_rrestore);
 
-extern FILE *fpReserve;
 extern long top_mob_index;
 extern long top_obj_index;
+extern bool copyover();
+
 extern AFFECT_DATA *affect_free;
 
 
@@ -31,7 +32,6 @@ bool add_alias(CHAR_DATA * ch, char *alias, char *cmd);
 bool set_char_hunger(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
 bool set_char_thirst(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
 bool set_char_feed(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
-bool write_to_descriptor(int desc, char *txt, int length);
 
 void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is, const char *message);
 
@@ -741,15 +741,11 @@ void impnet(char *string, CHAR_DATA *ch, OBJ_DATA *obj, long flag, long flag_ski
 
 void do_tick(CHAR_DATA *ch, char *argument)
 {
-	extern bool tickset;
-
 	DENY_NPC(ch)
 
-	tickset = !tickset;
-	if (tickset)
+	globalSystemState.tickset = !globalSystemState.tickset;
+	if (globalSystemState.tickset)
 		wiznet("$N forces a TICK!.", ch, NULL, 0, 0, 0);
-
-	return;
 }
 
 void do_grant(CHAR_DATA *ch, char *argument)
@@ -1775,7 +1771,6 @@ void do_reboot(CHAR_DATA *ch, char *argument)
 	DESCRIPTOR_DATA *d;
 	DESCRIPTOR_DATA *d_next;
 	char buf[MSL];
-	extern bool merc_down;
 
 	DENY_NPC(ch)
 
@@ -1789,7 +1784,7 @@ void do_reboot(CHAR_DATA *ch, char *argument)
 	do_force(ch, "all save");
 	if (ch)
 		do_save(ch, "");
-	merc_down = TRUE;
+	globalSystemState.merc_down = TRUE;
 
 	for (d = globalSystemState.connection_head; d != NULL; d = d_next) {
 		d_next = d->next;
@@ -1810,7 +1805,6 @@ void do_shutdown(CHAR_DATA *ch, char *argument)
 	DESCRIPTOR_DATA *d;
 	DESCRIPTOR_DATA *d_next;
 	char buf[MSL];
-	extern bool merc_down;
 
 	DENY_NPC(ch)
 
@@ -1824,7 +1818,7 @@ void do_shutdown(CHAR_DATA *ch, char *argument)
 
 	do_force(ch, "all save");
 	do_save(ch, "");
-	merc_down = TRUE;
+	globalSystemState.merc_down = TRUE;
 
 	for (d = globalSystemState.connection_head; d != NULL; d = d_next) {
 		d_next = d->next;
@@ -3413,169 +3407,9 @@ void do_prefix(CHAR_DATA *ch, char *argument)
  */
 void do_copyover(CHAR_DATA *ch, char *argument)
 {
-	FILE *fp, *cmdLog;
-	DESCRIPTOR_DATA *d, *d_next;
-	char buf [100], buf2[100];
-	extern int port, control; /* db.c */
-
-	fp = fopen(COPYOVER_FILE, "w");
-
-	if (!fp) {
-		send_to_char("Copyover file not writeable, aborted.\n\r", ch);
-		perror("do_copyover:fopen");
-		return;
-	}
-
-	/* Consider changing all saved areas here, if you use OLC */
-
-	/* do_asave (NULL, ""); - autosave changed areas */
-
-
-	sprintf(buf, "\n\r Preparing for a copyover....\n\r");
-
-	/* For each playing descriptor, save its state */
-	for (d = globalSystemState.connection_head; d; d = d_next) {
-		CHAR_DATA *och = CH(d);
-		d_next = d->next; /* We delete from the list , so need to save this */
-
-		if (!d->character || d->connected > CON_PLAYING) { /* drop those logging on */
-			write_to_descriptor(d->descriptor, "\n\rSorry, we are rebooting. Come back in a few minutes.\n\r", 0);
-			close_socket(d);  /* throw'em out */
-		} else {
-			fprintf(fp, "%d %s %s\n", d->descriptor, och->name, d->host);
-
-			if (och->level == 1) {
-				write_to_descriptor(d->descriptor, "Since you are level one, and level one characters do not save, you gain a free level!\n\r", 0);
-				advance_level(och, 1);
-			}
-			do_stand(och, "");
-			save_char_obj(och);
-		}
-	}
-
-	fprintf(fp, "-1\n");
-	fclose(fp);
-
-	/* Close reserve and other always-open files and release other resources */
-
-	fclose(fpReserve);
-
-	/* Dalamar - Save our last commands file.. */
-
-	if ((cmdLog = fopen(LAST_COMMANDS, "r")) == NULL) {
-		log_string("Crash function: can't open last commands log..");
-	} else {
-		time_t rawtime;
-		struct tm *timeinfo;
-		char buf[128];
-		char cmd[256];
-
-		time(&rawtime);
-		timeinfo = localtime(&rawtime);
-		strftime(buf, 128, "./log/command/lastCMDs-%m%d-%H%M.txt", timeinfo);
-		sprintf(cmd, "mv ./log/command/lastCMDs.txt %s", buf);
-		if (system(cmd) == -1) {
-            log_string("System command failed: ");
-            log_string(cmd);
-        }
-	}
-
-	/* exec - descriptors are inherited */
-
-	sprintf(buf, "%d", port);
-	sprintf(buf2, "%d", control);
-	execl(EXE_FILE, "Badtrip", buf, "copyover", buf2, (char *)NULL);
-
-	/* Failed - sucessful exec will not return */
-
-	perror("do_copyover: execl");
-	send_to_char("Copyover FAILED!\n\r", ch);
-
-	/* Here you might want to reopen fpReserve */
-	fpReserve = fopen(NULL_FILE, "r");
-}
-
-/* Recover from a copyover - load players */
-void copyover_recover()
-{
-	DESCRIPTOR_DATA *d;
-	FILE *fp;
-	char name [100];
-	char host[MSL];
-	int desc;
-	bool fOld;
-
-/*	logf ("Copyover recovery initiated");*/
-
-	fp = fopen(COPYOVER_FILE, "r");
-
-	if (!fp) { /* there are some descriptors open which will hang forever then ? */
-		perror("copyover_recover:fopen");
-		_Exit(1);
-		return;
-	}
-
-	unlink(COPYOVER_FILE);  /* In case something crashes - doesn't prevent reading	*/
-
-	for (;; ) {
-        int scancount;
-		scancount = fscanf(fp, "%d %s %s\n", &desc, name, host);
-		if (scancount == EOF || desc == -1)
-			break;
-
-		/* Write something, and check if it goes error-free */
-		if (!write_to_descriptor(desc, "", 0)) {
-			close(desc);  /* nope */
-			continue;
-		}
-
-		d = new_descriptor();
-		d->descriptor = desc;
-
-		d->host = str_dup(host);
-		d->next = globalSystemState.connection_head;
-		globalSystemState.connection_head = d;
-		d->connected = CON_COPYOVER_RECOVER; /* -15, so close_socket frees the char */
-
-
-		/* Now, find the pfile */
-
-		fOld = load_char_obj(d, name);
-
-		if (!fOld) { /* Player file not found?! */
-			write_to_descriptor(desc, "\n\rSomehow, your character was lost in the copyover. Sorry.\n\r", 0);
-			close_socket(d);
-		} else { /* ok! */
-/*			write_to_descriptor (desc, "\n\rCopyover recovery complete.\n\r",0);*/
-
-			/* Just In Case */
-			if (!d->character->in_room)
-				d->character->in_room = get_room_index(ROOM_VNUM_TEMPLE);
-
-			/* Insert in the char_list */
-			d->character->next = char_list;
-			char_list = d->character;
-
-			send_to_char("\n\r`6o`&-`O-====`8---------------------------------------------------------`O===`&--`6o``\n\r", d->character);
-			send_to_char("`2       ___    ___        __________________        ___    ___``\n\r", d->character);
-			send_to_char("`2  ____/ _ \\__/ _ \\_____ (------------------) _____/ _ \\__/ _ \\____``\n\r", d->character);
-			send_to_char("`2 (  _| / \\/  \\/ \\ |_   ) \\    `&Copyover`2    / (   _| / \\/  \\/ \\ |_  )``\n\r", d->character);
-			send_to_char("`2  \\(  \\|  )  (  |/  ) (___)  __________  (___) (  \\|  )  (  |/  )/``\n\r", d->character);
-			send_to_char("`2   '   '  \\`!''`2/  '  (_________)        (_________)  '  \\`!''`2/  '   '``\n\r", d->character);
-			send_to_char("`2           ||                                          ||``\n\r", d->character);
-			send_to_char("`6o`&-`O-====`8---------------------------------------------------------`O===`&--`6o``\n\r", d->character);
-			char_to_room(d->character, d->character->in_room);
-			do_look(d->character, "auto");
-			act("$n materializes!", d->character, NULL, NULL, TO_ROOM);
-			d->connected = CON_PLAYING;
-
-			if (d->character->pet != NULL) {
-				char_to_room(d->character->pet, d->character->in_room);
-				act("$n materializes!.", d->character->pet, NULL, NULL, TO_ROOM);
-			}
-		}
-	}
-	fclose(fp);
+    if (!copyover()) {
+		send_to_char("Copyover FAILED! (check std err for reason.)\n\r", ch);
+    }
 }
 
 bool check_parse_name(char *name);      /* comm.c */
@@ -3636,32 +3470,24 @@ void do_rename(CHAR_DATA *ch, char *argument)
 /* First, check if there is a player named that off-line */
 	sprintf(strsave, "%s%s", PLAYER_DIR, capitalize(new_name));
 
-	fclose(fpReserve);              /* close the reserve file */
 	file = fopen(strsave, "r");     /* attempt to to open pfile */
 
 	if (file) {
 		send_to_char("A player with that name already exists!\n\r", ch);
 		fclose(file);
-		fpReserve = fopen(NULL_FILE, "r");
 		return;
 	}
-
-	fpReserve = fopen(NULL_FILE, "r");      /* reopen the extra file */
 
 /* Check .gz file ! */
 	sprintf(strsave, "%s%s.gz", PLAYER_DIR, capitalize(new_name));
 
-	fclose(fpReserve);              /* close the reserve file */
 	file = fopen(strsave, "r");     /* attempt to to open pfile */
 
 	if (file) {
 		send_to_char("A player with that name already exists in a compacted file.\n\r", ch);
 		fclose(file);
-		fpReserve = fopen(NULL_FILE, "r");
 		return;
 	}
-
-	fpReserve = fopen(NULL_FILE, "r");      /* reopen the extra file */
 
 	if (get_char_world(ch, new_name)) {
 		send_to_char("A player with the name you specified already exists.\n\r", ch);
@@ -4395,76 +4221,6 @@ void do_gobstopper(CHAR_DATA *ch, char *argument)
 	}
 }
 
-void do_auto_shutdown()
-{
-	FILE *fp, *cmdLog;
-	DESCRIPTOR_DATA *d, *d_next;
-	char buf [100], buf2[100];
-	extern int port, control;
-
-	fp = fopen(COPYOVER_FILE, "w");
-
-	if (!fp) {
-		perror("do_copyover:fopen");
-
-		for (d = globalSystemState.connection_head; d != NULL; d = d_next) {
-			if (d->character) {
-				do_save(d->character, "");
-				send_to_char("Ok I tried but we're crashing anyway sorry!\n\r", d->character);
-			}
-
-			d_next = d->next;
-			close_socket(d);
-		}
-
-		_Exit(1);
-		return;
-	}
-
-	if ((cmdLog = fopen(LAST_COMMANDS, "r")) == NULL) {
-		log_string("Crash function: can't open last commands log..");
-	} else {
-		time_t rawtime;
-		struct tm *timeinfo;
-		char buf[128];
-		char cmd[256];
-
-		time(&rawtime);
-		timeinfo = localtime(&rawtime);
-		strftime(buf, 128, "./log/command/lastCMDs-%m%d-%H%M.txt", timeinfo);
-		sprintf(cmd, "mv ./log/command/lastCMDs.txt %s", buf);
-		if (system(cmd) == -1) {
-            log_string("System command failed: ");
-            log_string(cmd);
-        }
-	}
-
-	do_asave(NULL, "changed");
-
-	sprintf(buf, "\n\rYour mud is crashing attempting a copyover now!\n\r");
-
-	for (d = globalSystemState.connection_head; d; d = d_next) {
-		CHAR_DATA *och = CH(d);
-		d_next = d->next; /* We delete from the list , so need to save this */
-
-		if (!d->character || d->connected > CON_PLAYING) {
-			write_to_descriptor(d->descriptor, "\n\rSorry, we are rebooting. Come back in a few minutes.\n\r", 0);
-			close_socket(d); /* throw'em out */
-		} else {
-			fprintf(fp, "%d %s %s\n", d->descriptor, och->name, d->host);
-			save_char_obj(och);
-			write_to_descriptor(d->descriptor, buf, 0);
-		}
-	}
-
-	fprintf(fp, "-1\n");
-	fclose(fp);
-	fclose(fpReserve);
-	sprintf(buf, "%d", port);
-	sprintf(buf2, "%d", control);
-	execl(EXE_FILE, "Badtrip", buf, "copyover", buf2, (char *)NULL);
-	_Exit(1);
-}
 
 void do_mrelic(CHAR_DATA *ch, char *argument)
 {

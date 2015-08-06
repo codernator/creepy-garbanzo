@@ -25,8 +25,6 @@ extern void battlefield_update(void);
 *	external variables
 ***************************************************************************/
 
-extern int port;        /* from comm.c, what port are we running on */
-
 void gain_object_exp(CHAR_DATA * ch, OBJ_DATA * obj, int gain);
 extern void blood_rage(CHAR_DATA * ch);
 extern void random_drop(void);
@@ -1584,7 +1582,6 @@ static void aggr_update(void)
 ***************************************************************************/
 void update_handler(void)
 {
-	extern bool tickset;
 	static int pulse_area;
 	static int pulse_mobile;
 	static int pulse_violence;
@@ -1594,7 +1591,7 @@ void update_handler(void)
 	static int pulse_battlefield;
 	static int pulse_underwater;
 
-	if (--pulse_rooms <= 0 || tickset) {
+	if (--pulse_rooms <= 0 || globalSystemState.tickset) {
 		pulse_rooms = PULSE_ROOM;
 		room_update();
 		impnet("`!Update`7: Rooms have been updated.", NULL, NULL, IMN_UPDATES, 0, 0);
@@ -1624,7 +1621,7 @@ void update_handler(void)
 		impnet("`!Update`7: Violence has been updated.", NULL, NULL, IMN_UPDATES, 0, 0);
 	}
 
-	if (--pulse_battlefield <= 0 || tickset) {
+	if (--pulse_battlefield <= 0 || globalSystemState.tickset) {
 		/*used to be 40, changing it temporary to 120*/
 		pulse_battlefield = (40 * PULSE_PER_SECOND);
 		battlefield_update();
@@ -1636,7 +1633,7 @@ void update_handler(void)
 		underwater_update( );
 	}
 
-	if (tickset)
+	if (globalSystemState.tickset)
 		pulse_point = 0;
 
 	if (--pulse_point <= 0) {
@@ -1645,7 +1642,7 @@ void update_handler(void)
 		wiznet("TICK!", NULL, NULL, WIZ_TICKS, 0, 0);
 		impnet("`2TICK!`7", NULL, NULL, IMN_TICKS, 0, 0);
 		pulse_point = PULSE_TICK;
-		tickset = 0;
+		globalSystemState.tickset = false;
 		if (reboot_tick_counter > 0) {
 			reboot_tick_counter--;
 			sprintf(buf, " `6R`6`^e`&b`^o`6ot`` in %d tick%s.",

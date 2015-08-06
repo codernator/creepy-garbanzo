@@ -90,7 +90,6 @@ const struct cmd_type cmd_table[] =
 	{ "commands",	  do_commands,     POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "compare",	  do_compare,      POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "consider",	  do_consider,     POS_RESTING,  0,	 LOG_NORMAL, 1 },
-	{ "count",	      do_count,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "credits",	  do_credits,      POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "equipment",	  do_equipment,    POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "esp",	      do_esp,	       POS_STANDING, 0,	 LOG_NORMAL, 1 },

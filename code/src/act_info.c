@@ -1326,7 +1326,6 @@ char *const month_name[] =
 
 void do_time(CHAR_DATA *ch, char *argument)
 {
-	extern char boot_time[];
 	char *suf;
 	int day;
 
@@ -1363,32 +1362,9 @@ void do_time(CHAR_DATA *ch, char *argument)
 
 	printf_to_char(ch, "This `#B`Pa`@d `#T`Pr`@i`#p`` kicked in at `O%s``\r"
 		       "The `#B`Pa`@d `#T`Pr`@i`#p`` Server clock is screaming, `&%s``\r",
-		       boot_time, (char *)ctime(&globalSystemState.current_time));
+		       globalSystemState.boot_time, (char *)ctime(&globalSystemState.current_time));
 
 	return;
-}
-
-
-void do_count(CHAR_DATA *ch, char *argument)
-{
-	DESCRIPTOR_DATA *d;
-	int count;
-	extern int max_on;
-
-	count = 0;
-	for (d = globalSystemState.connection_head; d != NULL; d = d->next)
-		if (d->connected == CON_PLAYING && can_see(ch, d->character))
-			count++;
-
-	if (max_on < count)
-		max_on = count;
-
-	if (max_on == count)
-		printf_to_char(ch, "There are ```@%d ``characters on, the most so far today.\n\r", count);
-
-	else
-		printf_to_char(ch, "There are ```2%d ``characters on, the most on today was ```@%d``.\n\r",
-			       count, max_on);
 }
 
 void do_inventory(CHAR_DATA *ch, char *argument)
@@ -1398,17 +1374,12 @@ void do_inventory(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-
-
 /* New do_equipment() function. Shows eq slots not worn.*/
 void do_equipment(CHAR_DATA *ch, /*@unused@*/char *argument)
 {
     look_equipment(ch);
 	return;
 }
-
-
-
 
 void do_compare(CHAR_DATA *ch, char *argument)
 {

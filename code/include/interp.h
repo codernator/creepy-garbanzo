@@ -139,7 +139,6 @@ DECLARE_DO_FUN(do_combine);
 DECLARE_DO_FUN(do_compact);
 DECLARE_DO_FUN(do_compare);
 DECLARE_DO_FUN(do_consider);
-DECLARE_DO_FUN(do_count);
 DECLARE_DO_FUN(do_credits);
 DECLARE_DO_FUN(do_delet);
 DECLARE_DO_FUN(do_delete);

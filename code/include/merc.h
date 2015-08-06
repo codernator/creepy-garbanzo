@@ -68,13 +68,6 @@ typedef struct mprog_list MPROG_LIST;
 typedef struct mprog_code MPROG_CODE;
 typedef struct help_area_data HELP_AREA;
 typedef struct system_state SYSTEM_STATE;
-struct system_state {
-    DESCRIPTOR_DATA *connection_head;               /* All open descriptors */
-    OBJ_DATA *object_head;                          /* All objects in the game. */
-    bool wizlock;                                   /* Game is wizlocked. */
-    bool newlock;                                   /* Game is newlocked. */
-    time_t current_time;                            /* Time of this pulse. */
-};
 
 
 /* required for new skill system */
@@ -134,6 +127,19 @@ typedef void DO_FUN(/*@partial@*/CHAR_DATA * ch, char *argument);
 #define ANGEL                   (MAX_LEVEL - 7)
 #define AVATAR                  (MAX_LEVEL - 8)
 #define HERO                    LEVEL_HERO
+
+struct system_state {
+    DESCRIPTOR_DATA *connection_head;               /* All open descriptors */
+    OBJ_DATA *object_head;                          /* All objects in the game. */
+    bool wizlock;                                   /* Game is wizlocked. */
+    bool newlock;                                   /* Game is newlocked. */
+    time_t current_time;                            /* Time of this pulse. */
+    bool tickset;                                   /* Force a tick? whaat? --Eo */
+    bool merc_down;                                 /* Shutdown */
+    char boot_time[MIL];
+    int port;
+    int control;
+};
 
 
 /* Site ban structure. */
@@ -2162,18 +2168,11 @@ extern ROOM_INDEX_DATA *room_index_hash [MAX_KEY_HASH];
 * AREA_LIST contains a list of areas to boot.
 * all files are read in completely at bootup.
 * most output files (bug, idea, typo, shutdown) are append-only.
-*
-* the NULL_FILE is held open so that we have a stream handle in reserve,
-* so players can go ahead and telnet to all the other descriptors.
-* then we close it whenever we need to open a file (e.g. a save file).
 ***************************************************************************/
-
-
 #define LAST_COMMAND     "./db/last_command.txt"  /* Tracking commands */
 #define PLAYER_DIR       "./db/player/"           /* Player files */
 #define GOD_DIR          "./db/gods/"             /* list of gods */
 #define TEMP_FILE        "./db/player/romtmp"
-#define NULL_FILE        "/dev/null"              /* To reserve one stream */
 #define RDESC_DIR        "./db/rdesc/"
 #define MEMLOG_FILE      "./log/"
 #define EXE_FILE         "./badtrip"
@@ -2240,7 +2239,6 @@ void wear_obj(CHAR_DATA * ch, OBJ_DATA * obj, bool fReplace);
 /* act_wiz.c */
 void wiznet(char *string, /*@null@*/ CHAR_DATA * ch, /*@null@*/ OBJ_DATA * obj, long flag, long flag_skip, int min_level);
 void impnet(char *string, CHAR_DATA * ch, OBJ_DATA * obj, long flag, long flag_skip, int min_level);
-void copyover_recover(void);
 
 /* alias.c */
 void substitute_alias(DESCRIPTOR_DATA * d, char *input);

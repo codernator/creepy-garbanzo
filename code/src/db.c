@@ -15,7 +15,6 @@
 
 
 
-extern FILE *fpReserve;
 extern long flag_lookup(const char *word, const struct flag_type *flag_table);
 extern int _filbuf(FILE *);
 extern void init_mm(void);
@@ -148,13 +147,6 @@ static void reset_areas(void);
 void reset_area(AREA_DATA * area);
 
 extern void battlefield_clear(void);
-
-/***************************************************************************
-*	copyover
-***************************************************************************/
-extern bool write_to_descriptor(int desc, char *txt, int length);
-extern int close(int fd);
-
 
 
 
@@ -3051,8 +3043,6 @@ void do_dump(CHAR_DATA *ch, char *argument)
 	long match;
 
 	/* start memory dump */
-	fclose(fpReserve);
-
 	fp = fopen("mem.dmp", "w");
 
 	num_pcs = 0;
@@ -3193,8 +3183,6 @@ void do_dump(CHAR_DATA *ch, char *argument)
 	}
 	fclose(fp);
 	/* end of object dump */
-
-	fpReserve = fopen(NULL_FILE, "r");
 }
 
 
@@ -3217,7 +3205,6 @@ void append_file(CHAR_DATA *ch, char *file, char *str)
 	if (IS_NPC(ch) || str[0] == '\0')
 		return;
 
-	fclose(fpReserve);
 	if ((fp = fopen(file, "a")) == NULL) {
 		perror(file);
 		send_to_char("Could not open the file!\n\r", ch);
@@ -3225,14 +3212,7 @@ void append_file(CHAR_DATA *ch, char *file, char *str)
 		fprintf(fp, "[%5ld] %s: %s\n", ch->in_room ? ch->in_room->vnum : 0, ch->name, str);
 		fclose(fp);
 	}
-
-	fpReserve = fopen(NULL_FILE, "r");
-	return;
 }
-
-
-
-
 
 /*
  * Reports a bug.

@@ -12,7 +12,6 @@
 * The OS-dependent functions are Read_from_descriptor and Write_to_descriptor.
 * -- Furey  26 Jan 1993
 ***************************************************************************/
-
 #include <sys/time.h>
 #include <ctype.h>
 #include <errno.h>
@@ -25,10 +24,9 @@
 #include "recycle.h"
 #include "interp.h"
 
-
-/***************************************************************************
-*  Socket and TCP/IP stuff.
-***************************************************************************/
+/**
+ * Socket and TCP/IP stuff.
+ */
 #include <fcntl.h>
 #include <netdb.h>
 #include "telnet.h"
@@ -37,10 +35,26 @@
 #define STDOUT_FILENO 1
 #endif
 
-SYSTEM_STATE globalSystemState = {
-    NULL, NULL, false, false, 0
-};
 
+/**
+ * OS-dependent declarations.
+ */
+extern int close(int fd);
+extern int gettimeofday(struct timeval *tp, struct timezone *tzp);
+
+extern int select(int width, fd_set * readfds, fd_set * writefds, fd_set * exceptfds, struct timeval *timeout);
+extern int socket(int domain, int type, int protocol);
+
+extern pid_t waitpid(pid_t pid, int *status, int options);
+extern pid_t fork(void);
+extern int kill(pid_t pid, int sig);
+extern int pipe(int filedes[2]);
+extern int dup2(int oldfd, int newfd);
+extern int execl(const char *path, const char *arg, ...);
+
+/**
+ * Game declarations.
+ */
 extern char *color_table[];
 extern bool is_space(const char test);
 extern bool run_olc_editor(DESCRIPTOR_DATA * d);
@@ -50,61 +64,29 @@ extern void mp_act_trigger(char *argument, CHAR_DATA * mob, CHAR_DATA * ch, cons
 extern void string_add(CHAR_DATA * ch, char *argument);
 extern char *string_replace(char *orig, char *old, char *new);
 
-/***************************************************************************
-* Command tracking stuff.
-***************************************************************************/
-void init_signals(void);
-void auto_shutdown(void);
+bool copyover();
 
-/***************************************************************************
-* OS-dependent declarations.
-***************************************************************************/
-
-int close(int fd);
-int gettimeofday(struct timeval *tp, struct timezone *tzp);
-
-int select(int width, fd_set * readfds, fd_set * writefds, fd_set * exceptfds, struct timeval *timeout);
-int socket(int domain, int type, int protocol);
-
-pid_t waitpid(pid_t pid, int *status, int options);
-pid_t fork(void);
-int kill(pid_t pid, int sig);
-int pipe(int filedes[2]);
-int dup2(int oldfd, int newfd);
-int execl(const char *path, const char *arg, ...);
-
-
+static void game_loop(int control);
+static int init_socket(int port);
+static void init_descriptor(int control);
+static bool read_from_descriptor(DESCRIPTOR_DATA * d);
+static bool write_to_descriptor(int desc, char *txt, int length);
+static bool process_output(DESCRIPTOR_DATA * d, bool fPrompt);
+static void read_from_buffer(DESCRIPTOR_DATA * d);
+static void check_afk(CHAR_DATA * ch);
+static void bust_a_prompt(CHAR_DATA * ch);
+static void init_signals(void);
+static void auto_shutdown(void);
+static void copyover_recover(void);
 
 /***************************************************************************
 * Global variables.
 ***************************************************************************/
-DESCRIPTOR_DATA *d_next;                        /*   Next descriptor in loop      */
-FILE *fpReserve;                                /*   Reserved file handle         */
-bool merc_down;                                 /*   Shutdown                     */
-bool tickset;                                   /*   force a tick? whaat? --Eo    */
-bool quiet_note_post;                           /*   Post notes quietly! --Eo     */
-char boot_time[MIL];
-int port;
-int control;
-int max_on = 0;
+SYSTEM_STATE globalSystemState = {
+    NULL, NULL, false, false, 0, false, false, "", 0, 0
+};
+static DESCRIPTOR_DATA *d_next;  /* Next descriptor in loop  YUCKY */
 
-void game_loop(int control);
-int init_socket(int port);
-void init_descriptor(int control);
-bool read_from_descriptor(DESCRIPTOR_DATA * d);
-bool write_to_descriptor(int desc, char *txt, int length);
-
-
-/***************************************************************************
-* Other local functions(OS-independent).
-***************************************************************************/
-int main(int argc, char **argv);
-bool process_output(DESCRIPTOR_DATA * d, bool fPrompt);
-void read_from_buffer(DESCRIPTOR_DATA * d);
-void check_afk(CHAR_DATA * ch);
-void bust_a_prompt(CHAR_DATA * ch);
-void init_signals(void);
-extern void do_auto_shutdown(void);
 
 
 int main(int argc, char **argv)
@@ -119,26 +101,17 @@ int main(int argc, char **argv)
      */
 	gettimeofday(&now_time, NULL);
 	globalSystemState.current_time = (time_t)now_time.tv_sec;
-	strcpy(boot_time, (char *)ctime(&globalSystemState.current_time));
-
-
-    /*
-     * Reserve one channel for our use.
-     */
-	if ((fpReserve = fopen(NULL_FILE, "r")) == NULL) {
-		perror(NULL_FILE);
-		_Exit(1);
-	}
+	strcpy(globalSystemState.boot_time, (char *)ctime(&globalSystemState.current_time));
 
     /*
      * Get the port number.
      */
-	port = 7778;
+	globalSystemState.port = 7778;
 	if (argc > 1) {
 		if (!is_number(argv[1])) {
 			fprintf(stderr, "Usage: %s [port #]\n", argv[0]);
 			_Exit(1);
-		} else if ((port = atoi(argv[1])) <= 1024) {
+		} else if ((globalSystemState.port = atoi(argv[1])) <= 1024) {
 			fprintf(stderr, "Port number must be above 1024.\n");
 			_Exit(1);
 		}
@@ -146,36 +119,33 @@ int main(int argc, char **argv)
 		/* Are we recovering from a copyover? */
 		if (argv[2] && argv[2][0]) {
 			fCopyOver = TRUE;
-			control = atoi(argv[3]);
+			globalSystemState.control = atoi(argv[3]);
 		} else {
 			fCopyOver = FALSE;
 		}
 	}
 
-
-
     /*
      * Run the game.
      */
 	if (!fCopyOver) {
-		control = init_socket(port);
+		globalSystemState.control = init_socket(globalSystemState.port);
     }
 
 	boot_db();
-	sprintf(log_buf, "BT is ready to rock on port %d.", port);
+	sprintf(log_buf, "BT is ready to rock on port %d.", globalSystemState.port);
 	log_string(log_buf);
 
 	if (fCopyOver) {
 		copyover_recover();
     }
 
-	game_loop(control);
-	close(control);
+	game_loop(globalSystemState.control);
+	close(globalSystemState.control);
 
 	log_string("Normal termination of game.");
 	_Exit(0);
 }
-
 
 int init_socket(int port)
 {
@@ -241,7 +211,7 @@ void game_loop(int control)
 	init_signals();
 
 /* Main loop */
-	while (!merc_down) {
+	while (!globalSystemState.merc_down) {
 		fd_set in_set;
 		fd_set out_set;
 		fd_set exc_set;
@@ -420,11 +390,7 @@ void game_loop(int control)
 		gettimeofday(&last_time, NULL);
 		globalSystemState.current_time = (time_t)last_time.tv_sec;
 	}
-
-	return;
 }
-
-
 
 void init_descriptor(int control)
 {
@@ -516,15 +482,8 @@ void init_descriptor(int control)
 	dnew->next = globalSystemState.connection_head;
 	globalSystemState.connection_head = dnew;
 
-	if (port == 7779)
-		write_to_descriptor(dnew->descriptor, "\n\r\n\r.---------------------------------.\n\r| Bad Trip MUD -- Test/Build Port |\n\r| For the main MUD, use port 7778 |\n\r.---------------------------------.\n\r\n\r", 0);
-
 	write_to_descriptor(dnew->descriptor, "Ansi intro screen?(y/n) \n\r", 0);
-
-	return;
 }
-
-
 
 void close_socket(DESCRIPTOR_DATA *dclose)
 {
@@ -576,9 +535,7 @@ void close_socket(DESCRIPTOR_DATA *dclose)
 
 	close(dclose->descriptor);
 	free_descriptor(dclose);
-	return;
 }
-
 
 bool read_from_descriptor(DESCRIPTOR_DATA *d)
 {
@@ -624,8 +581,6 @@ bool read_from_descriptor(DESCRIPTOR_DATA *d)
 	d->inbuf[iStart] = '\0';
 	return TRUE;
 }
-
-
 
 /*
  * Transfer one line from input buffer to input line.
@@ -729,17 +684,15 @@ void read_from_buffer(DESCRIPTOR_DATA *d)
  */
 bool process_output(DESCRIPTOR_DATA *d, bool fPrompt)
 {
-	extern bool merc_down;
-
 /*
  * Bust a prompt.
  */
-	if (!merc_down) {
+	if (!globalSystemState.merc_down) {
 		if (d->showstr_point) {
 			write_to_buffer(d, "\n\r[Hit Return to continue]\n\r\n\r", 0);
 		} else if (fPrompt && d->ed_string && d->connected == CON_PLAYING) {
 			write_to_buffer(d, "> ", 2);
-		} else if (fPrompt && !merc_down && d->connected == CON_PLAYING) {
+		} else if (fPrompt && !globalSystemState.merc_down && d->connected == CON_PLAYING) {
 			CHAR_DATA *ch;
 			CHAR_DATA *victim;
 
@@ -838,7 +791,6 @@ bool process_output(DESCRIPTOR_DATA *d, bool fPrompt)
 		return TRUE;
 	}
 }
-
 
 /*
  * Bust a prompt(player settable prompt)
@@ -1051,8 +1003,6 @@ void bust_a_prompt(CHAR_DATA *ch)
 	return;
 }
 
-
-
 /*
  * Append onto an output buffer.
  */
@@ -1102,8 +1052,6 @@ void write_to_buffer(DESCRIPTOR_DATA *d, const char *txt, int length)
 	return;
 }
 
-
-
 /*
  * Lowest level output function.
  * Write a block of text to the file descriptor.
@@ -1130,8 +1078,6 @@ bool write_to_descriptor(int desc, char *txt, int length)
 
 	return TRUE;
 }
-
-
 
 #define CNUM(x) ch->pcdata->x
 void process_color(CHAR_DATA *ch, char a)
@@ -1406,7 +1352,6 @@ void send_to_char(char *txt, CHAR_DATA *ch)
 
 /* routine used to send color codes without displaying colors */
 /* JDS */
-
 void send_to_char_ascii(char *txt, CHAR_DATA *ch)
 {
 	if (txt != NULL && ch->desc != NULL)
@@ -1427,7 +1372,6 @@ void page_to_char(char *txt, CHAR_DATA *ch)
 	ch->desc->showstr_point = ch->desc->showstr_head;
 	show_string(ch->desc, "");
 }
-
 
 /* string pager */
 void show_string(struct descriptor_data *d, char *input)
@@ -1478,7 +1422,6 @@ void show_string(struct descriptor_data *d, char *input)
 	}
 }
 
-
 /* quick sex fixer */
 void fix_sex(CHAR_DATA *ch)
 {
@@ -1512,7 +1455,6 @@ int espBroadcastAndCheck(CHAR_DATA *ch, char *CanSeeAct, char *CanTSeeAct)
 
 	return esper;
 }
-
 
 void act(const char *format, CHAR_DATA *ch, const void *arg1, const void *arg2, int type)
 {
@@ -1677,11 +1619,6 @@ void act_new(const char *format, CHAR_DATA *ch, const void *arg1, const void *ar
 	return;
 }
 
-
-
-
-
-
 /* source: EOD, by John Booth <???> */
 /***************************************************************************
 *	printf_to_char
@@ -1699,9 +1636,6 @@ void printf_to_char(CHAR_DATA *ch, char *fmt, ...)
 	send_to_char(buf, ch);
 }
 
-/***************************************************************************
-*	printf_bug
-***************************************************************************/
 void printf_bug(char *fmt, ...)
 {
 	char buf[2 * MSL];
@@ -1715,10 +1649,6 @@ void printf_bug(char *fmt, ...)
 	bug(buf, 0);
 }
 
-
-/***************************************************************************
-*	printf_log
-***************************************************************************/
 void printf_log(char *fmt, ...)
 {
 	char buf[2 * MSL];
@@ -1731,12 +1661,6 @@ void printf_log(char *fmt, ...)
 	log_string(buf);
 }
 
-
-/***************************************************************************
-*	set_wait
-*
-*	set the wait time
-***************************************************************************/
 void set_wait(CHAR_DATA *ch, int len)
 {
 	CHAR_DATA *vch;
@@ -1777,12 +1701,6 @@ void set_wait(CHAR_DATA *ch, int len)
 	ch->wait = UMAX(ch->wait, len);
 }
 
-
-/***************************************************************************
-*	set_daze
-*
-*	set the wait time
-***************************************************************************/
 void set_daze(CHAR_DATA *ch, int len)
 {
 	int mod;
@@ -1807,18 +1725,18 @@ void sig_handler(int sig)
 	switch (sig) {
 	case SIGBUS:
 		bug("Sig handler SIGBUS.", 0);
-		do_auto_shutdown();
+		auto_shutdown();
 		break;
 	case SIGTERM:
 		bug("Sig handler SIGTERM.", 0);
-		do_auto_shutdown();
+		auto_shutdown();
 		break;
 	case SIGABRT:
 		bug("Sig handler SIGABRT", 0);
-		do_auto_shutdown();
+		auto_shutdown();
 	case SIGSEGV:
 		bug("Sig handler SIGSEGV", 0);
-		do_auto_shutdown();
+		auto_shutdown();
 		break;
 	}
 }
@@ -1829,4 +1747,240 @@ void init_signals()
 	signal(SIGTERM, sig_handler);
 	signal(SIGABRT, sig_handler);
 	signal(SIGSEGV, sig_handler);
+}
+
+void auto_shutdown()
+{
+	FILE *fp, *cmdLog;
+	DESCRIPTOR_DATA *d, *d_next;
+	char buf [100], buf2[100];
+
+	fp = fopen(COPYOVER_FILE, "w");
+
+	if (!fp) {
+		perror("do_copyover:fopen");
+
+		for (d = globalSystemState.connection_head; d != NULL; d = d_next) {
+			if (d->character) {
+				do_save(d->character, "");
+				send_to_char("Ok I tried but we're crashing anyway sorry!\n\r", d->character);
+			}
+
+			d_next = d->next;
+			close_socket(d);
+		}
+
+		_Exit(1);
+		return;
+	}
+
+	if ((cmdLog = fopen(LAST_COMMANDS, "r")) == NULL) {
+		log_string("Crash function: can't open last commands log..");
+	} else {
+		time_t rawtime;
+		struct tm *timeinfo;
+		char buf[128];
+		char cmd[256];
+
+		time(&rawtime);
+		timeinfo = localtime(&rawtime);
+		strftime(buf, 128, "./log/command/lastCMDs-%m%d-%H%M.txt", timeinfo);
+		sprintf(cmd, "mv ./log/command/lastCMDs.txt %s", buf);
+		if (system(cmd) == -1) {
+            log_string("System command failed: ");
+            log_string(cmd);
+        }
+	}
+
+	do_asave(NULL, "changed");
+
+	sprintf(buf, "\n\rYour mud is crashing attempting a copyover now!\n\r");
+
+	for (d = globalSystemState.connection_head; d; d = d_next) {
+		CHAR_DATA *och = CH(d);
+		d_next = d->next; /* We delete from the list , so need to save this */
+
+		if (!d->character || d->connected > CON_PLAYING) {
+			write_to_descriptor(d->descriptor, "\n\rSorry, we are rebooting. Come back in a few minutes.\n\r", 0);
+			close_socket(d); /* throw'em out */
+		} else {
+			fprintf(fp, "%d %s %s\n", d->descriptor, och->name, d->host);
+			save_char_obj(och);
+			write_to_descriptor(d->descriptor, buf, 0);
+		}
+	}
+
+	fprintf(fp, "-1\n");
+	fclose(fp);
+	sprintf(buf, "%d", globalSystemState.port);
+	sprintf(buf2, "%d", globalSystemState.control);
+	execl(EXE_FILE, "Badtrip", buf, "copyover", buf2, (char *)NULL);
+	_Exit(1);
+}
+
+/**
+ * determine whether a character is active - if they are, remove the AFK bit
+ */
+void check_afk(CHAR_DATA *ch)
+{
+	if (ch == NULL || ch->desc == NULL || ch->desc->connected != CON_PLAYING)
+		return;
+
+	if (IS_SET(ch->comm, COMM_AFK))
+		REMOVE_BIT(ch->comm, COMM_AFK);
+}
+
+bool copyover()
+{
+	FILE *fp, *cmdLog;
+	DESCRIPTOR_DATA *d, *d_next;
+	char buf [100], buf2[100];
+
+	fp = fopen(COPYOVER_FILE, "w");
+
+	if (!fp) {
+		perror("do_copyover:fopen");
+		return false;
+	}
+
+	/* Consider changing all saved areas here, if you use OLC */
+
+	/* do_asave (NULL, ""); - autosave changed areas */
+
+
+	sprintf(buf, "\n\r Preparing for a copyover....\n\r");
+
+	/* For each playing descriptor, save its state */
+	for (d = globalSystemState.connection_head; d; d = d_next) {
+		CHAR_DATA *och = CH(d);
+		d_next = d->next; /* We delete from the list , so need to save this */
+
+		if (!d->character || d->connected > CON_PLAYING) { /* drop those logging on */
+			write_to_descriptor(d->descriptor, "\n\rSorry, we are rebooting. Come back in a few minutes.\n\r", 0);
+			close_socket(d);  /* throw'em out */
+		} else {
+			fprintf(fp, "%d %s %s\n", d->descriptor, och->name, d->host);
+
+			if (och->level == 1) {
+				write_to_descriptor(d->descriptor, "Since you are level one, and level one characters do not save, you gain a free level!\n\r", 0);
+				advance_level(och, 1);
+			}
+			do_stand(och, "");
+			save_char_obj(och);
+		}
+	}
+
+	fprintf(fp, "-1\n");
+	fclose(fp);
+
+	/* Dalamar - Save our last commands file.. */
+	if ((cmdLog = fopen(LAST_COMMANDS, "r")) == NULL) {
+		log_string("Crash function: can't open last commands log..");
+	} else {
+		time_t rawtime;
+		struct tm *timeinfo;
+		char buf[128];
+		char cmd[256];
+
+		time(&rawtime);
+		timeinfo = localtime(&rawtime);
+		strftime(buf, 128, "./log/command/lastCMDs-%m%d-%H%M.txt", timeinfo);
+		sprintf(cmd, "mv ./log/command/lastCMDs.txt %s", buf);
+		if (system(cmd) == -1) {
+            log_string("System command failed: ");
+            log_string(cmd);
+        }
+	}
+
+	/** exec - descriptors are inherited */
+	sprintf(buf, "%d", globalSystemState.port);
+	sprintf(buf2, "%d", globalSystemState.control);
+	execl(EXE_FILE, "Badtrip", buf, "copyover", buf2, (char *)NULL);
+
+	/** Failed - sucessful exec will not return */
+	perror("do_copyover: execl");
+	return false;
+}
+
+/* Recover from a copyover - load players */
+void copyover_recover()
+{
+	DESCRIPTOR_DATA *d;
+	FILE *fp;
+	char name [100];
+	char host[MSL];
+	int desc;
+	bool fOld;
+
+/*	logf ("Copyover recovery initiated");*/
+
+	fp = fopen(COPYOVER_FILE, "r");
+
+	if (!fp) { /* there are some descriptors open which will hang forever then ? */
+		perror("copyover_recover:fopen");
+		_Exit(1);
+		return;
+	}
+
+	unlink(COPYOVER_FILE);  /* In case something crashes - doesn't prevent reading	*/
+
+	for (;; ) {
+        int scancount;
+		scancount = fscanf(fp, "%d %s %s\n", &desc, name, host);
+		if (scancount == EOF || desc == -1)
+			break;
+
+		/* Write something, and check if it goes error-free */
+		if (!write_to_descriptor(desc, "", 0)) {
+			close(desc);  /* nope */
+			continue;
+		}
+
+		d = new_descriptor();
+		d->descriptor = desc;
+
+		d->host = str_dup(host);
+		d->next = globalSystemState.connection_head;
+		globalSystemState.connection_head = d;
+		d->connected = CON_COPYOVER_RECOVER; /* -15, so close_socket frees the char */
+
+
+		/* Now, find the pfile */
+
+		fOld = load_char_obj(d, name);
+
+		if (!fOld) { /* Player file not found?! */
+			write_to_descriptor(desc, "\n\rSomehow, your character was lost in the copyover. Sorry.\n\r", 0);
+			close_socket(d);
+		} else { /* ok! */
+/*			write_to_descriptor (desc, "\n\rCopyover recovery complete.\n\r",0);*/
+
+			/* Just In Case */
+			if (!d->character->in_room)
+				d->character->in_room = get_room_index(ROOM_VNUM_TEMPLE);
+
+			/* Insert in the char_list */
+			d->character->next = char_list;
+			char_list = d->character;
+
+			send_to_char("\n\r`6o`&-`O-====`8---------------------------------------------------------`O===`&--`6o``\n\r", d->character);
+			send_to_char("`2       ___    ___        __________________        ___    ___``\n\r", d->character);
+			send_to_char("`2  ____/ _ \\__/ _ \\_____ (------------------) _____/ _ \\__/ _ \\____``\n\r", d->character);
+			send_to_char("`2 (  _| / \\/  \\/ \\ |_   ) \\    `&Copyover`2    / (   _| / \\/  \\/ \\ |_  )``\n\r", d->character);
+			send_to_char("`2  \\(  \\|  )  (  |/  ) (___)  __________  (___) (  \\|  )  (  |/  )/``\n\r", d->character);
+			send_to_char("`2   '   '  \\`!''`2/  '  (_________)        (_________)  '  \\`!''`2/  '   '``\n\r", d->character);
+			send_to_char("`2           ||                                          ||``\n\r", d->character);
+			send_to_char("`6o`&-`O-====`8---------------------------------------------------------`O===`&--`6o``\n\r", d->character);
+			char_to_room(d->character, d->character->in_room);
+			do_look(d->character, "auto");
+			act("$n materializes!", d->character, NULL, NULL, TO_ROOM);
+			d->connected = CON_PLAYING;
+
+			if (d->character->pet != NULL) {
+				char_to_room(d->character->pet, d->character->in_room);
+				act("$n materializes!.", d->character->pet, NULL, NULL, TO_ROOM);
+			}
+		}
+	}
+	fclose(fp);
 }
