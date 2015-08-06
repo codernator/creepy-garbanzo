@@ -1,30 +1,3 @@
-/****************************************************************************
- *   Original Diku Mud copyright(C) 1990, 1991 by Sebastian Hammer,         *
- *   Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
- *                                                                          *
- *   Merc Diku Mud improvments copyright(C) 1992, 1993 by Michael           *
- *   Chastain, Michael Quan, and Mitchell Tse.                              *
- *	                                                                        *
- *   In order to use any part of this Merc Diku Mud, you must comply with   *
- *   both the original Diku license in 'license.doc' as well the Merc	    *
- *   license in 'license.txt'.  In particular, you may not remove either of *
- *   these copyright notices.                                               *
- *                                                                          *
- *   Much time and thought has gone into this software and you are          *
- *   benefitting.  We hope that you share your changes too.  What goes      *
- *   around, comes around.                                                  *
- ***************************************************************************/
-
-/****************************************************************************
-*   ROM 2.4 is copyright 1993-1998 Russ Taylor                              *
-*   ROM has been brought to you by the ROM consortium                       *
-*       Russ Taylor(rtaylor@hypercube.org)                                  *
-*       Gabrielle Taylor(gtaylor@hypercube.org)                             *
-*       Brian Moore(zump@rom.org)                                           *
-*   By using this code, you have agreed to follow the terms of the          *
-*   ROM license, in the file Rom24/doc/rom.license                          *
-****************************************************************************/
-
 /***************************************************************************
 * This file contains all of the OS-dependent stuff:
 *   startup, signals, BSD sockets for tcp/ip, i/o, timing.
@@ -64,6 +37,9 @@
 #define STDOUT_FILENO 1
 #endif
 
+SYSTEM_STATE globalSystemState = {
+    NULL, NULL, false, false, 0
+};
 
 extern char *color_table[];
 extern bool is_space(const char test);
@@ -102,17 +78,12 @@ int execl(const char *path, const char *arg, ...);
 /***************************************************************************
 * Global variables.
 ***************************************************************************/
-DESCRIPTOR_DATA *descriptor_list;               /*   All open descriptors         */
 DESCRIPTOR_DATA *d_next;                        /*   Next descriptor in loop      */
 FILE *fpReserve;                                /*   Reserved file handle         */
-bool god;                                       /*   All new chars are gods!      */
 bool merc_down;                                 /*   Shutdown                     */
-bool wizlock;                                   /*   Game is wizlocked            */
 bool tickset;                                   /*   force a tick? whaat? --Eo    */
 bool quiet_note_post;                           /*   Post notes quietly! --Eo     */
-bool newlock;                                   /*   Game is newlocked            */
 char boot_time[MIL];
-time_t current_time;                            /*   time of this pulse           */
 int port;
 int control;
 int max_on = 0;
@@ -147,8 +118,8 @@ int main(int argc, char **argv)
      * Init time.
      */
 	gettimeofday(&now_time, NULL);
-	current_time = (time_t)now_time.tv_sec;
-	strcpy(boot_time, (char *)ctime(&current_time));
+	globalSystemState.current_time = (time_t)now_time.tv_sec;
+	strcpy(boot_time, (char *)ctime(&globalSystemState.current_time));
 
 
     /*
@@ -265,7 +236,7 @@ void game_loop(int control)
 	struct timeval last_time;
 
 	gettimeofday(&last_time, NULL);
-	current_time = (time_t)last_time.tv_sec;
+	globalSystemState.current_time = (time_t)last_time.tv_sec;
 
 	init_signals();
 
@@ -283,7 +254,7 @@ void game_loop(int control)
 		FD_SET(control, &in_set);
 		maxdesc = control;
 
-		for (d = descriptor_list; d; d = d->next) {
+		for (d = globalSystemState.connection_head; d; d = d->next) {
 			maxdesc = UMAX(maxdesc, (int)d->descriptor);
 			FD_SET(d->descriptor, &in_set);
 			FD_SET(d->descriptor, &out_set);
@@ -305,7 +276,7 @@ void game_loop(int control)
 		 * Kick out the freaky folks.
 		 * Kyndig: Get rid of idlers as well
 		 */
-		for (d = descriptor_list; d != NULL; d = d_next) {
+		for (d = globalSystemState.connection_head; d != NULL; d = d_next) {
 			d_next = d->next;
 
 			d->idle++;
@@ -330,7 +301,7 @@ void game_loop(int control)
 		/*
 		 * Process input.
 		 */
-		for (d = descriptor_list; d != NULL; d = d_next) {
+		for (d = globalSystemState.connection_head; d != NULL; d = d_next) {
 			d_next = d->next;
 			d->fcommand = FALSE;
 
@@ -396,7 +367,7 @@ void game_loop(int control)
 		/*
 		 * Output.
 		 */
-		for (d = descriptor_list; d != NULL; d = d_next) {
+		for (d = globalSystemState.connection_head; d != NULL; d = d_next) {
 			d_next = d->next;
 
 			if ((d->fcommand || d->outtop > 0)
@@ -447,7 +418,7 @@ void game_loop(int control)
 		}
 
 		gettimeofday(&last_time, NULL);
-		current_time = (time_t)last_time.tv_sec;
+		globalSystemState.current_time = (time_t)last_time.tv_sec;
 	}
 
 	return;
@@ -542,8 +513,8 @@ void init_descriptor(int control)
     /*
      * Init descriptor data.
      */
-	dnew->next = descriptor_list;
-	descriptor_list = dnew;
+	dnew->next = globalSystemState.connection_head;
+	globalSystemState.connection_head = dnew;
 
 	if (port == 7779)
 		write_to_descriptor(dnew->descriptor, "\n\r\n\r.---------------------------------.\n\r| Bad Trip MUD -- Test/Build Port |\n\r| For the main MUD, use port 7778 |\n\r.---------------------------------.\n\r\n\r", 0);
@@ -568,7 +539,7 @@ void close_socket(DESCRIPTOR_DATA *dclose)
 	{
 		DESCRIPTOR_DATA *d;
 
-		for (d = descriptor_list; d != NULL; d = d->next)
+		for (d = globalSystemState.connection_head; d != NULL; d = d->next)
 			if (d->snoop_by == dclose)
 				d->snoop_by = NULL;
 	}
@@ -589,12 +560,12 @@ void close_socket(DESCRIPTOR_DATA *dclose)
 	if (d_next == dclose)
 		d_next = d_next->next;
 
-	if (dclose == descriptor_list) {
-		descriptor_list = descriptor_list->next;
+	if (dclose == globalSystemState.connection_head) {
+		globalSystemState.connection_head = globalSystemState.connection_head->next;
 	} else {
 		DESCRIPTOR_DATA *d;
 
-		for (d = descriptor_list; d && d->next != dclose; d = d->next)
+		for (d = globalSystemState.connection_head; d && d->next != dclose; d = d->next)
 			;
 
 		if (d != NULL)
@@ -1520,7 +1491,7 @@ int espBroadcastAndCheck(CHAR_DATA *ch, char *CanSeeAct, char *CanTSeeAct)
 	DESCRIPTOR_DATA *d;
 	int esper = 0;
 
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		CHAR_DATA *wch;
 
 		if (d->connected != CON_PLAYING)

@@ -267,7 +267,7 @@ void battlefield_close(CHAR_DATA *ch)
 
 	battlefield_special(ch);
 
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		CHAR_DATA *wch;
 
 		if (d->connected != CON_PLAYING)
@@ -319,7 +319,7 @@ void battlefield_cancel(CHAR_DATA *ch)
 
 	battlefield_clear();
 
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		CHAR_DATA *wch;
 
 		if (d->connected != CON_PLAYING)
@@ -480,7 +480,7 @@ void battlefield_show(CHAR_DATA *ch)
 
 		send_to_char("\n\rPlayer information:\n\r"
 			     "Name         Room    Enters Kills Deaths  Hp    Mana   Position\n\r", ch);
-		for (d = descriptor_list; d != NULL; d = d->next) {
+		for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 			if (d->connected != CON_PLAYING)
 				continue;
 
@@ -774,7 +774,7 @@ int battlefield_count()
 	CHAR_DATA *ch;
 	int count = 0;
 
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		if (d->connected != CON_PLAYING)
 			continue;
 
@@ -850,7 +850,7 @@ void battlefield_notify(char *msg)
 	DESCRIPTOR_DATA *d;
 	CHAR_DATA *tch;
 
-	for (d = descriptor_list; d; d = d->next) {
+	for (d = globalSystemState.connection_head; d; d = d->next) {
 		if (d->connected == CON_PLAYING) {
 			tch = CH(d);
 			if (!IS_NPC(tch) && !IS_SET(tch->comm, COMM_NOBATTLEFIELD))

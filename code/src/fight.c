@@ -2063,7 +2063,7 @@ void raw_kill(CHAR_DATA *victim, CHAR_DATA *killer)
 			DESCRIPTOR_DATA *d;
 			CHAR_DATA *vch;
 
-			for (d = descriptor_list; d != NULL; d = d->next) {
+			for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 				if (d->connected != CON_PLAYING)
 					continue;
 

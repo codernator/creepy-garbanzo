@@ -25,7 +25,7 @@ void log_bug(const char *fmt, ...)
 	va_end(args);
 
 
-	strtime = ctime(&current_time);
+	strtime = ctime(&globalSystemState.current_time);
 	strtime[strlen(strtime) - 1] = '\0';
 	fprintf(stderr, "%s :: %s\n", strtime, buf);
 	return;
@@ -57,7 +57,7 @@ static char *logStamp(void)
 {
 	char *strtime;
 
-	strtime = ctime(&current_time);
+	strtime = ctime(&globalSystemState.current_time);
 	strtime[strlen(strtime) - 1] = '\0';
 
 	return strtime;

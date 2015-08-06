@@ -147,7 +147,7 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 
 	fprintf(fp, "Name %s~\n", ch->name);
 	fprintf(fp, "Id   %ld\n", ch->id);
-	fprintf(fp, "LogO %ld\n", (long)current_time);
+	fprintf(fp, "LogO %ld\n", (long)globalSystemState.current_time);
 	fprintf(fp, "Vers %d\n", 5);
 	fprintf(fp, "Vernew %d\n", ch->vernew);
 
@@ -173,7 +173,7 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 	if (ch->pcdata->security != 0)
 		fprintf(fp, "Sec  %d\n", ch->pcdata->security);
 
-	fprintf(fp, "Plyd %d\n", ch->played + (int)(current_time - ch->logon));
+	fprintf(fp, "Plyd %d\n", ch->played + (int)(globalSystemState.current_time - ch->logon));
 
 	for (idx = 0; message_type_table[idx].name[0] != '\0'; idx++) {
 		fprintf(fp, "Msg '%s' %ld\n",
@@ -435,7 +435,7 @@ static void fwrite_pet(CHAR_DATA *pet, FILE *fp)
 	fprintf(fp, "#PET\n");
 	fprintf(fp, "Vnum %ld\n", pet->mob_idx->vnum);
 	fprintf(fp, "Name %s~\n", pet->name);
-	fprintf(fp, "LogO %ld\n", (long)current_time);
+	fprintf(fp, "LogO %ld\n", (long)globalSystemState.current_time);
 
 	if (pet->short_descr != pet->mob_idx->short_descr)
 		fprintf(fp, "ShD  %s~\n", pet->short_descr);
@@ -904,7 +904,7 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 	char *value;
 	bool fMatch;
 	int count = 0;
-	time_t lastlogoff = current_time;
+	time_t lastlogoff = globalSystemState.current_time;
 	int percent;
 
 	sprintf(buf, "Loading %s.", ch->name);
@@ -1177,7 +1177,7 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 		case 'E':
 			if (!str_cmp(word, "End")) {
 				/* adjust hp mana move up  -- here for speed's sake */
-				percent = (int)((current_time - lastlogoff) * 25 / (2 * 60 * 60));
+				percent = (int)((globalSystemState.current_time - lastlogoff) * 25 / (2 * 60 * 60));
 
 				percent = UMIN(percent, 100);
 
@@ -1482,7 +1482,7 @@ static void fread_pet(CHAR_DATA *ch, FILE *fp)
 	char *word;
 	CHAR_DATA *pet;
 	bool fMatch;
-	time_t lastlogoff = current_time;
+	time_t lastlogoff = globalSystemState.current_time;
 	int percent;
 
 	word = feof(fp) ? "END" : fread_word(fp);
@@ -1617,7 +1617,7 @@ static void fread_pet(CHAR_DATA *ch, FILE *fp)
 				pet->master = ch;
 				ch->pet = pet;
 
-				percent = (int)((current_time - lastlogoff) * 25 / (2 * 60 * 60));
+				percent = (int)((globalSystemState.current_time - lastlogoff) * 25 / (2 * 60 * 60));
 				percent = UMIN(percent, 100);
 
 				if (percent > 0 && !IS_AFFECTED(ch, AFF_POISON)
@@ -1850,8 +1850,8 @@ static void fread_obj(CHAR_DATA *ch, FILE *fp)
 					}
 
 					if (!new_format) {
-						obj->next = object_list;
-						object_list = obj;
+						obj->next = globalSystemState.object_head;
+						globalSystemState.object_head = obj;
 						obj->obj_idx->count++;
 					}
 

@@ -806,7 +806,7 @@ int get_trust(CHAR_DATA *ch)
 ***************************************************************************/
 int get_age(CHAR_DATA *ch)
 {
-	return 17 + (ch->played + (int)(current_time - ch->logon)) / 72000;
+	return 17 + (ch->played + (int)(globalSystemState.current_time - ch->logon)) / 72000;
 }
 
 
@@ -1518,12 +1518,12 @@ void extract_obj(OBJ_DATA *obj)
 		extract_obj(obj_content);
 	}
 
-	if (object_list == obj) {
-		object_list = obj->next;
+	if (globalSystemState.object_head == obj) {
+		globalSystemState.object_head = obj->next;
 	} else {
 		OBJ_DATA *prev;
 
-		for (prev = object_list; prev != NULL; prev = prev->next) {
+		for (prev = globalSystemState.object_head; prev != NULL; prev = prev->next) {
 			if (prev->next == obj) {
 				prev->next = obj->next;
 				break;
@@ -1696,7 +1696,7 @@ OBJ_DATA *get_obj_type(OBJ_INDEX_DATA *obj_idx)
 {
 	OBJ_DATA *obj;
 
-	for (obj = object_list; obj != NULL; obj = obj->next)
+	for (obj = globalSystemState.object_head; obj != NULL; obj = obj->next)
 		if (obj->obj_idx == obj_idx)
 			return obj;
 
@@ -1806,8 +1806,6 @@ OBJ_DATA *get_obj_here(CHAR_DATA *ch, char *argument)
 	return NULL;
 }
 
-
-
 /***************************************************************************
 *	get_obj_world
 *
@@ -1825,7 +1823,7 @@ OBJ_DATA *get_obj_world(CHAR_DATA *ch, char *argument)
 
 	number = number_argument(argument, arg);
 	count = 0;
-	for (obj = object_list; obj != NULL; obj = obj->next) {
+	for (obj = globalSystemState.object_head; obj != NULL; obj = obj->next) {
 		if (can_see_obj(ch, obj) && is_name(arg, obj->name)) {
 			if (++count == number)
 				return obj;
@@ -2758,7 +2756,7 @@ ROOM_INDEX_DATA *get_death_room(CHAR_DATA *ch)
  */
 int get_hours_played(CHAR_DATA *ch)
 {
-	return (ch->played + (int)(current_time - ch->logon)) / 3600;
+	return (ch->played + (int)(globalSystemState.current_time - ch->logon)) / 3600;
 }
 
 /*
@@ -2766,7 +2764,7 @@ int get_hours_played(CHAR_DATA *ch)
  */
 int get_minutes_played(CHAR_DATA *ch)
 {
-	return ((ch->played + (int)(current_time - ch->logon)) / 60) % 60;
+	return ((ch->played + (int)(globalSystemState.current_time - ch->logon)) / 60) % 60;
 }
 
 /*
@@ -2774,21 +2772,21 @@ int get_minutes_played(CHAR_DATA *ch)
  */
 int get_seconds_played(CHAR_DATA *ch)
 {
-	return (ch->played + (int)(current_time - ch->logon)) % 60;
+	return (ch->played + (int)(globalSystemState.current_time - ch->logon)) % 60;
 }
 
 int get_session_hours(CHAR_DATA *ch)
 {
-	return (int)(current_time - ch->logon) / 3600;
+	return (int)(globalSystemState.current_time - ch->logon) / 3600;
 }
 
 int get_session_minutes(CHAR_DATA *ch)
 {
-	return (((int)(current_time - ch->logon)) / 60) % 60;
+	return (((int)(globalSystemState.current_time - ch->logon)) / 60) % 60;
 }
 
 int get_session_seconds(CHAR_DATA *ch)
 {
-	return (int)(current_time - ch->logon) % 60;
+	return (int)(globalSystemState.current_time - ch->logon) % 60;
 }
 

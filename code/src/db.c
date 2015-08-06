@@ -25,12 +25,6 @@ extern bool is_space(const char test);
 
 
 
-/***************************************************************************
-*	global vars
-***************************************************************************/
-/***************************************************************************
-*	linked lists
-***************************************************************************/
 extern OBJ_DATA *obj_free;
 extern CHAR_DATA *char_free;
 extern DESCRIPTOR_DATA *descriptor_free;
@@ -38,7 +32,6 @@ extern PC_DATA *pcdata_free;
 extern AFFECT_DATA *affect_free;
 
 CHAR_DATA *char_list;
-OBJ_DATA *object_list;
 NOTE_DATA *note_list;
 
 HELP_DATA *help_first;
@@ -189,7 +182,7 @@ static void init_time()
 	long lday;
 	long lmonth;
 
-	lhour = (long)((current_time - 650336715l) / (PULSE_TICK / PULSE_PER_SECOND));
+	lhour = (long)((globalSystemState.current_time - 650336715l) / (PULSE_TICK / PULSE_PER_SECOND));
 	time_info.hour = (int)(lhour % 24l);
 	lday = (int)(lhour / 24);
 	time_info.day = (int)(lday % 35l);
@@ -2449,8 +2442,8 @@ OBJ_DATA *create_object(OBJ_INDEX_DATA *obj_idx, int level)
 		if (paf->location == APPLY_SPELL_AFFECT)
 			affect_to_obj(obj, paf);
 
-	obj->next = object_list;
-	object_list = obj;
+	obj->next = globalSystemState.object_head;
+	globalSystemState.object_head = obj;
 	obj_idx->count++;
 
 	return obj;
@@ -3104,7 +3097,7 @@ void do_dump(CHAR_DATA *ch, char *argument)
 	/* descriptors */
 	count = 0;
 	count_free = 0;
-	for (d = descriptor_list; d != NULL; d = d->next)
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next)
 		count++;
 
 	for (d = descriptor_free; d != NULL; d = d->next)
@@ -3131,7 +3124,7 @@ void do_dump(CHAR_DATA *ch, char *argument)
 	/* objects */
 	count = 0;
 	count_free = 0;
-	for (obj = object_list; obj != NULL; obj = obj->next) {
+	for (obj = globalSystemState.object_head; obj != NULL; obj = obj->next) {
 		count++;
 		for (af = obj->affected; af != NULL; af = af->next)
 			aff_count++;
@@ -3309,7 +3302,7 @@ void log_string(const char *str)
 {
 	char *strtime;
 
-	strtime = ctime(&current_time);
+	strtime = ctime(&globalSystemState.current_time);
 	strtime[strlen(strtime) - 1] = '\0';
 	fprintf(stderr, "%s :: %s\n", strtime, str);
 	return;

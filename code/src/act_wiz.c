@@ -228,7 +228,7 @@ void do_ignore(CHAR_DATA *ch, char *argument)
 		}
 	}
 
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		CHAR_DATA *wch;
 
 		if (d->connected != CON_PLAYING || !can_see(ch, d->character))
@@ -440,7 +440,7 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
 	}
 
 	if (ch->last_fight
-	    && (current_time - ch->last_fight < 90)
+	    && (globalSystemState.current_time - ch->last_fight < 90)
 	    && !ch->pcdata->confirm_delete) {
 		send_to_char("You must wait 90 seconds after a pfight before you can quit.\n\r", ch);
 		return;
@@ -493,7 +493,7 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
 		close_socket(d);
 
     /* toast evil cheating bastards */
-	for (d = descriptor_list; d != NULL; d = d_next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d_next) {
 		CHAR_DATA *tch;
 
 		d_next = d->next;
@@ -608,7 +608,7 @@ void wiznet(char *string, /*@null@*/ CHAR_DATA *ch, /*@null@*/ OBJ_DATA *obj, lo
 {
 	DESCRIPTOR_DATA *d;
 
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		if (d->connected == CON_PLAYING
 		    && !IS_NPC(d->character)
 		    && IS_IMMORTAL(d->character)
@@ -719,7 +719,7 @@ void impnet(char *string, CHAR_DATA *ch, OBJ_DATA *obj, long flag, long flag_ski
 {
 	DESCRIPTOR_DATA *d;
 
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		if (d->connected
 		    && d->connected == CON_PLAYING
 		    && !IS_NPC(d->character)
@@ -1056,7 +1056,7 @@ void do_disconnect(CHAR_DATA *ch, char *argument)
 		int desc;
 
 		desc = parse_int(arg);
-		for (d = descriptor_list; d != NULL; d = d->next) {
+		for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 			if ((d->descriptor == (SOCKET)desc) && (ch->level > victim->level)) {
 				close_socket(d);
 				send_to_char("Ok.\n\r", ch);
@@ -1074,7 +1074,7 @@ void do_disconnect(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		if ((d == victim->desc) && (ch->level > victim->level)) {
 			close_socket(d);
 			send_to_char("Ok.\n\r", ch);
@@ -1142,7 +1142,7 @@ void do_echo(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	for (d = descriptor_list; d; d = d->next) {
+	for (d = globalSystemState.connection_head; d; d = d->next) {
 		if (d->connected == CON_PLAYING) {
 			if (ch != NULL) {
 				if (ch && get_trust(d->character) >= get_trust(ch)) {
@@ -1170,7 +1170,7 @@ void do_recho(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	for (d = descriptor_list; d; d = d->next) {
+	for (d = globalSystemState.connection_head; d; d = d->next) {
 		if (d->connected == CON_PLAYING
 		    && d->character->in_room == ch->in_room) {
 			if (ch != NULL
@@ -1198,7 +1198,7 @@ void do_zecho(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	for (d = descriptor_list; d; d = d->next) {
+	for (d = globalSystemState.connection_head; d; d = d->next) {
 		if (d->connected == CON_PLAYING
 		    && d->character->in_room != NULL && ch->in_room != NULL
 		    && d->character->in_room->area == ch->in_room->area) {
@@ -1512,7 +1512,7 @@ void do_transfer(CHAR_DATA *ch, char *argument)
 		location = ch->in_room;
 
 	if (!str_cmp(arg1, "all")) {
-		for (d = descriptor_list; d != NULL; d = d->next) {
+		for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 			if (d->connected == CON_PLAYING
 			    && d->character != ch
 			    && d->character->in_room != NULL
@@ -1594,7 +1594,7 @@ void do_tarnsfer(CHAR_DATA *ch, char *argument)
 	}
 
 	if (!str_cmp(arg1, "all")) {
-		for (d = descriptor_list; d != NULL; d = d->next) {
+		for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 			if (d->connected == CON_PLAYING
 			    && d->character != ch
 			    && d->character->in_room != NULL
@@ -1791,7 +1791,7 @@ void do_reboot(CHAR_DATA *ch, char *argument)
 		do_save(ch, "");
 	merc_down = TRUE;
 
-	for (d = descriptor_list; d != NULL; d = d_next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d_next) {
 		d_next = d->next;
 		close_socket(d);
 	}
@@ -1826,7 +1826,7 @@ void do_shutdown(CHAR_DATA *ch, char *argument)
 	do_save(ch, "");
 	merc_down = TRUE;
 
-	for (d = descriptor_list; d != NULL; d = d_next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d_next) {
 		d_next = d->next;
 		close_socket(d);
 	}
@@ -1866,7 +1866,7 @@ void do_snoop(CHAR_DATA *ch, char *argument)
 		       ch, NULL, WIZ_SNOOPS,
 		       WIZ_SECURE, get_trust(ch));
 
-		for (d = descriptor_list; d != NULL; d = d->next)
+		for (d = globalSystemState.connection_head; d != NULL; d = d->next)
 			if (d->snoop_by == ch->desc)
 				d->snoop_by = NULL;
 		return;
@@ -1913,7 +1913,7 @@ void do_snlist(CHAR_DATA *ch, char *argument)
 	send_to_char("Currently snooped characters\n\r", ch);
 	send_to_char("----------------------------\n\r", ch);
 
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		CHAR_DATA *wch;
 
 		wch = (d->original != NULL) ? d->original : d->character;
@@ -2583,7 +2583,7 @@ void do_restore(CHAR_DATA *ch, char *argument)
 	}
 
 	if (get_trust(ch) >= MAX_LEVEL - 1 && !str_cmp(arg1, "all")) {
-		for (d = descriptor_list; d != NULL; d = d->next) {
+		for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 			vch = d->character;
 
 			if (vch == NULL || IS_NPC(vch))
@@ -2669,7 +2669,7 @@ void do_unrestore(CHAR_DATA *ch, char *argument)
 	if (get_trust(ch) >= MAX_LEVEL - 2 && !str_cmp(arg1, "all")) {
 		/* unrestore all */
 
-		for (d = descriptor_list; d != NULL; d = d->next) {
+		for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 			victim = d->character;
 
 			if (victim == NULL || IS_NPC(victim))
@@ -2928,46 +2928,36 @@ void do_peace(CHAR_DATA *ch, char *argument)
 
 void do_wizlock(CHAR_DATA *ch, char *argument)
 {
-	extern bool wizlock;
-
-	wizlock = !wizlock;
-
 	DENY_NPC(ch)
 
-	if (wizlock) {
+	globalSystemState.wizlock = !globalSystemState.wizlock;
+
+	if (globalSystemState.wizlock) {
 		wiznet("$N has wizlocked the game.", ch, NULL, 0, 0, 0);
 		send_to_char("Game wizlocked.\n\r", ch);
 	} else {
 		wiznet("$N removes wizlock.", ch, NULL, 0, 0, 0);
 		send_to_char("Game un-wizlocked.\n\r", ch);
 	}
-
-	return;
 }
 
 void do_newlock(CHAR_DATA *ch, char *argument)
 {
-	extern bool newlock;
-
-	newlock = !newlock;
-
 	DENY_NPC(ch);
 
-	if (newlock) {
+	globalSystemState.newlock = !globalSystemState.newlock;
+
+	if (globalSystemState.newlock) {
 		wiznet("$N locks out new characters.", ch, NULL, 0, 0, 0);
 		send_to_char("New characters have been locked out.\n\r", ch);
 	} else {
 		wiznet("$N allows new characters back in.", ch, NULL, 0, 0, 0);
 		send_to_char("Newlock removed.\n\r", ch);
 	}
-
-	return;
 }
 
 void do_mode(CHAR_DATA *ch, char *argument)
 {
-	extern bool wizlock;
-	extern bool newlock;
 	char arg[MIL];
 	char arg2[MIL];
 
@@ -2986,13 +2976,13 @@ void do_mode(CHAR_DATA *ch, char *argument)
 		send_to_char("`PB`5ad `@T`2rip`7 mode status:\n\r", ch);
 
 		send_to_char("`5Wizlock  `7 :                ", ch);
-		if (wizlock)
+		if (globalSystemState.wizlock)
 			send_to_char("ON\n\r", ch);
 		else
 			send_to_char("`8OFF`7\n\r", ch);
 
 		send_to_char("`#Newlock  `7 :                ", ch);
-		if (newlock)
+		if (globalSystemState.newlock)
 			send_to_char("ON\n\r", ch);
 		else
 			send_to_char("`8OFF`7\n\r", ch);
@@ -3056,7 +3046,7 @@ void do_sockets(CHAR_DATA *ch, char *argument)
 	one_argument(argument, arg);
 	send_to_char("`$Connection state            Socket  Name           IP Address", ch);
 	send_to_char("``--------------------------+-------+--------------+------------------------------\n\r", ch);
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		if (d->character != NULL && can_see(ch, d->character)
 		    && (arg[0] == '\0' || is_name(arg, d->character->name)
 			|| (d->original && is_name(arg, d->original->name)))) {
@@ -3444,7 +3434,7 @@ void do_copyover(CHAR_DATA *ch, char *argument)
 	sprintf(buf, "\n\r Preparing for a copyover....\n\r");
 
 	/* For each playing descriptor, save its state */
-	for (d = descriptor_list; d; d = d_next) {
+	for (d = globalSystemState.connection_head; d; d = d_next) {
 		CHAR_DATA *och = CH(d);
 		d_next = d->next; /* We delete from the list , so need to save this */
 
@@ -3543,8 +3533,8 @@ void copyover_recover()
 		d->descriptor = desc;
 
 		d->host = str_dup(host);
-		d->next = descriptor_list;
-		descriptor_list = d;
+		d->next = globalSystemState.connection_head;
+		globalSystemState.connection_head = d;
 		d->connected = CON_COPYOVER_RECOVER; /* -15, so close_socket frees the char */
 
 
@@ -3717,7 +3707,7 @@ void do_pnlist(CHAR_DATA *ch, char *argument)
 	send_to_char("Name     | Frz| NoC| NoE| Log| Idt| Klr| Thi| SnP| Per| Pns| Dis\n\r", ch);
 	send_to_char("+----------------------------------------------------------------------+\n\r", ch);
 
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		CHAR_DATA *wch;
 
 		wch = CH(d);
@@ -3843,7 +3833,7 @@ void do_omnistat(CHAR_DATA *ch, char *argument)
 	add_buf(output, " ----Immortals:----\n\r");
 	add_buf(output, "Name          Level   Wiz   Incog   [Vnum]\n\r");
 
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		CHAR_DATA *wch;
 
 		if (d->connected != CON_PLAYING)
@@ -3872,7 +3862,7 @@ void do_omnistat(CHAR_DATA *ch, char *argument)
 	add_buf(output, "Name           Race/Class   Position        Lev  %%hps  %%mana  [Vnum]\n\r");
 
 	hptemp = 0;
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		CHAR_DATA *wch;
 		char const *class;
 
@@ -4417,7 +4407,7 @@ void do_auto_shutdown()
 	if (!fp) {
 		perror("do_copyover:fopen");
 
-		for (d = descriptor_list; d != NULL; d = d_next) {
+		for (d = globalSystemState.connection_head; d != NULL; d = d_next) {
 			if (d->character) {
 				do_save(d->character, "");
 				send_to_char("Ok I tried but we're crashing anyway sorry!\n\r", d->character);
@@ -4453,7 +4443,7 @@ void do_auto_shutdown()
 
 	sprintf(buf, "\n\rYour mud is crashing attempting a copyover now!\n\r");
 
-	for (d = descriptor_list; d; d = d_next) {
+	for (d = globalSystemState.connection_head; d; d = d_next) {
 		CHAR_DATA *och = CH(d);
 		d_next = d->next; /* We delete from the list , so need to save this */
 

@@ -26,6 +26,7 @@ typedef int SOCKET;
 #define TRUE     (!FALSE)
 #endif
 
+
 typedef int sh_int;
 
 typedef enum e_one_attack_result {
@@ -66,6 +67,14 @@ typedef struct auction_data AUCTION_DATA;
 typedef struct mprog_list MPROG_LIST;
 typedef struct mprog_code MPROG_CODE;
 typedef struct help_area_data HELP_AREA;
+typedef struct system_state SYSTEM_STATE;
+struct system_state {
+    DESCRIPTOR_DATA *connection_head;               /* All open descriptors */
+    OBJ_DATA *object_head;                          /* All objects in the game. */
+    bool wizlock;                                   /* Game is wizlocked. */
+    bool newlock;                                   /* Game is newlocked. */
+    time_t current_time;                            /* Time of this pulse. */
+};
 
 
 /* required for new skill system */
@@ -1936,7 +1945,7 @@ enum e_harvey_proctor_is { hp_pissed_off, hp_irritated, hp_off_his_rocker, hp_ag
 #define IS_TRUSTED(ch, level)    (get_trust((ch)) >= (level))
 #define IS_AFFECTED(ch, sn)     (IS_SET((ch)->affected_by, (sn)))
 
-#define GET_AGE(ch)             ((int)(17 + ((ch)->played + current_time - (ch)->logon) / 72000))
+#define GET_AGE(ch)             ((int)(17 + ((ch)->played + globalSystemState.current_time - (ch)->logon) / 72000))
 #define IS_GOOD(ch)             (ch->alignment >= 350)
 #define IS_EVIL(ch)             (ch->alignment <= -350)
 #define IS_NEUTRAL(ch)          (!IS_GOOD(ch) && !IS_EVIL(ch))
@@ -2108,8 +2117,7 @@ extern HELP_DATA *help_first;
 extern SHOP_DATA *shop_first;
 extern AUCTION_DATA *auction;
 extern CHAR_DATA *char_list;
-extern DESCRIPTOR_DATA *descriptor_list;
-extern OBJ_DATA *object_list;
+extern SYSTEM_STATE globalSystemState;
 
 
 extern MPROG_CODE *mprog_list;
@@ -2117,7 +2125,6 @@ extern DISABLED_DATA *disabled_first;
 
 
 extern char bug_buf[];
-extern time_t current_time;
 extern bool log_all;
 extern KILL_DATA kill_table[];
 extern char log_buf[];

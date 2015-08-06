@@ -203,7 +203,7 @@ static void for_gods(CHAR_DATA *ch, char *name, char *argument)
 		area = ch->in_room->area;
 	}
 
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		if (d->connected == CON_PLAYING
 		    && d->character != ch
 		    && IS_IMMORTAL(d->character)
@@ -250,7 +250,7 @@ static void for_morts(CHAR_DATA *ch, char *name, char *argument)
 		area = ch->in_room->area;
 	}
 
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		if (d->connected == CON_PLAYING
 		    && d->character != NULL
 		    && d->character != ch

@@ -231,7 +231,7 @@ void broadcast_shout(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender,
     CHAR_DATA *receiver;
 
 	act_new("`1You shout '`!$T`1'``", sender, NULL, argument, TO_CHAR, POS_DEAD, channel->mob_trigger);
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		actual = CH(d);
 		receiver = d->character;
 
@@ -255,7 +255,7 @@ void broadcast_global(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender
 	if (sender != NULL) {
         act_new("$n `2I`8M`2P`8:`` $t``", sender, argument, NULL, TO_CHAR, POS_DEAD, channel->mob_trigger);
 	}
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		actual = CH(d);
 		receiver = d->character;
 
@@ -500,7 +500,7 @@ void broadcast_sayto(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender,
 	printf_to_char(sender, "``You say to %s '`P%s``'\n\r", whom->name, argument);
 	printf_to_char(whom, "``%s says to you '`P%s``'\n\r", sender->name, argument);
 
-	for (d = descriptor_list; d; d = d->next) {
+	for (d = globalSystemState.connection_head; d; d = d->next) {
 		if (d->connected == CON_PLAYING && d->character != sender
                 && d->character->in_room == sender->in_room
                 && d->character->position != POS_SLEEPING

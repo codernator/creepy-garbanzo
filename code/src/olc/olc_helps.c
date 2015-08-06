@@ -421,7 +421,7 @@ EDIT(hedit_delete){
 
 	EDIT_HELP(ch, help);
 
-	for (d = descriptor_list; d; d = d->next)
+	for (d = globalSystemState.connection_head; d; d = d->next)
 		if (d->editor == ED_HELP && help == (HELP_DATA *)d->ed_data)
 			edit_done(d->character);
 

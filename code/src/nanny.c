@@ -97,7 +97,7 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 		if (check_reconnect(d, argument, FALSE)) {
 			found = TRUE;
 		} else {
-			if (wizlock && !IS_IMMORTAL(ch)) {
+			if (globalSystemState.wizlock && !IS_IMMORTAL(ch)) {
 				write_to_buffer(d, "The game is wizlocked.\n\r", 0);
 				close_socket(d);
 				return;
@@ -110,7 +110,7 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 			d->connected = CON_GET_OLD_PASSWORD;
 		} else {
 			/* New player */
-			if (newlock) {
+			if (globalSystemState.newlock) {
 				write_to_buffer(d, "The game is newlocked.\n\r", 0);
 				close_socket(d);
 				return;
@@ -173,7 +173,7 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 		switch (*argument) {
 		case 'y':
 		case 'Y':
-			for (d_old = descriptor_list; d_old != NULL; d_old = d_next) {
+			for (d_old = globalSystemState.connection_head; d_old != NULL; d_old = d_next) {
 				d_next = d_old->next;
 
 				if (d_old == d || d_old->character == NULL)
@@ -699,11 +699,11 @@ bool check_parse_name(char *name)
 	 * Check names of people playing. Yes, this is necessary for multiple
 	 * newbies with the same name (thanks Saro)
 	 */
-	if (descriptor_list) {
+	if (globalSystemState.connection_head) {
 		int count = 0;
 		DESCRIPTOR_DATA *d, *dnext;
 
-		for (d = descriptor_list; d != NULL; d = dnext) {
+		for (d = globalSystemState.connection_head; d != NULL; d = dnext) {
 			dnext = d->next;
 			if (d->connected != CON_PLAYING && d->character && d->character->name
 			    && d->character->name[0] && !str_cmp(d->character->name, name)) {
@@ -793,7 +793,7 @@ bool check_playing(DESCRIPTOR_DATA *d, char *name)
 {
 	DESCRIPTOR_DATA *dold;
 
-	for (dold = descriptor_list; dold; dold = dold->next) {
+	for (dold = globalSystemState.connection_head; dold; dold = dold->next) {
 		if (dold != d
 		    && dold->character != NULL
 		    && dold->connected != CON_GET_NAME

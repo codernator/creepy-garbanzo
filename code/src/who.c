@@ -121,7 +121,7 @@ void do_whois(CHAR_DATA *ch, char *argument)
 	send_to_char("`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo ``[`5B`Pad `2T`@rip``] `Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o``\n\r", ch);
 	output = new_buf();
 
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		CHAR_DATA *wch;
 
 		if (d->connected != CON_PLAYING || !can_see(ch, d->character))
@@ -230,7 +230,7 @@ void do_who(CHAR_DATA *ch, char *argument)
 	sprintf(buf, "`2I`@m`7m`8ort`7a`@l`2s`7:``\n\r");
 	add_buf(output, buf);
 
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		CHAR_DATA *wch;
 
 		/*
@@ -263,7 +263,7 @@ void do_who(CHAR_DATA *ch, char *argument)
 	sprintf(buf, "\n\r`5M`2o`Pr`@t`Pa`2l`5s`7:``\n\r");
 	add_buf(output, buf);
 
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		CHAR_DATA *wch;
 
 		/*
@@ -377,7 +377,7 @@ void do_ewho(CHAR_DATA *ch, char *argument)
 	nMatch = 0;
 	buf[0] = '\0';
 	output = new_buf();
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		CHAR_DATA *wch;
 
 		/*
@@ -437,7 +437,7 @@ void do_where(CHAR_DATA *ch, char *argument)
 	if (arg[0] == '\0') {
 		send_to_char("Players in your area```8:``\n\r", ch);
 		found = FALSE;
-		for (d = descriptor_list; d; d = d->next) {
+		for (d = globalSystemState.connection_head; d; d = d->next) {
 			if (d->connected == CON_PLAYING
 			    && (victim = d->character) != NULL
 			    && !IS_NPC(victim)

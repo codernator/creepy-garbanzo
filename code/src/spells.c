@@ -2743,7 +2743,7 @@ void spell_locate_object(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 
 	buffer = new_buf();
 
-	for (obj = object_list; obj != NULL; obj = obj->next) {
+	for (obj = globalSystemState.object_head; obj != NULL; obj = obj->next) {
 		if (!can_see_obj(ch, obj) || !is_name(argument, obj->name)
 		    || IS_OBJ_STAT(obj, ITEM_NOLOCATE) || number_percent() > 2 * level
 		    || ch->level < obj->level)

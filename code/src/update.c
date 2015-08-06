@@ -254,7 +254,7 @@ void advance_level(CHAR_DATA *ch, int level)
 		}
 	}
 
-	ch->pcdata->last_level = (ch->played + (int)(current_time - ch->logon)) / 3600;
+	ch->pcdata->last_level = (ch->played + (int)(globalSystemState.current_time - ch->logon)) / 3600;
 
 	printf_to_char(ch,
 		       "Your %s is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac %d/%d trains.\n\r",
@@ -305,7 +305,7 @@ void gain_exp(CHAR_DATA *ch, int gain)
 		save_char_obj(ch);
 
 		/* do the info */
-		for (d = descriptor_list; d; d = d->next) {
+		for (d = globalSystemState.connection_head; d; d = d->next) {
 			CHAR_DATA *vch;
 
 			vch = CH(d);
@@ -1009,7 +1009,7 @@ static void weather_update(void)
 	}
 
 	if (buf[0] != '\0') {
-		for (d = descriptor_list; d != NULL; d = d->next) {
+		for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 			if (d->connected == CON_PLAYING
 			    && IS_OUTSIDE(d->character)
 			    && IS_AWAKE(d->character))
@@ -1030,7 +1030,7 @@ static void auto_restore(void)
 	DESCRIPTOR_DATA *d;
 	CHAR_DATA *victim;
 
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		victim = d->character;
 		if (victim == NULL || IS_NPC(victim))
 			continue;
@@ -1155,7 +1155,7 @@ static void char_update(void)
 		if (!IS_NPC(ch)) {
 			if (IS_SET(ch->act, PLR_KILLER)) {
 				if ((ch->pcdata->killer_time == 0) ||
-				    (difftime(current_time, ch->pcdata->killer_time) > 479)) {
+				    (difftime(globalSystemState.current_time, ch->pcdata->killer_time) > 479)) {
 					send_to_char("You feel washed of your sins.\n\r", ch);
 					REMOVE_BIT(ch->act, PLR_KILLER);
 					ch->pcdata->killer_time = 0;
@@ -1164,7 +1164,7 @@ static void char_update(void)
 
 			if (IS_SET(ch->act, PLR_THIEF)) {
 				if ((ch->pcdata->thief_time == 0) ||
-				    (difftime(current_time, ch->pcdata->thief_time) > 479)) {
+				    (difftime(globalSystemState.current_time, ch->pcdata->thief_time) > 479)) {
 					send_to_char("You feel washed of your sins.\n\r", ch);
 					REMOVE_BIT(ch->act, PLR_THIEF);
 					ch->pcdata->thief_time = 0;
@@ -1338,7 +1338,7 @@ static void char_update(void)
  */
 		if ((!IS_NPC(ch)) && (IS_SET(ch->act, PLR_LINKDEAD))
 		    && (!IS_IMMORTAL(ch))) {
-			if (ch->last_fight && (current_time - ch->last_fight < 60)) {
+			if (ch->last_fight && (globalSystemState.current_time - ch->last_fight < 60)) {
 				impnet("`OAutomation`7: Killing [`8LINKDEAD`7] player $N", ch, NULL, IMN_AUTO, 0, 0);
 				if (IS_SET(ch->comm, COMM_AFK))
 					REMOVE_BIT(ch->comm, COMM_AFK);
@@ -1366,7 +1366,7 @@ static void obj_update(void)
 	AFFECT_DATA *paf;
 	AFFECT_DATA *paf_next;
 
-	for (obj = object_list; obj != NULL; obj = obj_next) {
+	for (obj = globalSystemState.object_head; obj != NULL; obj = obj_next) {
 		CHAR_DATA *rch;
 		char *message;
 

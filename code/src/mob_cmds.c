@@ -281,7 +281,7 @@ void do_mpgecho(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	for (d = descriptor_list; d; d = d->next) {
+	for (d = globalSystemState.connection_head; d; d = d->next) {
 		if (d->connected == CON_PLAYING) {
 			if (IS_IMMORTAL(d->character))
 				send_to_char("Mob echo> ", d->character);
@@ -309,7 +309,7 @@ void do_mpzecho(CHAR_DATA *ch, char *argument)
 	if (ch->in_room == NULL)
 		return;
 
-	for (d = descriptor_list; d; d = d->next) {
+	for (d = globalSystemState.connection_head; d; d = d->next) {
 		if (d->connected == CON_PLAYING
 		    && d->character->in_room != NULL
 		    && d->character->in_room->area == ch->in_room->area) {

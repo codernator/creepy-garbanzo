@@ -46,7 +46,7 @@ void do_teleport(CHAR_DATA *ch, char *argument)
 
 		count = 0;
 		buf = new_buf();
-		for (obj = object_list; obj != NULL; obj = obj->next) {
+		for (obj = globalSystemState.object_head; obj != NULL; obj = obj->next) {
 			if (!can_see_obj(ch, obj)
 			    || !is_name("teleporter_public", obj->name))
 				continue;
@@ -70,7 +70,7 @@ void do_teleport(CHAR_DATA *ch, char *argument)
 		if (IS_IMMORTAL(ch)) {
 			count = 0;
 			buf = new_buf();
-			for (obj = object_list; obj != NULL; obj = obj->next) {
+			for (obj = globalSystemState.object_head; obj != NULL; obj = obj->next) {
 				if (!can_see_obj(ch, obj)
 				    || !is_name("teleporter_private", obj->name))
 					continue;

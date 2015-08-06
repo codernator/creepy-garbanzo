@@ -335,7 +335,7 @@ CHAR_DATA *new_char(void)
 	ch->long_descr = &str_empty[0];
 	ch->description = &str_empty[0];
 	ch->prompt = &str_empty[0];
-	ch->logon = current_time;
+	ch->logon = globalSystemState.current_time;
 	ch->lines = PAGELEN;
 	for (iter = 0; iter < 4; iter++)
 		ch->armor[iter] = 100;
@@ -465,7 +465,6 @@ void free_pcdata(PC_DATA *pcdata)
 	if (!IS_VALID(pcdata))
 		return;
 
-	/*  pcdata->logon = current_time;  */
 	free_string(pcdata->pwd);
 	free_string(pcdata->bamfin);
 	free_string(pcdata->bamfout);
@@ -520,7 +519,7 @@ long get_pc_id(void)
 {
 	long val;
 
-	val = ((long)current_time <= last_pc_id) ? last_pc_id + 1 : (long)current_time;
+	val = ((long)globalSystemState.current_time <= last_pc_id) ? last_pc_id + 1 : (long)globalSystemState.current_time;
 	last_pc_id = val;
 
 	return val;

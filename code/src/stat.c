@@ -612,7 +612,7 @@ void do_mstat(CHAR_DATA *ch, char *argument)
 	if (!IS_NPC(victim)) {
 		printf_to_char(ch, "Age: %d  Played: %d  Last Level: %d  Timer: %d\n\r",
 			       get_age(victim),
-			       (int)(victim->played + current_time - victim->logon) / 3600,
+			       (int)(victim->played + globalSystemState.current_time - victim->logon) / 3600,
 			       victim->pcdata->last_level,
 			       victim->timer);
 

@@ -124,8 +124,8 @@ void find_money(CHAR_DATA *ch)
 {
 	int j;
 
-	if ((ch->pcdata->last_bank - current_time) > 86400) {
-		for (j = (int)((ch->pcdata->last_bank - current_time) / 86400); j != 0; j--) {
+	if ((ch->pcdata->last_bank - globalSystemState.current_time) > 86400) {
+		for (j = (int)((ch->pcdata->last_bank - globalSystemState.current_time) / 86400); j != 0; j--) {
 			ch->pcdata->gold_in_bank += ch->pcdata->gold_in_bank / 50;
 			ch->pcdata->silver_in_bank += ch->pcdata->silver_in_bank / 50;
 		}

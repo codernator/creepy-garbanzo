@@ -235,7 +235,7 @@ void do_tally(CHAR_DATA *ch, char *argument)
 	OBJ_DATA *obj;
 	int unique_tally = 0;
 
-	for (obj = object_list; obj != NULL; obj = obj->next) {
+	for (obj = globalSystemState.object_head; obj != NULL; obj = obj->next) {
 		CHAR_DATA *vch;
 
 		/* if it is carried by nobody or it is carried by a mob */
@@ -267,7 +267,7 @@ void do_untally(CHAR_DATA *ch, char *argument)
 	OBJ_DATA *obj_next;
 	int tally = 0;
 
-	for (obj = object_list; obj != NULL; obj = obj_next) {
+	for (obj = globalSystemState.object_head; obj != NULL; obj = obj_next) {
 		CHAR_DATA *vch;
 
 		obj_next = obj->next;

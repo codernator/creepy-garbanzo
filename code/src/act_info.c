@@ -953,9 +953,7 @@ void do_score(CHAR_DATA *ch, char *argument)
 
 	if (!IS_NPC(ch)) {
 		sprintf(buf, "%d years old``.\n\r",
-/* `8(``%d hours`8)``.\n\r",*/
 			get_age(ch));
-/*		(ch->played +(int)(current_time - ch->logon)) / 3600);*/
 		send_to_char(buf, ch);
 	}
 	sprintf(buf,
@@ -1365,7 +1363,7 @@ void do_time(CHAR_DATA *ch, char *argument)
 
 	printf_to_char(ch, "This `#B`Pa`@d `#T`Pr`@i`#p`` kicked in at `O%s``\r"
 		       "The `#B`Pa`@d `#T`Pr`@i`#p`` Server clock is screaming, `&%s``\r",
-		       boot_time, (char *)ctime(&current_time));
+		       boot_time, (char *)ctime(&globalSystemState.current_time));
 
 	return;
 }
@@ -1378,7 +1376,7 @@ void do_count(CHAR_DATA *ch, char *argument)
 	extern int max_on;
 
 	count = 0;
-	for (d = descriptor_list; d != NULL; d = d->next)
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next)
 		if (d->connected == CON_PLAYING && can_see(ch, d->character))
 			count++;
 
@@ -2095,7 +2093,7 @@ void do_laston(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	for (d = descriptor_list; d != NULL; d = d->next) {
+	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 		CHAR_DATA *wch;
 
 		if (d->connected != CON_PLAYING || !can_see(ch, d->character))

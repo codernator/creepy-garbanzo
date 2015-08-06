@@ -186,7 +186,7 @@ void do_owhere(CHAR_DATA *ch, char *argument)
 			"       owhere %s <value>:\n\r\n\r", arg);
 		add_buf(buffer, buf);
 
-		(*cmp_fn)(object_list, argument, buffer);
+		(*cmp_fn)(globalSystemState.object_head, argument, buffer);
 		page_to_char(buf_string(buffer), ch);
 	} else {
 		OBJ_DATA *obj;
@@ -197,7 +197,7 @@ void do_owhere(CHAR_DATA *ch, char *argument)
 
 		number = 0;
 
-		for (obj = object_list; obj != NULL; obj = obj->next) {
+		for (obj = globalSystemState.object_head; obj != NULL; obj = obj->next) {
 			if (can_see_obj(ch, obj)
 			    && (*cmp_fn)(obj, argument, NULL)) {
 				number++;

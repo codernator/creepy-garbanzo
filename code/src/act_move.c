@@ -240,7 +240,7 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
 	}
 
 	if (IS_SET(ch->act, PLR_ESP)) {
-		for (d = descriptor_list; d != NULL; d = d->next) {
+		for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
 			CHAR_DATA *wch;
 
 			if (d->connected != CON_PLAYING)
@@ -1716,8 +1716,7 @@ void do_hide(CHAR_DATA *ch, char *argument)
 	}
 
 
-	if (ch->last_fight
-	    && (current_time - ch->last_fight < 90)) {
+	if (ch->last_fight && (globalSystemState.current_time - ch->last_fight < 90)) {
 		send_to_char("You can't hide, your opponent can hear your heartbeat!\n\r", ch);
 		return;
 	}
