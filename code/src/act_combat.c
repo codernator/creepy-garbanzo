@@ -4,16 +4,12 @@
 #include "mob_cmds.h"
 #include "channels.h"
 
-
-
 extern void make_corpse(CHAR_DATA *ch);
 extern bool check_shield_block(CHAR_DATA *ch, CHAR_DATA *victim);
 extern void disarm(CHAR_DATA *ch, CHAR_DATA *victim);
 extern void spell_charm_person(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument);
 extern void set_fighting(CHAR_DATA *ch, CHAR_DATA *victim);
 extern int battlefield_count(void);
-
-
 
 /*
  * Generate a random door.
@@ -22,8 +18,6 @@ int number_door(void)
 {
     return number_range(0, 5);
 }
-
-
 
 void do_bash(CHAR_DATA *ch, char *argument)
 {
@@ -227,18 +221,12 @@ void do_kill(CHAR_DATA *ch, char *argument)
 	WAIT_STATE(ch, 1 * PULSE_VIOLENCE);
 	check_killer(ch, victim);
 	multi_hit(ch, victim, TYPE_UNDEFINED);
-
-	return;
 }
-
 
 void do_murde(CHAR_DATA *ch, /*@unused@*/char *argument)
 {
 	send_to_char("If you want to MURDER, spell it out.\n\r", ch);
-	return;
 }
-
-
 
 void do_murder(CHAR_DATA *ch, char *argument)
 {
@@ -297,7 +285,6 @@ void do_murder(CHAR_DATA *ch, char *argument)
 	broadcast_channel(victim, channels_find(CHANNEL_SHOUT), NULL, buf);
 	check_killer(ch, victim);
 	multi_hit(ch, victim, TYPE_UNDEFINED);
-	return;
 }
 
 void do_flee(/*@dependent@*/CHAR_DATA *ch, /*@unused@*/char *argument)
@@ -366,10 +353,7 @@ void do_flee(/*@dependent@*/CHAR_DATA *ch, /*@unused@*/char *argument)
 	}
 
 	send_to_char("```#PANIC``! You couldn't escape!\n\r", ch);
-	return;
 }
-
-
 
 void do_rescue(CHAR_DATA *ch, char *argument)
 {
@@ -447,8 +431,6 @@ void do_rescue(CHAR_DATA *ch, char *argument)
 	set_fighting(fch, ch);
 	return;
 }
-
-
 
 void do_kick(CHAR_DATA *ch, /*@unused@*/char *argument)
 {
@@ -533,11 +515,7 @@ void do_kick(CHAR_DATA *ch, /*@unused@*/char *argument)
 		ch->move -= 25;
 	}
 	check_killer(ch, victim);
-	return;
 }
-
-
-
 
 void do_disarm(CHAR_DATA *ch, /*@unused@*/char *argument)
 {
@@ -616,10 +594,7 @@ void do_disarm(CHAR_DATA *ch, /*@unused@*/char *argument)
 	}
 
 	check_killer(ch, victim);
-	return;
 }
-
-
 
 void do_surrender(CHAR_DATA *ch, /*@unused@*/char *argument)
 {
@@ -641,14 +616,10 @@ void do_surrender(CHAR_DATA *ch, /*@unused@*/char *argument)
 	}
 }
 
-
 void do_sla(CHAR_DATA *ch, /*@unused@*/char *argument)
 {
 	send_to_char("If you want to SLAY, spell it out.\n\r", ch);
-	return;
 }
-
-
 
 void do_slay(CHAR_DATA *ch, char *argument)
 {
@@ -682,7 +653,6 @@ void do_slay(CHAR_DATA *ch, char *argument)
 
 	make_corpse(victim);
 	raw_kill(victim, ch);
-	return;
 }
 
 void do_intimidate(CHAR_DATA *ch, char *argument)
@@ -756,63 +726,13 @@ void do_intimidate(CHAR_DATA *ch, char *argument)
 	}
 
 	ch->mana -= 50;
-
-	return;
-}
-
-
-void do_ravage(CHAR_DATA *ch, char *argument)
-{
-	CHAR_DATA *victim;
-	SKILL *skill;
-	int chance;
-
-	if ((skill = skill_lookup("ravage")) == NULL) {
-		send_to_char("Huh?\n\r", ch);
-		return;
-	}
-
-	if ((chance = get_learned_percent(ch, skill)) <= 0) {
-		send_to_char("You better leave the martial arts to fighters.\n\r", ch);
-		return;
-	}
-
-	if (argument[0] != '\0') {
-		if ((victim = get_char_room(ch, argument)) == NULL) {
-			send_to_char("They arent here.\n\r", ch);
-			return;
-		}
-	} else {
-		if ((victim = ch->fighting) == NULL) {
-			send_to_char("You aren't fighting anyone.\n\r", ch);
-			return;
-		}
-	}
-
-	if (chance > number_percent()) {
-		if (number_percent() < 5)
-			(void)damage(ch, victim, number_range(ch->level * 3, ch->level * 7), skill->sn, DAM_BASH, TRUE);
-		(void)damage(ch, victim, number_range(ch->level * 2, ch->level * 5), skill->sn, DAM_BASH, TRUE);
-		check_improve(ch, skill, TRUE, 1);
-
-		(void)damage(ch, victim, number_range(ch->level * 2, ch->level * 5), skill->sn, DAM_BASH, TRUE);
-		check_improve(ch, skill, TRUE, 1);
-		WAIT_STATE(victim, PULSE_VIOLENCE / 2);
-	} else {
-		(void)damage(ch, victim, 0, skill->sn, DAM_BASH, TRUE);
-		check_improve(ch, skill, FALSE, 1);
-	}
-
-	WAIT_STATE(ch, PULSE_VIOLENCE);
-	check_killer(ch, victim);
-	return;
 }
 
 /* ********************************************************************
  * Raise dead, based off the find familiar code
  * April 4 1998 by Gothar
  *
- * This skill allows your players to   have a companion like those loveable    pets in the pet shops.
+ * This skill allows your players to have a companion like those loveable pets in the pet shops.
  *  gothar@magma.ca
  * mcco0055@algonquinc.on.ca
  *
@@ -940,67 +860,5 @@ void do_familiar(/*@dependent@*/CHAR_DATA *ch, /*@unused@*/char *argument)
 	SET_BIT(mount->affected_by, AFF_CHARM);
 	ch->move /= 2; /* physically draining lose of move */
 	check_improve(ch, skill, TRUE, 6);
-	return;
 }
 
-void do_whirlwind(CHAR_DATA *ch, /*@unused@*/char *argument)
-{
-	CHAR_DATA *pChar;
-	CHAR_DATA *pChar_next;
-	OBJ_DATA *wield;
-	bool found = FALSE;
-	SKILL *skill;
-	int chance;
-
-	if ((skill = skill_lookup("whirlwind")) == NULL) {
-		send_to_char("Huh?\n\r", ch);
-		return;
-	}
-
-	if (!IS_NPC(ch) && (chance = get_learned_percent(ch, skill)) <= 0) {
-		send_to_char("You don't know how to do that...\n\r", ch);
-		return;
-	}
-
-	if ((wield = get_eq_char(ch, WEAR_WIELD)) == NULL) {
-		send_to_char("You need to wield a weapon first...\n\r", ch);
-		return;
-	}
-
-	if (ch->move < 1000) {
-		send_to_char("You don't have the energy.\n\r", ch);
-		return;
-	}
-
-	act("$n holds $p firmly, and starts spinning around...", ch, wield, NULL, TO_ROOM);
-	act("You hold $p firmly, and start spinning around...", ch, wield, NULL, TO_CHAR);
-
-	pChar_next = NULL;
-	for (pChar = ch->in_room->people; pChar != NULL; pChar = pChar_next) {
-		pChar_next = pChar->next_in_room;
-		if (IS_NPC(pChar)) {
-			found = TRUE;
-			act("$n turns towards YOU!", ch, NULL, pChar, TO_VICT);
-			(void)one_attack(ch, pChar, skill->sn, NULL);
-		}
-	}
-
-	if (!found) {
-		act("$n looks dizzy, and a tiny bit embarassed.", ch, NULL, NULL, TO_ROOM);
-		act("You feel dizzy, and a tiny bit embarassed.", ch, NULL, NULL, TO_CHAR);
-	}
-
-	WAIT_STATE(ch, skill->wait);
-
-	if (!found && number_percent() < 33) {
-		act("$n loses $s balance and falls into a heap.", ch, NULL, NULL, TO_ROOM);
-		act("You lose your balance and fall into a heap.", ch, NULL, NULL, TO_CHAR);
-		ch->position = POS_RESTING;
-		check_improve(ch, skill, FALSE, 1);
-	} else {
-		check_improve(ch, skill, TRUE, 1);
-	}
-
-	ch->move -= 1000;
-	return;
-}

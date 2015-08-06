@@ -226,7 +226,6 @@ const struct cmd_type cmd_table[] =
 	{ "kneecap",	  do_kneecap,      POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
 	{ "rake",	      do_rake,	       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
 	{ "dream",	      do_dream,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
-	{ "ravage",	      do_ravage,       POS_FIGHTING, 0,	 LOG_NORMAL, 0 },
 	{ "rescue",	      do_rescue,       POS_FIGHTING, 0,	 LOG_NORMAL, 0 },
 	{ "throw",	      do_throw,	       POS_FIGHTING, 0,	 LOG_NORMAL, 0 },
 	{ "shriek",	      do_shriek,       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
