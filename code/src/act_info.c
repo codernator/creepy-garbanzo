@@ -62,7 +62,7 @@ void do_gopk(CHAR_DATA *ch, char *argument)
 	send_to_char("WARNING: this command is irreversible.\n\r", ch);
 	send_to_char("Once you are PK, you cannot go back to NPK.\n\r", ch);
 	send_to_char("Typing go_pk with an argument will undo go_pk status.\n\r", ch);
-	ch->pcdata->confirm_pk = TRUE;
+	ch->pcdata->confirm_pk = true;
 	return;
 }
 
@@ -650,7 +650,7 @@ void do_lore(CHAR_DATA *ch, char *argument)
 		act("$n studies $p, discovering all of its hidden powers.", ch, obj, NULL, TO_ROOM);
 
 		identify_item(ch, obj);
-		check_improve(ch, skill, TRUE, 4);
+		check_improve(ch, skill, true, 4);
 	}
 }
 
@@ -856,12 +856,12 @@ void do_exits(CHAR_DATA *ch, char *argument)
 	else
 		sprintf(buf, "Obvious exits`8:``\n\r");
 
-	found = FALSE;
+	found = false;
 	for (door = 0; door <= 5; door++) {
 		if ((pexit = ch->in_room->exit[door]) != NULL
 		    && pexit->u1.to_room != NULL
 		    && can_see_room(ch, pexit->u1.to_room)) {
-			found = TRUE;
+			found = true;
 			dClosed = IS_SET(pexit->exit_info, EX_CLOSED);
 			if (fAuto) {
 				strcat(buf, " `^");
@@ -910,7 +910,7 @@ void do_exits(CHAR_DATA *ch, char *argument)
 				if (dClosed) sprintf(exit_name, "(down)"); else sprintf(exit_name, "down");
 			}
 
-			found = TRUE;
+			found = true;
 			return;
 		}
 		return;
@@ -1370,7 +1370,7 @@ void do_time(CHAR_DATA *ch, char *argument)
 void do_inventory(CHAR_DATA *ch, char *argument)
 {
 	send_to_char("You are carrying```8:``\n\r", ch);
-	show_list_to_char(ch->carrying, ch, TRUE, TRUE);
+	show_list_to_char(ch->carrying, ch, true, true);
 	return;
 }
 
@@ -1690,7 +1690,7 @@ void do_description(CHAR_DATA *ch, char *argument)
 
 		if (argument[0] == '-') {
 			int len, buf_len;
-			bool found = FALSE;
+			bool found = false;
 
 			if (ch->description == NULL || ch->description[0] == '\0') {
 				send_to_char("No lines left to remove.\n\r", ch);
@@ -1704,7 +1704,7 @@ void do_description(CHAR_DATA *ch, char *argument)
 					if (!found) {            /* back it up */
 						if (len > 0)
 							len--;
-						found = TRUE;
+						found = true;
 					} else {
 						/* found the second one */
 						buf[len + 1] = '\0';
@@ -1902,7 +1902,7 @@ void do_finger(CHAR_DATA *ch, char *argument)
 	char mins[MSL];
 	char secs[MSL];
 	bool fOld;
-	bool vOnline = TRUE;
+	bool vOnline = true;
 
 	one_argument(argument, arg);
 
@@ -1927,8 +1927,8 @@ void do_finger(CHAR_DATA *ch, char *argument)
 
 		victim = new_char();
 		victim->pcdata = new_pcdata();
-		fOld = FALSE;
-		vOnline = FALSE;
+		fOld = false;
+		vOnline = false;
 
 		sprintf(buf, "%s%s", PLAYER_DIR, capitalize(arg));
 		if ((fp = fopen(buf, "r")) != NULL) {
@@ -1937,7 +1937,7 @@ void do_finger(CHAR_DATA *ch, char *argument)
 			for (iNest = 0; iNest < MAX_NEST; iNest++)
 				rgObjNest[iNest] = NULL;
 
-			fOld = TRUE;
+			fOld = true;
 			for (;; ) {
 				char letter;
 				char *word;
@@ -2095,7 +2095,7 @@ void do_laston(CHAR_DATA *ch, char *argument)
 
 	victim = new_char();
 	victim->pcdata = new_pcdata();
-	fOld = FALSE;
+	fOld = false;
 
 	sprintf(buf, "%s%s", PLAYER_DIR, capitalize(arg));
 	if ((fp = fopen(buf, "r")) != NULL) {
@@ -2104,7 +2104,7 @@ void do_laston(CHAR_DATA *ch, char *argument)
 		for (iNest = 0; iNest < MAX_NEST; iNest++)
 			rgObjNest[iNest] = NULL;
 
-		fOld = TRUE;
+		fOld = true;
 		for (;; ) {
 			char letter;
 			char *word;
@@ -2263,7 +2263,7 @@ void do_history(CHAR_DATA *ch, char *argument)
 {
 	char cmd[MSL];
 	int len;
-	bool found = FALSE;
+	bool found = false;
 	size_t MAX_HIST_LENGTH = 4096;
 
 	if (IS_NPC(ch))
@@ -2331,7 +2331,7 @@ print_hist_help:
 					if (!found) {
 						if (len > 0)
 							len--;
-						found = TRUE;
+						found = true;
 					} else {
 						/* crop off everything after the second '\r' from the end */
 						buf[len + 1] = '\0';

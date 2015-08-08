@@ -191,23 +191,23 @@ MPEDIT(mpedit_create){
 
 	if (IS_NULLSTR(argument) || value < 1) {
 		send_to_char("Syntax:  mpedit create [vnum]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	ad = get_vnum_area(value);
 	if (ad == NULL) {
 		send_to_char("MPEdit : That vnum is not assigned to an area.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (!IS_BUILDER(ch, ad)) {
 		send_to_char("MPEdit : Insufficient security to create MobProgs.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (get_mprog_index(value)) {
 		send_to_char("MPEdit: Code vnum already exists.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	mpcode = new_mpcode();
@@ -219,7 +219,7 @@ MPEDIT(mpedit_create){
 	ch->desc->editor = ED_MPCODE;
 
 	send_to_char("MobProgram Code Created.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -238,17 +238,17 @@ MPEDIT(mpedit_clone){
 	if (argument[0] == '\0'
 	    || value == 0) {
 		send_to_char("Syntax:  clone [existing vnum]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if ((pClone = get_mprog_index(value)) == NULL) {
 		send_to_char("MEdit:  MobProgram to clone does not exist.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	free_string(mpcode->code);
 	mpcode->code = str_dup(pClone->code);
-	return TRUE;
+	return true;
 }
 
 
@@ -267,7 +267,7 @@ MPEDIT(mpedit_show){
 		       mpcode->vnum,
 		       (mpcode->comment[0] != '\0') ? mpcode->comment : "(none)",
 		       mpcode->code);
-	return FALSE;
+	return false;
 }
 
 
@@ -282,11 +282,11 @@ MPEDIT(mpedit_code){
 	EDIT_MPCODE(ch, mpcode);
 	if (argument[0] == '\0') {
 		string_append(ch, &mpcode->code);
-		return TRUE;
+		return true;
 	}
 
 	send_to_char("Syntax: code\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 
@@ -302,12 +302,12 @@ MPEDIT(mpedit_comment){
 
 	if (is_help(argument)) {
 		send_to_char("Syntax: code\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	free_string(mpcode->comment);
 	mpcode->comment = str_dup(argument);
-	return TRUE;
+	return true;
 }
 
 
@@ -359,5 +359,5 @@ MPEDIT(mpedit_list){
 			send_to_char("There are no mob programs in this area.\n\r", ch);
 	}
 
-	return FALSE;
+	return false;
 }

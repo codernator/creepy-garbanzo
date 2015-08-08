@@ -46,11 +46,11 @@ void die_follower(CHAR_DATA *ch)
 bool is_same_group(CHAR_DATA *ach, CHAR_DATA *bch)
 {
 	if (ach == NULL || bch == NULL)
-		return FALSE;
+		return false;
 
 	if (IS_NPC(ach) && IS_NPC(bch)) {
 		if (ach->group == bch->group)
-			return TRUE;
+			return true;
 	}
 
 	if (ach->leader != NULL)
@@ -72,7 +72,7 @@ void nuke_pets(CHAR_DATA *ch)
 			act("$N disappears in a puff of faerie dust.", ch, NULL, pet, TO_NOTVICT);
         }
 
-		extract_char(pet, TRUE);
+		extract_char(pet, true);
 	}
 	ch->pet = NULL;
 }

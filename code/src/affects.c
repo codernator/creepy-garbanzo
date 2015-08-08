@@ -22,7 +22,7 @@ void affect_enchant(OBJ_DATA *obj)
 		AFFECT_DATA *paf;
 		AFFECT_DATA *af_new;
 
-		obj->enchanted = TRUE;
+		obj->enchanted = true;
 
 		for (paf = obj->obj_idx->affected; paf != NULL; paf = paf->next) {
 			af_new = new_affect();
@@ -337,7 +337,7 @@ void affect_to_char(CHAR_DATA *ch, AFFECT_DATA *paf)
 	paf_new->next = ch->affected;
 	ch->affected = paf_new;
 
-	affect_modify(ch, paf_new, TRUE);
+	affect_modify(ch, paf_new, true);
 	return;
 }
 
@@ -414,7 +414,7 @@ void affect_remove(CHAR_DATA *ch, AFFECT_DATA *paf)
 		return;
 	}
 
-	affect_modify(ch, paf, FALSE);
+	affect_modify(ch, paf, false);
 	where = paf->where;
 	vector = paf->bitvector;
 	if (paf == ch->affected) {
@@ -457,7 +457,7 @@ void affect_remove_obj(OBJ_DATA *obj, AFFECT_DATA *paf)
 	}
 
 	if (obj->carried_by != NULL && obj->wear_loc != -1)
-		affect_modify(obj->carried_by, paf, FALSE);
+		affect_modify(obj->carried_by, paf, false);
 	where = paf->where;
 	vector = paf->bitvector;
 
@@ -612,10 +612,10 @@ bool is_affected(CHAR_DATA *ch, SKILL *skill)
 	if (skill != NULL) {
 		for (paf = ch->affected; paf != NULL; paf = paf->next)
 			if (paf->type == skill->sn)
-				return TRUE;
+				return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 /***************************************************************************
@@ -628,13 +628,13 @@ bool is_affected_room(ROOM_INDEX_DATA *room, SKILL *skill)
 	AFFECT_DATA *paf;
 
 	if (room == NULL)
-		return FALSE;
+		return false;
 
 	for (paf = room->affected; paf != NULL; paf = paf->next)
 		if (paf->type == skill->sn)
-			return TRUE;
+			return true;
 
-	return FALSE;
+	return false;
 }
 
 
@@ -739,7 +739,7 @@ void affect_parasitic_cloud(SKILL *skill, void *target, int type, AFFECT_DATA *p
 				int dam;
 
 				dam = number_range(paf->level * 3, paf->level * 6);
-				if ((dam = damage(vch, vch, dam, skill->sn, DAM_NEGATIVE, FALSE)) > 0) {
+				if ((dam = damage(vch, vch, dam, skill->sn, DAM_NEGATIVE, false)) > 0) {
 					vch->mana -= dam;
 					vch->move -= dam;
 
@@ -747,7 +747,7 @@ void affect_parasitic_cloud(SKILL *skill, void *target, int type, AFFECT_DATA *p
 					    vch, NULL, NULL, TO_CHAR);
 					act("A `1sw`!i`1rl`!i`1ng `1cl`!ou`1d`` comes to life `1v`!i`1c`!iou`1sl`!y`` attacks $n!!",
 					    vch, NULL, NULL, TO_ROOM);
-					dam_message(vch, NULL, dam, skill->sn, FALSE);
+					dam_message(vch, NULL, dam, skill->sn, false);
 					vch->position = POS_RESTING;
 				}
 			}
@@ -786,7 +786,7 @@ void affect_black_plague(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
 		dam = 50 * UMIN(ch->level, (int)(paf->level / 5 + 1));
 		ch->mana -= dam;
 		ch->move -= dam;
-		damage(ch, ch, dam, skill->sn, DAM_DISEASE, FALSE);
+		damage(ch, ch, dam, skill->sn, DAM_DISEASE, false);
 	}
 }
 
@@ -838,7 +838,7 @@ void affect_disease(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
 		dam = 20 * UMIN(ch->level, (int)(paf->level / 5 + 1));
 		ch->mana -= dam;
 		ch->move -= dam;
-		damage(ch, ch, dam, skill->sn, DAM_DISEASE, FALSE);
+		damage(ch, ch, dam, skill->sn, DAM_DISEASE, false);
 	}
 }
 
@@ -862,7 +862,7 @@ void affect_burning_flames(SKILL *skill, void *target, int type, AFFECT_DATA *pa
 			return;
 
 		dam = number_range(paf->level, paf->level * 3);
-		if (damage(ch, ch, dam, skill->sn, DAM_FIRE, FALSE) > 0) {
+		if (damage(ch, ch, dam, skill->sn, DAM_FIRE, false) > 0) {
 			act("$n `8screams`` in agony as `!flames`` sear their flesh!", ch, NULL, NULL, TO_ROOM);
 			send_to_char("You `8scream`` in agony as `!flames`` engulf you!\n\r", ch);
 		}
@@ -889,7 +889,7 @@ void affect_poison(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
 
 		dam = number_range(paf->level / 10 + 1, paf->level / 3 + 1);
 		if (!IS_AFFECTED(ch, AFF_SLOW)
-		    && damage(ch, ch, dam, skill->sn, DAM_POISON, FALSE) > 0) {
+		    && damage(ch, ch, dam, skill->sn, DAM_POISON, false) > 0) {
 			act("$n shivers and suffers.", ch, NULL, NULL, TO_ROOM);
 			send_to_char("You shiver and suffer.\n\r", ch);
 		}

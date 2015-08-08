@@ -196,7 +196,7 @@ EDIT(skedit_delete){
 	edit_done(ch);
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -211,12 +211,12 @@ EDIT(skedit_new){
 
 	if (is_help(argument)) {
 		send_to_char("Syntax   : new [name]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if ((skill = skill_lookup(argument)) != NULL) {
 		send_to_char("SKedit : skill already exists.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	skill = new_skill();
@@ -232,7 +232,7 @@ EDIT(skedit_new){
 	ch->desc->editor = ED_SKILL;
 
 	send_to_char("Ok.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 
@@ -251,7 +251,7 @@ EDIT(skedit_list){
 
 	if (is_help(argument)) {
 		send_to_char("Syntax : list [partial name]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	buffer = new_buf();
@@ -266,7 +266,7 @@ EDIT(skedit_list){
 	page_to_char(buf_string(buffer), ch);
 	free_buf(buffer);
 
-	return FALSE;
+	return false;
 }
 
 /***************************************************************************
@@ -295,12 +295,12 @@ EDIT(skedit_show){
 		SPELL_LIST *spells;
 		bool first;
 
-		first = TRUE;
+		first = true;
 		for (spells = skill->spells; spells != NULL; spells = spells->next) {
 			if (spells->spell_fn != NULL) {
 				if (first) {
 					printf_to_char(ch, "`&Spell Fn``:    [%s]\n\r", spell_fn_name(spells->spell_fn));
-					first = FALSE;
+					first = false;
 				} else {
 					printf_to_char(ch, "             [%s]\n\r", spell_fn_name(spells->spell_fn));
 				}
@@ -314,12 +314,12 @@ EDIT(skedit_show){
 		AFFECT_LIST *affects;
 		bool first;
 
-		first = TRUE;
+		first = true;
 		for (affects = skill->affects; affects != NULL; affects = affects->next) {
 			if (affects->affect_fn != NULL) {
 				if (first) {
 					printf_to_char(ch, "`&Affect Fn``:   [%s]\n\r", affect_fn_name(affects->affect_fn));
-					first = FALSE;
+					first = false;
 				} else {
 					printf_to_char(ch, "             [%s]\n\r", affect_fn_name(affects->affect_fn));
 				}
@@ -375,7 +375,7 @@ EDIT(skedit_show){
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 
@@ -398,13 +398,13 @@ EDIT(skedit_level){
 
 	if (is_help(argument)) {
 		send_to_char("Syntax:  level <class> <level|none> [difficulty]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	argument = one_argument(argument, arg);
 	if ((cls = class_lookup(arg)) <= -1) {
 		send_to_char("The chosen class is invalid.  Please check the name and try again.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (!str_prefix(argument, "none")) {
@@ -419,7 +419,7 @@ EDIT(skedit_level){
 			level = parse_int(arg);
 		} else {
 			send_to_char("The level must be a number or 'none'.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		if (is_number(argument))
@@ -452,7 +452,7 @@ EDIT(skedit_level){
 
 		if (level_info == NULL) {
 			send_to_char("Error creating LEVEL_INFO structure.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		level_info->level = level;
@@ -464,7 +464,7 @@ EDIT(skedit_level){
 
 		if (level_info == NULL) {
 			send_to_char("That level information does not exist.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		/* unlink the level info structure */
@@ -486,7 +486,7 @@ EDIT(skedit_level){
 	}
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -504,13 +504,13 @@ EDIT(skedit_min_mana){
 
 	if (is_help(argument) || !is_number(argument)) {
 		send_to_char("Syntax:  mana [number]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	skill->min_mana = parse_int(argument);
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -527,13 +527,13 @@ EDIT(skedit_wait){
 
 	if (is_help(argument) || !is_number(argument)) {
 		send_to_char("Syntax:  wait [number]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	skill->wait = parse_int(argument);
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 /***************************************************************************
@@ -552,13 +552,13 @@ EDIT(skedit_min_pos){
 	    || (value = flag_value(position_flags, argument)) == NO_FLAG) {
 		send_to_char("Syntax:  position [position]\n\r"
 			     "Type '? position' for a list of positions.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	skill->min_pos = value;
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -577,13 +577,13 @@ EDIT(skedit_target){
 	    || (value = flag_value(target_flags, argument)) == NO_FLAG) {
 		send_to_char("Syntax:  target [target]\n\r"
 			     "Type '? target' for a list of skill targets.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	skill->target = value;
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -599,7 +599,7 @@ EDIT(skedit_damage_msg){
 
 	if (is_help(argument)) {
 		send_to_char("Syntax:  damage [damage message]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (skill->dam_noun != NULL)
@@ -608,7 +608,7 @@ EDIT(skedit_damage_msg){
 	skill->dam_noun = str_dup(argument);
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 /***************************************************************************
@@ -623,7 +623,7 @@ EDIT(skedit_message){
 
 	if (is_help(argument)) {
 		send_to_char("Syntax:  message [wear-off message]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (skill->msg != NULL)
@@ -632,7 +632,7 @@ EDIT(skedit_message){
 	skill->msg = str_dup(argument);
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 /***************************************************************************
@@ -647,7 +647,7 @@ EDIT(skedit_obj_message){
 
 	if (is_help(argument)) {
 		send_to_char("Syntax:  obj_message [object wear-off message]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (skill->msg_obj != NULL)
@@ -656,7 +656,7 @@ EDIT(skedit_obj_message){
 	skill->msg_obj = str_dup(argument);
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -673,7 +673,7 @@ EDIT(skedit_others_message){
 
 	if (is_help(argument)) {
 		send_to_char("Syntax:  others_message [wear-off message to room]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (skill->msg_others != NULL)
@@ -682,7 +682,7 @@ EDIT(skedit_others_message){
 	skill->msg_others = str_dup(argument);
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 /***************************************************************************
@@ -702,21 +702,21 @@ EDIT(skedit_spell){
 		send_to_char("\n\r", ch);
 		send_to_char("Syntax:  spell <add|remove> <spell name>\n\r", ch);
 		send_to_char("         spell <list> [all|partiall spell name]\n\r\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	argument = one_argument(argument, cmd);
 	if (!str_prefix(cmd, "add")) {
 		if ((spell = spell_fn_lookup(argument)) == NULL) {
 			send_to_char("That spell does not exist.  Type 'spell list' for a list of spells.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		add_spell(skill, spell);
 	} else if (!str_prefix(cmd, "remove")) {
 		if (skill->spells == NULL) {
 			send_to_char("That skill does not have any spells associated with it.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		if (!str_prefix(argument, "all")) {
@@ -730,7 +730,7 @@ EDIT(skedit_spell){
 		} else {
 			if ((spell = spell_fn_lookup(argument)) == NULL) {
 				send_to_char("That spell does not exist.  Type 'spell list' for a list of spells.\n\r", ch);
-				return FALSE;
+				return false;
 			}
 
 			if (skill->spells->spell_fn == spell) {
@@ -749,7 +749,7 @@ EDIT(skedit_spell){
 
 				if (spells == NULL) {
 					printf_to_char(ch, "The spell is not set on this skill. Spell: %s\n\r", spell_fn_name(spell));
-					return FALSE;
+					return false;
 				}
 
 				if (spells_prev != NULL) {
@@ -780,7 +780,7 @@ EDIT(skedit_spell){
 	}
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -802,21 +802,21 @@ EDIT(skedit_affect){
 		send_to_char("\n\r", ch);
 		send_to_char("Syntax:  affect <add|remove> <affect function name>\n\r", ch);
 		send_to_char("         affect <list> [all|partial affect name]\n\r\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	argument = one_argument(argument, cmd);
 	if (!str_prefix(cmd, "add")) {
 		if ((affect = affect_fn_lookup(argument)) == NULL) {
 			send_to_char("That affect does not exist.  Type 'affect list' for a list of affects.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		add_affect(skill, affect);
 	} else if (!str_prefix(cmd, "remove")) {
 		if (skill->affects == NULL) {
 			send_to_char("That skill does not have any affects associated with it.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		if (!str_prefix(argument, "all")) {
@@ -830,7 +830,7 @@ EDIT(skedit_affect){
 		} else {
 			if ((affect = affect_fn_lookup(argument)) == NULL) {
 				send_to_char("That affect does not exist.  Type 'affect list' for a list of affects.\n\r", ch);
-				return FALSE;
+				return false;
 			}
 
 			if (skill->affects->affect_fn == affect) {
@@ -849,7 +849,7 @@ EDIT(skedit_affect){
 
 				if (affects == NULL) {
 					printf_to_char(ch, "The affect is not set on this skill. Affect: %s\n\r", affect_fn_name(affect));
-					return FALSE;
+					return false;
 				}
 
 				if (affects_prev != NULL) {
@@ -876,14 +876,14 @@ EDIT(skedit_affect){
 		if (col % 3 != 0)
 			send_to_char("\n\r", ch);
 
-		return FALSE;
+		return false;
 	} else {
 		return skedit_affect(ch, "");
 	}
 
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -902,7 +902,7 @@ EDIT(skedit_argument){
 	if (is_help(argument)) {
 		send_to_char("\n\rSyntax:  argument [add] [argument name] [value]\n\r", ch);
 		send_to_char("Syntax:  argument [remove] [argument name]\n\r\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	argument = one_argument(argument, cmd);
@@ -912,7 +912,7 @@ EDIT(skedit_argument){
 		argument = one_argument(argument, key);
 		if (argument[0] == '\0') {
 			send_to_char("You must provide a value.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		arg = new_argument();
@@ -924,7 +924,7 @@ EDIT(skedit_argument){
 	} else if (!str_prefix(cmd, "remove")) {
 		if (skill->args == NULL) {
 			send_to_char("That skill does not have any arguments associated with it.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		if (!str_prefix(argument, "all")) {
@@ -938,7 +938,7 @@ EDIT(skedit_argument){
 		} else {
 			if (argument[0] == '\0') {
 				send_to_char("You must supply a key name.\n\r", ch);
-				return FALSE;
+				return false;
 			}
 
 			if (!str_prefix(argument, skill->args->key)) {
@@ -957,7 +957,7 @@ EDIT(skedit_argument){
 				}
 				if (arg == NULL) {
 					printf_to_char(ch, "The argument is not set on this skill. Argument: %s\n\r", argument);
-					return FALSE;
+					return false;
 				}
 
 				if (arg_prev != NULL) {
@@ -971,7 +971,7 @@ EDIT(skedit_argument){
 	}
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -990,12 +990,12 @@ EDIT(skedit_help){
 
 	if (is_help(argument)) {
 		send_to_char("Syntax:  helpfile [keyword of help]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if ((help = help_lookup(argument)) == NULL) {
 		send_to_char("That help does not exist.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (skill->help_keyword != NULL)
@@ -1004,7 +1004,7 @@ EDIT(skedit_help){
 	skill->help = help;
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1027,13 +1027,13 @@ EDIT(skedit_flags){
 	    || (value = flag_value(skill_flags, argument)) == NO_FLAG) {
 		send_to_char("Syntax:  flag [flag]\n\r"
 			     "Type '? skill-flags' for a list of skill flags.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	skill->flags ^= value;
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 /***************************************************************************
@@ -1050,19 +1050,19 @@ EDIT(skedit_difficulty){
 	EDIT_SKILL(ch, skill);
 	if (is_help(argument) || !is_number(argument)) {
 		send_to_char("Syntax:  difficulty [number]\n\rReflects how hard a skill is to use.", ch);
-		return FALSE;
+		return false;
 	}
 
 	value = parse_int(argument);
 	if (value < 1 || value > 10) {
 		send_to_char("The number must be between 1 and 10.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	skill->difficulty = value;
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1083,13 +1083,13 @@ EDIT(skedit_percent){
 
 	if (is_help(argument) || !is_number(argument)) {
 		send_to_char("Syntax:  percent [number]\n\r\n\rSets a mob's base percentage for using a skill.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	skill->percent = parse_int(argument);
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1110,13 +1110,13 @@ EDIT(skedit_act_flag){
 	    || (value = flag_value(act_flags, argument)) == NO_FLAG) {
 		send_to_char("Syntax:  act_flag [flag]\n\r"
 			     "Type '? act' for a list of act flags.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	skill->act_flag = value;
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1136,13 +1136,13 @@ EDIT(skedit_off_flag){
 	    || (value = flag_value(off_flags, argument)) == NO_FLAG) {
 		send_to_char("Syntax:  off_flag [flag]\n\r"
 			     "Type '? off' for a list of off flags.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	skill->off_flag = value;
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1160,7 +1160,7 @@ EDIT(skedit_off_flag){
 	if (!str_cmp(word, literal))                     \
 	{                                                                       \
 		field = value;                                \
-		found = TRUE;                                 \
+		found = true;                                 \
 	}
 
 
@@ -1188,7 +1188,7 @@ void load_skills()
 	}
 
 	word = fread_word(fp);
-	found = FALSE;
+	found = false;
 
 	while (!feof(fp) && str_cmp(word, END_MARKER)) {
 		if (!str_cmp(word, "sn")) {
@@ -1200,7 +1200,7 @@ void load_skills()
 
 			skill->sn = sn;
 			gn_max_skill_sn = UMAX(gn_max_skill_sn, sn);
-			found = TRUE;
+			found = true;
 		} else {
 			if (skill == NULL) {
 				printf_bug("load_skills: No skill loaded - invalid file syntax. %s", word);
@@ -1229,7 +1229,7 @@ void load_skills()
 				if (spell != NULL)
 					add_spell(skill, spell);
 
-				found = TRUE;
+				found = true;
 			}
 
 			if (!str_cmp(word, "AfFn")) {
@@ -1239,7 +1239,7 @@ void load_skills()
 				if (affect != NULL)
 					add_affect(skill, affect);
 
-				found = TRUE;
+				found = true;
 			}
 
 
@@ -1255,7 +1255,7 @@ void load_skills()
 				set_variant(arg->data, VARIANT_STRING, data);
 
 				add_argument(skill, arg);
-				found = TRUE;
+				found = true;
 			}
 
 
@@ -1271,14 +1271,14 @@ void load_skills()
 
 				add_skill_level(skill, level);
 
-				found = TRUE;
+				found = true;
 			}
 		}
 
 		if (!str_cmp(word, "Help")) {
 			skill->help_keyword = fread_string(fp);
 			skill->help = help_lookup(skill->help_keyword);
-			found = TRUE;
+			found = true;
 		}
 
 		if (!found) {
@@ -1287,7 +1287,7 @@ void load_skills()
 		}
 
 		word = fread_word(fp);
-		found = FALSE;
+		found = false;
 	}
 }
 

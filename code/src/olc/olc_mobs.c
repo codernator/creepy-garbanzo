@@ -267,7 +267,7 @@ EDIT(medit_show){
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 
@@ -286,23 +286,23 @@ EDIT(medit_create){
 	value = parse_long(argument);
 	if (argument[0] == '\0' || value == 0) {
 		send_to_char("Syntax:  medit create [vnum]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	area = get_vnum_area(value);
 	if (!area) {
 		send_to_char("MEdit:  That vnum is not assigned an area.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (!IS_BUILDER(ch, area)) {
 		send_to_char("MEdit:  Vnum in an area you cannot build in.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (get_mob_index(value)) {
 		send_to_char("MEdit:  Mobile vnum already exists.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	mob_idx = new_mob_index();
@@ -319,7 +319,7 @@ EDIT(medit_create){
 	ch->desc->ed_data = (void *)mob_idx;
 
 	send_to_char("Mobile Created.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -339,12 +339,12 @@ EDIT(medit_clone){
 	if (argument[0] == '\0'
 	    || value == 0) {
 		send_to_char("Syntax:  clone [existing vnum]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if ((pClone = get_mob_index(value)) == NULL) {
 		send_to_char("MEdit:  Mobile to clone does not exist.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	mob_idx->new_format = pClone->new_format;
@@ -395,7 +395,7 @@ EDIT(medit_clone){
 	mob_idx->material = str_dup(pClone->material);
 
 	send_to_char("Mobile Cloned.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -411,12 +411,12 @@ EDIT(medit_damtype){
 	if (argument[0] == '\0') {
 		send_to_char("Syntax:  damtype [damage message]\n\r", ch);
 		send_to_char("Para ver una lista de tipos de mensajes, pon '? weapon'.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	mob_idx->dam_type = attack_lookup(argument);
 	send_to_char("Damage type set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 /*****************************************************************************
@@ -430,12 +430,12 @@ EDIT(medit_align){
 	EDIT_MOB(ch, mob_idx);
 	if (argument[0] == '\0' || !is_number(argument)) {
 		send_to_char("Syntax:  alignment [number]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	mob_idx->alignment = parse_int(argument);
 	send_to_char("Alignment set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 /*****************************************************************************
@@ -450,12 +450,12 @@ EDIT(medit_level){
 
 	if (argument[0] == '\0' || !is_number(argument)) {
 		send_to_char("Syntax:  level [number]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	mob_idx->level = parse_int(argument);
 	send_to_char("Level set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -470,11 +470,11 @@ EDIT(medit_desc){
 	EDIT_MOB(ch, mob_idx);
 	if (argument[0] == '\0') {
 		string_append(ch, &mob_idx->description);
-		return TRUE;
+		return true;
 	}
 
 	send_to_char("Syntax:  desc    - line edit\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 
@@ -489,7 +489,7 @@ EDIT(medit_long){
 	EDIT_MOB(ch, mob_idx);
 	if (argument[0] == '\0') {
 		send_to_char("Syntax:  long [string]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	free_string(mob_idx->long_descr);
@@ -498,7 +498,7 @@ EDIT(medit_long){
 	mob_idx->long_descr = str_dup(argument);
 	mob_idx->long_descr[0] = UPPER(mob_idx->long_descr[0]);
 	send_to_char("Long description set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -514,14 +514,14 @@ EDIT(medit_short){
 	EDIT_MOB(ch, mob_idx);
 	if (argument[0] == '\0') {
 		send_to_char("Syntax:  short [string]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	free_string(mob_idx->short_descr);
 	mob_idx->short_descr = str_dup(argument);
 
 	send_to_char("Short description set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -537,13 +537,13 @@ EDIT(medit_name){
 	EDIT_MOB(ch, mob_idx);
 	if (argument[0] == '\0') {
 		send_to_char("Syntax:  name [string]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	free_string(mob_idx->player_name);
 	mob_idx->player_name = str_dup(argument);
 	send_to_char("Name set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -567,7 +567,7 @@ EDIT(medit_shop){
 		send_to_char("         shop type [#x0-4] [item type]\n\r", ch);
 		send_to_char("         shop assign\n\r", ch);
 		send_to_char("         shop remove\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 
@@ -577,19 +577,19 @@ EDIT(medit_shop){
 		    || argument[0] == '\0'
 		    || !is_number(argument)) {
 			send_to_char("Syntax:  shop hours [#xopening] [#xclosing]\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		if (!mob_idx->shop) {
 			send_to_char("MEdit:  A shop must be assigned to this mobile first(shop assign).\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		mob_idx->shop->open_hour = parse_int(arg);
 		mob_idx->shop->close_hour = parse_int(argument);
 
 		send_to_char("Shop hours set.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 
@@ -599,18 +599,18 @@ EDIT(medit_shop){
 		    || argument[0] == '\0'
 		    || !is_number(argument)) {
 			send_to_char("Syntax:  shop profit [#xbuying%] [#xselling%]\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		if (!mob_idx->shop) {
 			send_to_char("MEdit:  A shop must be assigned to this mobile first(shop assign).\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		mob_idx->shop->profit_buy = parse_int(arg);
 		mob_idx->shop->profit_sell = parse_int(argument);
 		send_to_char("Shop profit set.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 
@@ -621,34 +621,34 @@ EDIT(medit_shop){
 		    || !is_number(arg)
 		    || argument[0] == '\0') {
 			send_to_char("Syntax:  shop type [#x0-4] [item type]\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		if (parse_int(arg) >= MAX_TRADE) {
 			printf_to_char(ch, "MEdit:  May sell %d items max.\n\r", MAX_TRADE);
-			return FALSE;
+			return false;
 		}
 
 		if (!mob_idx->shop) {
 			send_to_char("MEdit:  A shop must be assigned to this mobile first(shop assign).\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		if ((value = flag_value(type_flags, argument)) == NO_FLAG) {
 			send_to_char("MEdit:  That type of item is not known.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		mob_idx->shop->buy_type[parse_int(arg)] = value;
 		send_to_char("Shop type set.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 	/* shop assign && shop delete by Phoenix */
 	if (!str_prefix(command, "assign")) {
 		if (mob_idx->shop) {
 			send_to_char("Mob already has a shop assigned to it.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		mob_idx->shop = new_shop();
@@ -662,7 +662,7 @@ EDIT(medit_shop){
 		mob_idx->shop->keeper = mob_idx->vnum;
 
 		send_to_char("New shop assigned to mobile.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 	if (!str_prefix(command, "remove")) {
@@ -696,11 +696,11 @@ EDIT(medit_shop){
 		free_shop(shop);
 
 		send_to_char("Mobile is no longer a shopkeeper.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 	medit_shop(ch, "");
-	return FALSE;
+	return false;
 }
 
 
@@ -718,13 +718,13 @@ EDIT(medit_sex){
 		if ((value = flag_value(sex_flags, argument)) != NO_FLAG) {
 			mob_idx->sex = value;
 			send_to_char("Sex set.\n\r", ch);
-			return TRUE;
+			return true;
 		}
 	}
 
 	send_to_char("Syntax: sex [sex]\n\r"
 		     "Type '? sex' for a list of flags.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 /***************************************************************************
@@ -742,13 +742,13 @@ EDIT(medit_act){
 			mob_idx->act ^= value;
 			SET_BIT(mob_idx->act, ACT_IS_NPC);
 			send_to_char("Act flag toggled.\n\r", ch);
-			return TRUE;
+			return true;
 		}
 	}
 
 	send_to_char("Syntax: act [flag]\n\r"
 		     "Type '? act' for a list of flags.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 
@@ -766,13 +766,13 @@ EDIT(medit_affect){
 		if ((value = flag_value(affect_flags, argument)) != NO_FLAG) {
 			mob_idx->affected_by ^= value;
 			send_to_char("Affect flag toggled.\n\r", ch);
-			return TRUE;
+			return true;
 		}
 	}
 
 	send_to_char("Syntax: affect [flag]\n\r"
 		     "Type '? affect' for a list of flags.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 
@@ -834,12 +834,12 @@ EDIT(medit_ac){
 		mob_idx->ac[AC_EXOTIC] = exotic;
 
 		send_to_char("Ac set.\n\r", ch);
-		return TRUE;
-	} while (FALSE);    /* Just do it once.. */
+		return true;
+	} while (false);    /* Just do it once.. */
 
 	send_to_char("Syntax:  ac [ac-pierce [ac-bash [ac-slash [ac-exotic]]]]\n\r"
 		     "help MOB_AC  gives a list of reasonable ac-values.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 
@@ -857,13 +857,13 @@ EDIT(medit_form){
 		if ((value = flag_value(form_flags, argument)) != NO_FLAG) {
 			mob_idx->form ^= value;
 			send_to_char("Form toggled.\n\r", ch);
-			return TRUE;
+			return true;
 		}
 	}
 
 	send_to_char("Syntax: form [flags]\n\r"
 		     "Type '? form' for a list of flags.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 
@@ -881,13 +881,13 @@ EDIT(medit_part){
 		if ((value = flag_value(part_flags, argument)) != NO_FLAG) {
 			mob_idx->parts ^= value;
 			send_to_char("Parts toggled.\n\r", ch);
-			return TRUE;
+			return true;
 		}
 	}
 
 	send_to_char("Syntax: part [flags]\n\r"
 		     "Type '? part' for a list of flags.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 
@@ -905,13 +905,13 @@ EDIT(medit_imm){
 		if ((value = flag_value(imm_flags, argument)) != NO_FLAG) {
 			mob_idx->imm_flags ^= value;
 			send_to_char("Immunity toggled.\n\r", ch);
-			return TRUE;
+			return true;
 		}
 	}
 
 	send_to_char("Syntax: imm [flags]\n\r"
 		     "Type '? imm' for a list of flags.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 
@@ -929,13 +929,13 @@ EDIT(medit_res){
 		if ((value = flag_value(res_flags, argument)) != NO_FLAG) {
 			mob_idx->res_flags ^= value;
 			send_to_char("Resistance toggled.\n\r", ch);
-			return TRUE;
+			return true;
 		}
 	}
 
 	send_to_char("Syntax: res [flags]\n\r"
 		     "Type '? res' for a list of flags.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 
@@ -953,13 +953,13 @@ EDIT(medit_vuln){
 		if ((value = flag_value(vuln_flags, argument)) != NO_FLAG) {
 			mob_idx->vuln_flags ^= value;
 			send_to_char("Vulnerability toggled.\n\r", ch);
-			return TRUE;
+			return true;
 		}
 	}
 
 	send_to_char("Syntax: vuln [flags]\n\r"
 		     "Type '? vuln' for a list of flags.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 
@@ -974,13 +974,13 @@ EDIT(medit_material){
 	EDIT_MOB(ch, mob_idx);
 	if (argument[0] == '\0') {
 		send_to_char("Syntax:  material [string]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	free_string(mob_idx->material);
 	mob_idx->material = str_dup(argument);
 	send_to_char("Material set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -998,13 +998,13 @@ EDIT(medit_off){
 		if ((value = flag_value(off_flags, argument)) != NO_FLAG) {
 			mob_idx->off_flags ^= value;
 			send_to_char("Offensive behavior toggled.\n\r", ch);
-			return TRUE;
+			return true;
 		}
 	}
 
 	send_to_char("Syntax: off [flags]\n\r"
 		     "Type '? off' for a list of flags.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 
@@ -1022,20 +1022,20 @@ EDIT(medit_size){
 		if ((value = flag_value(size_flags, argument)) != NO_FLAG) {
 			mob_idx->size = value;
 			send_to_char("Size set.\n\r", ch);
-			return TRUE;
+			return true;
 		}
 	}
 
 	send_to_char("Syntax: size [size]\n\r"
 		     "Type '? size' for a list of sizes.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 static bool ShowMEditHitdiceSyntax(CHAR_DATA *ch)
 {
 	send_to_char("MEdit (hitdice): Syntax:  hitdice <number> d <type> + <bonus>\n\r", ch);
 	send_to_char("MEdit (hitdice): -or- hitdice auto <easy|norm|hard|insane>\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 /***************************************************************************
@@ -1091,7 +1091,7 @@ EDIT(medit_hitdice){
 		mob_idx->hit[DICE_BONUS] = parse_int(bonus);
 
 		send_to_char("Hitdice set.\n\r", ch);
-		return TRUE;
+		return true;
 	} else {
 		char arg[MIL];
 		enum medit_auto_config_type auto_config_type = mact_easy;
@@ -1102,7 +1102,7 @@ EDIT(medit_hitdice){
 
 		if (mob_idx->level == 0) {
 			send_to_char("MEdit (hitdice): Please set mob level before using auto function.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		argument = one_argument(argument, arg);
@@ -1119,7 +1119,7 @@ EDIT(medit_hitdice){
 
 		mob_auto_hit_dice(mob_idx, auto_config_type);
 		send_to_char("Hitdice auto configured.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 }
 
@@ -1142,7 +1142,7 @@ EDIT(medit_manadice){
 	EDIT_MOB(ch, mob_idx);
 	if (argument[0] == '\0') {
 		send_to_char("Syntax:  manadice <number> d <type> + <bonus>\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	/* num is the first argument */
@@ -1172,21 +1172,21 @@ EDIT(medit_manadice){
 	      && is_number(type)
 	      && is_number(bonus))) {
 		send_to_char("Syntax:  manadice <number> d <type> + <bonus>\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if ((!is_number(num) || parse_int(num) < 1)
 	    || (!is_number(type) || parse_int(type) < 1)
 	    || (!is_number(bonus) || parse_int(bonus) < 0)) {
 		send_to_char("Syntax:  manadice <number> d <type> + <bonus>\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	mob_idx->mana[DICE_NUMBER] = parse_int(num);
 	mob_idx->mana[DICE_TYPE] = parse_int(type);
 	mob_idx->mana[DICE_BONUS] = parse_int(bonus);
 	send_to_char("Manadice set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1206,7 +1206,7 @@ EDIT(medit_damdice){
 	EDIT_MOB(ch, mob_idx);
 	if (argument[0] == '\0') {
 		send_to_char("Syntax:  damdice <number> d <type> + <bonus>\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	/* num is the first argument */
@@ -1236,21 +1236,21 @@ EDIT(medit_damdice){
 
 	if (!(is_number(num) && is_number(type) && is_number(bonus))) {
 		send_to_char("Syntax:  damdice <number> d <type> + <bonus>\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if ((!is_number(num) || parse_int(num) < 1)
 	    || (!is_number(type) || parse_int(type) < 1)
 	    || (!is_number(bonus) || parse_int(bonus) < 0)) {
 		send_to_char("Syntax:  damdice <number> d <type> + <bonus>\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	mob_idx->damage[DICE_NUMBER] = parse_int(num);
 	mob_idx->damage[DICE_TYPE] = parse_int(type);
 	mob_idx->damage[DICE_BONUS] = parse_int(bonus);
 	send_to_char("Damdice set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1277,7 +1277,7 @@ EDIT(medit_race){
 		mob_idx->parts |= race_table[race].parts;
 
 		send_to_char("Race set.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 	if (argument[0] == '?') {
@@ -1288,12 +1288,12 @@ EDIT(medit_race){
 			printf_to_char(ch, " %-15s", race_table[race].name);
 		}
 		send_to_char("\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	send_to_char("Syntax:  race [race]\n\r"
 		     "Type 'race ?' for a list of races.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 
@@ -1322,7 +1322,7 @@ EDIT(medit_position){
 
 		mob_idx->start_pos = value;
 		send_to_char("Start position set.\n\r", ch);
-		return TRUE;
+		return true;
 
 	case 'D':
 	case 'd':
@@ -1334,12 +1334,12 @@ EDIT(medit_position){
 
 		mob_idx->default_pos = value;
 		send_to_char("Default position set.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 	send_to_char("Syntax:  position [start/default] [position]\n\r"
 		     "Type '? position' for a list of positions.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 
@@ -1354,12 +1354,12 @@ EDIT(medit_gold){
 	EDIT_MOB(ch, mob_idx);
 	if (argument[0] == '\0' || !is_number(argument)) {
 		send_to_char("Syntax:  wealth [number]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	mob_idx->wealth = parse_unsigned_int(argument);
 	send_to_char("Wealth set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1374,12 +1374,12 @@ EDIT(medit_hitroll){
 	EDIT_MOB(ch, mob_idx);
 	if (argument[0] == '\0' || !is_number(argument)) {
 		send_to_char("Syntax:  hitroll [number]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	mob_idx->hitroll = parse_int(argument);
 	send_to_char("Hitroll set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1395,26 +1395,26 @@ EDIT(medit_group){
 	char arg[MSL];
 	char buf[MSL];
 	int temp;
-	bool found = FALSE;
+	bool found = false;
 
 	EDIT_MOB(ch, mob_idx);
 	if (argument[0] == '\0') {
 		send_to_char("Syntax: group [number]\n\r", ch);
 		send_to_char("        group show [number]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (is_number(argument)) {
 		mob_idx->group = parse_int(argument);
 		send_to_char("Group set.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 	argument = one_argument(argument, arg);
 	if (!strcmp(arg, "show") && is_number(argument)) {
 		if (parse_int(argument) == 0) {
 			send_to_char("Are you crazy?\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		buffer = new_buf();
@@ -1422,7 +1422,7 @@ EDIT(medit_group){
 		for (temp = 0; temp < 65536; temp++) {
 			pMTemp = get_mob_index(temp);
 			if (pMTemp && (pMTemp->group == parse_int(argument))) {
-				found = TRUE;
+				found = true;
 				sprintf(buf, "[%7ld] %s\n\r", pMTemp->vnum, pMTemp->player_name);
 				add_buf(buffer, buf);
 			}
@@ -1434,10 +1434,10 @@ EDIT(medit_group){
 			send_to_char("No mobs in that group.\n\r", ch);
 
 		free_buf(buffer);
-		return FALSE;
+		return false;
 	}
 
-	return FALSE;
+	return false;
 }
 
 
@@ -1462,18 +1462,18 @@ EDIT(medit_addmprog){
 
 	if (!is_number(num) || trigger[0] == '\0' || phrase[0] == '\0') {
 		send_to_char("Syntax:   addmprog [vnum] [trigger] [phrase]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if ((value = flag_value(mprog_flags, trigger)) == NO_FLAG) {
 		send_to_char("Valid flags are:\n\r", ch);
 		show_help(ch, "mprog");
-		return FALSE;
+		return false;
 	}
 
 	if ((code = get_mprog_index(parse_int(num))) == NULL) {
 		send_to_char("No such MOBProgram.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	list = new_mprog();
@@ -1487,7 +1487,7 @@ EDIT(medit_addmprog){
 	mob_idx->mprogs = list;
 
 	send_to_char("Mprog Added.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1508,18 +1508,18 @@ EDIT(medit_delmprog){
 	one_argument(argument, mprog);
 	if (!is_number(mprog) || mprog[0] == '\0') {
 		send_to_char("Syntax:  delmprog [#mprog]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	value = parse_int(mprog);
 	if (value < 0) {
 		send_to_char("Only non-negative mprog-numbers allowed.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (!(list = mob_idx->mprogs)) {
 		send_to_char("MEdit:  Non existant mprog.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (value == 0) {
@@ -1540,7 +1540,7 @@ EDIT(medit_delmprog){
 			free_mprog(list_next);
 		} else {
 			send_to_char("No such mprog.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 	}
 
@@ -1555,5 +1555,5 @@ EDIT(medit_delmprog){
 		SET_BIT(mob_idx->mprog_flags, list->trig_type);
 
 	send_to_char("Mprog removed.\n\r", ch);
-	return TRUE;
+	return true;
 }

@@ -239,7 +239,7 @@ void do_brew(CHAR_DATA *ch, char *argument)
 
 		extract_obj(obj);
 		if (!IS_NPC(ch))
-			check_improve(ch, skill, FALSE, 6);
+			check_improve(ch, skill, false, 6);
 		return;
 	}
 
@@ -272,7 +272,7 @@ void do_brew(CHAR_DATA *ch, char *argument)
 		obj->value[0] = level;
 
 	if (!IS_NPC(ch) && learned_brew != NULL)
-		check_improve(ch, learned_brew->skill, TRUE, 6);
+		check_improve(ch, learned_brew->skill, true, 6);
 
 	spell_imprint(learned_spell->skill, ch->level, ch, obj);
 }
@@ -368,7 +368,7 @@ void do_scribe(CHAR_DATA *ch, char *argument)
 		spell_fireball(skill_lookup("fireball"), LEVEL_HERO - 1, ch, ch, TARGET_CHAR, "");
 
 		extract_obj(obj);
-		check_improve(ch, learned_scribe->skill, FALSE, 6);
+		check_improve(ch, learned_scribe->skill, false, 6);
 		return;
 	}
 
@@ -405,7 +405,7 @@ void do_scribe(CHAR_DATA *ch, char *argument)
 
 	obj->level = (int)(ch->level / 2);
 
-	check_improve(ch, learned_scribe->skill, TRUE, 6);
+	check_improve(ch, learned_scribe->skill, true, 6);
 	spell_imprint(learned_spell->skill, ch->level, ch, obj);
 }
 

@@ -130,7 +130,7 @@ void do_bash(CHAR_DATA *ch, char *argument)
 			act("$n slams into you, but your shield absorbs the brunt of the impact!", ch, NULL, victim, TO_VICT);
 			act("You slam into $N, but $S shield absorbs the impact!", ch, NULL, victim, TO_CHAR);
 			act("$n slams into $N's shield.", ch, NULL, victim, TO_NOTVICT);
-			check_improve(ch, skill, TRUE, 1);
+			check_improve(ch, skill, true, 1);
 			WAIT_STATE(victim, PULSE_VIOLENCE);
 			WAIT_STATE(ch, 3 * PULSE_VIOLENCE);
 			victim->position = POS_RESTING;
@@ -139,7 +139,7 @@ void do_bash(CHAR_DATA *ch, char *argument)
 			act("$n sends you sprawling with a powerful bash!", ch, NULL, victim, TO_VICT);
 			act("You slam into $N, and send $M flying!", ch, NULL, victim, TO_CHAR);
 			act("$n sends $N sprawling with a powerful bash.", ch, NULL, victim, TO_NOTVICT);
-			check_improve(ch, skill, TRUE, 1);
+			check_improve(ch, skill, true, 1);
 			WAIT_STATE(victim, 2 * PULSE_VIOLENCE);
 			WAIT_STATE(ch, 2 * PULSE_VIOLENCE);
 			victim->position = POS_RESTING;
@@ -157,15 +157,15 @@ void do_bash(CHAR_DATA *ch, char *argument)
 
 		total = (total > 0) ? total / modifier : total;
 
-		(void)damage(ch, victim, total, skill->sn, DAM_BASH, FALSE);
+		(void)damage(ch, victim, total, skill->sn, DAM_BASH, false);
 	} else {
-		(void)damage(ch, victim, 0, skill->sn, DAM_BASH, FALSE);
+		(void)damage(ch, victim, 0, skill->sn, DAM_BASH, false);
 
 		act("You fall flat on your face!", ch, NULL, victim, TO_CHAR);
 		act("$n falls flat on $s face.", ch, NULL, victim, TO_NOTVICT);
 		act("You evade $n's bash, causing $m to fall flat on $s face.", ch, NULL, victim, TO_VICT);
 
-		check_improve(ch, skill, FALSE, 1);
+		check_improve(ch, skill, false, 1);
 		ch->position = POS_RESTING;
 		WAIT_STATE(ch, skill->wait);
 	}
@@ -315,7 +315,7 @@ void do_flee(/*@dependent@*/CHAR_DATA *ch, /*@unused@*/char *argument)
 			&& IS_SET(pexit->u1.to_room->room_flags, ROOM_NO_MOB)))
 			continue;
 
-		move_char(ch, door, FALSE);
+		move_char(ch, door, false);
 		if ((now_in = ch->in_room) == was_in)
 			continue;
 
@@ -335,7 +335,7 @@ void do_flee(/*@dependent@*/CHAR_DATA *ch, /*@unused@*/char *argument)
 			}
 		}
 
-		stop_fighting(ch, TRUE);
+		stop_fighting(ch, true);
 
 		if (!IS_NPC(ch))
 			return;
@@ -405,14 +405,14 @@ void do_rescue(CHAR_DATA *ch, char *argument)
 	if (number_percent() > get_learned_percent(ch, skill)) {
 		send_to_char("You fail the rescue.\n\r", ch);
 
-		check_improve(ch, skill, FALSE, 1);
+		check_improve(ch, skill, false, 1);
 		return;
 	}
 
 	act("```&You rescue $N!``", ch, NULL, victim, TO_CHAR);
 	act("```&$n rescues you!``", ch, NULL, victim, TO_VICT);
 	act("```&$n rescues $N!``", ch, NULL, victim, TO_NOTVICT);
-	check_improve(ch, skill, TRUE, 1);
+	check_improve(ch, skill, true, 1);
 
 	heal = 1000;
 	victim->hit = UMIN(victim->hit + heal, victim->max_hit);
@@ -421,8 +421,8 @@ void do_rescue(CHAR_DATA *ch, char *argument)
 	send_to_char("You feel `#b`@e`#t`@t`#e`@r``!\n\r", victim);
 
 	/* stop the old fight */
-	stop_fighting(fch, FALSE);
-	stop_fighting(victim, FALSE);
+	stop_fighting(fch, false);
+	stop_fighting(victim, false);
 
 	check_killer(ch, fch);
 
@@ -483,8 +483,8 @@ void do_kick(CHAR_DATA *ch, /*@unused@*/char *argument)
 						if (ch->move < 25) {
 							return;
 						} else {
-							(void)damage(ch, victim, number_range(ch->level * 2, ch->level * 9) + mod, skill->sn, DAM_BASH, TRUE);
-							check_improve(ch, skill, TRUE, 1);
+							(void)damage(ch, victim, number_range(ch->level * 2, ch->level * 9) + mod, skill->sn, DAM_BASH, true);
+							check_improve(ch, skill, true, 1);
 							ch->move -= 25;
 						}
 					}
@@ -497,21 +497,21 @@ void do_kick(CHAR_DATA *ch, /*@unused@*/char *argument)
 						if (ch->move < 25) {
 							return;
 						} else {
-							(void)damage(ch, victim, number_range(ch->level, ch->level * 6) + mod, skill->sn, DAM_BASH, TRUE);
-							check_improve(ch, skill, TRUE, 1);
+							(void)damage(ch, victim, number_range(ch->level, ch->level * 6) + mod, skill->sn, DAM_BASH, true);
+							check_improve(ch, skill, true, 1);
 							ch->move -= 25;
 						}
 					}
 				}
 			}
 		} else {
-			(void)damage(ch, victim, number_range(ch->level + 50, ch->level * 12) + mod, skill->sn, DAM_BASH, TRUE);
-			check_improve(ch, skill, TRUE, 1);
+			(void)damage(ch, victim, number_range(ch->level + 50, ch->level * 12) + mod, skill->sn, DAM_BASH, true);
+			check_improve(ch, skill, true, 1);
 			ch->move -= 50;
 		}
 	} else {
-		(void)damage(ch, victim, 0, skill->sn, DAM_BASH, TRUE);
-		check_improve(ch, skill, FALSE, 1);
+		(void)damage(ch, victim, 0, skill->sn, DAM_BASH, true);
+		check_improve(ch, skill, false, 1);
 		ch->move -= 25;
 	}
 	check_killer(ch, victim);
@@ -582,7 +582,7 @@ void do_disarm(CHAR_DATA *ch, /*@unused@*/char *argument)
 	if (number_percent() < chance) {
 		disarm(ch, victim);
 		WAIT_STATE(ch, skill->wait);
-		check_improve(ch, skill, TRUE, 1);
+		check_improve(ch, skill, true, 1);
 	} else {
 		WAIT_STATE(ch, skill->wait);
 
@@ -590,7 +590,7 @@ void do_disarm(CHAR_DATA *ch, /*@unused@*/char *argument)
 		act("$n tries to disarm you, but fails.", ch, NULL, victim, TO_VICT);
 		act("$n tries to disarm $N, but fails.", ch, NULL, victim, TO_NOTVICT);
 
-		check_improve(ch, skill, FALSE, 1);
+		check_improve(ch, skill, false, 1);
 	}
 
 	check_killer(ch, victim);
@@ -607,7 +607,7 @@ void do_surrender(CHAR_DATA *ch, /*@unused@*/char *argument)
 	act("You surrender to $N!", ch, NULL, mob, TO_CHAR);
 	act("$n surrenders to you!", ch, NULL, mob, TO_VICT);
 	act("$n tries to surrender to $N!", ch, NULL, mob, TO_NOTVICT);
-	stop_fighting(ch, TRUE);
+	stop_fighting(ch, true);
 
 	if (!IS_NPC(ch) && IS_NPC(mob)
 	    && (!HAS_TRIGGER(mob, TRIG_SURR) || !mp_percent_trigger(mob, ch, NULL, NULL, TRIG_SURR))) {
@@ -859,6 +859,6 @@ void do_familiar(/*@dependent@*/CHAR_DATA *ch, /*@unused@*/char *argument)
 	SET_BIT(mount->act, ACT_PET);
 	SET_BIT(mount->affected_by, AFF_CHARM);
 	ch->move /= 2; /* physically draining lose of move */
-	check_improve(ch, skill, TRUE, 6);
+	check_improve(ch, skill, true, 6);
 }
 

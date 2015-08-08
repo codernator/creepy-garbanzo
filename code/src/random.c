@@ -251,7 +251,7 @@ static void random_drop_unique(long vnum)
 
 	/* apply positive affects */
 	for (idx = 0; idx < num_affects; idx++)
-		apply_random_affect(unique, TRUE);
+		apply_random_affect(unique, true);
 
 
 	/* apply negative affects */
@@ -264,7 +264,7 @@ static void random_drop_unique(long vnum)
 			num_affects++;
 
 		for (idx = 0; idx < num_affects; idx++)
-			apply_random_affect(unique, FALSE);
+			apply_random_affect(unique, false);
 	}
 
 	/* give the object to the mob */

@@ -42,38 +42,38 @@ struct flag_stat_type {
 const struct flag_stat_type flag_stat_table[] =
 {
 /*  {	structure			stat	}, */
-	{ area_flags,	    FALSE },
-	{ sex_flags,	    TRUE  },
-	{ exit_flags,	    FALSE },
-	{ door_resets,	    TRUE  },
-	{ room_flags,	    FALSE },
-	{ sector_flags,	    TRUE  },
-	{ type_flags,	    TRUE  },
-	{ extra_flags,	    FALSE },
-	{ wear_flags,	    FALSE },
-	{ act_flags,	    FALSE },
-	{ affect_flags,	    FALSE },
-	{ apply_flags,	    TRUE  },
-	{ wear_loc_flags,   TRUE  },
-	{ wear_loc_strings, TRUE  },
-	{ container_flags,  FALSE },
-	{ socket_flags,	    TRUE  },
-	{ socket_values,    TRUE  },
-	{ form_flags,	    FALSE },
-	{ part_flags,	    FALSE },
-	{ ac_type,	    TRUE  },
-	{ size_flags,	    TRUE  },
-	{ position_flags,   TRUE  },
-	{ off_flags,	    FALSE },
-	{ imm_flags,	    FALSE },
-	{ res_flags,	    FALSE },
-	{ vuln_flags,	    FALSE },
-	{ weapon_class,	    TRUE  },
-	{ weapon_flag_type, FALSE },
-	{ apply_types,	    TRUE  },
-	{ damage_flags,	    TRUE  },
-	{ target_flags,	    TRUE  },
-	{ skill_flags,	    FALSE },
+	{ area_flags,	    false },
+	{ sex_flags,	    true  },
+	{ exit_flags,	    false },
+	{ door_resets,	    true  },
+	{ room_flags,	    false },
+	{ sector_flags,	    true  },
+	{ type_flags,	    true  },
+	{ extra_flags,	    false },
+	{ wear_flags,	    false },
+	{ act_flags,	    false },
+	{ affect_flags,	    false },
+	{ apply_flags,	    true  },
+	{ wear_loc_flags,   true  },
+	{ wear_loc_strings, true  },
+	{ container_flags,  false },
+	{ socket_flags,	    true  },
+	{ socket_values,    true  },
+	{ form_flags,	    false },
+	{ part_flags,	    false },
+	{ ac_type,	    true  },
+	{ size_flags,	    true  },
+	{ position_flags,   true  },
+	{ off_flags,	    false },
+	{ imm_flags,	    false },
+	{ res_flags,	    false },
+	{ vuln_flags,	    false },
+	{ weapon_class,	    true  },
+	{ weapon_flag_type, false },
+	{ apply_types,	    true  },
+	{ damage_flags,	    true  },
+	{ target_flags,	    true  },
+	{ skill_flags,	    false },
 	{ 0,		    0	  }
 };
 
@@ -81,7 +81,7 @@ const struct flag_stat_type flag_stat_table[] =
 
 /*****************************************************************************
  * Name:		is_stat(table)
- * Purpose:	Returns TRUE if the table is a stat table and FALSE if flag.
+ * Purpose:	Returns true if the table is a stat table and false if flag.
  * Called by:	flag_value and flag_string.
  * Note:		This function is local and used only in bit.c.
  ****************************************************************************/
@@ -92,9 +92,9 @@ bool is_stat(const struct flag_type *flag_table)
 	for (flag = 0; flag_stat_table[flag].structure; flag++) {
 		if (flag_stat_table[flag].structure == flag_table
 		    && flag_stat_table[flag].stat)
-			return TRUE;
+			return true;
 	}
-	return FALSE;
+	return false;
 }
 
 /*****************************************************************************
@@ -107,7 +107,7 @@ long flag_value(const struct flag_type *flag_table, char *argument)
 	char word[MIL];
 	long bit;
 	long marked = 0;
-	bool found = FALSE;
+	bool found = false;
 
 	if (is_stat(flag_table))
 		return flag_lookup(argument, flag_table);
@@ -123,7 +123,7 @@ long flag_value(const struct flag_type *flag_table, char *argument)
 
 		if ((bit = flag_lookup(word, flag_table)) != NO_FLAG) {
 			SET_BIT(marked, bit);
-			found = TRUE;
+			found = true;
 		}
 	}
 

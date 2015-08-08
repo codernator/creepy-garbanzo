@@ -26,7 +26,7 @@ char *repeater(char *s, int i);
 
 /* Log-all switch. */
 
-bool log_all = FALSE;
+bool log_all = false;
 
 
 /* Command table. */
@@ -449,13 +449,13 @@ void interpret(CHAR_DATA *ch, char *argument)
 
 /*  Look for command in command table  */
 
-	found = FALSE;
+	found = false;
 	trust = get_trust(ch);
 	for (cmd = 0; cmd_table[cmd].name[0] != '\0'; cmd++) {
 		if (command[0] == cmd_table[cmd].name[0]
 		    && !str_prefix(command, cmd_table[cmd].name)
 		    && cmd_table[cmd].level <= trust) {
-			found = TRUE;
+			found = true;
 			break;
 		}
 	}

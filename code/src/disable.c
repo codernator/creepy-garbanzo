@@ -394,19 +394,19 @@ void load_disabled()
 
 		type = fread_number(fp);
 
-		found = FALSE;
+		found = false;
 		switch (type) {
 		case DISABLED_CMD:
 			for (iter = 0; cmd_table[iter].name[0] != '\0'; iter++) {
 				if (!str_cmp(cmd_table[iter].name, name)) {
-					found = TRUE;
+					found = true;
 					break;
 				}
 			}
 			break;
 		case DISABLED_SPELL:
 			if ((skill = skill_lookup(name)) != NULL)
-				found = TRUE;
+				found = true;
 			break;
 		}
 
@@ -475,12 +475,12 @@ void save_disabled()
 static bool player_check_disabled(CHAR_DATA *ch, int type, char *name)
 {
 	DISABLED_DATA *disabled;
-	bool is_disabled = FALSE;
+	bool is_disabled = false;
 
 	for (disabled = ch->disabled; disabled != NULL; disabled = disabled->next) {
 		if (disabled->type == (int)type
 		    && !str_cmp(name, disabled->command)) {
-			is_disabled = TRUE;
+			is_disabled = true;
 			break;
 		}
 	}
@@ -494,12 +494,12 @@ static bool player_check_disabled(CHAR_DATA *ch, int type, char *name)
 bool check_disabled(CHAR_DATA *ch, int type, char *name)
 {
 	DISABLED_DATA *disabled;
-	bool is_disabled = FALSE;
+	bool is_disabled = false;
 
 	for (disabled = disabled_first; disabled != NULL; disabled = disabled->next) {
 		if (disabled->type == (int)type
 		    && !str_cmp(name, disabled->command)) {
-			is_disabled = TRUE;
+			is_disabled = true;
 			break;
 		}
 	}

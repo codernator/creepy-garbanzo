@@ -733,7 +733,7 @@ static void save_helps(FILE *fp, HELP_AREA *ha)
 
 	fprintf(fp, "-1 $~\n\n");
 
-	ha->changed = FALSE;
+	ha->changed = false;
 
 	return;
 }
@@ -753,11 +753,11 @@ static void save_changed_helps()
 	FILE *fp;
 
 	for (ha = had_list; ha; ha = ha->next) {
-		if (ha->changed == TRUE) {
+		if (ha->changed == true) {
 			for (area = area_first; area != NULL; area = area->next) {
 				if (area->helps != NULL && area->helps == ha) {
 					save_area(area);
-					ha->changed = FALSE;
+					ha->changed = false;
 					break;
 				}
 			}
@@ -777,7 +777,7 @@ static void save_changed_helps()
 				fprintf(fp, "#$\n");
 				fclose(fp);
 
-				ha->changed = FALSE;
+				ha->changed = false;
 			}
 		}
 	}
@@ -922,7 +922,7 @@ void do_asave(CHAR_DATA *ch, char *argument)
 		else
 			log_string("Saved areas:");
 
-		saved = FALSE;
+		saved = false;
 		for (area = area_first; area; area = area->next) {
 			/* Builder must be assigned this area. */
 			if (ch != NULL && !IS_BUILDER(ch, area))
@@ -931,7 +931,7 @@ void do_asave(CHAR_DATA *ch, char *argument)
 			/* Save changed areas. */
 			if (IS_SET(area->area_flags, AREA_CHANGED)) {
 				save_area(area);
-				saved = TRUE;
+				saved = true;
 				sprintf(buf, "%24s - '%s'", area->name, area->file_name);
 				if (ch != NULL) {
 					send_to_char(buf, ch);

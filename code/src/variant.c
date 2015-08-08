@@ -104,7 +104,7 @@ bool is_valid_type(int var_type)
 
 	switch (var_type) {
 	default:
-		valid = FALSE;
+		valid = false;
 		break;
 	case VARIANT_INTEGER:
 	case VARIANT_LONG:
@@ -116,7 +116,7 @@ bool is_valid_type(int var_type)
 	case VARIANT_OBJECT_INDEX:
 	case VARIANT_DESCRIPTOR:
 	case VARIANT_AREA:
-		valid = TRUE;
+		valid = true;
 		break;
 	}
 

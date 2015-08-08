@@ -203,24 +203,24 @@ const struct race_type race_table[] =
  *         form,                parts
  * },
  */
-	{ "unique", FALSE, 0, 0, 0, 0, 0, 0, 0, 0 },
+	{ "unique", false, 0, 0, 0, 0, 0, 0, 0, 0 },
 
 	{
-		"human", TRUE,
+		"human", true,
 		0, 0, 0,
 		0, 0, 0,
 		A | H | M | V, A | B | C | D | E | F | G | H | I | J | K
 	},
 
 	{
-		"elf", TRUE,
+		"elf", true,
 		0, AFF_INFRARED, 0,
 		0, RES_CHARM, VULN_IRON,
 		A | H | M | V, A | B | C | D | E | F | G | H | I | J | K
 	},
 
 	{
-		"dwarf", TRUE,
+		"dwarf", true,
 		0, AFF_INFRARED, 0,
 		IMM_ACID, RES_POISON | RES_DISEASE, VULN_DROWNING,
 		A | H | M | V, A | B | C | D | E | F | G | H | I | J | K
@@ -228,7 +228,7 @@ const struct race_type race_table[] =
 
 
 	{
-		"giant", TRUE,
+		"giant", true,
 		0, 0, 0,
 		IMM_WOOD | IMM_SOUND, RES_FIRE | RES_COLD, VULN_MENTAL | VULN_LIGHTNING,
 		A | H | M | V, A | B | C | D | E | F | G | H | I | J | K
@@ -236,105 +236,105 @@ const struct race_type race_table[] =
 
 
 	{
-		"feline", TRUE,
+		"feline", true,
 		0, AFF_DARK_VISION | AFF_DETECT_INVIS | AFF_SNEAK, 0,
 		0, RES_BASH | RES_DISEASE, VULN_DROWNING,
 		A | H | V, A | C | D | E | F | H | I | J | K | Q | U | V
 	},
 
 	{
-		"aiel", TRUE,
+		"aiel", true,
 		0, AFF_SNEAK | AFF_DETECT_INVIS, 0,
 		0, RES_WEAPON | RES_BASH, VULN_DROWNING,
 		A | H | M | V, A | B | C | D | E | F | G | H | I | J | K
 	},
 
 	{
-		"mutant", TRUE,
+		"mutant", true,
 		0, AFF_SNEAK | AFF_DARK_VISION, 0,
 		IMM_LIGHTNING, RES_MENTAL | RES_DISEASE, VULN_COLD,
 		A | H | M | V, A | B | C | D | E | F | G | H | I | J | K
 	},
 
 	{
-		"dragon", TRUE,
+		"dragon", true,
 		0, AFF_DETECT_INVIS | AFF_FLYING, 0,
 		IMM_FIRE | IMM_COLD | IMM_LIGHTNING, RES_WEAPON, VULN_ACID,
 		A | H | M | V, A | B | C | D | E | F | G | H | I | J | K
 	},
 
 	{
-		"darkelf", TRUE,
+		"darkelf", true,
 		0, AFF_DARK_VISION, 0,
 		0, RES_CHARM, VULN_IRON | VULN_DROWNING,
 		A | H | M | V, A | B | C | D | E | F | G | H | I | J | K
 	},
 
 	{
-		"werebeast", TRUE,
+		"werebeast", true,
 		0, AFF_SNEAK | AFF_DETECT_INVIS, 0,
 		IMM_DISEASE, RES_IRON, VULN_SILVER | VULN_HOLY,
 		A | H | M | V, A | B | C | D | E | F | G | H | I | J | K
 	},
 
 	{
-		"vampire", TRUE,
+		"vampire", true,
 		0, AFF_DARK_VISION | AFF_DETECT_INVIS | AFF_SNEAK, 0,
 		IMM_DISEASE, RES_IRON, VULN_WOOD | VULN_HOLY,
 		A | H | M | V, A | B | C | D | E | F | G | H | I | J | K
 	},
 
 	{
-		"sprite", TRUE,
+		"sprite", true,
 		0, AFF_FLYING | AFF_INVISIBLE | AFF_DARK_VISION | AFF_DETECT_INVIS, 0,
 		IMM_DISEASE, RES_NEGATIVE | RES_WEAPON | RES_MAGIC | RES_CHARM, VULN_POISON | VULN_ACID,
 		A | H | M | V, A | B | C | D | E | F | G | H | I | J | K
 	},
 
 	{
-		"centaur", TRUE,
+		"centaur", true,
 		0, 0, 0,
 		IMM_DROWNING, RES_MAGIC, VULN_SOUND,
 		A | H | M | V, A | B | C | D | E | F | G | H | I | J | K
 	},
 
 	{
-		"bat", FALSE,
+		"bat", false,
 		0, AFF_FLYING | AFF_DARK_VISION, OFF_DODGE | OFF_FAST,
 		0, 0, VULN_LIGHT,
 		A | G | V, A | C | D | E | F | H | J | K | P
 	},
 
 	{
-		"bear", FALSE,
+		"bear", false,
 		0, 0, OFF_CRUSH | OFF_DISARM | OFF_BERSERK,
 		0, RES_BASH | RES_COLD, 0,
 		A | G | V, A | B | C | D | E | F | H | J | K | U | V
 	},
 
 	{
-		"cat", FALSE,
+		"cat", false,
 		0, AFF_DARK_VISION, OFF_FAST | OFF_DODGE,
 		0, 0, 0,
 		A | G | V, A | C | D | E | F | H | J | K | Q | U | V
 	},
 
 	{
-		"centipede", FALSE,
+		"centipede", false,
 		0, AFF_DARK_VISION, 0,
 		0, RES_PIERCE | RES_COLD, VULN_BASH,
 		A | B | G | O, A | C | K
 	},
 
 	{
-		"dog", FALSE,
+		"dog", false,
 		0, 0, OFF_FAST,
 		0, 0, 0,
 		A | G | V, A | C | D | E | F | H | J | K | U | V
 	},
 
 	{
-		"doll", FALSE,
+		"doll", false,
 		0, 0, 0,
 		IMM_COLD | IMM_POISON | IMM_HOLY | IMM_NEGATIVE | IMM_MENTAL | IMM_DISEASE
 		| IMM_DROWNING, RES_BASH | RES_LIGHT,
@@ -343,7 +343,7 @@ const struct race_type race_table[] =
 	},
 
 	{
-		"dragon", FALSE,
+		"dragon", false,
 		0, AFF_INFRARED | AFF_FLYING, 0,
 		0, RES_FIRE | RES_BASH | RES_CHARM,
 		VULN_PIERCE | VULN_COLD,
@@ -351,49 +351,49 @@ const struct race_type race_table[] =
 	},
 
 	{
-		"fido", FALSE,
+		"fido", false,
 		0, 0, OFF_DODGE | ASSIST_RACE,
 		0, 0, VULN_MAGIC,
 		A | B | G | V, A | C | D | E | F | H | J | K | Q | V
 	},
 
 	{
-		"fox", FALSE,
+		"fox", false,
 		0, AFF_DARK_VISION, OFF_FAST | OFF_DODGE,
 		0, 0, 0,
 		A | G | V, A | C | D | E | F | H | J | K | Q | V
 	},
 
 	{
-		"goblin", FALSE,
+		"goblin", false,
 		0, AFF_INFRARED, 0,
 		0, RES_DISEASE, VULN_MAGIC,
 		A | H | M | V, A | B | C | D | E | F | G | H | I | J | K
 	},
 
 	{
-		"hobgoblin", FALSE,
+		"hobgoblin", false,
 		0, AFF_INFRARED, 0,
 		0, RES_DISEASE | RES_POISON, 0,
 		A | H | M | V, A | B | C | D | E | F | G | H | I | J | K | Y
 	},
 
 	{
-		"kobold", FALSE,
+		"kobold", false,
 		0, AFF_INFRARED, 0,
 		0, RES_POISON, VULN_MAGIC,
 		A | B | H | M | V, A | B | C | D | E | F | G | H | I | J | K | Q
 	},
 
 	{
-		"lizard", FALSE,
+		"lizard", false,
 		0, 0, 0,
 		0, RES_POISON, VULN_COLD,
 		A | G | X | cc, A | C | D | E | F | H | K | Q | V
 	},
 
 	{
-		"modron", FALSE,
+		"modron", false,
 		0, AFF_INFRARED, ASSIST_RACE | ASSIST_ALIGN,
 		IMM_CHARM | IMM_DISEASE | IMM_MENTAL | IMM_HOLY | IMM_NEGATIVE,
 		RES_FIRE | RES_COLD | RES_ACID, 0,
@@ -401,77 +401,77 @@ const struct race_type race_table[] =
 	},
 
 	{
-		"orc", FALSE,
+		"orc", false,
 		0, AFF_INFRARED, 0,
 		0, RES_DISEASE, VULN_LIGHT,
 		A | H | M | V, A | B | C | D | E | F | G | H | I | J | K
 	},
 
 	{
-		"pig", FALSE,
+		"pig", false,
 		0, 0, 0,
 		0, 0, 0,
 		A | G | V, A | C | D | E | F | H | J | K
 	},
 
 	{
-		"rabbit", FALSE,
+		"rabbit", false,
 		0, 0, OFF_DODGE | OFF_FAST,
 		0, 0, 0,
 		A | G | V, A | C | D | E | F | H | J | K
 	},
 
 	{
-		"school monster", FALSE,
+		"school monster", false,
 		ACT_NOALIGN, 0, 0,
 		IMM_CHARM | IMM_SUMMON, 0, VULN_MAGIC,
 		A | M | V, A | B | C | D | E | F | H | J | K | Q | U
 	},
 
 	{
-		"snake", FALSE,
+		"snake", false,
 		0, 0, 0,
 		0, RES_POISON, VULN_COLD,
 		A | G | X | Y | cc, A | D | E | F | K | L | Q | V | X
 	},
 
 	{
-		"song bird", FALSE,
+		"song bird", false,
 		0, AFF_FLYING, OFF_FAST | OFF_DODGE,
 		0, 0, 0,
 		A | G | W, A | C | D | E | F | H | K | P
 	},
 
 	{
-		"troll", FALSE,
+		"troll", false,
 		0, AFF_INFRARED, OFF_BERSERK,
 		0, RES_CHARM | RES_BASH, VULN_FIRE | VULN_ACID,
 		A | B | H | M | V, A | B | C | D | E | F | G | H | I | J | K | U | V
 	},
 
 	{
-		"water fowl", FALSE,
+		"water fowl", false,
 		0, AFF_FLYING, 0,
 		0, RES_DROWNING, 0,
 		A | G | W, A | C | D | E | F | H | K | P
 	},
 
 	{
-		"wolf", FALSE,
+		"wolf", false,
 		0, AFF_DARK_VISION, OFF_FAST | OFF_DODGE,
 		0, 0, 0,
 		A | G | V, A | C | D | E | F | J | K | Q | V
 	},
 
 	{
-		"wyvern", FALSE,
+		"wyvern", false,
 		0, AFF_FLYING | AFF_DETECT_INVIS, OFF_BASH | OFF_FAST | OFF_DODGE,
 		IMM_POISON, 0, VULN_LIGHT,
 		A | B | G | Z, A | C | D | E | F | H | J | K | Q | V | X
 	},
 
 	{
-		"unique", FALSE,
+		"unique", false,
 		0, 0, 0,
 		0, 0, 0,
 		0, 0
@@ -479,7 +479,7 @@ const struct race_type race_table[] =
 
 
 	{
-		NULL, FALSE, 0, 0, 0, 0, 0, 0, 0, 0
+		NULL, false, 0, 0, 0, 0, 0, 0, 0, 0
 	}
 };
 
@@ -655,150 +655,150 @@ const struct class_type class_table[MAX_CLASS] =
 		{ 3018, 9618 },
 		75, 20, 6,
 		6, 20, 10, 32,
-		TRUE,
+		true,
 		"Mage basics", "maMagege default",
 		0.8f, 18.0f, 0.9f, 17.0f,
-		TRUE, "Caster, Fast casting, destructive and defensive", 0
+		true, "Caster, Fast casting, destructive and defensive", 0
 	},
 	{
 		"Cleric", "Cle", STAT_WIS, OBJ_VNUM_SCHOOL_MACE,
 		{ 3003, 9619 },
 		75, 20, 2,
 		7, 22, 10, 30,
-		TRUE,
+		true,
 		"Cleric basics", "cleric default",
 		0.9f, 12.0f, 0.9f, 15.0f,
-		TRUE, "Holy god worshipers, beneficial, healing", 0
+		true, "Holy god worshipers, beneficial, healing", 0
 	},
 	{
 		"Thief", "Thi", STAT_DEX, OBJ_VNUM_SCHOOL_DAGGER,
 		{ 3028, 9639 },
 		75, 20, -4,
 		9, 30, 5, 15,
-		FALSE,
+		false,
 		"thief basics", "thief default",
 		0.8f, 15.0f, 0.9f, 12.0f,
-		TRUE, "Melee-based attacks, deceptive and quick", 0
+		true, "Melee-based attacks, deceptive and quick", 0
 	},
 	{
 		"Warrior", "War", STAT_STR, OBJ_VNUM_SCHOOL_SWORD,
 		{ 3022, 9633 },
 		75, 20, -10,
 		11, 32, 5, 13,
-		FALSE,
+		false,
 		"warrior basics", "warrior default",
 		1.0f, 10.0f, 1.0f, 12.0f,
-		TRUE, "Aggressive and tough, melee and defensive", 0
+		true, "Aggressive and tough, melee and defensive", 0
 	},
 	{
 		"Witch", "Wit", STAT_INT, OBJ_VNUM_SCHOOL_DAGGER,
 		{ 3362, 1    },
 		75, 20, 6,
 		8, 24, 10, 20,
-		TRUE,
+		true,
 		"witch basics", "witch default",
 		0.9f, 15.0f, 0.9f, 16.0f,
-		TRUE, "Caster, poisons and unbeneficial spells", 0
+		true, "Caster, poisons and unbeneficial spells", 0
 	},
 	{
 		"WarMage", "Wmg", STAT_INT, OBJ_VNUM_SCHOOL_DAGGER,
 		{ 400,	400  },
 		75, 20, 6,
 		6, 20, 10, 32,
-		TRUE,
+		true,
 		"WarMage basics", "WarMage default",
 		0.9f, 15.0f, 0.9f, 16.0f,
-		FALSE, "Caster, fast-casting, all destructive", 750
+		false, "Caster, fast-casting, all destructive", 750
 	},
 	{
 		"Priest", "Pri", STAT_WIS, OBJ_VNUM_SCHOOL_MACE,
 		{ 400,	400  },
 		75, 20, 2,
 		7, 22, 10, 30,
-		TRUE,
+		true,
 		"Priest basics", "Priest default",
 		0.9f, 15.0f, 0.9f, 16.0f,
-		FALSE, "Holy crusader, major beneficial, minor healing/destructive", 750
+		false, "Holy crusader, major beneficial, minor healing/destructive", 750
 	},
 	{
 		"Merchant", "Mer", STAT_DEX, OBJ_VNUM_SCHOOL_DAGGER,
 		{ 400,	400  },
 		75, 20, -4,
 		9, 30, 5, 15,
-		FALSE,
+		false,
 		"Merchant basics", "Merchant default",
 		0.9f, 15.0f, 0.9f, 16.0f,
-		FALSE, "Spells/skills for item creation and design", 750
+		false, "Spells/skills for item creation and design", 750
 	},
 	{
 		"Paladin", "Pal", STAT_STR, OBJ_VNUM_SCHOOL_SWORD,
 		{ 400,	400  },
 		75, 20, -10,
 		11, 32, 5, 13,
-		FALSE,
+		false,
 		"Paladin basics", "Paladin default",
 		0.9f, 15.0f, 0.9f, 16.0f,
-		FALSE, "Melee-based attacks, w/ some healing & beneficial", 750
+		false, "Melee-based attacks, w/ some healing & beneficial", 750
 	},
 	{
 		"Seer", "See", STAT_INT, OBJ_VNUM_SCHOOL_DAGGER,
 		{ 400,	400  },
 		75, 20, 6,
 		8, 24, 10, 20,
-		TRUE,
+		true,
 		"Seer basics", "Seer default",
 		0.9f, 15.0f, 0.9f, 16.0f,
-		FALSE, "Beneficial and creation spells, minor melee", 750
+		false, "Beneficial and creation spells, minor melee", 750
 	},
 	{
 		"Necro", "Nec", STAT_INT, OBJ_VNUM_SCHOOL_DAGGER,
 		{ 400,	400  },
 		75, 20, 6,
 		6, 20, 10, 32,
-		TRUE,
+		true,
 		"Necro basics", "Necro default",
 		0.9f, 15.0f, 0.9f, 16.0f,
-		FALSE, "All destructive and stat-based attacks, summoning", -750
+		false, "All destructive and stat-based attacks, summoning", -750
 	},
 	{
 		"Demonic", "Dmn", STAT_WIS, OBJ_VNUM_SCHOOL_MACE,
 		{ 400,	400  },
 		75, 20, 2,
 		7, 22, 10, 30,
-		TRUE,
+		true,
 		"Demonic basics", "Demonic default",
 		0.9f, 15.0f, 0.9f, 16.0f,
-		FALSE, "Aggressive and destructive, no beneficial", -750
+		false, "Aggressive and destructive, no beneficial", -750
 	},
 	{
 		"Assassin", "Asn", STAT_DEX, OBJ_VNUM_SCHOOL_DAGGER,
 		{ 400,	400  },
 		75, 20, -4,
 		9, 30, 5, 15,
-		FALSE,
+		false,
 		"Assassin basics", "Assassin default",
 		0.9f, 15.0f, 0.9f, 16.0f,
-		FALSE, "Melee attacks with a mix of spells", -750
+		false, "Melee attacks with a mix of spells", -750
 	},
 	{
 		"Mercenery", "Mrc", STAT_STR, OBJ_VNUM_SCHOOL_SWORD,
 		{ 400,	400  },
 		75, 20, -10,
 		11, 32, 5, 13,
-		FALSE,
+		false,
 		"Mercenary basics", "Mercenary default",
 		0.9f, 15.0f, 0.9f, 16.0f,
-		FALSE, "Power melee, fewer attacks but stronger skills", -750
+		false, "Power melee, fewer attacks but stronger skills", -750
 	},
 	{
 		"Shaman", "Sha", STAT_INT, OBJ_VNUM_SCHOOL_DAGGER,
 		{ 400,	400  },
 		75, 20, 6,
 		8, 24, 10, 20,
-		TRUE,
+		true,
 		"Shaman basics", "Shaman default",
 		0.9f, 15.0f, 0.9f, 16.0f,
-		FALSE, "All attack spells, minor unbeneficial spells", -750
+		false, "All attack spells, minor unbeneficial spells", -750
 	}
 };
 

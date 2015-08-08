@@ -103,7 +103,7 @@ char *string_replace(char *orig, char *find, char *replace)
 void string_add(CHAR_DATA *ch, char *argument)
 {
 	char buf[MSL];
-	bool done = FALSE;
+	bool done = false;
 
 	/* this is entirely on drugs - the original string editor
 	 * says to do '@' or '~' on a line by itself then we
@@ -133,8 +133,8 @@ void string_add(CHAR_DATA *ch, char *argument)
 			char orig[MSL];
 			char repl[MSL];
 
-			argument = first_arg(argument, orig, FALSE);
-			argument = first_arg(argument, repl, FALSE);
+			argument = first_arg(argument, orig, false);
+			argument = first_arg(argument, repl, false);
 
 			if (orig[0] == '\0') {
 				send_to_char("`#Usage``:  .r 'old string' 'new string'\n\r", ch);
@@ -202,7 +202,7 @@ void string_add(CHAR_DATA *ch, char *argument)
 
 		if (!str_cmp(cmd, ".x"))
 			/* kind of hackish way to use '.x' as an exit command */
-			done = TRUE;
+			done = true;
 
 		if (!done) {
 			send_to_char("SEdit:  Invalid dot command.\n\r", ch);
@@ -528,7 +528,7 @@ static char *string_line_insert(char *string, char *newstr, int line)
 	char buf[MSL];
 	int cnt = 1;
 	int tmp = 0;
-	bool done = FALSE;
+	bool done = false;
 
 	buf[0] = '\0';
 	for (; *strtmp != '\0' || (!done && cnt == line); strtmp++) {
@@ -538,7 +538,7 @@ static char *string_line_insert(char *string, char *newstr, int line)
 
 			tmp += strlen(newstr) + 2;
 			cnt++;
-			done = TRUE;
+			done = true;
 		}
 
 		buf[tmp++] = *strtmp;
@@ -567,7 +567,7 @@ static char *getlinefrombuf(char *str, char *buf)
 {
 	int tmp = 0;
 
-	/* unused var bool	found	= FALSE; */
+	/* unused var bool	found	= false; */
 
 	while (*str != '\0' && *str != '\n')
 		buf[tmp++] = *(str++);

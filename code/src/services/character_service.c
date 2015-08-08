@@ -183,7 +183,7 @@ void look_equipment(CHAR_DATA *ch) {
 		send_to_char("`&", ch);
 		if (can_see_obj(ch, obj)) {
 			send_to_char("`&", ch);
-			send_to_char(format_obj_to_char(obj, ch, TRUE), ch);
+			send_to_char(format_obj_to_char(obj, ch, true), ch);
 			send_to_char("``\n\r", ch);
 		} else {
 			send_to_char("`&something.\n\r", ch);
@@ -375,7 +375,7 @@ void look_room(CHAR_DATA *ch, ROOM_INDEX_DATA *in_room) {
     if (is_affected_room(in_room, gsp_faerie_fog))
         send_to_char("There is a `Ppurple haze`` floating throughout the room.\n\r", ch);
 
-    show_list_to_char(in_room->contents, ch, FALSE, FALSE);
+    show_list_to_char(in_room->contents, ch, false, false);
     show_char_to_char(in_room->people, ch);
     return;
 }
@@ -413,7 +413,7 @@ void look_object(CHAR_DATA *ch, OBJ_DATA *obj, char *argument) {
             send_to_char("It is closed.\n\r", ch);
         } else {
             act("$p holds```8:``", ch, obj, NULL, TO_CHAR);
-            show_list_to_char(obj->contains, ch, TRUE, TRUE);
+            show_list_to_char(obj->contains, ch, true, true);
         }
         break;
     case ITEM_PORTAL:
@@ -441,7 +441,7 @@ void look_object(CHAR_DATA *ch, OBJ_DATA *obj, char *argument) {
                     do_at(ch, showexit);
                 }
 
-                show_list_to_char(location->contents, ch, FALSE, FALSE);
+                show_list_to_char(location->contents, ch, false, false);
                 show_char_to_char(location->people, ch);
             }
         }
@@ -488,7 +488,7 @@ void sit(CHAR_DATA *ch, OBJ_DATA *on)
         }
 
         if (on->carried_by != NULL && on->carried_by != ch) {
-			act_new("The $p is being held by someone!", ch, on, NULL, TO_CHAR, POS_DEAD, FALSE);
+			act_new("The $p is being held by someone!", ch, on, NULL, TO_CHAR, POS_DEAD, false);
             return;
         }
 
@@ -500,7 +500,7 @@ void sit(CHAR_DATA *ch, OBJ_DATA *on)
         }
 
 		if (ch->on != on && (long)count_users(on) >= on->value[0]) {
-			act_new("There's no more room on $p.", ch, on, NULL, TO_CHAR, POS_DEAD, FALSE);
+			act_new("There's no more room on $p.", ch, on, NULL, TO_CHAR, POS_DEAD, false);
 			return;
 		}
 	}
@@ -541,13 +541,13 @@ void sit(CHAR_DATA *ch, OBJ_DATA *on)
 			send_to_char("You wake and sit up.\n\r", ch);
 			act("$n wakes and sits up.", ch, NULL, NULL, TO_ROOM);
 		} else if (IS_SET(on->value[2], SIT_AT)) {
-			act_new("You wake and sit at $p.", ch, on, NULL, TO_CHAR, POS_DEAD, FALSE);
+			act_new("You wake and sit at $p.", ch, on, NULL, TO_CHAR, POS_DEAD, false);
 			act("$n wakes and sits at $p.", ch, on, NULL, TO_ROOM);
 		} else if (IS_SET(on->value[2], SIT_ON)) {
-			act_new("You wake and sit on $p.", ch, on, NULL, TO_CHAR, POS_DEAD, FALSE);
+			act_new("You wake and sit on $p.", ch, on, NULL, TO_CHAR, POS_DEAD, false);
 			act("$n wakes and sits at $p.", ch, on, NULL, TO_ROOM);
 		} else {
-			act_new("You wake and sit in $p.", ch, on, NULL, TO_CHAR, POS_DEAD, FALSE);
+			act_new("You wake and sit in $p.", ch, on, NULL, TO_CHAR, POS_DEAD, false);
 			act("$n wakes and sits in $p.", ch, on, NULL, TO_ROOM);
 		}
 		break;
@@ -598,7 +598,7 @@ void stand(CHAR_DATA *ch, OBJ_DATA *on)
 		}
 
         if (ch->on != on && (long)count_users(on) >= on->value[0]) {
-            act_new("There's no room to stand on $p.", ch, on, NULL, TO_ROOM, POS_DEAD, FALSE);
+            act_new("There's no room to stand on $p.", ch, on, NULL, TO_ROOM, POS_DEAD, false);
             return;
         }
 
@@ -644,13 +644,13 @@ void stand(CHAR_DATA *ch, OBJ_DATA *on)
 			send_to_char("You wake and stand up.\n\r", ch);
 			act("$n wakes and stands up.", ch, NULL, NULL, TO_ROOM);
 		} else if (IS_SET(on->value[2], STAND_AT)) {
-			act_new("You wake and stand at $p.", ch, on, NULL, TO_CHAR, POS_DEAD, FALSE);
+			act_new("You wake and stand at $p.", ch, on, NULL, TO_CHAR, POS_DEAD, false);
 			act("$n wakes and stands at $p.", ch, on, NULL, TO_ROOM);
 		} else if (IS_SET(on->value[2], STAND_ON)) {
-			act_new("You wake and stand on $p.", ch, on, NULL, TO_CHAR, POS_DEAD, FALSE);
+			act_new("You wake and stand on $p.", ch, on, NULL, TO_CHAR, POS_DEAD, false);
 			act("$n wakes and stands on $p.", ch, on, NULL, TO_ROOM);
 		} else {
-			act_new("You wake and stand in $p.", ch, on, NULL, TO_CHAR, POS_DEAD, FALSE);
+			act_new("You wake and stand in $p.", ch, on, NULL, TO_CHAR, POS_DEAD, false);
 			act("$n wakes and stands in $p.", ch, on, NULL, TO_ROOM);
 		}
 		look_room(ch, ch->in_room);
@@ -703,13 +703,13 @@ void get_obj(CHAR_DATA *ch, OBJ_DATA *obj, OBJ_DATA *container)
 		    && !CAN_WEAR(container, ITEM_TAKE)
 		    && !IS_OBJ_STAT(obj, ITEM_HAD_TIMER))
 			obj->timer = 0;
-		act_new("You get $p from $P.", ch, obj, container, TO_CHAR, POS_RESTING, TRUE);
-		act_new("$n gets $p from $P.", ch, obj, container, TO_ROOM, POS_RESTING, TRUE);
+		act_new("You get $p from $P.", ch, obj, container, TO_CHAR, POS_RESTING, true);
+		act_new("$n gets $p from $P.", ch, obj, container, TO_ROOM, POS_RESTING, true);
 		REMOVE_BIT(obj->extra_flags, ITEM_HAD_TIMER);
 		obj_from_obj(obj);
 	} else {
-		act_new("You get $p.", ch, obj, container, TO_CHAR, POS_RESTING, TRUE);
-		act_new("$n gets $p.", ch, obj, container, TO_ROOM, POS_RESTING, TRUE);
+		act_new("You get $p.", ch, obj, container, TO_CHAR, POS_RESTING, true);
+		act_new("$n gets $p.", ch, obj, container, TO_ROOM, POS_RESTING, true);
 		obj_from_room(obj);
 	}
 
@@ -998,18 +998,18 @@ void show_char_to_char_2(CHAR_DATA *victim, CHAR_DATA *ch)
 		if (victim->drained >= (9 * (victim->level / 10))) send_to_char("looks quite healthy and `!pink``.\n\r", ch); else if (victim->drained >= (7 * (victim->level / 10))) send_to_char("looks slightly `&pale``.\n\r", ch); else if (victim->drained >= (5 * (victim->level / 10))) send_to_char("looks rather pale.\n\r", ch); else if (victim->drained >= (3 * (victim->level / 10))) send_to_char("looks quite pale.\n\r", ch);
 	}
 
-	found = FALSE;
+	found = false;
 	for (iWear = 0; where_name[iWear].wear_loc >= 0; iWear++) {
 		if ((obj = get_eq_char(victim, where_name[iWear].wear_loc)) != NULL
 		    && can_see_obj(ch, obj)) {
 			if (!found) {
 				send_to_char("\n\r", ch);
 				act("$N is using:", ch, NULL, victim, TO_CHAR);
-				found = TRUE;
+				found = true;
 			}
 			send_to_char(where_name[iWear].desc, ch);
 			send_to_char("(", ch);
-			send_to_char(format_obj_to_char(obj, ch, TRUE), ch);
+			send_to_char(format_obj_to_char(obj, ch, true), ch);
 			send_to_char(")", ch);
 			send_to_char("\n\r", ch);
 		}
@@ -1019,8 +1019,8 @@ void show_char_to_char_2(CHAR_DATA *victim, CHAR_DATA *ch)
 	    && (skill_peek = gsp_peek) != NULL
 	    && number_percent() < get_learned_percent(ch, skill_peek)) {
 		send_to_char("\n\rYou peek at the inventory:\n\r", ch);
-		check_improve(ch, skill_peek, TRUE, 4);
-		show_list_to_char(victim->carrying, ch, TRUE, TRUE);
+		check_improve(ch, skill_peek, true, 4);
+		show_list_to_char(victim->carrying, ch, true, true);
 	}
 
 	return;
@@ -1066,7 +1066,7 @@ void show_list_to_char(OBJ_DATA *list, CHAR_DATA *ch, bool fShort, bool fShowNot
 		if (obj->wear_loc == WEAR_NONE && can_see_obj(ch, obj)) {
 			pstrShow = format_obj_to_char(obj, ch, fShort);
 
-			fCombine = FALSE;
+			fCombine = false;
 
 			if (IS_NPC(ch) || IS_SET(ch->comm, COMM_COMBINE)) {
 				/*
@@ -1076,7 +1076,7 @@ void show_list_to_char(OBJ_DATA *list, CHAR_DATA *ch, bool fShort, bool fShowNot
 				for (iShow = nShow - 1; iShow >= 0; iShow--) {
 					if (!strcmp(prgpstrShow[iShow], pstrShow)) {
 						prgnShow[iShow]++;
-						fCombine = TRUE;
+						fCombine = true;
 						break;
 					}
 				}

@@ -104,7 +104,7 @@ static void scan_list(ROOM_INDEX_DATA *scan_room, CHAR_DATA *ch, int depth, int 
 	CHAR_DATA *rch;
 	bool found;
 
-	found = FALSE;
+	found = false;
 	if (scan_room != NULL) {
 		for (rch = scan_room->people; rch != NULL; rch = rch->next_in_room) {
 			if (rch == ch)
@@ -124,7 +124,7 @@ static void scan_list(ROOM_INDEX_DATA *scan_room, CHAR_DATA *ch, int depth, int 
 				if (!found) {
 					/* print the header */
 					printf_to_char(ch, distance_name[depth], (direction >= 0) ? direction_name[direction] : "");
-					found = TRUE;
+					found = true;
 				}
 
 				printf_to_char(ch, " - %s\n\r", PERS(rch, ch));

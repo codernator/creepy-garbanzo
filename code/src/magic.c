@@ -213,7 +213,7 @@ bool saves_spell(int level, CHAR_DATA *victim, int dam_type)
 
 	switch (check_immune(victim, dam_type)) {
 	case IS_IMMUNE:
-		return TRUE;
+		return true;
 	case IS_RESISTANT:
 		save += 20;
 		break;
@@ -261,7 +261,7 @@ bool check_dispel(int dis_level, CHAR_DATA *victim, SKILL *skill)
 	AFFECT_DATA *af;
 
 	if (skill == NULL)
-		return FALSE;
+		return false;
 
 	if (is_affected(victim, skill)) {
 		for (af = victim->affected; af != NULL; af = af->next) {
@@ -276,7 +276,7 @@ bool check_dispel(int dis_level, CHAR_DATA *victim, SKILL *skill)
 					if (skill->msg_others != NULL
 					    && skill->msg_others[0] != '\0')
 						act(skill->msg_others, victim, NULL, NULL, TO_ROOM);
-					return TRUE;
+					return true;
 				} else {
 					af->level--;
 				}
@@ -284,7 +284,7 @@ bool check_dispel(int dis_level, CHAR_DATA *victim, SKILL *skill)
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 
@@ -390,7 +390,7 @@ void do_cast(CHAR_DATA *ch, char *argument)
 	wait = skill->wait;
 	level_mod = (get_curr_stat(ch, STAT_INT) + get_curr_stat(ch, STAT_WIS)) / 6;
 	level = (IS_NPC(ch) || class_table[ch->class].fMana) ? ch->level : (int)((ch->level * 7) / 8);
-	voodoo = FALSE;
+	voodoo = false;
 
 	switch (skill->target) {
 	default:
@@ -422,7 +422,7 @@ void do_cast(CHAR_DATA *ch, char *argument)
 						return;
 					}
 
-					voodoo = TRUE;
+					voodoo = true;
 				} else {
 					send_to_char("``They aren`8'``t here.\n\r", ch);
 					return;
@@ -487,7 +487,7 @@ void do_cast(CHAR_DATA *ch, char *argument)
 						return;
 					}
 
-					voodoo = TRUE;
+					voodoo = true;
 				} else {
 					send_to_char("They aren't here.\n\r", ch);
 					return;
@@ -554,7 +554,7 @@ void do_cast(CHAR_DATA *ch, char *argument)
 			}
 
 			target = TARGET_CHAR;
-			voodoo = TRUE;
+			voodoo = true;
 		}
 
 		if (target == TARGET_CHAR) { /* check the sanity of the attack */
@@ -563,7 +563,7 @@ void do_cast(CHAR_DATA *ch, char *argument)
 				return;
 			}
 
-			if (is_safe_spell(ch, victim, FALSE) && victim != ch) {
+			if (is_safe_spell(ch, victim, false) && victim != ch) {
 				send_to_char("Not on that target.\n\r", ch);
 				return;
 			}
@@ -616,7 +616,7 @@ void do_cast(CHAR_DATA *ch, char *argument)
 	if (str_cmp(skill->name, "ventriloquate"))
 		say_spell(ch, skill);
 
-	if (voodoo == TRUE) {
+	if (voodoo == true) {
 		mana = mana * 2;
 		wait = wait * 2;
 	}
@@ -635,7 +635,7 @@ void do_cast(CHAR_DATA *ch, char *argument)
 	chance = get_learned_percent(ch, skill);
 	if (number_percent() > chance) {
 		send_to_char("You lost your concentration.\n\r", ch);
-		check_improve(ch, skill, FALSE, 1);
+		check_improve(ch, skill, false, 1);
 		ch->mana -= mana / 2;
 	} else {
 		if (!IS_IMMORTAL(ch)) {
@@ -645,8 +645,8 @@ void do_cast(CHAR_DATA *ch, char *argument)
 
 				act("The room draws on your `Pm`5y`^s`6ti`^c`5a`Pl e`5n`^e`6rg`^i`5e`Ps`` and feeds them back at you!!", ch, NULL, NULL, TO_CHAR);
 				act("The room draws on $n's `Pm`5y`^s`6ti`^c`5a`Pl e`5n`^e`6rg`^i`5e`Ps`` and feeds them back at $m!!", ch, NULL, NULL, TO_ROOM);
-				if ((dam = damage(ch, ch, mana * 100, gsp_mana_vortex->sn, DAM_NEGATIVE, FALSE)) > 0) {
-					dam_message(ch, NULL, dam, gsp_mana_vortex->sn, FALSE);
+				if ((dam = damage(ch, ch, mana * 100, gsp_mana_vortex->sn, DAM_NEGATIVE, false)) > 0) {
+					dam_message(ch, NULL, dam, gsp_mana_vortex->sn, false);
 					ch->mana -= dam;
 				}
 				return;
@@ -663,7 +663,7 @@ void do_cast(CHAR_DATA *ch, char *argument)
 			level += (level_mod - 1);
 
 		cast_spell(ch, skill, level, vo, target, argument);
-		check_improve(ch, skill, TRUE, 1);
+		check_improve(ch, skill, true, 1);
 	}
 
 	if ((skill->target == TAR_CHAR_OFFENSIVE
@@ -778,7 +778,7 @@ void obj_cast_spell(int		sn,
 		}
 
 		if (victim != NULL) {
-			if (is_safe_spell(ch, victim, FALSE) && ch != victim) {
+			if (is_safe_spell(ch, victim, false) && ch != victim) {
 				send_to_char("Something isn't right...\n\r", ch);
 				return;
 			}
@@ -924,13 +924,13 @@ void do_recite(CHAR_DATA *ch, char *argument)
 
 	if (number_percent() >= 20 + get_learned_percent(ch, skill) * 4 / 5) {
 		send_to_char("You mispronounce a syllable.\n\r", ch);
-		check_improve(ch, skill, FALSE, 2);
+		check_improve(ch, skill, false, 2);
 	} else {
 		obj_cast_spell((int)scroll->value[1], (int)scroll->value[0], ch, victim, obj);
 		obj_cast_spell((int)scroll->value[2], (int)scroll->value[0], ch, victim, obj);
 		obj_cast_spell((int)scroll->value[3], (int)scroll->value[0], ch, victim, obj);
 		obj_cast_spell((int)scroll->value[4], (int)scroll->value[0], ch, victim, obj);
-		check_improve(ch, skill, TRUE, 2);
+		check_improve(ch, skill, true, 2);
 	}
 
 	extract_obj(scroll);
@@ -979,7 +979,7 @@ void do_brandish(CHAR_DATA *ch, char *argument)
 		    || number_percent() >= 20 + get_learned_percent(ch, skill) * 4 / 5) {
 			act("You fail to invoke $p.", ch, staff, NULL, TO_CHAR);
 			act("...and nothing happens.", ch, NULL, NULL, TO_ROOM);
-			check_improve(ch, skill, FALSE, 2);
+			check_improve(ch, skill, false, 2);
 		} else {
 			for (vch = ch->in_room->people; vch; vch = vch_next) {
 				vch_next = vch->next_in_room;
@@ -1010,7 +1010,7 @@ void do_brandish(CHAR_DATA *ch, char *argument)
 				}
 
 				obj_cast_spell((int)staff->value[3], (int)staff->value[0], ch, vch, NULL);
-				check_improve(ch, skill, TRUE, 2);
+				check_improve(ch, skill, true, 2);
 			}
 		}
 	}
@@ -1088,10 +1088,10 @@ void do_zap(CHAR_DATA *ch, char *argument)
 		    || number_percent() >= 20 + get_learned_percent(ch, skill) * 4 / 5) {
 			act("Your efforts with $p produce only smoke and sparks.", ch, wand, NULL, TO_CHAR);
 			act("$n's efforts with $p produce only smoke and sparks.", ch, wand, NULL, TO_ROOM);
-			check_improve(ch, skill, FALSE, 2);
+			check_improve(ch, skill, false, 2);
 		} else {
 			obj_cast_spell((int)wand->value[3], (int)wand->value[0], ch, victim, obj);
-			check_improve(ch, skill, TRUE, 2);
+			check_improve(ch, skill, true, 2);
 		}
 	}
 
@@ -1154,10 +1154,10 @@ void do_deft(CHAR_DATA *ch, char *argument)
 		af.location = APPLY_NONE;
 
 		affect_to_char(ch, &af);
-		check_improve(ch, skill, TRUE, 3);
+		check_improve(ch, skill, true, 3);
 	} else {
 		send_to_char("You try to concentrate on your magic, but fail miserably..\n\r", ch);
-		check_improve(ch, skill, FALSE, 3);
+		check_improve(ch, skill, false, 3);
 	}
 
 	return;
@@ -1200,10 +1200,10 @@ void do_dash(CHAR_DATA *ch, char *argument)
 		af.location = APPLY_NONE;
 
 		affect_to_char(ch, &af);
-		check_improve(ch, skill, TRUE, 3);
+		check_improve(ch, skill, true, 3);
 	} else {
 		send_to_char("You try to steel your mental prowess, but you are too stupid..\n\r", ch);
-		check_improve(ch, skill, FALSE, 3);
+		check_improve(ch, skill, false, 3);
 	}
 
 	return;

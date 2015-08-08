@@ -28,8 +28,8 @@ int auction_name_lookup(char *name);
 
 const struct auction_types auction_type_table[] =
 {
-	{ "gold", "`3Gold", AUCTION_TYPE_GOLD, 1000u, 2000000000u, TRUE	 },
-	{ "",	  "",	    -1,		       0u,    0u,	   FALSE }
+	{ "gold", "`3Gold", AUCTION_TYPE_GOLD, 1000u, 2000000000u, true	 },
+	{ "",	  "",	    -1,		       0u,    0u,	   false }
 };
 
 
@@ -161,15 +161,15 @@ int auction_name_lookup(char *name)
 ***************************************************************************/
 bool check_bid(CHAR_DATA *ch, unsigned int bid, int type)
 {
-	bool check = FALSE;
+	bool check = false;
 
 	if (IS_NPC(ch))
-		return FALSE;
+		return false;
 
 	switch (type) {
 	case AUCTION_TYPE_GOLD:
 		if (ch->gold >= UMAX(0, bid))
-			check = TRUE;
+			check = true;
 		break;
 	}
 

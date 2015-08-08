@@ -213,7 +213,7 @@ void do_unalias(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 bool add_alias(CHAR_DATA *ch, char *alias, char *cmd)
 {
-	bool success = FALSE;
+	bool success = false;
 	int pos;
 
 	if (!IS_NPC(ch)) {
@@ -225,7 +225,7 @@ bool add_alias(CHAR_DATA *ch, char *alias, char *cmd)
 			if (!str_cmp(alias, ch->pcdata->alias[pos])) {
 				free_string(ch->pcdata->alias_sub[pos]);
 				ch->pcdata->alias_sub[pos] = str_dup(cmd);
-				success = TRUE;
+				success = true;
 			}
 		}
 
@@ -233,7 +233,7 @@ bool add_alias(CHAR_DATA *ch, char *alias, char *cmd)
 			/* make a new alias */
 			ch->pcdata->alias[pos] = str_dup(alias);
 			ch->pcdata->alias_sub[pos] = str_dup(cmd);
-			success = TRUE;
+			success = true;
 		}
 	}
 
@@ -248,7 +248,7 @@ bool add_alias(CHAR_DATA *ch, char *alias, char *cmd)
 ***************************************************************************/
 bool remove_alias(CHAR_DATA *ch, char *alias)
 {
-	bool success = FALSE;
+	bool success = false;
 	int pos;
 
 	if (!IS_NPC(ch)) {
@@ -270,7 +270,7 @@ bool remove_alias(CHAR_DATA *ch, char *alias)
 
 				ch->pcdata->alias[pos] = NULL;
 				ch->pcdata->alias_sub[pos] = NULL;
-				success = TRUE;
+				success = true;
 			}
 		}
 	}

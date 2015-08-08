@@ -131,7 +131,7 @@ void hedit(CHAR_DATA *ch, char *argument)
 	for (cmd = 0; hedit_table[cmd].name != NULL; cmd++) {
 		if (!str_prefix(command, hedit_table[cmd].name)) {
 			if ((*hedit_table[cmd].olc_fn)(ch, argument))
-				had->changed = TRUE;
+				had->changed = true;
 			return;
 		}
 	}
@@ -192,7 +192,7 @@ EDIT(hedit_show){
 		       (had != NULL && had->area != NULL) ? had->area->file_name : "none");
 	printf_to_char(ch, "`&Text``:\n\r"
 		       "%s\n\r`1-`!END`1-``\n\r", help->text);
-	return FALSE;
+	return false;
 }
 
 
@@ -209,18 +209,18 @@ EDIT(hedit_level){
 	EDIT_HELP(ch, help);
 	if (IS_NULLSTR(argument) || !is_number(argument)) {
 		send_to_char("Syntax : level [-1..MAX_LEVEL]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	lev = parse_int(argument);
 	if (lev < -1 || lev > MAX_LEVEL) {
 		printf_to_char(ch, "HEdit : levels between -1 and %d only.\n\r", MAX_LEVEL);
-		return FALSE;
+		return false;
 	}
 
 	help->level = lev;
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -235,14 +235,14 @@ EDIT(hedit_keyword){
 	EDIT_HELP(ch, help);
 	if (IS_NULLSTR(argument)) {
 		send_to_char("Syntax : keyword [keywords]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	free_string(help->keyword);
 	help->keyword = str_dup(argument);
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -262,7 +262,7 @@ EDIT(hedit_new){
 	if (is_help(argument)) {
 		send_to_char("Syntax   : new [name]\n\r", ch);
 		send_to_char("           new [area] [name]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	argument = one_argument(argument, name);
@@ -278,7 +278,7 @@ EDIT(hedit_new){
 
 	if (help_lookup(name)) {
 		send_to_char("HEdit : help already exists.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (!had) {
@@ -287,7 +287,7 @@ EDIT(hedit_new){
 		had->area = ch->in_room->area;
 		had->first = NULL;
 		had->last = NULL;
-		had->changed = TRUE;
+		had->changed = true;
 		had->next = had_list;
 		had_list = had;
 		ch->in_room->area->helps = had;
@@ -321,7 +321,7 @@ EDIT(hedit_new){
 	ch->desc->editor = ED_HELP;
 
 	send_to_char("Ok.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 
@@ -336,7 +336,7 @@ EDIT(hedit_text){
 	EDIT_HELP(ch, help);
 
 	string_append(ch, &help->text);
-	return TRUE;
+	return true;
 }
 
 
@@ -357,7 +357,7 @@ EDIT(hedit_area){
 
 	if (is_help(argument)) {
 		send_to_char("Syntax : area <area filename|none>\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 
@@ -387,7 +387,7 @@ EDIT(hedit_area){
 				if (help_last != NULL && help_idx != NULL)
 					help_last->next_area = help->next_area;
 			}
-			had_old->changed = TRUE;
+			had_old->changed = true;
 		}
 
 
@@ -402,9 +402,9 @@ EDIT(hedit_area){
 			had_new->last = help;
 		}
 		help->next_area = NULL;
-		had_new->changed = TRUE;
+		had_new->changed = true;
 	}
-	return TRUE;
+	return true;
 }
 
 /***************************************************************************
@@ -417,7 +417,7 @@ EDIT(hedit_delete){
 	HELP_DATA *temp;
 	HELP_AREA *had;
 	DESCRIPTOR_DATA *d;
-	bool found = FALSE;
+	bool found = false;
 
 	EDIT_HELP(ch, help);
 
@@ -435,7 +435,7 @@ EDIT(hedit_delete){
 
 		if (!temp) {
 			printf_bug("HEdit delete : help %s not found in help_first", help->keyword);
-			return FALSE;
+			return false;
 		}
 
 		temp->next = help->next;
@@ -443,7 +443,7 @@ EDIT(hedit_delete){
 
 	for (had = had_list; had; had = had->next) {
 		if (help == had->first) {
-			found = TRUE;
+			found = true;
 			had->first = had->first->next_area;
 		} else {
 			for (temp = had->first; temp; temp = temp->next_area)
@@ -452,7 +452,7 @@ EDIT(hedit_delete){
 
 			if (temp) {
 				temp->next_area = help->next_area;
-				found = TRUE;
+				found = true;
 				break;
 			}
 		}
@@ -460,13 +460,13 @@ EDIT(hedit_delete){
 
 	if (!found) {
 		printf_bug("hedit_delete : help %s not found in had_list", help->keyword);
-		return FALSE;
+		return false;
 	}
 
 	free_help(help);
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -497,13 +497,13 @@ EDIT(hedit_list){
 
 		page_to_char(buf_string(buffer), ch);
 		free_buf(buffer);
-		return FALSE;
+		return false;
 	}
 
 	if (!str_cmp(argument, "area")) {
 		if (ch->in_room->area->helps == NULL) {
 			send_to_char("There are no helps in this area.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		buffer = new_buf();
@@ -519,10 +519,10 @@ EDIT(hedit_list){
 
 		page_to_char(buf_string(buffer), ch);
 		free_buf(buffer);
-		return FALSE;
+		return false;
 	}
 
 	send_to_char("Syntax : list all\n\r", ch);
 	send_to_char("         list area\n\r", ch);
-	return FALSE;
+	return false;
 }

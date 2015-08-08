@@ -311,7 +311,7 @@ static int get_order(CHAR_DATA *ch)
  * Check if ch has a given item or item type
  * vnum: item vnum or -1
  * item_type: item type or -1
- * fWear: TRUE: item must be worn, FALSE: don't care
+ * fWear: true: item must be worn, false: don't care
  */
 static bool has_item(CHAR_DATA *ch, long vnum, int item_type, bool fWear)
 {
@@ -321,8 +321,8 @@ static bool has_item(CHAR_DATA *ch, long vnum, int item_type, bool fWear)
 		if ((vnum < 0 || obj->obj_idx->vnum == vnum)
 		    && (item_type < 0 || obj->obj_idx->item_type == item_type)
 		    && (!fWear || obj->wear_loc != WEAR_NONE))
-			return TRUE;
-	return FALSE;
+			return true;
+	return false;
 }
 
 /*
@@ -334,8 +334,8 @@ static bool get_mob_vnum_room(CHAR_DATA *ch, long vnum)
 
 	for (mob = ch->in_room->people; mob; mob = mob->next_in_room)
 		if (IS_NPC(mob) && mob->mob_idx->vnum == vnum)
-			return TRUE;
-	return FALSE;
+			return true;
+	return false;
 }
 
 /*
@@ -347,8 +347,8 @@ static bool get_obj_vnum_room(CHAR_DATA *ch, long vnum)
 
 	for (obj = ch->in_room->contents; obj; obj = obj->next_content)
 		if (obj->obj_idx->vnum == vnum)
-			return TRUE;
-	return FALSE;
+			return true;
+	return false;
 }
 
 /* ---------------------------------------------------------------------
@@ -379,7 +379,7 @@ static bool cmd_eval(long vnum, char *line, int check,
 	original = line;
 	line = one_argument(line, buf);
 	if (buf[0] == '\0' || mob == NULL)
-		return FALSE;
+		return false;
 
 	/*
 	 * If this mobile has no target, let's assume our victim is the one
@@ -434,7 +434,7 @@ static bool cmd_eval(long vnum, char *line, int check,
 			sprintf(buf, "Cmd_eval: prog %ld syntax error(2) '%s'",
 				vnum, original);
 			bug(buf, 0);
-			return FALSE;
+			return false;
 		}
 		one_argument(line, buf);
 		lval = rval;
@@ -449,7 +449,7 @@ static bool cmd_eval(long vnum, char *line, int check,
 		sprintf(buf, "Cmd_eval: prog %ld syntax error(3) '%s'",
 			vnum, original);
 		bug(buf, 0);
-		return FALSE;
+		return false;
 	} else {
 		code = buf[1];
 	}
@@ -472,13 +472,13 @@ static bool cmd_eval(long vnum, char *line, int check,
 		sprintf(buf, "Cmd_eval: prog %ld syntax error(4) '%s'",
 			vnum, original);
 		bug(buf, 0);
-		return FALSE;
+		return false;
 	}
 	/*
 	 * From now on, we need an actor, so if none was found, bail out
 	 */
 	if (lval_char == NULL && lval_obj == NULL)
-		return FALSE;
+		return false;
 
 	/*
 	 * Case 3: Keyword, comparison and value
@@ -544,18 +544,18 @@ static bool cmd_eval(long vnum, char *line, int check,
 		       && IS_SET(lval_char->off_flags, flag_lookup(buf, off_flags));
 	case CHK_CARRIES:
 		if (is_number(buf))
-			return lval_char != NULL && has_item(lval_char, parse_int(buf), -1, FALSE);
+			return lval_char != NULL && has_item(lval_char, parse_int(buf), -1, false);
 		else
 			return lval_char != NULL && (get_obj_carry(lval_char, buf) != NULL);
 	case CHK_WEARS:
 		if (is_number(buf))
-			return lval_char != NULL && has_item(lval_char, parse_int(buf), -1, TRUE);
+			return lval_char != NULL && has_item(lval_char, parse_int(buf), -1, true);
 		else
 			return lval_char != NULL && (get_obj_wear(lval_char, buf) != NULL);
 	case CHK_HAS:
-		return lval_char != NULL && has_item(lval_char, -1, (int)item_lookup(buf), FALSE);
+		return lval_char != NULL && has_item(lval_char, -1, (int)item_lookup(buf), false);
 	case CHK_USES:
-		return lval_char != NULL && has_item(lval_char, -1, (int)item_lookup(buf), TRUE);
+		return lval_char != NULL && has_item(lval_char, -1, (int)item_lookup(buf), true);
 	case CHK_NAME:
 		switch (code) {
 		default:
@@ -587,7 +587,7 @@ static bool cmd_eval(long vnum, char *line, int check,
 		sprintf(buf, "Cmd_eval: prog %ld syntax error(5): '%s'",
 			vnum, original);
 		bug(buf, 0);
-		return FALSE;
+		return false;
 	}
 	one_argument(line, buf);
 	rval = parse_int(buf);
@@ -637,7 +637,7 @@ static bool cmd_eval(long vnum, char *line, int check,
 	case CHK_GRPSIZE:
 		if (lval_char != NULL) lval = count_people_room(lval_char, 4); break;
 	default:
-		return FALSE;
+		return false;
 	}
 	return num_eval(lval, oper, rval);
 }
@@ -875,7 +875,7 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
 	 */
 	for (level = 0; level < MAX_NESTED_LEVEL; level++) {
 		state[level] = IN_BLOCK;
-		cond[level] = TRUE;
+		cond[level] = true;
 	}
 	level = 0;
 
@@ -884,7 +884,7 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
 	 * Parse the MOBprog code
 	 */
 	while (*code != '\0') {
-		bool first_arg = TRUE;
+		bool first_arg = true;
 		char *b = buf, *c = control, *d = data;
 		/*
 		 * Get a command line. We sneakily get both the control word
@@ -896,7 +896,7 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
 				break;
 			} else if (is_space(*code)) {
 				if (first_arg)
-					first_arg = FALSE;
+					first_arg = false;
 				else
 					*d++ = *code;
 			} else {
@@ -932,8 +932,8 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
 				bug(buf, 0);
 				return;
 			}
-			if (level && cond[level - 1] == FALSE) {
-				cond[level] = FALSE;
+			if (level && cond[level - 1] == false) {
+				cond[level] = false;
 				continue;
 			}
 			line = one_argument(line, control);
@@ -951,7 +951,7 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
 				bug(buf, 0);
 				return;
 			}
-			if (level && cond[level - 1] == FALSE) continue;
+			if (level && cond[level - 1] == false) continue;
 			line = one_argument(line, control);
 			if ((check = keyword_lookup(fn_keyword, control)) >= 0) {
 				eval = cmd_eval(pvnum, line, check, mob, ch, arg1, arg2, rch);
@@ -960,14 +960,14 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
 				bug(buf, 0);
 				return;
 			}
-			cond[level] = (eval == TRUE) ? TRUE : cond[level];
+			cond[level] = (eval == true) ? true : cond[level];
 		} else if (!str_cmp(control, "and")) {
 			if (!level || state[level - 1] != BEGIN_BLOCK) {
 				sprintf(buf, "Mobprog: and without if, mob %ld prog %ld", mvnum, pvnum);
 				bug(buf, 0);
 				return;
 			}
-			if (level && cond[level - 1] == FALSE) continue;
+			if (level && cond[level - 1] == false) continue;
 			line = one_argument(line, control);
 			if ((check = keyword_lookup(fn_keyword, control)) >= 0) {
 				eval = cmd_eval(pvnum, line, check, mob, ch, arg1, arg2, rch);
@@ -976,14 +976,14 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
 				bug(buf, 0);
 				return;
 			}
-			cond[level] = (cond[level] == TRUE) && (eval == TRUE) ? TRUE : FALSE;
+			cond[level] = (cond[level] == true) && (eval == true) ? true : false;
 		} else if (!str_cmp(control, "endif")) {
 			if (!level || state[level - 1] != BEGIN_BLOCK) {
 				sprintf(buf, "Mobprog: endif without if, mob %ld prog %ld", mvnum, pvnum);
 				bug(buf, 0);
 				return;
 			}
-			cond[level] = TRUE;
+			cond[level] = true;
 			state[level] = IN_BLOCK;
 			state[--level] = END_BLOCK;
 		} else if (!str_cmp(control, "else")) {
@@ -992,14 +992,14 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
 				bug(buf, 0);
 				return;
 			}
-			if (level && cond[level - 1] == FALSE) continue;
+			if (level && cond[level - 1] == false) continue;
 			state[level] = IN_BLOCK;
-			cond[level] = (cond[level] == TRUE) ? FALSE : TRUE;
-		} else if (cond[level] == TRUE
+			cond[level] = (cond[level] == true) ? false : true;
+		} else if (cond[level] == true
 			   && (!str_cmp(control, "break") || !str_cmp(control, "end"))) {
 			call_level--;
 			return;
-		} else if ((!level || cond[level] == TRUE) && buf[0] != '\0') {
+		} else if ((!level || cond[level] == true) && buf[0] != '\0') {
 			state[level] = IN_BLOCK;
 			expand_arg(data, buf, mob, ch, arg1, arg2, rch);
 			if (!str_cmp(control, "mob")) {
@@ -1059,10 +1059,10 @@ bool mp_percent_trigger(
 		if (prg->trig_type == type
 		    && number_percent() < parse_int(prg->trig_phrase)) {
 			program_flow(prg->vnum, prg->code, mob, ch, arg1, arg2);
-			return TRUE;
+			return true;
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 void mp_bribe_trigger(CHAR_DATA *mob, CHAR_DATA *ch, long amount)
@@ -1106,17 +1106,17 @@ bool mp_exit_trigger(CHAR_DATA *ch, int dir)
 				    && mob->position == mob->mob_idx->default_pos
 				    && can_see(mob, ch)) {
 					program_flow(prg->vnum, prg->code, mob, ch, NULL, NULL);
-					return TRUE;
+					return true;
 				} else
 				if (prg->trig_type == TRIG_EXALL
 				    && dir == parse_int(prg->trig_phrase)) {
 					program_flow(prg->vnum, prg->code, mob, ch, NULL, NULL);
-					return TRUE;
+					return true;
 				}
 			}
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 void mp_give_trigger(CHAR_DATA *mob, CHAR_DATA *ch, OBJ_DATA *obj)

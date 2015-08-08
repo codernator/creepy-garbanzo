@@ -46,7 +46,7 @@ char fread_letter(FILE *fp)
 long fread_long(FILE *fp)
 {
 	long number = 0;
-	bool sign = FALSE;
+	bool sign = false;
 	char c;
 
 	do
@@ -56,7 +56,7 @@ long fread_long(FILE *fp)
 	if (c == '+') {
 		c = (char)getc(fp);
 	} else if (c == '-') {
-		sign = TRUE;
+		sign = true;
 		c = (char)getc(fp);
 	}
 
@@ -88,7 +88,7 @@ long fread_long(FILE *fp)
 unsigned int fread_uint(FILE *fp)
 {
 	unsigned int number = 0;
-	bool sign = FALSE;
+	bool sign = false;
 	char c;
 
 	do
@@ -98,7 +98,7 @@ unsigned int fread_uint(FILE *fp)
 	if (c == '+') {
 		c = (char)getc(fp);
 	} else if (c == '-') {
-		sign = TRUE;
+		sign = true;
 		c = (char)getc(fp);
 	}
 
@@ -140,11 +140,11 @@ int fread_number(FILE *fp)
 
 	number = 0;
 
-	sign = FALSE;
+	sign = false;
 	if (c == '+') {
 		c = (char)getc(fp);
 	} else if (c == '-') {
-		sign = TRUE;
+		sign = true;
 		c = (char)getc(fp);
 	}
 
@@ -174,14 +174,14 @@ long fread_flag(FILE *fp)
 {
 	int number;
 	char c;
-	bool negative = FALSE;
+	bool negative = false;
 
 	do
 		c = (char)getc(fp);
 	while (is_space(c));
 
 	if (c == '-') {
-		negative = TRUE;
+		negative = true;
 		c = (char)getc(fp);
 	}
 

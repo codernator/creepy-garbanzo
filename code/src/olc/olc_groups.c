@@ -177,7 +177,7 @@ EDIT(gredit_delete){
 	edit_done(ch);
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -204,12 +204,12 @@ EDIT(gredit_show){
 		SKILL_LIST *skills;
 		bool first;
 
-		first = TRUE;
+		first = true;
 		for (skills = group->skills; skills != NULL; skills = skills->next) {
 			if (skills->skill != NULL) {
 				if (first) {
 					printf_to_char(ch, "`&Skills``:      [%s]\n\r", skills->skill->name);
-					first = FALSE;
+					first = false;
 				} else {
 					printf_to_char(ch, "             [%s]\n\r", skills->skill->name);
 				}
@@ -231,7 +231,7 @@ EDIT(gredit_show){
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 
@@ -246,12 +246,12 @@ EDIT(gredit_new){
 
 	if (is_help(argument)) {
 		send_to_char("Syntax   : new [name]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if ((group = group_lookup(argument)) != NULL) {
 		send_to_char("GRedit : group already exists.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	group = new_group();
@@ -264,7 +264,7 @@ EDIT(gredit_new){
 	ch->desc->editor = ED_GROUP;
 
 	send_to_char("Ok.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 
@@ -281,12 +281,12 @@ EDIT(gredit_help){
 
 	if (is_help(argument)) {
 		send_to_char("Syntax:  helpfile [keyword of help]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if ((help = help_lookup(argument)) == NULL) {
 		send_to_char("That help does not exist.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (group->help_keyword != NULL)
@@ -295,7 +295,7 @@ EDIT(gredit_help){
 	group->help = help;
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -317,21 +317,21 @@ EDIT(gredit_skills){
 		send_to_char("\n\r", ch);
 		send_to_char("Syntax:  skill <add|remove> <skill name>\n\r", ch);
 		send_to_char("         skill <list> [all|partial skill name]\n\r\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	argument = one_argument(argument, cmd);
 	if (!str_prefix(cmd, "add")) {
 		if ((skill = skill_lookup(argument)) == NULL) {
 			send_to_char("That skill does not exist.  Type 'skill list' for a list of spells.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		add_group_skill(group, skill);
 	} else if (!str_prefix(cmd, "remove")) {
 		if (group->skills == NULL) {
 			send_to_char("That group does not have any skills associated with it.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		if (!str_prefix(argument, "all")) {
@@ -345,7 +345,7 @@ EDIT(gredit_skills){
 		} else {
 			if ((skill = skill_lookup(argument)) == NULL) {
 				send_to_char("That skill does not exist.  Type 'skill list' for a list of spells.\n\r", ch);
-				return FALSE;
+				return false;
 			}
 
 			if (group->skills->skill == skill) {
@@ -363,7 +363,7 @@ EDIT(gredit_skills){
 
 				if (list == NULL) {
 					printf_to_char(ch, "The skill is not set on this group. Skill: %s\n\r", skill->name);
-					return FALSE;
+					return false;
 				}
 
 				if (list_prev != NULL) {
@@ -389,13 +389,13 @@ EDIT(gredit_skills){
 
 		if (col % 3 != 0)
 			send_to_char("\n\r", ch);
-		return FALSE;
+		return false;
 	} else {
 		return skedit_spell(ch, "");
 	}
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -415,13 +415,13 @@ EDIT(gredit_cost){
 	EDIT_GROUP(ch, group);
 	if (is_help(argument)) {
 		send_to_char("Syntax:  cost <class> <cost|none>\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	argument = one_argument(argument, arg);
 	if ((cls = class_lookup(arg)) <= -1) {
 		send_to_char("The chosen class is invalid.  Please check the name and try again.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	cost = -1;
@@ -455,7 +455,7 @@ EDIT(gredit_cost){
 
 		if (level_info == NULL) {
 			send_to_char("Error creating LEVEL_INFO structure.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		level_info->level = 1;
@@ -467,7 +467,7 @@ EDIT(gredit_cost){
 
 		if (level_info == NULL) {
 			send_to_char("That level information does not exist.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		/* unlink the level info structure */
@@ -489,7 +489,7 @@ EDIT(gredit_cost){
 	}
 
 	send_to_char("Ok.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -507,7 +507,7 @@ EDIT(gredit_cost){
 	if (!str_cmp(word, literal))                     \
 	{                                                                       \
 		field = value;                                \
-		found = TRUE;                                 \
+		found = true;                                 \
 	}
 
 
@@ -533,7 +533,7 @@ void load_groups()
 	}
 
 	word = fread_word(fp);
-	found = FALSE;
+	found = false;
 
 	while (!feof(fp) && str_cmp(word, END_MARKER)) {
 		if (!str_cmp(word, "gn")) {
@@ -545,7 +545,7 @@ void load_groups()
 
 			group->gn = gn;
 			gn_max_group_sn = UMAX(gn_max_group_sn, gn);
-			found = TRUE;
+			found = true;
 		} else {
 			if (group == NULL) {
 				printf_bug("load_groups: No group loaded - invalid file syntax. %s", word);
@@ -564,7 +564,7 @@ void load_groups()
 				level->difficulty = fread_number(fp);
 
 				add_group_level(group, level);
-				found = TRUE;
+				found = true;
 			}
 
 			if (!str_cmp(word, "Sk")) {
@@ -575,7 +575,7 @@ void load_groups()
 					printf_bug("load_groups: invalid group skill.\ngroup: %s\nskill: %s\n",
 						   group->name, word);
 
-				found = TRUE;
+				found = true;
 			}
 
 			if (!str_cmp(word, "Help")) {
@@ -588,7 +588,7 @@ void load_groups()
 				}
 
 				group->help = help_lookup(group->help_keyword);
-				found = TRUE;
+				found = true;
 			}
 		}
 
@@ -598,7 +598,7 @@ void load_groups()
 		}
 
 		word = fread_word(fp);
-		found = FALSE;
+		found = false;
 	}
 }
 

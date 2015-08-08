@@ -231,7 +231,7 @@ static const struct olc_cmd_type medit_table[] =
 ***************************************************************************/
 bool run_olc_editor(DESCRIPTOR_DATA *d)
 {
-	bool success = TRUE;
+	bool success = true;
 
 	switch (d->editor) {
 	case ED_AREA:
@@ -259,7 +259,7 @@ bool run_olc_editor(DESCRIPTOR_DATA *d)
 		gredit(d->character, d->incomm);
 		break;
 	default:
-		success = FALSE;
+		success = false;
 	}
 
 	return success;
@@ -434,7 +434,7 @@ bool show_commands(CHAR_DATA *ch, char *argument)
 		break;
 	}
 
-	return FALSE;
+	return false;
 }
 
 
@@ -469,7 +469,7 @@ bool edit_done(CHAR_DATA *ch)
 	ch->desc->ed_data = NULL;
 	ch->desc->editor = 0;
 
-	return FALSE;
+	return false;
 }
 
 
@@ -1240,7 +1240,7 @@ bool show_version(CHAR_DATA *ch, char *argument)
 	send_to_char(CREDITS, ch);
 	send_to_char("\n\r", ch);
 
-	return FALSE;
+	return false;
 }
 
 /***************************************************************************
@@ -1390,21 +1390,21 @@ bool show_help(CHAR_DATA *ch, char *argument)
 					show_damlist(ch);
 				else
 					show_flag_cmds(ch, help_table[cnt].structure);
-				return FALSE;
+				return false;
 			}
 		}
 	}
 
 
 	/* show the list of tables */
-	found = FALSE;
+	found = false;
 	for (cnt = 0; help_table[cnt].command[0] != '\0'; cnt++) {
 		if (argument[0] == '\0' || !str_prefix(argument, help_table[cnt].applies_to)) {
 			if (!found) {
 				send_to_char("`#Syntax`3:``  ? [command]\n\r\n\r", ch);
 				send_to_char("`!Applies To      Command            Description\n\r", ch);
 				send_to_char("`1----------------------------------------------------``\n\r", ch);
-				found = TRUE;
+				found = true;
 			}
 			printf_to_char(ch, "`@%-15.15s`` %-18.18s %s\n\r",
 				       help_table[cnt].applies_to,
@@ -1416,7 +1416,7 @@ bool show_help(CHAR_DATA *ch, char *argument)
 	if (!found)
 		show_help(ch, "");
 
-	return FALSE;
+	return false;
 }
 
 

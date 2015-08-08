@@ -210,7 +210,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 		switch (value_num) {
 		default:
 			do_help(ch, "ITEM_LIGHT");
-			return FALSE;
+			return false;
 		case 2:
 			send_to_char("Hours of Light set.\n\r\n\r", ch);
 			pObj->value[2] = parse_int(argument);
@@ -223,7 +223,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 		switch (value_num) {
 		default:
 			do_help(ch, "ITEM_STAFF_WAND");
-			return FALSE;
+			return false;
 		case 0:
 			send_to_char("Spell level set.\n\r\n\r", ch);
 			pObj->value[0] = parse_int(argument);
@@ -250,7 +250,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 		switch (value_num) {
 		default:
 			do_help(ch, "ITEM_SCROLL_POTION_PILL");
-			return FALSE;
+			return false;
 		case 0:
 			send_to_char("Spell level set.\n\r\n\r", ch);
 			pObj->value[0] = parse_int(argument);
@@ -282,7 +282,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 		switch (value_num) {
 		default:
 			do_help(ch, "ITEM_ARMOR");
-			return FALSE;
+			return false;
 		case 0:
 			send_to_char("AC pierce set.\n\r\n\r", ch);
 			pObj->value[0] = parse_int(argument);
@@ -306,7 +306,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 		switch (value_num) {
 		default:
 			do_help(ch, "ITEM_WEAPON");
-			return FALSE;
+			return false;
 		case 0:
 			send_to_char("Weapon class set.\n\r\n\r", ch);
 			ALT_FLAGVALUE_SET(pObj->value[0], weapon_class, argument);
@@ -334,7 +334,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 		switch (value_num) {
 		default:
 			do_help(ch, "ITEM_PORTAL");
-			return FALSE;
+			return false;
 		case 0:
 			send_to_char("Charges set.\n\r\n\r", ch);
 			pObj->value[0] = parse_int(argument);
@@ -358,7 +358,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 		switch (value_num) {
 		default:
 			do_help(ch, "ITEM_FURNITURE");
-			return FALSE;
+			return false;
 		case 0:
 			send_to_char("Number of people set.\n\r\n\r", ch);
 			pObj->value[0] = parse_int(argument);
@@ -401,7 +401,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 		switch (value_num) {
 		default:
 			do_help(ch, "ITEM_CONTAINER");
-			return FALSE;
+			return false;
 		case 0:
 			send_to_char("Weight capacity set.\n\r\n\r", ch);
 			pObj->value[0] = parse_int(argument);
@@ -411,7 +411,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 				TOGGLE_BIT(pObj->value[1], value);
 			} else {
 				do_help(ch, "ITEM_CONTAINER");
-				return FALSE;
+				return false;
 			}
 			send_to_char("Container type set.\n\r\n\r", ch);
 			break;
@@ -419,12 +419,12 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 			if (parse_int(argument) != 0) {
 				if (!get_obj_index(parse_int(argument))) {
 					send_to_char("There is no such item.\n\r\n\r", ch);
-					return FALSE;
+					return false;
 				}
 
 				if (get_obj_index(parse_int(argument))->item_type != ITEM_KEY) {
 					send_to_char("That item is not a key.\n\r\n\r", ch);
-					return FALSE;
+					return false;
 				}
 			}
 			send_to_char("Container key set.\n\r\n\r", ch);
@@ -445,7 +445,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 		switch (value_num) {
 		default:
 			do_help(ch, "ITEM_DRINK");
-			return FALSE;
+			return false;
 		case 0:
 			send_to_char("Maximum amount of liquid hours set.\n\r\n\r", ch);
 			pObj->value[0] = parse_int(argument);
@@ -469,7 +469,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 		switch (value_num) {
 		default:
 			do_help(ch, "ITEM_FOUNTAIN");
-			return FALSE;
+			return false;
 		case 0:
 			send_to_char("Maximum amount of liquid hours set.\n\r\n\r", ch);
 			pObj->value[0] = parse_int(argument);
@@ -489,7 +489,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 		switch (value_num) {
 		default:
 			do_help(ch, "ITEM_FOOD");
-			return FALSE;
+			return false;
 		case 0:
 			send_to_char("Hours of food set.\n\r\n\r", ch);
 			pObj->value[0] = parse_int(argument);
@@ -509,7 +509,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 		switch (value_num) {
 		default:
 			do_help(ch, "ITEM_MONEY");
-			return FALSE;
+			return false;
 		case 0:
 			send_to_char("Gold amount set.\n\r\n\r", ch);
 			pObj->value[0] = parse_int(argument);
@@ -525,14 +525,14 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 		switch (value_num) {
 		default:
 			do_help(ch, "SOCKET_LIST");
-			return FALSE;
+			return false;
 		case 0:
 			if ((value = flag_value(socket_flags, argument)) != NO_FLAG) {
 				pObj->value[0] = value;
 				send_to_char("Inlay type set.\n\r\n\r", ch);
 			} else {
 				do_help(ch, "SOCKET_LIST");
-				return FALSE;
+				return false;
 			}
 			break;
 		case 1:
@@ -541,14 +541,14 @@ static bool set_obj_values(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj,
 				send_to_char("Gem value set.\n\r\n\r", ch);
 			} else {
 				do_help(ch, "SOCKET_LIST");
-				return FALSE;
+				return false;
 			}
 			break;
 		}
 		break;
 	}
 	show_obj_values(ch, pObj);
-	return TRUE;
+	return true;
 }
 
 
@@ -561,13 +561,13 @@ static bool set_value(CHAR_DATA *ch, OBJ_INDEX_DATA *pObj, char *argument, int v
 {
 	if (argument[0] == '\0') {
 		set_obj_values(ch, pObj, -1, "");
-		return FALSE;
+		return false;
 	}
 
 	if (set_obj_values(ch, pObj, value, argument))
-		return TRUE;
+		return true;
 
-	return FALSE;
+	return false;
 }
 
 
@@ -758,7 +758,7 @@ EDIT(oedit_show){
 
 	send_to_char("\n\r", ch);
 	show_obj_values(ch, pObj);
-	return FALSE;
+	return false;
 }
 
 
@@ -777,23 +777,23 @@ EDIT(oedit_create){
 	value = parse_int(argument);
 	if (argument[0] == '\0' || value == 0) {
 		send_to_char("Syntax:  oedit create [vnum]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	pArea = get_vnum_area(value);
 	if (!pArea) {
 		send_to_char("OEdit:  That vnum is not assigned an area.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (!IS_BUILDER(ch, pArea)) {
 		send_to_char("OEdit:  Vnum in an area you cannot build in.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (get_obj_index(value)) {
 		send_to_char("OEdit:  Object vnum already exists.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	pObj = new_obj_index();
@@ -809,7 +809,7 @@ EDIT(oedit_create){
 	ch->desc->ed_data = (void *)pObj;
 
 	send_to_char("Object Created.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -830,12 +830,12 @@ EDIT(oedit_clone){
 	value = parse_int(argument);
 	if (argument[0] == '\0' || value == 0) {
 		send_to_char("Syntax:  clone [existing vnum]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if ((pClone = get_obj_index(value)) == NULL) {
 		send_to_char("OEdit:  The source object does not exist.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	free_string(pObj->name);
@@ -872,7 +872,7 @@ EDIT(oedit_clone){
 	}
 
 	send_to_char("Object Cloned.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -894,13 +894,13 @@ EDIT(oedit_addaffect){
 	one_argument(argument, mod);
 	if (loc[0] == '\0' || mod[0] == '\0' || !is_number(mod)) {
 		send_to_char("Syntax:  addaffect [location] [#xmod]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if ((value = flag_value(apply_flags, loc)) == NO_FLAG) { /* Hugin */
 		send_to_char("Valid affects are:\n\r", ch);
 		show_help(ch, "apply");
-		return FALSE;
+		return false;
 	}
 
 	pAff = new_affect();
@@ -915,7 +915,7 @@ EDIT(oedit_addaffect){
 	pObj->affected = pAff;
 
 	send_to_char("Affect added.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -944,7 +944,7 @@ EDIT(oedit_addapply){
 	EDIT_OBJ(ch, pObj);
 	if (argument[0] == '?' || argument[0] == '\0') {
 		send_to_char("Syntax:  addapply [type] [where] [modifier] [bitvector]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	argument = one_argument(argument, type);
@@ -956,14 +956,14 @@ EDIT(oedit_addapply){
 	    || (typ = flag_value(apply_types, type)) == NO_FLAG) {
 		send_to_char("Invalid apply type.\n\rValid apply types are:\n\r", ch);
 		show_help(ch, "apptype");
-		return FALSE;
+		return false;
 	}
 
 	if (loc[0] == '\0'
 	    || (value = flag_value(apply_flags, loc)) == NO_FLAG) {
 		send_to_char("Valid applys are:\n\r", ch);
 		show_help(ch, "apply");
-		return FALSE;
+		return false;
 	}
 
 	if (bvector[0] == '\0'
@@ -971,12 +971,12 @@ EDIT(oedit_addapply){
 		send_to_char("Invalid bitvector type.\n\r", ch);
 		send_to_char("Valid bitvector types are:\n\r", ch);
 		show_help(ch, bitvector_type[typ].help);
-		return FALSE;
+		return false;
 	}
 
 	if (mod[0] == '\0' || !is_number(mod)) {
 		send_to_char("Syntax:  addapply [type] [location] [#xmod] [bitvector]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	pAff = new_affect();
@@ -991,7 +991,7 @@ EDIT(oedit_addapply){
 	pObj->affected = pAff;
 
 	send_to_char("Apply added.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1013,18 +1013,18 @@ EDIT(oedit_delaffect){
 	one_argument(argument, affect);
 	if (!is_number(affect) || affect[0] == '\0') {
 		send_to_char("Syntax:  delaffect [#xaffect]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	value = parse_int(affect);
 	if (value < 0) {
 		send_to_char("Only non-negative affect-numbers allowed.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (!(pAff = pObj->affected)) {
 		send_to_char("OEdit:  Non-existant affect.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (value == 0) {
@@ -1042,12 +1042,12 @@ EDIT(oedit_delaffect){
 			free_affect(pAff_next);
 		} else {
 			send_to_char("No such affect.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 	}
 
 	send_to_char("Affect removed.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1063,13 +1063,13 @@ EDIT(oedit_name){
 	EDIT_OBJ(ch, pObj);
 	if (argument[0] == '\0') {
 		send_to_char("Syntax:  name [string]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	free_string(pObj->name);
 	pObj->name = str_dup(argument);
 	send_to_char("Name set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1084,13 +1084,13 @@ EDIT(oedit_short){
 	EDIT_OBJ(ch, pObj);
 	if (argument[0] == '\0') {
 		send_to_char("Syntax:  short [string]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	free_string(pObj->short_descr);
 	pObj->short_descr = str_dup(argument);
 	send_to_char("Short description set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1105,13 +1105,13 @@ EDIT(oedit_long){
 	EDIT_OBJ(ch, pObj);
 	if (argument[0] == '\0') {
 		send_to_char("Syntax:  long [string]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	free_string(pObj->description);
 	pObj->description = str_dup(argument);
 	send_to_char("Long description set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1190,12 +1190,12 @@ EDIT(oedit_weight){
 	EDIT_OBJ(ch, pObj);
 	if (argument[0] == '\0' || !is_number(argument)) {
 		send_to_char("Syntax:  weight [number]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	pObj->weight = parse_int(argument);
 	send_to_char("Weight set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1210,12 +1210,12 @@ EDIT(oedit_cost){
 	EDIT_OBJ(ch, pObj);
 	if (argument[0] == '\0' || !is_number(argument)) {
 		send_to_char("Syntax:  cost [number]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	pObj->cost = parse_unsigned_int(argument);
 	send_to_char("Cost set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1239,13 +1239,13 @@ EDIT(oedit_ed){
 		send_to_char("         ed delete [keyword]\n\r", ch);
 		send_to_char("         ed edit [keyword]\n\r", ch);
 		send_to_char("         ed format [keyword]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (!str_cmp(command, "add")) {
 		if (keyword[0] == '\0') {
 			send_to_char("Syntax:  ed add [keyword]\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		ed = new_extra_descr();
@@ -1254,13 +1254,13 @@ EDIT(oedit_ed){
 		pObj->extra_descr = ed;
 
 		string_append(ch, &ed->description);
-		return TRUE;
+		return true;
 	}
 
 	if (!str_cmp(command, "edit")) {
 		if (keyword[0] == '\0') {
 			send_to_char("Syntax:  ed edit [keyword]\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		for (ed = pObj->extra_descr; ed; ed = ed->next)
@@ -1269,11 +1269,11 @@ EDIT(oedit_ed){
 
 		if (!ed) {
 			send_to_char("OEdit:  Extra description keyword not found.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		string_append(ch, &ed->description);
-		return TRUE;
+		return true;
 	}
 
 	if (!str_cmp(command, "delete")) {
@@ -1281,7 +1281,7 @@ EDIT(oedit_ed){
 
 		if (keyword[0] == '\0') {
 			send_to_char("Syntax:  ed delete [keyword]\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		for (ed = pObj->extra_descr; ed; ed = ed->next) {
@@ -1292,7 +1292,7 @@ EDIT(oedit_ed){
 
 		if (!ed) {
 			send_to_char("OEdit:  Extra description keyword not found.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		if (!ped)
@@ -1302,14 +1302,14 @@ EDIT(oedit_ed){
 
 		free_extra_descr(ed);
 		send_to_char("Extra description deleted.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 
 	if (!str_cmp(command, "format")) {
 		if (keyword[0] == '\0') {
 			send_to_char("Syntax:  ed format [keyword]\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		for (ed = pObj->extra_descr; ed; ed = ed->next) {
@@ -1319,16 +1319,16 @@ EDIT(oedit_ed){
 
 		if (!ed) {
 			send_to_char("OEdit:  Extra description keyword not found.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		ed->description = format_string(ed->description);
 		send_to_char("Extra description formatted.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 	oedit_ed(ch, "");
-	return FALSE;
+	return false;
 }
 
 
@@ -1349,13 +1349,13 @@ EDIT(oedit_extra){
 		if ((value = flag_value(extra_flags, argument)) != NO_FLAG) {
 			TOGGLE_BIT(pObj->extra_flags, value);
 			send_to_char("Extra flag toggled.\n\r", ch);
-			return TRUE;
+			return true;
 		}
 	}
 
 	send_to_char("Syntax:  extra [flag]\n\r"
 		     "Type '? extra' for a list of flags.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 /*****************************************************************************
@@ -1372,13 +1372,13 @@ EDIT(oedit_extra2){
 		if ((value = flag_value(extra2_flags, argument)) != NO_FLAG) {
 			TOGGLE_BIT(pObj->extra2_flags, value);
 			send_to_char("Extra flag toggled.\n\r", ch);
-			return TRUE;
+			return true;
 		}
 	}
 
 	send_to_char("Syntax:  extra2 [flag]\n\r"
 		     "Type '? extra2' for a list of flags.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 
@@ -1396,13 +1396,13 @@ EDIT(oedit_wear){
 		if ((value = flag_value(wear_flags, argument)) != NO_FLAG) {
 			TOGGLE_BIT(pObj->wear_flags, value);
 			send_to_char("Wear flag toggled.\n\r", ch);
-			return TRUE;
+			return true;
 		}
 	}
 
 	send_to_char("Syntax:  wear [flag]\n\r"
 		     "Type '? wear' for a list of flags.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 
@@ -1427,13 +1427,13 @@ EDIT(oedit_type){
 			pObj->value[2] = 0;
 			pObj->value[3] = 0;
 			pObj->value[4] = 0;
-			return TRUE;
+			return true;
 		}
 	}
 
 	send_to_char("Syntax:  type [flag]\n\r"
 		     "Type '? type' for a list of flags.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 /*****************************************************************************
@@ -1447,13 +1447,13 @@ EDIT(oedit_material){
 	EDIT_OBJ(ch, pObj);
 	if (argument[0] == '\0') {
 		send_to_char("Syntax:  material [string]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	free_string(pObj->material);
 	pObj->material = str_dup(argument);
 	send_to_char("Material set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 /*****************************************************************************
@@ -1468,12 +1468,12 @@ EDIT(oedit_timer){
 	EDIT_OBJ(ch, pObj);
 	if (argument[0] == '\0') {
 		send_to_char("Syntax:  timer [# of ticks]  (0 for infinite)\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	pObj->timer = parse_int(argument);
 	send_to_char("Timer set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 /*****************************************************************************
@@ -1487,12 +1487,12 @@ EDIT(oedit_level){
 	EDIT_OBJ(ch, pObj);
 	if (argument[0] == '\0' || !is_number(argument)) {
 		send_to_char("Syntax:  level [number]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	pObj->level = parse_int(argument);
 	send_to_char("Level set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1511,12 +1511,12 @@ EDIT(oedit_condition){
 	    && (value <= 100)) {
 		pObj->condition = value;
 		send_to_char("Condition set.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 	send_to_char("Syntax:  condition [number]\n\r"
 		     "Where number can range from 0(ruined) to 100(perfect).\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 
@@ -1528,18 +1528,18 @@ EDIT(oedit_xptolevel){
 
 	if (argument[0] == '\0' || !is_number(argument)) {
 		send_to_char("Syntax:  xptolevel [number]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	amount = parse_int(argument);
 
 	if (amount < 0 || amount > 5000) {
 		send_to_char("Please choose an amount between 0 and 5000\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	pObj->xp_tolevel = parse_int(argument);
 
 	send_to_char("Exp to level set.\n\r", ch);
-	return TRUE;
+	return true;
 }

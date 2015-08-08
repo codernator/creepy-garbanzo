@@ -33,9 +33,9 @@ bool is_help(char *argument)
 	if (argument[0] == '\0'
 	    || argument[0] == '?'
 	    || !str_prefix(argument, "help"))
-		return TRUE;
+		return true;
 
-	return FALSE;
+	return false;
 }
 
 
@@ -183,43 +183,43 @@ int class_lookup(const char *name)
 bool is_friend(CHAR_DATA *ch, CHAR_DATA *victim)
 {
 	if (is_same_group(ch, victim))
-		return TRUE;
+		return true;
 
 	if (!IS_NPC(ch))
-		return FALSE;
+		return false;
 
 	if (!IS_NPC(victim)) {
 		if (IS_SET(ch->off_flags, ASSIST_PLAYERS))
-			return TRUE;
+			return true;
 		else
-			return FALSE;
+			return false;
 	}
 
 	if (IS_AFFECTED(ch, AFF_CHARM))
-		return FALSE;
+		return false;
 
 	if (IS_SET(ch->off_flags, ASSIST_ALL))
-		return TRUE;
+		return true;
 
 	if (ch->group && ch->group == victim->group)
-		return TRUE;
+		return true;
 
 
 	if (IS_SET(ch->off_flags, ASSIST_VNUM)
 	    && ch->mob_idx == victim->mob_idx)
-		return TRUE;
+		return true;
 
 	if (IS_SET(ch->off_flags, ASSIST_RACE) && ch->race == victim->race)
-		return TRUE;
+		return true;
 
 	if (IS_SET(ch->off_flags, ASSIST_ALIGN)
 	    && !IS_SET(ch->act, ACT_NOALIGN) && !IS_SET(victim->act, ACT_NOALIGN)
 	    && ((IS_GOOD(ch) && IS_GOOD(victim))
 		|| (IS_EVIL(ch) && IS_EVIL(victim))
 		|| (IS_NEUTRAL(ch) && IS_NEUTRAL(victim))))
-		return TRUE;
+		return true;
 
-	return FALSE;
+	return false;
 }
 
 /***************************************************************************
@@ -927,17 +927,17 @@ bool is_name(char *str, char *namelist)
 		str = one_argument(str, part);
 
 		if (part[0] == '\0')
-			return TRUE;
+			return true;
 
 		/* check to see if this is part of namelist */
 		list = namelist;
 		for (;; ) { /* start parsing namelist */
 			list = one_argument(list, name);
 			if (name[0] == '\0') /* this name was not found */
-				return FALSE;
+				return false;
 
 			if (!str_prefix(string, name))
-				return TRUE; /* full pattern match */
+				return true; /* full pattern match */
 
 			if (!str_prefix(part, name))
 				break;
@@ -1015,7 +1015,7 @@ void char_to_room(CHAR_DATA *ch, ROOM_INDEX_DATA *pRoomIndex)
 
 	if (!IS_NPC(ch)) {
 		if (ch->in_room->area->empty) {
-			ch->in_room->area->empty = FALSE;
+			ch->in_room->area->empty = false;
 			ch->in_room->area->age = 0;
 		}
 		++ch->in_room->area->nplayer;
@@ -1247,12 +1247,12 @@ void equip_char(CHAR_DATA *ch, OBJ_DATA *obj, int iWear)
 	if (!obj->enchanted)
 		for (paf = obj->obj_idx->affected; paf != NULL; paf = paf->next)
 			if (paf->location != APPLY_SPELL_AFFECT)
-				affect_modify(ch, paf, TRUE);
+				affect_modify(ch, paf, true);
 	for (paf = obj->affected; paf != NULL; paf = paf->next)
 		if (paf->location == APPLY_SPELL_AFFECT)
 			affect_to_char(ch, paf);
 		else
-			affect_modify(ch, paf, TRUE);
+			affect_modify(ch, paf, true);
 
 	if (obj->item_type == ITEM_LIGHT
 	    && obj->value[2] != 0
@@ -1301,7 +1301,7 @@ void unequip_char(CHAR_DATA *ch, OBJ_DATA *obj)
 					}
 				}
 			} else {
-				affect_modify(ch, paf, FALSE);
+				affect_modify(ch, paf, false);
 				affect_check(ch, paf->where, paf->bitvector);
 			}
 		}
@@ -1321,7 +1321,7 @@ void unequip_char(CHAR_DATA *ch, OBJ_DATA *obj)
 				}
 			}
 		} else {
-			affect_modify(ch, paf, FALSE);
+			affect_modify(ch, paf, false);
 			affect_check(ch, paf->where, paf->bitvector);
 		}
 
@@ -1563,7 +1563,7 @@ void extract_char(CHAR_DATA *ch, bool extract)
 	if (extract)
 		die_follower(ch);
 
-	stop_fighting(ch, TRUE);
+	stop_fighting(ch, true);
 	char_from_room(ch);
 
 	if (!extract && !IS_NPC(ch)) {
@@ -2003,40 +2003,40 @@ int get_true_weight(OBJ_DATA *obj)
 bool room_is_dark(CHAR_DATA *ch, ROOM_INDEX_DATA *room)
 {
 	if (room == NULL)
-		return FALSE;
+		return false;
 
 	if (IS_SET(room->room_flags, ROOM_SAFE))
-		return FALSE;
+		return false;
 
 	if (ch != NULL) {
 		CHAR_DATA *vch;
 
 		if (is_affected(ch, gsp_darkness))
-			return FALSE;
+			return false;
 
 		for (vch = room->people; vch != NULL; vch = vch->next_in_room)
 			if (is_affected(vch, gsp_darkness))
-				return TRUE;
+				return true;
 
 		if (IS_AFFECTED(ch, AFF_INFRARED))
-			return FALSE;
+			return false;
 	}
 
 	if (room->light > 0)
-		return FALSE;
+		return false;
 
 	if (IS_SET(room->room_flags, ROOM_DARK))
-		return TRUE;
+		return true;
 
 	if (room->sector_type == SECT_INSIDE
 	    || room->sector_type == SECT_CITY)
-		return FALSE;
+		return false;
 
 	if (weather_info.sunlight == SUN_SET
 	    || weather_info.sunlight == SUN_DARK)
-		return TRUE;
+		return true;
 
-	return FALSE;
+	return false;
 }
 
 
@@ -2049,7 +2049,7 @@ bool is_room_owner(CHAR_DATA *ch, ROOM_INDEX_DATA *room)
 {
 	if (room->owner == NULL
 	    || room->owner[0] == '\0')
-		return FALSE;
+		return false;
 
 	return is_name(ch->name, room->owner);
 }
@@ -2066,7 +2066,7 @@ bool room_is_private(ROOM_INDEX_DATA *room)
 
 	if (room->owner != NULL
 	    && room->owner[0] != '\0')
-		return TRUE;
+		return true;
 
 	count = 0;
 	for (rch = room->people; rch != NULL; rch = rch->next_in_room)
@@ -2074,16 +2074,16 @@ bool room_is_private(ROOM_INDEX_DATA *room)
 
 	if (IS_SET(room->room_flags, ROOM_PRIVATE)
 	    && count >= 2)
-		return TRUE;
+		return true;
 
 	if (IS_SET(room->room_flags, ROOM_SOLITARY)
 	    && count >= 1)
-		return TRUE;
+		return true;
 
 	if (IS_SET(room->room_flags, ROOM_IMP_ONLY))
-		return TRUE;
+		return true;
 
-	return FALSE;
+	return false;
 }
 
 
@@ -2095,9 +2095,9 @@ bool room_is_private(ROOM_INDEX_DATA *room)
 bool room_is_bfield(ROOM_INDEX_DATA *pRoomIndex)
 {
 	if (IS_SET(pRoomIndex->room_flags, ROOM_BFIELD))
-		return TRUE;
+		return true;
 
-	return FALSE;
+	return false;
 }
 
 /***************************************************************************
@@ -2110,35 +2110,35 @@ bool can_see_room(CHAR_DATA *ch, ROOM_INDEX_DATA *room)
 	/* imp-only rooms */
 	if (IS_SET(room->room_flags, ROOM_IMP_ONLY)
 	    && get_trust(ch) < MAX_LEVEL)
-		return FALSE;
+		return false;
 
 	/* imm-only rooms */
 	if (IS_SET(room->room_flags, ROOM_GODS_ONLY)
 	    && !IS_IMMORTAL(ch))
-		return FALSE;
+		return false;
 
 	/* hero-only rooms */
 	if (IS_SET(room->room_flags, ROOM_HEROES_ONLY)
 	    && !IS_IMMORTAL(ch))
-		return FALSE;
+		return false;
 
 	/* newbie-only rooms */
 	if (IS_SET(room->room_flags, ROOM_NEWBIES_ONLY)
 	    && ch->level > 5 && !IS_IMMORTAL(ch))
-		return FALSE;
+		return false;
 
 
 	/* level 150 and up only */
 	if (IS_SET(room->room_flags, ROOM_HIGHER_ONLY)
 	    && ch->level < 150 && !IS_IMMORTAL(ch))
-		return FALSE;
+		return false;
 
 	/* level 300 and up only */
 	if (IS_SET(room->room_flags, ROOM_HIGHEST_ONLY)
 	    && ch->level < 300 && !IS_IMMORTAL(ch))
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }
 
 
@@ -2151,38 +2151,38 @@ bool can_see_room(CHAR_DATA *ch, ROOM_INDEX_DATA *room)
 bool can_see(CHAR_DATA *ch, CHAR_DATA *victim)
 {
 	if (ch == victim)
-		return TRUE;
+		return true;
 
 	/* wizi */
 	if (get_trust(ch) < victim->invis_level)
-		return FALSE;
+		return false;
 
 
 	/* incog */
 	if (get_trust(ch) < victim->incog_level
 	    && ch->in_room != victim->in_room)
-		return FALSE;
+		return false;
 
 	if ((!IS_NPC(ch) && IS_SET(ch->act, PLR_HOLYLIGHT))
 	    || (IS_NPC(ch) && IS_IMMORTAL(ch)))
-		return TRUE;
+		return true;
 
 	if (IS_AFFECTED(ch, AFF_BLIND))
-		return FALSE;
+		return false;
 
 	if (room_is_dark(ch, ch->in_room))
-		return FALSE;
+		return false;
 
 	if (IS_AFFECTED(victim, AFF_INVISIBLE)
 	    && !IS_AFFECTED(ch, AFF_DETECT_INVIS))
-		return FALSE;
+		return false;
 
 	if (IS_AFFECTED(victim, AFF_HIDE)
 	    && (!IS_NPC(victim))
 	    && victim->fighting == NULL)
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }
 
 
@@ -2195,30 +2195,30 @@ bool can_see(CHAR_DATA *ch, CHAR_DATA *victim)
 bool can_see_obj(CHAR_DATA *ch, OBJ_DATA *obj)
 {
 	if (!IS_NPC(ch) && IS_SET(ch->act, PLR_HOLYLIGHT))
-		return TRUE;
+		return true;
 
 	if (IS_SET(obj->extra_flags, ITEM_VIS_DEATH))
-		return FALSE;
+		return false;
 
 	if (IS_AFFECTED(ch, AFF_BLIND)
 	    && obj->item_type != ITEM_POTION)
-		return FALSE;
+		return false;
 
 	if (obj->item_type == ITEM_LIGHT
 	    && obj->value[2] != 0)
-		return TRUE;
+		return true;
 
 	if (IS_SET(obj->extra_flags, ITEM_INVIS)
 	    && !IS_AFFECTED(ch, AFF_DETECT_INVIS))
-		return FALSE;
+		return false;
 
 	if (IS_OBJ_STAT(obj, ITEM_GLOW))
-		return TRUE;
+		return true;
 
 	if (room_is_dark(ch, ch->in_room))
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }
 
 
@@ -2231,12 +2231,12 @@ bool can_see_obj(CHAR_DATA *ch, OBJ_DATA *obj)
 bool can_drop_obj(CHAR_DATA *ch, OBJ_DATA *obj)
 {
 	if (!IS_SET(obj->extra_flags, ITEM_NODROP))
-		return TRUE;
+		return true;
 
 	if (!IS_NPC(ch) && ch->level >= LEVEL_IMMORTAL)
-		return TRUE;
+		return true;
 
-	return FALSE;
+	return false;
 }
 
 

@@ -309,7 +309,7 @@ void boot_db()
 	}
 
 	top_string = string_space;
-	db_loading = TRUE;
+	db_loading = true;
 
 /* init random number generator */
 	log_string("Initializing environment..");
@@ -343,7 +343,7 @@ void boot_db()
 	fix_exits();
 	fix_mobprogs();
 
-	db_loading = FALSE;
+	db_loading = false;
 
 	log_string("Reseting Areas..");
 	reset_areas();
@@ -427,7 +427,7 @@ void load_area(FILE *fp)
 	area->min_vnum = 0;
 	area->max_vnum = 0;
 	area->area_flags = 0;
-	area->complete = TRUE;
+	area->complete = true;
 	area->ulevel = 0;
 	area->llevel = 0;
 	area->description = str_dup("");
@@ -747,12 +747,12 @@ void load_rooms(FILE *fp)
 		if (vnum == 0)
 			break;
 
-		db_loading = FALSE;
+		db_loading = false;
 		if (get_room_index(vnum) != NULL) {
 			bug_long("Load_rooms: vnum %d duplicated.", vnum);
 			_Exit(1);
 		}
-		db_loading = TRUE;
+		db_loading = true;
 
 		room_idx = alloc_perm((unsigned int)sizeof(*room_idx));
 		room_idx->owner = str_dup("");
@@ -958,17 +958,17 @@ void load_mobiles(FILE *fp)
 		if (vnum == 0)
 			break;
 
-		db_loading = FALSE;
+		db_loading = false;
 		if (get_mob_index(vnum) != NULL) {
 			bug_long("Load_mobiles: vnum %d duplicated.", vnum);
 			_Exit(1);
 		}
-		db_loading = TRUE;
+		db_loading = true;
 
 		mob_idx = alloc_perm((unsigned int)sizeof(*mob_idx));
 		mob_idx->vnum = vnum;
 		mob_idx->area = area_last;
-		mob_idx->new_format = TRUE;
+		mob_idx->new_format = true;
 		newmobs++;
 
 		mob_idx->player_name = fread_string(fp);
@@ -1138,17 +1138,17 @@ void load_objects(FILE *fp)
 		if (vnum == 0)
 			break;
 
-		db_loading = FALSE;
+		db_loading = false;
 		if (get_obj_index(vnum) != NULL) {
 			bug_long("Load_objects: vnum %d duplicated.", vnum);
 			_Exit(1);
 		}
-		db_loading = TRUE;
+		db_loading = true;
 
 		obj_idx = alloc_perm((unsigned int)sizeof(*obj_idx));
 		obj_idx->vnum = vnum;
 		obj_idx->area = area_last;
-		obj_idx->new_format = TRUE;
+		obj_idx->new_format = true;
 		obj_idx->reset_num = 0;
 		newobjs++;
 
@@ -1420,14 +1420,14 @@ void fix_exits(void)
 				}       /* switch */
 			}               /* for */
 
-			fexit = FALSE;
+			fexit = false;
 			for (door = 0; door <= 5; door++) {
 				if ((pexit = room_idx->exit[door]) != NULL) {
 					if (pexit->u1.vnum <= 0
 					    || get_room_index(pexit->u1.vnum) == NULL) {
 						pexit->u1.to_room = NULL;
 					} else {
-						fexit = TRUE;
+						fexit = true;
 						pexit->u1.to_room = get_room_index(pexit->u1.vnum);
 					}
 				}
@@ -1487,12 +1487,12 @@ void load_mobprogs(FILE *fp)
 		if (vnum == 0)
 			break;
 
-		db_loading = FALSE;
+		db_loading = false;
 		if (get_mprog_index(vnum) != NULL) {
 			bug_long("Load_mobprogs: vnum %d duplicated.", vnum);
 			_Exit(1);
 		}
-		db_loading = TRUE;
+		db_loading = true;
 
 		pMprog = alloc_perm((unsigned int)sizeof(*pMprog));
 		pMprog->vnum = vnum;
@@ -1555,12 +1555,12 @@ void load_mobprogs_new(FILE *fp)
 			if (vnum == 0)
 				break;
 
-			db_loading = FALSE;
+			db_loading = false;
 			if (get_mprog_index(vnum) != NULL) {
 				bug("load_mobprogs: vnum %d duplicated.", vnum);
 				_Exit(1);
 			}
-			db_loading = TRUE;
+			db_loading = true;
 
 			mprog = new_mpcode();
 			mprog->vnum = vnum;
@@ -1643,7 +1643,7 @@ void area_update(void)
 			if (room_idx != NULL && area == room_idx->area)
 				area->age = 15 - 2;
 			else if (area->nplayer == 0)
-				area->empty = TRUE;
+				area->empty = true;
 		}
 	}
 
@@ -1669,7 +1669,7 @@ void reset_room(ROOM_INDEX_DATA *room)
 		return;
 
 	mob = NULL;
-	last = FALSE;
+	last = false;
 	for (exit_dir = 0; exit_dir < MAX_DIR; exit_dir++) {
 		EXIT_DATA *exit;
 		if ((exit = room->exit[exit_dir])) {
@@ -1707,7 +1707,7 @@ void reset_room(ROOM_INDEX_DATA *room)
 			}
 
 			if (mob_idx->count >= (int)reset->arg2) {
-				last = FALSE;
+				last = false;
 				break;
 			}
 
@@ -1716,7 +1716,7 @@ void reset_room(ROOM_INDEX_DATA *room)
 				if (mob_it->mob_idx == mob_idx) {
 					count++;
 					if (count >= reset->arg4) {
-						last = FALSE;
+						last = false;
 						break;
 					}
 				}
@@ -1748,7 +1748,7 @@ void reset_room(ROOM_INDEX_DATA *room)
 			char_to_room(mob, room);
 
 			last_mob = mob;
-			last = TRUE;
+			last = true;
 			break;
 
 		case 'O':
@@ -1775,14 +1775,14 @@ void reset_room(ROOM_INDEX_DATA *room)
 			/*if(room->area->nplayer > 0
 			|| count_obj_list(obj_idx, room->contents) > 0)*/
 			if (count_obj_list(obj_idx, room->contents) > 0) {
-				last = FALSE;
+				last = false;
 				break;
 			}
 
 			obj = create_object(obj_idx, -1);
 			obj->cost = 0;
 			obj_to_room(obj, room);
-			last = TRUE;
+			last = true;
 			break;
 
 		case 'P':
@@ -1811,7 +1811,7 @@ void reset_room(ROOM_INDEX_DATA *room)
 			    || (last_obj->in_room == NULL && !last)
 			    || (obj_idx->count >= limit && number_range(0, 2) != 0)
 			    || (count = count_obj_list(obj_idx, last_obj->contains)) > reset->arg4) {
-				last = FALSE;
+				last = false;
 				break;
 			}
 
@@ -1825,7 +1825,7 @@ void reset_room(ROOM_INDEX_DATA *room)
 
 			/* fix object lock state! */
 			last_obj->value[1] = last_obj->obj_idx->value[1];
-			last = TRUE;
+			last = true;
 			break;
 
 		case 'G':
@@ -1840,7 +1840,7 @@ void reset_room(ROOM_INDEX_DATA *room)
 
 			if (!last_mob) {
 				bug_long("Reset_room: 'E' or 'G': null mob for vnum %d.", reset->arg1);
-				last = FALSE;
+				last = false;
 				break;
 			}
 
@@ -1898,7 +1898,7 @@ void reset_room(ROOM_INDEX_DATA *room)
 				obj_to_char(obj, last_mob);
 				if (reset->command == 'E')
 					equip_char(last_mob, obj, (int)reset->arg3);
-				last = TRUE;
+				last = true;
 			}
 			break;
 
@@ -2311,7 +2311,7 @@ OBJ_DATA *create_object(OBJ_INDEX_DATA *obj_idx, int level)
 
 	obj->obj_idx = obj_idx;
 	obj->in_room = NULL;
-	obj->enchanted = FALSE;
+	obj->enchanted = false;
 
 	if (level == -1) {
 		if (obj_idx->new_format)
@@ -2729,10 +2729,10 @@ char *fread_string_eol(FILE *fp)
 	char *plast;
 	char c;
 
-	if (char_special[EOF - EOF] != TRUE) {
-		char_special[EOF - EOF] = TRUE;
-		char_special[(int)'\n' - EOF] = TRUE;
-		char_special[(int)'\r' - EOF] = TRUE;
+	if (char_special[EOF - EOF] != true) {
+		char_special[EOF - EOF] = true;
+		char_special[(int)'\n' - EOF] = true;
+		char_special[(int)'\r' - EOF] = true;
 	}
 
 	plast = top_string + sizeof(char *);

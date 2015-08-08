@@ -129,11 +129,11 @@ static void advance_level_object(CHAR_DATA *ch, OBJ_DATA *obj)
 static void add_cache_affect(OBJ_DATA *obj, int bit, int sn, int level, int mod)
 {
 	AFFECT_DATA *paf;
-	bool found = FALSE;
+	bool found = false;
 
 	for (paf = obj->affected; paf != NULL; paf = paf->next) {
 		if (paf->location == bit) {
-			found = TRUE;
+			found = true;
 			paf->type = sn;
 			paf->modifier += mod;
 			paf->level = (int)UMAX(paf->level, (int)level);
@@ -181,7 +181,7 @@ void advance_level(CHAR_DATA *ch, int level)
 	int total_move = 0;
 	int total_prac = 0;
 	int total_train = 0;
-	bool negative = FALSE;
+	bool negative = false;
 
 	if (IS_NPC(ch)) {
 		send_to_char("Don't advance mobs. Use SET.\n\r", ch);
@@ -190,7 +190,7 @@ void advance_level(CHAR_DATA *ch, int level)
 
 	if (level < 0) {
 		level *= -1;
-		negative = TRUE;
+		negative = true;
 	}
 
 	stat_int = get_curr_stat(ch, STAT_INT);
@@ -446,7 +446,7 @@ static int hit_gain(CHAR_DATA *ch)
 		if (number < get_learned_percent(ch, gsp_fast_healing)) {
 			gain += number * gain / 100;
 			if (ch->hit < ch->max_hit)
-				check_improve(ch, gsp_fast_healing, TRUE, 8);
+				check_improve(ch, gsp_fast_healing, true, 8);
 		}
 
 		switch (ch->position) {
@@ -537,7 +537,7 @@ static int mana_gain(CHAR_DATA *ch)
 		if (number < get_learned_percent(ch, gsp_meditation)) {
 			gain += number * gain / 100;
 			if (ch->mana < ch->max_mana)
-				check_improve(ch, gsp_meditation, TRUE, 8);
+				check_improve(ch, gsp_meditation, true, 8);
 		}
 		if (!class_table[ch->class].fMana)
 			gain /= 2;
@@ -856,7 +856,7 @@ static void mobile_update(void)
 							&& IS_SET(pexit->u1.to_room->room_flags, ROOM_NO_MOB)))
 							continue;
 
-						move_char(ch, door, FALSE);
+						move_char(ch, door, false);
 						if ((now_in = ch->in_room) == was_in)
 							continue;
 
@@ -884,7 +884,7 @@ static void mobile_update(void)
 			|| !IS_SET(pexit->u1.to_room->room_flags, ROOM_INDOORS))
 		    && (!IS_SET(ch->act, ACT_INDOORS)
 			|| IS_SET(pexit->u1.to_room->room_flags, ROOM_INDOORS)))
-			move_char(ch, door, FALSE);
+			move_char(ch, door, false);
 	}
 
 	return;
@@ -1181,7 +1181,7 @@ static void char_update(void)
 			    && !IS_SET(ch->act, ACT_UPDATE_ALWAYS)
 			    && number_percent() < 10) {
 				act("$n wanders on home.", ch, NULL, NULL, TO_ROOM);
-				extract_char(ch, TRUE);
+				extract_char(ch, true);
 				continue;
 			}
 
@@ -1232,7 +1232,7 @@ static void char_update(void)
 
 					ch->was_in_room = ch->in_room;
 					if (ch->fighting != NULL)
-						stop_fighting(ch, TRUE);
+						stop_fighting(ch, true);
 
 					furniture_check(ch);
 					act("$n disintegrates into a pile of `1molten `8ash``.", ch, NULL, NULL, TO_ROOM);
@@ -1311,13 +1311,13 @@ static void char_update(void)
 		if (is_affected(ch, gsp_burning_flames) && ch != NULL) {
 			act("$n `8screams`` in agony as `!flames`` sear their flesh!", ch, NULL, NULL, TO_ROOM);
 			send_to_char("You `8scream`` in agony as `!flames`` engulf you!\n\r", ch);
-			damage(ch, ch, number_range(50, 350), get_skill_number("burning flames"), DAM_FIRE, FALSE);
+			damage(ch, ch, number_range(50, 350), get_skill_number("burning flames"), DAM_FIRE, false);
 		}
 
 		if (ch->position == POS_INCAP && number_range(0, 1) == 0)
-			damage(ch, ch, 1, TYPE_UNDEFINED, DAM_NONE, FALSE);
+			damage(ch, ch, 1, TYPE_UNDEFINED, DAM_NONE, false);
 		else if (ch->position == POS_MORTAL)
-			damage(ch, ch, 1, TYPE_UNDEFINED, DAM_NONE, FALSE);
+			damage(ch, ch, 1, TYPE_UNDEFINED, DAM_NONE, false);
 	}
 
 	/*

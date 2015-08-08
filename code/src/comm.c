@@ -1,4 +1,4 @@
-/***************************************************************************
+/**
 * This file contains all of the OS-dependent stuff:
 *   startup, signals, BSD sockets for tcp/ip, i/o, timing.
 *
@@ -11,8 +11,9 @@
 *
 * The OS-dependent functions are Read_from_descriptor and Write_to_descriptor.
 * -- Furey  26 Jan 1993
-***************************************************************************/
+*/
 #include <sys/time.h>
+#include <sys/select.h>
 #include <ctype.h>
 #include <errno.h>
 #include <unistd.h>
@@ -27,14 +28,10 @@
 /**
  * Socket and TCP/IP stuff.
  */
-#include <fcntl.h>
-#include <netdb.h>
-#include "telnet.h"
 #include <signal.h>
 #if !defined(STDOUT_FILENO)
 #define STDOUT_FILENO 1
 #endif
-
 
 /**
  * OS-dependent declarations.
@@ -42,7 +39,7 @@
 extern int close(int fd);
 extern int gettimeofday(struct timeval *tp, struct timezone *tzp);
 
-extern int select(int width, fd_set * readfds, fd_set * writefds, fd_set * exceptfds, struct timeval *timeout);
+extern int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
 extern int socket(int domain, int type, int protocol);
 
 extern pid_t waitpid(pid_t pid, int *status, int options);
@@ -51,6 +48,13 @@ extern int kill(pid_t pid, int sig);
 extern int pipe(int filedes[2]);
 extern int dup2(int oldfd, int newfd);
 extern int execl(const char *path, const char *arg, ...);
+
+/** socketio.c */
+extern bool read_from_descriptor(DESCRIPTOR_DATA *d);
+extern bool write_to_descriptor(int desc, char *txt, int length);
+extern int init_socket(int port);
+extern void init_descriptor(int control);
+/** ~socketio.c */
 
 /**
  * Game declarations.
@@ -67,10 +71,6 @@ extern char *string_replace(char *orig, char *old, char *new);
 bool copyover();
 
 static void game_loop(int control);
-static int init_socket(int port);
-static void init_descriptor(int control);
-static bool read_from_descriptor(DESCRIPTOR_DATA * d);
-static bool write_to_descriptor(int desc, char *txt, int length);
 static bool process_output(DESCRIPTOR_DATA * d, bool fPrompt);
 static void read_from_buffer(DESCRIPTOR_DATA * d);
 static void check_afk(CHAR_DATA * ch);
@@ -92,7 +92,7 @@ static DESCRIPTOR_DATA *d_next;  /* Next descriptor in loop  YUCKY */
 int main(int argc, char **argv)
 {
 	struct timeval now_time;
-	bool fCopyOver = FALSE;
+	bool fCopyOver = false;
 
 	init_signals();
 
@@ -118,10 +118,10 @@ int main(int argc, char **argv)
 
 		/* Are we recovering from a copyover? */
 		if (argv[2] && argv[2][0]) {
-			fCopyOver = TRUE;
+			fCopyOver = true;
 			globalSystemState.control = atoi(argv[3]);
 		} else {
-			fCopyOver = FALSE;
+			fCopyOver = false;
 		}
 	}
 
@@ -147,58 +147,7 @@ int main(int argc, char **argv)
 	_Exit(0);
 }
 
-int init_socket(int port)
-{
-	static struct sockaddr_in sa_zero;
-	struct sockaddr_in sa;
-	int x = 1;
-	int fd;
 
-	if ((fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-		perror("Init_socket: socket");
-		_Exit(1);
-	}
-
-	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&x, sizeof(x)) < 0) {
-		perror("Init_socket: SO_REUSEADDR");
-		close(fd);
-		_Exit(1);
-	}
-
-#if defined(SO_DONTLINGER) && !defined(SYSV)
-	{
-		struct linger ld;
-
-		ld.l_onoff = 1;
-		ld.l_linger = 1000;
-
-		if (setsockopt(fd, SOL_SOCKET, SO_DONTLINGER, (char *)&ld, sizeof(ld)) < 0) {
-			perror("Init_socket: SO_DONTLINGER");
-			close(fd);
-			_Exit(1);
-		}
-	}
-#endif
-
-	sa = sa_zero;
-	sa.sin_family = AF_INET;
-	sa.sin_port = htons(port);
-
-	if (bind(fd, (struct sockaddr *)&sa, sizeof(sa)) < 0) {
-		perror("Init socket: bind");
-		close(fd);
-		_Exit(1);
-	}
-
-
-	if (listen(fd, 3) < 0) {
-		perror("Init socket: listen");
-		close(fd);
-		_Exit(1);
-	}
-
-	return fd;
-}
 
 void game_loop(int control)
 {
@@ -273,7 +222,7 @@ void game_loop(int control)
 		 */
 		for (d = globalSystemState.connection_head; d != NULL; d = d_next) {
 			d_next = d->next;
-			d->fcommand = FALSE;
+			d->fcommand = false;
 
 			if (FD_ISSET(d->descriptor, &in_set)) {
 				if (d->character != NULL) {
@@ -301,7 +250,7 @@ void game_loop(int control)
 
 			read_from_buffer(d);
 			if (d->incomm[0] != '\0') {
-				d->fcommand = TRUE;
+				d->fcommand = true;
 				stop_idling(d->character);
 				check_afk(d->character);
 
@@ -342,7 +291,7 @@ void game_loop(int control)
 
 			if ((d->fcommand || d->outtop > 0)
 			    && FD_ISSET(d->descriptor, &out_set)) {
-				if (!process_output(d, TRUE)) {
+				if (!process_output(d, true)) {
 					if (d->character != NULL && d->character->level > 1)
 						save_char_obj(d->character);
 					d->outtop = 0;
@@ -392,105 +341,14 @@ void game_loop(int control)
 	}
 }
 
-void init_descriptor(int control)
-{
-	DESCRIPTOR_DATA *dnew;
-	struct sockaddr_in sock;
-	struct hostent *from;
-	char buf[MSL];
-	int desc;
-	socklen_t size;
 
-	size = sizeof(sock);
-	getsockname(control, (struct sockaddr *)&sock, &size);
-	if ((desc = accept(control, (struct sockaddr *)&sock, &size)) < 0) {
-		perror("New_descriptor: accept");
-		return;
-	}
-
-#if !defined(FNDELAY)
-#define FNDELAY O_NDELAY
-#endif
-
-	if (fcntl(desc, F_SETFL, FNDELAY) == -1) {
-		perror("new_descriptor: fcntl: FNDELAY");
-		return;
-	}
-
-	/*
-	 * Cons a new descriptor.
-	 */
-/*	dnew				= new_descriptor();
- *
- *      dnew->descriptor	= desc;
- *      dnew->connected		= CON_GET_ANSI;
- *      dnew->showstr_head	= NULL;
- *      dnew->showstr_point     = NULL;
- *      dnew->idle              = 0;
- *      dnew->outsize		= 2000;
- *      dnew->outbuf		= alloc_mem(dnew->outsize);
- *      dnew->ed_data		= NULL;
- *      dnew->ed_string		= NULL;
- *      dnew->editor		= 0;	*/
-/*	dnew->character		= NULL;*/
-
-	dnew = new_descriptor(); /* new_descriptor now also allocates things */
-	dnew->descriptor = desc;
-
-	size = sizeof(sock);
-	if (getpeername(desc, (struct sockaddr *)&sock, &size) < 0) {
-		perror("new_descriptor: getpeername");
-		dnew->host = str_dup("(unknown)");
-	} else {
-		/*
-		 * Would be nice to use inet_ntoa here but it takes a struct arg,
-		 * which ain't very compatible between gcc and system libraries.
-		 */
-		int addr;
-
-		addr = ntohl(sock.sin_addr.s_addr);
-		sprintf(buf, "%d.%d.%d.%d",
-			(addr >> 24) & 0xFF,
-			(addr >> 16) & 0xFF,
-			(addr >> 8) & 0xFF,
-			(addr) & 0xFF);
-		sprintf(log_buf, "Sock.sinaddr:  %s", buf);
-
-		log_string(log_buf);
-        from = gethostbyaddr((char *)&sock.sin_addr, sizeof(sock.sin_addr), AF_INET);
-		dnew->host = str_dup(from ? from->h_name : buf);
-	}
-
-    /*
-     * Swiftest: I added the following to ban sites.  I don't
-     * endorse banning of sites, but Copper has few descriptors now
-     * and some people from certain sites keep abusing access by
-     * using automated 'autodialers' and leaving connections hanging.
-     *
-     * Furey: added suffix check by request of Nickel of HiddenWorlds.
-     */
-	if (check_ban(dnew->host, BAN_ALL)) {
-		write_to_descriptor(desc, "Your site has been banned from this mud.\n\r", 0);
-		close(desc);
-		free_descriptor(dnew);
-		return;
-	}
-
-    /*
-     * Init descriptor data.
-     */
-	dnew->next = globalSystemState.connection_head;
-	globalSystemState.connection_head = dnew;
-
-	write_to_descriptor(dnew->descriptor, "Ansi intro screen?(y/n) \n\r", 0);
-}
 
 void close_socket(DESCRIPTOR_DATA *dclose)
 {
 	CHAR_DATA *ch;
 
 	if (dclose->outtop > 0)
-		process_output(dclose, FALSE);
+		process_output(dclose, false);
 
 	if (dclose->snoop_by != NULL)
 		write_to_buffer(dclose->snoop_by, "Your victim has left the game.\n\r", 0);
@@ -537,75 +395,23 @@ void close_socket(DESCRIPTOR_DATA *dclose)
 	free_descriptor(dclose);
 }
 
-bool read_from_descriptor(DESCRIPTOR_DATA *d)
-{
-	int iStart;
-
-/* Hold horses if pending command already. */
-	if (d->incomm[0] != '\0')
-		return TRUE;
-
-/* Check for overflow. */
-	iStart = (int)strlen(d->inbuf);
-
-	if (iStart >= (int)(sizeof(d->inbuf) - 10)) {
-		sprintf(log_buf, "%s input overflow!", d->host);
-		log_string(log_buf);
-		write_to_descriptor(d->descriptor, "\n\r*** PUT A LID ON IT!!! ***\n\r", 0);
-		return FALSE;
-	}
-
-
-	for (;; ) {
-		int nRead;
-
-		nRead = read(d->descriptor, d->inbuf + iStart, sizeof(d->inbuf) - 10 - iStart);
-
-		if (nRead > 0) {
-			iStart += nRead;
-			if (d->inbuf[iStart - 1] == '\n' || d->inbuf[iStart - 1] == '\r')
-				break;
-		} else if (nRead == 0) {
-			log_string("EOF encountered on read.");
-			return FALSE;
-		}
-		else if (errno == EWOULDBLOCK) {
-			break;
-		}
-		else {
-			perror("Read_from_descriptor");
-			return FALSE;
-		}
-	}
-
-	d->inbuf[iStart] = '\0';
-	return TRUE;
-}
-
-/*
+/**
  * Transfer one line from input buffer to input line.
  */
 void read_from_buffer(DESCRIPTOR_DATA *d)
 {
 	int i, j, k;
 
-/*
- * Hold horses if pending command already.
- */
-
-	if (d->incomm[0] != '\0')
+    /** Hold horses if pending command already. */
+    if (d->incomm[0] != '\0')
 		return;
 
-/*
- * Look for at least one new line.
- */
+    /** Look for at least one new line.  */
 	for (i = 0; d->inbuf[i] != '\n' && d->inbuf[i] != '\r'; i++)
 		if (d->inbuf[i] == '\0')
 			return;
 
-/*
- * Canonical input processing.
- */
+    /** Canonical input processing. */
 	for (i = 0, k = 0; d->inbuf[i] != '\n' && d->inbuf[i] != '\r'; i++) {
 		if (k >= MIL - 2) {
 			write_to_descriptor(d->descriptor, "Line too long.\n\r", 0);
@@ -625,17 +431,13 @@ void read_from_buffer(DESCRIPTOR_DATA *d)
 		else if (isascii((int)d->inbuf[i]) && isprint((int)d->inbuf[i]))
 			d->incomm[k++] = d->inbuf[i];
 	}
-/*
- * Finish off the line.
- */
+
+    /** Finish off the line. */
 	if (k == 0)
 		d->incomm[k++] = ' ';
 	d->incomm[k] = '\0';
 
-/*
- * Deal with bozos with #repeat 1000 ...
- */
-
+    /** Deal with bozos with #repeat 1000 ... */
 	if (k > 1 || d->incomm[0] == '!') {
 		if (d->incomm[0] != '!' && strcmp(d->incomm, d->inlast)) {
 			d->repeat = 0;
@@ -679,14 +481,12 @@ void read_from_buffer(DESCRIPTOR_DATA *d)
 	return;
 }
 
-/*
+/**
  * Low level output function.
  */
 bool process_output(DESCRIPTOR_DATA *d, bool fPrompt)
 {
-/*
- * Bust a prompt.
- */
+    /** Bust a prompt. */
 	if (!globalSystemState.merc_down) {
 		if (d->showstr_point) {
 			write_to_buffer(d, "\n\r[Hit Return to continue]\n\r\n\r", 0);
@@ -698,62 +498,9 @@ bool process_output(DESCRIPTOR_DATA *d, bool fPrompt)
 
 			ch = d->character;
 
-			/* battle prompt */
+			/** battle prompt */
 			if ((victim = ch->fighting) != NULL && can_see(ch, victim))
 				show_damage_display(ch, victim);
-				/*
-				 * char buf[MSL];
-				 * int percent;
-				 *
-				 * if(victim->max_hit > 0)
-				 * {
-				 *      percent = victim->hit * 100 / victim->max_hit;
-				 * }
-				 * else
-				 * {
-				 *      percent = -1;
-				 * }
-				 *
-				 * strcpy(buf, PERS(victim, ch));
-				 *
-				 *
-				 * if(percent >= 100)
-				 * {
-				 *      strcat(buf, " `Dis in excellent condition.``\n\r");
-				 * }
-				 * else if(percent >= 90)
-				 * {
-				 *      strcat(buf, " `Dhas a few scratches.``\n\r");
-				 * }
-				 * else if(percent >= 75)
-				 * {
-				 *      strcat(buf, " `Dhas some small wounds and bruises.``\n\r");
-				 * }
-				 * else if(percent >= 50)
-				 * {
-				 *      strcat(buf, " `Dhas quite a few wounds.``\n\r");
-				 * }
-				 * else if(percent >= 30)
-				 * {
-				 *      strcat(buf, " `Dhas some big nasty wounds and scratches.``\n\r");
-				 * }
-				 * else if(percent >= 15)
-				 * {
-				 *      strcat(buf, " `Dlooks pretty hurt.``\n\r");
-				 * }
-				 * else if(percent >= 0)
-				 * {
-				 *      strcat(buf, " `Dis in awful condition.``\n\r");
-				 * }
-				 * else
-				 * {
-				 *      strcat(buf, " `Dis bleeding to death.``\n\r");
-				 * }
-				 *
-				 * buf[0] = UPPER(buf[0]);
-				 * send_to_char(buf, ch);
-				 */
-
 
 			ch = CH(d);
 			if (!IS_SET(ch->comm, COMM_COMPACT))
@@ -764,15 +511,12 @@ bool process_output(DESCRIPTOR_DATA *d, bool fPrompt)
 				bust_a_prompt(d->character);
 		}
 	}
-/*
- * Short-circuit if nothing to write.
- */
-	if (d->outtop == 0)
-		return TRUE;
 
-/*
- * Snoop-o-rama.
- */
+    /** Short-circuit if nothing to write. */
+	if (d->outtop == 0)
+		return true;
+
+    /** Snoop-o-rama. */
 	if (d->snoop_by != NULL) {
 		if (d->character != NULL)
 			write_to_buffer(d->snoop_by, d->character->name, 0);
@@ -780,19 +524,17 @@ bool process_output(DESCRIPTOR_DATA *d, bool fPrompt)
 		write_to_buffer(d->snoop_by, d->outbuf, d->outtop);
 	}
 
-/*
- * OS-dependent output.
- */
+    /** OS-dependent output. */
 	if (!write_to_descriptor(d->descriptor, d->outbuf, d->outtop)) {
 		d->outtop = 0;
-		return FALSE;
+		return false;
 	} else {
 		d->outtop = 0;
-		return TRUE;
+		return true;
 	}
 }
 
-/*
+/**
  * Bust a prompt(player settable prompt)
  * coded by Morgenes for Aldara Mud
  */
@@ -840,7 +582,7 @@ void bust_a_prompt(CHAR_DATA *ch)
 			i = " ";
 			break;
 		case 'e':
-			found = FALSE;
+			found = false;
 			doors[0] = '\0';
 			for (door = 0; door < 6; door++) {
 				if ((pexit = ch->in_room->exit[door]) != NULL
@@ -848,7 +590,7 @@ void bust_a_prompt(CHAR_DATA *ch)
 				    && (can_see_room(ch, pexit->u1.to_room)
 					|| (IS_AFFECTED(ch, AFF_INFRARED)
 					    && !IS_AFFECTED(ch, AFF_BLIND)))) {
-					found = TRUE;
+					found = true;
 					dClosed = IS_SET(pexit->exit_info, EX_CLOSED);
 					if (dClosed) strcat(doors, "("); strcat(doors, dir_name[door]);
 					if (dClosed) strcat(doors, ")");
@@ -976,7 +718,6 @@ void bust_a_prompt(CHAR_DATA *ch)
 
 		if (is_affected(ch, skill_lookup("darkness")))
 			send_to_char("(`8d``) ", ch);
-
 	}
 
 
@@ -1003,31 +744,26 @@ void bust_a_prompt(CHAR_DATA *ch)
 	return;
 }
 
-/*
+/**
  * Append onto an output buffer.
  */
 void write_to_buffer(DESCRIPTOR_DATA *d, const char *txt, int length)
 {
 	if (d == NULL)
 		return;
-/*
- * Find length in case caller didn't.
- */
+
+    /** Find length in case caller didn't. */
 	if (length <= 0)
 		length = (int)strlen(txt);
 
-/*
- * Initial \n\r if needed.
- */
+    /** Initial \n\r if needed. */
 	if (d->outtop == 0 && !d->fcommand) {
 		d->outbuf[0] = '\n';
 		d->outbuf[1] = '\r';
 		d->outtop = 2;
 	}
 
-/*
- * Expand the buffer as needed.
- */
+    /** Expand the buffer as needed. */
 	while (d->outtop + (int)strlen(txt) >= d->outsize) {
 		char *outbuf;
 
@@ -1043,47 +779,19 @@ void write_to_buffer(DESCRIPTOR_DATA *d, const char *txt, int length)
 		d->outsize *= 2;
 	}
 
-/*
- * Copy.
- */
+    /** Copy. */
 /*  strcpy(d->outbuf + d->outtop, txt);  growl ..   */
 	strncpy(d->outbuf + d->outtop, txt, (size_t)length);
 	d->outtop += length;
 	return;
 }
 
-/*
- * Lowest level output function.
- * Write a block of text to the file descriptor.
- * If this gives errors on very long blocks(like 'ofind all'),
- *   try lowering the max block size.
- */
-bool write_to_descriptor(int desc, char *txt, int length)
-{
-	int iStart;
-	int nWrite;
-	int nBlock;
-
-
-	if (length <= 0)
-		length = (int)strlen(txt);
-
-	for (iStart = 0; iStart < length; iStart += nWrite) {
-		nBlock = UMIN(length - iStart, 8192);
-		if ((nWrite = (int)write(desc, txt + iStart, (size_t)nBlock)) < 0) {
-			perror("Write_to_descriptor");
-			return FALSE;
-		}
-	}
-
-	return TRUE;
-}
 
 #define CNUM(x) ch->pcdata->x
 void process_color(CHAR_DATA *ch, char a)
 {
 	byte c = (byte)0;
-	bool real = TRUE;
+	bool real = true;
 
 	switch (a) {
 	case '`':       /* off color */
@@ -1215,19 +923,19 @@ void process_color(CHAR_DATA *ch, char a)
 	case '%':
 	case '$':
 		write_to_buffer(ch->desc, "", 0);
-		real = FALSE;
+		real = false;
 		break;
 	case 'z':
 		write_to_buffer(ch->desc, "`", 0);
-		real = FALSE;
+		real = false;
 		break;
 	case '-':
 		write_to_buffer(ch->desc, "~", 0);
-		real = FALSE;
+		real = false;
 		break;
 	case ';':
 		write_to_buffer(ch->desc, "\033", 0);
-		real = FALSE;
+		real = false;
 		break;
 	/*
 	 * case 'R':
@@ -1239,11 +947,11 @@ void process_color(CHAR_DATA *ch, char a)
 	 */
 	case 'R':
 		write_to_buffer(ch->desc, "\n\r", 0);
-		real = FALSE;
+		real = false;
 		break;
 	case 'B':
 		write_to_buffer(ch->desc, "\a", 0);
-		real = FALSE;
+		real = false;
 		break;
 	case '|':
 		c = (byte)number_range(0, 14);
@@ -1459,7 +1167,7 @@ int espBroadcastAndCheck(CHAR_DATA *ch, char *CanSeeAct, char *CanTSeeAct)
 void act(const char *format, CHAR_DATA *ch, const void *arg1, const void *arg2, int type)
 {
 	/* to be compatible with older code */
-	act_new(format, ch, arg1, arg2, type, POS_RESTING, TRUE);
+	act_new(format, ch, arg1, arg2, type, POS_RESTING, true);
 }
 
 void act_new(const char *format, CHAR_DATA *ch, const void *arg1, const void *arg2, int type, int min_pos, bool mob_trigger)

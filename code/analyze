@@ -1,2 +1,11 @@
 clear
+
+#splint -nolib -DLINUX \
+#       /usr/src/linux-headers-3.13.0-45-generic/include/config/cifs/posix.h  \
+#       /usr/include/x86_64-linux-gnu/stdbool.h \
+#              -dump analysis/posix
+
+
 splint -DLINUX -Iinclude +skip-sys-headers -macroparams src/comm.c
+
+

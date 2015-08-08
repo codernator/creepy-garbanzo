@@ -446,26 +446,26 @@ static void remove_message(NOTE_DATA *note)
 static bool is_message_to(CHAR_DATA *ch, NOTE_DATA *note)
 {
 	if (IS_NPC(ch))
-		return FALSE;
+		return false;
 
 	if (!str_cmp(ch->name, note->sender))
-		return TRUE;
+		return true;
 
 	if (is_name("all", note->to_list))
-		return TRUE;
+		return true;
 
 	if (IS_IMMORTAL(ch)
 	    && (is_name("immortal", note->to_list) || is_name("imm", note->to_list)))
-		return TRUE;
+		return true;
 
 	if (IS_IMP(ch)
 	    && (is_name("imp", note->to_list) || is_name("implementor", note->to_list)))
-		return TRUE;
+		return true;
 
 	if (is_name(ch->name, note->to_list))
-		return TRUE;
+		return true;
 
-	return FALSE;
+	return false;
 }
 
 
@@ -478,21 +478,21 @@ static bool is_message_to(CHAR_DATA *ch, NOTE_DATA *note)
 static bool is_message_hidden(CHAR_DATA *ch, NOTE_DATA *note)
 {
 	if (IS_NPC(ch))
-		return TRUE;
+		return true;
 
 	if (note->type < 0 || note->type >= NOTE_MAX)
-		return TRUE;
+		return true;
 
 	if (note->date_stamp <= ch->pcdata->last_read[note->type])
-		return TRUE;
+		return true;
 
 	if (!str_cmp(ch->name, note->sender))
-		return TRUE;
+		return true;
 
 	if (!is_message_to(ch, note))
-		return TRUE;
+		return true;
 
-	return FALSE;
+	return false;
 }
 
 /***************************************************************************
@@ -676,7 +676,7 @@ static void message_read(CHAR_DATA *ch, char *argument, int type)
 ***************************************************************************/
 static void message_list(CHAR_DATA *ch, char *argument, int type)
 {
-	list_thread(ch, type, argument, FALSE);
+	list_thread(ch, type, argument, false);
 }
 
 
@@ -687,7 +687,7 @@ static void message_list(CHAR_DATA *ch, char *argument, int type)
 ***************************************************************************/
 static void message_search(CHAR_DATA *ch, char *argument, int type)
 {
-	list_thread(ch, type, argument, TRUE);
+	list_thread(ch, type, argument, true);
 }
 
 
@@ -842,7 +842,7 @@ static void message_subtract(CHAR_DATA *ch, char *argument, int type)
 {
 	static char buf[MAX_MESSAGE_LENGTH];
 	int len, buf_len;
-	bool found = FALSE;
+	bool found = false;
 
 	attach_message(ch, type);
 	if (ch->pnote == NULL) {
@@ -868,7 +868,7 @@ static void message_subtract(CHAR_DATA *ch, char *argument, int type)
 			if (!found) {
 				if (len > 0)
 					len--;
-				found = TRUE;
+				found = true;
 			} else {
 				/* crop off everything after the second '\r' */
 				buf[len + 1] = '\0';
@@ -1228,7 +1228,7 @@ static void list_thread(CHAR_DATA *ch, int type, char *argument, bool search)
 
 	msg_idx = 0;
 	buf = new_buf();
-	found = FALSE;
+	found = false;
 	for (note = *list; note != NULL; note = note->next) {
 		if (is_message_to(ch, note)) {
 			msg_idx++;
@@ -1242,7 +1242,7 @@ static void list_thread(CHAR_DATA *ch, int type, char *argument, bool search)
 					   is_message_hidden(ch, note) ? ' ' : 'N',
 					   note->sender,
 					   note->subject);
-				found = TRUE;
+				found = true;
 			}
 			free_string(txt);
 		}

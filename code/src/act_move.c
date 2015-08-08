@@ -165,14 +165,14 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
 			/*
 			 * Look for a boat.
 			 */
-			found = FALSE;
+			found = false;
 
 			if (IS_IMMORTAL(ch))
-				found = TRUE;
+				found = true;
 
 			for (obj = ch->carrying; obj != NULL; obj = obj->next_content) {
 				if (obj->item_type == ITEM_BOAT) {
-					found = TRUE;
+					found = true;
 					break;
 				}
 			}
@@ -314,7 +314,7 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
 			}
 
 			act("You follow $N.", fch, NULL, ch, TO_CHAR);
-			move_char(fch, door, TRUE);
+			move_char(fch, door, true);
 		}
 	}
 
@@ -425,7 +425,7 @@ void do_push(CHAR_DATA *ch, char *argument)
 	result = number_percent();
 	if ((get_curr_stat(ch, STAT_STR) > get_curr_stat(victim, STAT_STR))
 	    || (get_curr_stat(ch, STAT_STR) == get_curr_stat(victim, STAT_STR) && result <= fail)) {
-		push_char(ch, victim, door, FALSE);
+		push_char(ch, victim, door, false);
 		if (!IS_NPC(ch) || IS_SET(ch->act, PLR_BATTLE))
 			victim->last_fight = time(NULL);
 		if (!IS_NPC(victim) || IS_SET(victim->act, PLR_BATTLE))
@@ -526,7 +526,7 @@ void do_drag(CHAR_DATA *ch, char *argument)
 	result = number_percent();
 	if ((get_curr_stat(ch, STAT_STR) > get_curr_stat(victim, STAT_STR))
 	    || (get_curr_stat(ch, STAT_STR) == get_curr_stat(victim, STAT_STR) && result <= fail)) {
-		drag_char(ch, victim, door, FALSE);
+		drag_char(ch, victim, door, false);
 		victim->last_fight = time(NULL);
 		ch->last_fight = time(NULL);
 	} else {
@@ -625,7 +625,7 @@ void push_char(CHAR_DATA *ch, CHAR_DATA *vch, int door, bool follow)
 			}
 
 			act("You follow $N.", fch, NULL, vch, TO_CHAR);
-			move_char(fch, door, TRUE);
+			move_char(fch, door, true);
 		}
 	}
 
@@ -738,7 +738,7 @@ void drag_char(CHAR_DATA *ch, CHAR_DATA *victim, int door, bool follow)
 			}
 
 			act("You follow $N.", fch, NULL, ch, TO_CHAR);
-			move_char(fch, door, TRUE);
+			move_char(fch, door, true);
 		}
 	}
 
@@ -962,7 +962,7 @@ void do_split(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_north(CHAR_DATA *ch, char *argument)
 {
-	move_char(ch, check_dir(ch, DIR_NORTH), FALSE);
+	move_char(ch, check_dir(ch, DIR_NORTH), false);
 }
 
 
@@ -971,7 +971,7 @@ void do_north(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_east(CHAR_DATA *ch, char *argument)
 {
-	move_char(ch, check_dir(ch, DIR_EAST), FALSE);
+	move_char(ch, check_dir(ch, DIR_EAST), false);
 }
 
 
@@ -980,7 +980,7 @@ void do_east(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_south(CHAR_DATA *ch, char *argument)
 {
-	move_char(ch, check_dir(ch, DIR_SOUTH), FALSE);
+	move_char(ch, check_dir(ch, DIR_SOUTH), false);
 }
 
 
@@ -989,7 +989,7 @@ void do_south(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_west(CHAR_DATA *ch, char *argument)
 {
-	move_char(ch, check_dir(ch, DIR_WEST), FALSE);
+	move_char(ch, check_dir(ch, DIR_WEST), false);
 }
 
 
@@ -998,7 +998,7 @@ void do_west(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_up(CHAR_DATA *ch, char *argument)
 {
-	move_char(ch, check_dir(ch, DIR_UP), FALSE);
+	move_char(ch, check_dir(ch, DIR_UP), false);
 }
 
 /***************************************************************************
@@ -1006,7 +1006,7 @@ void do_up(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_down(CHAR_DATA *ch, char *argument)
 {
-	move_char(ch, check_dir(ch, DIR_DOWN), FALSE);
+	move_char(ch, check_dir(ch, DIR_DOWN), false);
 }
 
 
@@ -1282,9 +1282,9 @@ bool has_key(CHAR_DATA *ch, long key)
 
 	for (obj = ch->carrying; obj != NULL; obj = obj->next_content)
 		if (obj->obj_idx->vnum == key)
-			return TRUE;
+			return true;
 
-	return FALSE;
+	return false;
 }
 
 
@@ -1566,7 +1566,7 @@ void do_pick(CHAR_DATA *ch, char *argument)
 	percent = get_learned_percent(ch, skill);
 	if (!IS_NPC(ch) && number_percent() > percent) {
 		send_to_char("You failed.\n\r", ch);
-		check_improve(ch, skill, FALSE, 2);
+		check_improve(ch, skill, false, 2);
 		return;
 	}
 
@@ -1596,7 +1596,7 @@ void do_pick(CHAR_DATA *ch, char *argument)
 			REMOVE_BIT(obj->value[1], EX_LOCKED);
 			act("You pick the lock on $p.", ch, obj, NULL, TO_CHAR);
 			act("$n picks the lock on $p.", ch, obj, NULL, TO_ROOM);
-			check_improve(ch, skill, TRUE, 2);
+			check_improve(ch, skill, true, 2);
 			return;
 		}
 
@@ -1625,7 +1625,7 @@ void do_pick(CHAR_DATA *ch, char *argument)
 		REMOVE_BIT(obj->value[1], CONT_LOCKED);
 		act("You pick the lock on $p.", ch, obj, NULL, TO_CHAR);
 		act("$n picks the lock on $p.", ch, obj, NULL, TO_ROOM);
-		check_improve(ch, skill, TRUE, 2);
+		check_improve(ch, skill, true, 2);
 		return;
 	}
 
@@ -1656,7 +1656,7 @@ void do_pick(CHAR_DATA *ch, char *argument)
 		REMOVE_BIT(pexit->exit_info, EX_LOCKED);
 		send_to_char("*Click*\n\r", ch);
 		act("$n picks the $d.", ch, NULL, pexit->keyword, TO_ROOM);
-		check_improve(ch, skill, TRUE, 2);
+		check_improve(ch, skill, true, 2);
 
 		/* pick the other side */
 		if ((to_room = pexit->u1.to_room) != NULL
@@ -1686,7 +1686,7 @@ void do_sneak(CHAR_DATA *ch, char *argument)
 		affect_strip(ch, skill);
 
 	if (number_percent() < get_learned_percent(ch, skill)) {
-		check_improve(ch, skill, TRUE, 3);
+		check_improve(ch, skill, true, 3);
 		af.where = TO_AFFECTS;
 		af.type = skill->sn;
 		af.skill = skill;
@@ -1697,7 +1697,7 @@ void do_sneak(CHAR_DATA *ch, char *argument)
 		af.bitvector = AFF_SNEAK;
 		affect_to_char(ch, &af);
 	} else {
-		check_improve(ch, skill, FALSE, 3);
+		check_improve(ch, skill, false, 3);
 	}
 
 	return;
@@ -1729,9 +1729,9 @@ void do_hide(CHAR_DATA *ch, char *argument)
 
 	if (number_percent() < get_learned_percent(ch, skill)) {
 		SET_BIT(ch->affected_by, AFF_HIDE);
-		check_improve(ch, skill, TRUE, 3);
+		check_improve(ch, skill, true, 3);
 	} else {
-		check_improve(ch, skill, FALSE, 3);
+		check_improve(ch, skill, false, 3);
 	}
 
 	return;
@@ -1867,7 +1867,7 @@ void do_rest(CHAR_DATA *ch, char *argument)
 		}
 
 		if (obj != NULL && ch->on != obj && (long)count_users(obj) >= obj->value[0]) {
-			act_new("There's no more room on $p.", ch, obj, NULL, TO_CHAR, POS_DEAD, FALSE);
+			act_new("There's no more room on $p.", ch, obj, NULL, TO_CHAR, POS_DEAD, false);
 			return;
 		}
 
@@ -1885,13 +1885,13 @@ void do_rest(CHAR_DATA *ch, char *argument)
 			send_to_char("You wake up and start resting.\n\r", ch);
 			act("$n wakes up and starts resting.", ch, NULL, NULL, TO_ROOM);
 		} else if (IS_SET(obj->value[2], REST_AT)) {
-			act_new("You wake up and rest at $p.", ch, obj, NULL, TO_CHAR, POS_SLEEPING, FALSE);
+			act_new("You wake up and rest at $p.", ch, obj, NULL, TO_CHAR, POS_SLEEPING, false);
 			act("$n wakes up and rests at $p.", ch, obj, NULL, TO_ROOM);
 		} else if (IS_SET(obj->value[2], REST_ON)) {
-			act_new("You wake up and rest on $p.", ch, obj, NULL, TO_CHAR, POS_SLEEPING, FALSE);
+			act_new("You wake up and rest on $p.", ch, obj, NULL, TO_CHAR, POS_SLEEPING, false);
 			act("$n wakes up and rests on $p.", ch, obj, NULL, TO_ROOM);
 		} else {
-			act_new("You wake up and rest in $p.", ch, obj, NULL, TO_CHAR, POS_SLEEPING, FALSE);
+			act_new("You wake up and rest in $p.", ch, obj, NULL, TO_CHAR, POS_SLEEPING, false);
 			act("$n wakes up and rests in $p.", ch, obj, NULL, TO_ROOM);
 		}
 		ch->position = POS_RESTING;
@@ -2004,20 +2004,20 @@ void do_sleep(CHAR_DATA *ch, char *argument)
 			}
 
 			if (ch->on != obj && (long)count_users(obj) >= obj->value[0]) {
-				act_new("There is no room on $p for you.", ch, obj, NULL, TO_CHAR, POS_DEAD, FALSE);
+				act_new("There is no room on $p for you.", ch, obj, NULL, TO_CHAR, POS_DEAD, false);
 				return;
 			}
 
 			ch->on = obj;
 			if (IS_SET(obj->value[2], SLEEP_AT)) {
-				act_new("You go to sleep at $p.", ch, obj, NULL, TO_CHAR, POS_RESTING, TRUE);
-				act_new("$n goes to sleep at $p.", ch, obj, NULL, TO_ROOM, POS_RESTING, TRUE);
+				act_new("You go to sleep at $p.", ch, obj, NULL, TO_CHAR, POS_RESTING, true);
+				act_new("$n goes to sleep at $p.", ch, obj, NULL, TO_ROOM, POS_RESTING, true);
 			} else if (IS_SET(obj->value[2], SLEEP_ON)) {
-				act_new("You go to sleep on $p.", ch, obj, NULL, TO_CHAR, POS_RESTING, TRUE);
-				act_new("$n goes to sleep on $p.", ch, obj, NULL, TO_ROOM, POS_RESTING, TRUE);
+				act_new("You go to sleep on $p.", ch, obj, NULL, TO_CHAR, POS_RESTING, true);
+				act_new("$n goes to sleep on $p.", ch, obj, NULL, TO_ROOM, POS_RESTING, true);
 			} else {
-				act_new("You go to sleep in $p.", ch, obj, NULL, TO_CHAR, POS_RESTING, TRUE);
-				act_new("$n goes to sleep in $p.", ch, obj, NULL, TO_ROOM, POS_RESTING, TRUE);
+				act_new("You go to sleep in $p.", ch, obj, NULL, TO_CHAR, POS_RESTING, true);
+				act_new("$n goes to sleep in $p.", ch, obj, NULL, TO_ROOM, POS_RESTING, true);
 			}
 			ch->position = POS_SLEEPING;
 		}
@@ -2066,7 +2066,7 @@ void do_wake(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	act_new("$n wakes you.", ch, NULL, victim, TO_VICT, POS_SLEEPING, FALSE);
+	act_new("$n wakes you.", ch, NULL, victim, TO_VICT, POS_SLEEPING, false);
 	do_stand(victim, "");
 	return;
 }

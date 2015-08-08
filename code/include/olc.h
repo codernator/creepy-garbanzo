@@ -47,7 +47,7 @@ typedef bool OLC_FUN(CHAR_DATA * ch, char *argument);
 
 
 
-/* Return TRUE if area changed, FALSE if not. */
+/* Return true if area changed, false if not. */
 #define EDIT(fn)                bool fn(CHAR_DATA * ch, char *argument)
 
 /*

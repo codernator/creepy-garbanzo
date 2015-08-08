@@ -27,19 +27,19 @@ static struct item_affect {
 }
 item_affect_stats[] =
 {
-	{ "str",     "Strength",	 APPLY_STR,	     FALSE, 15000, 30000 },
-	{ "dex",     "Dexterity",	 APPLY_DEX,	     FALSE, 15000, 30000 },
-	{ "int",     "Intelligence",	 APPLY_INT,	     FALSE, 15000, 30000 },
-	{ "wis",     "Wisdom",		 APPLY_WIS,	     FALSE, 15000, 30000 },
-	{ "con",     "Constitution",	 APPLY_CON,	     FALSE, 15000, 30000 },
-	{ "mana",    "Mana",		 APPLY_MANA,	     FALSE, 4000,  7000	 },
-	{ "hp",	     "Hit Points",	 APPLY_HIT,	     FALSE, 4000,  7000	 },
-	{ "moves",   "Movement",	 APPLY_MOVE,	     FALSE, 1000,  2000	 },
-	{ "ac",	     "Armor Class",	 APPLY_AC,	     TRUE,  1000,  1000	 },
-	{ "damroll", "Damage Roll",	 APPLY_DAMROLL,	     FALSE, 40000, 80000 },
-	{ "hitroll", "Hit Roll",	 APPLY_HITROLL,	     FALSE, 30000, 50000 },
-	{ "saves",   "Saves vs. Spells", APPLY_SAVING_SPELL, TRUE,  40000, 80000 },
-	{ "",	     "",		 -1,		     FALSE, 0,	   0	 }
+	{ "str",     "Strength",	 APPLY_STR,	     false, 15000, 30000 },
+	{ "dex",     "Dexterity",	 APPLY_DEX,	     false, 15000, 30000 },
+	{ "int",     "Intelligence",	 APPLY_INT,	     false, 15000, 30000 },
+	{ "wis",     "Wisdom",		 APPLY_WIS,	     false, 15000, 30000 },
+	{ "con",     "Constitution",	 APPLY_CON,	     false, 15000, 30000 },
+	{ "mana",    "Mana",		 APPLY_MANA,	     false, 4000,  7000	 },
+	{ "hp",	     "Hit Points",	 APPLY_HIT,	     false, 4000,  7000	 },
+	{ "moves",   "Movement",	 APPLY_MOVE,	     false, 1000,  2000	 },
+	{ "ac",	     "Armor Class",	 APPLY_AC,	     true,  1000,  1000	 },
+	{ "damroll", "Damage Roll",	 APPLY_DAMROLL,	     false, 40000, 80000 },
+	{ "hitroll", "Hit Roll",	 APPLY_HITROLL,	     false, 30000, 50000 },
+	{ "saves",   "Saves vs. Spells", APPLY_SAVING_SPELL, true,  40000, 80000 },
+	{ "",	     "",		 -1,		     false, 0,	   0	 }
 };
 
 
@@ -223,7 +223,7 @@ void do_disenchant(CHAR_DATA *ch, char *argument)
 
 		obj->affected = NULL;
 		obj->extra_flags = 0;
-		obj->enchanted = TRUE;
+		obj->enchanted = true;
 		send_to_char("This object now has no enchantments upon it.\n\r", ch);
 		return;
 	}
@@ -325,7 +325,7 @@ bool is_negative_affect(AFFECT_DATA *paf)
 
 	}
 
-	return FALSE;
+	return false;
 }
 
 
@@ -437,7 +437,7 @@ void do_repair(CHAR_DATA *ch, char *argument)
 	    && roll < get_learned_percent(ch, skill_haggle)) {
 		cost -= cost / 2 * roll / 100;
 		printf_to_char(ch, "You haggle the price down to %d `#gold``.\n\r", cost);
-		check_improve(ch, skill_haggle, TRUE, 4);
+		check_improve(ch, skill_haggle, true, 4);
 	}
 
 	if (cost > ch->gold) {
@@ -494,7 +494,7 @@ unsigned int repair_cost(OBJ_DATA *obj, char *stat)
 	AFFECT_DATA *paf;
 	unsigned int cost = 0;
 	int idx;
-	bool found = FALSE;
+	bool found = false;
 
 	if (!obj->enchanted) {
 		for (paf = obj->obj_idx->affected; paf != NULL; paf = paf->next) {
@@ -509,7 +509,7 @@ unsigned int repair_cost(OBJ_DATA *obj, char *stat)
 						    || (!item_affect_stats[idx].is_negative && paf->modifier < 0)) {
 							if (!found) {
 								cost += abs((int)(paf->modifier * item_affect_stats[idx].repair_cost));
-								found = TRUE;
+								found = true;
 							}
 						}
 					}
@@ -531,7 +531,7 @@ unsigned int repair_cost(OBJ_DATA *obj, char *stat)
 					    || (!item_affect_stats[idx].is_negative && paf->modifier < 0)) {
 						if (!found) {
 							cost += abs((int)(paf->modifier * item_affect_stats[idx].repair_cost));
-							found = TRUE;
+							found = true;
 						}
 					}
 				}
@@ -579,6 +579,6 @@ void enchant_item(OBJ_DATA *obj)
 			obj->affected = new_af;
 		}
 
-		obj->enchanted = TRUE;
+		obj->enchanted = true;
 	}
 }

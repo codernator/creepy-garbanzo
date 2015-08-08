@@ -40,14 +40,14 @@ void do_raceinfo(CHAR_DATA *ch, char *argument)
 			printf_buf(buf, "`#Race`3:``             %s\n\r", capitalize(pc_race_table[race_idx].name));
 
 			/* display skills */
-			first = FALSE;
+			first = false;
 			for (skill_idx = 0; skill_idx < 5; skill_idx++) {
 				if (pc_race_table[race_idx].skills[skill_idx] == NULL)
 					break;
 
 				if (!first) {
 					add_buf(buf, "`#Default skills`3:``   ");
-					first = TRUE;
+					first = true;
 				} else if (skill_idx % 3 == 0) {
 					add_buf(buf, "\n\r                  ");
 
@@ -312,7 +312,7 @@ void do_shriek(CHAR_DATA *ch, char *argument)
 
 
 	WAIT_STATE(ch, 6);
-	check_improve(ch, skill, TRUE, 3);
+	check_improve(ch, skill, true, 3);
 
 	if (is_affected(victim, skill)) {
 		for (paf = victim->affected; paf != NULL; paf = paf->next) {
@@ -439,7 +439,7 @@ void do_crush(CHAR_DATA *ch, char *argument)
 
 	if (!IS_NPC(ch)
 	    && (victim->race != race_lookup("giant"))) {
-		damage(ch, victim, (ch->level * 3 + 45), skill->sn, DAM_BASH, TRUE);
+		damage(ch, victim, (ch->level * 3 + 45), skill->sn, DAM_BASH, true);
 		ch->mana = ch->mana - 25;
 		ch->move = ch->move - 25;
 
@@ -546,10 +546,10 @@ void do_throw(CHAR_DATA *ch, char *argument)
 
 					act("$n comes flying into the room! THUD!!!", victim, NULL, NULL, TO_NOTVICT);
 					act("$n THROWS your punk ass out of the room. SMASH!!...and smashes down a door!", ch, NULL, victim, TO_VICT);
-					damage(ch, victim, dam * 2, skill->sn, DAM_BASH, TRUE);
+					damage(ch, victim, dam * 2, skill->sn, DAM_BASH, true);
 
-					stop_fighting(ch, TRUE);
-					stop_fighting(victim, TRUE);
+					stop_fighting(ch, true);
+					stop_fighting(victim, true);
 					update_pos(victim);
 
 					if (victim->position > POS_RESTING)
@@ -559,7 +559,7 @@ void do_throw(CHAR_DATA *ch, char *argument)
 				} else {
 					act("$n sends you flying across the room...and SPLAT!!...into a door!\n\r", ch, NULL, victim, TO_VICT);
 					act("\n\rARRRGGGHHH... $n goes flying across the room!!...SPLAT!!...right into a door!\n\r", victim, NULL, NULL, TO_NOTVICT);
-					damage(ch, victim, dam, skill->sn, DAM_BASH, TRUE);
+					damage(ch, victim, dam, skill->sn, DAM_BASH, true);
 				}
 			} else {
 				/* character goes flying */
@@ -570,10 +570,10 @@ void do_throw(CHAR_DATA *ch, char *argument)
 
 				act("$n comes flying into the room! THUD!!!\n\r", victim, NULL, NULL, TO_NOTVICT);
 				act("$n throws  you out of the room!!\n\r", ch, NULL, victim, TO_VICT);
-				damage(ch, victim, dam, skill->sn, DAM_BASH, TRUE);
+				damage(ch, victim, dam, skill->sn, DAM_BASH, true);
 
-				stop_fighting(ch, TRUE);
-				stop_fighting(victim, TRUE);
+				stop_fighting(ch, true);
+				stop_fighting(victim, true);
 
 				update_pos(victim);
 
@@ -587,14 +587,14 @@ void do_throw(CHAR_DATA *ch, char *argument)
 		WAIT_STATE(ch, skill->wait);
 		WAIT_STATE(victim, (skill->wait * 2 / 3));
 
-		check_improve(ch, skill, TRUE, 1);
+		check_improve(ch, skill, true, 1);
 	} else {
 		/* skill failed */
 		act("You cannot get a decent grip on $m.\n\r", ch, NULL, victim, TO_CHAR);
 		act("$n tries to pick you up but slips!.\n\r", ch, NULL, victim, TO_VICT);
 
 		WAIT_STATE(ch, skill->wait);
-		check_improve(ch, skill, FALSE, 1);
+		check_improve(ch, skill, false, 1);
 	}
 
 	check_killer(ch, victim);
@@ -658,7 +658,7 @@ void do_rake(CHAR_DATA *ch, char *argument)
 			if (number_percent() < ((ch->level + 5 - victim->level) * 7)) {
 				act("$n's claws rake across your face!", ch, NULL, victim, TO_VICT);
 				act("Your claws rake across $n's face!", victim, NULL, ch, TO_VICT);
-				damage(ch, victim, number_range(ch->level * 4, ch->level * 10) + mod, skill->sn, DAM_SLASH, TRUE);
+				damage(ch, victim, number_range(ch->level * 4, ch->level * 10) + mod, skill->sn, DAM_SLASH, true);
 				ch->move -= 25;
 
 				if (!is_affected(ch, skill)
@@ -674,18 +674,18 @@ void do_rake(CHAR_DATA *ch, char *argument)
 					affect_to_char(victim, &af);
 				}
 
-				check_improve(ch, skill, TRUE, 1);
+				check_improve(ch, skill, true, 1);
 			} else {
 				act("$n's claws rake across your chest!", ch, NULL, victim, TO_VICT);
 				act("Your claws rake across $n's chest!", victim, NULL, ch, TO_VICT);
-				damage(ch, victim, number_range(ch->level * 6, ch->level * 12) + mod, skill->sn, DAM_SLASH, TRUE);
+				damage(ch, victim, number_range(ch->level * 6, ch->level * 12) + mod, skill->sn, DAM_SLASH, true);
 				ch->move -= 5;
-				check_improve(ch, skill, TRUE, 1);
+				check_improve(ch, skill, true, 1);
 			}
 		}
 	} else {
-		damage(ch, victim, 0, skill->sn, DAM_BASH, TRUE);
-		check_improve(ch, skill, FALSE, 1);
+		damage(ch, victim, 0, skill->sn, DAM_BASH, true);
+		check_improve(ch, skill, false, 1);
 	}
 	return;
 }
@@ -757,9 +757,9 @@ void do_hiss(CHAR_DATA *ch, char *argument)
 	send_to_char("You hiss at your enemy!\n\r", ch);
 	send_to_char("Spittle flies in your face!\n\r", victim);
 	check_killer(ch, victim);
-	damage(ch, victim, number_range(ch->level * 4, ch->level * 6), skill->sn, DAM_PIERCE, TRUE);
+	damage(ch, victim, number_range(ch->level * 4, ch->level * 6), skill->sn, DAM_PIERCE, true);
 
-	check_improve(ch, skill, TRUE, 1);
+	check_improve(ch, skill, true, 1);
 
 	WAIT_STATE(ch, PULSE_VIOLENCE);
 	WAIT_STATE(victim, PULSE_VIOLENCE * 2);
@@ -908,7 +908,7 @@ void do_kneecap(CHAR_DATA *ch, char *argument)
 	if (ch->level > number_percent()) {
 		act("$n slams into your knee!", ch, NULL, victim, TO_VICT);
 		act("You slam into $n's knee!", victim, NULL, ch, TO_VICT);
-		damage(ch, victim, number_range(ch->level * 6, ch->level * 10), skill->sn, DAM_BASH, TRUE);
+		damage(ch, victim, number_range(ch->level * 6, ch->level * 10), skill->sn, DAM_BASH, true);
 
 		ch->move -= 50;
 		if (victim->move > 0)
@@ -916,10 +916,10 @@ void do_kneecap(CHAR_DATA *ch, char *argument)
 		victim->move -= (ch->level / 3);
 
 		WAIT_STATE(victim, skill->wait / 2);
-		check_improve(ch, skill, TRUE, 1);
+		check_improve(ch, skill, true, 1);
 	} else {
-		damage(ch, victim, 0, skill->sn, DAM_BASH, TRUE);
-		check_improve(ch, skill, FALSE, 1);
+		damage(ch, victim, 0, skill->sn, DAM_BASH, true);
+		check_improve(ch, skill, false, 1);
 		ch->move -= 25;
 	}
 
@@ -981,11 +981,11 @@ void do_veil(CHAR_DATA *ch, char *argument)
 			     "You feel yourself begin to move with uncanny speed.\n\r"
 			     "You feel yourself begin to move with deadly grace.\n\r", ch);
 		act("$n dons a black veil.", ch, NULL, NULL, TO_ROOM);
-		check_improve(ch, skill, TRUE, 2);
+		check_improve(ch, skill, true, 2);
 
 		return;
 	} else {
-		check_improve(ch, gsp_veil, FALSE, 2);
+		check_improve(ch, gsp_veil, false, 2);
 		send_to_char("You don your veil.\n\r", ch);
 	}
 }
@@ -1396,11 +1396,11 @@ void do_bite(CHAR_DATA *ch, char *argument)
 		}
 
 		WAIT_STATE(victim, skill->wait / 2);
-		check_improve(ch, skill, TRUE, 2);
+		check_improve(ch, skill, true, 2);
 	} else {
-		damage(ch, victim, 0, skill->sn, DAM_NONE, TRUE);
+		damage(ch, victim, 0, skill->sn, DAM_NONE, true);
 		send_to_char("You miss your victim's neck!\n\r", ch);
-		check_improve(ch, skill, FALSE, 1);
+		check_improve(ch, skill, false, 1);
 	}
 
 	check_killer(ch, victim);

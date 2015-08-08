@@ -66,7 +66,7 @@ void do_deposit(CHAR_DATA *ch, char *argument)
 	argument = one_argument(argument, arg1);
 	argument = one_argument(argument, arg2);
 
-	evaluate_transaction(ch, FALSE, arg1, arg2);
+	evaluate_transaction(ch, false, arg1, arg2);
 }
 
 void do_withdraw(CHAR_DATA *ch, char *argument)
@@ -79,7 +79,7 @@ void do_withdraw(CHAR_DATA *ch, char *argument)
 	argument = one_argument(argument, arg1);
 	argument = one_argument(argument, arg2);
 
-	evaluate_transaction(ch, TRUE, arg1, arg2);
+	evaluate_transaction(ch, true, arg1, arg2);
 }
 
 void evaluate_transaction(CHAR_DATA *ch, bool withdraw, char *arg_amount, char *arg_tender)
@@ -149,13 +149,13 @@ bool check_for_bank(CHAR_DATA *ch, /*@out@*/ OBJ_DATA **atm)
 		*atm = temp_atm;
 		if (temp_atm == NULL) {
 			send_to_char("There is no ATM here.\n\r", ch);
-			return FALSE;
+			return false;
 		} else {
-			return TRUE;
+			return true;
 		}
 	} else {
 		*atm = NULL;
-		return TRUE;
+		return true;
 	}
 }
 

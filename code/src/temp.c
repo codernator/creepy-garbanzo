@@ -42,7 +42,7 @@ void do_findflags(CHAR_DATA *ch, char *argument)
 
 	/* Initialize values */
 	argument = one_argument(argument, rFlag);
-	found = FALSE;
+	found = false;
 	buf = new_buf();
 
 	if (rFlag[0] != '\0') {
@@ -61,7 +61,7 @@ void do_findflags(CHAR_DATA *ch, char *argument)
 		for (hash_idx = 0; hash_idx < MAX_KEY_HASH; hash_idx++) {
 			for (room = room_index_hash[hash_idx]; room != NULL; room = room->next) {
 				if (IS_SET(room->room_flags, flag)) {
-					found = TRUE;
+					found = true;
 
 					unclr = uncolor_str(capitalize(room->name));
 
@@ -131,7 +131,7 @@ void do_worldflag(CHAR_DATA *ch, char *argument)
 	/* Initialize values*/
 	argument = one_argument(argument, rFlag);
 	argument = one_argument(argument, rType);
-	found = FALSE;
+	found = false;
 	flag = NO_FLAG;
 
 	for (flag_idx = 0; room_flags[flag_idx].name != NULL; flag_idx++) {
@@ -148,7 +148,7 @@ void do_worldflag(CHAR_DATA *ch, char *argument)
 	for (hash_idx = 0; hash_idx < MAX_KEY_HASH; hash_idx++) {
 		for (room = room_index_hash[hash_idx]; room != NULL; room = room->next) {
 			if (IS_SET(room->room_flags, flag)) {
-				found = TRUE;
+				found = true;
 
 				if (!strcmp(rType, "on")) {
 					SET_BIT(room->room_flags, flag);
@@ -186,7 +186,7 @@ void do_spellflags(CHAR_DATA *ch, char *argument)
 
 	/* Initialize values*/
 	buf = new_buf();
-	found = FALSE;
+	found = false;
 	col = 0;
 
 	if ((flag = flag_value(skill_flags, argument)) == NO_FLAG) {
@@ -206,7 +206,7 @@ void do_spellflags(CHAR_DATA *ch, char *argument)
 
 	for (skill_idx = skill_list; skill_idx != NULL; skill_idx = skill_idx->next) {
 		if (IS_SET(skill_idx->flags, flag)) {
-			found = TRUE;
+			found = true;
 			printf_buf(buf, "%-20s", skill_idx->name);
 
 			if (++col % 4 == 0)

@@ -24,7 +24,7 @@ void spell_acid_blast(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int targ
 	if (saves_spell(level, victim, DAM_ACID))
 		dam /= 2;
 
-	damage(ch, victim, dam, skill->sn, DAM_ACID, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_ACID, true);
 	return;
 }
 
@@ -125,7 +125,7 @@ void spell_blood_boil(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int targ
 	if (saves_spell(level, victim, DAM_FIRE))
 		dam /= 2;
 
-	damage(ch, victim, dam, skill->sn, DAM_FIRE, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_FIRE, true);
 
 	fail = 50;
 	result = number_percent();
@@ -327,7 +327,7 @@ void spell_burning_hands(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 	dam = number_range(dam_each[level] / 2, dam_each[level] * 2);
 	if (saves_spell(level, victim, DAM_FIRE))
 		dam /= 2;
-	damage(ch, victim, dam, skill->sn, DAM_FIRE, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_FIRE, true);
 	return;
 }
 
@@ -367,7 +367,7 @@ void spell_call_lightning(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int 
 				       saves_spell(level, vch, DAM_LIGHTNING) ? dam / 2 : dam,
 				       skill->sn,
 				       DAM_LIGHTNING,
-				       TRUE);
+				       true);
 			}
 			continue;
 		}
@@ -421,7 +421,7 @@ void spell_calm(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, ch
 
 			send_to_char("``A wave of `^ca`6lm`` passes over you.\n\r", vch);
 			if (vch->fighting || vch->position == POS_FIGHTING)
-				stop_fighting(vch, FALSE);
+				stop_fighting(vch, false);
 
 			af.where = TO_AFFECTS;
 			af.type = skill->sn;
@@ -446,7 +446,7 @@ void spell_calm(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, ch
 
 void spell_cause_light(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
-	damage(ch, (CHAR_DATA *)vo, dice(1, 8) * level / 30, skill->sn, DAM_HARM, TRUE);
+	damage(ch, (CHAR_DATA *)vo, dice(1, 8) * level / 30, skill->sn, DAM_HARM, true);
 	return;
 }
 
@@ -454,7 +454,7 @@ void spell_cause_light(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int tar
 
 void spell_cause_critical(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
-	damage(ch, (CHAR_DATA *)vo, dice(30, 3) * level / 10, skill->sn, DAM_HARM, TRUE);
+	damage(ch, (CHAR_DATA *)vo, dice(30, 3) * level / 10, skill->sn, DAM_HARM, true);
 	return;
 }
 
@@ -462,7 +462,7 @@ void spell_cause_critical(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int 
 
 void spell_cause_serious(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
-	damage(ch, (CHAR_DATA *)vo, dice(2, 25) * level / 20, skill->sn, DAM_HARM, TRUE);
+	damage(ch, (CHAR_DATA *)vo, dice(2, 25) * level / 20, skill->sn, DAM_HARM, true);
 	return;
 }
 
@@ -487,23 +487,23 @@ void spell_meteor_storm(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 	if (saves_spell(level, victim, DAM_ACID))
 		dam /= 2;
 
-	damage(ch, victim, dam, skill->sn, DAM_ACID, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_ACID, true);
 	last_vict = victim;
 	level -= 30;    /* decrement damage */
 
 	/* new targets */
 	while (level > 0) {
-		found = FALSE;
+		found = false;
 		for (tmp_vict = ch->in_room->people;
 		     tmp_vict != NULL;
 		     tmp_vict = next_vict) {
 			next_vict = tmp_vict->next_in_room;
 
-			if (!is_safe_spell(ch, tmp_vict, TRUE) && tmp_vict != last_vict) {
+			if (!is_safe_spell(ch, tmp_vict, true) && tmp_vict != last_vict) {
 				if (is_same_group(tmp_vict, ch))
 					continue;
 
-				found = TRUE;
+				found = true;
 				last_vict = tmp_vict;
 				act("A meteor `!strikes`` $n!", tmp_vict, NULL, NULL, TO_ROOM);
 				act("A meteor `!hits`` you!", tmp_vict, NULL, NULL, TO_CHAR);
@@ -512,7 +512,7 @@ void spell_meteor_storm(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 				if (saves_spell(level, tmp_vict, DAM_ACID))
 					dam /= 3;
 
-				damage(ch, tmp_vict, dam, skill->sn, DAM_ACID, TRUE);
+				damage(ch, tmp_vict, dam, skill->sn, DAM_ACID, true);
 				level -= 30;    /* decrement damage */
 			}
 		} /* end target searching loop */
@@ -534,7 +534,7 @@ void spell_meteor_storm(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 
 			if (saves_spell(level, ch, DAM_ACID))
 				dam /= 3;
-			damage(ch, ch, dam, skill->sn, DAM_ACID, TRUE);
+			damage(ch, ch, dam, skill->sn, DAM_ACID, true);
 			level -= 30;    /* decrement damage */
 			if (ch == NULL)
 				return;
@@ -561,19 +561,19 @@ void spell_chain_lightning(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int
 	if (saves_spell(level, victim, DAM_LIGHTNING))
 		dam /= 3;
 
-	damage(ch, victim, dam, skill->sn, DAM_LIGHTNING, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_LIGHTNING, true);
 	last_vict = victim;
 	level -= 20;    /* decrement damage */
 
 	/* new targets */
 	while (level > 0) {
-		found = FALSE;
+		found = false;
 		for (tmp_vict = ch->in_room->people;
 		     tmp_vict != NULL;
 		     tmp_vict = next_vict) {
 			next_vict = tmp_vict->next_in_room;
-			if (!is_safe_spell(ch, tmp_vict, TRUE) && tmp_vict != last_vict) {
-				found = TRUE;
+			if (!is_safe_spell(ch, tmp_vict, true) && tmp_vict != last_vict) {
+				found = true;
 				last_vict = tmp_vict;
 				if (!is_same_group(tmp_vict, ch)) {
 					act("The bolt `!arcs`` to $n!", tmp_vict, NULL, NULL, TO_ROOM);
@@ -581,7 +581,7 @@ void spell_chain_lightning(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int
 					dam = dice(level, 6);
 					if (saves_spell(level, tmp_vict, DAM_LIGHTNING))
 						dam /= 3;
-					damage(ch, tmp_vict, dam, skill->sn, DAM_LIGHTNING, TRUE);
+					damage(ch, tmp_vict, dam, skill->sn, DAM_LIGHTNING, true);
 				}
 
 				level -= 20;    /* decrement damage */
@@ -604,7 +604,7 @@ void spell_chain_lightning(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int
 			dam = dice(level, 6);
 			if (saves_spell(level, ch, DAM_LIGHTNING))
 				dam /= 3;
-			damage(ch, ch, dam, skill->sn, DAM_LIGHTNING, TRUE);
+			damage(ch, ch, dam, skill->sn, DAM_LIGHTNING, true);
 			level -= 21;    /* decrement damage */
 			if (ch == NULL)
 				return;
@@ -746,7 +746,7 @@ void spell_chill_touch(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int tar
 		dam /= 2;
 	}
 
-	damage(ch, victim, dam, skill->sn, DAM_COLD, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_COLD, true);
 	return;
 }
 
@@ -777,7 +777,7 @@ void spell_colour_spray(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 			cast_spell(ch, gsp_blindness, level, (void *)victim, TARGET_CHAR, "");
 	}
 
-	damage(ch, victim, dam, skill->sn, DAM_LIGHT, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_LIGHT, true);
 	return;
 }
 
@@ -1193,7 +1193,7 @@ void spell_demonfire(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int targe
 	dam = dice(level, 20);
 	if (saves_spell(level, victim, DAM_NEGATIVE))
 		dam /= 2;
-	damage(ch, victim, dam, skill->sn, DAM_NEGATIVE, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_NEGATIVE, true);
 }
 
 void spell_detect_evil(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
@@ -1379,7 +1379,7 @@ void spell_dispel_evil(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int tar
 	if (saves_spell(level, victim, DAM_HOLY))
 		dam /= 2;
 
-	damage(ch, victim, dam, skill->sn, DAM_HOLY, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_HOLY, true);
 	return;
 }
 
@@ -1417,7 +1417,7 @@ void spell_dispel_good(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int tar
 	if (saves_spell(level, victim, DAM_NEGATIVE))
 		dam /= 2;
 
-	damage(ch, victim, dam, skill->sn, DAM_NEGATIVE, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_NEGATIVE, true);
 	return;
 }
 
@@ -1432,7 +1432,7 @@ void spell_dispel_magic(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 {
 	CHAR_DATA *victim = (CHAR_DATA *)vo;
 	SKILL *skill_idx;
-	bool found = FALSE;
+	bool found = false;
 
 	level += level / 10;
 	if (number_range(1, 10) == 1)
@@ -1447,7 +1447,7 @@ void spell_dispel_magic(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 	for (skill_idx = skill_list; skill_idx != NULL; skill_idx = skill_idx->next) {
 		if (IS_SET(skill_idx->flags, SPELL_DISPELLABLE)) {
 			if (check_dispel(level, victim, skill_idx))
-				found = TRUE;
+				found = true;
 		}
 	}
 
@@ -1469,7 +1469,7 @@ void spell_cancellation(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 {
 	CHAR_DATA *victim = (CHAR_DATA *)vo;
 	SKILL *skill_idx;
-	bool found = FALSE;
+	bool found = false;
 
 	level += level / 10;
 	if (number_range(1, 10) == 1)
@@ -1487,13 +1487,13 @@ void spell_cancellation(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 			if (number_range(1, 3) == 3) {
 				if (IS_SET(skill_idx->flags, SPELL_CANCELABLE)) {
 					if (check_dispel(level, victim, skill_idx))
-						found = TRUE;
+						found = true;
 				}
 			}
 		} else {
 			if (IS_SET(skill_idx->flags, SPELL_CANCELABLE)) {
 				if (check_dispel(level, victim, skill_idx))
-					found = TRUE;
+					found = true;
 			}
 		}
 	}
@@ -1524,13 +1524,13 @@ void spell_earthquake(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int targ
 			continue;
 
 		if (vch->in_room == ch->in_room) {
-			if (vch != ch && !is_safe_spell(ch, vch, TRUE)) {
+			if (vch != ch && !is_safe_spell(ch, vch, true)) {
 				if (IS_AFFECTED(vch, AFF_FLYING)) {
 					continue;
 				} else {
 					if (is_same_group(vch, ch))
 						continue;
-					damage(ch, vch, level + dice(10, 50), skill->sn, DAM_BASH, TRUE);
+					damage(ch, vch, level + dice(10, 50), skill->sn, DAM_BASH, true);
 				}
 			}
 			continue;
@@ -1551,7 +1551,7 @@ void spell_enchant_armor(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 	int fail;
 	int ac_bonus;
 	int added;
-	bool ac_found = FALSE;
+	bool ac_found = false;
 
 	if (obj->item_type != ITEM_ARMOR) {
 		send_to_char("That isn't an `1a`!r`1m`!o`1r``.\n\r", ch);
@@ -1572,7 +1572,7 @@ void spell_enchant_armor(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 		for (paf = obj->obj_idx->affected; paf != NULL; paf = paf->next) {
 			if (paf->location == APPLY_AC) {
 				ac_bonus = (int)paf->modifier;
-				ac_found = TRUE;
+				ac_found = true;
 				if (ac_bonus != 0)
 					fail += (ac_bonus > 0) ? (ac_bonus * 3) : (ac_bonus * -3);
 					/* 5 *(ac_bonus * ac_bonus); */
@@ -1585,7 +1585,7 @@ void spell_enchant_armor(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 	for (paf = obj->affected; paf != NULL; paf = paf->next) {
 		if (paf->location == APPLY_AC) {
 			ac_bonus = (int)paf->modifier;
-			ac_found = TRUE;
+			ac_found = true;
 			if (ac_bonus != 0)
 				fail += (ac_bonus > 0) ? (ac_bonus * 3) : (ac_bonus * -3);
 				/* 5 *(ac_bonus * ac_bonus); */
@@ -1620,7 +1620,7 @@ void spell_enchant_armor(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 
 		act("$p glows `1bri`#ght`1ly``, then fades...`1FUCK``!.", ch, obj, NULL, TO_CHAR);
 		act("$p glows `1bri`#ght`1ly``, then fades.", ch, obj, NULL, TO_ROOM);
-		obj->enchanted = TRUE;
+		obj->enchanted = true;
 
 		/* remove all affects */
 		for (paf = obj->affected; paf != NULL; paf = paf_next) {
@@ -1643,7 +1643,7 @@ void spell_enchant_armor(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 	if (!obj->enchanted) {
 		AFFECT_DATA *af_new;
 
-		obj->enchanted = TRUE;
+		obj->enchanted = true;
 
 		for (paf = obj->obj_idx->affected; paf != NULL; paf = paf->next) {
 			af_new = new_affect();
@@ -1714,8 +1714,8 @@ void spell_enchant_weapon(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int 
 	int hit_bonus;
 	int dam_bonus;
 	int added;
-	bool hit_found = FALSE;
-	bool dam_found = FALSE;
+	bool hit_found = false;
+	bool dam_found = false;
 
 	if (obj->item_type != ITEM_WEAPON) {
 		send_to_char("That isn't a weapon, `1TARD``!\n\r", ch);
@@ -1737,11 +1737,11 @@ void spell_enchant_weapon(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int 
 		for (paf = obj->obj_idx->affected; paf != NULL; paf = paf->next) {
 			if (paf->location == APPLY_HITROLL) {
 				hit_bonus = (int)paf->modifier;
-				hit_found = TRUE;
+				hit_found = true;
 				fail += 2 * (hit_bonus * hit_bonus);
 			} else if (paf->location == APPLY_DAMROLL) {
 				dam_bonus = (int)paf->modifier;
-				dam_found = TRUE;
+				dam_found = true;
 				fail += 2 * (dam_bonus * dam_bonus);
 			} else { /* things get a little harder */
 				fail += 25;
@@ -1752,11 +1752,11 @@ void spell_enchant_weapon(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int 
 	for (paf = obj->affected; paf != NULL; paf = paf->next) {
 		if (paf->location == APPLY_HITROLL) {
 			hit_bonus = (int)paf->modifier;
-			hit_found = TRUE;
+			hit_found = true;
 			fail += 2 * (hit_bonus * hit_bonus);
 		} else if (paf->location == APPLY_DAMROLL) {
 			dam_bonus = (int)paf->modifier;
-			dam_found = TRUE;
+			dam_found = true;
 			fail += 2 * (dam_bonus * dam_bonus);
 		} else { /* things get a little harder */
 			fail += 25;
@@ -1788,7 +1788,7 @@ void spell_enchant_weapon(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int 
 
 		act("$p glows `1bri`#ght`1ly``, then fades...`1FUCK``!.", ch, obj, NULL, TO_CHAR);
 		act("$p glows `1bri`#ght`1ly``, then fades.", ch, obj, NULL, TO_ROOM);
-		obj->enchanted = TRUE;
+		obj->enchanted = true;
 
 		/* remove all affects */
 		for (paf = obj->affected; paf != NULL; paf = paf_next) {
@@ -1811,7 +1811,7 @@ void spell_enchant_weapon(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int 
 	if (!obj->enchanted) {
 		AFFECT_DATA *af_new;
 
-		obj->enchanted = TRUE;
+		obj->enchanted = true;
 
 		for (paf = obj->obj_idx->affected; paf != NULL; paf = paf->next) {
 			af_new = new_affect();
@@ -1929,7 +1929,7 @@ void spell_energy_drain(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 
 	send_to_char("You feel your `!life`` `&s`7li`8pping`` away!\n\r", victim);
 	send_to_char("`1W`!o`1w`8....`1what `!a `1rush``!\n\r", ch);
-	damage(ch, victim, dam, skill->sn, DAM_NEGATIVE, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_NEGATIVE, true);
 
 	return;
 }
@@ -1967,7 +1967,7 @@ void spell_fireball(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target
 			dam /= 2;
 
 
-		damage(ch, victim, dam, skill->sn, DAM_FIRE, TRUE);
+		damage(ch, victim, dam, skill->sn, DAM_FIRE, true);
 		return;
 	}
 
@@ -2011,7 +2011,7 @@ void spell_fireball(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target
 		if (saves_spell(level, victim, DAM_FIRE))
 			dam /= 2;
 
-		damage(ch, victim, dam, skill->sn, DAM_FIRE, TRUE);
+		damage(ch, victim, dam, skill->sn, DAM_FIRE, true);
 		return;
 	}
 	case 4:
@@ -2035,7 +2035,7 @@ void spell_fireball(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target
 		if (saves_spell(level, victim, DAM_FIRE))
 			dam /= 2;
 
-		damage(ch, victim, dam, skill->sn, DAM_FIRE, TRUE);
+		damage(ch, victim, dam, skill->sn, DAM_FIRE, true);
 		return;
 	}
 	default:
@@ -2059,7 +2059,7 @@ void spell_fireball(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target
 		if (saves_spell(level, victim, DAM_FIRE))
 			dam /= 2;
 
-		damage(ch, victim, dam, skill->sn, DAM_FIRE, TRUE);
+		damage(ch, victim, dam, skill->sn, DAM_FIRE, true);
 		return;
 	}
 	}
@@ -2129,7 +2129,7 @@ void spell_flamestrike(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int tar
 	if (saves_spell(level, victim, DAM_FIRE))
 		dam /= 2;
 
-	damage(ch, victim, dam, skill->sn, DAM_FIRE, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_FIRE, true);
 	return;
 }
 
@@ -2263,7 +2263,7 @@ void spell_floating_disc(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 	act("$n has created a floating `8black`` `1disc``.", ch, NULL, NULL, TO_ROOM);
 	send_to_char("You create a floating `1disc``.\n\r", ch);
 	obj_to_char(disc, ch);
-	wear_obj(ch, disc, TRUE);
+	wear_obj(ch, disc, true);
 	return;
 }
 
@@ -2378,9 +2378,9 @@ void spell_gate(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, ch
 	}
 
 	if (ch->pet != NULL && ch->in_room == ch->pet->in_room)
-		gate_pet = TRUE;
+		gate_pet = true;
 	else
-		gate_pet = FALSE;
+		gate_pet = false;
 
 	act("$n steps through a gate and `8v`7a`&n`7i`8s`7h`&e`7s``.", ch, NULL, NULL, TO_ROOM);
 	send_to_char("You step through a gate and `8v`7a`&ni`7s`8h``.\n\r", ch);
@@ -2444,7 +2444,7 @@ void spell_harm(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, ch
 		dam = UMIN(50, dam / 2);
 
 	dam = 3 * (UMIN(100, dam));
-	damage(ch, victim, dam, skill->sn, DAM_HARM, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_HARM, true);
 	return;
 }
 
@@ -2554,20 +2554,20 @@ void spell_holy_word(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int targe
 			cast_spell(ch, gsp_frenzy, level, vch, TARGET_CHAR, argument);
 		} else if ((IS_GOOD(ch) && IS_EVIL(vch))
 			   || (IS_EVIL(ch) && IS_GOOD(vch))) {
-			if (!is_safe_spell(ch, vch, TRUE)) {
+			if (!is_safe_spell(ch, vch, true)) {
 				cast_spell(ch, gsp_curse, level, vch, TARGET_CHAR, argument);
 
 				send_to_char("You are `8s`7t`&ru`7c`8k`` down!\n\r", vch);
 				dam = dice(level, 6);
-				damage(ch, vch, dam, skill->sn, DAM_ENERGY, TRUE);
+				damage(ch, vch, dam, skill->sn, DAM_ENERGY, true);
 			}
 		} else if (IS_NEUTRAL(ch)) {
-			if (!is_safe_spell(ch, vch, TRUE)) {
+			if (!is_safe_spell(ch, vch, true)) {
 				cast_spell(ch, gsp_curse, level, vch, TARGET_CHAR, argument);
 
 				send_to_char("You are `8s`7t`&ru`7c`8k`` down!\n\r", vch);
 				dam = dice(level, 4);
-				damage(ch, vch, dam, skill->sn, DAM_ENERGY, TRUE);
+				damage(ch, vch, dam, skill->sn, DAM_ENERGY, true);
 			}
 		}
 	}
@@ -2721,7 +2721,7 @@ void spell_lightning_bolt(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int 
 	if (saves_spell(level, victim, DAM_LIGHTNING))
 		dam /= 2;
 
-	damage(ch, victim, dam, skill->sn, DAM_LIGHTNING, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_LIGHTNING, true);
 	return;
 }
 
@@ -2737,7 +2737,7 @@ void spell_locate_object(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 	int max_found;
 
 
-	found = FALSE;
+	found = false;
 	number = 0;
 	max_found = IS_IMMORTAL(ch) ? 200 : 2 * level;
 
@@ -2749,7 +2749,7 @@ void spell_locate_object(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 		    || ch->level < obj->level)
 			continue;
 
-		found = TRUE;
+		found = true;
 		number++;
 
 		for (in_obj = obj; in_obj->in_obj != NULL; in_obj = in_obj->in_obj) {
@@ -2811,24 +2811,24 @@ void spell_magic_missile(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 	if (saves_spell(level, victim, DAM_ENERGY))
 		dam /= 3;
 
-	damage(ch, victim, dam, skill->sn, DAM_ENERGY, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_ENERGY, true);
 	last_vict = victim;
 	num_missile -= 1;       /* decrement number of missiles */
 
 	/* new targets */
 	while (num_missile > 0) {
-		found = FALSE;
+		found = false;
 		for (tmp_vict = ch->in_room->people;
 		     tmp_vict != NULL;
 		     tmp_vict = next_vict) {
 			next_vict = tmp_vict->next_in_room;
 
-			if (!is_safe_spell(ch, tmp_vict, TRUE) && tmp_vict != last_vict && num_missile > 0) {
+			if (!is_safe_spell(ch, tmp_vict, true) && tmp_vict != last_vict && num_missile > 0) {
 				last_vict = tmp_vict;
 				if (is_same_group(tmp_vict, ch))
 					continue;
 
-				found = TRUE;
+				found = true;
 
 /*				act("A magic missile erupts from $n's hand and hits $N in the chest.",
  *                                       ch, NULL, tmp_vict, TO_NOTVICT);
@@ -2840,7 +2840,7 @@ void spell_magic_missile(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 				if (saves_spell(level, tmp_vict, DAM_ENERGY))
 					dam /= 2;
 
-				damage(ch, tmp_vict, dam, skill->sn, DAM_ENERGY, TRUE);
+				damage(ch, tmp_vict, dam, skill->sn, DAM_ENERGY, true);
 				num_missile -= 1;       /* decrement number of missiles */
 			}
 		} /* end target searching loop */
@@ -3224,7 +3224,7 @@ void spell_ray_of_truth(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 
 	dam = (dam * align * align) / 1000000;
 
-	damage(ch, victim, dam, skill->sn, DAM_HOLY, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_HOLY, true);
 
 	if (gsp_blindness != NULL)
 		cast_spell(ch, gsp_blindness, (3 * level / 4), victim, TARGET_CHAR, argument);
@@ -3569,7 +3569,7 @@ void spell_shocking_grasp(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int 
 	if (saves_spell(level, victim, DAM_LIGHTNING))
 		dam /= 2;
 
-	damage(ch, victim, dam, skill->sn, DAM_LIGHTNING, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_LIGHTNING, true);
 	return;
 }
 
@@ -3781,10 +3781,10 @@ void spell_acid_breath(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int tar
 
 	if (saves_spell(level, victim, DAM_ACID)) {
 		acid_effect(victim, level / 2, dam / 4, TARGET_CHAR);
-		damage(ch, victim, dam / 2, skill->sn, DAM_ACID, TRUE);
+		damage(ch, victim, dam / 2, skill->sn, DAM_ACID, true);
 	} else {
 		acid_effect(victim, level, dam, TARGET_CHAR);
-		damage(ch, victim, dam, skill->sn, DAM_ACID, TRUE);
+		damage(ch, victim, dam, skill->sn, DAM_ACID, true);
 	}
 }
 
@@ -3816,7 +3816,7 @@ void spell_fire_breath(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int tar
 	for (vch = victim->in_room->people; vch != NULL; vch = vch_next) {
 		vch_next = vch->next_in_room;
 
-		if (is_safe_spell(ch, vch, TRUE)
+		if (is_safe_spell(ch, vch, true)
 		    || (IS_NPC(vch) && IS_NPC(ch)
 			&& (ch->fighting != vch || vch->fighting != ch)))
 			continue;
@@ -3824,19 +3824,19 @@ void spell_fire_breath(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int tar
 		if (vch == victim) {     /* full damage */
 			if (saves_spell(level, vch, DAM_FIRE)) {
 				fire_effect(vch, level / 2, dam / 4, TARGET_CHAR);
-				damage(ch, vch, dam / 2, skill->sn, DAM_FIRE, TRUE);
+				damage(ch, vch, dam / 2, skill->sn, DAM_FIRE, true);
 			} else {
 				fire_effect(vch, level, dam, TARGET_CHAR);
-				damage(ch, vch, dam, skill->sn, DAM_FIRE, TRUE);
+				damage(ch, vch, dam, skill->sn, DAM_FIRE, true);
 			}
 		} else {
 			/* partial damage */
 			if (saves_spell(level - 2, vch, DAM_FIRE)) {
 				fire_effect(vch, level / 4, dam / 8, TARGET_CHAR);
-				damage(ch, vch, dam / 4, skill->sn, DAM_FIRE, TRUE);
+				damage(ch, vch, dam / 4, skill->sn, DAM_FIRE, true);
 			} else {
 				fire_effect(vch, level / 2, dam / 4, TARGET_CHAR);
-				damage(ch, vch, dam / 2, skill->sn, DAM_FIRE, TRUE);
+				damage(ch, vch, dam / 2, skill->sn, DAM_FIRE, true);
 			}
 		}
 	}
@@ -3868,7 +3868,7 @@ void spell_frost_breath(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 	for (vch = victim->in_room->people; vch != NULL; vch = vch_next) {
 		vch_next = vch->next_in_room;
 
-		if (is_safe_spell(ch, vch, TRUE)
+		if (is_safe_spell(ch, vch, true)
 		    || (IS_NPC(vch) && IS_NPC(ch)
 			&& (ch->fighting != vch || vch->fighting != ch)))
 			continue;
@@ -3876,18 +3876,18 @@ void spell_frost_breath(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 		if (vch == victim) {     /* full damage */
 			if (saves_spell(level, vch, DAM_COLD)) {
 				cold_effect(vch, level / 2, dam / 4, TARGET_CHAR);
-				damage(ch, vch, dam / 2, skill->sn, DAM_COLD, TRUE);
+				damage(ch, vch, dam / 2, skill->sn, DAM_COLD, true);
 			} else {
 				cold_effect(vch, level, dam, TARGET_CHAR);
-				damage(ch, vch, dam, skill->sn, DAM_COLD, TRUE);
+				damage(ch, vch, dam, skill->sn, DAM_COLD, true);
 			}
 		} else {
 			if (saves_spell(level - 2, vch, DAM_COLD)) {
 				cold_effect(vch, level / 4, dam / 8, TARGET_CHAR);
-				damage(ch, vch, dam / 4, skill->sn, DAM_COLD, TRUE);
+				damage(ch, vch, dam / 4, skill->sn, DAM_COLD, true);
 			} else {
 				cold_effect(vch, level / 2, dam / 4, TARGET_CHAR);
-				damage(ch, vch, dam / 2, skill->sn, DAM_COLD, TRUE);
+				damage(ch, vch, dam / 2, skill->sn, DAM_COLD, true);
 			}
 		}
 	}
@@ -3917,17 +3917,17 @@ void spell_gas_breath(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int targ
 	for (vch = ch->in_room->people; vch != NULL; vch = vch_next) {
 		vch_next = vch->next_in_room;
 
-		if (is_safe_spell(ch, vch, TRUE)
+		if (is_safe_spell(ch, vch, true)
 		    || (IS_NPC(ch) && IS_NPC(vch)
 			&& (ch->fighting == vch || vch->fighting == ch)))
 			continue;
 
 		if (saves_spell(level, vch, DAM_POISON)) {
 			poison_effect(vch, level / 2, dam / 4, TARGET_CHAR);
-			damage(ch, vch, dam / 2, skill->sn, DAM_POISON, TRUE);
+			damage(ch, vch, dam / 2, skill->sn, DAM_POISON, true);
 		} else {
 			poison_effect(vch, level, dam, TARGET_CHAR);
-			damage(ch, vch, dam, skill->sn, DAM_POISON, TRUE);
+			damage(ch, vch, dam, skill->sn, DAM_POISON, true);
 		}
 	}
 }
@@ -3953,10 +3953,10 @@ void spell_lightning_breath(SKILL *skill, int level, CHAR_DATA *ch, void *vo, in
 
 	if (saves_spell(level, victim, DAM_LIGHTNING)) {
 		shock_effect(victim, level / 2, dam / 4, TARGET_CHAR);
-		damage(ch, victim, dam / 2, skill->sn, DAM_LIGHTNING, TRUE);
+		damage(ch, victim, dam / 2, skill->sn, DAM_LIGHTNING, true);
 	} else {
 		shock_effect(victim, level, dam, TARGET_CHAR);
-		damage(ch, victim, dam, skill->sn, DAM_LIGHTNING, TRUE);
+		damage(ch, victim, dam, skill->sn, DAM_LIGHTNING, true);
 	}
 }
 
@@ -3972,7 +3972,7 @@ void spell_general_purpose(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int
 	if (saves_spell(level, victim, DAM_PIERCE))
 		dam /= 2;
 
-	damage(ch, victim, dam, skill->sn, DAM_PIERCE, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_PIERCE, true);
 	return;
 }
 
@@ -3986,7 +3986,7 @@ void spell_high_explosive(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int 
 	if (saves_spell(level, victim, DAM_PIERCE))
 		dam /= 2;
 
-	damage(ch, victim, dam, skill->sn, DAM_PIERCE, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_PIERCE, true);
 	return;
 }
 
@@ -4036,7 +4036,7 @@ void spell_shatter_curse(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 {
 	CHAR_DATA *victim;
 	OBJ_DATA *obj;
-	bool found = FALSE;
+	bool found = false;
 
     /* do object cases first */
 	if (target == TARGET_OBJ) {
@@ -4062,7 +4062,7 @@ void spell_shatter_curse(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 		if ((IS_OBJ_STAT(obj, ITEM_NODROP) || IS_OBJ_STAT(obj, ITEM_NOREMOVE))
 		    && !IS_OBJ_STAT(obj, ITEM_NOUNCURSE)) {
 			if (!saves_dispel(level, obj->level, 0)) {
-				found = TRUE;
+				found = true;
 				act("You convulse as you toss $p to the ground, destroying it.", victim, obj, NULL, TO_CHAR);
 				act("$n convulses as $e tosses $p to the ground, destroying it.", victim, obj, NULL, TO_ROOM);
 				extract_obj(obj);
@@ -4093,12 +4093,12 @@ void spell_cloud_of_death(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int 
 	for (vch = ch->in_room->people; vch != NULL; vch = vch_next) {
 		vch_next = vch->next_in_room;
 
-		if (is_safe_spell(ch, vch, TRUE) || is_same_group(ch, vch))
+		if (is_safe_spell(ch, vch, true) || is_same_group(ch, vch))
 			continue;
 
 		dam = dice(level, 13);
 		if (vch != ch) {
-			damage(ch, vch, dam, skill->sn, DAM_ACID, TRUE);
+			damage(ch, vch, dam, skill->sn, DAM_ACID, true);
 			if (++v_count > 15)
 				break;
 		}
@@ -4588,7 +4588,7 @@ void spell_thorns(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, 
 	if (saves_spell(level, victim, DAM_WOOD))
 		dam /= 2;
 
-	damage(ch, victim, dam, skill->sn, DAM_WOOD, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_WOOD, true);
 	return;
 }
 
@@ -4616,24 +4616,24 @@ void spell_monsoon(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target,
 	if (saves_spell(level, victim, DAM_DROWNING))
 		dam /= 3;
 
-	damage(ch, victim, dam, skill->sn, DAM_DROWNING, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_DROWNING, true);
 	last_vict = victim;
 	num_hit -= 1;
 
 
 	while (num_hit > 0) {
-		found = FALSE;
+		found = false;
 		for (tmp_vict = ch->in_room->people;
 		     tmp_vict != NULL;
 		     tmp_vict = next_vict) {
 			next_vict = tmp_vict->next_in_room;
 
-			if (!is_safe_spell(ch, tmp_vict, TRUE) && tmp_vict != last_vict && num_hit > 0) {
+			if (!is_safe_spell(ch, tmp_vict, true) && tmp_vict != last_vict && num_hit > 0) {
 				last_vict = tmp_vict;
 				if (is_same_group(tmp_vict, ch))
 					continue;
 
-				found = TRUE;
+				found = true;
 
 				act("A tidal wave `^strikes`` $n!", victim, NULL, NULL, TO_ROOM);
 				act("A tidal wave `Ocrashes`` into you!", victim, NULL, NULL, TO_CHAR);
@@ -4641,7 +4641,7 @@ void spell_monsoon(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target,
 				dam = (dam - 100) + number_range(1, 200);
 
 
-				damage(ch, tmp_vict, dam, skill->sn, DAM_DROWNING, TRUE);
+				damage(ch, tmp_vict, dam, skill->sn, DAM_DROWNING, true);
 				num_hit -= 1;
 			}
 		}
@@ -4714,7 +4714,7 @@ void spell_ring_of_fire(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 	if (saves_spell(level, victim, DAM_FIRE))
 		dam /= 4;
 
-	damage(ch, victim, dam, skill->sn, DAM_FIRE, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_FIRE, true);
 	last_vict = victim;
 
 	if (ch->in_room == NULL)
@@ -4728,7 +4728,7 @@ void spell_ring_of_fire(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 		if (is_same_group(tmp_vict, ch))
 			continue;
 
-		if (!is_safe_spell(ch, tmp_vict, TRUE) && tmp_vict != last_vict) {
+		if (!is_safe_spell(ch, tmp_vict, true) && tmp_vict != last_vict) {
 			last_vict = tmp_vict;
 			act("A ring of fire rages toward $n!", tmp_vict, NULL, NULL, TO_ROOM);
 			act("You are covered head to toe in flames!", tmp_vict, NULL, NULL, TO_CHAR);
@@ -4736,7 +4736,7 @@ void spell_ring_of_fire(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 			dam = dice(level, 10);
 			if (saves_spell(level, tmp_vict, DAM_FIRE))
 				dam /= 4;
-			damage(ch, tmp_vict, dam, skill->sn, DAM_FIRE, TRUE);
+			damage(ch, tmp_vict, dam, skill->sn, DAM_FIRE, true);
 		} /* end if(!is_safe_spell . . . */
 	}       /* end for-loop */
 	/* Now its time to go looking for other adjoining rooms */
@@ -4797,7 +4797,7 @@ void spell_ring_of_fire(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 					dam = dice(level, 10);
 					if (saves_spell(level, tmp_vict, DAM_FIRE))
 						dam /= 4;
-					damage(ch, tmp_vict, dam, skill->sn, DAM_FIRE, TRUE);
+					damage(ch, tmp_vict, dam, skill->sn, DAM_FIRE, true);
 				}
 			}
 		}
@@ -5164,7 +5164,7 @@ void spell_freeze_bolt(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int tar
 	if (saves_spell(level, victim, DAM_COLD))
 		dam /= 2;
 
-	damage(ch, victim, dam, skill->sn, DAM_COLD, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_COLD, true);
 	return;
 }
 
@@ -5184,14 +5184,14 @@ void spell_freeze_storm(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 	for (vch = ch->in_room->people; vch != NULL; vch = vch_next) {
 		if (counter <= 20) {
 			vch_next = vch->next_in_room;
-			if (!is_safe_spell(ch, vch, TRUE)) {
+			if (!is_safe_spell(ch, vch, true)) {
 				if (is_same_group(vch, ch))
 					continue;
 
 				dam = dice(level, 8);
 				if (saves_spell(level, vch, DAM_COLD))
 					dam /= 2;
-				damage(ch, vch, dam, skill->sn, DAM_COLD, TRUE);
+				damage(ch, vch, dam, skill->sn, DAM_COLD, true);
 			}
 			counter = counter + 1;
 		} else {
@@ -5225,7 +5225,7 @@ void spell_frost_hands(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int tar
 
 	if (saves_spell(level, victim, DAM_COLD))
 		dam /= 2;
-	damage(ch, victim, dam, skill->sn, DAM_COLD, TRUE);
+	damage(ch, victim, dam, skill->sn, DAM_COLD, true);
 	return;
 }
 
@@ -5251,7 +5251,7 @@ void spell_acidic_rain(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int tar
 		if (vch->in_room->area == ch->in_room->area) {
 			send_to_char("`!A`&c`!i`&d`!i`&c rain pours down from above!\n\r", vch);
 
-			if (vch != ch && !is_safe_spell(ch, vch, TRUE)) {
+			if (vch != ch && !is_safe_spell(ch, vch, true)) {
 				if (is_same_group(vch, ch))
 					continue;
 
@@ -5262,7 +5262,7 @@ void spell_acidic_rain(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int tar
 				if (saves_spell(level, vch, DAM_ACID))
 					dam /= 2;
 
-				damage(ch, vch, dam, skill->sn, DAM_ACID, TRUE);
+				damage(ch, vch, dam, skill->sn, DAM_ACID, true);
 				acid_effect(vch, level / 2, dam / 3, TARGET_CHAR);
 			}
 		}
@@ -5377,29 +5377,29 @@ void spell_super_speed(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int tar
 ***************************************************************************/
 bool can_trans_room(CHAR_DATA *ch, CHAR_DATA *victim, int sn)
 {
-	if (victim == NULL || victim == ch || victim->in_room == NULL) return FALSE;
+	if (victim == NULL || victim == ch || victim->in_room == NULL) return false;
 
-	if (!can_see_room(ch, victim->in_room)) return FALSE;
-	if (room_is_private(victim->in_room)) return FALSE;
+	if (!can_see_room(ch, victim->in_room)) return false;
+	if (room_is_private(victim->in_room)) return false;
 	if (gsp_gate != NULL && sn == gsp_gate->sn)
-		if (IS_SET(victim->in_room->room_flags, ROOM_NOGATE)) return FALSE;
+		if (IS_SET(victim->in_room->room_flags, ROOM_NOGATE)) return false;
 	if (gsp_portal != NULL && sn == gsp_portal->sn)
-		if (IS_SET(victim->in_room->room_flags, ROOM_NOPORTAL)) return FALSE;
+		if (IS_SET(victim->in_room->room_flags, ROOM_NOPORTAL)) return false;
 	if (gsp_nexus != NULL && sn == gsp_nexus->sn)
-		if (IS_SET(victim->in_room->room_flags, ROOM_NOPORTAL)) return FALSE;
-	if (IS_SET(victim->in_room->room_flags, ROOM_NOWHERE)) return FALSE;
-	if (IS_SET(victim->in_room->room_flags, ROOM_BFIELD)) return FALSE;
-	if (IS_SET(victim->in_room->room_flags, ROOM_NOTRANSPORT)) return FALSE;
-	if (IS_SET(ch->in_room->room_flags, ROOM_NOTRANSPORT)) return FALSE;
+		if (IS_SET(victim->in_room->room_flags, ROOM_NOPORTAL)) return false;
+	if (IS_SET(victim->in_room->room_flags, ROOM_NOWHERE)) return false;
+	if (IS_SET(victim->in_room->room_flags, ROOM_BFIELD)) return false;
+	if (IS_SET(victim->in_room->room_flags, ROOM_NOTRANSPORT)) return false;
+	if (IS_SET(ch->in_room->room_flags, ROOM_NOTRANSPORT)) return false;
 	if (!IS_IMMORTAL(ch) && IS_IMMORTAL(victim))
-		if (get_trust(ch) < get_trust(victim)) return FALSE;
-	if (!IS_IMMORTAL(ch) && IS_SET(victim->in_room->room_flags, ROOM_GODS_ONLY)) return FALSE;
-	if (get_trust(ch) < MAX_LEVEL && IS_SET(victim->in_room->room_flags, ROOM_IMP_ONLY)) return FALSE;
+		if (get_trust(ch) < get_trust(victim)) return false;
+	if (!IS_IMMORTAL(ch) && IS_SET(victim->in_room->room_flags, ROOM_GODS_ONLY)) return false;
+	if (get_trust(ch) < MAX_LEVEL && IS_SET(victim->in_room->room_flags, ROOM_IMP_ONLY)) return false;
 
 	/* for some rooms, only portal and nexus can get you in and out */
 	if ((gsp_portal != NULL && sn != gsp_portal->sn) && (gsp_nexus != NULL && sn != gsp_nexus->sn)) {
-		if (IS_SET(ch->in_room->room_flags, ROOM_PORTALONLY)) return FALSE;
-		else if (IS_SET(victim->in_room->room_flags, ROOM_PORTALONLY)) return FALSE;
+		if (IS_SET(ch->in_room->room_flags, ROOM_PORTALONLY)) return false;
+		else if (IS_SET(victim->in_room->room_flags, ROOM_PORTALONLY)) return false;
 	}
-	return TRUE;
+	return true;
 }

@@ -94,8 +94,8 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 			return;
 		}
 
-		if (check_reconnect(d, argument, FALSE)) {
-			found = TRUE;
+		if (check_reconnect(d, argument, false)) {
+			found = true;
 		} else {
 			if (globalSystemState.wizlock && !IS_IMMORTAL(ch)) {
 				write_to_buffer(d, "The game is wizlocked.\n\r", 0);
@@ -139,7 +139,7 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 
 		write_to_buffer(d, (char *)echo_on_str, 0);
 
-		if (check_playing(d, ch->name) || check_reconnect(d, ch->name, TRUE)) {
+		if (check_playing(d, ch->name) || check_reconnect(d, ch->name, true)) {
 			return;
         }
 
@@ -185,7 +185,7 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 				close_socket(d_old);
 			}
 
-			if (check_reconnect(d, ch->name, TRUE))
+			if (check_reconnect(d, ch->name, true))
 				return;
 
 			write_to_buffer(d, "Reconnect attempt failed.\n\rName: ", 0);
@@ -452,13 +452,13 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 
 			send_to_char(buf, ch);
 			buf[0] = '\0';
-			found = FALSE;
+			found = false;
 			for (idx = 0; weapon_table[idx].name != NULL; idx++) {
 				if ((learned = get_learned(ch, weapon_table[idx].name)) != NULL) {
 					if (!found) {
 						write_to_buffer(d, "\n\r", 2);
 						write_to_buffer(d, "Please pick a weapon from the following choices:\n\r", 0);
-						found = TRUE;
+						found = true;
 					}
 
 					strcat(buf, weapon_table[idx].name);
@@ -642,7 +642,7 @@ bool check_parse_name(char *name)
 	 * Reserved words.
 	 */
 	if (is_name(name, "all auto immortal imp self someone something the you your none socket who anonymous fuck")) {
-		return FALSE;
+		return false;
     }
 
 	if (!str_infix(name, "fuck")
@@ -674,7 +674,7 @@ bool check_parse_name(char *name)
 	        || !str_infix(name, "asshole")
 	        || !str_infix(name, "vagina")
 	        || !str_cmp(name, "ass")) {
-		return FALSE;
+		return false;
     }
 
 
@@ -682,7 +682,7 @@ bool check_parse_name(char *name)
      * Length restrictions.
      */
 	if (strlen(name) < 2 || strlen(name) > MAX_NAME_LENGTH) {
-		return FALSE;
+		return false;
     }
 
     /*
@@ -690,7 +690,7 @@ bool check_parse_name(char *name)
      */
 	for (pc = name; *pc != '\0'; pc++) {
 		if (!is_alpha(*pc))
-			return FALSE;
+			return false;
 	}
 
 	/*
@@ -715,7 +715,7 @@ bool check_parse_name(char *name)
 			sprintf(log_buf, "Double newbie alert (%s)", name);
 			wiznet(log_buf, NULL, NULL, WIZ_LOGINS, 0, 0);
 
-			return FALSE;
+			return false;
 		}
 	}
 
@@ -725,12 +725,12 @@ bool check_parse_name(char *name)
 	for (hash = 0; hash < MAX_KEY_HASH; hash++) {
 		for (pMobIndex = mob_index_hash[hash]; pMobIndex != NULL; pMobIndex = pMobIndex->next) {
 			if (is_name(name, pMobIndex->player_name)) {
-				return FALSE;
+				return false;
             }
         }
 	}
 
-	return TRUE;
+	return true;
 }
 
 
@@ -746,7 +746,7 @@ bool check_reconnect(DESCRIPTOR_DATA *d, char *name, bool reconnect)
 
 	for (ch = char_list; ch != NULL; ch = ch->next) {
 		if (!IS_NPC(ch) && (!reconnect || ch->desc == NULL) && !str_cmp(d->character->name, ch->name)) {
-			if (reconnect == FALSE) {
+			if (reconnect == false) {
 				free_string(d->character->pcdata->pwd);
 				d->character->pcdata->pwd = str_dup(ch->pcdata->pwd);
 			} else {
@@ -775,11 +775,11 @@ bool check_reconnect(DESCRIPTOR_DATA *d, char *name, bool reconnect)
 				REMOVE_BIT(ch->act, PLR_LINKDEAD);
 				d->connected = CON_PLAYING;
 			}
-			return TRUE;
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 
@@ -802,11 +802,11 @@ bool check_playing(DESCRIPTOR_DATA *d, char *name)
 			write_to_buffer(d, "That character is already playing.\n\r", 0);
 			write_to_buffer(d, "Do you wish to connect anyway(Y/N)?", 0);
 			d->connected = CON_BREAK_CONNECT;
-			return TRUE;
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 

@@ -18,12 +18,12 @@ typedef int SOCKET;
  * Short scalar types.
  * Diavolo reports AIX compiler has bugs with short types.
  */
-#if !defined(FALSE)
-#define FALSE    0
+#if !defined(false)
+#define false    0
 #endif
 
-#if !defined(TRUE)
-#define TRUE     (!FALSE)
+#if !defined(true)
+#define true     (!false)
 #endif
 
 
@@ -1887,8 +1887,8 @@ enum e_harvey_proctor_is { hp_pissed_off, hp_irritated, hp_off_his_rocker, hp_ag
 ***************************************************************************/
 #define CHECK_NON_OWNER(ch)      (strncmp((ch)->name, "Brom", 5) && strncmp((ch)->name, "Araevin", 8))
 #define IS_VALID(data)           ((data) != NULL && (data)->valid)
-#define VALIDATE(data)           ((data)->valid = TRUE)
-#define INVALIDATE(data)         ((data)->valid = FALSE)
+#define VALIDATE(data)           ((data)->valid = true)
+#define INVALIDATE(data)         ((data)->valid = false)
 #define IS_SET(flag, bit)        ((((flag) & (bit)) == (bit)))
 #define SET_BIT(var, bit)        ((var) |= (bit))
 #define REMOVE_BIT(var, bit)     ((var) &= ~(bit))

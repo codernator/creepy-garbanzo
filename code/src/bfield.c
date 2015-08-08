@@ -184,7 +184,7 @@ void battlefield_open(CHAR_DATA *ch)
 
 	if (!battlefield.dirty) {
 		battlefield_clear();
-		battlefield.dirty = TRUE;
+		battlefield.dirty = true;
 	}
 
 	if (battlefield.open) {
@@ -198,7 +198,7 @@ void battlefield_open(CHAR_DATA *ch)
 		return;
 	}
 
-	battlefield.open = TRUE;
+	battlefield.open = true;
 	if (ch != NULL)
 		sprintf(log_buf, "%s opened the battlefield ..", ch->name);
 	else
@@ -249,8 +249,8 @@ void battlefield_close(CHAR_DATA *ch)
 		return;
 	}
 
-	battlefield.open = FALSE;
-	battlefield.dirty = FALSE;
+	battlefield.open = false;
+	battlefield.dirty = false;
 	battlefield.running_ticks = 0;
 
 	if (ch != NULL) {
@@ -314,8 +314,8 @@ void battlefield_cancel(CHAR_DATA *ch)
 	sprintf(buf, "%s has canceled the `#Battlefield`7 ..\n\r", ch->name);
 	battlefield_notify(buf);
 
-	battlefield.open = FALSE;
-	battlefield.dirty = FALSE;
+	battlefield.open = false;
+	battlefield.dirty = false;
 
 	battlefield_clear();
 
@@ -399,10 +399,10 @@ void battlefield_clear()
 	battlefield.uroom = BATTLEFIELD_ROOM_NORMAL_U;
 	battlefield.llevel = LEVEL_NEWBIE;
 	battlefield.ulevel = LEVEL_HERO;
-	battlefield.dirty = FALSE;
-	battlefield.open = FALSE;
+	battlefield.dirty = false;
+	battlefield.open = false;
 	battlefield.participants = 0;
-	battlefield.special = FALSE;
+	battlefield.special = false;
 	battlefield.open_ticks = -1;
 	battlefield.running_ticks = -1;
 
@@ -521,7 +521,7 @@ void battlefield_special(CHAR_DATA *ch)
 		return;
 
 	src = ch->in_room;
-	battlefield.affected = FALSE;
+	battlefield.affected = false;
 	for (iter = battlefield.lroom; iter < battlefield.uroom; iter++) {
 		room = get_room_index(iter);
 		if (room != NULL) {
@@ -580,7 +580,7 @@ void battlefield_special(CHAR_DATA *ch)
 					af.skill = skill;
 					af.level = level;
 
-					battlefield.affected = TRUE;
+					battlefield.affected = true;
 
 					affect_to_room(room, &af);
 				}
@@ -616,7 +616,7 @@ void battlefield_set(CHAR_DATA *ch, char *argument)
 	for (iter = 0; battlefield_set_cmds[iter].cmd != NULL; iter++) {
 		if (!str_prefix(arg, battlefield_set_cmds[iter].cmd)) {
 			if ((*battlefield_set_cmds[iter].fn)(ch, argument))
-				battlefield.dirty = TRUE;
+				battlefield.dirty = true;
 			break;
 		}
 	}
@@ -632,7 +632,7 @@ void battlefield_set(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 bool battlefield_set_llevel(CHAR_DATA *ch, char *arg)
 {
-	bool success = FALSE;
+	bool success = false;
 	int level;
 
 	if (battlefield_count() > 0) {
@@ -648,7 +648,7 @@ bool battlefield_set_llevel(CHAR_DATA *ch, char *arg)
 			} else {
 				send_to_char("Lower level set.\n\r", ch);
 				battlefield.llevel = level;
-				success = TRUE;
+				success = true;
 			}
 		}
 	}
@@ -664,7 +664,7 @@ bool battlefield_set_llevel(CHAR_DATA *ch, char *arg)
 ***************************************************************************/
 bool battlefield_set_ulevel(CHAR_DATA *ch, char *arg)
 {
-	bool success = FALSE;
+	bool success = false;
 	int level;
 
 	if (battlefield_count() > 0) {
@@ -680,7 +680,7 @@ bool battlefield_set_ulevel(CHAR_DATA *ch, char *arg)
 			} else {
 				send_to_char("Upper level set.\n\r", ch);
 				battlefield.ulevel = level;
-				success = TRUE;
+				success = true;
 			}
 		}
 	}
@@ -696,22 +696,22 @@ bool battlefield_set_ulevel(CHAR_DATA *ch, char *arg)
 ***************************************************************************/
 bool battlefield_set_special(CHAR_DATA *ch, char *arg)
 {
-	bool success = FALSE;
-	bool set = FALSE;
+	bool success = false;
+	bool set = false;
 
 	if (battlefield_count() > 0) {
 		send_to_char("There are still people in the battlefield.\n\r", ch);
 	} else {
 		if (arg[0] == '\0') {
 			if (!battlefield.special)
-				set = TRUE;
+				set = true;
 		} else if (!str_prefix(arg, "on") || !str_prefix(arg, "true")) {
-			set = TRUE;
+			set = true;
 		}
 
 		printf_to_char(ch, "Battlefield special %s\n\r", (set) ? "set" : "removed");
 		battlefield.special = set;
-		success = TRUE;
+		success = true;
 	}
 
 	return success;
@@ -725,7 +725,7 @@ bool battlefield_set_special(CHAR_DATA *ch, char *arg)
 ***************************************************************************/
 bool battlefield_set_openticks(CHAR_DATA *ch, char *arg)
 {
-	bool success = FALSE;
+	bool success = false;
 
 	if (battlefield_count() > 0) {
 		send_to_char("There are still people in the battlefield.\n\r", ch);
@@ -741,7 +741,7 @@ bool battlefield_set_openticks(CHAR_DATA *ch, char *arg)
 			battlefield.open_ticks = -1;
 		}
 
-		success = TRUE;
+		success = true;
 	}
 
 	return success;
@@ -757,7 +757,7 @@ bool battlefield_set_disabled(CHAR_DATA *ch, char *arg)
 {
 	disable_all(ch, arg, &battlefield.disabled);
 
-	return FALSE;
+	return false;
 }
 
 
@@ -809,9 +809,9 @@ bool in_battlefield(CHAR_DATA *ch)
 {
 	if (ch->in_room->vnum >= battlefield.lroom
 	    && ch->in_room->vnum <= battlefield.uroom)
-		return TRUE;
+		return true;
 
-	return FALSE;
+	return false;
 }
 
 
@@ -823,14 +823,14 @@ bool in_battlefield(CHAR_DATA *ch)
 bool battlefield_check_disabled(CHAR_DATA *ch, int type, char *name)
 {
 	DISABLED_DATA *disabled;
-	bool is_disabled = FALSE;
+	bool is_disabled = false;
 
 	if (!IS_NPC(ch) && IS_SET(ch->act, PLR_BATTLE)
 	    && (in_battlefield(ch) || ch->in_room->vnum == ROOM_VNUM_WARPREP)) {
 		for (disabled = battlefield.disabled; disabled != NULL; disabled = disabled->next) {
 			if (disabled->type == type
 			    && !str_cmp(name, disabled->command)) {
-				is_disabled = TRUE;
+				is_disabled = true;
 				break;
 			}
 		}

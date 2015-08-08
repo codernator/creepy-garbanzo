@@ -56,7 +56,7 @@ static bool change_exit(CHAR_DATA *ch, char *argument, int door)
 
 		if (!room->exit[door]) {
 			send_to_char("Exit does not exist.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		/* this room */
@@ -73,7 +73,7 @@ static bool change_exit(CHAR_DATA *ch, char *argument, int door)
 		}
 
 		send_to_char("Exit flag toggled.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 	/* parse the arguments */
@@ -81,13 +81,13 @@ static bool change_exit(CHAR_DATA *ch, char *argument, int door)
 	one_argument(argument, arg);
 
 	if (command[0] == '\0' && argument[0] == '\0') {
-		move_char(ch, door, TRUE);
-		return FALSE;
+		move_char(ch, door, true);
+		return false;
 	}
 
 	if (command[0] == '?') {
 		do_help(ch, "OLC_EXIT");
-		return FALSE;
+		return false;
 	}
 
 	if (!str_cmp(command, "delete")) {
@@ -96,7 +96,7 @@ static bool change_exit(CHAR_DATA *ch, char *argument, int door)
 
 		if (!room->exit[door]) {
 			send_to_char("REdit:  Cannot delete a null exit.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		/* remove ToRoom exit */
@@ -113,7 +113,7 @@ static bool change_exit(CHAR_DATA *ch, char *argument, int door)
 		room->exit[door] = NULL;
 
 		send_to_char("Exit unlinked.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 	if (!str_cmp(command, "link")) {
@@ -122,24 +122,24 @@ static bool change_exit(CHAR_DATA *ch, char *argument, int door)
 
 		if (arg[0] == '\0' || !is_number(arg)) {
 			send_to_char("Syntax:  [direction] link [vnum]\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		value = parse_int(arg);
 
 		if (!(toRoom = get_room_index(value))) {
 			send_to_char("REdit:  Cannot link to non-existant room.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		if (!IS_BUILDER(ch, toRoom->area)) {
 			send_to_char("REdit:  Cannot link to that area.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		if (toRoom->exit[rev_dir[door]]) {
 			send_to_char("REdit:  Remote side's exit already exists.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		if (!room->exit[door])
@@ -155,7 +155,7 @@ static bool change_exit(CHAR_DATA *ch, char *argument, int door)
 		toRoom->exit[door] = pExit;
 
 		send_to_char("Two-way link established.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 	if (!str_cmp(command, "dig")) {
@@ -163,13 +163,13 @@ static bool change_exit(CHAR_DATA *ch, char *argument, int door)
 
 		if (arg[0] == '\0' || !is_number(arg)) {
 			send_to_char("Syntax: [direction] dig <vnum>\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		redit_create(ch, arg);
 		sprintf(buf, "link %s", arg);
 		change_exit(ch, buf, door);
-		return TRUE;
+		return true;
 	}
 
 	if (!str_cmp(command, "room")) {
@@ -177,13 +177,13 @@ static bool change_exit(CHAR_DATA *ch, char *argument, int door)
 
 		if (arg[0] == '\0' || !is_number(arg)) {
 			send_to_char("Syntax:  [direction] room [vnum]\n\r", ch);
-			return FALSE;
+			return false;
 		}
 		value = parse_int(arg);
 
 		if (!(toRoom = get_room_index(value))) {
 			send_to_char("REdit:  Cannot link to non-existant room.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		if (!room->exit[door])
@@ -193,7 +193,7 @@ static bool change_exit(CHAR_DATA *ch, char *argument, int door)
 		room->exit[door]->orig_door = door;
 
 		send_to_char("One-way link established.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 	if (!str_cmp(command, "key")) {
@@ -201,42 +201,42 @@ static bool change_exit(CHAR_DATA *ch, char *argument, int door)
 
 		if (arg[0] == '\0' || !is_number(arg)) {
 			send_to_char("Syntax:  [direction] key [vnum]\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		if (!room->exit[door]) {
 			send_to_char("Exit does not exist.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		value = parse_int(arg);
 
 		if (!(key = get_obj_index(value))) {
 			send_to_char("REdit:  Key doesn't exist.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		if (key->item_type != ITEM_KEY) {
 			send_to_char("REdit:  Object is not a key.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		room->exit[door]->key = value;
 
 		send_to_char("Exit key set.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 	if (!str_cmp(command, "name")) {
 		if (arg[0] == '\0') {
 			send_to_char("Syntax:  [direction] name [string]\n\r", ch);
 			send_to_char("         [direction] name none\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		if (!room->exit[door]) {
 			send_to_char("Exit does not exist.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		free_string(room->exit[door]->keyword);
@@ -247,25 +247,25 @@ static bool change_exit(CHAR_DATA *ch, char *argument, int door)
 			room->exit[door]->keyword = str_dup("");
 
 		send_to_char("Exit name set.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 	if (!str_prefix(command, "description")) {
 		if (arg[0] == '\0') {
 			if (!room->exit[door]) {
 				send_to_char("Exit does not exist.\n\r", ch);
-				return FALSE;
+				return false;
 			}
 
 			string_append(ch, &room->exit[door]->description);
-			return TRUE;
+			return true;
 		}
 
 		send_to_char("Syntax:  [direction] desc\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
-	return FALSE;
+	return false;
 }
 
 
@@ -376,23 +376,23 @@ EDIT(redit_create){
 	value = parse_long(argument);
 	if (argument[0] == '\0' || value <= 0) {
 		send_to_char("Syntax:  create [vnum > 0]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	area = get_vnum_area(value);
 	if (!area) {
 		send_to_char("REdit:  That vnum is not assigned an area.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (!IS_BUILDER(ch, area)) {
 		send_to_char("REdit:  Vnum in an area you cannot build in.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (get_room_index(value)) {
 		send_to_char("REdit:  Room vnum already exists.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	room = new_room_index();
@@ -408,7 +408,7 @@ EDIT(redit_create){
 	ch->desc->ed_data = (void *)room;
 
 	send_to_char("Room created.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -426,18 +426,18 @@ EDIT(redit_clone){
 	EDIT_ROOM(ch, room);
 	if (room == NULL) {
 		send_to_char("REdit: Cloning a room copies over the room you are in, but you are not in a room.", ch);
-		return FALSE;
+		return false;
 	}
 
 	room_idx = parse_long(argument);
 	if (argument[0] == '\0') {
 		send_to_char("REdit: Syntax:  clone [existing vnum]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if ((clone = get_room_index(room_idx)) == NULL) {
 		send_to_char("REdit:  Room to clone does not exist.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	free_string(room->name);
@@ -453,7 +453,7 @@ EDIT(redit_clone){
 
 	snprintf(buf, 100, "REdit: This room has become a clone of room %ld.\n\r", room_idx);
 	send_to_char(buf, ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -476,11 +476,11 @@ EDIT(redit_rlist){
 
 	area = ch->in_room->area;
 	buf = new_buf();
-	found = FALSE;
+	found = false;
 
 	for (vnum = area->min_vnum; vnum <= area->max_vnum; vnum++) {
 		if ((room = get_room_index(vnum))) {
-			found = TRUE;
+			found = true;
 
 			unclr = uncolor_str(capitalize(room->name));
 			printf_buf(buf, "[`1%5d``] %-17.16s", vnum, unclr);
@@ -493,7 +493,7 @@ EDIT(redit_rlist){
 
 	if (!found) {
 		send_to_char("Room(s) not found in this area.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (col % 3 != 0)
@@ -501,7 +501,7 @@ EDIT(redit_rlist){
 
 	page_to_char(buf_string(buf), ch);
 	free_buf(buf);
-	return FALSE;
+	return false;
 }
 
 
@@ -525,18 +525,18 @@ EDIT(redit_mlist){
 	one_argument(argument, arg);
 	if (is_help(arg)) {
 		send_to_char("Syntax:  mlist <all/name>\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	buf = new_buf();
 	area = ch->in_room->area;
 	all = !str_cmp(arg, "all");
-	found = FALSE;
+	found = false;
 
 	for (vnum = area->min_vnum; vnum <= area->max_vnum; vnum++) {
 		if ((mob = get_mob_index(vnum)) != NULL) {
 			if (all || is_name(arg, mob->player_name)) {
-				found = TRUE;
+				found = true;
 				unclr = uncolor_str(capitalize(mob->short_descr));
 
 				printf_buf(buf, "[`1%5d``] %-17.16s",
@@ -552,7 +552,7 @@ EDIT(redit_mlist){
 
 	if (!found) {
 		send_to_char("Mobile(s) not found in this area.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (col % 3 != 0)
@@ -561,7 +561,7 @@ EDIT(redit_mlist){
 
 	page_to_char(buf_string(buf), ch);
 	free_buf(buf);
-	return FALSE;
+	return false;
 }
 
 
@@ -585,19 +585,19 @@ EDIT(redit_olist){
 	(void)one_argument(argument, arg);
 	if (arg[0] == '\0') {
 		send_to_char("Syntax:  olist <all/name/item_type>\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	area = ch->in_room->area;
 	buf = new_buf();
 	all = !str_cmp(arg, "all");
-	found = FALSE;
+	found = false;
 
 	for (vnum = area->min_vnum; vnum <= area->max_vnum; vnum++) {
 		if ((obj = get_obj_index(vnum))) {
 			if (all || is_name(arg, obj->name)
 			    || flag_value(type_flags, arg) == obj->item_type) {
-				found = TRUE;
+				found = true;
 				unclr = uncolor_str(capitalize(obj->short_descr));
 				printf_buf(buf, "[`1%5d``] %-17.16s",
 					   obj->vnum,
@@ -611,7 +611,7 @@ EDIT(redit_olist){
 
 	if (!found) {
 		send_to_char("Object(s) not found in this area.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (col % 3 != 0)
@@ -619,7 +619,7 @@ EDIT(redit_olist){
 
 	page_to_char(buf_string(buf), ch);
 	free_buf(buf);
-	return FALSE;
+	return false;
 }
 
 
@@ -634,19 +634,19 @@ EDIT(redit_mshow){
 
 	if (argument[0] == '\0') {
 		send_to_char("Syntax:  mshow <vnum>\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (!is_number(argument)) {
 		send_to_char("REdit: Enter a mobs vnum.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (is_number(argument)) {
 		value = parse_int(argument);
 		if (!(mob = get_mob_index(value))) {
 			send_to_char("REdit:  That mobile does not exist.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		ch->desc->ed_data = (void *)mob;
@@ -655,7 +655,7 @@ EDIT(redit_mshow){
 	medit_show(ch, argument);
 	ch->desc->ed_data = (void *)ch->in_room;
 
-	return FALSE;
+	return false;
 }
 
 
@@ -670,19 +670,19 @@ EDIT(redit_oshow){
 
 	if (argument[0] == '\0') {
 		send_to_char("Syntax:  oshow <vnum>\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (!is_number(argument)) {
 		send_to_char("REdit: Enter an object vnum.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (is_number(argument)) {
 		value = parse_int(argument);
 		if (!(obj = get_obj_index(value))) {
 			send_to_char("REdit:  That object does not exist.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		ch->desc->ed_data = (void *)obj;
@@ -691,7 +691,7 @@ EDIT(redit_oshow){
 	oedit_show(ch, argument);
 
 	ch->desc->ed_data = (void *)ch->in_room;
-	return FALSE;
+	return false;
 }
 
 
@@ -740,21 +740,21 @@ EDIT(redit_show){
 	}
 
 	printf_to_char(ch, "`&Characters``:  [");
-	fcnt = FALSE;
+	fcnt = false;
 	for (rch = room->people; rch; rch = rch->next_in_room) {
 		one_argument(rch->name, buf);
 		if (rch->next_in_room)
 			printf_to_char(ch, "%s ", buf);
 		else
 			printf_to_char(ch, "%s]\n\r", buf);
-		fcnt = TRUE;
+		fcnt = true;
 	}
 
 	if (!fcnt)
 		send_to_char("none]\n\r", ch);
 
 	printf_to_char(ch, "`&Objects``:     [");
-	fcnt = FALSE;
+	fcnt = false;
 	for (obj = room->contents; obj; obj = obj->next_content) {
 		one_argument(obj->name, buf);
 		if (obj->next_content)
@@ -762,7 +762,7 @@ EDIT(redit_show){
 		else
 			printf_to_char(ch, "%s]\n\r", buf);
 
-		fcnt = TRUE;
+		fcnt = true;
 	}
 
 	if (!fcnt)
@@ -810,7 +810,7 @@ EDIT(redit_show){
 			strcpy(reset_state, flag_string(exit_flags, pexit->rs_flags));
 			state = flag_string(exit_flags, pexit->exit_info);
 
-			fcnt = FALSE;
+			fcnt = false;
 			printf_to_char(ch, " Exit flags: [");
 			for (;; ) {
 				state = one_argument(state, word);
@@ -823,7 +823,7 @@ EDIT(redit_show){
 					}
 					if (!fcnt) {
 						printf_to_char(ch, "%s", word);
-						fcnt = TRUE;
+						fcnt = true;
 					} else {
 						printf_to_char(ch, " %s", word);
 					}
@@ -841,7 +841,7 @@ EDIT(redit_show){
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 
@@ -914,13 +914,13 @@ EDIT(redit_ed){
 		send_to_char("         ed edit [keyword]\n\r", ch);
 		send_to_char("         ed delete [keyword]\n\r", ch);
 		send_to_char("         ed format [keyword]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (!str_cmp(command, "add")) {
 		if (keyword[0] == '\0') {
 			send_to_char("Syntax:  ed add [keyword]\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		ed = new_extra_descr();
@@ -930,14 +930,14 @@ EDIT(redit_ed){
 		room->extra_descr = ed;
 
 		string_append(ch, &ed->description);
-		return TRUE;
+		return true;
 	}
 
 
 	if (!str_cmp(command, "edit")) {
 		if (keyword[0] == '\0') {
 			send_to_char("Syntax:  ed edit [keyword]\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		for (ed = room->extra_descr; ed; ed = ed->next)
@@ -946,11 +946,11 @@ EDIT(redit_ed){
 
 		if (!ed) {
 			send_to_char("REdit:  Extra description keyword not found.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		string_append(ch, &ed->description);
-		return TRUE;
+		return true;
 	}
 
 
@@ -959,7 +959,7 @@ EDIT(redit_ed){
 
 		if (keyword[0] == '\0') {
 			send_to_char("Syntax:  ed delete [keyword]\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		for (ed = room->extra_descr; ed; ed = ed->next) {
@@ -970,7 +970,7 @@ EDIT(redit_ed){
 
 		if (!ed) {
 			send_to_char("REdit:  Extra description keyword not found.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		if (!ped)
@@ -981,14 +981,14 @@ EDIT(redit_ed){
 		free_extra_descr(ed);
 
 		send_to_char("Extra description deleted.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 
 	if (!str_cmp(command, "format")) {
 		if (keyword[0] == '\0') {
 			send_to_char("Syntax:  ed format [keyword]\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		for (ed = room->extra_descr; ed; ed = ed->next)
@@ -997,16 +997,16 @@ EDIT(redit_ed){
 
 		if (!ed) {
 			send_to_char("REdit:  Extra description keyword not found.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 		ed->description = format_string(ed->description);
 
 		send_to_char("Extra description formatted.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 	redit_ed(ch, "");
-	return FALSE;
+	return false;
 }
 
 
@@ -1021,14 +1021,14 @@ EDIT(redit_name){
 	EDIT_ROOM(ch, room);
 	if (argument[0] == '\0') {
 		send_to_char("Syntax:  name [name]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	free_string(room->name);
 	room->name = str_dup(argument);
 
 	send_to_char("Name set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1043,11 +1043,11 @@ EDIT(redit_desc){
 	EDIT_ROOM(ch, room);
 	if (argument[0] == '\0') {
 		string_append(ch, &room->description);
-		return TRUE;
+		return true;
 	}
 
 	send_to_char("Syntax:  desc\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 
@@ -1063,11 +1063,11 @@ EDIT(redit_heal){
 	if (is_number(argument)) {
 		room->heal_rate = parse_int(argument);
 		send_to_char("Heal rate set.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 	send_to_char("Syntax : heal <#xnumber>\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 /***************************************************************************
@@ -1082,11 +1082,11 @@ EDIT(redit_mana){
 	if (is_number(argument)) {
 		room->mana_rate = parse_int(argument);
 		send_to_char("Mana rate set.\n\r", ch);
-		return TRUE;
+		return true;
 	}
 
 	send_to_char("Syntax : mana <#xnumber>\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 /***************************************************************************
@@ -1101,7 +1101,7 @@ EDIT(redit_owner){
 	if (argument[0] == '\0') {
 		send_to_char("Syntax:  owner [owner]\n\r", ch);
 		send_to_char("         owner none\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	free_string(room->owner);
@@ -1111,7 +1111,7 @@ EDIT(redit_owner){
 		room->owner = str_dup(argument);
 
 	send_to_char("Owner set.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1129,13 +1129,13 @@ EDIT(redit_room){
 
 	if ((value = flag_value(room_flags, argument)) == NO_FLAG) {
 		send_to_char("Syntax: room [flags]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	TOGGLE_BIT(room->room_flags, value);
 
 	send_to_char("Room flags toggled.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1152,13 +1152,13 @@ EDIT(redit_sector){
 
 	if ((value = flag_value(sector_flags, argument)) == NO_FLAG) {
 		send_to_char("Syntax: sector [type]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	room->sector_type = value;
 	send_to_char("Sector type set.\n\r", ch);
 
-	return TRUE;
+	return true;
 }
 
 /***************************************************************************
@@ -1181,7 +1181,7 @@ EDIT(redit_addaffect){
 	    || skill == NULL
 	    || skill->target != TAR_ROOM) {
 		send_to_char("Syntax: addaffect [spell] [level]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	af.where = TO_AFFECTS;
@@ -1195,7 +1195,7 @@ EDIT(redit_addaffect){
 	affect_to_room(room, &af);
 	send_to_char("Affect added.\n\r", ch);
 
-	return TRUE;
+	return true;
 }
 
 
@@ -1216,7 +1216,7 @@ EDIT(redit_delaffect){
 	argument = one_argument(argument, arg);
 	if (!is_number(arg)) {
 		send_to_char("Syntax: delaffect [# affect]\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	number = parse_int(arg);
@@ -1227,12 +1227,12 @@ EDIT(redit_delaffect){
 		if (count++ == number) {
 			affect_remove_room(room, paf);
 			printf_to_char(ch, "Affect #%d removed.\n\r", number);
-			return TRUE;
+			return true;
 		}
 	}
 
 	send_to_char("Affect number does not exist.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 /***************************************************************************
@@ -1248,7 +1248,7 @@ EDIT(redit_format){
 	room->description = format_string(room->description);
 
 	send_to_char("String formatted.\n\r", ch);
-	return TRUE;
+	return true;
 }
 
 
@@ -1271,17 +1271,17 @@ EDIT(redit_mreset){
 	argument = one_argument(argument, arg2);
 	if (arg[0] == '\0' || !is_number(arg)) {
 		send_to_char("Syntax:  mreset <vnum> <max #x> <mix #x>\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (!(mob = get_mob_index(parse_int(arg)))) {
 		send_to_char("REdit: No mobile has that vnum.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (mob->area != room->area) {
 		send_to_char("REdit: No such mobile in this area.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	/*
@@ -1307,7 +1307,7 @@ EDIT(redit_mreset){
 		       pReset->arg2);
 
 	act("$n has created $N!", ch, NULL, newmob, TO_ROOM);
-	return TRUE;
+	return true;
 }
 
 
@@ -1336,17 +1336,17 @@ EDIT(redit_oreset){
 		send_to_char("        -no_args               = into room\n\r", ch);
 		send_to_char("        -<obj_name>            = into obj\n\r", ch);
 		send_to_char("        -<mob_name> <wear_loc> = into mob\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (!(obj = get_obj_index(parse_int(arg1)))) {
 		send_to_char("REdit: No object has that vnum.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (obj->area != room->area) {
 		send_to_char("REdit: No such object in this area.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	/*
@@ -1368,7 +1368,7 @@ EDIT(redit_oreset){
 			       capitalize(obj->short_descr),
 			       obj->vnum);
 		act("$n has created $p!", ch, newobj, NULL, TO_ROOM);
-		return TRUE;
+		return true;
 	}
 
 	/*
@@ -1395,7 +1395,7 @@ EDIT(redit_oreset){
 			       to_obj->short_descr,
 			       to_obj->obj_idx->vnum);
 		act("$n has created $p!", ch, newobj, NULL, TO_ROOM);
-		return TRUE;
+		return true;
 	}
 
 	if ((to_mob = get_char_room(ch, arg2)) != NULL) {
@@ -1403,7 +1403,7 @@ EDIT(redit_oreset){
 
 		if ((wear_loc = flag_value(wear_loc_flags, argument)) == NO_FLAG) {
 			send_to_char("REdit: Invalid wear_loc.  '? wear-loc'\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		/*
@@ -1414,7 +1414,7 @@ EDIT(redit_oreset){
 				       capitalize(obj->short_descr),
 				       obj->vnum,
 				       flag_string(wear_flags, obj->wear_flags));
-			return FALSE;
+			return false;
 		}
 
 		/*
@@ -1422,7 +1422,7 @@ EDIT(redit_oreset){
 		 */
 		if (get_eq_char(to_mob, wear_loc)) {
 			send_to_char("REdit:  Object already equipped.\n\r", ch);
-			return FALSE;
+			return false;
 		}
 
 		pReset = new_reset_data();
@@ -1492,7 +1492,7 @@ EDIT(redit_oreset){
 
 
 	send_to_char("REdit:  That mobile isn't here.\n\r", ch);
-	return FALSE;
+	return false;
 }
 
 /***************************************************************************
@@ -1520,16 +1520,16 @@ EDIT(redit_flagall){
 		send_to_char("Syntax:  flagall [flag] <toggle>\n\r", ch);
 		send_to_char("        `&Toggle can be `@on`&, `!off`&, or left out to toggle``\n\r", ch);
 		send_to_char("        Type '`^? room``' to see a list of available room flags.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	area = ch->in_room->area;
 	buf = new_buf();
-	found = FALSE;
+	found = false;
 
 	for (vnum = area->min_vnum; vnum <= area->max_vnum; vnum++) {
 		if ((room = get_room_index(vnum))) {
-			found = TRUE;
+			found = true;
 
 			if (!strcmp(rType, "on"))
 				SET_BIT(room->room_flags, iFlag);
@@ -1556,7 +1556,7 @@ EDIT(redit_flagall){
 
 	if (!found) {
 		send_to_char("Room(s) not found in this area.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (col % 3 != 0)
@@ -1564,7 +1564,7 @@ EDIT(redit_flagall){
 
 	page_to_char(buf_string(buf), ch);
 	free_buf(buf);
-	return TRUE;
+	return true;
 }
 
 /***************************************************************************
@@ -1589,16 +1589,16 @@ EDIT(redit_showrooms){
 	if ((iFlag = flag_value(room_flags, rFlag)) == NO_FLAG) {
 		send_to_char("Syntax:  showrooms [flag]\n\r", ch);
 		send_to_char("        Type '`^? room``' to see a list of available room flags.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	area = ch->in_room->area;
 	buf = new_buf();
-	found = FALSE;
+	found = false;
 
 	for (vnum = area->min_vnum; vnum <= area->max_vnum; vnum++) {
 		if ((room = get_room_index(vnum))) {
-			found = TRUE;
+			found = true;
 
 			unclr = uncolor_str(capitalize(room->name));
 			printf_buf(buf, "[");
@@ -1618,7 +1618,7 @@ EDIT(redit_showrooms){
 
 	if (!found) {
 		send_to_char("Room(s) not found in this area.\n\r", ch);
-		return FALSE;
+		return false;
 	}
 
 	if (col % 3 != 0)
@@ -1626,5 +1626,5 @@ EDIT(redit_showrooms){
 
 	page_to_char(buf_string(buf), ch);
 	free_buf(buf);
-	return FALSE;
+	return false;
 }

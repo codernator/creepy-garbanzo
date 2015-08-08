@@ -95,13 +95,13 @@ static const char *invalid_cmds[] =
 static bool valid_cmd(CHAR_DATA *vch, char *cmd)
 {
 	const CMD *cmd_base;
-	bool success = TRUE;
+	bool success = true;
 	int iter;
 
 	if ((cmd_base = cmd_lookup(vch, cmd)) != NULL) {
 		for (iter = 0; invalid_cmds[iter] != NULL; iter++) {
 			if (!str_cmp(invalid_cmds[iter], cmd_base->name)) {
-				success = FALSE;
+				success = false;
 				break;
 			}
 		}

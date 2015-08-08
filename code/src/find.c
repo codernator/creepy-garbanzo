@@ -565,7 +565,7 @@ bool char_cmp_short(CHAR_DATA *vch, char *arg, BUFFER *buf)
 {
 	if (buf != NULL)
 		add_buf(buf, "search by a mob's short description.\n\r");
-	return IS_NPC(vch) ? cmp_fn_string(vch->short_descr, arg) : FALSE;
+	return IS_NPC(vch) ? cmp_fn_string(vch->short_descr, arg) : false;
 }
 
 /***************************************************************************
@@ -575,7 +575,7 @@ bool char_cmp_long(CHAR_DATA *vch, char *arg, BUFFER *buf)
 {
 	if (buf != NULL)
 		add_buf(buf, "search by a mob's long description.\n\r");
-	return IS_NPC(vch) ? cmp_fn_string(vch->long_descr, arg) : FALSE;
+	return IS_NPC(vch) ? cmp_fn_string(vch->long_descr, arg) : false;
 }
 
 /***************************************************************************
@@ -602,7 +602,7 @@ bool char_cmp_race(CHAR_DATA *vch, char *arg, BUFFER *buf)
 		if (col % 3 != 0)
 			add_buf(buf, "\n\r");
 
-		return FALSE;
+		return false;
 	}
 
 	while (is_space(*arg) || arg[0] == '=')
@@ -634,7 +634,7 @@ bool char_cmp_sex(CHAR_DATA *vch, char *arg, BUFFER *buf)
 		if (col % 3 != 0)
 			add_buf(buf, "\n\r");
 
-		return FALSE;
+		return false;
 	}
 
 	while (is_space(*arg) || arg[0] == '=')
@@ -1218,7 +1218,7 @@ bool mob_idx_cmp_race(MOB_INDEX_DATA *vch, char *arg, BUFFER *buf)
 		if (col % 3 != 0)
 			add_buf(buf, "\n\r");
 
-		return FALSE;
+		return false;
 	}
 
 	while (is_space(*arg) || arg[0] == '=')
@@ -1250,7 +1250,7 @@ bool mob_idx_cmp_sex(MOB_INDEX_DATA *vch, char *arg, BUFFER *buf)
 		if (col % 3 != 0)
 			add_buf(buf, "\n\r");
 
-		return FALSE;
+		return false;
 	}
 
 
@@ -1361,7 +1361,7 @@ bool cmp_fn_number(long val, char *arg)
 			return val == parse_int(arg);
 	}
 
-	return FALSE;
+	return false;
 }
 
 
@@ -1402,7 +1402,7 @@ bool cmp_fn_flag(long				bit,
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 /***************************************************************************
@@ -1442,5 +1442,5 @@ bool cmp_fn_index(long				bit,
 		}
 	}
 
-	return FALSE;
+	return false;
 }

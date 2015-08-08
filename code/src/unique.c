@@ -197,7 +197,7 @@ void do_cuo(CHAR_DATA *ch, char *argument)
 			num_affects++;
 
 		for (iter = 0; iter < num_affects; iter++)
-			apply_random_affect(obj, TRUE);
+			apply_random_affect(obj, true);
 
 		chance = number_percent();
 
@@ -210,7 +210,7 @@ void do_cuo(CHAR_DATA *ch, char *argument)
 				num_affects++;
 
 			for (iter = 0; iter < num_affects; iter++)
-				apply_random_affect(obj, FALSE);
+				apply_random_affect(obj, false);
 		}
 
 		/*Lets give the obj to the mob*/
@@ -555,7 +555,7 @@ static void format_obj_armor(OBJ_DATA *obj)
 	int wear_loc;
 	bool set;
 
-	set = FALSE;
+	set = false;
 	while (!set) {
 		wear_loc = number_range(0, MAX_WEAR);
 
@@ -563,78 +563,78 @@ static void format_obj_armor(OBJ_DATA *obj)
 		case WEAR_LIGHT:
 			obj->item_type = ITEM_LIGHT;
 			obj->value[2] = -1;
-			set = TRUE;
+			set = true;
 			break;
 		case WEAR_FINGER_L:
 		case WEAR_FINGER_R:
 		case WEAR_FINGER_L2:
 		case WEAR_FINGER_R2:
 			SET_BIT(obj->wear_flags, ITEM_WEAR_FINGER);
-			set = TRUE;
+			set = true;
 			break;
 		case WEAR_NECK_1:
 		case WEAR_NECK_2:
 			SET_BIT(obj->wear_flags, ITEM_WEAR_NECK);
-			set = TRUE;
+			set = true;
 			break;
 		case WEAR_BODY:
 			SET_BIT(obj->wear_flags, ITEM_WEAR_BODY);
-			set = TRUE;
+			set = true;
 			break;
 		case WEAR_HEAD:
 			SET_BIT(obj->wear_flags, ITEM_WEAR_HEAD);
-			set = TRUE;
+			set = true;
 			break;
 		case WEAR_FACE:
 			SET_BIT(obj->wear_flags, ITEM_WEAR_FACE);
-			set = TRUE;
+			set = true;
 			break;
 		case WEAR_TATTOO:
 			SET_BIT(obj->wear_flags, ITEM_WEAR_TATTOO);
-			set = TRUE;
+			set = true;
 			break;
 		case WEAR_EAR_L:
 		case WEAR_EAR_R:
 			SET_BIT(obj->wear_flags, ITEM_WEAR_EAR);
-			set = TRUE;
+			set = true;
 			break;
 		case WEAR_LEGS:
 			SET_BIT(obj->wear_flags, ITEM_WEAR_LEGS);
-			set = TRUE;
+			set = true;
 			break;
 		case WEAR_FEET:
 			SET_BIT(obj->wear_flags, ITEM_WEAR_FEET);
-			set = TRUE;
+			set = true;
 			break;
 		case WEAR_HANDS:
 			SET_BIT(obj->wear_flags, ITEM_WEAR_HANDS);
-			set = TRUE;
+			set = true;
 			break;
 		case WEAR_ARMS:
 			SET_BIT(obj->wear_flags, ITEM_WEAR_ARMS);
-			set = TRUE;
+			set = true;
 			break;
 		case WEAR_SHIELD:
 			SET_BIT(obj->wear_flags, ITEM_WEAR_SHIELD);
-			set = TRUE;
+			set = true;
 			break;
 		case WEAR_ABOUT:
 			SET_BIT(obj->wear_flags, ITEM_WEAR_ABOUT);
-			set = TRUE;
+			set = true;
 			break;
 		case WEAR_WAIST:
 			SET_BIT(obj->wear_flags, ITEM_WEAR_WAIST);
-			set = TRUE;
+			set = true;
 			break;
 		case WEAR_WRIST_R:
 		case WEAR_WRIST_L:
 			SET_BIT(obj->wear_flags, ITEM_WEAR_WRIST);
-			set = TRUE;
+			set = true;
 			break;
 		case WEAR_FLOAT:
 			SET_BIT(obj->wear_flags, ITEM_WEAR_FLOAT);
 			wear_loc = WEAR_FLOAT;
-			set = TRUE;
+			set = true;
 			break;
 		}
 

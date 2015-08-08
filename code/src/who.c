@@ -109,7 +109,7 @@ void do_whois(CHAR_DATA *ch, char *argument)
 	DESCRIPTOR_DATA *d;
 	BUFFER *output;
 	char arg[MIL];
-	bool found = FALSE;
+	bool found = false;
 
 	one_argument(argument, arg);
 
@@ -133,7 +133,7 @@ void do_whois(CHAR_DATA *ch, char *argument)
 			continue;
 
 		if (is_whois_target(wch, arg)) {
-			found = TRUE;
+			found = true;
 
 			add_buf(output, who_string(wch));
 		}
@@ -165,19 +165,19 @@ void do_who(CHAR_DATA *ch, char *argument)
 	int nMatch;
 	bool restricted_classes[MAX_CLASS];
 	bool restricted_races[MAX_PC_RACE];
-	bool class_restrict = FALSE;
-	bool race_restrict = FALSE;
-	bool immortal_restrict = FALSE;
+	bool class_restrict = false;
+	bool race_restrict = false;
+	bool immortal_restrict = false;
 
 
 	output = new_buf();
 	iLevelLower = 0;
 	iLevelUpper = MAX_LEVEL;
 	for (iClass = 0; iClass < MAX_CLASS; iClass++)
-		restricted_classes[iClass] = FALSE;
+		restricted_classes[iClass] = false;
 
 	for (iRace = 0; iRace < MAX_PC_RACE; iRace++)
-		restricted_races[iRace] = FALSE;
+		restricted_races[iRace] = false;
 
 	/* parse the arguments */
 	nNumber = 0;
@@ -202,7 +202,7 @@ void do_who(CHAR_DATA *ch, char *argument)
 			}
 		} else {
 			if (arg[0] == 'i')
-				immortal_restrict = TRUE;
+				immortal_restrict = true;
 			else
 				iClass = class_lookup(arg);
 			if (iClass == -1) {
@@ -212,12 +212,12 @@ void do_who(CHAR_DATA *ch, char *argument)
 					send_to_char("That's not a valid race or class.\n\r", ch);
 					return;
 				} else {
-					race_restrict = TRUE;
-					restricted_races[iRace] = TRUE;
+					race_restrict = true;
+					restricted_races[iRace] = true;
 				}
 			} else {
-				class_restrict = TRUE;
-				restricted_classes[iClass] = TRUE;
+				class_restrict = true;
+				restricted_classes[iClass] = true;
 			}
 		}
 	}
@@ -320,17 +320,17 @@ void do_ewho(CHAR_DATA *ch, char *argument)
 	int nMatch;
 	bool restricted_classes[MAX_CLASS];
 	bool restricted_races[MAX_PC_RACE];
-	bool class_restrict = FALSE;
-	bool race_restrict = FALSE;
-	bool immortal_restrict = FALSE;
+	bool class_restrict = false;
+	bool race_restrict = false;
+	bool immortal_restrict = false;
 
 	iLevelLower = 0;
 	iLevelUpper = MAX_LEVEL;
 	for (iClass = 0; iClass < MAX_CLASS; iClass++)
-		restricted_classes[iClass] = FALSE;
+		restricted_classes[iClass] = false;
 
 	for (iRace = 0; iRace < MAX_PC_RACE; iRace++)
-		restricted_races[iRace] = FALSE;
+		restricted_races[iRace] = false;
 
 	/* parse the arguments */
 	nNumber = 0;
@@ -356,13 +356,13 @@ void do_ewho(CHAR_DATA *ch, char *argument)
 		} else {
 			/* look for classes to turn on */
 			if (arg[0] == 'i') {
-				immortal_restrict = TRUE;
+				immortal_restrict = true;
 			} else if ((iClass = class_lookup(arg)) > -1 && iClass < MAX_CLASS) {
-				class_restrict = TRUE;
-				restricted_classes[iClass] = TRUE;
+				class_restrict = true;
+				restricted_classes[iClass] = true;
 			} else if ((iRace = race_lookup(arg)) != 0 && iRace <= MAX_PC_RACE) {
-				race_restrict = TRUE;
-				restricted_races[iRace] = TRUE;
+				race_restrict = true;
+				restricted_races[iRace] = true;
 			} else {
 				send_to_char("That's not a valid race or class.\n\r", ch);
 				return;
@@ -436,7 +436,7 @@ void do_where(CHAR_DATA *ch, char *argument)
 
 	if (arg[0] == '\0') {
 		send_to_char("Players in your area```8:``\n\r", ch);
-		found = FALSE;
+		found = false;
 		for (d = globalSystemState.connection_head; d; d = d->next) {
 			if (d->connected == CON_PLAYING
 			    && (victim = d->character) != NULL
@@ -446,7 +446,7 @@ void do_where(CHAR_DATA *ch, char *argument)
 				|| !room_is_private(victim->in_room))
 			    && victim->in_room->area == ch->in_room->area
 			    && can_see(ch, victim)) {
-				found = TRUE;
+				found = true;
 				printf_to_char(ch, "%-28s %s``\n\r", victim->name, victim->in_room->name);
 			}
 		}
@@ -454,13 +454,13 @@ void do_where(CHAR_DATA *ch, char *argument)
 		if (!found)
 			send_to_char("None.\n\r", ch);
 	} else {
-		found = FALSE;
+		found = false;
 		for (victim = char_list; victim != NULL; victim = victim->next) {
 			if (victim->in_room != NULL
 			    && victim->in_room->area == ch->in_room->area
 			    && can_see(ch, victim)
 			    && is_name(arg, victim->name)) {
-				found = TRUE;
+				found = true;
 				printf_to_char(ch, "%-28s %s``\n\r", PERS(victim, ch), victim->in_room->name);
 				break;
 			}

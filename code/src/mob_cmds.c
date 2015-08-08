@@ -343,7 +343,7 @@ void do_mpasound(CHAR_DATA *ch, char *argument)
 		    && pexit->u1.to_room != NULL
 		    && pexit->u1.to_room != was_in_room) {
 			ch->in_room = pexit->u1.to_room;
-			act_new(argument, ch, NULL, NULL, TO_ROOM, POS_RESTING, FALSE);
+			act_new(argument, ch, NULL, NULL, TO_ROOM, POS_RESTING, false);
 		}
 	}
 
@@ -602,12 +602,12 @@ void do_mpoload(CHAR_DATA *ch, char *argument)
 	 * 'R'     - load to room
 	 * 'W'     - load to mobile and force wear
 	 */
-	to_room = FALSE;
-	to_wear = FALSE;
+	to_room = false;
+	to_wear = false;
 	if (arg[0] == 'R' || arg[0] == 'r')
-		to_room = TRUE;
+		to_room = true;
 	else if (arg[0] == 'W' || arg[0] == 'w')
-		to_wear = TRUE;
+		to_wear = true;
 
 	if ((obj_idx = get_obj_index(vnum)) == NULL) {
 		bug_long("mpoload - bad vnum arg from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
@@ -619,7 +619,7 @@ void do_mpoload(CHAR_DATA *ch, char *argument)
 	    && CAN_WEAR(obj, ITEM_TAKE)) {
 		obj_to_char(obj, ch);
 		if (to_wear)
-			wear_obj(ch, obj, TRUE);
+			wear_obj(ch, obj, true);
 	} else {
 		obj_to_room(obj, ch->in_room);
 	}
@@ -651,7 +651,7 @@ void do_mppurge(CHAR_DATA *ch, char *argument)
 			vnext = victim->next_in_room;
 			if (IS_NPC(victim) && victim != ch
 			    && !IS_SET(victim->act, ACT_NOPURGE))
-				extract_char(victim, TRUE);
+				extract_char(victim, true);
 		}
 
 		for (obj = ch->in_room->contents; obj != NULL; obj = obj_next) {
@@ -675,7 +675,7 @@ void do_mppurge(CHAR_DATA *ch, char *argument)
 		bug_long("Mppurge - Purging a PC from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
-	extract_char(victim, TRUE);
+	extract_char(victim, true);
 	return;
 }
 
@@ -705,7 +705,7 @@ void do_mpgoto(CHAR_DATA *ch, char *argument)
 	}
 
 	if (ch->fighting != NULL)
-		stop_fighting(ch, TRUE);
+		stop_fighting(ch, true);
 
 	char_from_room(ch);
 	char_to_room(ch, location);
@@ -817,7 +817,7 @@ void do_mptransfer(CHAR_DATA *ch, char *argument)
 		return;
 
 	if (victim->fighting != NULL)
-		stop_fighting(victim, TRUE);
+		stop_fighting(victim, true);
 	char_from_room(victim);
 	char_to_room(victim, location);
 	do_look(victim, "auto");
@@ -1044,7 +1044,7 @@ void do_mpdamage(CHAR_DATA *ch, char *argument)
 	     min[MIL],
 	     max[MIL];
 	int low, high;
-	bool fAll = FALSE, fKill = FALSE;
+	bool fAll = false, fKill = false;
 
 	argument = one_argument(argument, target);
 	argument = one_argument(argument, min);
@@ -1055,7 +1055,7 @@ void do_mpdamage(CHAR_DATA *ch, char *argument)
 		return;
 	}
 	if (!str_cmp(target, "all"))
-		fAll = TRUE;
+		fAll = true;
 	else if ((victim = get_char_room(ch, target)) == NULL)
 		return;
 
@@ -1079,7 +1079,7 @@ void do_mpdamage(CHAR_DATA *ch, char *argument)
 	 */
 
 	if (target[0] != '\0')
-		fKill = TRUE;
+		fKill = true;
 	if (fAll) {
 		for (victim = ch->in_room->people; victim; victim = victim_next) {
 			victim_next = victim->next_in_room;
@@ -1087,14 +1087,14 @@ void do_mpdamage(CHAR_DATA *ch, char *argument)
 				damage(victim, victim,
 				       fKill ?
 				       number_range(low, high) : UMIN(victim->hit, number_range(low, high)),
-				       TYPE_UNDEFINED, DAM_NONE, FALSE);
+				       TYPE_UNDEFINED, DAM_NONE, false);
 			}
 		}
 	} else {
 		damage(victim, victim,
 		       fKill ?
 		       number_range(low, high) : UMIN(victim->hit, number_range(low, high)),
-		       TYPE_UNDEFINED, DAM_NONE, FALSE);
+		       TYPE_UNDEFINED, DAM_NONE, false);
 	}
 	return;
 }
@@ -1230,9 +1230,9 @@ void do_mpflee(CHAR_DATA *ch, char *argument)
 	}
 
 	if (door >= 0) {
-		stop_fighting(ch, TRUE);
+		stop_fighting(ch, true);
 		act("$n has fled!", ch, NULL, NULL, TO_ROOM);
-		move_char(ch, door, FALSE);
+		move_char(ch, door, false);
 		if (ch->in_room != was_in)
 			return;
 	}
@@ -1286,7 +1286,7 @@ void do_mpremove(CHAR_DATA *ch, char *argument)
 	CHAR_DATA *victim;
 	OBJ_DATA *obj, *obj_next;
 	long vnum = 0;
-	bool fAll = FALSE;
+	bool fAll = false;
 	char arg[MIL];
 
 	argument = one_argument(argument, arg);
@@ -1295,7 +1295,7 @@ void do_mpremove(CHAR_DATA *ch, char *argument)
 
 	one_argument(argument, arg);
 	if (!str_cmp(arg, "all")) {
-		fAll = TRUE;
+		fAll = true;
 	} else if (!is_number(arg)) {
 		bug_long("MpRemove: Invalid object from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;

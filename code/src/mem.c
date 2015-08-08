@@ -99,7 +99,7 @@ AREA_DATA *new_area(void)
 	pArea->max_vnum = 0;
 	pArea->age = 0;
 	pArea->nplayer = 0;
-	pArea->empty = TRUE;
+	pArea->empty = true;
 
 	pArea->vnum = top_area - 1;
 
@@ -300,7 +300,7 @@ OBJ_INDEX_DATA *new_obj_index(void)
 	for (value = 0; value < 5; value++)             /* 5 - ROM */
 		obj->value[value] = 0;
 
-	obj->new_format = TRUE;    /* ROM */
+	obj->new_format = true;    /* ROM */
 
 	return obj;
 }
@@ -383,7 +383,7 @@ MOB_INDEX_DATA *new_mob_index(void)
 	mob->default_pos = POS_STANDING;
 	mob->wealth = 0;
 
-	mob->new_format = TRUE;         /* ROM */
+	mob->new_format = true;         /* ROM */
 
 	return mob;
 }

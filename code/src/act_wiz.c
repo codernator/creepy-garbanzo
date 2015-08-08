@@ -127,10 +127,10 @@ void do_order(CHAR_DATA *ch, char *argument)
 	}
 
 	if (!str_cmp(arg, "all")) {
-		fAll = TRUE;
+		fAll = true;
 		victim = NULL;
 	} else {
-		fAll = FALSE;
+		fAll = false;
 		if ((victim = get_char_room(ch, arg)) == NULL) {
 			send_to_char("They aren't here.\n\r", ch);
 			return;
@@ -148,14 +148,14 @@ void do_order(CHAR_DATA *ch, char *argument)
 		}
 	}
 
-	found = FALSE;
+	found = false;
 	for (och = ch->in_room->people; och != NULL; och = och_next) {
 		och_next = och->next_in_room;
 
 		if (IS_AFFECTED(och, AFF_CHARM)
 		    && och->master == ch
 		    && (fAll || och == victim)) {
-			found = TRUE;
+			found = true;
 
 			if (!str_infix(arg2, "rem")) {
 				send_to_char("One at a time...\n\r", ch);
@@ -187,7 +187,7 @@ void do_ignore(CHAR_DATA *ch, char *argument)
 	char arg[MIL], buf[MSL];
 	DESCRIPTOR_DATA *d;
 	int pos;
-	bool found = FALSE;
+	bool found = false;
 
 	if (ch->desc == NULL)
 		rch = ch;
@@ -240,7 +240,7 @@ void do_ignore(CHAR_DATA *ch, char *argument)
 			continue;
 
 		if (!str_cmp(arg, wch->name)) {
-			found = TRUE;
+			found = true;
 			if (wch == ch) {
 				send_to_char("You try to ignore yourself .. and fail.\n\r", ch);
 				return;
@@ -276,7 +276,7 @@ void do_unignore(CHAR_DATA *ch, char *argument)
 	CHAR_DATA *rch;
 	char arg[MIL], buf[MSL];
 	int pos;
-	bool found = FALSE;
+	bool found = false;
 
 	if (ch->desc == NULL)
 		rch = ch;
@@ -319,7 +319,7 @@ void do_unignore(CHAR_DATA *ch, char *argument)
 			send_to_char("Ignore removed.\n\r", ch);
 			free_string(rch->pcdata->ignore[pos]);
 			rch->pcdata->ignore[pos] = NULL;
-			found = TRUE;
+			found = true;
 		}
 	}
 
@@ -353,7 +353,7 @@ void do_delete(CHAR_DATA *ch, char *argument)
 	if (ch->pcdata->confirm_delete) {
 		if (argument[0] != '\0') {
 			send_to_char("Delete status removed.\n\r", ch);
-			ch->pcdata->confirm_delete = FALSE;
+			ch->pcdata->confirm_delete = false;
 			(void)snprintf(log_buf, MAX_NAME_LENGTH + 32, "DELETE: %s just couldn't do it...", ch->name);
 			log_string(log_buf);
 
@@ -387,7 +387,7 @@ void do_delete(CHAR_DATA *ch, char *argument)
 	send_to_char("```!WARNING``: this command is irreversible.\n\r", ch);
 	send_to_char("Typing delete with an argument will undo delete status.\n\r", ch);
 
-	ch->pcdata->confirm_delete = TRUE;
+	ch->pcdata->confirm_delete = true;
 
 	wiznet("$N is contemplating deletion.", ch, NULL, 0, 0, get_trust(ch));
 	(void)snprintf(log_buf, MAX_NAME_LENGTH + 64, "DELETE: %s .. %s's thinking about it ..", ch->name, ch->sex == 0 ? "It" : ch->sex == 1 ? "He" : "She");
@@ -488,7 +488,7 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
 		wiznet("`!Killing`7: $N `1(`7Level 1 cleanup`1)`7", ch, NULL, 0, 0, 0);
 		unlink(strsave);
 	}
-	extract_char(ch, TRUE);
+	extract_char(ch, true);
 	if (d != NULL)
 		close_socket(d);
 
@@ -499,7 +499,7 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
 		d_next = d->next;
 		tch = d->original ? d->original : d->character;
 		if (tch && tch->id == id) {
-			extract_char(tch, TRUE);
+			extract_char(tch, true);
 			close_socket(d);
 		}
 	}
@@ -620,7 +620,7 @@ void wiznet(char *string, /*@null@*/ CHAR_DATA *ch, /*@null@*/ OBJ_DATA *obj, lo
 			if (IS_SET(d->character->pcdata->wiznet, WIZ_PREFIX))
 				send_to_char("--> ", d->character);
 
-			act_new(string, d->character, obj, ch, TO_CHAR, POS_DEAD, FALSE);
+			act_new(string, d->character, obj, ch, TO_CHAR, POS_DEAD, false);
 		}
 	}
 
@@ -732,7 +732,7 @@ void impnet(char *string, CHAR_DATA *ch, OBJ_DATA *obj, long flag, long flag_ski
 			if (IS_SET(d->character->pcdata->impnet, IMN_PREFIX))
 				send_to_char("--> ", d->character);
 
-			act_new(string, d->character, obj, ch, TO_CHAR, POS_DEAD, FALSE);
+			act_new(string, d->character, obj, ch, TO_CHAR, POS_DEAD, false);
 		}
 	}
 
@@ -1025,7 +1025,7 @@ void do_deny(CHAR_DATA *ch, char *argument)
 
 	send_to_char("OK.\n\r", ch);
 	save_char_obj(victim);
-	stop_fighting(victim, TRUE);
+	stop_fighting(victim, true);
 	do_quit(victim, "");
 	return;
 }
@@ -1560,7 +1560,7 @@ void do_transfer(CHAR_DATA *ch, char *argument)
 		REMOVE_BIT(victim->act, PLR_BATTLE);
 
 	if (victim->fighting != NULL)
-		stop_fighting(victim, TRUE);
+		stop_fighting(victim, true);
 	act("$n disappears in a mushroom cloud.", victim, NULL, NULL, TO_ROOM);
 	char_from_room(victim);
 	char_to_room(victim, location);
@@ -1639,7 +1639,7 @@ void do_tarnsfer(CHAR_DATA *ch, char *argument)
 	}
 
 	if (victim->fighting != NULL)
-		stop_fighting(victim, TRUE);
+		stop_fighting(victim, true);
 	act("$n disappears in a mushroom cloud.", victim, NULL, NULL, TO_ROOM);
 	char_from_room(victim);
 	char_to_room(victim, location);
@@ -1681,7 +1681,7 @@ void do_goto(CHAR_DATA *ch, char *argument)
 	}
 
 	if (ch->fighting != NULL)
-		stop_fighting(ch, TRUE);
+		stop_fighting(ch, true);
 
 	for (rch = ch->in_room->people; rch != NULL; rch = rch->next_in_room) {
 		if (get_trust(rch) >= ch->invis_level) {
@@ -1732,7 +1732,7 @@ void do_violate(CHAR_DATA *ch, char *argument)
 	}
 
 	if (ch->fighting != NULL)
-		stop_fighting(ch, TRUE);
+		stop_fighting(ch, true);
 
 	for (rch = ch->in_room->people; rch != NULL; rch = rch->next_in_room) {
 		if (get_trust(rch) >= ch->invis_level) {
@@ -1784,7 +1784,7 @@ void do_reboot(CHAR_DATA *ch, char *argument)
 	do_force(ch, "all save");
 	if (ch)
 		do_save(ch, "");
-	globalSystemState.merc_down = TRUE;
+	globalSystemState.merc_down = true;
 
 	for (d = globalSystemState.connection_head; d != NULL; d = d_next) {
 		d_next = d->next;
@@ -1818,7 +1818,7 @@ void do_shutdown(CHAR_DATA *ch, char *argument)
 
 	do_force(ch, "all save");
 	do_save(ch, "");
-	globalSystemState.merc_down = TRUE;
+	globalSystemState.merc_down = true;
 
 	for (d = globalSystemState.connection_head; d != NULL; d = d_next) {
 		d_next = d->next;
@@ -2026,9 +2026,9 @@ bool obj_check(CHAR_DATA *ch, OBJ_DATA *obj)
 	    || (IS_TRUSTED(ch, DEMI) && obj->level <= 10 && obj->cost <= 500)
 	    || (IS_TRUSTED(ch, ANGEL) && obj->level <= 5 && obj->cost <= 250)
 	    || (IS_TRUSTED(ch, AVATAR) && obj->level == 0 && obj->cost <= 100))
-		return TRUE;
+		return true;
 	else
-		return FALSE;
+		return false;
 }
 
 /* for clone, to insure that cloning goes many levels deep */
@@ -2339,7 +2339,7 @@ void do_purge(CHAR_DATA *ch, char *argument)
 			if (IS_NPC(victim)
 			    && !IS_SET(victim->act, ACT_NOPURGE)
 			    && victim != ch)
-				extract_char(victim, TRUE);
+				extract_char(victim, true);
 		}
 
 		for (obj = ch->in_room->contents; obj != NULL; obj = obj_next) {
@@ -2378,7 +2378,7 @@ void do_purge(CHAR_DATA *ch, char *argument)
 			save_char_obj(victim);
 
 		d = victim->desc;
-		extract_char(victim, TRUE);
+		extract_char(victim, true);
 		if (d != NULL)
 			close_socket(d);
 
@@ -2386,7 +2386,7 @@ void do_purge(CHAR_DATA *ch, char *argument)
 	}
 
 	act("$n purges $N.", ch, NULL, victim, TO_NOTVICT);
-	extract_char(victim, TRUE);
+	extract_char(victim, true);
 	return;
 }
 
@@ -2822,10 +2822,10 @@ void do_log(CHAR_DATA *ch, char *argument)
 
 	if (!str_cmp(arg, "all")) {
 		if (log_all) {
-			log_all = FALSE;
+			log_all = false;
 			send_to_char("Log ALL off.\n\r", ch);
 		} else {
-			log_all = TRUE;
+			log_all = true;
 			send_to_char("Log ALL on.\n\r", ch);
 		}
 		return;
@@ -2910,7 +2910,7 @@ void do_peace(CHAR_DATA *ch, char *argument)
 
 	for (rch = ch->in_room->people; rch != NULL; rch = rch->next_in_room) {
 		if (rch->fighting != NULL)
-			stop_fighting(rch, TRUE);
+			stop_fighting(rch, true);
 
 		if (IS_NPC(rch) && IS_SET(rch->act, ACT_AGGRESSIVE))
 			REMOVE_BIT(rch->act, ACT_AGGRESSIVE);
@@ -3765,14 +3765,14 @@ void do_olevel(CHAR_DATA *ch, char *argument)
 	}
 	level = parse_int(arg);
 	buffer = new_buf();
-	found = FALSE;
+	found = false;
 	nMatch = 0;
 
 	for (vnum = 0; nMatch < top_obj_index; vnum++) {
 		if ((pObjIndex = get_obj_index(vnum)) != NULL)
 			nMatch++;
 		if (level == pObjIndex->level) {
-			found = TRUE;
+			found = true;
 			sprintf(buf, "`7[`O%5ld`7] `&%s`7\n\r", pObjIndex->vnum, pObjIndex->short_descr);
 			add_buf(buffer, buf);
 		}
@@ -3810,14 +3810,14 @@ void do_mlevel(CHAR_DATA *ch, char *argument)
 	}
 	level = parse_int(arg);
 	buffer = new_buf();
-	found = FALSE;
+	found = false;
 	nMatch = 0;
 
 	for (vnum = 0; nMatch < top_mob_index; vnum++) {
 		if ((pMobIndex = get_mob_index(vnum)) != NULL)
 			nMatch++;
 		if (level == pMobIndex->level) {
-			found = TRUE;
+			found = true;
 			sprintf(buf, "`7[`O%5ld`7] `&%s`7\n\r", pMobIndex->vnum, pMobIndex->short_descr);
 			add_buf(buffer, buf);
 		}
@@ -4017,7 +4017,7 @@ void do_rdesc(CHAR_DATA *ch, char *argument)
 
 		if (argument[0] == '-') {
 			int len, buf_len;
-			bool found = FALSE;
+			bool found = false;
 
 			if (location->description == NULL || location->description[0] == '\0') {
 				send_to_char("No lines left to remove.\n\r", ch);
@@ -4031,7 +4031,7 @@ void do_rdesc(CHAR_DATA *ch, char *argument)
 					if (!found) {            /* back it up */
 						if (len > 0)
 							len--;
-						found = TRUE;
+						found = true;
 					} else {
 						buf[len + 1] = '\0';
 						free_string(location->description);
@@ -4177,7 +4177,7 @@ void fry_char(CHAR_DATA *ch, char *argument)
 
 	char_from_room(ch);
 	char_to_room(ch, get_room_index(ROOM_VNUM_LIMBO));
-	extract_char(ch, TRUE);
+	extract_char(ch, true);
 
 	for (obj = get_room_index(ROOM_VNUM_LIMBO)->contents; obj != NULL; obj = obj_next) {
 		obj_next = obj->next_content;
@@ -4263,7 +4263,7 @@ void do_wpeace(CHAR_DATA *ch, char *argument)
 			continue;
 
 		if (fch->fighting != NULL) {
-			stop_fighting(fch, TRUE);
+			stop_fighting(fch, true);
 			printf_to_char(fch, "%s has declared world peace.\n\r",
 				       capitalize(ch->name));
 		}

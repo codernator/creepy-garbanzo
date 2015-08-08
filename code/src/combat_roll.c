@@ -42,7 +42,7 @@ void fill_combat_roll(COMBAT_ROLL_BOX *crb, bool defense, int bonus_die_skill)
 			roll = number_range(1, crb->die_type);
 			if (roll <= bonus_die_skill && roll > crb->rolls[crb->significant_dice_count - 1]) {
 				crb->rolls[crb->significant_dice_count - 1] = roll;
-				crb->bonus_die_success = TRUE;
+				crb->bonus_die_success = true;
 				break;
 			}
 		}
