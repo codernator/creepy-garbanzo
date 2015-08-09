@@ -115,13 +115,8 @@ DESCRIPTOR_DATA *new_descriptor(void)
 	VALIDATE(d);
 
 	d->connected = CON_GET_ANSI;
-	d->showstr_head = NULL;
-	d->showstr_point = NULL;
 	d->outsize = 2000;
 	d->outbuf = alloc_mem((unsigned int)d->outsize);
-	d->ed_data = NULL;
-	d->ed_string = NULL;
-	d->editor = 0;
 
 	return d;
 }

@@ -228,11 +228,11 @@ struct nickname_data {
 /* Descriptor (channel) structure. */
 struct descriptor_data {
     DESCRIPTOR_DATA *next;
-    DESCRIPTOR_DATA *previous;
     DESCRIPTOR_DATA *snoop_by;
     CHAR_DATA *character;
     CHAR_DATA *original;
     bool valid;
+    bool pending_delete;
     char *host;
     SOCKET descriptor;
     int connected;
@@ -255,7 +255,6 @@ struct descriptor_data {
     int auth_state;
     char abuf[256];
     int auth_fd;
-    char *user;
     int atimes;
     void *ed_data;
     char **ed_string;
@@ -2515,6 +2514,12 @@ void log_bug(const char *fmt, ...);
 
 /* Needs a home */
 char *capitalize(const char *str);
+
+/* iterator.c */
+DESCRIPTOR_DATA *descriptor_iterator(DESCRIPTOR_DATA *current);
+DESCRIPTOR_DATA *descriptor_connected_iterator(DESCRIPTOR_DATA *current);
+
+
 
 #endif  /* __MERC_H */
 

@@ -19,7 +19,7 @@ _OBJ=act_comm.o act_combat.o act_enter.o act_info.o act_move.o act_obj.o act_wiz
      effects.o enchant.o \
      fight.o find.o flags.o for.o \
      handler.o healer.o help.o \
-     imprint.o interp.o \
+     imprint.o interp.o iterator.o \
      libfile.o logging.o lookup.o \
      magic.o mem.o mob_cmds.o mob_prog.o mobs.o \
      nanny.o nickname.o note.o \
