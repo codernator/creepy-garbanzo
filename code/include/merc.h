@@ -129,7 +129,7 @@ typedef void DO_FUN(/*@partial@*/CHAR_DATA * ch, char *argument);
 #define HERO                    LEVEL_HERO
 
 struct system_state {
-    DESCRIPTOR_DATA *connection_head;               /* All open descriptors */
+    DESCRIPTOR_DATA *descriptor_head;               /* All open descriptors */
     OBJ_DATA *object_head;                          /* All objects in the game. */
     bool wizlock;                                   /* Game is wizlocked. */
     bool newlock;                                   /* Game is newlocked. */
@@ -2517,7 +2517,7 @@ char *capitalize(const char *str);
 
 /* iterator.c */
 DESCRIPTOR_DATA *descriptor_iterator(DESCRIPTOR_DATA *current);
-DESCRIPTOR_DATA *descriptor_connected_iterator(DESCRIPTOR_DATA *current);
+DESCRIPTOR_DATA *descriptor_playing_iterator(DESCRIPTOR_DATA *current);
 
 
 

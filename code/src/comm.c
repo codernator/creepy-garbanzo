@@ -173,7 +173,7 @@ void game_loop(int control)
 		FD_SET(control, &in_set);
 		maxdesc = control;
 
-		for (d = globalSystemState.connection_head; d; d = d->next) {
+		for (d = globalSystemState.descriptor_head; d; d = d->next) {
 			maxdesc = UMAX(maxdesc, (int)d->descriptor);
 			FD_SET(d->descriptor, &in_set);
 			FD_SET(d->descriptor, &out_set);
@@ -195,7 +195,7 @@ void game_loop(int control)
 		 * Kick out the freaky folks.
 		 * Kyndig: Get rid of idlers as well
 		 */
-		for (d = globalSystemState.connection_head; d != NULL; d = d_next) {
+		for (d = globalSystemState.descriptor_head; d != NULL; d = d_next) {
 			d_next = d->next;
 
 			d->idle++;
@@ -220,7 +220,7 @@ void game_loop(int control)
 		/*
 		 * Process input.
 		 */
-		for (d = globalSystemState.connection_head; d != NULL; d = d_next) {
+		for (d = globalSystemState.descriptor_head; d != NULL; d = d_next) {
 			d_next = d->next;
 			d->fcommand = false;
 
@@ -286,7 +286,7 @@ void game_loop(int control)
 		/*
 		 * Output.
 		 */
-		for (d = globalSystemState.connection_head; d != NULL; d = d_next) {
+		for (d = globalSystemState.descriptor_head; d != NULL; d = d_next) {
 			d_next = d->next;
 
 			if ((d->fcommand || d->outtop > 0)
@@ -356,7 +356,7 @@ void close_socket(DESCRIPTOR_DATA *dclose)
 	{
 		DESCRIPTOR_DATA *d;
 
-		for (d = globalSystemState.connection_head; d != NULL; d = d->next)
+		for (d = globalSystemState.descriptor_head; d != NULL; d = d->next)
 			if (d->snoop_by == dclose)
 				d->snoop_by = NULL;
 	}
@@ -377,12 +377,12 @@ void close_socket(DESCRIPTOR_DATA *dclose)
 	if (d_next == dclose)
 		d_next = d_next->next;
 
-	if (dclose == globalSystemState.connection_head) {
-		globalSystemState.connection_head = globalSystemState.connection_head->next;
+	if (dclose == globalSystemState.descriptor_head) {
+		globalSystemState.descriptor_head = globalSystemState.descriptor_head->next;
 	} else {
 		DESCRIPTOR_DATA *d;
 
-		for (d = globalSystemState.connection_head; d && d->next != dclose; d = d->next)
+		for (d = globalSystemState.descriptor_head; d && d->next != dclose; d = d->next)
 			;
 
 		if (d != NULL)
@@ -1142,7 +1142,7 @@ int espBroadcastAndCheck(CHAR_DATA *ch, char *CanSeeAct, char *CanTSeeAct)
 	DESCRIPTOR_DATA *d;
 	int esper = 0;
 
-	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
+	for (d = globalSystemState.descriptor_head; d != NULL; d = d->next) {
 		CHAR_DATA *wch;
 
 		if (d->connected != CON_PLAYING)
@@ -1468,7 +1468,7 @@ void auto_shutdown()
 	if (!fp) {
 		perror("do_copyover:fopen");
 
-		for (d = globalSystemState.connection_head; d != NULL; d = d_next) {
+		for (d = globalSystemState.descriptor_head; d != NULL; d = d_next) {
 			if (d->character) {
 				do_save(d->character, "");
 				send_to_char("Ok I tried but we're crashing anyway sorry!\n\r", d->character);
@@ -1504,7 +1504,7 @@ void auto_shutdown()
 
 	sprintf(buf, "\n\rYour mud is crashing attempting a copyover now!\n\r");
 
-	for (d = globalSystemState.connection_head; d; d = d_next) {
+	for (d = globalSystemState.descriptor_head; d; d = d_next) {
 		CHAR_DATA *och = CH(d);
 		d_next = d->next; /* We delete from the list , so need to save this */
 
@@ -1559,7 +1559,7 @@ bool copyover()
 	sprintf(buf, "\n\r Preparing for a copyover....\n\r");
 
 	/* For each playing descriptor, save its state */
-	for (d = globalSystemState.connection_head; d; d = d_next) {
+	for (d = globalSystemState.descriptor_head; d; d = d_next) {
 		CHAR_DATA *och = CH(d);
 		d_next = d->next; /* We delete from the list , so need to save this */
 
@@ -1648,8 +1648,8 @@ void copyover_recover()
 		d->descriptor = desc;
 
 		d->host = str_dup(host);
-		d->next = globalSystemState.connection_head;
-		globalSystemState.connection_head = d;
+		d->next = globalSystemState.descriptor_head;
+		globalSystemState.descriptor_head = d;
 		d->connected = CON_COPYOVER_RECOVER; /* -15, so close_socket frees the char */
 
 

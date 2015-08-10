@@ -121,10 +121,10 @@ void do_whois(CHAR_DATA *ch, char *argument)
 	send_to_char("`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo ``[`5B`Pad `2T`@rip``] `Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o``\n\r", ch);
 	output = new_buf();
 
-	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
+	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
 		CHAR_DATA *wch;
 
-		if (d->connected != CON_PLAYING || !can_see(ch, d->character))
+		if (!can_see(ch, d->character))
 			continue;
 
 		wch = CH(d);
@@ -230,7 +230,7 @@ void do_who(CHAR_DATA *ch, char *argument)
 	sprintf(buf, "`2I`@m`7m`8ort`7a`@l`2s`7:``\n\r");
 	add_buf(output, buf);
 
-	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
+	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
 		CHAR_DATA *wch;
 
 		/*
@@ -238,7 +238,7 @@ void do_who(CHAR_DATA *ch, char *argument)
 		 * Don't use trust as that exposes trusted mortals.
 		 */
 
-		if (d->connected != CON_PLAYING || !can_see(ch, d->character))
+		if (!can_see(ch, d->character))
 			continue;
 
 		wch = (d->original != NULL) ? d->original : d->character;
@@ -263,7 +263,7 @@ void do_who(CHAR_DATA *ch, char *argument)
 	sprintf(buf, "\n\r`5M`2o`Pr`@t`Pa`2l`5s`7:``\n\r");
 	add_buf(output, buf);
 
-	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
+	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
 		CHAR_DATA *wch;
 
 		/*
@@ -271,7 +271,7 @@ void do_who(CHAR_DATA *ch, char *argument)
 		 * Don't use trust as that exposes trusted mortals.
 		 */
 
-		if (d->connected != CON_PLAYING || !can_see(ch, d->character))
+		if (!can_see(ch, d->character))
 			continue;
 
 		wch = (d->original != NULL) ? d->original : d->character;
@@ -377,14 +377,14 @@ void do_ewho(CHAR_DATA *ch, char *argument)
 	nMatch = 0;
 	buf[0] = '\0';
 	output = new_buf();
-	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
+	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
 		CHAR_DATA *wch;
 
 		/*
 		 * Check for match against restrictions.
 		 * Don't use trust as that exposes trusted mortals.
 		 */
-		if (d->connected != CON_PLAYING || !can_see(ch, d->character))
+		if (!can_see(ch, d->character))
 			continue;
 
 		wch = (d->original != NULL) ? d->original : d->character;
@@ -437,9 +437,8 @@ void do_where(CHAR_DATA *ch, char *argument)
 	if (arg[0] == '\0') {
 		send_to_char("Players in your area```8:``\n\r", ch);
 		found = false;
-		for (d = globalSystemState.connection_head; d; d = d->next) {
-			if (d->connected == CON_PLAYING
-			    && (victim = d->character) != NULL
+		for (d = globalSystemState.descriptor_head; d; d = descriptor_playing_iterator(d)) {
+			if ((victim = d->character) != NULL
 			    && !IS_NPC(victim)
 			    && victim->in_room != NULL
 			    && (is_room_owner(ch, victim->in_room)

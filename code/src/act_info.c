@@ -2064,10 +2064,10 @@ void do_laston(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
+	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
 		CHAR_DATA *wch;
 
-		if (d->connected != CON_PLAYING || !can_see(ch, d->character))
+		if (!can_see(ch, d->character))
 			continue;
 
 		wch = CH(d);

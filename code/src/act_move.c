@@ -240,11 +240,8 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
 	}
 
 	if (IS_SET(ch->act, PLR_ESP)) {
-		for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
+		for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
 			CHAR_DATA *wch;
-
-			if (d->connected != CON_PLAYING)
-				continue;
 
 			wch = (d->original != NULL) ? d->original : d->character;
 

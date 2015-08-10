@@ -303,12 +303,11 @@ void gain_exp(CHAR_DATA *ch, int gain)
 		save_char_obj(ch);
 
 		/* do the info */
-		for (d = globalSystemState.connection_head; d; d = d->next) {
+		for (d = globalSystemState.descriptor_head; d; d = descriptor_playing_iterator(d)) {
 			CHAR_DATA *vch;
 
 			vch = CH(d);
-			if (d->connected == CON_PLAYING
-			    && d->character != ch
+			if (d->character != ch
 			    && vch != NULL
 			    && IS_SET(vch->comm, COMM_INFO)
 			    && !IS_SET(vch->comm, COMM_QUIET)) {
@@ -1007,10 +1006,8 @@ static void weather_update(void)
 	}
 
 	if (buf[0] != '\0') {
-		for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
-			if (d->connected == CON_PLAYING
-			    && IS_OUTSIDE(d->character)
-			    && IS_AWAKE(d->character))
+		for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
+			if (IS_OUTSIDE(d->character) && IS_AWAKE(d->character))
 				send_to_char(buf, d->character);
 		}
 	}
@@ -1021,14 +1018,14 @@ static void weather_update(void)
 /***************************************************************************
 *	auto_restore
 *
-*	automattic restores set at the interval PULSE_RESTORE in merc.h
+*	automatic restores set at the interval PULSE_RESTORE in merc.h
 ***************************************************************************/
 static void auto_restore(void)
 {
 	DESCRIPTOR_DATA *d;
 	CHAR_DATA *victim;
 
-	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
+	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
 		victim = d->character;
 		if (victim == NULL || IS_NPC(victim))
 			continue;

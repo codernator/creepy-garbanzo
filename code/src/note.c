@@ -1014,19 +1014,14 @@ static void message_post(CHAR_DATA *ch, char *argument, int type)
 
 	append_message(ch->pnote);
 
-	for (desc = globalSystemState.connection_head; desc != NULL; desc = desc->next) {
+	for (desc = globalSystemState.descriptor_head; desc; desc = descriptor_playing_iterator(desc)) {
 		CHAR_DATA *wch;
-
-		if (desc->connected != CON_PLAYING)
-			continue;
 
 		wch = CH(desc);
 
 		if (is_message_to(wch, ch->pnote)) {
 			if (can_see(wch, ch)) {
-				printf_to_char(wch, "%s just left a new %s message.\n\r",
-					       PERS(ch, wch),
-					       message_type_table[msg_idx].name);
+				printf_to_char(wch, "%s just left a new %s message.\n\r", PERS(ch, wch), message_type_table[msg_idx].name);
 			}
 		}
 	}

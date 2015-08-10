@@ -2063,10 +2063,7 @@ void raw_kill(CHAR_DATA *victim, CHAR_DATA *killer)
 			DESCRIPTOR_DATA *d;
 			CHAR_DATA *vch;
 
-			for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
-				if (d->connected != CON_PLAYING)
-					continue;
-
+			for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
 				vch = CH(d);
 
 				if (IS_SET(vch->act, PLR_BATTLE)

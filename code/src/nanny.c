@@ -173,7 +173,7 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 		switch (*argument) {
 		case 'y':
 		case 'Y':
-			for (d_old = globalSystemState.connection_head; d_old != NULL; d_old = d_next) {
+			for (d_old = globalSystemState.descriptor_head; d_old != NULL; d_old = d_next) {
 				d_next = d_old->next;
 
 				if (d_old == d || d_old->character == NULL)
@@ -699,11 +699,11 @@ bool check_parse_name(char *name)
 	 * Check names of people playing. Yes, this is necessary for multiple
 	 * newbies with the same name (thanks Saro)
 	 */
-	if (globalSystemState.connection_head) {
+	if (globalSystemState.descriptor_head) {
 		int count = 0;
 		DESCRIPTOR_DATA *d, *dnext;
 
-		for (d = globalSystemState.connection_head; d != NULL; d = dnext) {
+		for (d = globalSystemState.descriptor_head; d != NULL; d = dnext) {
 			dnext = d->next;
 			if (d->connected != CON_PLAYING && d->character && d->character->name
 			    && d->character->name[0] && !str_cmp(d->character->name, name)) {
@@ -793,7 +793,7 @@ bool check_playing(DESCRIPTOR_DATA *d, char *name)
 {
 	DESCRIPTOR_DATA *dold;
 
-	for (dold = globalSystemState.connection_head; dold; dold = dold->next) {
+	for (dold = globalSystemState.descriptor_head; dold; dold = dold->next) {
 		if (dold != d
 		    && dold->character != NULL
 		    && dold->connected != CON_GET_NAME

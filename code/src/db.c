@@ -3087,7 +3087,7 @@ void do_dump(CHAR_DATA *ch, char *argument)
 	/* descriptors */
 	count = 0;
 	count_free = 0;
-	for (d = globalSystemState.connection_head; d != NULL; d = d->next)
+	for (d = globalSystemState.descriptor_head; d != NULL; d = d->next)
 		count++;
 
 	for (d = descriptor_free; d != NULL; d = d->next)

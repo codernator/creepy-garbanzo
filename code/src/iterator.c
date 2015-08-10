@@ -17,7 +17,7 @@ DESCRIPTOR_DATA *descriptor_iterator(DESCRIPTOR_DATA *current)
     return next;
 }
 
-DESCRIPTOR_DATA *descriptor_connected_iterator(DESCRIPTOR_DATA *current)
+DESCRIPTOR_DATA *descriptor_playing_iterator(DESCRIPTOR_DATA *current)
 {
     DESCRIPTOR_DATA *next;
     if (current == NULL) {
@@ -25,7 +25,7 @@ DESCRIPTOR_DATA *descriptor_connected_iterator(DESCRIPTOR_DATA *current)
     }
 
     next = current->next;
-    while (next != NULL && (!next->pending_delete || !next->connected)) {
+    while (next != NULL && (!next->pending_delete || next->connected != CON_PLAYING)) {
         next = next->next;
     }
 

@@ -267,11 +267,8 @@ void battlefield_close(CHAR_DATA *ch)
 
 	battlefield_special(ch);
 
-	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
+	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
 		CHAR_DATA *wch;
-
-		if (d->connected != CON_PLAYING)
-			continue;
 
 		wch = CH(d);
 
@@ -319,11 +316,8 @@ void battlefield_cancel(CHAR_DATA *ch)
 
 	battlefield_clear();
 
-	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
+	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
 		CHAR_DATA *wch;
-
-		if (d->connected != CON_PLAYING)
-			continue;
 
 		wch = CH(d);
 
@@ -480,10 +474,7 @@ void battlefield_show(CHAR_DATA *ch)
 
 		send_to_char("\n\rPlayer information:\n\r"
 			     "Name         Room    Enters Kills Deaths  Hp    Mana   Position\n\r", ch);
-		for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
-			if (d->connected != CON_PLAYING)
-				continue;
-
+		for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
 			bch = CH(d);
 
 			if (IS_SET(bch->act, PLR_BATTLE)
@@ -774,10 +765,7 @@ int battlefield_count()
 	CHAR_DATA *ch;
 	int count = 0;
 
-	for (d = globalSystemState.connection_head; d != NULL; d = d->next) {
-		if (d->connected != CON_PLAYING)
-			continue;
-
+	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
 		ch = CH(d);
 
 		if (IS_SET(ch->act, PLR_BATTLE)
@@ -850,12 +838,10 @@ void battlefield_notify(char *msg)
 	DESCRIPTOR_DATA *d;
 	CHAR_DATA *tch;
 
-	for (d = globalSystemState.connection_head; d; d = d->next) {
-		if (d->connected == CON_PLAYING) {
-			tch = CH(d);
-			if (!IS_NPC(tch) && !IS_SET(tch->comm, COMM_NOBATTLEFIELD))
-				send_to_char(msg, d->character);
-		}
+	for (d = globalSystemState.descriptor_head; d; d = descriptor_playing_iterator(d)) {
+        tch = CH(d);
+        if (!IS_NPC(tch) && !IS_SET(tch->comm, COMM_NOBATTLEFIELD))
+            send_to_char(msg, d->character);
 	}
 
 	return;
