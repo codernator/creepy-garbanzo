@@ -423,9 +423,9 @@ void do_push(CHAR_DATA *ch, char *argument)
 	if ((get_curr_stat(ch, STAT_STR) > get_curr_stat(victim, STAT_STR))
 	    || (get_curr_stat(ch, STAT_STR) == get_curr_stat(victim, STAT_STR) && result <= fail)) {
 		push_char(ch, victim, door, false);
-		if (!IS_NPC(ch) || IS_SET(ch->act, PLR_BATTLE))
+		if (!IS_NPC(ch))
 			victim->last_fight = time(NULL);
-		if (!IS_NPC(victim) || IS_SET(victim->act, PLR_BATTLE))
+		if (!IS_NPC(victim))
 			ch->last_fight = time(NULL);
 	} else {
 		act("$n tries unsuccessfully to push $N.\n\r", ch, NULL, victim, TO_ROOM);

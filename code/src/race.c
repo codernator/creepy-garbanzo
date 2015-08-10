@@ -225,41 +225,23 @@ void do_breathe(CHAR_DATA *ch, char *argument)
 	ch->mana -= 50;
 	WAIT_STATE(ch, 6);
 
-	if (IS_SET(ch->act, PLR_BATTLE)) {
-		type = number_range(1, 4);
-		switch (type) {
-		case 1:
-			spell_fire_breath(skill_lookup("fire breath"), ch->level, ch, vo, TAR_CHAR_OFFENSIVE, "");
-			break;
-		case 2:
-			spell_frost_breath(skill_lookup("frost breath"), ch->level, ch, vo, TAR_CHAR_OFFENSIVE, "");
-			break;
-		case 3:
-			spell_gas_breath(skill_lookup("gas breath"), ch->level, ch, vo, TAR_CHAR_OFFENSIVE, "");
-			break;
-		default:
-			spell_lightning_breath(skill_lookup("lightning breath"), ch->level, ch, vo, TAR_CHAR_OFFENSIVE, "");
-			break;
-		}
-	} else {
-		type = number_range(1, 5);
-		switch (type) {
-		case 1:
-			spell_acid_breath(skill_lookup("acid breath"), ch->level, ch, vo, TAR_CHAR_OFFENSIVE, "");
-			break;
-		case 2:
-			spell_fire_breath(skill_lookup("fire breath"), ch->level, ch, vo, TAR_CHAR_OFFENSIVE, "");
-			break;
-		case 3:
-			spell_frost_breath(skill_lookup("frost breath"), ch->level, ch, vo, TAR_CHAR_OFFENSIVE, "");
-			break;
-		case 4:
-			spell_gas_breath(skill_lookup("gas breath"), ch->level, ch, vo, TAR_CHAR_OFFENSIVE, "");
-			break;
-		default:
-			spell_lightning_breath(skill_lookup("lightning breath"), ch->level, ch, vo, TAR_CHAR_OFFENSIVE, "");
-			break;
-		}
+    type = number_range(1, 5);
+    switch (type) {
+    case 1:
+        spell_acid_breath(skill_lookup("acid breath"), ch->level, ch, vo, TAR_CHAR_OFFENSIVE, "");
+        break;
+    case 2:
+        spell_fire_breath(skill_lookup("fire breath"), ch->level, ch, vo, TAR_CHAR_OFFENSIVE, "");
+        break;
+    case 3:
+        spell_frost_breath(skill_lookup("frost breath"), ch->level, ch, vo, TAR_CHAR_OFFENSIVE, "");
+        break;
+    case 4:
+        spell_gas_breath(skill_lookup("gas breath"), ch->level, ch, vo, TAR_CHAR_OFFENSIVE, "");
+        break;
+    default:
+        spell_lightning_breath(skill_lookup("lightning breath"), ch->level, ch, vo, TAR_CHAR_OFFENSIVE, "");
+        break;
 	}
 }
 

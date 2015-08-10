@@ -421,7 +421,6 @@ const struct flag_type door_resets[] =
 const struct flag_type room_flags[] =
 {
 	{ "bank",	  ROOM_BANK,		 true  },
-	{ "battlefield",  ROOM_BFIELD,		 false },
 	{ "dark",	  ROOM_DARK,		 true  },
 	{ "indoors",	  ROOM_INDOORS,		 true  },
 	{ "law",	  ROOM_LAW,		 true  },

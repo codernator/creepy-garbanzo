@@ -155,9 +155,6 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 		if (IS_SET(ch->comm, COMM_AFK))
 			REMOVE_BIT(ch->comm, COMM_AFK);
 
-		if (IS_SET(ch->act, PLR_BATTLE))
-			REMOVE_BIT(ch->act, PLR_BATTLE);
-
 		if (IS_IMMORTAL(ch)) {
 			ch->invis_level = get_trust(ch);
 			do_help(ch, "imotd");
@@ -568,10 +565,6 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 		act("$n has entered the game.", ch, NULL, NULL, TO_ROOM);
 
 		do_look(ch, "auto");
-
-		if (IS_SET(ch->act, PLR_BATTLE)) {
-			REMOVE_BIT(ch->act, PLR_BATTLE);
-        }
 
 		if (ch->level > 300 && ch->vernew <= 3) {
 			if (ch->level <= 600) {

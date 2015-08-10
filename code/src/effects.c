@@ -41,10 +41,6 @@ void acid_effect(void *vo, int level, int dam, int target)
 		    || number_range(0, 4) == 0)
 			return;
 
-		if (obj->carried_by != NULL
-		    && !IS_NPC(obj->carried_by)
-		    && (IS_SET(obj->carried_by->act, PLR_BATTLE)))
-			return;
 		chance = level / 4 + dam / 10;
 
 		if (chance > 25)

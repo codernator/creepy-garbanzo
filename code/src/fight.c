@@ -993,14 +993,6 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
 	if (IS_AFFECTED(ch, AFF_CALLOUSED))
 		dam = (dam * 11) / 10;
 
-	if (!IS_NPC(ch)
-	    && victim == ch
-	    && dam >= (ch->hit * 2)
-	    && IS_SET(ch->act, PLR_BATTLE)) {
-		send_to_char("You cant kill yourself in the battlefield. DIPSHIT!\n\r", ch);
-		return 0;
-	}
-
 	if (victim != ch) {
 		if (is_safe(ch, victim))
 			return 0;
@@ -1190,11 +1182,7 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
 			ch->in_room->vnum);
 
 		if (!IS_NPC(ch)) {
-			if ((IS_SET(ch->act, PLR_BATTLE))
-			    && (IS_SET(victim->act, PLR_BATTLE))) {
-				ch->bkills++;
-				victim->bloss++;
-			} else if ((ch != victim)
+			if ((ch != victim)
 				   && (!IS_TRUSTED(ch, IMPLEMENTOR))) {
 				if (IS_NPC(victim)) {
 					ch->pcdata->mobkills++;
@@ -1372,11 +1360,8 @@ bool is_safe(CHAR_DATA *ch, CHAR_DATA *victim)
 			if (IS_SET(victim->act, PLR_KILLER) || IS_SET(victim->act, PLR_THIEF))
 				return false;
 
-			if (victim->level - ch->level >= 20
-			    || ch->level - victim->level >= 20) {
-				if ((victim->level > ch->level)
-				    || (ch->ticks_since_last_fight <= 25 && victim->ticks_since_last_fight <= 25)
-				    || (IS_SET(ch->act, PLR_BATTLE))) {
+			if (victim->level - ch->level >= 20 || ch->level - victim->level >= 20) {
+				if ((victim->level > ch->level) || (ch->ticks_since_last_fight <= 25 && victim->ticks_since_last_fight <= 25)) {
 					/*
 					 * send_to_char("You charge into the fray!\n\r",ch);
 					 * continue;
@@ -1418,11 +1403,6 @@ bool is_safe_spell(CHAR_DATA *ch, CHAR_DATA *victim, bool area)
 		return false;
 
 	if (IS_IMMORTAL(ch) && ch->level > LEVEL_IMMORTAL && !area)
-		return false;
-
-	if (!IS_NPC(ch) && !IS_NPC(victim)
-	    && IS_SET(ch->act, PLR_BATTLE)
-	    && IS_SET(victim->act, PLR_BATTLE))
 		return false;
 
 /* killing mobiles */
@@ -1799,13 +1779,6 @@ void make_corpse(CHAR_DATA *ch)
 	OBJ_DATA *obj_next;
 	char *name;
 
-	if (!IS_NPC(ch)) {
-		if (IS_SET(ch->act, PLR_BATTLE)
-		    || ((ch->in_room->vnum == ROOM_VNUM_DUEL) && (IS_SET(ch->act, PLR_DUELIST))))
-			return;
-		if (in_battlefield(ch))
-			return;
-	}
 
 	if (IS_NPC(ch)) {
 		name = ch->short_descr;
@@ -1896,7 +1869,7 @@ void death_cry(CHAR_DATA *ch, CHAR_DATA *killer)
 	msg = str_dup("");
 
 	if (!IS_NPC(ch)) {
-		if (!IS_NPC(killer) && !IS_SET(killer->act, PLR_BATTLE)) {
+		if (!IS_NPC(killer)) {
 			msg = "$n's ear is severed from their head just before the final blow lands.";
 			vnum = OBJ_VNUM_SEVERED_HEAD;
 		}
@@ -1988,10 +1961,6 @@ void death_cry(CHAR_DATA *ch, CHAR_DATA *killer)
 
 void raw_kill(CHAR_DATA *victim, CHAR_DATA *killer)
 {
-	char buf[MSL];
-	bool check_battlefield = false;
-	int iter;
-
 	stop_fighting(victim, true);
 
 	if (!IS_NPC(victim)) {
@@ -2011,25 +1980,6 @@ void raw_kill(CHAR_DATA *victim, CHAR_DATA *killer)
 	if (victim != NULL && killer != NULL)
 		death_cry(victim, killer);
 
-	if ((!IS_NPC(victim)) && (victim->level >= LEVEL_NEWBIE)) {
-		if (in_battlefield(victim)) {
-			check_battlefield = true;
-			victim->last_fight = 0;
-			REMOVE_BIT(victim->act, PLR_BATTLE);
-			if (killer != NULL) {
-				sprintf(buf, "Battlefield Update: `#%s`` has been killed by `!%s``!\n\r",
-					IS_NPC(victim) ? victim->short_descr : victim->name,
-					IS_NPC(killer) ? killer->short_descr : killer->name);
-			} else {
-				sprintf(buf, "Battlefield Update: `#%s`` has been killed!\n\r",
-					IS_NPC(victim) ? victim->short_descr : victim->name);
-			}
-			battlefield_notify(buf);
-			send_to_char("Restoring you after battlefield.\n\r", victim);
-			restore_char(victim);
-		}
-	}
-
 	if (IS_NPC(victim))
 		make_corpse(victim);
 
@@ -2044,48 +1994,12 @@ void raw_kill(CHAR_DATA *victim, CHAR_DATA *killer)
 
 	extract_char(victim, false);
 
-	if (!IS_NPC(victim) && (!IS_SET(victim->act, PLR_BATTLE))) {
-		for (iter = 0; iter < 4; iter++)
-			victim->armor[iter] = 100;
-
-		WAIT_STATE(victim, PULSE_VIOLENCE * 4);
-	}
-
 	victim->position = POS_SLEEPING;
 	victim->hit = UMAX(1, victim->hit);
 	victim->mana = UMAX(1, victim->mana);
 	victim->move = UMAX(1, victim->move);
 
 	strip_negative_affects(victim);
-
-	if (check_battlefield) {
-		if (battlefield_count() == 1) {
-			DESCRIPTOR_DATA *d;
-			CHAR_DATA *vch;
-
-			for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
-				vch = CH(d);
-
-				if (IS_SET(vch->act, PLR_BATTLE)
-				    && in_battlefield(vch)) {
-					REMOVE_BIT(vch->act, PLR_BATTLE);
-
-					sprintf(buf, "Battlefield Update: `#%s`` has won this [%d] person `#Battlefield``!\n\r",
-						vch->name, battlefield_participants());
-					battlefield_notify(buf);
-					send_to_char("Restoring you after battlefield.\n\r", vch);
-					restore_char(vch);
-
-					char_from_room(vch);
-					char_to_room(vch, get_room_index(ROOM_VNUM_ALTAR));
-					strip_negative_affects(vch);
-					do_look(vch, "auto");
-					break;
-				}
-			}
-		}
-	}
-	return;
 }
 
 
@@ -2242,9 +2156,7 @@ int xp_compute(CHAR_DATA *gch, CHAR_DATA *victim, int total_levels)
 
 	align = victim->alignment - gch->alignment;
 
-	if (IS_SET(victim->act, PLR_BATTLE)) {
-		/* no change */
-	} else if (IS_SET(victim->act, ACT_NOALIGN)) {
+	if (IS_SET(victim->act, ACT_NOALIGN)) {
 		/* no change */
 	} else if (align > 500) { /* monster is more good than slayer */
 		change = (align - 500) * base_exp / 500 * gch->level / total_levels;

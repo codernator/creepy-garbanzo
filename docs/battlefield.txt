@@ -1,0 +1,35 @@
+# Summary
+An arena-style pvp subgame with definite start and stop conditions, and varying rules.
+
+# Specification
+
+## Locations
+""" How to specify these locations in code without hardcoding location keys? """
+* Queue - for players who've joined the arena and are awaiting a match.
+* Out - for players who've been knocked out of the current match.
+* Arena - a series of locations for arena play.
+
+## Commands
+
+### Play
+join
+resign
+
+### Administration
+participant list
+notify all
+define (game - level requirements, class requirements, etc.)
+open (for queue)
+close (for queue)
+start (with timer, manual, ...)
+cancel
+eject
+
+### System
+update
+
+
+## Rules
+
+No penalty flags are issued by the system (such as KILLER or THIEF).
+

@@ -1548,9 +1548,6 @@ void do_transfer(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if (IS_SET(victim->act, PLR_BATTLE))
-		REMOVE_BIT(victim->act, PLR_BATTLE);
-
 	if (victim->fighting != NULL)
 		stop_fighting(victim, true);
 	act("$n disappears in a mushroom cloud.", victim, NULL, NULL, TO_ROOM);

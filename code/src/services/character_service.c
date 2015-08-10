@@ -99,9 +99,6 @@ void show_channels(CHAR_DATA *ch)
 	printf_to_char(ch, "`^Quiet Mode     %s``\n\r",
 		       character_has_comm(ch, COMM_QUIET) ? "`#ON" : "`1OFF");
 
-	printf_to_char(ch, "`#Battlefield    %s``\n\r",
-		       character_has_comm(ch, COMM_NOBATTLEFIELD) ? "`#ON" : "`1OFF");
-
 	send_to_char("\n\r", ch);
 	if (character_has_comm(ch, COMM_AFK))
 		send_to_char("You are ```!A```@F```OK``.\n\r", ch);

@@ -117,7 +117,6 @@ typedef void DO_FUN(/*@partial@*/CHAR_DATA * ch, char *argument);
 #define PULSE_ROOM              (20 * PULSE_PER_SECOND)
 #define PULSE_RESTORE           (3200 * PULSE_PER_SECOND)
 #define PULSE_AUCTION           (10 * PULSE_PER_SECOND)
-#define PULSE_BATTLEFIELD       (40 * PULSE_PER_SECOND)
 #define PULSE_UNDERWATER        (5 * PULSE_PER_SECOND)
 
 #define IMPLEMENTOR             MAX_LEVEL
@@ -1101,10 +1100,6 @@ struct kill_data {
 #define ROOM_VNUM_ALTAR         3054l
 #define ROOM_VNUM_SCHOOL        3700l
 #define ROOM_VNUM_DONATION      3360l
-#define ROOM_VNUM_BFS           822l
-#define ROOM_VNUM_BF_START      800l /* battlefield */
-#define ROOM_VNUM_BF_END        891l
-#define ROOM_VNUM_WARPREP       899l
 
 /* Room flags. * Used in #ROOMS. */
 #define ROOM_DARK               (A)
@@ -1130,7 +1125,6 @@ struct kill_data {
 
 #define ROOM_HIGHEST_ONLY       (X)
 #define ROOM_HIGHER_ONLY        (Y)
-#define ROOM_BFIELD             (Z)
 #define ROOM_NOGATE             (aa)
 #define ROOM_NOSUMMON           (bb)
 #define ROOM_NOPORTAL           (dd)
@@ -1241,7 +1235,6 @@ struct kill_data {
 #define PLR_AUTOGOLD            (G)
 #define PLR_AUTOSPLIT           (H)
 #define PLR_LINKDEAD            (L)
-#define PLR_BATTLE              (M)
 
 /* RT personal flags */
 #define PLR_HOLYLIGHT           (N)
@@ -1271,7 +1264,6 @@ struct kill_data {
 #define COMM_TELNET_GA          (F)
 #define COMM_SHOW_AFFECTS       (G)
 #define COMM_NOCHANNELS         (H)
-#define COMM_NOBATTLEFIELD      (J)
 #define COMM_AFK                (K)
 #define COMM_INFO               (L)
 #define COMM_NOEMOTE            (M)
@@ -2073,24 +2065,6 @@ extern SKILL *gsp_haven;
 extern SKILL *gsp_mana_vortex;
 
 
-struct battlefield_data {
- DISABLED_DATA * disabled;
- int  lroom;
- int  uroom;
- int  llevel;
- int  ulevel;
- char  opened_by[64];
- bool  special;
- bool  dirty;
- bool  open;
- int  participants;
- bool  affected;
- int  open_ticks;
- int  running_ticks;
- int  immortal_opens;
- int  mortal_opens;
-};
-
 
 
 /*****************************************************************************
@@ -2392,7 +2366,6 @@ int get_true_weight(OBJ_DATA * obj);
 bool room_is_dark(CHAR_DATA * ch, ROOM_INDEX_DATA * pRoomIndex);
 bool is_room_owner(CHAR_DATA * ch, ROOM_INDEX_DATA * room);
 bool room_is_private(ROOM_INDEX_DATA * pRoomIndex);
-bool room_is_bfield(ROOM_INDEX_DATA * pRoomIndex);
 bool can_see(CHAR_DATA * ch, CHAR_DATA * victim);
 bool can_see_obj(CHAR_DATA * ch, OBJ_DATA * obj);
 bool can_see_room(CHAR_DATA * ch, ROOM_INDEX_DATA * pRoomIndex);

@@ -18,7 +18,6 @@ ROOM_INDEX_DATA *get_random_room(CHAR_DATA *ch, AREA_DATA *area)
 			if (can_see_room(ch, room)
 			    && !room_is_private(room)
 			    && !IS_SET(room->room_flags, ROOM_SAFE)
-			    && !IS_SET(room->room_flags, ROOM_BFIELD) /* make sure room isn't in the battlefield */
 			    && !IS_SET(room->room_flags, ROOM_NORANDOM))
 				break;
 		}

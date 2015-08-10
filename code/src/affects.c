@@ -686,25 +686,12 @@ void affect_displacement(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
 	CHAR_DATA *vch;
 	CHAR_DATA *vch_next;
 	int iter;
-	int count = 0;
 
 	if ((type = AFFECT_TYPE_ROOM) && paf != NULL) {
 		for (vch = room->people; vch != NULL; vch = vch_next) {
 			vch_next = vch->next_in_room;
 			if (!IS_NPC(vch) && !IS_IMMORTAL(vch)) {
-				if (!IS_SET(room->room_flags, ROOM_BFIELD)) {
-					ROOM_INDEX_DATA *temp;
-
-					for (iter = 0; iter < 5; iter++) {
-						temp = get_room_index(number_range_long(ROOM_VNUM_BFS, ROOM_VNUM_BF_END));
-						if (temp != NULL && number_range(0, count) == 0) {
-							to = temp;
-							count++;
-						}
-					}
-				} else {
-					to = get_random_room(vch, NULL);
-				}
+                to = get_random_room(vch, NULL);
 
 				if (to != NULL) {
 					send_to_char("You have been t`@e``l`2e``p`4o``r`4t``e`8d``!\n\r", vch);

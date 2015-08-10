@@ -1918,8 +1918,7 @@ void spell_energy_drain(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 	if (victim->level <= 2) {
 		dam = ch->hit + 1;
 	} else {
-		if (!IS_NPC(victim)
-		    && !IS_SET(victim->act, PLR_BATTLE))
+		if (!IS_NPC(victim))
 			gain_exp(victim, 0 - number_range(level / 2, 3 * level / 2));
 		victim->mana /= 2;
 		victim->move /= 2;
@@ -5388,7 +5387,6 @@ bool can_trans_room(CHAR_DATA *ch, CHAR_DATA *victim, int sn)
 	if (gsp_nexus != NULL && sn == gsp_nexus->sn)
 		if (IS_SET(victim->in_room->room_flags, ROOM_NOPORTAL)) return false;
 	if (IS_SET(victim->in_room->room_flags, ROOM_NOWHERE)) return false;
-	if (IS_SET(victim->in_room->room_flags, ROOM_BFIELD)) return false;
 	if (IS_SET(victim->in_room->room_flags, ROOM_NOTRANSPORT)) return false;
 	if (IS_SET(ch->in_room->room_flags, ROOM_NOTRANSPORT)) return false;
 	if (!IS_IMMORTAL(ch) && IS_IMMORTAL(victim))

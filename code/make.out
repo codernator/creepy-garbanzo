@@ -1,3 +1,7 @@
+src/affects.c: In function ‘affect_displacement’:
+src/affects.c:688:6: warning: unused variable ‘iter’ [-Wunused-variable]
+  int iter;
+      ^
 src/db.c: In function ‘alloc_mem’:
 src/db.c:2851:7: warning: pointer of type ‘void *’ used in arithmetic [-Wpedantic]
   pMem += sizeof(*magic);
@@ -6,3 +10,12 @@ src/db.c: In function ‘free_mem’:
 src/db.c:2868:7: warning: pointer of type ‘void *’ used in arithmetic [-Wpedantic]
   pMem -= sizeof(*magic);
        ^
+obj/db.o: In function `boot_db':
+/home/dadu/projects/c/badtrip/code/src/db.c:363: undefined reference to `battlefield_clear'
+obj/disable.o: In function `check_disabled':
+/home/dadu/projects/c/badtrip/code/src/disable.c:508: undefined reference to `battlefield_check_disabled'
+obj/interp.o:(.rodata+0x1b08): undefined reference to `do_battlefield'
+obj/update.o: In function `update_handler':
+/home/dadu/projects/c/badtrip/code/src/update.c:1624: undefined reference to `battlefield_update'
+collect2: error: ld returned 1 exit status
+make: *** [bin/badtrip] Error 1

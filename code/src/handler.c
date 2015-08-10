@@ -2088,19 +2088,6 @@ bool room_is_private(ROOM_INDEX_DATA *room)
 
 
 /***************************************************************************
-*	room_is_bfield
-*
-*	is the room in the battlefield?
-***************************************************************************/
-bool room_is_bfield(ROOM_INDEX_DATA *pRoomIndex)
-{
-	if (IS_SET(pRoomIndex->room_flags, ROOM_BFIELD))
-		return true;
-
-	return false;
-}
-
-/***************************************************************************
 *	can_see_room
 *
 *	can a character see a room
