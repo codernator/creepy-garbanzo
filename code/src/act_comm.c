@@ -8,7 +8,6 @@
 void command_channel(CHAR_DATA *ch, char *argument) {
     static char arg1[MIL];
     static char arg2[MIL];
-    static char arg3[MIL];
     const CHANNEL_DEFINITION const *channel;
 
     if (argument[0] == '\0') {
@@ -16,25 +15,31 @@ void command_channel(CHAR_DATA *ch, char *argument) {
         return;
     }
 
-    argument = one_argument(argument, arg1);
 
-    switch (arg1[0]) {
+    switch (argument[0]) {
         case '~': /* toggly-woggly */
         case '-': /* deny */
         case '+': /* grant */
         {
+            /** EX1: channel ~ say */
+            /** EX2: channel ~say */
+            /** EX3: channel -say foobar */
+            
+            char operation = argument[0];
             char *chanName;
             CHAR_DATA *victim;
 
-            if (arg1[1] != '\0') {
-                chanName = arg1+1;
+            if (argument[1] != '\0') {
+                /** EX2, chanName = "say" */
+                chanName = argument+1;
             } else {
-                if (argument[0] == '\0') {
+                /** EX1, chanName = arg1 = "say", argument = "\0" */
+                argument = one_argument(argument, arg1);
+                if (arg1[0] == '\0') {
                     send_to_char("Please specify a channel.", ch);
                     return;
                 }
-                argument = one_argument(argument, arg2);
-                chanName = arg2;
+                chanName = arg1;
             }
 
             channel = channels_parse(chanName);
@@ -43,18 +48,22 @@ void command_channel(CHAR_DATA *ch, char *argument) {
                 return;
             }
 
-            switch (arg1[0]) {
+            switch (operation) {
             case '~':
                 channels_toggle(ch, channel);
                 break;
             case '-':
             case '+':
-                (void)one_argument(argument, arg3);
-                if ((victim = get_char_world(ch, arg3)) == NULL) {
-                    printf_to_char(ch, "There is no such victim: %s.", arg3);
+                (void)one_argument(argument, arg2);
+                if (arg2[0] == '\0') {
+                    send_to_char("Please specify a grantee.", ch);
                     return;
                 }
-                channels_permission(ch, victim, arg1[0] == '+', channel);
+                if ((victim = get_char_world(ch, arg2)) == NULL) {
+                    printf_to_char(ch, "There is no such grantee: %s.", arg2);
+                    return;
+                }
+                channels_permission(ch, victim, operation == '+', channel);
                 break;
             }
             return;
@@ -69,10 +78,10 @@ void command_channel(CHAR_DATA *ch, char *argument) {
                 return;
             }
 
-            argument = one_argument(argument, arg2);
-            channel = channels_parse(arg2);
+            argument = one_argument(argument, arg1);
+            channel = channels_parse(arg1);
             if (channel == NULL) {
-                printf_to_char(ch, "There is no such channel: %s.", arg2);
+                printf_to_char(ch, "There is no such channel: %s.", arg1);
                 return;
             }
 
@@ -82,9 +91,9 @@ void command_channel(CHAR_DATA *ch, char *argument) {
                 case CHANNEL_TARGET_OPTIONAL:
                 {
                     if (argument[0] == '-') {
-                        argument = one_argument(argument, arg3);
-                        if ((target = get_char_world(ch, arg3+1)) == NULL) {
-                            printf_to_char(ch, "There is no such victim: %s.", arg3);
+                        argument = one_argument(argument, arg2);
+                        if ((target = get_char_world(ch, arg2+1)) == NULL) {
+                            printf_to_char(ch, "There is no such character: %s.", arg2);
                             return;
                         }
                     }
@@ -93,9 +102,9 @@ void command_channel(CHAR_DATA *ch, char *argument) {
                 case CHANNEL_TARGET_REQUIRED:
                 {
                     if (argument[0] == '-') {
-                        argument = one_argument(argument, arg3);
-                        if ((target = get_char_world(ch, arg3+1)) == NULL) {
-                            printf_to_char(ch, "There is no such victim: %s.", arg3);
+                        argument = one_argument(argument, arg2);
+                        if ((target = get_char_world(ch, arg2+1)) == NULL) {
+                            printf_to_char(ch, "There is no such character: %s.", arg2);
                             return;
                         }
                     } else {

@@ -229,7 +229,7 @@ static void init_areas()
 		buf = fread_word(fpList);
 		if (buf[0] == '$')
 			break;
-		snprintf(area_file, MIL, "%s%s", AREA_FOLDER, buf);
+		snprintf(area_file, MIL, "%s%s\n\r", AREA_FOLDER, buf);
 
 		if (area_file[0] == '-') {
 			fp_area = stdin;
