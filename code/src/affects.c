@@ -685,7 +685,6 @@ void affect_displacement(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
 	ROOM_INDEX_DATA *to = NULL;
 	CHAR_DATA *vch;
 	CHAR_DATA *vch_next;
-	int iter;
 
 	if ((type = AFFECT_TYPE_ROOM) && paf != NULL) {
 		for (vch = room->people; vch != NULL; vch = vch_next) {

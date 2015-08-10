@@ -217,9 +217,6 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 	if (ch->tLag != 0)
 		fprintf(fp, "TLag %d\n", ch->tLag);
 
-	fprintf(fp, "Benter %d\n", ch->benter);
-	fprintf(fp, "Bkills %d\n", ch->bkills);
-	fprintf(fp, "Bloss %d\n", ch->bloss);
 	fprintf(fp, "Pkil %ld\n", ch->pcdata->pkills);
 	fprintf(fp, "Pdea %ld\n", ch->pcdata->pdeaths);
 	fprintf(fp, "Mkil %ld\n", ch->pcdata->mobkills);
@@ -1046,12 +1043,7 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 			break;
 
 		case 'B':
-			KEY("Bamfin", ch->pcdata->bamfin, fread_string(fp));
-			KEY("Bamfout", ch->pcdata->bamfout, fread_string(fp));
 			KEY("Bin", ch->pcdata->bamfin, fread_string(fp));
-			KEY("Benter", ch->benter, fread_number(fp));
-			KEY("Bkills", ch->bkills, fread_number(fp));
-			KEY("Bloss", ch->bloss, fread_number(fp));
 			KEY("Bout", ch->pcdata->bamfout, fread_string(fp));
 			break;
 

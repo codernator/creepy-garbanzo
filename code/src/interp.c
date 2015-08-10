@@ -283,7 +283,6 @@ const struct cmd_type cmd_table[] =
 
 	{ "addalias",	  do_addalias,     POS_DEAD,     L7, LOG_ALWAYS, 1 },
 	{ "advance",	  do_advance,      POS_DEAD,     L1, LOG_ALWAYS, 1 },
-	{ "battlefield",  do_battlefield,  POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "dump",	      do_dump,	       POS_DEAD,     ML, LOG_ALWAYS, 0 },
 	{ "trust",	      do_trust,	       POS_DEAD,     ML, LOG_ALWAYS, 1 },
 	{ "extend",	      do_extend,       POS_DEAD,     IM, LOG_ALWAYS, 1 },

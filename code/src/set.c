@@ -124,10 +124,6 @@ static SET_CHAR_FN set_char_full;
 SET_CHAR_FN set_char_hunger;
 SET_CHAR_FN set_char_thirst;
 SET_CHAR_FN set_char_feed;
-/* battlefield info */
-static SET_CHAR_FN set_char_bfield_enter;
-static SET_CHAR_FN set_char_bfield_loss;
-static SET_CHAR_FN set_char_bfield_kills;
 /* misc properties */
 static SET_CHAR_FN set_char_deathroom;
 static SET_CHAR_FN set_char_security;
@@ -173,10 +169,6 @@ set_char_cmd_table[] =
 	{ "hunger",	  set_char_hunger	},
 	{ "thirst",	  set_char_thirst	},
 	{ "feed",	  set_char_feed		},
-	/* battlefield info */
-	{ "bfield_enter", set_char_bfield_enter },
-	{ "bfield_loss",  set_char_bfield_loss	},
-	{ "bfield_kills", set_char_bfield_kills },
 	/* misc properties */
 	{ "deathroom",	  set_char_deathroom	},
 	{ "security",	  set_char_security	},
@@ -1032,72 +1024,6 @@ bool set_char_feed(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
 	return true;
 }
 
-
-/***************************************************************************
-*	set_char_bfield_enter
-*
-*	set the battlefield enters property of a player
-***************************************************************************/
-static bool set_char_bfield_enter(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
-{
-	if (is_help(argument)) {
-		send_to_char("`#SYNTAX``: bfield_enter [+/-]<number>\n\r", ch);
-		return false;
-	}
-
-	if (IS_NPC(vch)) {
-		send_to_char("Not on mobs.\n\r", ch);
-		return false;
-	}
-
-	set_integer_arg(&vch->benter, argument);
-	vch->benter = UMAX(vch->benter, 0);
-	return true;
-}
-
-/***************************************************************************
-*	set_char_bfield_loss
-*
-*	set the battlefield losses property of a player
-***************************************************************************/
-static bool set_char_bfield_loss(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
-{
-	if (is_help(argument)) {
-		send_to_char("`#SYNTAX``: bfield_loss [+/-]<number>\n\r", ch);
-		return false;
-	}
-
-	if (IS_NPC(vch)) {
-		send_to_char("Not on mobs.\n\r", ch);
-		return false;
-	}
-
-	set_integer_arg(&vch->bloss, argument);
-	vch->bloss = UMAX(vch->bloss, 0);
-	return true;
-}
-
-/***************************************************************************
-*	set_char_bfield_kills
-*
-*	set the battlefield kills property of a player
-***************************************************************************/
-static bool set_char_bfield_kills(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
-{
-	if (is_help(argument)) {
-		send_to_char("`#SYNTAX``: bfield_kills [+/-]<number>\n\r", ch);
-		return false;
-	}
-
-	if (IS_NPC(vch)) {
-		send_to_char("Not on mobs.\n\r", ch);
-		return false;
-	}
-
-	set_integer_arg(&vch->bkills, argument);
-	vch->bkills = UMAX(vch->bkills, 0);
-	return true;
-}
 
 /***************************************************************************
 *	set_char_deathroom

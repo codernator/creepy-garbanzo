@@ -38,8 +38,6 @@
  * void disable_show(CHAR_DATA * ch, DISABLED_DATA * list);
  */
 
-extern bool battlefield_check_disabled(CHAR_DATA * ch, int type, char *name);
-
 /***************************************************************************
 *	memory functions
 ***************************************************************************/
@@ -503,9 +501,6 @@ bool check_disabled(CHAR_DATA *ch, int type, char *name)
 			break;
 		}
 	}
-
-	if (!is_disabled)
-		is_disabled = battlefield_check_disabled(ch, (int)type, name);
 
 	if (!is_disabled)
 		is_disabled = player_check_disabled(ch, type, name);

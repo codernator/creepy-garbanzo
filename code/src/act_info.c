@@ -1047,12 +1047,6 @@ void do_score(CHAR_DATA *ch, char *argument)
 		send_to_char(buf, ch);
 	}
 
-	if (!IS_NPC(ch)) {
-		sprintf(buf, "You have entered %d battlefields, killed %d of those who entered,\n\rand you've been killed %d times.\n\r",
-			ch->benter, ch->bkills, ch->bloss);
-		send_to_char(buf, ch);
-	}
-
 /* RT shows exp to level */
 	if (!IS_NPC(ch) && ch->level < LEVEL_HERO) {
 		sprintf(buf,
@@ -1988,9 +1982,6 @@ void do_finger(CHAR_DATA *ch, char *argument)
 	send_to_char(buf, ch);
 	sprintf(buf, "      `7Player Kills`8:`6 %-4ld     `7 Player Deaths`8:`6 %-4ld        `7Mob Kills`8:`6 %ld``\n\r",
 		victim->pcdata->pkills, victim->pcdata->pdeaths, victim->pcdata->mobkills);
-	send_to_char(buf, ch);
-	sprintf(buf, "`7 Battlefield Kills`8:`6 %-3d  `7Battlefield Deaths`8:`6 %-3d        `7Mob Deaths`8:`6 %ld``\n\r",
-		victim->bkills, victim->bloss, victim->pcdata->mobdeaths);
 	send_to_char(buf, ch);
 	send_to_char("`8 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-``\n\r", ch);
 

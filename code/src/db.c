@@ -146,9 +146,6 @@ static void fix_mobprogs(void);
 static void reset_areas(void);
 void reset_area(AREA_DATA * area);
 
-extern void battlefield_clear(void);
-
-
 
 /* RT max open files fix */
 static void maxfilelimit()
@@ -358,9 +355,6 @@ void boot_db()
 
 	log_string("Assigning Skill Helpts..");
 	assign_skill_helps();
-
-	log_string("Clearing Battlefield..");
-	battlefield_clear();
 
 	log_string("BootDB: Done..");
 

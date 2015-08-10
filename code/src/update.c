@@ -19,7 +19,6 @@ extern DECLARE_DO_FUN(do_copyover);
 
 extern void bug_long(const char *str, long param);
 extern bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
-extern void battlefield_update(void);
 
 /***************************************************************************
 *	external variables
@@ -1585,7 +1584,6 @@ void update_handler(void)
 	static int pulse_point;
 	static int pulse_rooms;
 	static int pulse_restore;
-	static int pulse_battlefield;
 	static int pulse_underwater;
 
 	if (--pulse_rooms <= 0 || globalSystemState.tickset) {
@@ -1616,13 +1614,6 @@ void update_handler(void)
 		pulse_violence = PULSE_VIOLENCE;
 		violence_update();
 		impnet("`!Update`7: Violence has been updated.", NULL, NULL, IMN_UPDATES, 0, 0);
-	}
-
-	if (--pulse_battlefield <= 0 || globalSystemState.tickset) {
-		/*used to be 40, changing it temporary to 120*/
-		pulse_battlefield = (40 * PULSE_PER_SECOND);
-		battlefield_update();
-		impnet("`!Update`7: Battlefield has been updated.", NULL, NULL, IMN_UPDATES, 0, 0);
 	}
 
 	if (--pulse_underwater <= 0) {

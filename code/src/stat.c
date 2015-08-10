@@ -623,11 +623,6 @@ void do_mstat(CHAR_DATA *ch, char *argument)
 			       victim->pcdata->mobdeaths);
 
 
-		printf_to_char(ch, "Battlefield enters: %d  Battle kills: %d  Battle deaths: %d\n\r",
-			       victim->benter,
-			       victim->bkills,
-			       victim->bloss);
-
 		printf_to_char(ch, "Death room: %d \n\r", victim->deathroom);
 	}
 

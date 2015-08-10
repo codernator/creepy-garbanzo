@@ -1461,9 +1461,6 @@ struct char_data {
     time_t duel_start;
     int duelwin;
     int duelloss;
-    int benter;
-    int bkills;
-    int bloss;
     int safe_timer;
     long act;
     int color;
