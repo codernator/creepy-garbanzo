@@ -2271,7 +2271,6 @@ void smash_tilde(char *str);
 /* misc utility func. */
 void append_file(CHAR_DATA * ch, char *file, char *str);
 void bug(const char *str, int param);
-void log_new(const char *log, const char *str, char *username);
 void tail_chain(void);
 
 /* olc/mprogs */
@@ -2476,8 +2475,15 @@ bool is_situpon(/*@partial@*/OBJ_DATA *obj);
 bool is_standupon(/*@partial@*/OBJ_DATA *obj);
 
 /* logging.c */
+#define LOG_SINK_ALWAYS 1
+#define LOG_SINK_ALL 2
+#define LOG_SINK_PLAYER 3
+#define LOG_SINK_LASTCMD 4
+
+void log_to(int log, char username[], const char *fmt, ...);
 void log_bug(const char *fmt, ...);
 void log_string(const char *fmt, ...);
+
 
 /* Needs a home */
 char *capitalize(const char *str);

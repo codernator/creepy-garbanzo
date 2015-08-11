@@ -7,9 +7,6 @@
 
 
 
-extern void log_new(const char *log, const char *str, char username[]);
-
-
 char last_command[MSL];
 
 DISABLED_DATA *disabled_first;
@@ -473,51 +470,35 @@ void interpret(CHAR_DATA *ch, char *argument)
 	}
 
 	/* Log and snoop. */
-
-	sprintf(log_buf, "[%s] -- '%s'", ch->name, logline);
-	log_new("LASTCMD", log_buf, ch->name);
+	log_to(LOG_SINK_LASTCMD, ch->name, "[%s] -- '%s'", ch->name, logline);
 
 	if (cmd_table[cmd].log == LOG_NEVER)
 		strcpy(logline, "");
 
 	if (cmd_table[cmd].log == LOG_ALWAYS) {
 		if (!IS_NPC(ch)) {
-			sprintf(log_buf, "[%s] -- '%s'", ch->name, logline);
-			log_new("CMDALWAYS", log_buf, ch->name);
-
+			log_to(LOG_SINK_ALWAYS, ch->name, "[%s] -- '%s'", ch->name, logline);
 			log_string("Log %s: %s", ch->name, logline);
-
 			sprintf(log_buf, "`4Log `O%s`4: `O%s``", ch->name, logline);
 			wiznet(log_buf, ch, NULL, WIZ_SECURE, 0, get_trust(ch));
 		} else {
-			sprintf(log_buf, "[%s](mob) -- '%s'", ch->name, logline);
-			log_new("CMDALWAYS", log_buf, ch->name);
-
+			log_to(LOG_SINK_ALWAYS, ch->name, "[%s] -- '%s'", ch->name, logline);
 			log_string("Log %s(mob): %s", ch->name, logline);
-
 			sprintf(log_buf, "`4Log `O%s(mob)`4: `O%s``", ch->name, logline);
 			wiznet(log_buf, ch, NULL, WIZ_SECURE, 0, get_trust(ch));
 		}
 	}
 
 	if (!IS_NPC(ch) && IS_SET(ch->act, PLR_LOG)) {
-		char name[MSL];
-		sprintf(name, "%s", ch->name);
-		sprintf(log_buf, "[%s] -- '%s'", ch->name, logline);
-		log_new("LOGGEDPLR", log_buf, name);
-
+		log_to(LOG_SINK_PLAYER, ch->name, "[%s] -- '%s'", ch->name, logline);
 		log_string("Log %s(plr): %s", ch->name, logline);
-
 		sprintf(log_buf, "`4Log `O%s(plr)`4: `O%s``", ch->name, logline);
 		wiznet(log_buf, ch, NULL, WIZ_PLOG, 0, get_trust(ch));
 	}
 
 	if (log_all) {
-		sprintf(log_buf, "[%s] -- '%s'", ch->name, logline);
-		log_new("LOGALLCMD", log_buf, "NULL");
-
+		log_to(LOG_SINK_ALL, "NULL", "[%s] -- '%s'", ch->name, logline);
 		log_string("Log %s: %s", ch->name, logline);
-
 		sprintf(log_buf, "`4Log `O%s(all)`4: `O%s``", ch->name, logline);
 		wiznet(log_buf, ch, NULL, WIZ_ALOG, 0, get_trust(ch));
 	}

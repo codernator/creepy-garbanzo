@@ -4,16 +4,8 @@
 #include <string.h>
 #include <stdarg.h>
 
-static void lastCommands(const char *str);
-static void cmdLogAlways(const char *str);
-static void cmdLogALL(const char *str);
-static void cmdLogPlayer(const char *str, char username[]);
-static char *logStamp(void);
+
 static void write_file(const char *fileName, char *mode, const char *fmt, ...);
-
-
-// :(
-static int numCmds = 1;
 
 
 void log_bug(const char *fmt, ...)
@@ -50,22 +42,41 @@ void log_string(const char *fmt, ...)
 }
 
 
-void log_new(const char *log, const char *str, char username[])
+void log_to(int log, char username[], const char *fmt, ...)
 {
-	if (!strncmp(log, "LASTCMD", 8)) {
-		lastCommands(str);
-	} else if (!strncmp(log, "CMDALWAYS", 10)) {
-		cmdLogAlways(str);
-	} else if (!strncmp(log, "LOGALLCMD", 10)) {
-		cmdLogALL(str);
-	} else if (!strncmp(log, "LOGGEDPLR", 10)) {
-		if (username[0] == '\0')
-			log_bug("ERROR- log_new: Log Type 'Player' requires a username!");
-		else
-			cmdLogPlayer(str, username);
-	} else {
-		log_bug("ERROR - log_new: Log type '%s' does not exist.", log);
-	}
+	char *strtime;
+	static char buf[MSL];
+	va_list args;
+
+	va_start(args, fmt);
+	vsprintf(buf, fmt, args);
+	va_end(args);
+
+	strtime = ctime(&globalSystemState.current_time);
+	strtime[strlen(strtime) - 1] = '\0';
+
+    switch (log)
+    {
+        case LOG_SINK_LASTCMD:
+            write_file(LAST_COMMANDS, "a+", "[%s] %s\n", strtime, buf);
+            break;
+        case LOG_SINK_ALWAYS:
+        case LOG_SINK_ALL:
+            write_file(LOG_ALWAYS_FILE, "a+", "[%s] %s\n", strtime, buf);
+            break;
+        case LOG_SINK_PLAYER:
+            if (username[0] == '\0') {
+                log_bug("ERROR- log_to: Log Type 'Player' requires a username!");
+            } else {
+                static char log_file_name[2*MIL];
+                (void)snprintf(log_file_name, 2*MIL, LOG_PLAYER_FILE, username);
+                write_file(log_file_name, "a+", "[%s] %s\n", strtime, buf);
+            }
+            break;
+        default:
+            log_bug("ERROR - log_to: Log type '%d' does not exist.", log);
+            break;
+    }
 }
 
 static void write_file(const char *fileName, char *mode, const char *fmt, ...)
@@ -79,7 +90,7 @@ static void write_file(const char *fileName, char *mode, const char *fmt, ...)
 	va_end(args);
 
 	if ((thisFile = fopen(fileName, mode)) == NULL) {
-		log_bug("Error - log_new - cannot open file '%s' in mode %s", fileName, mode);
+		log_bug("Error - log_to - cannot open file '%s' in mode %s", fileName, mode);
         return;
 	}
 
@@ -87,53 +98,3 @@ static void write_file(const char *fileName, char *mode, const char *fmt, ...)
     fclose(thisFile);
 }
 
-static char *logStamp(void)
-{
-	char *strtime;
-
-	strtime = ctime(&globalSystemState.current_time);
-	strtime[strlen(strtime) - 1] = '\0';
-
-	return strtime;
-}
-
-static void cmdLogAlways(const char *str)
-{
-	static char buf[LOG_BUF_LENGTH];
-	(void)snprintf(buf, LOG_BUF_LENGTH, "[%s] %s\n", logStamp(), str);
-	write_file(LOG_ALWAYS_FILE, "a+", buf);
-}
-
-static void cmdLogALL(const char *str)
-{
-	static char buf[LOG_BUF_LENGTH];
-	(void)snprintf(buf, LOG_BUF_LENGTH, "[%s] %s\n", logStamp(), str);
-	write_file(LOG_ALL_CMDS_FILE, "a+", buf);
-}
-
-static void cmdLogPlayer(const char *str, char username[])
-{
-	static char log_file_name[2*MIL];
-	static char bff[LOG_BUF_LENGTH];
-
-	(void)snprintf(log_file_name, 2*MIL, LOG_PLAYER_FILE, username);
-	(void)snprintf(bff, LOG_BUF_LENGTH, "[%s] %s\n", logStamp(), str);
-	write_file(log_file_name, "a+", bff);
-}
-
-static void lastCommands(const char *str)
-{
-	static char buf[LOG_BUF_LENGTH];
-
-	if (numCmds < 51) {
-		(void)snprintf(buf, LOG_BUF_LENGTH, "[%d][%s] %s\n", numCmds, logStamp(), str);
-		write_file(LAST_COMMANDS, "a+", buf);
-		numCmds++;
-	} else {
-		numCmds = 1;
-		(void)snprintf(buf, LOG_BUF_LENGTH, "[%d][%s] %s\n", numCmds, logStamp(), str);
-		write_file(LAST_COMMANDS, "w+", buf);
-		numCmds++;
-	}
-	return;
-}
