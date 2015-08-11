@@ -97,7 +97,7 @@ void affect_modify(CHAR_DATA *ch, AFFECT_DATA *paf, bool fAdd)
 
 	switch (paf->location) {
 	default:
-		/*bug("affect_modify: unknown location %d.", paf->location);*/
+		/*log_bug("affect_modify: unknown location %d.", paf->location);*/
 		return;
 
 	case APPLY_NONE:
@@ -410,7 +410,7 @@ void affect_remove(CHAR_DATA *ch, AFFECT_DATA *paf)
 	long vector;
 
 	if (ch->affected == NULL) {
-		bug("affect_remove: no affect.", 0);
+		log_bug("affect_remove: no affect.");
 		return;
 	}
 
@@ -430,7 +430,7 @@ void affect_remove(CHAR_DATA *ch, AFFECT_DATA *paf)
 		}
 
 		if (prev == NULL) {
-			bug("affect_remove: cannot find paf.", 0);
+			log_bug("affect_remove: cannot find paf.");
 			return;
 		}
 	}
@@ -452,7 +452,7 @@ void affect_remove_obj(OBJ_DATA *obj, AFFECT_DATA *paf)
 	long vector;
 
 	if (obj->affected == NULL) {
-		bug("affect_remove_object: no affect.", 0);
+		log_bug("affect_remove_object: no affect.");
 		return;
 	}
 
@@ -487,7 +487,7 @@ void affect_remove_obj(OBJ_DATA *obj, AFFECT_DATA *paf)
 		}
 
 		if (prev == NULL) {
-			bug("affect_remove_object: cannot find paf.", 0);
+			log_bug("affect_remove_object: cannot find paf.");
 			return;
 		}
 	}
@@ -507,7 +507,7 @@ void affect_remove_obj(OBJ_DATA *obj, AFFECT_DATA *paf)
 void affect_remove_room(ROOM_INDEX_DATA *room, AFFECT_DATA *paf)
 {
 	if (room->affected == NULL) {
-		bug("affect_remove_room: no affect.", 0);
+		log_bug("affect_remove_room: no affect.");
 		return;
 	}
 
@@ -524,7 +524,7 @@ void affect_remove_room(ROOM_INDEX_DATA *room, AFFECT_DATA *paf)
 		}
 
 		if (prev == NULL) {
-			bug("affect_remove_room: cannot find paf.", 0);
+			log_bug("affect_remove_room: cannot find paf.");
 			return;
 		}
 	}

@@ -46,9 +46,6 @@ NOTE_DATA *note_free;
 KILL_DATA kill_table[MAX_LEVEL];
 
 
-char bug_buf[LOG_BUF_LENGTH];
-char log_buf[LOG_BUF_LENGTH];
-
 char *help_greeting;
 static char *ahelp_greeting;
 static char *ahelp_greeting2;
@@ -99,7 +96,8 @@ int newmobs = 0;
 int newobjs = 0;
 
 
-void bug_long(const char *str, long param);
+static void bug_long(const char *str, long param);
+static void bug(const char *str, int param);
 
 /***************************************************************************
 *	memory management
@@ -3225,7 +3223,6 @@ void bug(const char *str, int param)
     log_string("[*****] BUG IN FILE: %s LINE: %d", area_file, iLine);
     log_string(str, param);
 }
-
 
 void bug_long(const char *str, long param)
 {

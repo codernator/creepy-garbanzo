@@ -17,7 +17,6 @@ extern DECLARE_DO_FUN(do_btrans);
 extern DECLARE_DO_FUN(do_reboot);
 extern DECLARE_DO_FUN(do_copyover);
 
-extern void bug_long(const char *str, long param);
 extern bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
 
 /***************************************************************************
@@ -957,7 +956,7 @@ static void weather_update(void)
 
 	switch (weather_info.sky) {
 	default:
-		bug("Weather_update: bad sky %d.", weather_info.sky);
+		log_bug("Weather_update: bad sky %d.", weather_info.sky);
 		weather_info.sky = SKY_CLOUDLESS;
 		break;
 

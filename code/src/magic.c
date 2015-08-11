@@ -22,7 +22,6 @@ static void say_spell(CHAR_DATA * ch, SKILL * skill);
 extern bool remove_obj(CHAR_DATA * ch, int iWear, bool fReplace);
 extern void wear_obj(CHAR_DATA * ch, OBJ_DATA * obj, bool fReplace);
 extern void dam_message(CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt, bool immune);
-extern void bug_long(const char *str, long param);
 
 
 
@@ -394,7 +393,7 @@ void do_cast(CHAR_DATA *ch, char *argument)
 
 	switch (skill->target) {
 	default:
-		bug("Do_cast: bad target for sn %d.", skill->sn);
+		log_bug("Do_cast: bad target for sn %d.", skill->sn);
 		return;
 
 	case TAR_IGNORE:
@@ -712,7 +711,7 @@ void obj_cast_spell(int		sn,
 
 	skill = resolve_skill_sn(sn);
 	if (skill == NULL || skill->spells == NULL) {
-		bug("Obj_cast_spell: bad sn %d.", sn);
+		log_bug("Obj_cast_spell: bad sn %d.", sn);
 		return;
 	}
 
@@ -723,7 +722,7 @@ void obj_cast_spell(int		sn,
 
 	switch (skill->target) {
 	default:
-		bug("Obj_cast_spell: bad target for sn %d.", sn);
+		log_bug("Obj_cast_spell: bad target for sn %d.", sn);
 		return;
 
 	case TAR_IGNORE:
@@ -967,7 +966,7 @@ void do_brandish(CHAR_DATA *ch, char *argument)
 
 	if ((cast = resolve_skill_sn((int)staff->value[3])) == NULL
 	    || cast->spells == NULL) {
-		bug_long("Do_brandish: bad sn %d.", staff->value[3]);
+		log_bug("Do_brandish: bad sn %d.", staff->value[3]);
 		return;
 	}
 
@@ -986,7 +985,7 @@ void do_brandish(CHAR_DATA *ch, char *argument)
 
 				switch (cast->target) {
 				default:
-					bug_long("Do_brandish: bad target for sn %d.", staff->value[3]);
+					log_bug("Do_brandish: bad target for sn %d.", staff->value[3]);
 					return;
 
 				case TAR_IGNORE:

@@ -91,7 +91,7 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
 
 
 	if (door < 0 || door > 5) {
-		bug("Do_move: bad door %d.", door);
+		log_bug("Do_move: bad door %d.", door);
 		return;
 	}
 
@@ -557,7 +557,7 @@ void push_char(CHAR_DATA *ch, CHAR_DATA *vch, int door, bool follow)
 	}
 
 	if (door < 0 || door > 5) {
-		bug("Do_move: bad door %d.", door);
+		log_bug("Do_move: bad door %d.", door);
 		return;
 	}
 
@@ -650,7 +650,7 @@ void drag_char(CHAR_DATA *ch, CHAR_DATA *victim, int door, bool follow)
 	}
 
 	if (door < 0 || door > 5) {
-		bug("Do_move: bad door %d.", door);
+		log_bug("Do_move: bad door %d.", door);
 		return;
 	}
 

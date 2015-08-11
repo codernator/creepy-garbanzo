@@ -194,7 +194,7 @@ void credit_player_bid(CHAR_DATA *ch, long bid, int type)
 		target = &ch->gold;
 		break;
 	default:
-		bug("Unknown auction type %d", type);
+		log_bug("Unknown auction type %d", type);
 		return;
 	}
 

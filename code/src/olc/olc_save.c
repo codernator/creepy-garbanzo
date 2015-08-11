@@ -38,7 +38,6 @@
  *  may aid in debugging.
  */
 
-extern void bug_long(const char *str, long param);
 static void save_area(AREA_DATA * area);
 
 /***************************************************************************
@@ -82,7 +81,7 @@ static void save_area_list()
 	HELP_AREA *ha;
 
 	if ((fp = fopen(AREA_LIST, "w")) == NULL) {
-		bug("Save_area_list: fopen", 0);
+		log_bug("Save_area_list: fopen");
 		perror("area.lst");
 	} else {
 		/*
@@ -410,7 +409,7 @@ static void save_object(FILE *fp, OBJ_INDEX_DATA *pObjIndex)
 				fprintf(fp, "V ");
 				break;
 			default:
-				bug("olc_save: Invalid Affect->where", 0);
+				log_bug("olc_save: Invalid Affect->where");
 				break;
 			}
 
@@ -616,7 +615,7 @@ static void save_resets(FILE *fp, AREA_DATA *area)
 				for (pReset = pRoom->reset_first; pReset; pReset = pReset->next) {
 					switch (pReset->command) {
 					default:
-						bug("Save_resets: bad command %c.", (int)pReset->command);
+						log_bug("Save_resets: bad command %c.", (int)pReset->command);
 						break;
 
 					case 'M':
@@ -798,7 +797,7 @@ static void save_area(AREA_DATA *area)
 	snprintf(haf, MIL, "%s%s", AREA_FOLDER, area->file_name);
 
 	if (!(fp = fopen(haf, "w"))) {
-		bug("Open_area: fopen", 0);
+		log_bug("Open_area: fopen");
 		perror(haf);
 		return;
 	}

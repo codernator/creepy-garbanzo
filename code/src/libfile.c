@@ -61,7 +61,7 @@ long fread_long(FILE *fp)
 	}
 
 	if (!is_digit(c)) {
-		bug("Fread_long: bad format.", 0);
+		log_bug("Fread_long: bad format.", 0);
 		_Exit(1);
 	}
 
@@ -103,7 +103,7 @@ unsigned int fread_uint(FILE *fp)
 	}
 
 	if (!is_digit(c)) {
-		bug("Fread_uint: bad format.", 0);
+		log_bug("Fread_uint: bad format.", 0);
 		_Exit(1);
 	}
 
@@ -149,7 +149,7 @@ int fread_number(FILE *fp)
 	}
 
 	if (!is_digit(c)) {
-		bug("Fread_number: bad format.", 0);
+		log_bug("Fread_number: bad format.", 0);
 		_Exit(1);
 	}
 
@@ -264,6 +264,6 @@ char *fread_word(FILE *fp)
 		}
 	}
 
-	bug("Fread_word: word too long.", 0);
+	log_bug("Fread_word: word too long.", 0);
 	_Exit(1);
 }

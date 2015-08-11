@@ -6,8 +6,6 @@
 #include <stdarg.h>
 
 
-extern void bug_long(const char *str, long param);
-
 
 extern NOTE_DATA *note_free;
 
@@ -657,7 +655,7 @@ BUFFER *new_buf_size(int size)
 	buffer->size = get_size(size);
 
 	if (buffer->size == -1) {
-		bug("new_buf: buffer size %d too large.", size);
+		log_bug("new_buf: buffer size %d too large.", size);
 		_Exit(1);
 	}
 
@@ -712,7 +710,7 @@ bool add_buf(BUFFER *buffer, char *string)
 		if (buffer->size == -1) { /* overflow */
 			buffer->size = oldsize;
 			buffer->state = BUFFER_OVERFLOW;
-			bug_long("buffer overflow past size %d", buffer->size);
+			log_bug("buffer overflow past size %d", buffer->size);
 			return false;
 		}
 	}

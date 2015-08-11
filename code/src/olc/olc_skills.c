@@ -1274,7 +1274,7 @@ void save_skills()
 	char *tmp;
 
 	if ((fp = fopen(SKILL_FILE, "w")) == NULL) {
-		bug("save_skills: fopen", 0);
+		log_bug("save_skills: fopen");
 		return;
 	}
 

@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include "merc.h"
 #include "character.h"
@@ -9,50 +8,22 @@
 #include "interp.h"
 
 
-extern void bug_long(const char *str, long param);
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern void affect_modify(CHAR_DATA * ch, AFFECT_DATA * paf, bool fAdd);
 extern void blood_rage(CHAR_DATA * ch);
 extern long parse_long(char *test);
-
-/* external functions */
 extern void affect_join_obj(OBJ_DATA * obj, AFFECT_DATA * paf);
 
 
-/***************************************************************************
-*	local functions
-***************************************************************************/
-
-/***************************************************************************
-*	is_help
-*
-*	checks to see if a character string is a cry for help
-***************************************************************************/
-bool is_help(char *argument)
+/**
+ * see if a character string is a cry for help
+ */
+inline bool is_help(char *argument)
 {
-	if (argument[0] == '\0'
-	    || argument[0] == '?'
-	    || !str_prefix(argument, "help"))
-		return true;
-
-	return false;
+	return (argument[0] == '\0' || argument[0] == '?' || !str_prefix(argument, "help"));
 }
 
 
-/***************************************************************************
-*	lookup functions
-***************************************************************************/
-/***************************************************************************
-*	material_lookup
-***************************************************************************/
-int material_lookup(const char *name)
-{
-	return 0;
-}
-
-/***************************************************************************
-*	weapon_lookup
-***************************************************************************/
 int weapon_lookup(const char *name)
 {
 	int type;
@@ -66,10 +37,6 @@ int weapon_lookup(const char *name)
 	return -1;
 }
 
-
-/***************************************************************************
-*	weapon_type
-***************************************************************************/
 int weapon_type(const char *name)
 {
 	int type;
@@ -81,10 +48,6 @@ int weapon_type(const char *name)
 	return WEAPON_EXOTIC;
 }
 
-
-/***************************************************************************
-*	item_name
-***************************************************************************/
 char *item_name(int item_type)
 {
 	int type;
@@ -96,9 +59,6 @@ char *item_name(int item_type)
 	return "none";
 }
 
-/***************************************************************************
-*	weapon_name
-***************************************************************************/
 char *weapon_name(int weapon_type)
 {
 	int type;
@@ -110,9 +70,6 @@ char *weapon_name(int weapon_type)
 	return "exotic";
 }
 
-/***************************************************************************
-*	attack_lookup
-***************************************************************************/
 int attack_lookup(const char *name)
 {
 	int att;
@@ -126,9 +83,6 @@ int attack_lookup(const char *name)
 	return 0;
 }
 
-/***************************************************************************
-*	wiznet_lookup
-***************************************************************************/
 long wiznet_lookup(const char *name)
 {
 	int flag;
@@ -143,9 +97,6 @@ long wiznet_lookup(const char *name)
 }
 
 
-/***************************************************************************
-*	impnet_lookup
-***************************************************************************/
 long impnet_lookup(const char *name)
 {
 	int flag;
@@ -160,9 +111,6 @@ long impnet_lookup(const char *name)
 }
 
 
-/***************************************************************************
-*	class_lookup
-***************************************************************************/
 int class_lookup(const char *name)
 {
 	int class;
@@ -177,9 +125,6 @@ int class_lookup(const char *name)
 }
 
 
-/***************************************************************************
-*	is_friend
-***************************************************************************/
 bool is_friend(CHAR_DATA *ch, CHAR_DATA *victim)
 {
 	if (is_same_group(ch, victim))
@@ -222,11 +167,6 @@ bool is_friend(CHAR_DATA *ch, CHAR_DATA *victim)
 	return false;
 }
 
-/***************************************************************************
-*	count_users
-*
-*	counts the number of people 'on' an object
-***************************************************************************/
 int count_users(OBJ_DATA *obj)
 {
 	CHAR_DATA *fch;
@@ -243,14 +183,11 @@ int count_users(OBJ_DATA *obj)
 }
 
 
-
 /***************************************************************************
-*	check_immune
-*
-*	for immunity, vulnerabiltiy, and resistant
-*	the 'globals'(magic and weapons) may be overriden
-*	three other cases -- wood, silver, and iron --
-*	are checked in fight.c
+* for immunity, vulnerabiltiy, and resistant
+* the 'globals'(magic and weapons) may be overriden
+* three other cases -- wood, silver, and iron --
+* are checked in fight.c
 ***************************************************************************/
 int check_immune(CHAR_DATA *ch, int dam_type)
 {
@@ -361,10 +298,6 @@ int check_immune(CHAR_DATA *ch, int dam_type)
 		return immune;
 }
 
-
-/***************************************************************************
-*	find_location
-***************************************************************************/
 ROOM_INDEX_DATA *find_location(CHAR_DATA *ch, char *arg)
 {
 	CHAR_DATA *victim;
@@ -383,10 +316,6 @@ ROOM_INDEX_DATA *find_location(CHAR_DATA *ch, char *arg)
 }
 
 
-
-/***************************************************************************
-* get_weapon_sn
-***************************************************************************/
 int get_weapon_sn(CHAR_DATA *ch, OBJ_DATA *wield)
 {
 	SKILL *skill;
@@ -432,10 +361,6 @@ int get_weapon_sn(CHAR_DATA *ch, OBJ_DATA *wield)
 	return (skill != NULL) ? skill->sn : -1;
 }
 
-
-/***************************************************************************
-*	get_weapon_skill
-***************************************************************************/
 int get_weapon_skill(CHAR_DATA *ch, int sn)
 {
 	int skill;
@@ -452,18 +377,14 @@ int get_weapon_skill(CHAR_DATA *ch, int sn)
 			skill = 3 * ch->level;
 		else
 			skill = get_learned_percent(ch, resolve_skill_sn(sn));
-			/*skill = ch->pcdata->learned[sn];*/
 	}
 
 	return URANGE(0, skill, 100);
 }
 
-
 /***************************************************************************
-*	reset_char
-*
-*	used to reset default on a character that are bestowed
-*	by race abilities or equipment.
+* used to reset default on a character that are bestowed
+* by race abilities or equipment.
 ***************************************************************************/
 void reset_char(CHAR_DATA *ch)
 {
@@ -560,10 +481,10 @@ void reset_char(CHAR_DATA *ch)
 	ch->hitroll = 0;
 	ch->damroll = 0;
 	ch->saving_throw = 0;
-	/*	because humans are so average
-	 *	instead of rooted somewhere in magic,
+	/* because humans are so average
+	 * instead of rooted somewhere in magic,
 	 *  their saving throw vs. magical attacks
-	 *	is stronger -- -1/5 of the level
+	 * is stronger -- -1/5 of the level
 	 *
 	 * if( ch->race == race_lookup("human"))
 	 * {
@@ -769,21 +690,19 @@ void reset_char(CHAR_DATA *ch)
 	/* reset werebest blood rage */
 	blood_rage(ch);
 
-/* make sure sex is RIGHT!!!! */
+    /* make sure sex is RIGHT!!!! */
 	if (ch->sex < 0 || ch->sex > 2)
 		ch->sex = ch->pcdata->true_sex;
 }
 
 
-/***************************************************************************
-*	get_trust
-*
-*	gets the trust level of a user
-*		if null is passed it is lvl 311
-*		if an NPC is passed it is 0
-*		if ch->trust > 0 then return ch->trust
-*		otherwise return ch->level
-***************************************************************************/
+/**
+ * gets the trust level of a user
+ * 	if null is passed it is lvl 311
+ * 	if an NPC is passed it is 0
+ * 	if ch->trust > 0 then return ch->trust
+ * 	otherwise return ch->level
+ */
 int get_trust(CHAR_DATA *ch)
 {
 	if (!ch)
@@ -799,24 +718,22 @@ int get_trust(CHAR_DATA *ch)
 }
 
 
-/***************************************************************************
-*	get_age
-*
-*	gets the age, in mud years, for a player
-***************************************************************************/
+/**
+ * get_age
+ *
+ * gets the age, in mud years, for a player
+ */
 int get_age(CHAR_DATA *ch)
 {
 	return 17 + (ch->played + (int)(globalSystemState.current_time - ch->logon)) / 72000;
 }
 
 
-/***************************************************************************
-*	get_current_stat
-*
-*	gets a the specified current stat by combining
-*	perm_stat with mod_stat and putting that number
-*	in the number range 3 - <max stat value>
-***************************************************************************/
+/**
+ * gets a the specified current stat by combining
+ * perm_stat with mod_stat and putting that number
+ * in the number range 3 - <max stat value>
+ */
 int get_curr_stat(CHAR_DATA *ch, int stat)
 {
 	int val;
@@ -838,12 +755,10 @@ int get_curr_stat(CHAR_DATA *ch, int stat)
 }
 
 
-/***************************************************************************
-*	get_max_train
-*
-*	gets the highest value a stat can be trained for a
-*	given character
-***************************************************************************/
+/**
+ * gets the highest value a stat can be trained for a
+ * given character
+ */
 int get_max_train(CHAR_DATA *ch, int stat)
 {
 	int max;
@@ -864,11 +779,9 @@ int get_max_train(CHAR_DATA *ch, int stat)
 }
 
 
-/***************************************************************************
-*	get_carry_n
-*
-*	get the number of items a character can carry
-***************************************************************************/
+/**
+ * get the number of items a character can carry
+ */
 int can_carry_n(CHAR_DATA *ch)
 {
 	if (!IS_NPC(ch) && ch->level >= LEVEL_IMMORTAL)
@@ -882,11 +795,9 @@ int can_carry_n(CHAR_DATA *ch)
 
 
 
-/***************************************************************************
-*	get_carry_w
-*
-*	get the maximum amount of weight a character can carry
-***************************************************************************/
+/**
+ * get the maximum amount of weight a character can carry
+ */
 int can_carry_w(CHAR_DATA *ch)
 {
 	if (!IS_NPC(ch) && ch->level >= LEVEL_IMMORTAL)
@@ -898,11 +809,9 @@ int can_carry_w(CHAR_DATA *ch)
 	return ((get_curr_stat(ch, STAT_STR) - 2) * 200) + (ch->level * 25);
 }
 
-/***************************************************************************
-*	get_wield_weight
-*
-*	get the maximum wieght of a wielded item
-***************************************************************************/
+/**
+ * get the maximum wieght of a wielded item
+ */
 int get_wield_weight(CHAR_DATA *ch)
 {
 	return UMIN((get_curr_stat(ch, STAT_STR) * 5 / 2), 75) * 10;
@@ -910,11 +819,9 @@ int get_wield_weight(CHAR_DATA *ch)
 
 
 
-/***************************************************************************
-*	is_name
-*
-*	is a given name in a name list
-***************************************************************************/
+/**
+ * is a given name in a name list
+ */
 bool is_name(char *str, char *namelist)
 {
 	char name[MIL], part[MIL];
@@ -945,11 +852,7 @@ bool is_name(char *str, char *namelist)
 	}
 }
 
-
-
-
-
-/*
+/**
  * Move a char out of a room.
  */
 void char_from_room(CHAR_DATA *ch)
@@ -957,7 +860,7 @@ void char_from_room(CHAR_DATA *ch)
 	OBJ_DATA *obj;
 
 	if (ch->in_room == NULL) {
-		bug("Char_from_room: NULL.", 0);
+		log_bug("Char_from_room: NULL.", 0);
 		return;
 	}
 
@@ -983,7 +886,7 @@ void char_from_room(CHAR_DATA *ch)
 		}
 
 		if (prev == NULL)
-			bug("Char_from_room: ch not found.", 0);
+			log_bug("Char_from_room: ch not found.", 0);
 	}
 
 	ch->in_room = NULL;
@@ -992,8 +895,6 @@ void char_from_room(CHAR_DATA *ch)
 	return;
 }
 
-
-
 void char_to_room(CHAR_DATA *ch, ROOM_INDEX_DATA *pRoomIndex)
 {
 	OBJ_DATA *obj;
@@ -1001,7 +902,7 @@ void char_to_room(CHAR_DATA *ch, ROOM_INDEX_DATA *pRoomIndex)
 	if (pRoomIndex == NULL) {
 		ROOM_INDEX_DATA *room;
 
-		bug("Char_to_room: NULL.", 0);
+		log_bug("Char_to_room: NULL.", 0);
 
 		if ((room = get_room_index(ROOM_VNUM_TEMPLE)) != NULL)
 			char_to_room(ch, room);
@@ -1063,13 +964,11 @@ void char_to_room(CHAR_DATA *ch, ROOM_INDEX_DATA *pRoomIndex)
 			}
 		}
 	}
-
-	return;
 }
 
 
 
-/*
+/**
  * Give an obj to a char.
  */
 void obj_to_char(OBJ_DATA *obj, CHAR_DATA *ch)
@@ -1084,7 +983,7 @@ void obj_to_char(OBJ_DATA *obj, CHAR_DATA *ch)
 }
 
 
-/*
+/**
  * Take an obj from its character.
  */
 void obj_from_char(OBJ_DATA *obj)
@@ -1092,7 +991,7 @@ void obj_from_char(OBJ_DATA *obj)
 	CHAR_DATA *ch;
 
 	if ((ch = obj->carried_by) == NULL) {
-		bug("Obj_from_char: null ch.", 0);
+		log_bug("Obj_from_char: null ch.", 0);
 		return;
 	}
 
@@ -1112,19 +1011,16 @@ void obj_from_char(OBJ_DATA *obj)
 		}
 
 		if (prev == NULL)
-			bug("Obj_from_char: obj not in list.", 0);
+			log_bug("Obj_from_char: obj not in list.", 0);
 	}
 
 	obj->carried_by = NULL;
 	obj->next_content = NULL;
 	ch->carry_number -= get_obj_number(obj);
 	ch->carry_weight -= get_obj_weight(obj);
-	return;
 }
 
-
-
-/*
+/**
  * Find the ac value of an obj, including position effect.
  */
 long apply_ac(OBJ_DATA *obj, int iWear, int type)
@@ -1178,9 +1074,7 @@ long apply_ac(OBJ_DATA *obj, int iWear, int type)
 	return 0;
 }
 
-
-
-/*
+/**
  * Find a piece of eq on a character.
  */
 OBJ_DATA *get_eq_char(CHAR_DATA *ch, int iWear)
@@ -1197,9 +1091,7 @@ OBJ_DATA *get_eq_char(CHAR_DATA *ch, int iWear)
 	return NULL;
 }
 
-
-
-/*
+/**
  * Equip a char with an obj.
  */
 void equip_char(CHAR_DATA *ch, OBJ_DATA *obj, int iWear)
@@ -1258,13 +1150,9 @@ void equip_char(CHAR_DATA *ch, OBJ_DATA *obj, int iWear)
 	    && obj->value[2] != 0
 	    && ch->in_room != NULL)
 		++ch->in_room->light;
-
-	return;
 }
 
-
-
-/*
+/**
  * Unequip a char with an obj.
  */
 void unequip_char(CHAR_DATA *ch, OBJ_DATA *obj)
@@ -1275,12 +1163,12 @@ void unequip_char(CHAR_DATA *ch, OBJ_DATA *obj)
 	int i;
 
 	if (obj == NULL) {
-		bug("Unequip_char: no object.", 0);
+		log_bug("Unequip_char: no object.", 0);
 		return;
 	}
 
 	if (obj->wear_loc == WEAR_NONE) {
-		bug("Unequip_char: already unequipped.", 0);
+		log_bug("Unequip_char: already unequipped.", 0);
 		return;
 	}
 
@@ -1308,14 +1196,14 @@ void unequip_char(CHAR_DATA *ch, OBJ_DATA *obj)
 	}
 	for (paf = obj->affected; paf != NULL; paf = paf->next)
 		if (paf->location == APPLY_SPELL_AFFECT) {
-			bug("Norm-Apply: %d", 0);
+			log_bug("Norm-Apply: %d", 0);
 			for (lpaf = ch->affected; lpaf != NULL; lpaf = lpaf_next) {
 				lpaf_next = lpaf->next;
 				if ((lpaf->type == paf->type) &&
 				    (lpaf->level == paf->level) &&
 				    (lpaf->location == APPLY_SPELL_AFFECT)) {
-					bug("location = %d", lpaf->location);
-					bug("type = %d", lpaf->type);
+					log_bug("location = %d", lpaf->location);
+					log_bug("type = %d", lpaf->type);
 					affect_remove(ch, lpaf);
 					lpaf_next = NULL;
 				}
@@ -1334,9 +1222,7 @@ void unequip_char(CHAR_DATA *ch, OBJ_DATA *obj)
 	return;
 }
 
-
-
-/*
+/**
  * Count occurrences of an obj in a list.
  */
 int count_obj_list(OBJ_INDEX_DATA *pObjIndex, OBJ_DATA *list)
@@ -1352,9 +1238,7 @@ int count_obj_list(OBJ_INDEX_DATA *pObjIndex, OBJ_DATA *list)
 	return nMatch;
 }
 
-
-
-/*
+/**
  * Move an obj out of a room.
  */
 void obj_from_room(OBJ_DATA *obj)
@@ -1363,7 +1247,7 @@ void obj_from_room(OBJ_DATA *obj)
 	CHAR_DATA *ch;
 
 	if ((in_room = obj->in_room) == NULL) {
-		bug("obj_from_room: NULL.", 0);
+		log_bug("obj_from_room: NULL.", 0);
 		return;
 	}
 
@@ -1384,7 +1268,7 @@ void obj_from_room(OBJ_DATA *obj)
 		}
 
 		if (prev == NULL) {
-			bug("obj_from_room: obj not found.", 0);
+			log_bug("obj_from_room: obj not found.", 0);
 			return;
 		}
 	}
@@ -1460,7 +1344,7 @@ void obj_from_obj(OBJ_DATA *obj)
 	OBJ_DATA *obj_from;
 
 	if ((obj_from = obj->in_obj) == NULL) {
-		bug("Obj_from_obj: null obj_from.", 0);
+		log_bug("Obj_from_obj: null obj_from.", 0);
 		return;
 	}
 
@@ -1477,7 +1361,7 @@ void obj_from_obj(OBJ_DATA *obj)
 		}
 
 		if (prev == NULL) {
-			bug("Obj_from_obj: obj not found.", 0);
+			log_bug("Obj_from_obj: obj not found.", 0);
 			return;
 		}
 	}
@@ -1531,7 +1415,7 @@ void extract_obj(OBJ_DATA *obj)
 		}
 
 		if (prev == NULL) {
-			bug_long("Extract_obj: obj %d not found.", obj->obj_idx->vnum);
+			log_string("Extract_obj: obj %ld not found.", obj->obj_idx->vnum);
 			return;
 		}
 	}
@@ -1553,7 +1437,7 @@ void extract_char(CHAR_DATA *ch, bool extract)
 	CHAR_DATA *wch;
 
 	if (ch->in_room == NULL) {
-		bug("extract_char: NULL room", 0);
+		log_bug("extract_char: NULL room", 0);
 		return;
 	}
 
@@ -1601,7 +1485,7 @@ void extract_char(CHAR_DATA *ch, bool extract)
 		}
 
 		if (prev == NULL) {
-			bug("extract_char: char not found.", 0);
+			log_bug("extract_char: char not found.", 0);
 			return;
 		}
 	}
@@ -1616,9 +1500,9 @@ void extract_char(CHAR_DATA *ch, bool extract)
 
 
 /***************************************************************************
-*	get_char_room
+* get_char_room
 *
-*	get a character in the room
+* get a character in the room
 ***************************************************************************/
 CHAR_DATA *get_char_room(CHAR_DATA *ch, char *argument)
 {
@@ -1652,9 +1536,9 @@ CHAR_DATA *get_char_room(CHAR_DATA *ch, char *argument)
 
 
 /***************************************************************************
-*	get_char_world
+* get_char_world
 *
-*	find a character somewhere in the world
+* find a character somewhere in the world
 ***************************************************************************/
 CHAR_DATA *get_char_world(CHAR_DATA *ch, char *argument)
 {
@@ -1688,9 +1572,9 @@ CHAR_DATA *get_char_world(CHAR_DATA *ch, char *argument)
 
 
 /***************************************************************************
-*	get_obj_type
+* get_obj_type
 *
-*	find an object with a given index data
+* find an object with a given index data
 ***************************************************************************/
 OBJ_DATA *get_obj_type(OBJ_INDEX_DATA *obj_idx)
 {
@@ -1704,9 +1588,9 @@ OBJ_DATA *get_obj_type(OBJ_INDEX_DATA *obj_idx)
 }
 
 /***************************************************************************
-*	get_obj_list
+* get_obj_list
 *
-*	find an object in an arbitrary object list
+* find an object in an arbitrary object list
 ***************************************************************************/
 OBJ_DATA *get_obj_list(CHAR_DATA *ch, char *argument, OBJ_DATA *list)
 {
@@ -1730,9 +1614,9 @@ OBJ_DATA *get_obj_list(CHAR_DATA *ch, char *argument, OBJ_DATA *list)
 
 
 /***************************************************************************
-*	get_obj_carry
+* get_obj_carry
 *
-*	find an object in the characters inventory
+* find an object in the characters inventory
 ***************************************************************************/
 OBJ_DATA *get_obj_carry(CHAR_DATA *ch, char *argument)
 {
@@ -1757,9 +1641,9 @@ OBJ_DATA *get_obj_carry(CHAR_DATA *ch, char *argument)
 
 
 /***************************************************************************
-*	get_obj_wear
+* get_obj_wear
 *
-*	find an object worn by the character
+* find an object worn by the character
 ***************************************************************************/
 OBJ_DATA *get_obj_wear(CHAR_DATA *ch, char *argument)
 {
@@ -1785,9 +1669,9 @@ OBJ_DATA *get_obj_wear(CHAR_DATA *ch, char *argument)
 
 
 /***************************************************************************
-*	get_obj_here
+* get_obj_here
 *
-*	find an object in the room or in inventory or worn
+* find an object in the room or in inventory or worn
 ***************************************************************************/
 OBJ_DATA *get_obj_here(CHAR_DATA *ch, char *argument)
 {
@@ -1807,9 +1691,9 @@ OBJ_DATA *get_obj_here(CHAR_DATA *ch, char *argument)
 }
 
 /***************************************************************************
-*	get_obj_world
+* get_obj_world
 *
-*	find an object somewhere in the world
+* find an object somewhere in the world
 ***************************************************************************/
 OBJ_DATA *get_obj_world(CHAR_DATA *ch, char *argument)
 {
@@ -1835,10 +1719,10 @@ OBJ_DATA *get_obj_world(CHAR_DATA *ch, char *argument)
 
 
 /***************************************************************************
-*	deduct_cost
+* deduct_cost
 *
-*	deduct the cost of something from a character
-*	uses silver then gold
+* deduct the cost of something from a character
+* uses silver then gold
 ***************************************************************************/
 void deduct_cost(CHAR_DATA *ch, unsigned int cost)
 {
@@ -1852,25 +1736,24 @@ void deduct_cost(CHAR_DATA *ch, unsigned int cost)
 	}
 
 	if (ch->gold < gold) {
-		bug_long("deduct costs: player gold less than amount to be deducted.  %ld", 0);
+		log_string("deduct costs: player gold less than amount to be deducted.  %ld < %ld", ch->gold, gold);
 		gold = ch->gold;
 	}
 	if (ch->silver < silver) {
-		bug_long("deduct costs: silver less than amount to be deducted. %ld", 0);
+		log_string("deduct costs: silver less than amount to be deducted. %ld < %ld", ch->silver, silver);
 		silver = ch->silver;
 	}
 
-
-	ch->gold -= gold;
-	ch->silver -= silver;
+	ch->gold -= UMAX(0, gold);
+	ch->silver -= UMAX(0, silver);
 }
 
 
 
 /***************************************************************************
-*	create_money
+* create_money
 *
-*	create money
+* create money
 ***************************************************************************/
 OBJ_DATA *create_money(unsigned int gold, unsigned int silver)
 {
@@ -1924,11 +1807,11 @@ OBJ_DATA *create_money(unsigned int gold, unsigned int silver)
 
 
 /***************************************************************************
-*	get_obj_number
+* get_obj_number
 *
-*	get the number of objects which an object counts as
-*	certain object types count as 0 objects, containers
-*	may contain several objects
+* get the number of objects which an object counts as
+* certain object types count as 0 objects, containers
+* may contain several objects
 ***************************************************************************/
 int get_obj_number(OBJ_DATA *obj)
 {
@@ -1956,9 +1839,9 @@ int get_obj_number(OBJ_DATA *obj)
 
 
 /***************************************************************************
-*	get_object_weight
+* get_object_weight
 *
-*	get an objects weight figuring in weight multiplers
+* get an objects weight figuring in weight multiplers
 ***************************************************************************/
 int get_obj_weight(OBJ_DATA *obj)
 {
@@ -1975,10 +1858,10 @@ int get_obj_weight(OBJ_DATA *obj)
 }
 
 /***************************************************************************
-*	get_true_weight
+* get_true_weight
 *
-*	get an objects true weight - handles objects inside of
-*	other objects
+* get an objects true weight - handles objects inside of
+* other objects
 ***************************************************************************/
 int get_true_weight(OBJ_DATA *obj)
 {
@@ -1996,9 +1879,9 @@ int get_true_weight(OBJ_DATA *obj)
 
 
 /***************************************************************************
-*	is_room_dark
+* is_room_dark
 *
-*	is the room dark?
+* is the room dark?
 ***************************************************************************/
 bool room_is_dark(CHAR_DATA *ch, ROOM_INDEX_DATA *room)
 {
@@ -2041,9 +1924,9 @@ bool room_is_dark(CHAR_DATA *ch, ROOM_INDEX_DATA *room)
 
 
 /***************************************************************************
-*	is_room_owner
+* is_room_owner
 *
-*	is the character the owner of a room?
+* is the character the owner of a room?
 ***************************************************************************/
 bool is_room_owner(CHAR_DATA *ch, ROOM_INDEX_DATA *room)
 {
@@ -2055,9 +1938,9 @@ bool is_room_owner(CHAR_DATA *ch, ROOM_INDEX_DATA *room)
 }
 
 /***************************************************************************
-*	room_is_private
+* room_is_private
 *
-*	checks to see if a room is private
+* checks to see if a room is private
 ***************************************************************************/
 bool room_is_private(ROOM_INDEX_DATA *room)
 {
@@ -2088,9 +1971,9 @@ bool room_is_private(ROOM_INDEX_DATA *room)
 
 
 /***************************************************************************
-*	can_see_room
+* can_see_room
 *
-*	can a character see a room
+* can a character see a room
 ***************************************************************************/
 bool can_see_room(CHAR_DATA *ch, ROOM_INDEX_DATA *room)
 {
@@ -2131,9 +2014,9 @@ bool can_see_room(CHAR_DATA *ch, ROOM_INDEX_DATA *room)
 
 
 /***************************************************************************
-*	can_see
+* can_see
 *
-*	can a character see another character?
+* can a character see another character?
 ***************************************************************************/
 bool can_see(CHAR_DATA *ch, CHAR_DATA *victim)
 {
@@ -2175,9 +2058,9 @@ bool can_see(CHAR_DATA *ch, CHAR_DATA *victim)
 
 
 /***************************************************************************
-*	can_see_obj
+* can_see_obj
 *
-*	can a character see an object?
+* can a character see an object?
 ***************************************************************************/
 bool can_see_obj(CHAR_DATA *ch, OBJ_DATA *obj)
 {
@@ -2211,9 +2094,9 @@ bool can_see_obj(CHAR_DATA *ch, OBJ_DATA *obj)
 
 
 /***************************************************************************
-*	can_drop_obj
+* can_drop_obj
 *
-*	can a character drop an object?
+* can a character drop an object?
 ***************************************************************************/
 bool can_drop_obj(CHAR_DATA *ch, OBJ_DATA *obj)
 {
@@ -2228,9 +2111,9 @@ bool can_drop_obj(CHAR_DATA *ch, OBJ_DATA *obj)
 
 
 /***************************************************************************
-*	room_flag_bit
+* room_flag_bit
 *
-*	return the room flags for a room
+* return the room flags for a room
 ***************************************************************************/
 char *room_flag_bit_name(ROOM_INDEX_DATA *room)
 {
@@ -2239,9 +2122,9 @@ char *room_flag_bit_name(ROOM_INDEX_DATA *room)
 
 
 /***************************************************************************
-*	item_type_name
+* item_type_name
 *
-*	get the ascii name of an item type
+* get the ascii name of an item type
 ***************************************************************************/
 char *item_type_name(OBJ_DATA *obj)
 {
@@ -2249,12 +2132,12 @@ char *item_type_name(OBJ_DATA *obj)
 }
 
 /***************************************************************************
-*	functions provided for backwards compatibility
+* functions provided for backwards compatibility
 ***************************************************************************/
 /***************************************************************************
-*	affect_loc_name
+* affect_loc_name
 *
-*	return an affect location name
+* return an affect location name
 ***************************************************************************/
 char *affect_loc_name(long flags)
 {
@@ -2263,9 +2146,9 @@ char *affect_loc_name(long flags)
 
 
 /***************************************************************************
-*	extra_bit_name
+* extra_bit_name
 *
-*	return an extra bit name
+* return an extra bit name
 ***************************************************************************/
 char *extra_bit_name(long flags)
 {
@@ -2278,9 +2161,9 @@ char *extra2_bit_name(long flags)
 }
 
 /***************************************************************************
-*	exit_bit_name
+* exit_bit_name
 *
-*	return an exit bit name
+* return an exit bit name
 ***************************************************************************/
 char *exit_bit_name(long flags)
 {
@@ -2289,9 +2172,9 @@ char *exit_bit_name(long flags)
 
 
 /***************************************************************************
-*	affect_bit_name
+* affect_bit_name
 *
-*	return an affect bit name
+* return an affect bit name
 ***************************************************************************/
 char *affect_bit_name(long flags)
 {
@@ -2299,9 +2182,9 @@ char *affect_bit_name(long flags)
 }
 
 /***************************************************************************
-*	act_bit_name
+* act_bit_name
 *
-*	return an act bit name - differentiates between mobs and players
+* return an act bit name - differentiates between mobs and players
 ***************************************************************************/
 char *act_bit_name(long flags)
 {
@@ -2312,9 +2195,9 @@ char *act_bit_name(long flags)
 }
 
 /***************************************************************************
-*	comm_bit_name
+* comm_bit_name
 *
-*	return a communication bit string
+* return a communication bit string
 ***************************************************************************/
 char *comm_bit_name(long flags)
 {
@@ -2322,9 +2205,9 @@ char *comm_bit_name(long flags)
 }
 
 /***************************************************************************
-*	imm_bit_name
+* imm_bit_name
 *
-*	return an immunity bit string
+* return an immunity bit string
 ***************************************************************************/
 char *imm_bit_name(long flags)
 {
@@ -2333,9 +2216,9 @@ char *imm_bit_name(long flags)
 
 
 /***************************************************************************
-*	wear_bit_name
+* wear_bit_name
 *
-*	return a wear bit string
+* return a wear bit string
 ***************************************************************************/
 char *wear_bit_name(long flags)
 {
@@ -2343,9 +2226,9 @@ char *wear_bit_name(long flags)
 }
 
 /***************************************************************************
-*	form_bit_name
+* form_bit_name
 *
-*	return a form bit string
+* return a form bit string
 ***************************************************************************/
 char *form_bit_name(long flags)
 {
@@ -2354,9 +2237,9 @@ char *form_bit_name(long flags)
 
 
 /***************************************************************************
-*	part_bit_name
+* part_bit_name
 *
-*	return a body part bit string
+* return a body part bit string
 ***************************************************************************/
 char *part_bit_name(long flags)
 {
@@ -2364,9 +2247,9 @@ char *part_bit_name(long flags)
 }
 
 /***************************************************************************
-*	weapon_bit_name
+* weapon_bit_name
 *
-*	return a weapon flag string
+* return a weapon flag string
 ***************************************************************************/
 char *weapon_bit_name(long flags)
 {
@@ -2374,9 +2257,9 @@ char *weapon_bit_name(long flags)
 }
 
 /***************************************************************************
-*	cont_bit_name
+* cont_bit_name
 *
-*	return a container bit string
+* return a container bit string
 ***************************************************************************/
 char *cont_bit_name(long flags)
 {
@@ -2385,9 +2268,9 @@ char *cont_bit_name(long flags)
 
 
 /***************************************************************************
-*	off_bit_name
+* off_bit_name
 *
-*	return a offense flags bit string
+* return a offense flags bit string
 ***************************************************************************/
 char *off_bit_name(long flags)
 {
@@ -2397,10 +2280,10 @@ char *off_bit_name(long flags)
 
 
 /***************************************************************************
-*	uncolor_str
+* uncolor_str
 *
-*	remove the color codes from a string
-*	WARNING: allocates a new string, so you MUST free it
+* remove the color codes from a string
+* WARNING: allocates a new string, so you MUST free it
 ***************************************************************************/
 char *uncolor_str(char *txt)
 {
@@ -2458,7 +2341,7 @@ char *uncolor_str(char *txt)
 
 
 /***************************************************************************
-*	identify_item
+* identify_item
 ***************************************************************************/
 void identify_item(CHAR_DATA *ch, OBJ_DATA *obj)
 {
@@ -2697,12 +2580,9 @@ void identify_item(CHAR_DATA *ch, OBJ_DATA *obj)
 
 
 
-/********************************************************************
-*       furniture_check
-*
-*       check to make sure that the character is no longer
-*       on a carry-able piece of furniture
-********************************************************************/
+/**
+ * make sure that the character is no longer on a carry-able piece of furniture
+ */
 void furniture_check(CHAR_DATA *ch)
 {
 	OBJ_DATA *obj_on;
@@ -2718,9 +2598,7 @@ void furniture_check(CHAR_DATA *ch)
 
 
 /***************************************************************************
-*	get_death_room
-*
-*	get the deathroom for a character
+* get the deathroom for a character
 ***************************************************************************/
 ROOM_INDEX_DATA *get_death_room(CHAR_DATA *ch)
 {

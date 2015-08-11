@@ -409,7 +409,7 @@ void load_disabled()
 		}
 
 		if (!found) {
-			bug("Skipping uknown command in " DISABLED_FILE " file.", 0);
+			log_bug("Skipping uknown command in " DISABLED_FILE " file.");
 			fread_number(fp);       /* level */
 			fread_word(fp);         /* disabled_by */
 		} else {
@@ -444,7 +444,7 @@ void save_disabled()
 	fp = fopen(DISABLED_FILE, "w");
 
 	if (fp == NULL) {
-		bug("Could not open " DISABLED_FILE " for writing", 0);
+		log_bug("Could not open " DISABLED_FILE " for writing");
 		return;
 	}
 

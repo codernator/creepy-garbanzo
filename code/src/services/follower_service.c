@@ -4,7 +4,7 @@
 void add_follower(CHAR_DATA *ch, CHAR_DATA *master)
 {
 	if (ch->master != NULL) {
-		bug("Add_follower: non-null master.", 0);
+		log_bug("Add_follower: non-null master.");
 		return;
 	}
 
@@ -80,7 +80,7 @@ void nuke_pets(CHAR_DATA *ch)
 void stop_follower(CHAR_DATA *ch)
 {
 	if (ch->master == NULL) {
-		bug("Stop_follower: null master.", 0);
+		log_bug("Stop_follower: null master.");
 		return;
 	}
 

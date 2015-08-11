@@ -333,7 +333,7 @@ static void load_thread(char *name, NOTE_DATA **list, int type, time_t free_time
 		note_last = note;
 	}
 
-	bug("load_threads: bad key word.", 0);
+	log_bug("load_threads: bad key word.");
 	_Exit(1);
 }
 
@@ -424,7 +424,7 @@ static void remove_message(NOTE_DATA *note)
 				break;
 
 		if (prev == NULL) {
-			bug("note_remove: note not found.", 0);
+			log_bug("note_remove: note not found.");
 			return;
 		}
 

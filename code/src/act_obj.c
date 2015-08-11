@@ -13,7 +13,6 @@
 *	external commands
 ***************************************************************************/
 
-extern void bug_long(const char *str, long param);
 extern unsigned int parse_unsigned_int(char *string);
 extern void mp_bribe_trigger(CHAR_DATA * mob, CHAR_DATA * ch, long amount);
 extern void mp_give_trigger(CHAR_DATA * mob, CHAR_DATA * ch, OBJ_DATA * obj);
@@ -1646,7 +1645,7 @@ void do_drink(CHAR_DATA *ch, char *argument)
 
 	case ITEM_FOUNTAIN:
 		if ((liquid = obj->value[2]) < 0) {
-			bug_long("Do_drink: bad liquid number %ld.", liquid);
+			log_bug("Do_drink: bad liquid number %ld.", liquid);
 			liquid = obj->value[2] = 0;
 		}
 		amount = liq_table[liquid].liq_affect[4] * 3;
@@ -1659,7 +1658,7 @@ void do_drink(CHAR_DATA *ch, char *argument)
 		}
 
 		if ((liquid = obj->value[2]) < 0) {
-			bug_long("Do_drink: bad liquid number %ld.", liquid);
+			log_bug("Do_drink: bad liquid number %ld.", liquid);
 			liquid = obj->value[2] = 0;
 		}
 
@@ -1962,7 +1961,7 @@ void wear_obj(CHAR_DATA *ch, OBJ_DATA *obj, bool fReplace)
 		}
 
 
-		bug("Wear_obj: no free finger.", 0);
+		log_bug("Wear_obj: no free finger.");
 		send_to_char("You already wear two rings.\n\r", ch);
 		return;
 	}
@@ -1989,7 +1988,7 @@ void wear_obj(CHAR_DATA *ch, OBJ_DATA *obj, bool fReplace)
 			return;
 		}
 
-		bug("Wear_obj: no free neck.", 0);
+		log_bug("Wear_obj: no free neck.");
 		send_to_char("You already wear two neck items.\n\r", ch);
 		return;
 	}
@@ -2043,7 +2042,7 @@ void wear_obj(CHAR_DATA *ch, OBJ_DATA *obj, bool fReplace)
 			return;
 		}
 
-		bug("Wear_obj: no free ear.", 0);
+		log_bug("Wear_obj: no free ear.");
 		send_to_char("You already wear two ear items.\n\r", ch);
 		return;
 	}
@@ -2123,7 +2122,7 @@ void wear_obj(CHAR_DATA *ch, OBJ_DATA *obj, bool fReplace)
 			return;
 		}
 
-		bug("Wear_obj: no free wrist.", 0);
+		log_bug("Wear_obj: no free wrist.");
 		send_to_char("You already wear two wrist items.\n\r", ch);
 		return;
 	}
@@ -2957,7 +2956,7 @@ void do_buy(CHAR_DATA *ch, char *argument)
 			pRoomIndexNext = get_room_index(ch->in_room->vnum + 1);
 
 		if (pRoomIndexNext == NULL) {
-			bug_long("Do_buy: bad pet shop at vnum %d.", ch->in_room->vnum);
+			log_bug("Do_buy: bad pet shop at vnum %d.", ch->in_room->vnum);
 			send_to_char("Sorry, you can't buy that here.\n\r", ch);
 			return;
 		}
@@ -3031,7 +3030,6 @@ void do_buy(CHAR_DATA *ch, char *argument)
 		OBJ_DATA *obj;
 		OBJ_DATA *t_obj;
 		char arg[MIL];
-		char cheat[MIL];
 		int number;
 		int count = 1;
 
@@ -3075,8 +3073,7 @@ void do_buy(CHAR_DATA *ch, char *argument)
 
 		if (number < 1) {
 			send_to_char("Sorry, no cheating allowed.\n\r", ch);
-			sprintf(cheat, "%s tried to use the negative buy bug.", ch->name);
-			log_string(cheat);
+			log_string("%s tried to use the negative buy bug.", ch->name);
 			return;
 		}
 
@@ -3163,8 +3160,6 @@ void do_buy(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_list(CHAR_DATA *ch, char *argument)
 {
-	char buf[MSL];
-
 	if (IS_SET(ch->in_room->room_flags, ROOM_PET_SHOP)) {
 		ROOM_INDEX_DATA *pRoomIndexNext;
 		CHAR_DATA *pet;
@@ -3177,7 +3172,7 @@ void do_list(CHAR_DATA *ch, char *argument)
 			pRoomIndexNext = get_room_index(ch->in_room->vnum + 1);
 
 		if (pRoomIndexNext == NULL) {
-			bug_long("Do_list: bad pet shop at vnum %d.", ch->in_room->vnum);
+			log_bug("Do_list: bad pet shop at vnum %d.", ch->in_room->vnum);
 			send_to_char("You can't do that here.\n\r", ch);
 			return;
 		}
@@ -3190,11 +3185,7 @@ void do_list(CHAR_DATA *ch, char *argument)
 					send_to_char("Pets for sale:\n\r", ch);
 				}
 
-				sprintf(buf, "[%2d] %8d - %s\n\r",
-					pet->level,
-					10 * pet->level * pet->level,
-					pet->short_descr);
-				send_to_char(buf, ch);
+				printf_to_char(ch, "[%2d] %8d - %s\n\r", pet->level, 10 * pet->level * pet->level, pet->short_descr);
 			}
 		}
 
@@ -3226,10 +3217,7 @@ void do_list(CHAR_DATA *ch, char *argument)
 				}
 
 				if (IS_OBJ_STAT(obj, ITEM_INVENTORY)) {
-					sprintf(buf, "[%2d %10u -- ] %s\n\r",
-						obj->level,
-						cost,
-						obj->short_descr);
+					printf_to_char(ch, "[%2d %10u -- ] %s\n\r", obj->level, cost, obj->short_descr);
 				} else {
 					count = 1;
 
@@ -3239,13 +3227,8 @@ void do_list(CHAR_DATA *ch, char *argument)
 						obj = obj->next_content;
 						count++;
 					}
-					sprintf(buf, "[%2d %10u %2d ] %s\n\r",
-						obj->level,
-						cost,
-						count,
-						obj->short_descr);
+					printf_to_char(ch, "[%2d %10u %2d ] %s\n\r", obj->level, cost, count, obj->short_descr);
 				}
-				send_to_char(buf, ch);
 			}
 		}
 

@@ -1171,12 +1171,6 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
 						       * victim->level - victim->exp) / 2) + 50);
 		}
 
-		sprintf(log_buf, "%s got toasted by %s at %s [room %ld]",
-			(IS_NPC(victim) ? victim->short_descr : victim->name),
-			(IS_NPC(ch) ? ch->short_descr : ch->name),
-			ch->in_room->name,
-			ch->in_room->vnum);
-
 		if (!IS_NPC(ch)) {
 			if ((ch != victim) && (!IS_TRUSTED(ch, IMPLEMENTOR))) {
 				if (IS_NPC(victim)) {
@@ -1191,10 +1185,20 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
 				victim->pcdata->mobdeaths++;
 		}
 
-		if (IS_NPC(victim))
-			impnet(log_buf, NULL, NULL, (long)IMN_MOBDEATHS, 0, 0);
-		else
-			wiznet(log_buf, NULL, NULL, WIZ_DEATHS, 0, 0);
+        {
+            static char wiznet_message[MIL];
+            sprintf(wiznet_message, "%s got toasted by %s at %s [room %ld]",
+                (IS_NPC(victim) ? victim->short_descr : victim->name),
+                (IS_NPC(ch) ? ch->short_descr : ch->name),
+                ch->in_room->name,
+                ch->in_room->vnum);
+
+            if (IS_NPC(victim))
+                impnet(wiznet_message, NULL, NULL, (long)IMN_MOBDEATHS, 0, 0);
+            else
+                wiznet(wiznet_message, NULL, NULL, WIZ_DEATHS, 0, 0);
+        }
+
 		check_killer(ch, victim);
 
 		/* death trigger */
@@ -1486,10 +1490,7 @@ void check_killer(CHAR_DATA *ch, CHAR_DATA *victim)
  * NPC's are fair game.
  * So are killers and thieves.
  */
-	if (IS_NPC(victim)
-	    || IS_SET(victim->act, PLR_KILLER)
-	    || IS_SET(victim->act, PLR_DUELIST)
-	    || IS_SET(victim->act, PLR_THIEF))
+	if (IS_NPC(victim) || IS_SET(victim->act, PLR_KILLER) || IS_SET(victim->act, PLR_DUELIST) || IS_SET(victim->act, PLR_THIEF))
 		return;
 
 /*
@@ -1497,11 +1498,7 @@ void check_killer(CHAR_DATA *ch, CHAR_DATA *victim)
  */
 	if (IS_AFFECTED(ch, AFF_CHARM)) {
 		if (ch->master == NULL) {
-			char buf[MSL];
-
-			sprintf(buf, "Check_killer: %s bad AFF_CHARM",
-				IS_NPC(ch) ? ch->short_descr : ch->name);
-			bug(buf, 0);
+			log_bug("Check_killer: %s bad AFF_CHARM", IS_NPC(ch) ? ch->short_descr : ch->name);
 			affect_strip(ch, skill_lookup("charm person"));
 			REMOVE_BIT(ch->affected_by, AFF_CHARM);
 			return;
@@ -1520,11 +1517,7 @@ void check_killer(CHAR_DATA *ch, CHAR_DATA *victim)
  * So is being immortal(Alander's idea).
  * And current killers stay as they are.
  */
-	if (IS_NPC(ch)
-	    || ch == victim
-	    || ch->level >= LEVEL_IMMORTAL
-	    || IS_SET(ch->act, PLR_KILLER)
-	    || ch->fighting == victim)
+	if (IS_NPC(ch) || ch == victim || ch->level >= LEVEL_IMMORTAL || IS_SET(ch->act, PLR_KILLER) || ch->fighting == victim)
 		return;
 
 	if (ch->in_room->sector_type != SECT_CITY)
@@ -1725,7 +1718,7 @@ void update_pos(CHAR_DATA *victim)
 void set_fighting(CHAR_DATA *ch, CHAR_DATA *victim)
 {
 	if (ch->fighting != NULL) {
-		bug("Set_fighting: already fighting", 0);
+		log_bug("Set_fighting: already fighting");
 		return;
 	}
 
@@ -2403,7 +2396,7 @@ void dam_message(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, bool immune)
 			   && dt <= TYPE_HIT + MAX_DAMAGE_MESSAGE) {
 			attack = attack_table[dt - TYPE_HIT].noun;
 		} else {
-			bug("Dam_message: bad dt %d.", dt);
+			log_bug("Dam_message: bad dt %d.", dt);
 			dt = TYPE_HIT;
 			attack = attack_table[0].name;
 		}

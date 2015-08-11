@@ -1074,7 +1074,7 @@ void do_disconnect(CHAR_DATA *ch, char *argument)
 		}
 	}
 
-	bug("do_disconnect: desc not found.", 0);
+	log_bug("do_disconnect: desc not found.");
 	send_to_char("Descriptor not found!\n\r", ch);
 	return;
 }

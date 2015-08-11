@@ -583,7 +583,7 @@ void save_groups()
 	LEVEL_INFO *level;
 
 	if ((fp = fopen(GROUP_FILE, "w")) == NULL) {
-		bug("save_groups: fopen", 0);
+		log_bug("save_groups: fopen");
 		return;
 	}
 

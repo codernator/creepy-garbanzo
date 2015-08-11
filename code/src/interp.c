@@ -409,6 +409,7 @@ void interpret(CHAR_DATA *ch, char *argument)
 	char buf[MSL];
 	char command[MIL];
 	char logline[MIL];
+    static char wiznet_message[MIL];
 	int cmd;
 	int trust;
 	bool found;
@@ -478,29 +479,26 @@ void interpret(CHAR_DATA *ch, char *argument)
 	if (cmd_table[cmd].log == LOG_ALWAYS) {
 		if (!IS_NPC(ch)) {
 			log_to(LOG_SINK_ALWAYS, ch->name, "[%s] -- '%s'", ch->name, logline);
-			log_string("Log %s: %s", ch->name, logline);
-			sprintf(log_buf, "`4Log `O%s`4: `O%s``", ch->name, logline);
-			wiznet(log_buf, ch, NULL, WIZ_SECURE, 0, get_trust(ch));
+			sprintf(wiznet_message, "`4Log `O%s`4: `O%s``", ch->name, logline);
+			wiznet(wiznet_message, ch, NULL, WIZ_SECURE, 0, get_trust(ch));
 		} else {
 			log_to(LOG_SINK_ALWAYS, ch->name, "[%s] -- '%s'", ch->name, logline);
 			log_string("Log %s(mob): %s", ch->name, logline);
-			sprintf(log_buf, "`4Log `O%s(mob)`4: `O%s``", ch->name, logline);
-			wiznet(log_buf, ch, NULL, WIZ_SECURE, 0, get_trust(ch));
+			sprintf(wiznet_message, "`4Log `O%s(mob)`4: `O%s``", ch->name, logline);
+			wiznet(wiznet_message, ch, NULL, WIZ_SECURE, 0, get_trust(ch));
 		}
 	}
 
 	if (!IS_NPC(ch) && IS_SET(ch->act, PLR_LOG)) {
 		log_to(LOG_SINK_PLAYER, ch->name, "[%s] -- '%s'", ch->name, logline);
-		log_string("Log %s(plr): %s", ch->name, logline);
-		sprintf(log_buf, "`4Log `O%s(plr)`4: `O%s``", ch->name, logline);
-		wiznet(log_buf, ch, NULL, WIZ_PLOG, 0, get_trust(ch));
+		sprintf(wiznet_message, "`4Log `O%s(plr)`4: `O%s``", ch->name, logline);
+		wiznet(wiznet_message, ch, NULL, WIZ_PLOG, 0, get_trust(ch));
 	}
 
 	if (log_all) {
 		log_to(LOG_SINK_ALL, "NULL", "[%s] -- '%s'", ch->name, logline);
-		log_string("Log %s: %s", ch->name, logline);
-		sprintf(log_buf, "`4Log `O%s(all)`4: `O%s``", ch->name, logline);
-		wiznet(log_buf, ch, NULL, WIZ_ALOG, 0, get_trust(ch));
+		sprintf(wiznet_message, "`4Log `O%s(all)`4: `O%s``", ch->name, logline);
+		wiznet(wiznet_message, ch, NULL, WIZ_ALOG, 0, get_trust(ch));
 	}
 
 	if (ch->desc != NULL && ch->desc->snoop_by != NULL) {

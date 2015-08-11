@@ -50,7 +50,6 @@ static DECLARE_DO_FUN(do_mpremove);
 
 extern DECLARE_DO_FUN(do_look);
 extern ROOM_INDEX_DATA *find_location(CHAR_DATA *, char *);
-extern void bug_long(const char *str, long param);
 
 /*
  * Command table.
@@ -243,7 +242,7 @@ void do_mpgecho(CHAR_DATA *ch, char *argument)
 	DESCRIPTOR_DATA *d;
 
 	if (argument[0] == '\0') {
-		bug_long("MpGEcho: missing argument from vnum %d", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("MpGEcho: missing argument from vnum %d", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 
@@ -266,7 +265,7 @@ void do_mpzecho(CHAR_DATA *ch, char *argument)
 	DESCRIPTOR_DATA *d;
 
 	if (argument[0] == '\0') {
-		bug_long("MpZEcho: missing argument from vnum %d", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("MpZEcho: missing argument from vnum %d", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 
@@ -390,7 +389,7 @@ void do_mpkill(CHAR_DATA *ch, char *argument)
 		return;
 
 	if (IS_AFFECTED(ch, AFF_CHARM) && ch->master == victim) {
-		bug_long("MpKill - Charmed mob attacking master from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("MpKill - Charmed mob attacking master from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 
@@ -522,7 +521,7 @@ void do_mpoload(CHAR_DATA *ch, char *argument)
 			min_vnum = parse_long(mm_buf);
 
 		if (min_vnum <= 0) {
-			bug_long("mpoload - bad minimum number for random range %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+			log_bug("mpoload - bad minimum number for random range %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 			return;
 		}
 
@@ -534,7 +533,7 @@ void do_mpoload(CHAR_DATA *ch, char *argument)
 		vnum = number_range(min_vnum, max_vnum);
 	} else {
 		if (arg[0] == '\0' || !is_number(arg)) {
-			bug_long("mpoload - bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+			log_bug("mpoload - bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 			return;
 		}
 
@@ -547,13 +546,13 @@ void do_mpoload(CHAR_DATA *ch, char *argument)
 		level = -1;
 	} else {
 		if (!is_number(arg)) {
-			bug_long("mpoload - bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+			log_bug("mpoload - bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 			return;
 		}
 
 		level = parse_int(arg);
 		if (level < 0 || level > get_trust(ch)) {
-			bug_long("mpoload - bad level from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+			log_bug("mpoload - bad level from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 			return;
 		}
 	}
@@ -573,7 +572,7 @@ void do_mpoload(CHAR_DATA *ch, char *argument)
 		to_wear = true;
 
 	if ((obj_idx = get_obj_index(vnum)) == NULL) {
-		bug_long("mpoload - bad vnum arg from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("mpoload - bad vnum arg from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 
@@ -630,12 +629,12 @@ void do_mppurge(CHAR_DATA *ch, char *argument)
 		if ((obj = get_obj_here(ch, arg)))
 			extract_obj(obj);
 		else
-			bug_long("Mppurge - Bad argument from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+			log_bug("Mppurge - Bad argument from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 
 	if (!IS_NPC(victim)) {
-		bug_long("Mppurge - Purging a PC from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("Mppurge - Purging a PC from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 	extract_char(victim, true);
@@ -655,7 +654,7 @@ void do_mpgoto(CHAR_DATA *ch, char *argument)
 
 	one_argument(argument, arg);
 	if (arg[0] == '\0') {
-		bug_long("Mpgoto - No argument from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("Mpgoto - No argument from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 
@@ -663,7 +662,7 @@ void do_mpgoto(CHAR_DATA *ch, char *argument)
 		if ((location = get_random_room(ch, NULL)) == NULL)
 			return;
 	} else if ((location = find_location(ch, arg)) == NULL) {
-		bug_long("Mpgoto - No such location from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("Mpgoto - No such location from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 
@@ -692,12 +691,12 @@ void do_mpat(CHAR_DATA *ch, char *argument)
 	argument = one_argument(argument, arg);
 
 	if (arg[0] == '\0' || argument[0] == '\0') {
-		bug_long("Mpat - Bad argument from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("Mpat - Bad argument from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 
 	if ((location = find_location(ch, arg)) == NULL) {
-		bug_long("Mpat - No such location from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("Mpat - No such location from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 
@@ -741,7 +740,7 @@ void do_mptransfer(CHAR_DATA *ch, char *argument)
 	argument = one_argument(argument, arg2);
 
 	if (arg1[0] == '\0') {
-		bug_long("Mptransfer - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("Mptransfer - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 
@@ -765,7 +764,7 @@ void do_mptransfer(CHAR_DATA *ch, char *argument)
 		location = ch->in_room;
 	} else {
 		if ((location = find_location(ch, arg2)) == NULL) {
-			bug_long("Mptransfer - No such location from vnum %ld.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+			log_bug("Mptransfer - No such location from vnum %ld.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 			return;
 		}
 
@@ -804,7 +803,7 @@ void do_mpgtransfer(CHAR_DATA *ch, char *argument)
 	argument = one_argument(argument, arg2);
 
 	if (arg1[0] == '\0') {
-		bug_long("Mpgtransfer - Bad syntax from vnum %l.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("Mpgtransfer - Bad syntax from vnum %l.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 
@@ -834,7 +833,7 @@ void do_mpforce(CHAR_DATA *ch, char *argument)
 	argument = one_argument(argument, arg);
 
 	if (arg[0] == '\0' || argument[0] == '\0') {
-		bug_long("Mpforce - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("Mpforce - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 
@@ -878,7 +877,7 @@ void do_mpgforce(CHAR_DATA *ch, char *argument)
 	argument = one_argument(argument, arg);
 
 	if (arg[0] == '\0' || argument[0] == '\0') {
-		bug_long("MpGforce - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("MpGforce - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 
@@ -911,12 +910,12 @@ void do_mpvforce(CHAR_DATA *ch, char *argument)
 	argument = one_argument(argument, arg);
 
 	if (arg[0] == '\0' || argument[0] == '\0') {
-		bug_long("MpVforce - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("MpVforce - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 
 	if (!is_number(arg)) {
-		bug_long("MpVforce - Non-number argument vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("MpVforce - Non-number argument vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 
@@ -953,12 +952,12 @@ void do_mpcast(CHAR_DATA *ch, char *argument)
 	one_argument(argument, target);
 
 	if (spell[0] == '\0') {
-		bug_long("MpCast - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("MpCast - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 
 	if ((skill = skill_lookup(spell)) == NULL) {
-		bug_long("MpCast - No such spell from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("MpCast - No such spell from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 
@@ -1014,7 +1013,7 @@ void do_mpdamage(CHAR_DATA *ch, char *argument)
 	argument = one_argument(argument, max);
 
 	if (target[0] == '\0') {
-		bug_long("MpDamage - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("MpDamage - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 	if (!str_cmp(target, "all"))
@@ -1025,13 +1024,13 @@ void do_mpdamage(CHAR_DATA *ch, char *argument)
 	if (is_number(min)) {
 		low = parse_int(min);
 	} else {
-		bug_long("MpDamage - Bad damage min vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("MpDamage - Bad damage min vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 	if (is_number(max)) {
 		high = parse_int(max);
 	} else {
-		bug_long("MpDamage - Bad damage max vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("MpDamage - Bad damage max vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 	one_argument(argument, target);
@@ -1076,7 +1075,7 @@ void do_mpremember(CHAR_DATA *ch, char *argument)
 	if (arg[0] != '\0')
 		ch->mprog_target = get_char_world(ch, arg);
 	else
-		bug_long("MpRemember: missing argument from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("MpRemember: missing argument from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 }
 
 /*
@@ -1102,7 +1101,7 @@ void do_mpdelay(CHAR_DATA *ch, char *argument)
 
 	one_argument(argument, arg);
 	if (!is_number(arg)) {
-		bug_long("MpDelay: invalid arg from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("MpDelay: invalid arg from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 	ch->mprog_delay = parse_int(arg);
@@ -1137,11 +1136,11 @@ void do_mpcall(CHAR_DATA *ch, char *argument)
 
 	argument = one_argument(argument, arg);
 	if (arg[0] == '\0') {
-		bug_long("MpCall: missing arguments from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("MpCall: missing arguments from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 	if ((prg = get_mprog_index(parse_long(arg))) == NULL) {
-		bug_long("MpCall: invalid prog from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("MpCall: invalid prog from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 	vch = NULL;
@@ -1216,13 +1215,13 @@ void do_mpotransfer(CHAR_DATA *ch, char *argument)
 
 	argument = one_argument(argument, arg);
 	if (arg[0] == '\0') {
-		bug_long("MpOTransfer - Missing argument from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("MpOTransfer - Missing argument from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 
 	one_argument(argument, buf);
 	if ((location = find_location(ch, buf)) == NULL) {
-		bug_long("MpOTransfer - No such location from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("MpOTransfer - No such location from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 	if ((obj = get_obj_here(ch, arg)) == NULL)
@@ -1260,7 +1259,7 @@ void do_mpremove(CHAR_DATA *ch, char *argument)
 	if (!str_cmp(arg, "all")) {
 		fAll = true;
 	} else if (!is_number(arg)) {
-		bug_long("MpRemove: Invalid object from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("MpRemove: Invalid object from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	} else {
 		vnum = parse_long(arg);

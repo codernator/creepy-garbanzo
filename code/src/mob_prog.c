@@ -43,7 +43,6 @@
 #include "mob_cmds.h"
 
 extern long flag_lookup(const char *word, const struct flag_type *flag_table);
-extern void bug_long(const char *str, long param);
 extern void mob_interpret(CHAR_DATA * ch, char *argument);
 
 void mp_bribe_trigger(CHAR_DATA * mob, CHAR_DATA * ch, long amount);
@@ -230,7 +229,7 @@ static bool num_eval(long lval, long oper, long rval)
 	case EVAL_LT:
 		return lval < rval;
 	default:
-		bug("num_eval: invalid oper", 0);
+		log_bug("num_eval: invalid oper", 0);
 		return 0;
 	}
 }
@@ -433,7 +432,7 @@ static bool cmd_eval(long vnum, char *line, int check,
 		if ((oper = keyword_lookup(fn_evals, buf)) < 0) {
 			sprintf(buf, "Cmd_eval: prog %ld syntax error(2) '%s'",
 				vnum, original);
-			bug(buf, 0);
+			log_bug(buf);
 			return false;
 		}
 		one_argument(line, buf);
@@ -448,7 +447,7 @@ static bool cmd_eval(long vnum, char *line, int check,
 	if (buf[0] != '$' || buf[1] == '\0') {
 		sprintf(buf, "Cmd_eval: prog %ld syntax error(3) '%s'",
 			vnum, original);
-		bug(buf, 0);
+		log_bug(buf);
 		return false;
 	} else {
 		code = buf[1];
@@ -471,7 +470,7 @@ static bool cmd_eval(long vnum, char *line, int check,
 	default:
 		sprintf(buf, "Cmd_eval: prog %ld syntax error(4) '%s'",
 			vnum, original);
-		bug(buf, 0);
+		log_bug(buf);
 		return false;
 	}
 	/*
@@ -586,7 +585,7 @@ static bool cmd_eval(long vnum, char *line, int check,
 	if ((oper = keyword_lookup(fn_evals, buf)) < 0) {
 		sprintf(buf, "Cmd_eval: prog %ld syntax error(5): '%s'",
 			vnum, original);
-		bug(buf, 0);
+		log_bug(buf);
 		return false;
 	}
 	one_argument(line, buf);
@@ -685,7 +684,7 @@ static void expand_arg(char *buf,
 		++str;
 
 		switch (*str) {
-		default:  bug("Expand_arg: bad code %d.", (int)*str);
+		default:  log_bug("Expand_arg: bad code %d.", (int)*str);
 			i = " <@@@> ";                        break;
 		case 'i':
 			one_argument(mob->name, fname);
@@ -866,7 +865,7 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
 	long mvnum = mob->mob_idx->vnum;
 
 	if (++call_level > MAX_CALL_LEVEL) {
-		bug_long("MOBprogs: MAX_CALL_LEVEL exceeded, vnum %d", mob->mob_idx->vnum);
+		log_bug("MOBprogs: MAX_CALL_LEVEL exceeded, vnum %d", mob->mob_idx->vnum);
 		return;
 	}
 
@@ -922,14 +921,14 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
 			if (state[level] == BEGIN_BLOCK) {
 				sprintf(buf, "Mobprog: misplaced if statement, mob %ld prog %ld",
 					mvnum, pvnum);
-				bug(buf, 0);
+				log_bug(buf);
 				return;
 			}
 			state[level] = BEGIN_BLOCK;
 			if (++level >= MAX_NESTED_LEVEL) {
 				sprintf(buf, "Mobprog: Max nested level exceeded, mob %ld prog %ld",
 					mvnum, pvnum);
-				bug(buf, 0);
+				log_bug(buf);
 				return;
 			}
 			if (level && cond[level - 1] == false) {
@@ -941,14 +940,14 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
 				cond[level] = (int)cmd_eval(pvnum, line, check, mob, ch, arg1, arg2, rch);
 			} else {
 				sprintf(buf, "Mobprog: invalid if_check (if), mob %ld prog %ld", mvnum, pvnum);
-				bug(buf, 0);
+				log_bug(buf);
 				return;
 			}
 			state[level] = END_BLOCK;
 		} else if (!str_cmp(control, "or")) {
 			if (!level || state[level - 1] != BEGIN_BLOCK) {
 				sprintf(buf, "Mobprog: or without if, mob %ld prog %ld", mvnum, pvnum);
-				bug(buf, 0);
+				log_bug(buf);
 				return;
 			}
 			if (level && cond[level - 1] == false) continue;
@@ -957,14 +956,14 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
 				eval = cmd_eval(pvnum, line, check, mob, ch, arg1, arg2, rch);
 			} else {
 				sprintf(buf, "Mobprog: invalid if_check (or), mob %ld prog %ld", mvnum, pvnum);
-				bug(buf, 0);
+				log_bug(buf);
 				return;
 			}
 			cond[level] = (eval == true) ? true : cond[level];
 		} else if (!str_cmp(control, "and")) {
 			if (!level || state[level - 1] != BEGIN_BLOCK) {
 				sprintf(buf, "Mobprog: and without if, mob %ld prog %ld", mvnum, pvnum);
-				bug(buf, 0);
+				log_bug(buf);
 				return;
 			}
 			if (level && cond[level - 1] == false) continue;
@@ -973,14 +972,14 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
 				eval = cmd_eval(pvnum, line, check, mob, ch, arg1, arg2, rch);
 			} else {
 				sprintf(buf, "Mobprog: invalid if_check (and), mob %ld prog %ld", mvnum, pvnum);
-				bug(buf, 0);
+				log_bug(buf);
 				return;
 			}
 			cond[level] = (cond[level] == true) && (eval == true) ? true : false;
 		} else if (!str_cmp(control, "endif")) {
 			if (!level || state[level - 1] != BEGIN_BLOCK) {
 				sprintf(buf, "Mobprog: endif without if, mob %ld prog %ld", mvnum, pvnum);
-				bug(buf, 0);
+				log_bug(buf);
 				return;
 			}
 			cond[level] = true;
@@ -989,7 +988,7 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
 		} else if (!str_cmp(control, "else")) {
 			if (!level || state[level - 1] != BEGIN_BLOCK) {
 				sprintf(buf, "Mobprog: else without if, mob %ld prog %ld", mvnum, pvnum);
-				bug(buf, 0);
+				log_bug(buf);
 				return;
 			}
 			if (level && cond[level - 1] == false) continue;

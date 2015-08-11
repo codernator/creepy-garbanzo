@@ -1556,7 +1556,7 @@ void set_title(CHAR_DATA *ch, char *title)
 	char buf[MSL];
 
 	if (IS_NPC(ch)) {
-		bug("Set_title: NPC.", 0);
+		log_bug("Set_title: NPC.");
 		return;
 	}
 
@@ -1943,7 +1943,7 @@ void do_finger(CHAR_DATA *ch, char *argument)
 				}
 
 				if (letter != '#') {
-					bug("Load_char_obj: # not found.", 0);
+					log_bug("Load_char_obj: # not found.");
 					break;
 				}
 
@@ -2107,7 +2107,7 @@ void do_laston(CHAR_DATA *ch, char *argument)
 			}
 
 			if (letter != '#') {
-				bug("Load_char_obj: # not found.", 0);
+				log_bug("Load_char_obj: # not found.");
 				break;
 			}
 

@@ -1886,7 +1886,7 @@ enum e_harvey_proctor_is { hp_pissed_off, hp_irritated, hp_off_his_rocker, hp_ag
   (a) = (b); \
   if ((a) < 0) \
   { \
-   bug("CHECK_POS : " c " == %d < 0", (int)a); \
+   log_bug("CHECK_POS : " c " == %d < 0", (int)a); \
   } \
  } \
 
@@ -2100,10 +2100,8 @@ extern MPROG_CODE *mprog_list;
 extern DISABLED_DATA *disabled_first;
 
 
-extern char bug_buf[];
 extern bool log_all;
 extern KILL_DATA kill_table[];
-extern char log_buf[];
 extern TIME_INFO_DATA time_info;
 extern WEATHER_DATA weather_info;
 extern int reboot_tick_counter;
@@ -2270,7 +2268,6 @@ void smash_tilde(char *str);
 
 /* misc utility func. */
 void append_file(CHAR_DATA * ch, char *file, char *str);
-void bug(const char *str, int param);
 void tail_chain(void);
 
 /* olc/mprogs */
@@ -2307,7 +2304,6 @@ int count_users(OBJ_DATA * obj);
 void deduct_cost(CHAR_DATA * ch, unsigned int cost);
 void affect_enchant(OBJ_DATA * obj);
 int check_immune(CHAR_DATA * ch, int dam_type);
-int material_lookup(const char *name);
 int weapon_lookup(const char *name);
 int weapon_type(const char *name);
 char *weapon_name(int weapon_Type);

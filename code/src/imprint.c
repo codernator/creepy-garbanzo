@@ -86,28 +86,25 @@ static void spell_imprint(SKILL *skill, int level, CHAR_DATA *ch, void *vo)
  * scrolls - JH */
 	switch (sp_slot) {
 	default:
-		bug("sp_slot has more than %d spells.", sp_slot);
+		log_bug("sp_slot has more than %d spells.", sp_slot);
 		return;
 	case 1:
 		if (number_percent() > 95) {
-			sprintf(buf, "The magic enchantment has failed --- the %s vanishes.\n\r", item_type_name(obj));
-			send_to_char(buf, ch);
+			printf_to_char(ch, "The magic enchantment has failed --- the %s vanishes.\n\r", item_type_name(obj));
 			extract_obj(obj);
 			return;
 		}
 		break;
 	case 2:
 		if (number_percent() > 60) {
-			sprintf(buf, "The magic enchantment has failed --- the %s vanishes.\n\r", item_type_name(obj));
-			send_to_char(buf, ch);
+			printf_to_char(ch, "The magic enchantment has failed --- the %s vanishes.\n\r", item_type_name(obj));
 			extract_obj(obj);
 			return;
 		}
 		break;
 	case 3:
 		if (number_percent() > 35) {
-			sprintf(buf, "The magic enchantment has failed --- the %s vanishes.\n\r", item_type_name(obj));
-			send_to_char(buf, ch);
+			printf_to_char(ch, "The magic enchantment has failed --- the %s vanishes.\n\r", item_type_name(obj));
 			extract_obj(obj);
 			return;
 		}

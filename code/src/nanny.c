@@ -10,6 +10,7 @@
 const unsigned char echo_off_str [] = { (unsigned char)IAC, (unsigned char)WILL, (unsigned char)TELOPT_ECHO, (unsigned char)'\0' };
 const unsigned char echo_on_str  [] = { (unsigned char)IAC, (unsigned char)WONT, (unsigned char)TELOPT_ECHO, (unsigned char)'\0' };
 const unsigned char go_ahead_str [] = { (unsigned char)IAC, (unsigned char)GA, (unsigned char)'\0' };
+static char log_buf[MIL];
 
 
 void nanny(DESCRIPTOR_DATA *d, char *argument)
@@ -38,7 +39,7 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 
 	switch (d->connected) {
 	default:
-		bug("Nanny: bad d->connected %d.", d->connected);
+		log_bug("Nanny: bad d->connected %d.", d->connected);
 		close_socket(d);
 		return;
 
@@ -141,11 +142,11 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 			return;
         }
 
-		sprintf(log_buf, "%s@%s has connected.", ch->name, d->host);
+		(void)snprintf(log_buf, MIL, "%s@%s has connected.", ch->name, d->host);
 		log_string(log_buf);
 
 		wiznet(log_buf, NULL, NULL, WIZ_SITES, 0, get_trust(ch));
-		sprintf(log_buf, "%s has entered the world.", ch->name);
+		(void)snprintf(log_buf, MIL, "%s has entered the world.", ch->name);
 
 		if (IS_SET(ch->act, PLR_LINKDEAD))
 			REMOVE_BIT(ch->act, PLR_LINKDEAD);
@@ -389,7 +390,7 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 		ch->class = class_idx;
 		ch->alignment = class_table[class_idx].dAlign; /* New!!! Added by Monrick */
 
-		sprintf(log_buf, "%s@%s new player.", ch->name, d->host);
+		(void)snprintf(log_buf, MIL, "%s@%s new player.", ch->name, d->host);
 		log_string(log_buf);
 		wiznet("Newbie alert!  $N sighted.", ch, NULL, WIZ_NEWBIE, 0, 0);
 		wiznet(log_buf, NULL, NULL, WIZ_SITES, 0, get_trust(ch));
@@ -703,7 +704,7 @@ bool check_parse_name(char *name)
 			}
 		}
 		if (count) {
-			sprintf(log_buf, "Double newbie alert (%s)", name);
+			(void)snprintf(log_buf, MIL, "Double newbie alert (%s)", name);
 			wiznet(log_buf, NULL, NULL, WIZ_LOGINS, 0, 0);
 
 			return false;
@@ -759,7 +760,7 @@ bool check_reconnect(DESCRIPTOR_DATA *d, char *name, bool reconnect)
 				    && ch->in_room->light > 0)
 					--ch->in_room->light;
 
-				sprintf(log_buf, "%s@%s reconnected.", ch->name, d->host);
+				(void)snprintf(log_buf, MIL, "%s@%s reconnected.", ch->name, d->host);
 				log_string(log_buf);
 				wiznet("$N groks the fullness of $S link.", ch, NULL, WIZ_LINKS, 0, 0);
 
