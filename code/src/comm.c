@@ -78,6 +78,7 @@ static void bust_a_prompt(CHAR_DATA * ch);
 static void init_signals(void);
 static void auto_shutdown(void);
 static void copyover_recover(void);
+volatile sig_atomic_t fatal_error_in_progress = 0;
 
 /***************************************************************************
 * Global variables.
@@ -1373,12 +1374,31 @@ void set_daze(CHAR_DATA *ch, int len)
 	ch->daze = UMAX(ch->daze, len);
 }
 
+/**
+ * 2015-08-10
+ * see: http://www.gnu.org/software/libc/manual/html_node/Termination-in-Handler.html#Termination-in-Handler 
+ */
 void sig_handler(int sig)
 { 
+    /* Since this handler is established for more than one kind of signal, it might still 
+     * get invoked recursively by delivery of some other kind of signal.  Use a static 
+     * variable to keep track of that. 
+     */
+    if (fatal_error_in_progress) {
+        raise(sig);
+    }
+
+    fatal_error_in_progress = 1;
     psignal(sig, "Auto shutdown invoked.");
     log_bug("Critical signal received %d", sig);
     auto_shutdown();
-    _Exit(1);
+
+    /* Now reraise the signal. We reactivate the signal’s default handling, which is to 
+     * terminate the process. We could just call exit or abort,  but reraising the signal 
+     * sets the return status from the process correctly.
+     */
+    signal(sig, SIG_DFL);
+    raise(sig);
 }
 
 void init_signals()
