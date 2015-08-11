@@ -485,8 +485,7 @@ void interpret(CHAR_DATA *ch, char *argument)
 			sprintf(log_buf, "[%s] -- '%s'", ch->name, logline);
 			log_new("CMDALWAYS", log_buf, ch->name);
 
-			sprintf(log_buf, "Log %s: %s", ch->name, logline);
-			log_string(log_buf);
+			log_string("Log %s: %s", ch->name, logline);
 
 			sprintf(log_buf, "`4Log `O%s`4: `O%s``", ch->name, logline);
 			wiznet(log_buf, ch, NULL, WIZ_SECURE, 0, get_trust(ch));
@@ -494,8 +493,7 @@ void interpret(CHAR_DATA *ch, char *argument)
 			sprintf(log_buf, "[%s](mob) -- '%s'", ch->name, logline);
 			log_new("CMDALWAYS", log_buf, ch->name);
 
-			sprintf(log_buf, "Log %s(mob): %s", ch->name, logline);
-			log_string(log_buf);
+			log_string("Log %s(mob): %s", ch->name, logline);
 
 			sprintf(log_buf, "`4Log `O%s(mob)`4: `O%s``", ch->name, logline);
 			wiznet(log_buf, ch, NULL, WIZ_SECURE, 0, get_trust(ch));
@@ -508,8 +506,7 @@ void interpret(CHAR_DATA *ch, char *argument)
 		sprintf(log_buf, "[%s] -- '%s'", ch->name, logline);
 		log_new("LOGGEDPLR", log_buf, name);
 
-		sprintf(log_buf, "Log %s(plr): %s", ch->name, logline);
-		log_string(log_buf);
+		log_string("Log %s(plr): %s", ch->name, logline);
 
 		sprintf(log_buf, "`4Log `O%s(plr)`4: `O%s``", ch->name, logline);
 		wiznet(log_buf, ch, NULL, WIZ_PLOG, 0, get_trust(ch));
@@ -519,8 +516,7 @@ void interpret(CHAR_DATA *ch, char *argument)
 		sprintf(log_buf, "[%s] -- '%s'", ch->name, logline);
 		log_new("LOGALLCMD", log_buf, "NULL");
 
-		sprintf(log_buf, "Log %s: %s", ch->name, logline);
-		log_string(log_buf);
+		log_string("Log %s: %s", ch->name, logline);
 
 		sprintf(log_buf, "`4Log `O%s(all)`4: `O%s``", ch->name, logline);
 		wiznet(log_buf, ch, NULL, WIZ_ALOG, 0, get_trust(ch));

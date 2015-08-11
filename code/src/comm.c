@@ -133,8 +133,7 @@ int main(int argc, char **argv)
     }
 
 	boot_db();
-	sprintf(log_buf, "BT is ready to rock on port %d.", globalSystemState.port);
-	log_string(log_buf);
+	log_string("BT is ready to rock on port %d.", globalSystemState.port);
 
 	if (fCopyOver) {
 		copyover_recover();
@@ -362,8 +361,7 @@ void close_socket(DESCRIPTOR_DATA *dclose)
 	}
 
 	if ((ch = dclose->character) != NULL) {
-		sprintf(log_buf, "Closing link to %s.", ch->name);
-		log_string(log_buf);
+		log_string("Closing link to %s.", ch->name);
 		if (dclose->connected == CON_PLAYING) {
 			act("$n has lost $s link.", ch, NULL, NULL, TO_ROOM);
 			wiznet("Net death has claimed $N.", ch, NULL, WIZ_LINKS, 0, 0);
@@ -444,16 +442,13 @@ void read_from_buffer(DESCRIPTOR_DATA *d)
 		} else {
 			if (++d->repeat >= 50 && !IS_IMMORTAL(d->character)) {
 				send_to_char("`@Acid-Fiend-1 tells you '`tlay off the spam Bucky!`@'`7\n\r", d->character);
-				sprintf(log_buf, "%s input spamming!", d->host);
+				log_string("%s input spamming!", d->host);
 				WAIT_STATE(d->character, 25);
-				log_string(log_buf);
-				wiznet("Spam spam spam $N spam spam spam spam spam!",
-				       d->character, NULL, WIZ_SPAM, 0, get_trust(d->character));
+				wiznet("Spam spam spam $N spam spam spam spam spam!", d->character, NULL, WIZ_SPAM, 0, get_trust(d->character));
 				if (d->incomm[0] == '!')
 					wiznet(d->inlast, d->character, NULL, WIZ_SPAM, 0, get_trust(d->character));
 				else
-					wiznet(d->incomm, d->character, NULL, WIZ_SPAM, 0,
-					       get_trust(d->character));
+					wiznet(d->incomm, d->character, NULL, WIZ_SPAM, 0, get_trust(d->character));
 
 				d->repeat = 0;
 			}

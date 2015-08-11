@@ -1164,11 +1164,7 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
 	if (victim->position == POS_DEAD) {
 		group_gain(ch, victim);
 		if (!IS_NPC(victim)) {
-			sprintf(log_buf, "%s killed by %s at %ld",
-				victim->name,
-				(IS_NPC(ch) ? ch->short_descr : ch->name),
-				ch->in_room->vnum);
-			log_string(log_buf);
+			log_string("%s killed by %s at %ld", victim->name, (IS_NPC(ch) ? ch->short_descr : ch->name), ch->in_room->vnum);
 
 			if (victim->exp > exp_per_level(victim, victim->pcdata->points) * victim->level)
 				gain_exp(victim, (2 * (exp_per_level(victim, victim->pcdata->points)
@@ -1182,8 +1178,7 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
 			ch->in_room->vnum);
 
 		if (!IS_NPC(ch)) {
-			if ((ch != victim)
-				   && (!IS_TRUSTED(ch, IMPLEMENTOR))) {
+			if ((ch != victim) && (!IS_TRUSTED(ch, IMPLEMENTOR))) {
 				if (IS_NPC(victim)) {
 					ch->pcdata->mobkills++;
 				} else {
@@ -1192,8 +1187,7 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
 				}
 			}
 		} else {
-			if ((!IS_NPC(victim))
-			    && (!IS_TRUSTED(victim, IMPLEMENTOR)))
+			if ((!IS_NPC(victim)) && (!IS_TRUSTED(victim, IMPLEMENTOR)))
 				victim->pcdata->mobdeaths++;
 		}
 

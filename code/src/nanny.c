@@ -74,15 +74,13 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 			return;
 		}
 
-		sprintf(log_buf, "char name enterred %s", argument);
-		log_string(log_buf);
+		log_string("char name enterred %s", argument);
 
 		found = load_char_obj(d, argument);
 		ch = d->character;
 
 		if (IS_SET(ch->act, PLR_DENY)) {
-			sprintf(log_buf, "Denying access to %s@%s.", argument, d->host);
-			log_string(log_buf);
+			log_string("Denying access to %s@%s.", argument, d->host);
 			write_to_buffer(d, "Boom Biddy Bye Bye.\n\r", 0);
 			close_socket(d);
 			return;

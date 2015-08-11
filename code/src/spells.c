@@ -704,8 +704,7 @@ void spell_charm_person(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 	if (ch != victim)
 		act("$N looks at you with absolute adoration swarming $s face.", ch, NULL, victim, TO_CHAR);
 
-	sprintf(log_buf, "%s has charmed %s", ch->name, victim->name);
-	log_string(log_buf);
+	log_string("%s has charmed %s", ch->name, victim->name);
 	return;
 }
 

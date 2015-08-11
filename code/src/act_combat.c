@@ -214,8 +214,7 @@ void do_kill(CHAR_DATA *ch, char *argument)
 	}
 
 	if (!IS_NPC(victim)) {
-		(void)snprintf(log_buf, LOG_BUF_LENGTH, "%s is attempting to kill %s", ch->name, victim->name);
-		log_string(log_buf);
+		log_string("%s is attempting to kill %s", ch->name, victim->name);
 	}
 
 	WAIT_STATE(ch, 1 * PULSE_VIOLENCE);
@@ -272,8 +271,7 @@ void do_murder(CHAR_DATA *ch, char *argument)
 	}
 
 	if (!IS_NPC(victim)) {
-		(void)snprintf(log_buf, LOG_BUF_LENGTH, "%s is attempting to murder %s", ch->name, victim->name);
-		log_string(log_buf);
+		log_string("%s is attempting to murder %s", ch->name, victim->name);
 	}
 
 	WAIT_STATE(ch, 1 * PULSE_VIOLENCE);

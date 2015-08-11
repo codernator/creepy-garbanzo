@@ -366,8 +366,7 @@ void do_delete(CHAR_DATA *ch, char *argument)
 			(void)snprintf(strsave, MIL, "%s%s", PLAYER_DIR, filename);
 
 			wiznet("$N turns $Mself into line noise.", ch, NULL, 0, 0, 0);
-			(void)snprintf(log_buf, MAX_NAME_LENGTH + 32, "DELETE: %s is TOAST! wOOp!", ch->name);
-			log_string(log_buf);
+			log_string("DELETE: %s is TOAST! wOOp!", ch->name);
 
 			do_quit(ch, "");
 
@@ -389,8 +388,7 @@ void do_delete(CHAR_DATA *ch, char *argument)
 	ch->pcdata->confirm_delete = true;
 
 	wiznet("$N is contemplating deletion.", ch, NULL, 0, 0, get_trust(ch));
-	(void)snprintf(log_buf, MAX_NAME_LENGTH + 64, "DELETE: %s .. %s's thinking about it ..", ch->name, ch->sex == 0 ? "It" : ch->sex == 1 ? "He" : "She");
-	log_string(log_buf);
+	log_string("DELETE: %s .. %s's thinking about it ..", ch->name, ch->sex == 0 ? "It" : ch->sex == 1 ? "He" : "She");
 }
 
 void do_fixscreen(CHAR_DATA *ch, char *argument)
@@ -465,8 +463,7 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
 
 	send_to_char("`@Disconnected.``\n\r", ch);
 	act("```@$n ```Ohas ```^left ```#the ```!game.``", ch, NULL, NULL, TO_ROOM);
-	(void)snprintf(log_buf, 2 * MIL, "%s has quit.", ch->name);
-	log_string(log_buf);
+	log_string("%s has quit.", ch->name);
 	wiznet("$N rejoins the real world.", ch, NULL, WIZ_LOGINS, 0, get_trust(ch));
 
     /*
@@ -4153,8 +4150,7 @@ void fry_char(CHAR_DATA *ch, char *argument)
 	DENY_NPC(ch)
 
 	send_to_char("`!Get `Plost `#l```#o`#s```#e`#r``.\n\r", ch);
-	sprintf(log_buf, "%s has quit for the last time.", ch->name);
-	log_string(log_buf);
+	log_string("%s has quit for the last time.", ch->name);
 
 	save_char_obj(ch);
 	d = ch->desc;

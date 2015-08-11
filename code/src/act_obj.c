@@ -1,30 +1,3 @@
-/**************************************************************************
- *   Original Diku Mud copyright(C) 1990, 1991 by Sebastian Hammer,        *
- *   Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
- *                                                                             *
- *   Merc Diku Mud improvments copyright(C) 1992, 1993 by Michael          *
- *   Chastain, Michael Quan, and Mitchell Tse.                              *
- *	                                                                       *
- *   In order to use any part of this Merc Diku Mud, you must comply with   *
- *   both the original Diku license in 'license.doc' as well the Merc	   *
- *   license in 'license.txt'.  In particular, you may not remove either of *
- *   these copyright notices.                                               *
- *                                                                             *
- *   Much time and thought has gone into this software and you are          *
- *   benefitting.  We hope that you share your changes too.  What goes      *
- *   around, comes around.                                                  *
- ***************************************************************************/
-
-/***************************************************************************
-*   ROM 2.4 is copyright 1993-1998 Russ Taylor                             *
-*   ROM has been brought to you by the ROM consortium                      *
-*       Russ Taylor(rtaylor@hypercube.org)                                *
-*       Gabrielle Taylor(gtaylor@hypercube.org)                           *
-*       Brian Moore(zump@rom.org)                                         *
-*   By using this code, you have agreed to follow the terms of the         *
-*   ROM license, in the file Rom24/doc/rom.license                         *
-***************************************************************************/
-
 #include <stdio.h>
 #include <string.h>
 #include "merc.h"
@@ -417,9 +390,7 @@ void do_get(CHAR_DATA *ch, char *argument)
 
 			if (!str_prefix(arg2, "corpse")) {
 				if (!IS_SET(obj->extra_flags, ITEM_SAFE_CORPSE)) {
-					sprintf(log_buf, "%s looted %s from %s",
-						ch->name, obj->short_descr, container->short_descr);
-					log_string(log_buf);
+					log_string("%s looted %s from %s", ch->name, obj->short_descr, container->short_descr);
 				} else if (obj->owner == NULL || is_name(obj->owner, ch->name)) {
 					send_to_char("This corpse has been protected from thieves and `!BUTTP`1i`!RATES`` like `#YOU``!\n\r", ch);
 					return;
@@ -432,11 +403,9 @@ void do_get(CHAR_DATA *ch, char *argument)
 			item_ctr = 0;
 			for (obj = container->contains; obj != NULL; obj = obj_next) {
 				obj_next = obj->next_content;
-				if ((arg1[3] == '\0' || is_name(&arg1[4], obj->name))
-				    && can_see_obj(ch, obj)) {
+				if ((arg1[3] == '\0' || is_name(&arg1[4], obj->name)) && can_see_obj(ch, obj)) {
 					found = true;
-					if (container->obj_idx->vnum == OBJ_VNUM_PIT
-					    && !IS_IMMORTAL(ch)) {
+					if (container->obj_idx->vnum == OBJ_VNUM_PIT && !IS_IMMORTAL(ch)) {
 						send_to_char("Don't be so greedy!\n\r", ch);
 						return;
 					}
@@ -1360,8 +1329,7 @@ void do_give(CHAR_DATA *ch, char *argument)
 		}
 
 		if (IS_IMMORTAL(ch)) {
-			sprintf(log_buf, "%s gave %s %u %s coins", ch->name, victim->name, amount, silver ? "silver" : "gold");
-			log_string(log_buf);
+			log_string("%s gave %s %u %s coins", ch->name, victim->name, amount, silver ? "silver" : "gold");
 		}
 		sprintf(buf, "$n gives you %u %s.", amount, silver ? "silver" : "gold");
 		act(buf, ch, NULL, victim, TO_VICT);
@@ -1454,8 +1422,7 @@ void do_give(CHAR_DATA *ch, char *argument)
 	obj_from_char(obj);
 	obj_to_char(obj, victim);
 	if (IS_IMMORTAL(ch)) {
-		sprintf(log_buf, "%s gave %s to %s", ch->name, obj->short_descr, victim->name);
-		log_string(log_buf);
+		log_string("%s gave %s to %s", ch->name, obj->short_descr, victim->name);
 	}
 
 	act_new("$n gives $p to $N.", ch, obj, victim, TO_NOTVICT, POS_RESTING, true);

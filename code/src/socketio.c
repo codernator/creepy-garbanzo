@@ -79,14 +79,7 @@ void init_descriptor(int control)
 		int addr;
 
 		addr = ntohl(sock.sin_addr.s_addr);
-		sprintf(buf, "%d.%d.%d.%d",
-			(addr >> 24) & 0xFF,
-			(addr >> 16) & 0xFF,
-			(addr >> 8) & 0xFF,
-			(addr) & 0xFF);
-		sprintf(log_buf, "Sock.sinaddr:  %s", buf);
-
-		log_string(log_buf);
+		log_string("Sock.sinaddr: %d.%d.%d.%d", (addr >> 24) & 0xFF, (addr >> 16) & 0xFF, (addr >> 8) & 0xFF, (addr) & 0xFF);
         from = gethostbyaddr((char *)&sock.sin_addr, sizeof(sock.sin_addr), AF_INET);
 		dnew->host = str_dup(from ? from->h_name : buf);
 	}
@@ -180,8 +173,7 @@ bool read_from_descriptor(DESCRIPTOR_DATA *d)
 	iStart = (int)strlen(d->inbuf);
 
 	if (iStart >= (int)(sizeof(d->inbuf) - 10)) {
-		sprintf(log_buf, "%s input overflow!", d->host);
-		log_string(log_buf);
+		log_string("%s input overflow!", d->host);
 		write_to_descriptor(d->descriptor, "\n\r*** PUT A LID ON IT!!! ***\n\r", 0);
 		return false;
 	}
