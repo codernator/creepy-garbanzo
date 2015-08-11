@@ -96,16 +96,12 @@ int main(int argc, char **argv)
 
 	init_signals();
 
-    /*
-     * Init time.
-     */
+    /** Init time. */
 	gettimeofday(&now_time, NULL);
 	globalSystemState.current_time = (time_t)now_time.tv_sec;
 	strcpy(globalSystemState.boot_time, (char *)ctime(&globalSystemState.current_time));
 
-    /*
-     * Get the port number.
-     */
+    /** Get the port number. */
 	globalSystemState.port = 7778;
 	if (argc > 1) {
 		if (!is_number(argv[1])) {
@@ -125,9 +121,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-    /*
-     * Run the game.
-     */
+    /** Run the game. */
 	if (!fCopyOver) {
 		globalSystemState.control = init_socket(globalSystemState.port);
     }
@@ -146,8 +140,6 @@ int main(int argc, char **argv)
 	_Exit(0);
 }
 
-
-
 void game_loop(int control)
 {
 	static struct timeval null_time;
@@ -156,9 +148,7 @@ void game_loop(int control)
 	gettimeofday(&last_time, NULL);
 	globalSystemState.current_time = (time_t)last_time.tv_sec;
 
-	init_signals();
-
-/* Main loop */
+    /** Main loop */
 	while (!globalSystemState.merc_down) {
 		fd_set in_set;
 		fd_set out_set;
@@ -184,16 +174,12 @@ void game_loop(int control)
 			_Exit(1);
 		}
 
-		/*
-		 * New connection?
-		 */
-		if (FD_ISSET(control, &in_set))
+		/** New connection? */
+		if (FD_ISSET(control, &in_set)) {
 			init_descriptor(control);
+        }
 
-		/*
-		 * Kick out the freaky folks.
-		 * Kyndig: Get rid of idlers as well
-		 */
+		/** Kick out the freaky folks. Kyndig: Get rid of idlers as well. */
 		for (d = globalSystemState.descriptor_head; d != NULL; d = d_next) {
 			d_next = d->next;
 
@@ -201,24 +187,20 @@ void game_loop(int control)
 			if (FD_ISSET(d->descriptor, &exc_set)) {
 				FD_CLR(d->descriptor, &in_set);
 				FD_CLR(d->descriptor, &out_set);
-				if (d->character && d->character->level > 1)
+				if (d->character && d->character->level > 1) {
 					save_char_obj(d->character);
+                }
 				d->outtop = 0;
 				close_socket(d);
-			} else
-			if ((!d->character && d->idle > 50)             /* 10 seconds */
-			    || d->idle > 28800) {                       /* 2 hrs  */
+			} else if ((!d->character && d->idle > 50 /* 10 seconds */) || d->idle > 28800 /* 2 hrs  */) { 
 				write_to_descriptor(d->descriptor, "Idle.\n\r", 0);
 				d->outtop = 0;
 				close_socket(d);
-
 				continue;
 			}
 		}
 
-		/*
-		 * Process input.
-		 */
+		/** Process input. */
 		for (d = globalSystemState.descriptor_head; d != NULL; d = d_next) {
 			d_next = d->next;
 			d->fcommand = false;
@@ -239,8 +221,9 @@ void game_loop(int control)
 				}
 			}
 
-			if (d->character != NULL && d->character->daze > 0)
+			if (d->character != NULL && d->character->daze > 0) {
 				--d->character->daze;
+            }
 
 			if (d->character != NULL && d->character->wait > 0) {
 				--d->character->wait;
@@ -275,24 +258,18 @@ void game_loop(int control)
 			}
 		}
 
-
-		/*
-		 * Autonomous game motion.
-		 */
+		/** Autonomous game motion. */
 		update_handler();
 
-
-		/*
-		 * Output.
-		 */
+		/** Output. */
 		for (d = globalSystemState.descriptor_head; d != NULL; d = d_next) {
 			d_next = d->next;
 
-			if ((d->fcommand || d->outtop > 0)
-			    && FD_ISSET(d->descriptor, &out_set)) {
+			if ((d->fcommand || d->outtop > 0) && FD_ISSET(d->descriptor, &out_set)) {
 				if (!process_output(d, true)) {
-					if (d->character != NULL && d->character->level > 1)
+					if (d->character != NULL && d->character->level > 1) {
 						save_char_obj(d->character);
+                    }
 					d->outtop = 0;
 					close_socket(d);
 				}
@@ -339,8 +316,6 @@ void game_loop(int control)
 		globalSystemState.current_time = (time_t)last_time.tv_sec;
 	}
 }
-
-
 
 void close_socket(DESCRIPTOR_DATA *dclose)
 {
