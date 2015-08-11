@@ -9,21 +9,22 @@ static void cmdLogAlways(const char *str);
 static void cmdLogALL(const char *str);
 static void cmdLogPlayer(const char *str, char username[]);
 static char *logStamp(void);
-static void write_file(const char *fileName, char *mode, char *text);
+static void write_file(const char *fileName, char *mode, const char *fmt, ...);
 
+
+// :(
 static int numCmds = 1;
+
 
 void log_bug(const char *fmt, ...)
 {
+	static char buf[MSL];
 	char *strtime;
-	char buf[MSL];
-
 	va_list args;
 
 	va_start(args, fmt);
 	vsprintf(buf, fmt, args);
 	va_end(args);
-
 
 	strtime = ctime(&globalSystemState.current_time);
 	strtime[strlen(strtime) - 1] = '\0';
@@ -35,15 +36,13 @@ void log_bug(const char *fmt, ...)
  */
 void log_string(const char *fmt, ...)
 {
+	static char buf[MSL];
 	char *strtime;
-	char buf[MSL];
-
 	va_list args;
 
 	va_start(args, fmt);
 	vsprintf(buf, fmt, args);
 	va_end(args);
-
 
 	strtime = ctime(&globalSystemState.current_time);
 	strtime[strlen(strtime) - 1] = '\0';
@@ -67,7 +66,25 @@ void log_new(const char *log, const char *str, char username[])
 	} else {
 		log_bug("ERROR - log_new: Log type '%s' does not exist.", log);
 	}
-	return;
+}
+
+static void write_file(const char *fileName, char *mode, const char *fmt, ...)
+{
+	static char buf[MSL];
+	FILE *thisFile;
+	va_list args;
+
+	va_start(args, fmt);
+	vsprintf(buf, fmt, args);
+	va_end(args);
+
+	if ((thisFile = fopen(fileName, mode)) == NULL) {
+		log_bug("Error - log_new - cannot open file '%s' in mode %s", fileName, mode);
+        return;
+	}
+
+    fprintf(thisFile, "%s", buf);
+    fclose(thisFile);
 }
 
 static char *logStamp(void)
@@ -119,16 +136,4 @@ static void lastCommands(const char *str)
 		numCmds++;
 	}
 	return;
-}
-
-static void write_file(const char *fileName, char *mode, char *text)
-{
-	FILE *thisFile;
-
-	if ((thisFile = fopen(fileName, mode)) == NULL) {
-		log_bug("Error - log_new - cannot open file '%s' in mode %s", fileName, mode);
-	} else {
-		fprintf(thisFile, "%s", text);
-		fclose(thisFile);
-	}
 }
