@@ -354,8 +354,7 @@ void do_delete(CHAR_DATA *ch, char *argument)
 		if (argument[0] != '\0') {
 			send_to_char("Delete status removed.\n\r", ch);
 			ch->pcdata->confirm_delete = false;
-			(void)snprintf(log_buf, MAX_NAME_LENGTH + 32, "DELETE: %s just couldn't do it...", ch->name);
-			log_string(log_buf);
+			log_string("DELETE: %s just couldn't do it...", ch->name);
 
 			return;
 		} else {
@@ -786,7 +785,7 @@ void do_grant(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	printf_log("%s granted %s by %s", victim->name, skill->name, ch->name);
+	log_string("%s granted %s by %s", victim->name, skill->name, ch->name);
 
 	if (victim != ch)
 		printf_to_char(victim, "You have been found worthy of %s!\n\r", skill->name);

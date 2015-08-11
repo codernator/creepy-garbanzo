@@ -407,15 +407,7 @@ void do_crush(CHAR_DATA *ch, char *argument)
 	}
 
 	if (!IS_NPC(victim) && (ch->position != POS_FIGHTING)) {
-		sprintf(buf,
-			"ATTACK: %s(%d) stomped on %s(%d) in room [%ld]!",
-			ch->name,
-			ch->level,
-			victim->name,
-			victim->level,
-			victim->in_room->vnum);
-
-		log_string(buf);
+		log_string("ATTACK: %s(%d) stomped on %s(%d) in room [%ld]!", ch->name, ch->level, victim->name, victim->level, victim->in_room->vnum);
 		wiznet(buf, ch, NULL, WIZ_FLAGS, 0, 0);
 	}
 

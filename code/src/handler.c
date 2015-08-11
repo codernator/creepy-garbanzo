@@ -1208,7 +1208,7 @@ void equip_char(CHAR_DATA *ch, OBJ_DATA *obj, int iWear)
 	int i;
 
 	if (get_eq_char(ch, iWear) != NULL) {
-		printf_bug("equip_char: already equipped.\narea: %s\ncharacter: %s\nroom: %d\nobj: %d",
+		log_bug("equip_char: already equipped.\narea: %s\ncharacter: %s\nroom: %d\nobj: %d",
 			   (ch->in_room != NULL && ch->in_room->area != NULL) ? ch->in_room->area->file_name : 0,
 			   ch->name,
 			   (ch->in_room != NULL) ? ch->in_room->vnum : 0,
@@ -1878,7 +1878,7 @@ OBJ_DATA *create_money(unsigned int gold, unsigned int silver)
 	OBJ_DATA *obj;
 
 	if ((gold == 0 && silver == 0)) {
-		printf_bug("create_money: zerod money: %u - %u", gold, silver);
+		log_bug("create_money: zerod money: %u - %u", gold, silver);
 		gold = UMAX(1u, gold);
 		silver = UMAX(1u, silver);
 	}

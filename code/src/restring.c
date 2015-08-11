@@ -290,7 +290,7 @@ static void realloc_string(char **src, char *str)
 
 		strcpy(buf, *src);
 		if (len >= MIL)
-			printf_bug("realloc_string: new string too long. %d bytes", len);
+			log_bug("realloc_string: new string too long. %d bytes", len);
 		else
 			strcat(buf, str);
 
@@ -308,7 +308,7 @@ static void realloc_string(char **src, char *str)
 
 		len = (int)strlen(*src) + (int)strlen(str);
 		if (len >= MIL) {
-			printf_bug("realloc_string: new string too long. %d bytes", len);
+			log_bug("realloc_string: new string too long. %d bytes", len);
 			strcpy(buf, *src);
 		} else {
 			strcpy(buf, str);

@@ -893,8 +893,7 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 	time_t lastlogoff = globalSystemState.current_time;
 	int percent;
 
-	sprintf(buf, "Loading %s.", ch->name);
-	log_string(buf);
+	log_string("Loading %s.", ch->name);
 
 	for (;;) {
 		word = feof(fp) ? "End" : fread_word(fp);
@@ -2125,11 +2124,9 @@ static bool load_rdesc(ROOM_INDEX_DATA *location, char *name)
 
 static void fread_rdesc(ROOM_INDEX_DATA *location, FILE *fp)
 {
-	char buf[MAX_STRING_LENGTH];
 	char letter;
 
-	sprintf(buf, "Loading rdesc %ld.", location->vnum);
-	log_string(buf);
+	log_string("Loading rdesc %ld.", location->vnum);
 
 	location->name = fread_string(fp);
 	location->owner = fread_string(fp);

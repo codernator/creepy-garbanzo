@@ -179,8 +179,7 @@ void resolve_global_skills()
     for (idx = 0; skill_resolve_table[idx].name[0] != '\0'; idx++) {
         *skill_resolve_table[idx].skill = skill_lookup(skill_resolve_table[idx].name);
         if (*skill_resolve_table[idx].skill == NULL)
-            printf_log("ERROR - resolve_global_skills NULL skill: %s",
-                   skill_resolve_table[idx].name);
+            log_string("ERROR - resolve_global_skills NULL skill: %s", skill_resolve_table[idx].name);
     }
 
 
@@ -1010,7 +1009,7 @@ void add_learned(CHAR_DATA *ch, LEARNED *learned)
         add_learned_group(ch, learned);
         break;
     default:
-        printf_bug("Invalid learned type: %s",
+        log_bug("Invalid learned type: %s",
                (learned->skill != NULL) ? learned->skill->name :
                (learned->group != NULL) ? learned->group->name : "unknown");
     }

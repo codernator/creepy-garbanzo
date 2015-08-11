@@ -2226,6 +2226,8 @@ void send_to_char_ascii(char *txt, /*@partial@*/CHAR_DATA * ch);
 void page_to_char(char *txt, /*@partial@*/CHAR_DATA * ch);
 void act(const char *format, /*@partial@*/CHAR_DATA * ch, /*@null@*/const void *arg1, /*@null@*/const void *arg2, int type);
 void act_new(const char *format, /*@partial@*/CHAR_DATA * ch, /*@null@*/const void *arg1, /*@null@*/const void *arg2, int type, int min_pos, bool mob_trigger);
+void printf_to_char(CHAR_DATA *, char *, ...);
+
 
 /* nanny.c */
 void nanny(DESCRIPTOR_DATA * d, char *argument);
@@ -2269,7 +2271,6 @@ void smash_tilde(char *str);
 /* misc utility func. */
 void append_file(CHAR_DATA * ch, char *file, char *str);
 void bug(const char *str, int param);
-void log_string(const char *str);
 void log_new(const char *log, const char *str, char *username);
 void tail_chain(void);
 
@@ -2465,11 +2466,6 @@ bool check_disabled(CHAR_DATA * ch, int type, char *cmd);
 void load_disabled(void);
 void save_disabled(void);
 
-/* olc */
-void printf_to_char(CHAR_DATA *, char *, ...);
-void printf_bug(char *, ...);
-void printf_log(char *fmt, ...);
-
 /* lookup.c */
 int race_lookup(const char *name);
 int item_lookup(const char *name);
@@ -2481,6 +2477,7 @@ bool is_standupon(/*@partial@*/OBJ_DATA *obj);
 
 /* logging.c */
 void log_bug(const char *fmt, ...);
+void log_string(const char *fmt, ...);
 
 /* Needs a home */
 char *capitalize(const char *str);

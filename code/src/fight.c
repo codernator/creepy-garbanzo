@@ -1514,8 +1514,7 @@ void check_killer(CHAR_DATA *ch, CHAR_DATA *victim)
 		}
 
 		send_to_char("One day your `1blood`7 may flow just as easily.\n\r", ch);
-		sprintf(buf, "%s is a killer!", ch->name);
-		log_string(buf);
+		log_string("%s is a killer!", ch->name);
 
 		stop_follower(ch);
 		return;

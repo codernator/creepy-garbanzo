@@ -121,7 +121,7 @@ void mob_interpret(CHAR_DATA *ch, char *argument)
 		}
 	}
 
-	printf_bug("mob_interpret: invalid cmd from mob %d: '%s'", IS_NPC(ch) ? ch->mob_idx->vnum : 0, command);
+	log_bug("mob_interpret: invalid cmd from mob %d: '%s'", IS_NPC(ch) ? ch->mob_idx->vnum : 0, command);
 }
 
 char *mprog_type_to_name(int type)
@@ -485,7 +485,7 @@ void do_mpmload(CHAR_DATA *ch, char *argument)
 
 	vnum = parse_long(arg);
 	if ((pMobIndex = get_mob_index(vnum)) == NULL) {
-		printf_bug("Mpmload: bad mob index(%d) from mob %d", vnum, IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+		log_bug("Mpmload: bad mob index(%d) from mob %d", vnum, IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 	victim = create_mobile(pMobIndex);

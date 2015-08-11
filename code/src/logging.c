@@ -28,13 +28,31 @@ void log_bug(const char *fmt, ...)
 	strtime = ctime(&globalSystemState.current_time);
 	strtime[strlen(strtime) - 1] = '\0';
 	fprintf(stderr, "%s :: %s\n", strtime, buf);
-	return;
 }
+
+/*
+ * Writes a string to the log.
+ */
+void log_string(const char *fmt, ...)
+{
+	char *strtime;
+	char buf[MSL];
+
+	va_list args;
+
+	va_start(args, fmt);
+	vsprintf(buf, fmt, args);
+	va_end(args);
+
+
+	strtime = ctime(&globalSystemState.current_time);
+	strtime[strlen(strtime) - 1] = '\0';
+	fprintf(stderr, "%s :: %s\n", strtime, buf);
+}
+
 
 void log_new(const char *log, const char *str, char username[])
 {
-	char buf[MSL];
-
 	if (!strncmp(log, "LASTCMD", 8)) {
 		lastCommands(str);
 	} else if (!strncmp(log, "CMDALWAYS", 10)) {
@@ -43,12 +61,11 @@ void log_new(const char *log, const char *str, char username[])
 		cmdLogALL(str);
 	} else if (!strncmp(log, "LOGGEDPLR", 10)) {
 		if (username[0] == '\0')
-			log_string("ERROR- log_new: Log Type 'Player' requires a username!");
+			log_bug("ERROR- log_new: Log Type 'Player' requires a username!");
 		else
 			cmdLogPlayer(str, username);
 	} else {
-		sprintf(buf, "ERROR - log_new: Log type '%s' does not exist.", log);
-		log_string(buf);
+		log_bug("ERROR - log_new: Log type '%s' does not exist.", log);
 	}
 	return;
 }
@@ -106,12 +123,10 @@ static void lastCommands(const char *str)
 
 static void write_file(const char *fileName, char *mode, char *text)
 {
-	static char buf[LOG_BUF_LENGTH];
 	FILE *thisFile;
 
 	if ((thisFile = fopen(fileName, mode)) == NULL) {
-		(void)snprintf(buf, LOG_BUF_LENGTH, "Error - log_new - cannot open file '%s' in mode %s", fileName, mode);
-		log_string(buf);
+		log_bug("Error - log_new - cannot open file '%s' in mode %s", fileName, mode);
 	} else {
 		fprintf(thisFile, "%s", text);
 		fclose(thisFile);

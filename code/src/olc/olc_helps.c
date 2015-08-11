@@ -76,7 +76,7 @@ void hedit(CHAR_DATA *ch, char *argument)
 	EDIT_HELP(ch, help);
 	had = get_help_area(help);
 	if (had == NULL) {
-		printf_bug("hedit : had for help %s NULL", help->keyword);
+		log_bug("hedit : had for help %s NULL", help->keyword);
 		edit_done(ch);
 		return;
 	}
@@ -404,7 +404,7 @@ EDIT(hedit_delete){
 				break;
 
 		if (!temp) {
-			printf_bug("HEdit delete : help %s not found in help_first", help->keyword);
+			log_bug("HEdit delete : help %s not found in help_first", help->keyword);
 			return false;
 		}
 
@@ -429,7 +429,7 @@ EDIT(hedit_delete){
 	}
 
 	if (!found) {
-		printf_bug("hedit_delete : help %s not found in had_list", help->keyword);
+		log_bug("hedit_delete : help %s not found in had_list", help->keyword);
 		return false;
 	}
 

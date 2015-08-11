@@ -646,14 +646,14 @@ static void save_resets(FILE *fp, AREA_DATA *area)
 					case 'G':
 						fprintf(fp, "G 0 %ld 0\n", pReset->arg1);
 						if (!pLastMob)
-							printf_log("Save_resets: !NO_MOB! in [%s]", area->file_name);
+							log_string("Save_resets: !NO_MOB! in [%s]", area->file_name);
 						break;
 					case 'E':
 						fprintf(fp, "E 0 %ld 0 %ld\n",
 							pReset->arg1,
 							pReset->arg3);
 						if (!pLastMob)
-							printf_log("Save_resets: !NO_MOB! in [%s]", area->file_name);
+							log_string("Save_resets: !NO_MOB! in [%s]", area->file_name);
 						break;
 
 					case 'D':
@@ -912,7 +912,6 @@ void do_asave(CHAR_DATA *ch, char *argument)
 	/* Save changed areas, only authorized areas. */
 	/* ------------------------------------------ */
 	if (!str_prefix(arg, "changed")) {
-		char buf[MIL];
 		bool saved;
 
 		save_area_list();
@@ -932,12 +931,10 @@ void do_asave(CHAR_DATA *ch, char *argument)
 			if (IS_SET(area->area_flags, AREA_CHANGED)) {
 				save_area(area);
 				saved = true;
-				sprintf(buf, "%24s - '%s'", area->name, area->file_name);
 				if (ch != NULL) {
-					send_to_char(buf, ch);
-					send_to_char("\n\r", ch);
+                    printf_to_char(ch, "%24s - '%s'\n\r", area->name, area->file_name);
 				} else {
-					log_string(buf);
+                    log_string("%24s - '%s'", area->name, area->file_name);
 				}
 
 				REMOVE_BIT(area->area_flags, AREA_CHANGED);

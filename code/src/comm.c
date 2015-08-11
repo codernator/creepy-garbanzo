@@ -1344,31 +1344,6 @@ void printf_to_char(CHAR_DATA *ch, char *fmt, ...)
 	send_to_char(buf, ch);
 }
 
-void printf_bug(char *fmt, ...)
-{
-	char buf[2 * MSL];
-
-	va_list args;
-
-	va_start(args, fmt);
-	vsprintf(buf, fmt, args);
-	va_end(args);
-
-	bug(buf, 0);
-}
-
-void printf_log(char *fmt, ...)
-{
-	char buf[2 * MSL];
-	va_list args;
-
-	va_start(args, fmt);
-	vsprintf(buf, fmt, args);
-	va_end(args);
-
-	log_string(buf);
-}
-
 void set_wait(CHAR_DATA *ch, int len)
 {
 	CHAR_DATA *vch;
@@ -1429,24 +1404,11 @@ void set_daze(CHAR_DATA *ch, int len)
 }
 
 void sig_handler(int sig)
-{
-	switch (sig) {
-	case SIGBUS:
-		bug("Sig handler SIGBUS.", 0);
-		auto_shutdown();
-		break;
-	case SIGTERM:
-		bug("Sig handler SIGTERM.", 0);
-		auto_shutdown();
-		break;
-	case SIGABRT:
-		bug("Sig handler SIGABRT", 0);
-		auto_shutdown();
-	case SIGSEGV:
-		bug("Sig handler SIGSEGV", 0);
-		auto_shutdown();
-		break;
-	}
+{ 
+    psignal(sig, "Auto shutdown invoked.");
+    log_bug("Critical signal received %d", sig);
+    auto_shutdown();
+    _Exit(1);
 }
 
 void init_signals()
@@ -1459,71 +1421,26 @@ void init_signals()
 
 void auto_shutdown()
 {
-	FILE *fp, *cmdLog;
-	DESCRIPTOR_DATA *d, *d_next;
-	char buf [100], buf2[100];
-
-	fp = fopen(COPYOVER_FILE, "w");
-
-	if (!fp) {
-		perror("do_copyover:fopen");
-
-		for (d = globalSystemState.descriptor_head; d != NULL; d = d_next) {
-			if (d->character) {
-				do_save(d->character, "");
-				send_to_char("Ok I tried but we're crashing anyway sorry!\n\r", d->character);
-			}
-
-			d_next = d->next;
-			close_socket(d);
-		}
-
-		_Exit(1);
-		return;
-	}
+	FILE *cmdLog;
 
 	if ((cmdLog = fopen(LAST_COMMANDS, "r")) == NULL) {
 		log_string("Crash function: can't open last commands log..");
-	} else {
-		time_t rawtime;
-		struct tm *timeinfo;
-		char buf[128];
-		char cmd[256];
+        return;
+	} 
+    
+    time_t rawtime;
+    struct tm *timeinfo;
+    char buf[128];
+    char cmd[256];
 
-		time(&rawtime);
-		timeinfo = localtime(&rawtime);
-		strftime(buf, 128, "./log/command/lastCMDs-%m%d-%H%M.txt", timeinfo);
-		sprintf(cmd, "mv ./log/command/lastCMDs.txt %s", buf);
-		if (system(cmd) == -1) {
-            log_string("System command failed: ");
-            log_string(cmd);
-        }
-	}
-
-	do_asave(NULL, "changed");
-
-	sprintf(buf, "\n\rYour mud is crashing attempting a copyover now!\n\r");
-
-	for (d = globalSystemState.descriptor_head; d; d = d_next) {
-		CHAR_DATA *och = CH(d);
-		d_next = d->next; /* We delete from the list , so need to save this */
-
-		if (!d->character || d->connected > CON_PLAYING) {
-			write_to_descriptor(d->descriptor, "\n\rSorry, we are rebooting. Come back in a few minutes.\n\r", 0);
-			close_socket(d); /* throw'em out */
-		} else {
-			fprintf(fp, "%d %s %s\n", d->descriptor, och->name, d->host);
-			save_char_obj(och);
-			write_to_descriptor(d->descriptor, buf, 0);
-		}
-	}
-
-	fprintf(fp, "-1\n");
-	fclose(fp);
-	sprintf(buf, "%d", globalSystemState.port);
-	sprintf(buf2, "%d", globalSystemState.control);
-	execl(EXE_FILE, "Badtrip", buf, "copyover", buf2, (char *)NULL);
-	_Exit(1);
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    strftime(buf, 128, "./log/command/lastCMDs-%m%d-%H%M.txt", timeinfo);
+    sprintf(cmd, "mv ./log/command/lastCMDs.txt %s", buf);
+    if (system(cmd) == -1) {
+        log_string("System command failed: ");
+        log_string(cmd);
+    }
 }
 
 /**

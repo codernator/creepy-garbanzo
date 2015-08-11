@@ -209,50 +209,48 @@ static void init_time()
 }
 
 
-/***************************************************************************
-*	init_areas
-*
-*	load the area information
-***************************************************************************/
+/** load the area information */
 static void init_areas()
 {
 	FILE *fpList;
 	char *buf;
 
+    log_string("Opening area file.");
 	if ((fpList = fopen(AREA_LIST, "r")) == NULL) {
 		perror(AREA_LIST);
 		_Exit(1);
 	}
 
 
-	for (;; ) {
+	for (;;) {
 		buf = fread_word(fpList);
-		if (buf[0] == '$')
+		if (buf[0] == '$') {
+            /** End of Area List. */
 			break;
-		snprintf(area_file, MIL, "%s%s\n\r", AREA_FOLDER, buf);
+        }
+		snprintf(area_file, MIL, "%s%s", AREA_FOLDER, buf);
 
-		if (area_file[0] == '-') {
-			fp_area = stdin;
-		} else {
-			if ((fp_area = fopen(area_file, "r")) == NULL) {
-				perror(area_file);
-				_Exit(1);
-			}
-		}
+        if ((fp_area = fopen(area_file, "r")) == NULL) {
+            perror(area_file);
+            _Exit(1);
+        }
 
 		current_area = NULL;
 
 		for (;; ) {
 			char *word;
+            char token;
 
-			if (fread_letter(fp_area) != '#') {
-				bug("Boot_db: # not found.", 0);
+            token = fread_letter(fp_area);
+			if (token != '#') {
+				log_bug("Boot_db: Found %c instead of expected header token # in area_file %s.", token, area_file);
 				_Exit(1);
 			}
 
 			word = fread_word(fp_area);
 
 			if (word[0] == '$') {
+                /** End of Area File definition. */
 				break;
 			} else if (!str_cmp(word, "AREADATA")) {
 				load_area(fp_area);
@@ -680,7 +678,7 @@ void load_resets(FILE *fp)
 			    || !room_idx
 			    || !(pexit = room_idx->exit[reset->arg2])
 			    || !IS_SET(pexit->rs_flags, EX_ISDOOR)) {
-				printf_bug("Load_resets: 'D': exit %d, room %d not door.", reset->arg2, reset->arg1);
+				log_bug("Load_resets: 'D': exit %d, room %d not door.", reset->arg2, reset->arg1);
 				_Exit(1);
 			}
 
@@ -700,7 +698,7 @@ void load_resets(FILE *fp)
 		}
 
 		if (rVnum == -1) {
-			printf_bug("load_resets : rVnum == -1");
+			log_bug("load_resets : rVnum == -1");
 			_Exit(1);
 		}
 
@@ -1369,7 +1367,7 @@ void fix_exits(void)
 			for (reset = room_idx->reset_first; reset; reset = reset->next) {
 				switch (reset->command) {
 				default:
-					printf_log("fix_exits : room %d with reset cmd %c", room_idx->vnum, reset->command);
+					log_string("fix_exits : room %d with reset cmd %c", room_idx->vnum, reset->command);
 					_Exit(1);
 
 				case 'M':
@@ -1385,7 +1383,7 @@ void fix_exits(void)
 				case 'P':
 					get_obj_index(reset->arg1);
 					if (ilast_obj == NULL) {
-						printf_log("fix_exits : reset in room %d con ilast_obj NULL", room_idx->vnum);
+						log_string("fix_exits : reset in room %d con ilast_obj NULL", room_idx->vnum);
 						_Exit(1);
 					}
 					break;
@@ -1394,20 +1392,19 @@ void fix_exits(void)
 				case 'E':
 					get_obj_index(reset->arg1);
 					if (iLastRoom == NULL) {
-						printf_bug("fix_exits : reset in room %d with iLastRoom NULL", room_idx->vnum);
+						log_bug("fix_exits : reset in room %d with iLastRoom NULL", room_idx->vnum);
 						_Exit(1);
 					}
 					ilast_obj = iLastRoom;
 					break;
 
 				case 'D':
-					printf_bug("???");
 					break;
 
 				case 'R':
 					get_room_index(reset->arg1);
 					if (reset->arg2 < 0 || reset->arg2 > MAX_DIR) {
-						printf_bug("fix_exits : reset in room %d with arg2 %d >= MAX_DIR", room_idx->vnum, reset->arg2);
+						log_bug("fix_exits : reset in room %d with arg2 %d >= MAX_DIR", room_idx->vnum, reset->arg2);
 						_Exit(1);
 					}
 					break;
@@ -1442,7 +1439,7 @@ void fix_exits(void)
 				    && pexit_rev->u1.to_room != room_idx
 				    && (room_idx->vnum < 1200 || room_idx->vnum > 1299)
 				    && (room_idx->vnum < 5700 && room_idx->vnum > 5799)) {
-					printf_log("Fix_exits: %d:%d -> %d:%d -> %d.",
+					log_string("Fix_exits: %d:%d -> %d:%d -> %d.",
 						   room_idx->vnum, door,
 						   to_room->vnum, rev_dir[door],
 						   (pexit_rev->u1.to_room == NULL) ? 0 : pexit_rev->u1.to_room->vnum);
@@ -3213,74 +3210,43 @@ void append_file(CHAR_DATA *ch, char *file, char *str)
  */
 void bug(const char *str, int param)
 {
-	char buf[MAX_STRING_LENGTH];
+    int iLine;
+    long iChar;
 
-	if (fp_area != NULL) {
-		int iLine;
-		long iChar;
+    if (fp_area == NULL)
+        return;
 
-		if (fp_area == stdin) {
-			iLine = 0;
-		} else {
-			iChar = ftell(fp_area);
-			fseek(fp_area, 0, 0);
-			for (iLine = 0; ftell(fp_area) < iChar; iLine++)
-				while ((char)getc(fp_area) != '\n');
-			fseek(fp_area, iChar, 0);
-		}
+    iChar = ftell(fp_area);
+    fseek(fp_area, 0, 0);
+    for (iLine = 0; ftell(fp_area) < iChar; iLine++)
+        while ((char)getc(fp_area) != '\n');
+    fseek(fp_area, iChar, 0);
 
-		sprintf(buf, "[*****] FILE: %s LINE: %d", area_file, iLine);
-		log_string(buf);
-
-		strcpy(buf, "[*****] BUG: ");
-		sprintf(buf + strlen(buf), str, param);
-		log_string(buf);
-	}
+    log_string("[*****] BUG IN FILE: %s LINE: %d", area_file, iLine);
+    log_string(str, param);
 }
 
 
 void bug_long(const char *str, long param)
 {
-	char buf[MAX_STRING_LENGTH];
+    int iLine;
+    long iChar;
 
-	if (fp_area != NULL) {
-		int iLine;
-		long iChar;
+    if (fp_area == NULL)
+        return;
 
-		if (fp_area == stdin) {
-			iLine = 0;
-		} else {
-			iChar = ftell(fp_area);
-			fseek(fp_area, 0, 0);
-			for (iLine = 0; ftell(fp_area) < iChar; iLine++) {
-				while ((char)getc(fp_area) != '\n') {
-				}
-			}
-			fseek(fp_area, iChar, 0);
-		}
+    iChar = ftell(fp_area);
+    fseek(fp_area, 0, 0);
+    for (iLine = 0; ftell(fp_area) < iChar; iLine++) {
+        while ((char)getc(fp_area) != '\n') {
+        }
+    }
+    fseek(fp_area, iChar, 0);
 
-		sprintf(buf, "[*****] FILE: %s LINE: %d", area_file, iLine);
-		log_string(buf);
-
-		strcpy(buf, "[*****] BUG: ");
-		sprintf(buf + strlen(buf), str, param);
-		log_string(buf);
-	}
+    log_string("[*****] BUG IN FILE: %s LINE: %d", area_file, iLine);
+    log_string(str, param);
 }
 
-
-/*
- * Writes a string to the log.
- */
-void log_string(const char *str)
-{
-	char *strtime;
-
-	strtime = ctime(&globalSystemState.current_time);
-	strtime[strlen(strtime) - 1] = '\0';
-	fprintf(stderr, "%s :: %s\n", strtime, str);
-	return;
-}
 
 
 
