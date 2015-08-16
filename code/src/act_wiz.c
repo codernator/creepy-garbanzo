@@ -1350,48 +1350,6 @@ void do_pardon(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-void do_norestore(CHAR_DATA *ch, char *argument)
-{
-	CHAR_DATA *victim;
-	char arg[MSL];
-
-	DENY_NPC(ch)
-
-	one_argument(argument, arg);
-	if (argument[0] == '\0') {
-		send_to_char("Syntax: norestore <character name>\n\r", ch);
-		return;
-	}
-
-	victim = get_char_world(ch, arg);
-	if (get_trust(victim) >= get_trust(ch)) {
-		send_to_char("I don't think so ..\n\r", ch);
-		return;
-	}
-
-	if (victim == NULL) {
-		send_to_char("That player can't be found..\n\r", ch);
-		return;
-	}
-
-	if (IS_NPC(victim)) {
-		send_to_char("You can't do that to NPCs.\n\r", ch);
-		return;
-	}
-
-	if (IS_SET(victim->act, PLR_NORESTORE)) {
-		send_to_char("They will now receive restores.\n\r", ch);
-		send_to_char("You will now receive restores.\n\r", victim);
-		REMOVE_BIT(victim->act, PLR_NORESTORE);
-		return;
-	}
-
-	send_to_char("They no longer receive restores.\n\r", ch);
-	send_to_char("You no longer receive restores.\n\r", victim);
-	SET_BIT(victim->act, PLR_NORESTORE);
-	return;
-}
-
 void do_transfer(CHAR_DATA *ch, char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };

@@ -290,7 +290,6 @@ const struct cmd_type cmd_table[] =
 	{ "deny",	      do_deny,	       POS_DEAD,     L2, LOG_ALWAYS, 1 },
 	{ "disconnect",	  do_disconnect,   POS_DEAD,     L2, LOG_ALWAYS, 1 },
 	{ "flag",	      do_flag,	       POS_DEAD,     L4, LOG_ALWAYS, 1 },
-	{ "norestore",	  do_norestore,    POS_DEAD,     L8, LOG_ALWAYS, 1 },
 	{ "permban",	  do_permban,      POS_DEAD,     L1, LOG_ALWAYS, 1 },
 	{ "rdesc",	      do_rdesc,	       POS_DEAD,     L5, LOG_ALWAYS, 1 },
 	{ "rload",	      do_rload,	       POS_DEAD,     L5, LOG_ALWAYS, 1 },

@@ -1250,7 +1250,6 @@ struct kill_data {
 #define PLR_CHALLENGER          (aa)
 #define PLR_PENDING             (bb)
 #define PLR_DUELIST             (cc)
-#define PLR_NORESTORE           (ee)
 
 /* RT comm flags -- may be used n both mobs and chars */
 #define COMM_COMPACT            (A)

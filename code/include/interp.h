@@ -353,7 +353,6 @@ DECLARE_DO_FUN(do_ewho);
 DECLARE_DO_FUN(do_suicide);
 DECLARE_DO_FUN(do_idiot);
 DECLARE_DO_FUN(do_immredeem);
-DECLARE_DO_FUN(do_norestore);
 DECLARE_DO_FUN(do_deft);
 DECLARE_DO_FUN(do_dash);
 DECLARE_DO_FUN(do_second);
