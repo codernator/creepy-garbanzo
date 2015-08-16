@@ -3079,63 +3079,6 @@ void do_pnlist(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-void do_pig(CHAR_DATA *ch, char *argument)
-{
-	ROOM_INDEX_DATA *location;
-	MOB_INDEX_DATA *pMobIndex;
-	CHAR_DATA *mob;
-	CHAR_DATA *victim;
-
-	DENY_NPC(ch)
-
-	if (argument[0] == '\0') {
-		send_to_char("Who would you like to morph?\n\r", ch);
-		return;
-	}
-
-	if ((victim = get_char_world(ch, argument)) == NULL) {
-		send_to_char("They aren't here spunky.\n\r", ch);
-		return;
-	}
-
-	if (IS_NPC(victim)) {
-		send_to_char("Won't work on NPC's punk .. \n\r", ch);
-		return;
-	}
-
-	if ((pMobIndex = get_mob_index(MOB_VNUM_PIG)) == NULL) {
-		send_to_char("Couldn't find the PIGS vnum ..\n\r", ch);
-		return;
-	}
-
-	if (victim->desc == NULL) {
-		send_to_char("Already switched, like.\n\r", ch);
-		return;
-	}
-
-	if (get_trust(victim) >= get_trust(ch)) {
-		send_to_char("uhmm, yeah ..\n\r", ch);
-		return;
-	}
-
-	mob = create_mobile(pMobIndex);
-	location = victim->in_room;
-	char_from_room(victim);
-
-	send_to_char("`#Squeeeeeeee!!! `3The ground looks a lot closer.\n``Oh `!NO!`` You're a `PPIG!``\n\n", victim);
-	act("$n is suddenly turned into a pig!", victim, NULL, NULL, TO_ROOM);
-	send_to_char("Ok.\n\r", ch);
-	char_to_room(victim, get_room_index(ROOM_VNUM_LIMBO));
-	save_char_obj(victim);
-	char_to_room(mob, location);
-
-	victim->desc->character = mob;
-	victim->desc->original = victim;
-	mob->desc = victim->desc;
-	victim->desc = NULL;
-	return;
-}
-
 void do_repop(CHAR_DATA *ch, char *argument)
 {
 	AREA_DATA *pArea;

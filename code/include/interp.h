@@ -358,7 +358,6 @@ DECLARE_DO_FUN(do_dash);
 DECLARE_DO_FUN(do_second);
 DECLARE_DO_FUN(do_fixscreen);
 DECLARE_DO_FUN(do_battlefield);
-DECLARE_DO_FUN(do_pig);
 DECLARE_DO_FUN(do_clearscreen);
 DECLARE_DO_FUN(do_omnistat);
 DECLARE_DO_FUN(do_laston);

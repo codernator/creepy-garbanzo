@@ -338,7 +338,6 @@ const struct cmd_type cmd_table[] =
 	{ "peace",	      do_peace,	       POS_DEAD,     IM, LOG_NORMAL, 1 },
 	{ "wpeace",	      do_wpeace,       POS_DEAD,     IM, LOG_NORMAL, 1 },
 	{ "penalty",	  do_penalty,      POS_DEAD,     0,	 LOG_NORMAL, 1 },
-	{ "pig",	      do_pig,	       POS_DEAD,     L7, LOG_ALWAYS, 1 },
 	{ "pnlist",	      do_pnlist,       POS_DEAD,     L7, LOG_NORMAL, 1 },
 	{ "echo",	      do_recho,	       POS_DEAD,     HE, LOG_ALWAYS, 1 },
 	{ "rename",	      do_rename,       POS_DEAD,     L2, LOG_NORMAL, 1 },
