@@ -1223,8 +1223,6 @@ struct kill_data {
 #define POS_STANDING            8
 
 /* ACT bits for players. */
-#define PLR_IS_NPC              (A)     /* Don't EVER set.        */
-
 /* RT auto flags */
 #define PLR_KILLER              (B)
 #define PLR_AUTOASSIST          (C)
