@@ -1487,7 +1487,7 @@ void check_killer(CHAR_DATA *ch, CHAR_DATA *victim)
  * NPC's are fair game.
  * So are killers and thieves.
  */
-	if (IS_NPC(victim) || IS_SET(victim->act, PLR_KILLER) || IS_SET(victim->act, PLR_DUELIST) || IS_SET(victim->act, PLR_THIEF))
+	if (IS_NPC(victim) || IS_SET(victim->act, PLR_KILLER) || IS_SET(victim->act, PLR_THIEF))
 		return;
 
 /*
