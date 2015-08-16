@@ -93,9 +93,6 @@ void show_channels(CHAR_DATA *ch)
 	send_to_char("CHANNEL        STATUS\n\r", ch);
 	send_to_char("```&---------------------``\n\r", ch);
 
-	printf_to_char(ch, "`![Info]         %s``\n\r",
-		       character_has_comm(ch, COMM_INFO) ? "`#ON" : "`1OFF");
-
 	printf_to_char(ch, "`^Quiet Mode     %s``\n\r",
 		       character_has_comm(ch, COMM_QUIET) ? "`#ON" : "`1OFF");
 

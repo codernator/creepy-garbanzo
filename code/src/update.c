@@ -273,10 +273,7 @@ void advance_level(CHAR_DATA *ch, int level)
 ***************************************************************************/
 void gain_exp(CHAR_DATA *ch, int gain)
 {
-	DESCRIPTOR_DATA *d;
-    DESCRIPTOR_DATA *dpending;
-    struct descriptor_iterator_filter filter = { .must_playing = true, .skip_character = ch  };
-	char buf[MSL];
+    static char buf[MIL];
 
 	if (IS_NPC(ch) || ch->level >= (301 - 1)) {
 		if (!IS_NPC(ch) && ch->level == 301 - 1)
@@ -294,29 +291,22 @@ void gain_exp(CHAR_DATA *ch, int gain)
 	/* while the level < LEVEL_HERO and exp > exp_per_level - gain levels */
 	while (ch->level < 300 && !IS_IMMORTAL(ch) && ch->exp >= exp_per_level(ch, ch->pcdata->points) * (ch->level + 1)) {
 		send_to_char("You raise a level!!\n\r `1*`8-`7-`&-`8#`7#`&#`6<`@-`4G`$r`4a`$t`4s`@-`6>`&#`7#`8#`&-`7-`8-`1*``\n\r", ch);
-		sprintf(buf, "$N has attained level %d!", ch->level + 1);
+		(void)snprintf(buf, MIL, "$N has attained level %d!", ch->level + 1);
 		wiznet(buf, ch, NULL, WIZ_LEVELS, 0, 0);
 
 		advance_level(ch, 1);
 		save_char_obj(ch);
 
 		/* do the info */
-        dpending = descriptor_iterator_start(&filter);
-        while ((d = dpending) != NULL) {
-			CHAR_DATA *vch;
-            dpending = descriptor_iterator(d, &filter);
-
-			vch = CH(d);
-			if (vch != NULL && IS_SET(vch->comm, COMM_INFO) && !IS_SET(vch->comm, COMM_QUIET)) {
-				if (ch->level == 300) {
-					printf_to_char(vch, "`![Info]:`& %s has made it to 300!``\n\r", ch->name);
-					restore_char(ch);
-					send_to_char("`^You have been restored by the Immortal of Bad Trip for making it to level 300!``\n\r", ch);
-				} else {
-					printf_to_char(vch, "`![Info]:`& %s has gained a level!``\n\r", ch->name);
-				}
-			}
-		}
+        if (ch->level == 300) {
+            (void)snprintf(buf, MIL, "%s has made it to 300!``\n\r", ch->name);
+            broadcast_channel(NULL, channels_find(CHANNEL_INFO), NULL, buf);
+            restore_char(ch);
+            send_to_char("`^You have been restored by the Immortal of Bad Trip for making it to level 300!``\n\r", ch);
+        } else {
+            (void)snprintf(buf, MIL, "%s has gained a level!``\n\r", ch->name);
+            broadcast_channel(NULL, channels_find(CHANNEL_INFO), NULL, buf);
+        }
 	}
 
 	save_char_obj(ch);
