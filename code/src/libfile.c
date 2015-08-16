@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <signal.h>
 #include "merc.h"
 #include "libfile.h"
 
@@ -62,7 +63,7 @@ long fread_long(FILE *fp)
 
 	if (!is_digit(c)) {
 		log_bug("Fread_long: bad format.", 0);
-		_Exit(1);
+		raise(SIGABRT);
 	}
 
 	while (is_digit(c)) {
@@ -104,7 +105,7 @@ unsigned int fread_uint(FILE *fp)
 
 	if (!is_digit(c)) {
 		log_bug("Fread_uint: bad format.", 0);
-		_Exit(1);
+		raise(SIGABRT);
 	}
 
 	while (is_digit(c)) {
@@ -150,7 +151,7 @@ int fread_number(FILE *fp)
 
 	if (!is_digit(c)) {
 		log_bug("Fread_number: bad format.", 0);
-		_Exit(1);
+        raise(SIGABRT);
 	}
 
 	while (is_digit(c)) {
@@ -265,5 +266,6 @@ char *fread_word(FILE *fp)
 	}
 
 	log_bug("Fread_word: word too long.", 0);
-	_Exit(1);
+	raise(SIGABRT);
+    return 0;
 }

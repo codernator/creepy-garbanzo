@@ -31,12 +31,10 @@
 /***************************************************************************
 *	includes
 ***************************************************************************/
-//#include <sys/time.h>
-//#include <ctype.h>
+#include <signal.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-//#include <time.h>
 
 #include "merc.h"
 #include "interp.h"
@@ -334,7 +332,7 @@ static void load_thread(char *name, NOTE_DATA **list, int type, time_t free_time
 	}
 
 	log_bug("load_threads: bad key word.");
-	_Exit(1);
+    raise(SIGABRT);
 }
 
 /***************************************************************************

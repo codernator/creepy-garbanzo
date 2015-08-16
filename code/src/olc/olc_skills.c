@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 #include "merc.h"
 #include "tables.h"
 #include "olc.h"
@@ -1174,7 +1175,7 @@ void load_skills()
 		} else {
 			if (skill == NULL) {
 				log_bug("load_skills: No skill loaded - invalid file syntax. %s", word);
-				_Exit(1);
+                raise(SIGABRT);
 			}
 
 			KEY("Name", skill->name, fread_string(fp));
@@ -1253,7 +1254,7 @@ void load_skills()
 
 		if (!found) {
 			log_bug("load_skills: No skill loaded - invalid file syntax. %s", word);
-			_Exit(1);
+            raise(SIGABRT);
 		}
 
 		word = fread_word(fp);

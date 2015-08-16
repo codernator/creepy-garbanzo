@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
-
+#include <signal.h>
 
 
 extern NOTE_DATA *note_free;
@@ -603,7 +603,7 @@ BUFFER *new_buf_size(int size)
 
 	if (buffer->size == -1) {
 		log_bug("new_buf: buffer size %d too large.", size);
-		_Exit(1);
+		raise(SIGABRT);
 	}
 
 	buffer->string = alloc_mem((unsigned int)buffer->size);

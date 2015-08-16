@@ -3231,7 +3231,7 @@ void do_pnlist(CHAR_DATA *ch, char *argument)
 
 	send_to_char("Listing all connected penalized characters:\n\r", ch);
 	send_to_char("+----------------------------------------------------------------------+\n\r", ch);
-	send_to_char("Name     | Frz| NoC| NoE| Log| Idt| Klr| Thi| SnP| Per| Pns| Dis\n\r", ch);
+	send_to_char("Name     | NoC| NoE| Log| Idt| Klr| Thi| SnP| Per| Pns| Dis\n\r", ch);
 	send_to_char("+----------------------------------------------------------------------+\n\r", ch);
 
     dpending = descriptor_iterator_start(&descriptor_empty_filter);

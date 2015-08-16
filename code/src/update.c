@@ -1661,7 +1661,6 @@ void update_handler(void)
 		weather_update();
 		char_update();
 		obj_update();
-		random_drop();
 		impnet("`!Update`7: Characters/Object/Weather/WhoOut have been updated.", NULL, NULL, IMN_UPDATES, 0, 0);
 	}
 

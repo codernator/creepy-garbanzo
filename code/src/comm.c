@@ -105,10 +105,10 @@ int main(int argc, char **argv)
 	if (argc > 1) {
 		if (!is_number(argv[1])) {
 			fprintf(stderr, "Usage: %s [port #]\n", argv[0]);
-			_Exit(1);
+            raise(SIGABRT);
 		} else if ((globalSystemState.port = atoi(argv[1])) <= 1024) {
 			fprintf(stderr, "Port number must be above 1024.\n");
-			_Exit(1);
+            raise(SIGABRT);
 		}
 
 		/* Are we recovering from a copyover? */
@@ -180,7 +180,7 @@ void game_loop(int control)
 
 		if (select(maxdesc + 1, &in_set, &out_set, &exc_set, &null_time) < 0) {
 			perror("Game_loop: select: poll");
-			_Exit(1);
+            raise(SIGABRT);
 		}
 
 		/** New connection? */
@@ -318,7 +318,7 @@ void game_loop(int control)
 				stall_time.tv_sec = secDelta;
 				if (select(0, NULL, NULL, NULL, &stall_time) < 0) {
 					perror("Game_loop: select: stall");
-					_Exit(1);
+                    raise(SIGABRT);
 				}
 			}
 		}
@@ -1508,7 +1508,7 @@ void copyover_recover()
 
 	if (!fp) { /* there are some descriptors open which will hang forever then ? */
 		perror("copyover_recover:fopen");
-		_Exit(1);
+		raise(SIGABRT);
 		return;
 	}
 

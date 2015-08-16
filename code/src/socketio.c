@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <netdb.h>
+#include <signal.h>
 #include "telnet.h"
 
 /** recycle.h */
@@ -46,23 +47,6 @@ void init_descriptor(int control)
 		perror("new_descriptor: fcntl: FNDELAY");
 		return;
 	}
-
-	/*
-	 * Cons a new descriptor.
-	 */
-/*	dnew				= new_descriptor();
- *
- *      dnew->descriptor	= desc;
- *      dnew->connected		= CON_GET_ANSI;
- *      dnew->showstr_head	= NULL;
- *      dnew->showstr_point     = NULL;
- *      dnew->idle              = 0;
- *      dnew->outsize		= 2000;
- *      dnew->outbuf		= alloc_mem(dnew->outsize);
- *      dnew->ed_data		= NULL;
- *      dnew->ed_string		= NULL;
- *      dnew->editor		= 0;	*/
-/*	dnew->character		= NULL;*/
 
 	dnew = new_descriptor(); /* new_descriptor now also allocates things */
 	dnew->descriptor = desc;
@@ -115,13 +99,13 @@ int init_socket(int port)
 
 	if ((fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		perror("Init_socket: socket");
-		_Exit(1);
+        raise(SIGABRT);
 	}
 
 	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&x, sizeof(x)) < 0) {
 		perror("Init_socket: SO_REUSEADDR");
 		close(fd);
-		_Exit(1);
+        raise(SIGABRT);
 	}
 
 #if defined(SO_DONTLINGER) && !defined(SYSV)
@@ -134,7 +118,7 @@ int init_socket(int port)
 		if (setsockopt(fd, SOL_SOCKET, SO_DONTLINGER, (char *)&ld, sizeof(ld)) < 0) {
 			perror("Init_socket: SO_DONTLINGER");
 			close(fd);
-			_Exit(1);
+            raise(SIGABRT);
 		}
 	}
 #endif
@@ -146,14 +130,14 @@ int init_socket(int port)
 	if (bind(fd, (struct sockaddr *)&sa, sizeof(sa)) < 0) {
 		perror("Init socket: bind");
 		close(fd);
-		_Exit(1);
+        raise(SIGABRT);
 	}
 
 
 	if (listen(fd, 3) < 0) {
 		perror("Init socket: listen");
 		close(fd);
-		_Exit(1);
+        raise(SIGABRT);
 	}
 
 	return fd;

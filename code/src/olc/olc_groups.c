@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <signal.h>
 #include "merc.h"
 #include "tables.h"
 #include "olc.h"
@@ -516,7 +517,7 @@ void load_groups()
 		} else {
 			if (group == NULL) {
 				log_bug("load_groups: No group loaded - invalid file syntax. %s", word);
-				_Exit(1);
+                raise(SIGABRT);
 			}
 
 			KEY("Name", group->name, fread_string(fp));
@@ -561,7 +562,7 @@ void load_groups()
 
 		if (!found) {
 			log_bug("load_groups: No group loaded - invalid file syntax. %s", word);
-			_Exit(1);
+            raise(SIGABRT);
 		}
 
 		word = fread_word(fp);
