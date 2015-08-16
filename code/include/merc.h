@@ -1262,7 +1262,6 @@ struct kill_data {
 #define COMM_SHOW_AFFECTS       (G)
 #define COMM_AFK                (K)
 #define COMM_INFO               (L)
-#define COMM_NOEMOTE            (M)
 #define COMM_TICKS              (N)
 #define COMM_ENABLE             (O)
 #define COMM_TARGET             (P)

@@ -2510,53 +2510,6 @@ void do_log(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-void do_noemote(CHAR_DATA *ch, char *argument)
-{
-	char arg[MIL], buf[MSL];
-	CHAR_DATA *victim;
-
-	one_argument(argument, arg);
-
-	if (ch) {
-		if (IS_NPC(ch)) {
-			send_to_char("Mobs can't use this command.\n\r", ch);
-			return;
-		}
-	}
-
-	if (arg[0] == '\0') {
-		send_to_char("Noemote whom?\n\r", ch);
-		return;
-	}
-
-	if ((victim = get_char_world(ch, arg)) == NULL) {
-		send_to_char("They aren't here.\n\r", ch);
-		return;
-	}
-
-
-	if (get_trust(victim) >= get_trust(ch)) {
-		send_to_char("You failed.\n\r", ch);
-		return;
-	}
-
-	if (IS_SET(victim->comm, COMM_NOEMOTE)) {
-		REMOVE_BIT(victim->comm, COMM_NOEMOTE);
-		send_to_char("You can emote again.\n\r", victim);
-		send_to_char("NOEMOTE removed.\n\r", ch);
-		sprintf(buf, "$N restores emotes to %s.", victim->name);
-		wiznet(buf, ch, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
-	} else {
-		SET_BIT(victim->comm, COMM_NOEMOTE);
-		send_to_char("You can't emote!\n\r", victim);
-		send_to_char("NOEMOTE set.\n\r", ch);
-		sprintf(buf, "$N revokes %s's emotes.", victim->name);
-		wiznet(buf, ch, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
-	}
-
-	return;
-}
-
 void do_peace(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *rch;
@@ -3188,7 +3141,7 @@ void do_pnlist(CHAR_DATA *ch, char *argument)
 
 	send_to_char("Listing all connected penalized characters:\n\r", ch);
 	send_to_char("+----------------------------------------------------------------------+\n\r", ch);
-	send_to_char("Name     | NoE| Log| Idt| Klr| Thi| SnP| Per| Pns| Dis\n\r", ch);
+	send_to_char("Name     | Log| Idt| Klr| Thi| SnP| Per| Pns| Dis\n\r", ch);
 	send_to_char("+----------------------------------------------------------------------+\n\r", ch);
 
     dpending = descriptor_iterator_start(&descriptor_empty_filter);
@@ -3205,9 +3158,8 @@ void do_pnlist(CHAR_DATA *ch, char *argument)
 			continue;
 
 		printf_to_char(ch,
-			       "%-13s%-9s%-9s%-9s%-9s%-9s%-9s\n\r",
+			       "%-13s%-9s%-9s%-9s%-9s%-9s\n\r",
 			       wch->name,
-			       IS_SET(wch->comm, COMM_NOEMOTE) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->act, PLR_LOG) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->act, PLR_KILLER) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->act, PLR_THIEF) ? "`!X`7" : "`8-`7 ",

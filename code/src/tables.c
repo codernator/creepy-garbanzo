@@ -287,7 +287,6 @@ const struct flag_type comm_flags[] =
 	{ "show_affects", COMM_SHOW_AFFECTS, true  },
 	{ "afk",	  COMM_AFK,	     true  },
 	{ "info",	  COMM_INFO,	     true  },
-	{ "noemote",	  COMM_NOEMOTE,     false },
 	{ "busy",	  COMM_BUSY,	     true  },
 	{ "coding",	  COMM_CODING,	     true  },
 	{ "building",	  COMM_BUILD,	     true  },

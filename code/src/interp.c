@@ -312,7 +312,6 @@ const struct cmd_type cmd_table[] =
 	{ "newlock",	  do_newlock,      POS_DEAD,     ML, LOG_ALWAYS, 1 },
 	{ "chown",	      do_chown,	       POS_DEAD,     L6, LOG_ALWAYS, 1 },
 	{ "mode",	      do_mode,	       POS_DEAD,     ML, LOG_ALWAYS, 1 },
-	{ "noemote",	  do_noemote,      POS_DEAD,     L7, LOG_ALWAYS, 1 },
 	{ "pecho",	      do_pecho,	       POS_DEAD,     L7, LOG_ALWAYS, 1 },
 	{ "pardon",	      do_pardon,       POS_DEAD,     L7, LOG_ALWAYS, 1 },
 	{ "ploa",	      do_ploa,	       POS_DEAD,     ML, LOG_NORMAL, 0 },

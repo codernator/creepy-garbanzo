@@ -122,9 +122,6 @@ void show_channels(CHAR_DATA *ch)
 	if (ch->prompt != NULL)
 		printf_to_char(ch, "Your current prompt is: %s\n\r", ch->prompt);
 
-	if (character_has_comm(ch, COMM_NOEMOTE))
-		send_to_char("You cannot show emotions.\n\r", ch);
-
     return;
 }
 
