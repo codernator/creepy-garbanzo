@@ -749,69 +749,6 @@ void do_hiss(CHAR_DATA *ch, char *argument)
 }
 
 
-
-
-/***************************************************************************
-*	do_esp
-***************************************************************************/
-void do_esp(CHAR_DATA *ch, char *argument)
-{
-	char arg[MIL];
-	char buf[MSL];
-	CHAR_DATA *victim;
-	int race;
-
-	one_argument(argument, arg);
-
-	if (ch->race != (race = race_lookup("human"))) {
-		send_to_char("`!WHAT``\n\r`PTHE``\n\r`OFUCK?``\n\r", ch);
-		return;
-	}
-
-	if (arg[0] == '\0') {
-		victim = ch->fighting;
-		if (victim == NULL) {
-			send_to_char("Use ESP on who?\n\r", ch);
-			return;
-		}
-
-		ch->linked = victim;
-	} else if ((victim = get_char_room(ch, arg)) == NULL) {
-		send_to_char("They aren't here.\n\r", ch);
-		return;
-	}
-
-	if (victim == ch && ch->linked != NULL) {
-		if (!IS_NPC(victim)) {
-			sprintf(buf, "You are no longer psychically linked to %s.\n\r", ch->linked->name);
-			send_to_char(buf, ch);
-		}
-
-		ch->linked = NULL;
-		return;
-	} else if (victim == ch && ch->target == NULL) {
-		send_to_char("You read your own thoughts.. how impressive.\n\r", ch);
-		return;
-	} else if (IS_AFFECTED(ch, AFF_CHARM) && ch->master == victim) {
-		act("But $N is your friend!", ch, NULL, victim, TO_CHAR);
-		return;
-	} else {
-		if (!IS_NPC(victim)) {
-			sprintf(buf, "You are now linked to %s's mind.\n\r", victim->name);
-			send_to_char(buf, ch);
-		} else {
-			send_to_char("You can only link your mind to other players.\n\r", ch);
-			return;
-		}
-
-		ch->linked = victim;
-		SET_BIT(victim->act, PLR_ESP);
-		return;
-	}
-}
-
-
-
 /***************************************************************************
 *	elves
 ***************************************************************************/

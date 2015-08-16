@@ -970,7 +970,9 @@ static void message_show(CHAR_DATA *ch, char *argument, int type)
 ***************************************************************************/
 static void message_post(CHAR_DATA *ch, char *argument, int type)
 {
-	DESCRIPTOR_DATA *desc;
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true };
+	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 	char *time_str;
 	int msg_idx;
 
@@ -1014,10 +1016,12 @@ static void message_post(CHAR_DATA *ch, char *argument, int type)
 
 	append_message(ch->pnote);
 
-	for (desc = globalSystemState.descriptor_head; desc; desc = descriptor_playing_iterator(desc)) {
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
 		CHAR_DATA *wch;
+        dpending = descriptor_iterator(d, &playing_filter);
 
-		wch = CH(desc);
+		wch = CH(d);
 
 		if (is_message_to(wch, ch->pnote)) {
 			if (can_see(wch, ch)) {

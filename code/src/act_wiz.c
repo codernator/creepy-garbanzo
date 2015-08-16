@@ -183,9 +183,11 @@ void do_ignor(CHAR_DATA *ch, /*@unused@*/ char *argument)
 
 void do_ignore(CHAR_DATA *ch, char *argument)
 {
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	CHAR_DATA *rch;
 	char arg[MIL], buf[MSL];
 	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 	int pos;
 	bool found = false;
 
@@ -228,8 +230,10 @@ void do_ignore(CHAR_DATA *ch, char *argument)
 		}
 	}
 
-	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
 		CHAR_DATA *wch;
+        dpending = descriptor_iterator(d, &playing_filter);
 
 		if (!can_see(ch, d->character))
 			continue;
@@ -421,9 +425,9 @@ void do_qui(CHAR_DATA *ch, /*@unused@*/ char *argument)
 
 void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
+    DESCRIPTOR_DATA *d;
 	char buf[MSL];
 	char strsave[2*MIL];
-	DESCRIPTOR_DATA *d, *d_next;
 	long id;
 
 	if (IS_NPC(ch))
@@ -488,17 +492,22 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
 	if (d != NULL)
 		close_socket(d);
 
-    /* toast evil cheating bastards */
-	for (d = globalSystemState.descriptor_head; d != NULL; d = d_next) {
-		CHAR_DATA *tch;
+    /** if a character somehow gets duped and linked to multiple descriptors, close them, too. */
+    {
+        DESCRIPTOR_DATA *dpending;
 
-		d_next = d->next;
-		tch = d->original ? d->original : d->character;
-		if (tch && tch->id == id) {
-			extract_char(tch, true);
-			close_socket(d);
-		}
-	}
+        dpending = descriptor_iterator_start(&descriptor_empty_filter);
+        while ((d = dpending) != NULL) {
+            CHAR_DATA *tch;
+            dpending = descriptor_iterator(d, &descriptor_empty_filter);
+
+            tch = CH(d);
+            if (tch && tch->id == id) {
+                extract_char(tch, true);
+                close_socket(d);
+            }
+        }
+    }
 }
 
 void do_save(CHAR_DATA *ch, /*@unused@*/ char *argument)
@@ -602,24 +611,26 @@ void do_wiznet(CHAR_DATA *ch, char *argument)
 
 void wiznet(char *string, /*@null@*/ CHAR_DATA *ch, /*@null@*/ OBJ_DATA *obj, long flag, long flag_skip, int min_level)
 {
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
 	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 
-	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
+        dpending = descriptor_iterator(d, &playing_filter);
+
 		if (!IS_NPC(d->character)
 		    && IS_IMMORTAL(d->character)
 		    && IS_SET(d->character->pcdata->wiznet, WIZ_ON)
 		    && (!flag || IS_SET(d->character->pcdata->wiznet, flag))
 		    && (!flag_skip || !IS_SET(d->character->pcdata->wiznet, flag_skip))
-		    && get_trust(d->character) >= min_level
-		    && d->character != ch) {
+		    && get_trust(d->character) >= min_level) {
 			if (IS_SET(d->character->pcdata->wiznet, WIZ_PREFIX))
 				send_to_char("--> ", d->character);
 
 			act_new(string, d->character, obj, ch, TO_CHAR, POS_DEAD, false);
 		}
 	}
-
-	return;
 }
 
 void do_impnet(CHAR_DATA *ch, char *argument)
@@ -696,15 +707,11 @@ void do_impnet(CHAR_DATA *ch, char *argument)
 	}
 
 	if (IS_SET(ch->pcdata->impnet, impnet_table[flag].flag)) {
-		printf_to_char(ch,
-			       "You will no longer see `2%s`7 on `2I`8M`2P`7Net``.\n\r",
-			       impnet_table[flag].name);
+		printf_to_char(ch, "You will no longer see `2%s`7 on `2I`8M`2P`7Net``.\n\r", impnet_table[flag].name);
 		REMOVE_BIT(ch->pcdata->impnet, impnet_table[flag].flag);
 		return;
 	} else {
-		printf_to_char(ch,
-			       "You will now see `2%s`7 on `2I`8M`2P`7Net``.\n\r",
-			       impnet_table[flag].name);
+		printf_to_char(ch, "You will now see `2%s`7 on `2I`8M`2P`7Net``.\n\r", impnet_table[flag].name);
 		SET_BIT(ch->pcdata->impnet, impnet_table[flag].flag);
 		return;
 	}
@@ -712,16 +719,19 @@ void do_impnet(CHAR_DATA *ch, char *argument)
 
 void impnet(char *string, CHAR_DATA *ch, OBJ_DATA *obj, long flag, long flag_skip, int min_level)
 {
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
 	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 
-	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
+        dpending = descriptor_iterator(d, &playing_filter);
 		if (!IS_NPC(d->character)
 		    && IS_IMMORTAL(d->character)
 		    && IS_SET(d->character->pcdata->impnet, IMN_ON)
 		    && (!flag || IS_SET(d->character->pcdata->impnet, flag))
 		    && (!flag_skip || !IS_SET(d->character->pcdata->impnet, flag_skip))
-		    && get_trust(d->character) >= min_level
-		    && d->character != ch) {
+		    && get_trust(d->character) >= min_level) {
 			if (IS_SET(d->character->pcdata->impnet, IMN_PREFIX))
 				send_to_char("--> ", d->character);
 
@@ -1037,46 +1047,38 @@ void do_disconnect(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	victim = get_char_world(ch, arg);
-	if (victim == NULL) {
-		send_to_char("They aren't here.\n\r", ch);
-		return;
-	} else if (is_number(arg)) {
-		int desc;
+    if (is_number(arg)) {
+        DESCRIPTOR_ITERATOR_FILTER filter;
 
-		desc = parse_int(arg);
-		for (d = globalSystemState.descriptor_head; d != NULL; d = d->next) {
-			if ((d->descriptor == (SOCKET)desc) && (ch->level > victim->level)) {
-				close_socket(d);
-				send_to_char("Ok.\n\r", ch);
-				return;
-			} else if (ch->level <= victim->level) {
-				send_to_char("You failed.\n\r", ch);
-				return;
-			}
-		}
-	}
+		filter.descriptor = (SOCKET)parse_int(arg);
+        d = descriptor_iterator_start(&filter);
+        if (d == NULL) {
+            printf_to_char(ch, "Descriptor %d not found.", filter.descriptor);
+            return;
+        }
 
+        victim = CH(d);
+    } else {
+        victim = get_char_world(ch, arg);
+        if (victim == NULL) {
+            send_to_char("They aren't here.\n\r", ch);
+            return;
+        }
 
-	if (victim->desc == NULL) {
-		act("$N doesn't have a descriptor.", ch, NULL, victim, TO_CHAR);
-		return;
-	}
+        if (victim->desc == NULL) {
+            act("$N seems to be link-dead.", ch, NULL, victim, TO_CHAR);
+            return;
+        }
 
-	for (d = globalSystemState.descriptor_head; d != NULL; d = d->next) {
-		if ((d == victim->desc) && (ch->level > victim->level)) {
-			close_socket(d);
-			send_to_char("Ok.\n\r", ch);
-			return;
-		} else if (ch->level <= victim->level) {
-			send_to_char("You failed.\n\r", ch);
-			return;
-		}
-	}
+        d = victim->desc;
+    }
 
-	log_bug("do_disconnect: desc not found.");
-	send_to_char("Descriptor not found!\n\r", ch);
-	return;
+    if (ch == victim || ch->level <= victim->level) {
+        send_to_char("You failed.\n\r", ch);
+    } else if (ch->level > victim->level) {
+        close_socket(d);
+        send_to_char("Ok.\n\r", ch);
+    }
 }
 
 void do_chown(CHAR_DATA *ch, char *argument)
@@ -1121,7 +1123,9 @@ void do_chown(CHAR_DATA *ch, char *argument)
 
 void do_echo(CHAR_DATA *ch, char *argument)
 {
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 	char buf[MSL];
 
 	DENY_NPC(ch)
@@ -1131,7 +1135,10 @@ void do_echo(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	for (d = globalSystemState.descriptor_head; d; d = descriptor_playing_iterator(d)) {
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
+        dpending = descriptor_iterator(d, &playing_filter);
+
         if (ch != NULL) {
             if (ch && get_trust(d->character) >= get_trust(ch)) {
                 sprintf(buf, "%s global> ", ch->name);
@@ -1141,13 +1148,13 @@ void do_echo(CHAR_DATA *ch, char *argument)
         send_to_char(argument, d->character);
         send_to_char("\n\r", d->character);
 	}
-
-	return;
 }
 
 void do_recho(CHAR_DATA *ch, char *argument)
 {
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 	char buf[MSL];
 
 	DENY_NPC(ch)
@@ -1157,10 +1164,12 @@ void do_recho(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	for (d = globalSystemState.descriptor_head; d; d = descriptor_playing_iterator(d)) {
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
+        dpending = descriptor_iterator(d, &playing_filter);
+
 		if (d->character->in_room == ch->in_room) {
-			if (ch != NULL
-			    && get_trust(d->character) >= get_trust(ch)) {
+			if (ch != NULL && get_trust(d->character) >= get_trust(ch)) {
 				sprintf(buf, "%s local> ", ch->name);
 				send_to_char(buf, d->character);
 			}
@@ -1168,13 +1177,13 @@ void do_recho(CHAR_DATA *ch, char *argument)
 			send_to_char("\n\r", d->character);
 		}
 	}
-
-	return;
 }
 
 void do_zecho(CHAR_DATA *ch, char *argument)
 {
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 	char buf[MSL];
 
 	DENY_NPC(ch)
@@ -1184,11 +1193,12 @@ void do_zecho(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	for (d = globalSystemState.descriptor_head; d; d = descriptor_playing_iterator(d)) {
-		if (d->character->in_room != NULL && ch->in_room != NULL
-		    && d->character->in_room->area == ch->in_room->area) {
-			if (ch != NULL
-			    && get_trust(d->character) >= get_trust(ch)) {
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
+        dpending = descriptor_iterator(d, &playing_filter);
+
+		if (d->character->in_room != NULL && ch->in_room != NULL && d->character->in_room->area == ch->in_room->area) {
+			if (ch != NULL && get_trust(d->character) >= get_trust(ch)) {
 				sprintf(buf, "%s zone> ", ch->name);
 				send_to_char(buf, d->character);
 			}
@@ -1477,10 +1487,10 @@ void do_norestore(CHAR_DATA *ch, char *argument)
 
 void do_transfer(CHAR_DATA *ch, char *argument)
 {
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
 	char arg1[MIL];
 	char arg2[MIL];
 	ROOM_INDEX_DATA *location;
-	DESCRIPTOR_DATA *d;
 	CHAR_DATA *victim;
 
 	argument = one_argument(argument, arg1);
@@ -1497,13 +1507,15 @@ void do_transfer(CHAR_DATA *ch, char *argument)
 		location = ch->in_room;
 
 	if (!str_cmp(arg1, "all")) {
-		for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
-			if (d->character != ch
-			    && d->character->in_room != NULL
-			    && get_trust(d->character) < get_trust(ch)
-			    && can_see(ch, d->character)) {
-				char buf[MSL];
+        DESCRIPTOR_DATA *d;
+        DESCRIPTOR_DATA *dpending;
 
+        dpending = descriptor_iterator_start(&playing_filter);
+        while ((d = dpending) != NULL) {
+            dpending = descriptor_iterator(d, &playing_filter);
+
+			if (d->character->in_room != NULL && get_trust(d->character) < get_trust(ch) && can_see(ch, d->character)) {
+				char buf[MSL];
 				sprintf(buf, "%s %s", d->character->name, arg2);
 				do_transfer(ch, buf);
 			}
@@ -1511,9 +1523,7 @@ void do_transfer(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-/*
- * Thanks to Grodyn for the optional location parameter.
- */
+    /** Thanks to Grodyn for the optional location parameter. */
 	if (arg2[0] == '\0') {
 		location = ch->in_room;
 	} else {
@@ -1522,8 +1532,7 @@ void do_transfer(CHAR_DATA *ch, char *argument)
 			return;
 		}
 
-		if (!is_room_owner(ch, location) && room_is_private(location)
-		    && get_trust(ch) < LEVEL_IMMORTAL) {
+		if (!is_room_owner(ch, location) && room_is_private(location) && get_trust(ch) < LEVEL_IMMORTAL) {
 			send_to_char("That room is private right now.\n\r", ch);
 			return;
 		}
@@ -1553,86 +1562,6 @@ void do_transfer(CHAR_DATA *ch, char *argument)
 	if (ch != victim)
 		act("$n has transferred you.", ch, NULL, victim, TO_VICT);
 	do_look(victim, "auto");
-	send_to_char("Ok.\n\r", ch);
-}
-
-void do_tarnsfer(CHAR_DATA *ch, char *argument)
-{
-	char arg1[MIL];
-	char arg2[MIL];
-	ROOM_INDEX_DATA *location;
-	DESCRIPTOR_DATA *d;
-	CHAR_DATA *victim;
-
-	DENY_NPC(ch)
-
-	argument = one_argument(argument, arg1);
-	argument = one_argument(argument, arg2);
-
-	if (arg1[0] == '\0') {
-		send_to_char("Tarnsfer whom(and where)?\n\r", ch);
-		return;
-	}
-
-	if (!str_cmp(arg1, "all")) {
-		for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
-			if (d->character != ch
-			    && d->character->in_room != NULL
-			    && get_trust(d->character) < get_trust(ch)
-			    && can_see(ch, d->character)) {
-				char buf[MSL];
-
-				sprintf(buf, "%s %s", d->character->name, arg2);
-				do_tarnsfer(ch, buf);
-			}
-		}
-		return;
-	}
-
-/*
- * Thanks to Grodyn for the optional location parameter.
- */
-	if (arg2[0] == '\0') {
-		location = ch->in_room;
-	} else {
-		if ((location = find_location(ch, arg2)) == NULL) {
-			send_to_char("No such location.\n\r", ch);
-			return;
-		}
-
-		if (!is_room_owner(ch, location) && room_is_private(location)
-		    && get_trust(ch) < LEVEL_IMMORTAL) {
-			send_to_char("That room is private right now.\n\r", ch);
-			return;
-		}
-	}
-
-	if ((victim = get_char_world(ch, arg1)) == NULL) {
-		send_to_char("They aren't here.\n\r", ch);
-		return;
-	}
-
-	if (victim->in_room == NULL) {
-		send_to_char("They are in limbo.\n\r", ch);
-		return;
-	}
-
-	if (get_trust(victim) >= get_trust(ch)) {
-		send_to_char("I don't think so ..\n\r", ch);
-		return;
-	}
-
-	if (victim->fighting != NULL)
-		stop_fighting(victim, true);
-	act("$n disappears in a mushroom cloud.", victim, NULL, NULL, TO_ROOM);
-	char_from_room(victim);
-	char_to_room(victim, location);
-	act("$n arrives from a puff of smoke.", victim, NULL, NULL, TO_ROOM);
-	if (ch != victim)
-		act("$n has tarnsferred you.", ch, NULL, victim, TO_VICT);
-	do_look(victim, "auto");
-	send_to_char("What's the matter, you catching `5G`Prapez `#syndrome`` or something?  Well, I\n\r", ch);
-	send_to_char("can letcha slide THIS time.\n\r", ch);
 	send_to_char("Ok.\n\r", ch);
 }
 
@@ -1752,8 +1681,7 @@ void do_reboo(CHAR_DATA *ch, char *argument)
 
 void do_reboot(CHAR_DATA *ch, char *argument)
 {
-	DESCRIPTOR_DATA *d;
-	DESCRIPTOR_DATA *d_next;
+    DESCRIPTOR_DATA *d, *dpending;
 	char buf[MSL];
 
 	DENY_NPC(ch)
@@ -1770,24 +1698,22 @@ void do_reboot(CHAR_DATA *ch, char *argument)
 		do_save(ch, "");
 	globalSystemState.merc_down = true;
 
-	for (d = globalSystemState.descriptor_head; d != NULL; d = d_next) {
-		d_next = d->next;
+    dpending = descriptor_iterator_start(&descriptor_empty_filter);
+    while ((d = dpending) != NULL) {
+        dpending = descriptor_iterator(d, &descriptor_empty_filter);
 		close_socket(d);
 	}
-
-	return;
 }
 
 void do_shutdow(CHAR_DATA *ch, char *argument)
 {
 	send_to_char("If you want to SHUTDOWN, spell it out.\n\r", ch);
-	return;
 }
 
 void do_shutdown(CHAR_DATA *ch, char *argument)
 {
-	DESCRIPTOR_DATA *d;
-	DESCRIPTOR_DATA *d_next;
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true };
+    DESCRIPTOR_DATA *d, *dpending;
 	char buf[MSL];
 
 	DENY_NPC(ch)
@@ -1804,17 +1730,16 @@ void do_shutdown(CHAR_DATA *ch, char *argument)
 	do_save(ch, "");
 	globalSystemState.merc_down = true;
 
-	for (d = globalSystemState.descriptor_head; d != NULL; d = d_next) {
-		d_next = d->next;
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
+        dpending = descriptor_iterator(d, &playing_filter);
 		close_socket(d);
 	}
-
-	return;
 }
 
 void do_snoop(CHAR_DATA *ch, char *argument)
 {
-	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *d, *dpending;
 	CHAR_DATA *victim;
 	char buf[MSL];
 	char arg[MIL];
@@ -1840,13 +1765,14 @@ void do_snoop(CHAR_DATA *ch, char *argument)
 
 	if (victim == ch) {
 		send_to_char("Cancelling all snoops.\n\r", ch);
-		wiznet("$N stops being such a snoop.",
-		       ch, NULL, WIZ_SNOOPS,
-		       WIZ_SECURE, get_trust(ch));
+		wiznet("$N stops being such a snoop.", ch, NULL, WIZ_SNOOPS, WIZ_SECURE, get_trust(ch));
 
-		for (d = globalSystemState.descriptor_head; d != NULL; d = d->next)
+        dpending = descriptor_iterator_start(&descriptor_empty_filter);
+        while ((d = dpending) != NULL) {
+            dpending = descriptor_iterator(d, &descriptor_empty_filter);
 			if (d->snoop_by == ch->desc)
 				d->snoop_by = NULL;
+        }
 		return;
 	}
 
@@ -1871,8 +1797,7 @@ void do_snoop(CHAR_DATA *ch, char *argument)
 	}
 
 	victim->desc->snoop_by = ch->desc;
-	sprintf(buf, "$N starts snooping on %s",
-		(IS_NPC(ch) ? victim->short_descr : victim->name));
+	sprintf(buf, "$N starts snooping on %s", (IS_NPC(ch) ? victim->short_descr : victim->name));
 	wiznet(buf, ch, NULL, WIZ_SNOOPS, WIZ_SECURE, get_trust(ch));
 
 	send_to_char("Ok.\n\r", ch);
@@ -1883,7 +1808,7 @@ void do_snoop(CHAR_DATA *ch, char *argument)
 /* SnoopList ..  November 1996  */
 void do_snlist(CHAR_DATA *ch, char *argument)
 {
-	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *d, *dpending;
 	char buf[MSL];
 
 	DENY_NPC(ch)
@@ -1891,10 +1816,12 @@ void do_snlist(CHAR_DATA *ch, char *argument)
 	send_to_char("Currently snooped characters\n\r", ch);
 	send_to_char("----------------------------\n\r", ch);
 
-	for (d = globalSystemState.descriptor_head; d != NULL; d = d->next) {
+    dpending = descriptor_iterator_start(&descriptor_empty_filter);
+    while ((d = dpending) != NULL) {
 		CHAR_DATA *wch;
 
-		wch = (d->original != NULL) ? d->original : d->character;
+        dpending = descriptor_iterator(d, &descriptor_empty_filter);
+		wch = CH(d);
 
 		if (d->snoop_by != NULL) {
 			sprintf(buf, "%-15s\n\r", wch->name);
@@ -2522,219 +2449,6 @@ void do_trust(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-void do_restore(CHAR_DATA *ch, char *argument)
-{
-	DESCRIPTOR_DATA *d;
-	CHAR_DATA *vch;
-	char arg1[MIL];
-	char buf[MSL];
-
-	one_argument(argument, arg1);
-
-	if (!ch)
-		return;
-
-	if (IS_NPC(ch)) {
-		send_to_char("Mobs can't use this command.\n\r", ch);
-		return;
-	}
-
-	if ((arg1[0] == '\0'
-	     || !str_cmp(arg1, "room"))
-	    && (get_trust(ch) >= MAX_LEVEL - 1)) {
-		for (vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room) {
-			restore_char(vch);
-
-			if (ch->pcdata != NULL && ch->pcdata->rrestore_string[0] != '\0') {
-				sprintf(buf, "%s", ch->pcdata->rrestore_string);
-				send_to_char(buf, vch);
-			} else {
-				send_to_char("`1All`` of your aches have been `8soothed``.\n\r", vch);
-			}
-		}
-
-		sprintf(buf, "$N restored room %ld.", ch->in_room->vnum);
-		wiznet(buf, ch, NULL, WIZ_RESTORE, WIZ_SECURE, get_trust(ch));
-
-		send_to_char("Room restored.\n\r", ch);
-		return;
-	}
-
-	if (get_trust(ch) >= MAX_LEVEL - 1 && !str_cmp(arg1, "all")) {
-		for (d = globalSystemState.descriptor_head; d != NULL; d = d->next) {
-			vch = d->character;
-
-			if (vch == NULL || IS_NPC(vch))
-				continue;
-
-			restore_char(vch);
-			save_char_obj(vch);
-
-			if (vch->in_room != NULL) {
-				if (ch->pcdata != NULL && ch->pcdata->grestore_string[0] != '\0') {
-					sprintf(buf, "%s\n\r", ch->pcdata->grestore_string);
-					send_to_char(buf, vch);
-				} else {
-					send_to_char("`1A `!huge`` beam of `&light`` crosses the sky above you, `4re`$st`6or`4in`$g`` you.\n\r", vch);
-				}
-			}
-		}
-
-		send_to_char("All active players restored and saved.\n\r", ch);
-		return;
-	}
-
-	if ((vch = get_char_world(ch, arg1)) == NULL) {
-		send_to_char("They aren't here.\n\r", ch);
-		return;
-	}
-
-	if (get_trust(ch) < MAX_LEVEL - 1 && !IS_NPC(vch)) {
-		send_to_char("You can only restore mobs ..\n\r", ch);
-		return;
-	}
-
-	restore_char(vch);
-
-	if (ch->pcdata != NULL && ch->pcdata->rrestore_string[0] != '\0')
-		act("$t", ch, ch->pcdata->rrestore_string, vch, TO_VICT);
-	else
-		act("`1All`` of your aches have been `8soothed``.", ch, NULL, vch, TO_VICT);
-
-	sprintf(buf, "$N restored %s", IS_NPC(vch) ? vch->short_descr : vch->name);
-	wiznet(buf, ch, NULL, WIZ_RESTORE, WIZ_SECURE, get_trust(ch));
-
-	send_to_char("Ok.\n\r", ch);
-	return;
-}
-
-void do_unrestore(CHAR_DATA *ch, char *argument)
-{
-	char arg1[MIL];
-	char buf[MSL];
-	CHAR_DATA *victim;
-	CHAR_DATA *vch;
-	DESCRIPTOR_DATA *d;
-
-
-	one_argument(argument, arg1);
-
-	if (ch) {
-		if (IS_NPC(ch)) {
-			send_to_char("Mobs can't use this command.\n\r", ch);
-			return;
-		}
-	}
-
-	if (arg1[0] == '\0' || !str_cmp(arg1, "room")) {
-		/* unrestore room */
-
-		for (vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room) {
-			vch->hit = 1;
-			vch->mana = 1;
-			vch->move = 1;
-			update_pos(vch);
-			send_to_char("You suddenly feel `1very `8achy`` and `8sore``.\n\r", vch);
-		}
-
-		sprintf(buf, "$N un-restored room %ld.", ch->in_room->vnum);
-		wiznet(buf, ch, NULL, WIZ_RESTORE, WIZ_SECURE, get_trust(ch));
-
-		send_to_char("Room un-restored.\n\r", ch);
-		return;
-	}
-
-	if (get_trust(ch) >= MAX_LEVEL - 2 && !str_cmp(arg1, "all")) {
-		/* unrestore all */
-
-		for (d = globalSystemState.descriptor_head; d != NULL; d = d->next) {
-			victim = d->character;
-
-			if (victim == NULL || IS_NPC(victim))
-				continue;
-
-			victim->hit = 1;
-			victim->mana = 1;
-			victim->move = 1;
-			update_pos(victim);
-			save_char_obj(victim);
-			if (victim->in_room != NULL)
-				send_to_char("`1A `8dull`` beam of `&light`` crosses the sky above you, `!SMACKING`` you in the head!\n\r", victim);
-		}
-		send_to_char("All active players un-restored and saved.\n\r", ch);
-		return;
-	}
-
-	if ((victim = get_char_world(ch, arg1)) == NULL) {
-		send_to_char("They aren't here.\n\r", ch);
-		return;
-	}
-
-	victim->hit = 1;
-	victim->mana = 1;
-	victim->move = 1;
-	update_pos(victim);
-	send_to_char("You suddenly feel `1very `8achy`` and `8sore``.\n\r", victim);
-	sprintf(buf, "$N un-restored %s",
-		IS_NPC(victim) ? victim->short_descr : victim->name);
-	wiznet(buf, ch, NULL, WIZ_RESTORE, WIZ_SECURE, get_trust(ch));
-	send_to_char("That oughtta teach the lil' bugger!\n\r", ch);
-	return;
-}
-
-void do_freeze(CHAR_DATA *ch, char *argument)
-{
-	char arg[MIL], buf[MSL];
-	CHAR_DATA *victim;
-
-	one_argument(argument, arg);
-
-	if (ch) {
-		if (IS_NPC(ch)) {
-			send_to_char("Mobs can't use this command.\n\r", ch);
-			return;
-		}
-	}
-
-	if (arg[0] == '\0') {
-		send_to_char("Freeze whom?\n\r", ch);
-		return;
-	}
-
-	if ((victim = get_char_world(ch, arg)) == NULL) {
-		send_to_char("They aren't here.\n\r", ch);
-		return;
-	}
-
-	if (IS_NPC(victim)) {
-		send_to_char("Not on NPC's.\n\r", ch);
-		return;
-	}
-
-	if (get_trust(victim) >= get_trust(ch)) {
-		send_to_char("You failed.\n\r", ch);
-		return;
-	}
-
-	if (IS_SET(victim->act, PLR_FREEZE)) {
-		REMOVE_BIT(victim->act, PLR_FREEZE);
-		send_to_char("You can play again.\n\r", victim);
-		send_to_char("FREEZE removed.\n\r", ch);
-		sprintf(buf, "$N thaws %s.", victim->name);
-		wiznet(buf, ch, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
-	} else {
-		SET_BIT(victim->act, PLR_FREEZE);
-		send_to_char("You can't do ANYthing!\n\r", victim);
-		send_to_char("FREEZE set.\n\r", ch);
-		sprintf(buf, "$N puts %s in the deep freeze.", victim->name);
-		wiznet(buf, ch, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
-	}
-
-	save_char_obj(victim);
-
-	return;
-}
-
 void do_affstrip(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *victim;
@@ -3009,7 +2723,7 @@ void do_slot(CHAR_DATA *ch, char *argument)
 
 void do_sockets(CHAR_DATA *ch, char *argument)
 {
-	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *d, *dpending;
 	BUFFER *buf;
 	char *state;
 	char arg[MIL];
@@ -3024,7 +2738,10 @@ void do_sockets(CHAR_DATA *ch, char *argument)
 	one_argument(argument, arg);
 	send_to_char("`$Connection state            Socket  Name           IP Address", ch);
 	send_to_char("``--------------------------+-------+--------------+------------------------------\n\r", ch);
-	for (d = globalSystemState.descriptor_head; d != NULL; d = d->next) {
+    dpending = descriptor_iterator_start(&descriptor_empty_filter);
+    while ((d = dpending) != NULL) {
+        dpending = descriptor_iterator(d, &descriptor_empty_filter);
+
 		if (d->character != NULL && can_see(ch, d->character)
 		    && (arg[0] == '\0' || is_name(arg, d->character->name)
 			|| (d->original && is_name(arg, d->original->name)))) {
@@ -3508,7 +3225,7 @@ void do_rename(CHAR_DATA *ch, char *argument)
 
 void do_pnlist(CHAR_DATA *ch, char *argument)
 {
-	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *d, *dpending;
 
 	DENY_NPC(ch);
 
@@ -3517,8 +3234,10 @@ void do_pnlist(CHAR_DATA *ch, char *argument)
 	send_to_char("Name     | Frz| NoC| NoE| Log| Idt| Klr| Thi| SnP| Per| Pns| Dis\n\r", ch);
 	send_to_char("+----------------------------------------------------------------------+\n\r", ch);
 
-	for (d = globalSystemState.descriptor_head; d != NULL; d = d->next) {
+    dpending = descriptor_iterator_start(&descriptor_empty_filter);
+    while ((d = dpending) != NULL) {
 		CHAR_DATA *wch;
+        dpending = descriptor_iterator(d, &descriptor_empty_filter);
 
 		wch = CH(d);
 
@@ -3529,9 +3248,8 @@ void do_pnlist(CHAR_DATA *ch, char *argument)
 			continue;
 
 		printf_to_char(ch,
-			       "%-13s%-9s%-9s%-9s%-9s%-9s%-9s%-9s%-9s\n\r",
+			       "%-13s%-9s%-9s%-9s%-9s%-9s%-9s%-9s\n\r",
 			       wch->name,
-			       IS_SET(wch->act, PLR_FREEZE) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->comm, COMM_NOCHANNELS) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->comm, COMM_NOEMOTE) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->act, PLR_LOG) ? "`!X`7" : "`8-`7 ",
@@ -3626,7 +3344,9 @@ void do_repop(CHAR_DATA *ch, char *argument)
 
 void do_omnistat(CHAR_DATA *ch, char *argument)
 {
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 	BUFFER *output;
 	char buf[MSL];
 	int immmatch;
@@ -3643,8 +3363,10 @@ void do_omnistat(CHAR_DATA *ch, char *argument)
 	add_buf(output, " ----Immortals:----\n\r");
 	add_buf(output, "Name          Level   Wiz   Incog   [Vnum]\n\r");
 
-	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
 		CHAR_DATA *wch;
+        dpending = descriptor_iterator(d, &playing_filter);
 
 		wch = CH(d);
 
@@ -3669,8 +3391,10 @@ void do_omnistat(CHAR_DATA *ch, char *argument)
 	add_buf(output, "Name           Race/Class   Position        Lev  %%hps  %%mana  [Vnum]\n\r");
 
 	hptemp = 0;
-	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
 		CHAR_DATA *wch;
+        dpending = descriptor_iterator(d, &playing_filter);
 		char const *class;
 
 		if (!can_see(ch, d->character))
@@ -3718,7 +3442,6 @@ void do_omnistat(CHAR_DATA *ch, char *argument)
 	page_to_char(buf_string(output), ch);
 
 	free_buf(output);
-	return;
 }
 
 void do_olevel(CHAR_DATA *ch, char *argument)

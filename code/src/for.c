@@ -157,7 +157,9 @@ static void for_all(CHAR_DATA *ch, char *name, char *argument)
 ***************************************************************************/
 static void for_gods(CHAR_DATA *ch, char *name, char *argument)
 {
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
 	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 	ROOM_INDEX_DATA *origin;
 	AREA_DATA *area;
 	char cmd[MSL];
@@ -173,9 +175,11 @@ static void for_gods(CHAR_DATA *ch, char *name, char *argument)
 		area = ch->in_room->area;
 	}
 
-	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
-		if (d->character != ch
-		    && IS_IMMORTAL(d->character)
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
+        dpending = descriptor_iterator(d, &playing_filter);
+
+		if (IS_IMMORTAL(d->character)
 		    && d->character->in_room != NULL
 		    && !room_is_private(d->character->in_room)
 		    && (area == NULL || d->character->in_room->area == area)) {
@@ -197,14 +201,14 @@ static void for_gods(CHAR_DATA *ch, char *name, char *argument)
 }
 
 
-/***************************************************************************
-*	for_morts
-*
-*	for all morts
-***************************************************************************/
+/**
+ * for_morts
+ */
 static void for_morts(CHAR_DATA *ch, char *name, char *argument)
 {
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
 	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 	ROOM_INDEX_DATA *origin;
 	AREA_DATA *area;
 	char cmd[MSL];
@@ -219,10 +223,11 @@ static void for_morts(CHAR_DATA *ch, char *name, char *argument)
 		area = ch->in_room->area;
 	}
 
-	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
-		if (d->character != NULL
-		    && d->character != ch
-		    && !IS_IMMORTAL(d->character)
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
+        dpending = descriptor_iterator(d, &playing_filter);
+
+		if (!IS_IMMORTAL(d->character)
 		    && d->character->in_room != NULL
 		    && !room_is_private(d->character->in_room)
 		    && (area == NULL || d->character->in_room->area == area)) {

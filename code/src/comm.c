@@ -84,10 +84,8 @@ volatile sig_atomic_t fatal_error_in_progress = 0;
 * Global variables.
 ***************************************************************************/
 SYSTEM_STATE globalSystemState = {
-    NULL, NULL, false, false, 0, false, false, "", 0, 0
+    NULL, false, false, 0, false, false, "", 0, 0
 };
-static DESCRIPTOR_DATA *d_next;  /* Next descriptor in loop  YUCKY */
-
 
 
 int main(int argc, char **argv)
@@ -145,6 +143,7 @@ void game_loop(int control)
 {
 	static struct timeval null_time;
 	struct timeval last_time;
+    static const struct descriptor_iterator_filter allfilter = { .all = true };
 
 	gettimeofday(&last_time, NULL);
 	globalSystemState.current_time = (time_t)last_time.tv_sec;
@@ -155,6 +154,7 @@ void game_loop(int control)
 		fd_set out_set;
 		fd_set exc_set;
 		DESCRIPTOR_DATA *d;
+        DESCRIPTOR_DATA *dpending;
 		int maxdesc;
 
 		FD_ZERO(&in_set);
@@ -163,11 +163,19 @@ void game_loop(int control)
 		FD_SET(control, &in_set);
 		maxdesc = control;
 
-		for (d = globalSystemState.descriptor_head; d; d = d->next) {
-			maxdesc = UMAX(maxdesc, (int)d->descriptor);
-			FD_SET(d->descriptor, &in_set);
-			FD_SET(d->descriptor, &out_set);
-			FD_SET(d->descriptor, &exc_set);
+        dpending = descriptor_iterator_start(&allfilter);
+        while ((d = dpending) != NULL) {
+            dpending = descriptor_iterator(d, &allfilter);
+
+            if (d->pending_delete) {
+                descriptor_list_remove(d);
+                free_descriptor(d);
+            } else {
+                maxdesc = UMAX(maxdesc, (int)d->descriptor);
+                FD_SET(d->descriptor, &in_set);
+                FD_SET(d->descriptor, &out_set);
+                FD_SET(d->descriptor, &exc_set);
+            }
 		}
 
 		if (select(maxdesc + 1, &in_set, &out_set, &exc_set, &null_time) < 0) {
@@ -181,8 +189,9 @@ void game_loop(int control)
         }
 
 		/** Kick out the freaky folks. Kyndig: Get rid of idlers as well. */
-		for (d = globalSystemState.descriptor_head; d != NULL; d = d_next) {
-			d_next = d->next;
+        dpending = descriptor_iterator_start(&descriptor_empty_filter);
+        while ((d = dpending) != NULL) {
+            dpending = descriptor_iterator(d, &descriptor_empty_filter);
 
 			d->idle++;
 			if (FD_ISSET(d->descriptor, &exc_set)) {
@@ -202,8 +211,9 @@ void game_loop(int control)
 		}
 
 		/** Process input. */
-		for (d = globalSystemState.descriptor_head; d != NULL; d = d_next) {
-			d_next = d->next;
+        dpending = descriptor_iterator_start(&descriptor_empty_filter);
+        while ((d = dpending) != NULL) {
+            dpending = descriptor_iterator(d, &descriptor_empty_filter);
 			d->fcommand = false;
 
 			if (FD_ISSET(d->descriptor, &in_set)) {
@@ -263,8 +273,9 @@ void game_loop(int control)
 		update_handler();
 
 		/** Output. */
-		for (d = globalSystemState.descriptor_head; d != NULL; d = d_next) {
-			d_next = d->next;
+        dpending = descriptor_iterator_start(&descriptor_empty_filter);
+        while ((d = dpending) != NULL) {
+            dpending = descriptor_iterator(d, &descriptor_empty_filter);
 
 			if ((d->fcommand || d->outtop > 0) && FD_ISSET(d->descriptor, &out_set)) {
 				if (!process_output(d, true)) {
@@ -276,7 +287,6 @@ void game_loop(int control)
 				}
 			}
 		}
-
 
 		/*
 		 * Synchronize to a clock.
@@ -329,11 +339,17 @@ void close_socket(DESCRIPTOR_DATA *dclose)
 		write_to_buffer(dclose->snoop_by, "Your victim has left the game.\n\r", 0);
 
 	{
-		DESCRIPTOR_DATA *d;
+        struct descriptor_iterator_filter playing_filter = { .all = true };
+        DESCRIPTOR_DATA *dpending;
+        DESCRIPTOR_DATA *d;
 
-		for (d = globalSystemState.descriptor_head; d != NULL; d = d->next)
-			if (d->snoop_by == dclose)
+        dpending = descriptor_iterator_start(&playing_filter);
+        while ((d = dpending) != NULL) {
+            dpending = descriptor_iterator(d, &playing_filter);
+			if (d->snoop_by == dclose) {
 				d->snoop_by = NULL;
+            }
+        }
 	}
 
 	if ((ch = dclose->character) != NULL) {
@@ -348,25 +364,9 @@ void close_socket(DESCRIPTOR_DATA *dclose)
 		}
 	}
 
-	if (d_next == dclose)
-		d_next = d_next->next;
 
-	if (dclose == globalSystemState.descriptor_head) {
-		globalSystemState.descriptor_head = globalSystemState.descriptor_head->next;
-	} else {
-		DESCRIPTOR_DATA *d;
-
-		for (d = globalSystemState.descriptor_head; d && d->next != dclose; d = d->next)
-			;
-
-		if (d != NULL)
-			d->next = dclose->next;
-		else
-			log_bug("Close_socket: dclose %d not found.", dclose);
-	}
-
+    dclose->pending_delete = true;
 	close(dclose->descriptor);
-	free_descriptor(dclose);
 }
 
 /**
@@ -1108,33 +1108,6 @@ void fix_sex(CHAR_DATA *ch)
 		ch->sex = IS_NPC(ch) ? 0 : ch->pcdata->true_sex;
 }
 
-int espBroadcastAndCheck(CHAR_DATA *ch, char *CanSeeAct, char *CanTSeeAct)
-{
-	DESCRIPTOR_DATA *d;
-	int esper = 0;
-
-	for (d = globalSystemState.descriptor_head; d != NULL; d = d->next) {
-		CHAR_DATA *wch;
-
-		if (d->connected != CON_PLAYING)
-			continue;
-
-		wch = (d->original != NULL) ? d->original : d->character;
-
-		if (wch->linked == ch) {
-			esper = 1;
-			if (CanSeeAct != NULL && CanTSeeAct != NULL) {
-				if (can_see(wch, ch))
-					send_to_char(CanSeeAct, wch);
-				else
-					send_to_char(CanTSeeAct, wch);
-			}
-		}
-	}
-
-	return esper;
-}
-
 void act(const char *format, CHAR_DATA *ch, const void *arg1, const void *arg2, int type)
 {
 	/* to be compatible with older code */
@@ -1157,14 +1130,14 @@ void act_new(const char *format, CHAR_DATA *ch, const void *arg1, const void *ar
 	char *i = NULL;
 	char *point;
 
-/*
- * Discard null and zero-length messages.
- */
+    /*
+     * Discard null and zero-length messages.
+     */
 	if (format == NULL || format[0] == '\0')
 		return;
 
 
-/* discard null rooms and chars */
+    /* discard null rooms and chars */
 	if (ch == NULL || ch->in_room == NULL)
 		return;
 
@@ -1448,7 +1421,7 @@ void check_afk(CHAR_DATA *ch)
 bool copyover()
 {
 	FILE *fp, *cmdLog;
-	DESCRIPTOR_DATA *d, *d_next;
+	DESCRIPTOR_DATA *d, *dpending;
 	char buf [100], buf2[100];
 
 	fp = fopen(COPYOVER_FILE, "w");
@@ -1466,9 +1439,11 @@ bool copyover()
 	sprintf(buf, "\n\r Preparing for a copyover....\n\r");
 
 	/* For each playing descriptor, save its state */
-	for (d = globalSystemState.descriptor_head; d; d = d_next) {
+    dpending = descriptor_iterator_start(&descriptor_empty_filter);
+    while ((d = dpending) != NULL) {
 		CHAR_DATA *och = CH(d);
-		d_next = d->next; /* We delete from the list , so need to save this */
+
+        dpending = descriptor_iterator(d, &descriptor_empty_filter);
 
 		if (!d->character || d->connected > CON_PLAYING) { /* drop those logging on */
 			write_to_descriptor(d->descriptor, "\n\rSorry, we are rebooting. Come back in a few minutes.\n\r", 0);
@@ -1555,8 +1530,7 @@ void copyover_recover()
 		d->descriptor = desc;
 
 		d->host = str_dup(host);
-		d->next = globalSystemState.descriptor_head;
-		globalSystemState.descriptor_head = d;
+        descriptor_list_add(d);
 		d->connected = CON_COPYOVER_RECOVER; /* -15, so close_socket frees the char */
 
 

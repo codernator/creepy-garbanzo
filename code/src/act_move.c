@@ -73,18 +73,15 @@ int check_dir(CHAR_DATA *ch, int dir)
 	return dir;
 }
 
-/***************************************************************************
-*	move_char
-*
-*	move a character in a given direction
-***************************************************************************/
+/**
+ * move a character in a given direction
+ */
 void move_char(CHAR_DATA *ch, int door, bool follow)
 {
 	CHAR_DATA *fch;
 	CHAR_DATA *fch_next;
 	ROOM_INDEX_DATA *in_room;
 	ROOM_INDEX_DATA *to_room;
-	DESCRIPTOR_DATA *d;
 	EXIT_DATA *pexit;
 	char buf[MSL];
 	int race;
@@ -102,9 +99,7 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
 		return;
 
 	in_room = ch->in_room;
-	if ((pexit = in_room->exit[door]) == NULL
-	    || (to_room = pexit->u1.to_room) == NULL
-	    || !can_see_room(ch, pexit->u1.to_room)) {
+	if ((pexit = in_room->exit[door]) == NULL || (to_room = pexit->u1.to_room) == NULL || !can_see_room(ch, pexit->u1.to_room)) {
 		send_to_char("Alas, you cannot go that way.\n\r", ch);
 		return;
 	}
@@ -121,9 +116,7 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
 		return;
 	}
 
-	if (IS_AFFECTED(ch, AFF_CHARM)
-	    && ch->master != NULL
-	    && in_room == ch->master->in_room) {
+	if (IS_AFFECTED(ch, AFF_CHARM) && ch->master != NULL && in_room == ch->master->in_room) {
 		send_to_char("What?  And leave your beloved master?\n\r", ch);
 		return;
 	}
@@ -183,18 +176,17 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
 			}
 		}
 
-		move = movement_loss[UMIN(SECT_MAX - 1, in_room->sector_type)]
-		       + movement_loss[UMIN(SECT_MAX - 1, to_room->sector_type)];
-
+		move = movement_loss[UMIN(SECT_MAX - 1, in_room->sector_type)] + movement_loss[UMIN(SECT_MAX - 1, to_room->sector_type)];
 		move /= 2;      /* i.e. the average */
 
-
 		/* conditional effects */
-		if (IS_AFFECTED(ch, AFF_FLYING) || IS_AFFECTED(ch, AFF_HASTE))
+		if (IS_AFFECTED(ch, AFF_FLYING) || IS_AFFECTED(ch, AFF_HASTE)) {
 			move /= 2;
+        }
 
-		if (IS_AFFECTED(ch, AFF_SLOW))
+		if (IS_AFFECTED(ch, AFF_SLOW)) {
 			move *= 2;
+        }
 
 		if (ch->move < move) {
 			send_to_char("You are too exhausted.\n\r", ch);
@@ -239,25 +231,6 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
 		}
 	}
 
-	if (IS_SET(ch->act, PLR_ESP)) {
-		for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
-			CHAR_DATA *wch;
-
-			wch = (d->original != NULL) ? d->original : d->character;
-
-			if (wch->linked == ch) {
-				if (can_see(wch, ch)) {
-					sprintf(buf, "%s's thoughts `&*`7*`8*`!BOOM`8*`7*`&*`7 into your minds as '`&%s`7'.\n\r", ch->name, dir_name[door]);
-					send_to_char(buf, wch);
-				} else {
-					sprintf(buf, "%s's thoughts `&*`7*`8*`!BOOM`8*`7*`&*`7 into your minds as '`&%s`7'.\n\r", "Someone", dir_name[door]);
-					send_to_char(buf, wch);
-				}
-			}
-		}
-	}
-
-
 	char_from_room(ch);
 	char_to_room(ch, to_room);
 	if (!IS_AFFECTED(ch, AFF_SNEAK) && ch->invis_level < LEVEL_HERO) {
@@ -266,8 +239,9 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
 		CHAR_DATA *watcher;
 		CHAR_DATA *next_watcher;
 
-		for (watcher = ch->in_room->people; watcher; watcher = next_watcher)
+		for (watcher = ch->in_room->people; watcher; watcher = next_watcher) {
 			next_watcher = watcher->next_in_room;
+        }
 	}
 
 	if (is_affected_room(ch->in_room, gsp_faerie_fog)) {
@@ -280,8 +254,7 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
 		REMOVE_BIT(ch->affected_by, AFF_SNEAK);
 	}
 
-	if ((IS_SET(in_room->room_flags, ROOM_INDOORS))
-	    && (!IS_SET(to_room->room_flags, ROOM_INDOORS)))
+	if ((IS_SET(in_room->room_flags, ROOM_INDOORS)) && (!IS_SET(to_room->room_flags, ROOM_INDOORS)))
 		do_weather(ch, NULL);
 
 	do_look(ch, "auto");
@@ -292,21 +265,13 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
 	for (fch = in_room->people; fch != NULL; fch = fch_next) {
 		fch_next = fch->next_in_room;
 
-		if (fch->master == ch
-		    && IS_AFFECTED(fch, AFF_CHARM)
-		    && fch->position < POS_STANDING)
+		if (fch->master == ch && IS_AFFECTED(fch, AFF_CHARM) && fch->position < POS_STANDING)
 			do_stand(fch, "");
 
-		if (fch->master == ch
-		    && fch->position == POS_STANDING
-		    && can_see_room(fch, to_room)) {
-			if (IS_NPC(fch)
-			    && IS_SET(fch->act, ACT_AGGRESSIVE)
-			    && IS_AFFECTED(fch, AFF_CHARM)) {
-				act("You can't force $N into moving.",
-				    ch, NULL, fch, TO_CHAR);
-				act("You aren't allowed to move.",
-				    fch, NULL, NULL, TO_CHAR);
+		if (fch->master == ch && fch->position == POS_STANDING && can_see_room(fch, to_room)) {
+			if (IS_NPC(fch) && IS_SET(fch->act, ACT_AGGRESSIVE) && IS_AFFECTED(fch, AFF_CHARM)) {
+				act("You can't force $N into moving.", ch, NULL, fch, TO_CHAR);
+				act("You aren't allowed to move.", fch, NULL, NULL, TO_CHAR);
 				continue;
 			}
 

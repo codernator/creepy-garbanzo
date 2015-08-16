@@ -102,9 +102,7 @@ void init_descriptor(int control)
     /*
      * Init descriptor data.
      */
-	dnew->next = globalSystemState.descriptor_head;
-	globalSystemState.descriptor_head = dnew;
-
+    descriptor_list_add(dnew);
 	write_to_descriptor(dnew->descriptor, "Ansi intro screen?(y/n) \n\r", 0);
 }
 

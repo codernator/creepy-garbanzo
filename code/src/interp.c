@@ -89,7 +89,6 @@ const struct cmd_type cmd_table[] =
 	{ "consider",	  do_consider,     POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "credits",	  do_credits,      POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "equipment",	  do_equipment,    POS_DEAD,     0,	 LOG_NORMAL, 1 },
-	{ "esp",	      do_esp,	       POS_STANDING, 0,	 LOG_NORMAL, 1 },
 	{ "examine",	  do_examine,      POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "help",	      do_help,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 
@@ -292,7 +291,6 @@ const struct cmd_type cmd_table[] =
 	{ "deny",	      do_deny,	       POS_DEAD,     L2, LOG_ALWAYS, 1 },
 	{ "disconnect",	  do_disconnect,   POS_DEAD,     L2, LOG_ALWAYS, 1 },
 	{ "flag",	      do_flag,	       POS_DEAD,     L4, LOG_ALWAYS, 1 },
-	{ "freeze",	      do_freeze,       POS_DEAD,     L2, LOG_ALWAYS, 1 },
 	{ "norestore",	  do_norestore,    POS_DEAD,     L8, LOG_ALWAYS, 1 },
 	{ "permban",	  do_permban,      POS_DEAD,     L1, LOG_ALWAYS, 1 },
 	{ "rdesc",	      do_rdesc,	       POS_DEAD,     L5, LOG_ALWAYS, 1 },
@@ -323,9 +321,7 @@ const struct cmd_type cmd_table[] =
 	{ "punloa",	      do_punloa,       POS_DEAD,     ML, LOG_NORMAL, 0 },
 	{ "punload",	  do_punload,      POS_DEAD,     ML, LOG_ALWAYS, 1 },
 	{ "purge",	      do_purge,	       POS_DEAD,     L5, LOG_ALWAYS, 1 },
-	{ "restore",	  do_restore,      POS_DEAD,     IM, LOG_ALWAYS, 1 },
 	{ "repop",	      do_repop,	       POS_DEAD,     L5, LOG_ALWAYS, 1 },
-	{ "unrestore",	  do_unrestore,    POS_DEAD,     L5, LOG_ALWAYS, 1 },
 	{ "sla",	      do_sla,	       POS_DEAD,     L5, LOG_NORMAL, 0 },
 	{ "slay",	      do_slay,	       POS_DEAD,     L5, LOG_ALWAYS, 1 },
 	{ "teleport",	  do_teleport,     POS_STANDING, 0,	 LOG_NORMAL, 1 },
@@ -413,11 +409,6 @@ void interpret(CHAR_DATA *ch, char *argument)
 	int cmd;
 	int trust;
 	bool found;
-
-	if (!IS_NPC(ch) && IS_SET(ch->act, PLR_FREEZE)) {
-		send_to_char("You're totally frozen!\n\r", ch);
-		return;
-	}
 
 	while (is_space(*argument))
 		argument++;

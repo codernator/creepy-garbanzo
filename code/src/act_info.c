@@ -2039,7 +2039,9 @@ void do_finger2(CHAR_DATA *ch, char *argument)
 
 void do_laston(CHAR_DATA *ch, char *argument)
 {
+    struct descriptor_iterator_filter filter = { .must_playing = true, .skip_character = ch };
 	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 	CHAR_DATA *victim = ch;
 	FILE *fp;
 	char arg[MIL];
@@ -2055,34 +2057,32 @@ void do_laston(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
+    dpending = descriptor_iterator_start(&filter);
+    while ((d = dpending) != NULL) {
 		CHAR_DATA *wch;
+        dpending = descriptor_iterator(d, &filter);
 
-		if (!can_see(ch, d->character))
-			continue;
+		if (can_see(ch, d->character)) {
+            wch = CH(d);
 
-		wch = CH(d);
+            if (can_see(ch, wch)) {
+                if (!str_cmp(arg, wch->name)) {
+                    if (victim->name == ch->name) {
+                        send_to_char("`@You are on right now.`7\n\r", ch);
+                    } else if (!can_see(ch, wch)) {
+                        sprintf(buf, "`@`t%s was last here on %s`@`7\n\r", victim->name, (char *)ctime(&victim->llogoff));
+                        send_to_char(buf, ch);
+                    } else {
+                        act("`@`t$N is currently connected ..`@`7", ch, NULL, victim, TO_CHAR);
+                    }
 
-		if (!can_see(ch, wch))
-			continue;
-
-		if (!str_cmp(arg, wch->name)) {
-			if (victim->name == ch->name) {
-				send_to_char("`@Acid-Fiend-1 tells you '`tAre you stupid?`@'`7\n\r", ch);
-				return;
-			}
-
-			if (!can_see(ch, wch)) {
-				sprintf(buf, "`@Acid-Fiend-1 tells you '`t%s was last here on %s`@'`7\n\r",
-					victim->name, (char *)ctime(&victim->llogoff));
-				send_to_char(buf, ch);
-				return;
-			}
-
-			act("`@Acid-Fiend-1 tells you '`t$N is currently connected ..`@'`7", ch, NULL, victim, TO_CHAR);
-			return;
-		}
+                    /* PERHAPS THIS IS A NASTY SHORT CIRCUIT, NO? */
+                    return;
+                }
+            }
+        }
 	}
+    /* character is not connected, so go snooping save games. */
 
 	victim = new_char();
 	victim->pcdata = new_pcdata();

@@ -106,7 +106,9 @@ char *who_string(CHAR_DATA *ch)
 ***************************************************************************/
 void do_whois(CHAR_DATA *ch, char *argument)
 {
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 	BUFFER *output;
 	char arg[MIL];
 	bool found = false;
@@ -121,8 +123,10 @@ void do_whois(CHAR_DATA *ch, char *argument)
 	send_to_char("`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo`1O`!O`4o`Oo ``[`5B`Pad `2T`@rip``] `Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o`!O`1O`Oo`4o``\n\r", ch);
 	output = new_buf();
 
-	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
 		CHAR_DATA *wch;
+        dpending = descriptor_iterator(d, &playing_filter);
 
 		if (!can_see(ch, d->character))
 			continue;
@@ -154,7 +158,9 @@ void do_whois(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_who(CHAR_DATA *ch, char *argument)
 {
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 	BUFFER *output;
 	char buf[2 * MSL];
 	int iClass;
@@ -230,8 +236,10 @@ void do_who(CHAR_DATA *ch, char *argument)
 	sprintf(buf, "`2I`@m`7m`8ort`7a`@l`2s`7:``\n\r");
 	add_buf(output, buf);
 
-	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
 		CHAR_DATA *wch;
+        dpending = descriptor_iterator(d, &playing_filter);
 
 		/*
 		 * Check for match against restrictions.
@@ -245,7 +253,6 @@ void do_who(CHAR_DATA *ch, char *argument)
 
 		if (!can_see(ch, wch))
 			continue;
-
 
 		if (wch->level < LEVEL_IMMORTAL)
 			continue;
@@ -263,8 +270,10 @@ void do_who(CHAR_DATA *ch, char *argument)
 	sprintf(buf, "\n\r`5M`2o`Pr`@t`Pa`2l`5s`7:``\n\r");
 	add_buf(output, buf);
 
-	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
 		CHAR_DATA *wch;
+        dpending = descriptor_iterator(d, &playing_filter);
 
 		/*
 		 * Check for match against restrictions.
@@ -309,7 +318,9 @@ void do_who(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_ewho(CHAR_DATA *ch, char *argument)
 {
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 	BUFFER *output;
 	char buf[MSL];
 	int iClass;
@@ -377,8 +388,11 @@ void do_ewho(CHAR_DATA *ch, char *argument)
 	nMatch = 0;
 	buf[0] = '\0';
 	output = new_buf();
-	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
+
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
 		CHAR_DATA *wch;
+        dpending = descriptor_iterator(d, &playing_filter);
 
 		/*
 		 * Check for match against restrictions.
@@ -427,7 +441,9 @@ void do_ewho(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_where(CHAR_DATA *ch, char *argument)
 {
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 	CHAR_DATA *victim;
 	char arg[MIL];
 	bool found;
@@ -437,7 +453,10 @@ void do_where(CHAR_DATA *ch, char *argument)
 	if (arg[0] == '\0') {
 		send_to_char("Players in your area```8:``\n\r", ch);
 		found = false;
-		for (d = globalSystemState.descriptor_head; d; d = descriptor_playing_iterator(d)) {
+        dpending = descriptor_iterator_start(&playing_filter);
+        while ((d = dpending) != NULL) {
+            dpending = descriptor_iterator(d, &playing_filter);
+
 			if ((victim = d->character) != NULL
 			    && !IS_NPC(victim)
 			    && victim->in_room != NULL

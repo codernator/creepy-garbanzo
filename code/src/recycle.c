@@ -85,59 +85,6 @@ void free_ban(BAN_DATA *ban)
 	ban_free = ban;
 }
 
-
-/***************************************************************************
-*	descriptors
-***************************************************************************/
-DESCRIPTOR_DATA *descriptor_free;
-
-/***************************************************************************
-*	new_descriptor
-*
-*	create a new descriptor
-***************************************************************************/
-DESCRIPTOR_DATA *new_descriptor(void)
-{
-	static DESCRIPTOR_DATA d_zero;
-	DESCRIPTOR_DATA *d;
-
-	if (descriptor_free == NULL) {
-		d = alloc_perm((unsigned int)sizeof(*d));
-	} else {
-		d = descriptor_free;
-
-		descriptor_free = descriptor_free->next;
-	}
-
-	*d = d_zero;
-	VALIDATE(d);
-
-	d->connected = CON_GET_ANSI;
-	d->outsize = 2000;
-	d->outbuf = alloc_mem((unsigned int)d->outsize);
-
-	return d;
-}
-
-/***************************************************************************
-*	free_descriptor
-*
-*	free a descriptor
-***************************************************************************/
-void free_descriptor(DESCRIPTOR_DATA *d)
-{
-	if (!IS_VALID(d))
-		return;
-
-	free_string(d->host);
-	free_mem(d->outbuf, (unsigned int)d->outsize);
-	INVALIDATE(d);
-	d->next = descriptor_free;
-	descriptor_free = d;
-}
-
-
-
 /***************************************************************************
 *	extended descriptions
 ***************************************************************************/

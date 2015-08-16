@@ -26,7 +26,6 @@ extern bool is_space(const char test);
 
 extern OBJ_DATA *obj_free;
 extern CHAR_DATA *char_free;
-extern DESCRIPTOR_DATA *descriptor_free;
 extern PC_DATA *pcdata_free;
 extern AFFECT_DATA *affect_free;
 
@@ -3074,13 +3073,8 @@ void do_dump(CHAR_DATA *ch, char *argument)
 		(long)count * (long)(sizeof(*pc)));
 
 	/* descriptors */
-	count = 0;
-	count_free = 0;
-	for (d = globalSystemState.descriptor_head; d != NULL; d = d->next)
-		count++;
-
-	for (d = descriptor_free; d != NULL; d = d->next)
-		count_free++;
+	count = descriptor_list_count();
+    count_free = descriptor_recycle_count();
 
 	fprintf(fp, "Descs	%10ld(%12ld bytes), %10ld free(%12ld bytes)\n",
 		count,

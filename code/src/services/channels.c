@@ -226,19 +226,22 @@ const CHANNEL_DEFINITION const *channels_find(CHANNEL_FLAG_TYPE channel_flag)
 
 void broadcast_shout(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, char *argument)
 {
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = sender };
 	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
     CHAR_DATA *actual;
     CHAR_DATA *receiver;
 
 	act_new("`1You shout '`!$T`1'``", sender, NULL, argument, TO_CHAR, POS_DEAD, channel->mob_trigger);
-	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
+        dpending = descriptor_iterator(d, &playing_filter);
 		actual = CH(d);
 		receiver = d->character;
 
-		if (receiver != sender
-                && receiver->in_room != NULL && receiver->in_room->area == sender->in_room->area
-                && CHAN_ENABLED(actual, channel->flag)
-                && !CHAN_DENIED(actual, channel->flag)) {
+		if (receiver->in_room != NULL 
+                && receiver->in_room->area == sender->in_room->area
+                && CHAN_ENABLED(actual, channel->flag) && !CHAN_DENIED(actual, channel->flag)) {
             act_new("`1$n shouts '`!$t`1'``", sender, argument, receiver, TO_VICT, channel->receiver_position, false);
 		}
 	}
@@ -247,23 +250,23 @@ void broadcast_shout(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender,
 void broadcast_global(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, char *argument)
 {
 	static char buf[2*MIL];
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = sender };
+    DESCRIPTOR_DATA *dpending;
 	DESCRIPTOR_DATA *d;
     CHAR_DATA *actual;
-    CHAR_DATA *receiver;
 
 	(void)snprintf(buf, 2 * MIL, "``$n %s: %s``", channel->print_name, argument);
 	if (sender != NULL) {
         act_new("$n `2I`8M`2P`8:`` $t``", sender, argument, NULL, TO_CHAR, POS_DEAD, channel->mob_trigger);
 	}
-	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
+        dpending = descriptor_iterator(d, &playing_filter);
 		actual = CH(d);
-		receiver = d->character;
 
         (void)snprintf(buf, 2 * MIL, "``$t %s: %s``", channel->print_name, argument);
-		if (receiver != sender
-                && CHAN_ENABLED(actual, channel->flag)
-                && !CHAN_DENIED(actual, channel->flag)) {
-			act_new(buf, sender, argument, receiver, TO_VICT, channel->receiver_position, false);
+		if (CHAN_ENABLED(actual, channel->flag) && !CHAN_DENIED(actual, channel->flag)) {
+			act_new(buf, sender, argument, d->character, TO_VICT, channel->receiver_position, false);
         }
 	}
 }
@@ -490,7 +493,9 @@ void broadcast_gtell(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender,
 
 void broadcast_sayto(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, CHAR_DATA *whom, char *argument)
 {
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = sender };
 	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 
 	if (IS_SET(whom->comm, COMM_AFK) && IS_NPC(whom)) {
         act("$E is `!A`@F`OK``, and is unable to pay attention.", sender, NULL, whom, TO_CHAR);
@@ -500,9 +505,10 @@ void broadcast_sayto(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender,
 	printf_to_char(sender, "``You say to %s '`P%s``'\n\r", whom->name, argument);
 	printf_to_char(whom, "``%s says to you '`P%s``'\n\r", sender->name, argument);
 
-	for (d = globalSystemState.descriptor_head; d; d = descriptor_playing_iterator(d)) {
-		if (d->character != sender
-                && d->character->in_room == sender->in_room
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
+        dpending = descriptor_iterator(d, &playing_filter);
+		if (d->character->in_room == sender->in_room
                 && d->character->position != POS_SLEEPING
                 && d->character != whom) {
             printf_to_char(d->character, "%s says to %s, '`P%s``'.\n\r", PERS(sender, d->character), PERS(whom, d->character), argument);
@@ -518,7 +524,6 @@ void broadcast_tell(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, 
             mp_act_trigger(argument, whom, sender, NULL, NULL, TRIG_SPEECH);
         }
     }
-	return;
 }
 
 

@@ -387,13 +387,18 @@ EDIT(hedit_delete){
 	HELP_DATA *temp;
 	HELP_AREA *had;
 	DESCRIPTOR_DATA *d;
+    struct descriptor_iterator_filter playing_filter = { .all = true, .must_playing = true };
+    DESCRIPTOR_DATA *dpending;
 	bool found = false;
 
 	EDIT_HELP(ch, help);
 
-	for (d = globalSystemState.descriptor_head; d; d = d->next)
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
+        dpending = descriptor_iterator(d, &playing_filter);
 		if (d->editor == ED_HELP && help == (HELP_DATA *)d->ed_data)
 			edit_done(d->character);
+    }
 
 
 	if (help_first == help) {

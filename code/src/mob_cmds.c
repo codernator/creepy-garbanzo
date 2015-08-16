@@ -239,14 +239,18 @@ void do_mpdump(CHAR_DATA *ch, char *argument)
  */
 void do_mpgecho(CHAR_DATA *ch, char *argument)
 {
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 
 	if (argument[0] == '\0') {
 		log_bug("MpGEcho: missing argument from vnum %d", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 		return;
 	}
 
-	for (d = globalSystemState.descriptor_head; d; d = descriptor_playing_iterator(d)) {
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
+        dpending = descriptor_iterator(d, &playing_filter);
         if (IS_IMMORTAL(d->character))
             send_to_char("Mob echo> ", d->character);
 
@@ -262,7 +266,9 @@ void do_mpgecho(CHAR_DATA *ch, char *argument)
  */
 void do_mpzecho(CHAR_DATA *ch, char *argument)
 {
+    struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 
 	if (argument[0] == '\0') {
 		log_bug("MpZEcho: missing argument from vnum %d", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
@@ -272,9 +278,10 @@ void do_mpzecho(CHAR_DATA *ch, char *argument)
 	if (ch->in_room == NULL)
 		return;
 
-	for (d = globalSystemState.descriptor_head; d; d = descriptor_playing_iterator(d)) {
-		if (d->character->in_room != NULL
-		    && d->character->in_room->area == ch->in_room->area) {
+    dpending = descriptor_iterator_start(&playing_filter);
+    while ((d = dpending) != NULL) {
+        dpending = descriptor_iterator(d, &playing_filter);
+		if (d->character->in_room != NULL && d->character->in_room->area == ch->in_room->area) {
 			if (IS_IMMORTAL(d->character))
 				send_to_char("Mob echo> ", d->character);
 

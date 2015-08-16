@@ -128,7 +128,6 @@ typedef void DO_FUN(/*@partial@*/CHAR_DATA * ch, char *argument);
 #define HERO                    LEVEL_HERO
 
 struct system_state {
-    DESCRIPTOR_DATA *descriptor_head;               /* All open descriptors */
     OBJ_DATA *object_head;                          /* All objects in the game. */
     bool wizlock;                                   /* Game is wizlocked. */
     bool newlock;                                   /* Game is newlocked. */
@@ -1247,12 +1246,10 @@ struct kill_data {
 #define PLR_PERMIT              (U)
 #define PLR_LOG                 (W)
 #define PLR_DENY                (X)
-#define PLR_FREEZE              (Y)
 #define PLR_THIEF               (Z)
 #define PLR_CHALLENGER          (aa)
 #define PLR_PENDING             (bb)
 #define PLR_DUELIST             (cc)
-#define PLR_ESP                 (dd)
 #define PLR_NORESTORE           (ee)
 
 /* RT comm flags -- may be used n both mobs and chars */
@@ -2484,9 +2481,25 @@ void log_string(const char *fmt, ...);
 /* Needs a home */
 char *capitalize(const char *str);
 
-/* iterator.c */
-DESCRIPTOR_DATA *descriptor_iterator(DESCRIPTOR_DATA *current);
-DESCRIPTOR_DATA *descriptor_playing_iterator(DESCRIPTOR_DATA *current);
+/* descriptor.c */
+typedef struct descriptor_iterator_filter DESCRIPTOR_ITERATOR_FILTER;
+struct descriptor_iterator_filter {
+    bool all;
+    bool must_playing;
+    CHAR_DATA *skip_character;
+    SOCKET descriptor;
+};
+extern const DESCRIPTOR_ITERATOR_FILTER descriptor_empty_filter;
+
+
+void descriptor_list_add(DESCRIPTOR_DATA *d);
+void descriptor_list_remove(DESCRIPTOR_DATA *d);
+DESCRIPTOR_DATA * new_descriptor(void);
+void free_descriptor(DESCRIPTOR_DATA * d);
+int descriptor_list_count();
+int descriptor_recycle_count();
+DESCRIPTOR_DATA *descriptor_iterator_start(const DESCRIPTOR_ITERATOR_FILTER *filter);
+DESCRIPTOR_DATA *descriptor_iterator(DESCRIPTOR_DATA *current, const DESCRIPTOR_ITERATOR_FILTER *filter);
 
 
 

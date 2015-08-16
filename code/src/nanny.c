@@ -16,7 +16,6 @@ static char log_buf[MIL];
 void nanny(DESCRIPTOR_DATA *d, char *argument)
 {
 	DESCRIPTOR_DATA *d_old;
-	DESCRIPTOR_DATA *d_next;
 	CHAR_DATA *ch;
 	LEARNED *learned;
 	char buf[MSL];
@@ -168,9 +167,12 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 	case CON_BREAK_CONNECT:
 		switch (*argument) {
 		case 'y':
-		case 'Y':
-			for (d_old = globalSystemState.descriptor_head; d_old != NULL; d_old = d_next) {
-				d_next = d_old->next;
+		case 'Y': {
+            DESCRIPTOR_DATA *dpending;
+
+            dpending = descriptor_iterator_start(&descriptor_empty_filter);
+            while ((d_old = dpending) != NULL) {
+                dpending = descriptor_iterator(d_old, &descriptor_empty_filter);
 
 				if (d_old == d || d_old->character == NULL)
 					continue;
@@ -181,8 +183,9 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 				close_socket(d_old);
 			}
 
-			if (check_reconnect(d, ch->name, true))
+			if (check_reconnect(d, ch->name, true)) {
 				return;
+            }
 
 			write_to_buffer(d, "Reconnect attempt failed.\n\rName: ", 0);
 			if (d->character != NULL) {
@@ -192,9 +195,9 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 
 			d->connected = CON_GET_NAME;
 			break;
-
-		case 'n':
-		case 'N':
+        }
+        case 'n':
+        case 'N':
 			write_to_buffer(d, "Name: ", 0);
 			if (d->character != NULL) {
 				free_char(d->character);
@@ -691,14 +694,19 @@ bool check_parse_name(char *name)
 	 * Check names of people playing. Yes, this is necessary for multiple
 	 * newbies with the same name (thanks Saro)
 	 */
-	if (globalSystemState.descriptor_head) {
+	{
 		int count = 0;
-		DESCRIPTOR_DATA *d, *dnext;
+        DESCRIPTOR_DATA *d, *dpending;
 
-		for (d = globalSystemState.descriptor_head; d != NULL; d = dnext) {
-			dnext = d->next;
-			if (d->connected != CON_PLAYING && d->character && d->character->name
-			    && d->character->name[0] && !str_cmp(d->character->name, name)) {
+        dpending = descriptor_iterator_start(&descriptor_empty_filter);
+        while ((d = dpending) != NULL) {
+            dpending = descriptor_iterator(d, &descriptor_empty_filter);
+
+			if (d->connected != CON_PLAYING 
+                    && d->character != NULL
+                    && d->character->name
+			        && d->character->name[0] 
+                    && !str_cmp(d->character->name, name)) {
 				count++;
 				close_socket(d);
 			}
@@ -706,7 +714,6 @@ bool check_parse_name(char *name)
 		if (count) {
 			(void)snprintf(log_buf, MIL, "Double newbie alert (%s)", name);
 			wiznet(log_buf, NULL, NULL, WIZ_LOGINS, 0, 0);
-
 			return false;
 		}
 	}
@@ -727,11 +734,9 @@ bool check_parse_name(char *name)
 
 
 
-/***************************************************************************
-*	check_reconnect
-*
-*	see if there is an existing player to reconnect
-***************************************************************************/
+/**
+ * see if there is an existing player to reconnect
+ */
 bool check_reconnect(DESCRIPTOR_DATA *d, char *name, bool reconnect)
 {
 	CHAR_DATA *ch;
@@ -776,21 +781,23 @@ bool check_reconnect(DESCRIPTOR_DATA *d, char *name, bool reconnect)
 
 
 
-/***************************************************************************
-*	check_playing
-*
-*	check to see if a character is already playing
-***************************************************************************/
+/**
+ * determine whether a character is already playing
+ */
 bool check_playing(DESCRIPTOR_DATA *d, char *name)
 {
+    DESCRIPTOR_DATA *dpending;
 	DESCRIPTOR_DATA *dold;
 
-	for (dold = globalSystemState.descriptor_head; dold; dold = dold->next) {
+    dpending = descriptor_iterator_start(&descriptor_empty_filter);
+    while ((dold = dpending) != NULL) {
+        dpending = descriptor_iterator(dold, &descriptor_empty_filter);
+
 		if (dold != d
-		    && dold->character != NULL
-		    && dold->connected != CON_GET_NAME
-		    && dold->connected != CON_GET_OLD_PASSWORD
-		    && !str_cmp(name, (dold->original) ? dold->original->name : dold->character->name)) {
+                && dold->character != NULL
+                && dold->connected != CON_GET_NAME
+                && dold->connected != CON_GET_OLD_PASSWORD
+                && !str_cmp(name, (dold->original) ? dold->original->name : dold->character->name)) {
 			write_to_buffer(d, "That character is already playing.\n\r", 0);
 			write_to_buffer(d, "Do you wish to connect anyway(Y/N)?", 0);
 			d->connected = CON_BREAK_CONNECT;

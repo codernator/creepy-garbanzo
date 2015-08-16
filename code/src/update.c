@@ -274,12 +274,12 @@ void advance_level(CHAR_DATA *ch, int level)
 void gain_exp(CHAR_DATA *ch, int gain)
 {
 	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
+    struct descriptor_iterator_filter filter = { .must_playing = true, .skip_character = ch  };
 	char buf[MSL];
 
-	if (IS_NPC(ch)
-	    || ch->level >= (301 - 1)) {
-		if (!IS_NPC(ch)
-		    && ch->level == 301 - 1)
+	if (IS_NPC(ch) || ch->level >= (301 - 1)) {
+		if (!IS_NPC(ch) && ch->level == 301 - 1)
 			ch->exp = exp_per_level(ch, ch->pcdata->points) * ch->level;
 		if (!IS_NPC(ch)) ch->pcdata->extendedexp += (gain / 10);
 		return;
@@ -301,14 +301,13 @@ void gain_exp(CHAR_DATA *ch, int gain)
 		save_char_obj(ch);
 
 		/* do the info */
-		for (d = globalSystemState.descriptor_head; d; d = descriptor_playing_iterator(d)) {
+        dpending = descriptor_iterator_start(&filter);
+        while ((d = dpending) != NULL) {
 			CHAR_DATA *vch;
+            dpending = descriptor_iterator(d, &filter);
 
 			vch = CH(d);
-			if (d->character != ch
-			    && vch != NULL
-			    && IS_SET(vch->comm, COMM_INFO)
-			    && !IS_SET(vch->comm, COMM_QUIET)) {
+			if (vch != NULL && IS_SET(vch->comm, COMM_INFO) && !IS_SET(vch->comm, COMM_QUIET)) {
 				if (ch->level == 300) {
 					printf_to_char(vch, "`![Info]:`& %s has made it to 300!``\n\r", ch->name);
 					restore_char(ch);
@@ -321,7 +320,6 @@ void gain_exp(CHAR_DATA *ch, int gain)
 	}
 
 	save_char_obj(ch);
-	return;
 }
 
 /***************************************************************************
@@ -895,6 +893,7 @@ static void mobile_update(void)
 ***************************************************************************/
 static void weather_update(void)
 {
+    struct descriptor_iterator_filter filter = { .must_playing = true };
 	DESCRIPTOR_DATA *d;
 	char buf[MSL];
 	int diff;
@@ -1004,7 +1003,12 @@ static void weather_update(void)
 	}
 
 	if (buf[0] != '\0') {
-		for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
+        DESCRIPTOR_DATA *dpending;
+        
+        dpending = descriptor_iterator_start(&filter);
+        while ((d = dpending) != NULL) {
+            dpending = descriptor_iterator(d, &filter);
+
 			if (IS_OUTSIDE(d->character) && IS_AWAKE(d->character))
 				send_to_char(buf, d->character);
 		}
@@ -1013,27 +1017,29 @@ static void weather_update(void)
 	return;
 }
 
-/***************************************************************************
-*	auto_restore
-*
-*	automatic restores set at the interval PULSE_RESTORE in merc.h
-***************************************************************************/
+/**
+ * automatic restores set at the interval PULSE_RESTORE in merc.h
+ */
 static void auto_restore(void)
 {
+    struct descriptor_iterator_filter filter = { .must_playing = true };
 	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 	CHAR_DATA *victim;
 
-	for (d = globalSystemState.descriptor_head; d != NULL; d = descriptor_playing_iterator(d)) {
-		victim = d->character;
-		if (victim == NULL || IS_NPC(victim))
-			continue;
+    dpending = descriptor_iterator_start(&filter);
+    while ((d = dpending) != NULL) {
+        dpending = descriptor_iterator(d, &filter);
 
-		restore_char(victim);
-		save_char_obj(victim);
-		if (victim->in_room != NULL)
-			send_to_char("`1A `!huge`` beam of `&light`` crosses the sky above you ..\n\r", victim);
+		victim = d->character;
+		if (victim != NULL && !IS_NPC(victim))
+        {
+            restore_char(victim);
+            save_char_obj(victim);
+            if (victim->in_room != NULL)
+                send_to_char("`1A `!huge`` beam of `&light`` crosses the sky above you ..\n\r", victim);
+        }
 	}
-	return;
 }
 
 
