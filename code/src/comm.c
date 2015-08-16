@@ -33,9 +33,7 @@
 #define STDOUT_FILENO 1
 #endif
 
-/**
- * OS-dependent declarations.
- */
+/** OS-dependent declarations. */
 extern int close(int fd);
 extern int gettimeofday(struct timeval *tp, struct timezone *tzp);
 
@@ -52,13 +50,11 @@ extern int execl(const char *path, const char *arg, ...);
 /** socketio.c */
 extern bool read_from_descriptor(DESCRIPTOR_DATA *d);
 extern bool write_to_descriptor(int desc, char *txt, int length);
-extern int init_socket(int port);
 extern void init_descriptor(int control);
 /** ~socketio.c */
 
-/**
- * Game declarations.
- */
+
+/** Game declarations. */
 extern char *color_table[];
 extern bool is_space(const char test);
 extern bool run_olc_editor(DESCRIPTOR_DATA * d);
@@ -69,81 +65,30 @@ extern void string_add(CHAR_DATA * ch, char *argument);
 extern char *string_replace(char *orig, char *old, char *new);
 
 bool copyover();
+void sig_handler(int sig);
+void game_loop(int port, int control);
+void copyover_recover(void);
 
-static void game_loop(int control);
 static bool process_output(DESCRIPTOR_DATA * d, bool fPrompt);
 static void read_from_buffer(DESCRIPTOR_DATA * d);
 static void check_afk(CHAR_DATA * ch);
 static void bust_a_prompt(CHAR_DATA * ch);
-static void init_signals(void);
 static void auto_shutdown(void);
-static void copyover_recover(void);
 volatile sig_atomic_t fatal_error_in_progress = 0;
 
-/***************************************************************************
-* Global variables.
-***************************************************************************/
-SYSTEM_STATE globalSystemState = {
-    NULL, false, false, 0, false, false, "", 0, 0
-};
 
 
-int main(int argc, char **argv)
-{
-	struct timeval now_time;
-	bool fCopyOver = false;
-
-	init_signals();
-
-    /** Init time. */
-	gettimeofday(&now_time, NULL);
-	globalSystemState.current_time = (time_t)now_time.tv_sec;
-	strcpy(globalSystemState.boot_time, (char *)ctime(&globalSystemState.current_time));
-
-    /** Get the port number. */
-	globalSystemState.port = 7778;
-	if (argc > 1) {
-		if (!is_number(argv[1])) {
-			fprintf(stderr, "Usage: %s [port #]\n", argv[0]);
-            raise(SIGABRT);
-		} else if ((globalSystemState.port = atoi(argv[1])) <= 1024) {
-			fprintf(stderr, "Port number must be above 1024.\n");
-            raise(SIGABRT);
-		}
-
-		/* Are we recovering from a copyover? */
-		if (argv[2] && argv[2][0]) {
-			fCopyOver = true;
-			globalSystemState.control = atoi(argv[3]);
-		} else {
-			fCopyOver = false;
-		}
-	}
-
-    /** Run the game. */
-	if (!fCopyOver) {
-		globalSystemState.control = init_socket(globalSystemState.port);
-    }
-
-	boot_db();
-	log_string("BT is ready to rock on port %d.", globalSystemState.port);
-
-	if (fCopyOver) {
-		copyover_recover();
-    }
-
-	game_loop(globalSystemState.control);
-	close(globalSystemState.control);
-
-	log_string("Normal termination of game.");
-	_Exit(0);
-}
-
-void game_loop(int control)
+/** TODO - these are only outside of main scope because the copyover routine needs them. */
+static int listen_port;
+static int listen_control;
+void game_loop(int port, int control)
 {
 	static struct timeval null_time;
 	struct timeval last_time;
     static const struct descriptor_iterator_filter allfilter = { .all = true };
+
+    listen_port = port;
+    listen_control = control;
 
 	gettimeofday(&last_time, NULL);
 	globalSystemState.current_time = (time_t)last_time.tv_sec;
@@ -1374,14 +1319,6 @@ void sig_handler(int sig)
     raise(sig);
 }
 
-void init_signals()
-{
-	signal(SIGBUS, sig_handler);
-	signal(SIGTERM, sig_handler);
-	signal(SIGABRT, sig_handler);
-	signal(SIGSEGV, sig_handler);
-}
-
 void auto_shutdown()
 {
 	FILE *cmdLog;
@@ -1483,8 +1420,8 @@ bool copyover()
 	}
 
 	/** exec - descriptors are inherited */
-	sprintf(buf, "%d", globalSystemState.port);
-	sprintf(buf2, "%d", globalSystemState.control);
+	sprintf(buf, "%d", listen_port);
+	sprintf(buf2, "%d", listen_control);
 	execl(EXE_FILE, "Badtrip", buf, "copyover", buf2, (char *)NULL);
 
 	/** Failed - sucessful exec will not return */

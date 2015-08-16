@@ -135,8 +135,6 @@ struct system_state {
     bool tickset;                                   /* Force a tick? whaat? --Eo */
     bool merc_down;                                 /* Shutdown */
     char boot_time[MIL];
-    int port;
-    int control;
 };
 
 

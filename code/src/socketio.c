@@ -1,4 +1,5 @@
 #include "merc.h"
+#include <sys/time.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -7,6 +8,9 @@
 #include <netdb.h>
 #include <signal.h>
 #include "telnet.h"
+
+
+extern int gettimeofday(struct timeval *tp, struct timezone *tzp);
 
 /** recycle.h */
 extern DESCRIPTOR_DATA * new_descriptor(void);
@@ -17,11 +21,26 @@ extern void free_descriptor(DESCRIPTOR_DATA * d);
 typedef void handle_new_connection(int control);
 
 
+void init_time(SYSTEM_STATE *system_state);
 bool read_from_descriptor(DESCRIPTOR_DATA *d);
 bool write_to_descriptor(int desc, char *txt, int length);
-int init_socket(int port);
+int listen_port(int port);
+void deafen_port(int listen_control);
 void init_descriptor(int control);
 
+
+void init_time(SYSTEM_STATE *system_state) 
+{
+	struct timeval now_time;
+    gettimeofday(&now_time, NULL);
+    system_state->current_time = (time_t)now_time.tv_sec;
+    strcpy(system_state->boot_time, (char *)ctime(&system_state->current_time));
+}
+
+void deafen_port(int listen_control)
+{
+    close(listen_control);
+}
 
 void init_descriptor(int control)
 {
@@ -90,7 +109,7 @@ void init_descriptor(int control)
 	write_to_descriptor(dnew->descriptor, "Ansi intro screen?(y/n) \n\r", 0);
 }
 
-int init_socket(int port)
+int listen_port(int port)
 {
 	static struct sockaddr_in sa_zero;
 	struct sockaddr_in sa;

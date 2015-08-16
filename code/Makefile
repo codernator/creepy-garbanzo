@@ -21,7 +21,7 @@ _OBJ=act_comm.o act_combat.o act_enter.o act_info.o act_move.o act_obj.o act_wiz
      handler.o healer.o help.o \
      imprint.o interp.o \
      libfile.o logging.o lookup.o \
-     magic.o mem.o mob_cmds.o mob_prog.o mobs.o \
+     magic.o main.o mem.o mob_cmds.o mob_prog.o mobs.o \
      nanny.o nickname.o note.o \
      ovnum.o \
      race.o recycle.o repair.o restring.o \
