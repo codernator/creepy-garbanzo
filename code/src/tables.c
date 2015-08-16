@@ -285,7 +285,6 @@ const struct flag_type comm_flags[] =
 	{ "combine",	  COMM_COMBINE,	     true  },
 	{ "telnet_ga",	  COMM_TELNET_GA,    true  },
 	{ "show_affects", COMM_SHOW_AFFECTS, true  },
-	{ "nochannels",	  COMM_NOCHANNELS,   false },
 	{ "afk",	  COMM_AFK,	     true  },
 	{ "info",	  COMM_INFO,	     true  },
 	{ "noemote",	  COMM_NOEMOTE,     false },

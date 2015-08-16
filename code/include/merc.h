@@ -1260,7 +1260,6 @@ struct kill_data {
 #define COMM_COMBINE            (E)
 #define COMM_TELNET_GA          (F)
 #define COMM_SHOW_AFFECTS       (G)
-#define COMM_NOCHANNELS         (H)
 #define COMM_AFK                (K)
 #define COMM_INFO               (L)
 #define COMM_NOEMOTE            (M)

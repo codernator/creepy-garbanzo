@@ -217,7 +217,6 @@ DECLARE_DO_FUN(do_mode);
 DECLARE_DO_FUN(do_motd);
 DECLARE_DO_FUN(do_newlock);
 DECLARE_DO_FUN(do_nickname);
-DECLARE_DO_FUN(do_nochannels);
 DECLARE_DO_FUN(do_noemote);
 DECLARE_DO_FUN(do_nofollow);
 DECLARE_DO_FUN(do_noloot);

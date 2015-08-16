@@ -3002,7 +3002,6 @@ void do_buy(CHAR_DATA *ch, char *argument)
 		SET_BIT(pet->act, ACT_PET);
 		SET_BIT(pet->affected_by, AFF_CHARM);
 
-		pet->comm = COMM_NOCHANNELS;
 		pet->channels_denied = CHANNEL_SHOUT | CHANNEL_TELL;
 		pet->zone = ch->in_room->area;
 

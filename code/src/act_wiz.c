@@ -900,49 +900,6 @@ void do_outfit(CHAR_DATA *ch, char *argument)
 		printf_to_char(vch, "You have been equipped by %s.\n\r", ch->name);
 }
 
-void do_nochannels(CHAR_DATA *ch, char *argument)
-{
-	CHAR_DATA *victim;
-	char arg[MIL];
-	char buf[MSL];
-
-	DENY_NPC(ch)
-
-	one_argument(argument, arg);
-	if (arg[0] == '\0') {
-		send_to_char("Nochannel whom?\n\r", ch);
-		return;
-	}
-
-	if ((victim = get_char_world(ch, arg)) == NULL) {
-		send_to_char("They aren't here.\n\r", ch);
-		return;
-	}
-
-	if (get_trust(victim) >= get_trust(ch)) {
-		send_to_char("You failed.\n\r", ch);
-		return;
-	}
-
-	if (IS_SET(victim->comm, COMM_NOCHANNELS)) {
-		REMOVE_BIT(victim->comm, COMM_NOCHANNELS);
-		send_to_char("The gods have restored your channel priviliges.\n\r", victim);
-		send_to_char("NOCHANNELS removed.\n\r", ch);
-
-		sprintf(buf, "$N restores channels to %s", victim->name);
-		wiznet(buf, ch, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
-	} else {
-		SET_BIT(victim->comm, COMM_NOCHANNELS);
-		send_to_char("The gods have revoked your channel priviliges.\n\r", victim);
-		send_to_char("NOCHANNELS set.\n\r", ch);
-
-		sprintf(buf, "$N revokes %s's channels.", victim->name);
-		wiznet(buf, ch, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
-	}
-
-	return;
-}
-
 void do_bamfin(CHAR_DATA *ch, char *argument)
 {
 	char buf[MSL];
@@ -3231,7 +3188,7 @@ void do_pnlist(CHAR_DATA *ch, char *argument)
 
 	send_to_char("Listing all connected penalized characters:\n\r", ch);
 	send_to_char("+----------------------------------------------------------------------+\n\r", ch);
-	send_to_char("Name     | NoC| NoE| Log| Idt| Klr| Thi| SnP| Per| Pns| Dis\n\r", ch);
+	send_to_char("Name     | NoE| Log| Idt| Klr| Thi| SnP| Per| Pns| Dis\n\r", ch);
 	send_to_char("+----------------------------------------------------------------------+\n\r", ch);
 
     dpending = descriptor_iterator_start(&descriptor_empty_filter);
@@ -3248,9 +3205,8 @@ void do_pnlist(CHAR_DATA *ch, char *argument)
 			continue;
 
 		printf_to_char(ch,
-			       "%-13s%-9s%-9s%-9s%-9s%-9s%-9s%-9s\n\r",
+			       "%-13s%-9s%-9s%-9s%-9s%-9s%-9s\n\r",
 			       wch->name,
-			       IS_SET(wch->comm, COMM_NOCHANNELS) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->comm, COMM_NOEMOTE) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->act, PLR_LOG) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->act, PLR_KILLER) ? "`!X`7" : "`8-`7 ",
