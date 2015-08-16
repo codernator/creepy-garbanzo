@@ -1245,8 +1245,6 @@ struct kill_data {
 #define PLR_LOG                 (W)
 #define PLR_DENY                (X)
 #define PLR_THIEF               (Z)
-#define PLR_CHALLENGER          (aa)
-#define PLR_PENDING             (bb)
 
 /* RT comm flags -- may be used n both mobs and chars */
 #define COMM_COMPACT            (A)
