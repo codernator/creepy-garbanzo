@@ -302,7 +302,6 @@ const struct cmd_type cmd_table[] =
 	{ "shutdow",	  do_shutdow,      POS_DEAD,     ML, LOG_NORMAL, 0 },
 	{ "shutdown",	  do_shutdown,     POS_DEAD,     ML, LOG_ALWAYS, 1 },
 	{ "sockets",      do_sockets,      POS_DEAD,     L4, LOG_ALWAYS, 1 },
-	{ "target",	      do_target,       POS_DEAD,     L2, LOG_ALWAYS, 1 },
 	{ "for",	      do_for,	       POS_DEAD,     L4, LOG_ALWAYS, 1 },
 	{ "force",	      do_force,	       POS_DEAD,     L3, LOG_ALWAYS, 1 },
 	{ "fry",	      do_fry,	       POS_DEAD,     ML, LOG_ALWAYS, 1 },

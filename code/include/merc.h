@@ -1253,20 +1253,16 @@ struct kill_data {
 #define PLR_NORESTORE           (ee)
 
 /* RT comm flags -- may be used n both mobs and chars */
-#define COMM_COMPACT            (B)
-#define COMM_BRIEF              (C)
-#define COMM_PROMPT             (D)
-#define COMM_COMBINE            (E)
-#define COMM_SHOW_AFFECTS       (G)
-#define COMM_AFK                (K)
-#define COMM_TICKS              (N)
-#define COMM_ENABLE             (O)
-#define COMM_TARGET             (P)
-#define COMM_LOCKREPLY          (Q)
-#define COMM_RP                 (R)
-#define COMM_CODING             (S)
-#define COMM_BUILD              (T)
-#define COMM_BUSY               (U)
+#define COMM_COMPACT            (A)
+#define COMM_BRIEF              (B)
+#define COMM_PROMPT             (C)
+#define COMM_COMBINE            (D)
+#define COMM_SHOW_AFFECTS       (E)
+#define COMM_AFK                (F)
+#define COMM_TICKS              (G)
+#define COMM_CODING             (H)
+#define COMM_BUILD              (I)
+#define COMM_BUSY               (J)
 
 
 /* WIZnet flags */

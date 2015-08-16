@@ -1346,57 +1346,7 @@ void do_pardon(CHAR_DATA *ch, char *argument)
 	}
 
 
-	if (!str_cmp(arg2, "target")) {
-		if (IS_SET(victim->comm, COMM_TARGET)) {
-			REMOVE_BIT(victim->comm, COMM_TARGET);
-			send_to_char("Target status removed ..\n\r", ch);
-			send_to_char("You are no longer a `Otarget`7.\n\r", victim);
-		}
-		return;
-	}
-
 	send_to_char("Syntax: pardon <character> <killer|thief|target>.\n\r", ch);
-	return;
-}
-
-void do_target(CHAR_DATA *ch, char *argument)
-{
-	CHAR_DATA *victim;
-	char arg[MSL];
-
-	DENY_NPC(ch)
-
-	one_argument(argument, arg);
-	if (argument[0] == '\0') {
-		send_to_char("Syntax: Target <character name>\n\r", ch);
-		return;
-	}
-
-	victim = get_char_world(ch, arg);
-	if (get_trust(victim) >= get_trust(ch)) {
-		send_to_char("I don't think so ..\n\r", ch);
-		return;
-	}
-
-	if (victim == NULL) {
-		send_to_char("That player can't be found..\n\r", ch);
-		return;
-	}
-
-	if (IS_NPC(victim)) {
-		send_to_char("You can't do that to NPC's..\n\r", ch);
-		return;
-	}
-
-	if (IS_SET(victim->comm, COMM_TARGET)) {
-		send_to_char("They are nolonger a `#target`7..\n\r", ch);
-		send_to_char("You don't feel like such an `#target`7 anymore..\n\r", victim);
-		REMOVE_BIT(victim->comm, COMM_TARGET);
-		return;
-	}
-
-	send_to_char("They are now a `#target`7!..\n\r", ch);
-	SET_BIT(victim->comm, COMM_TARGET);
 	return;
 }
 

@@ -176,7 +176,6 @@ DECLARE_DO_FUN(do_gopk);
 DECLARE_DO_FUN(do_inlay);
 DECLARE_DO_FUN(do_aanswer);
 DECLARE_DO_FUN(do_filter);
-DECLARE_DO_FUN(do_target);
 DECLARE_DO_FUN(do_cuo);
 DECLARE_DO_FUN(do_tally);
 DECLARE_DO_FUN(do_untally);

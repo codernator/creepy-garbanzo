@@ -1284,9 +1284,6 @@ bool is_safe(CHAR_DATA *ch, CHAR_DATA *victim)
 	if (victim->in_room == NULL || ch->in_room == NULL)
 		return true;
 
-	if (IS_SET(victim->comm, COMM_TARGET))
-		return false;
-
 	if (victim->phased)
 		return true;
 
