@@ -59,17 +59,6 @@ static struct { int	wear_loc; char *desc; } where_name[] =
 	{ -1,		  ""			 }
 };
 
-void toggle_quiet(CHAR_DATA *ch) {
-    bool now_on;
-    now_on = character_toggle_comm(ch, COMM_QUIET);
-
-	if (now_on) {
-		send_to_char("All channels are quiet.\n\r", ch);
-	} else {
-		send_to_char("Channels are no longer quiet.\n\r", ch);
-	}
-}
-
 void toggle_afk(CHAR_DATA *ch, char *message)
 {
     bool now_on;
@@ -92,9 +81,6 @@ void show_channels(CHAR_DATA *ch)
 {
 	send_to_char("CHANNEL        STATUS\n\r", ch);
 	send_to_char("```&---------------------``\n\r", ch);
-
-	printf_to_char(ch, "`^Quiet Mode     %s``\n\r",
-		       character_has_comm(ch, COMM_QUIET) ? "`#ON" : "`1OFF");
 
 	send_to_char("\n\r", ch);
 	if (character_has_comm(ch, COMM_AFK))

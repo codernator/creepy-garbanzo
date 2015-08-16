@@ -1253,7 +1253,6 @@ struct kill_data {
 #define PLR_NORESTORE           (ee)
 
 /* RT comm flags -- may be used n both mobs and chars */
-#define COMM_QUIET              (A)
 #define COMM_COMPACT            (B)
 #define COMM_BRIEF              (C)
 #define COMM_PROMPT             (D)

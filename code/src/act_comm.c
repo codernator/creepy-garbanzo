@@ -122,12 +122,6 @@ void command_channel(CHAR_DATA *ch, char *argument) {
 }
 
 
-void do_quiet(CHAR_DATA *ch, /*@unused@*/ char *argument)
-{
-    DENY_NPC(ch);
-    toggle_quiet(ch);
-}
-
 void do_afk(CHAR_DATA *ch, char *argument)
 {
     DENY_NPC(ch);

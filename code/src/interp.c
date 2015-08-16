@@ -161,7 +161,6 @@ const struct cmd_type cmd_table[] =
 	{ "build",	      do_build,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 
 	{ "at",		      do_at,	       POS_DEAD,     L7, LOG_NORMAL, 1 },
-	{ "quiet",	      do_quiet,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "replay",	      do_replay,       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "catchup",	  do_catchup,      POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "unread",	      do_unread,       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },

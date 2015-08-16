@@ -248,7 +248,6 @@ DECLARE_DO_FUN(do_push);
 DECLARE_DO_FUN(do_put);
 DECLARE_DO_FUN(do_quaff);
 DECLARE_DO_FUN(do_qui);
-DECLARE_DO_FUN(do_quiet);
 DECLARE_DO_FUN(do_quit);
 DECLARE_DO_FUN(do_quote);
 DECLARE_DO_FUN(do_ravage);

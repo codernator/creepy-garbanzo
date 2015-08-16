@@ -274,7 +274,6 @@ const struct flag_type part_flags[] = {
 };
 
 const struct flag_type comm_flags[] = {
-    { "quiet",        COMM_QUIET,        true },
     { "compact",      COMM_COMPACT,      true },
     { "brief",        COMM_BRIEF,        true },
     { "prompt",       COMM_PROMPT,       true },
