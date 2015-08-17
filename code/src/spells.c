@@ -2728,7 +2728,7 @@ void spell_lightning_bolt(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int 
 void spell_locate_object(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
 	BUFFER *buffer;
-	OBJ_DATA *obj;
+	OBJ_DATA *obj, *opending;
 	OBJ_DATA *in_obj;
 	bool found;
 	int number = 0;
@@ -2741,7 +2741,9 @@ void spell_locate_object(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 
 	buffer = new_buf();
 
-	for (obj = globalSystemState.object_head; obj != NULL; obj = obj->next) {
+    opending = object_iterator_start(&object_empty_filter);
+    while ((obj = opending) != NULL) {
+        opending = object_iterator(obj, &object_empty_filter);
 		if (!can_see_obj(ch, obj) || !is_name(argument, obj->name)
 		    || IS_OBJ_STAT(obj, ITEM_NOLOCATE) || number_percent() > 2 * level
 		    || ch->level < obj->level)

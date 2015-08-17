@@ -1402,24 +1402,7 @@ void extract_obj(OBJ_DATA *obj)
 		extract_obj(obj_content);
 	}
 
-	if (globalSystemState.object_head == obj) {
-		globalSystemState.object_head = obj->next;
-	} else {
-		OBJ_DATA *prev;
-
-		for (prev = globalSystemState.object_head; prev != NULL; prev = prev->next) {
-			if (prev->next == obj) {
-				prev->next = obj->next;
-				break;
-			}
-		}
-
-		if (prev == NULL) {
-			log_string("Extract_obj: obj %ld not found.", obj->obj_idx->vnum);
-			return;
-		}
-	}
-
+    object_list_remove(obj);
 	--obj->obj_idx->count;
 	free_object(obj);
 	return;
@@ -1578,13 +1561,8 @@ CHAR_DATA *get_char_world(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 OBJ_DATA *get_obj_type(OBJ_INDEX_DATA *obj_idx)
 {
-	OBJ_DATA *obj;
-
-	for (obj = globalSystemState.object_head; obj != NULL; obj = obj->next)
-		if (obj->obj_idx == obj_idx)
-			return obj;
-
-	return NULL;
+    const struct object_iterator_filter filter = { .object_template = obj_idx };
+    return object_iterator_start(&filter);
 }
 
 /***************************************************************************
@@ -1697,17 +1675,20 @@ OBJ_DATA *get_obj_here(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 OBJ_DATA *get_obj_world(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
+	OBJ_DATA *obj, *opending;
 	char arg[MIL];
 	int number;
-	int count;
+	int count = 0;
 
 	if ((obj = get_obj_here(ch, argument)) != NULL)
 		return obj;
 
 	number = number_argument(argument, arg);
-	count = 0;
-	for (obj = globalSystemState.object_head; obj != NULL; obj = obj->next) {
+
+    opending = object_iterator_start(&object_empty_filter);
+    while ((obj = opending) != NULL) {
+        opending = object_iterator(obj, &object_empty_filter);
+    
 		if (can_see_obj(ch, obj) && is_name(arg, obj->name)) {
 			if (++count == number)
 				return obj;

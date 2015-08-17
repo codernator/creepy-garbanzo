@@ -2459,8 +2459,7 @@ OBJ_DATA *create_object(OBJ_INDEX_DATA *obj_idx, int level)
 		if (paf->location == APPLY_SPELL_AFFECT)
 			affect_to_obj(obj, paf);
 
-	obj->next = globalSystemState.object_head;
-	globalSystemState.object_head = obj;
+    object_list_add(obj);
 	obj_idx->count++;
 
 	return obj;

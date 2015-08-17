@@ -14,7 +14,7 @@ extern DECLARE_DO_FUN(do_help);
 void do_teleport(CHAR_DATA *ch, char *argument)
 {
 	OBJ_DATA *teleporter;
-	OBJ_DATA *obj;
+	OBJ_DATA *obj, *opending;
 	OBJ_DATA *in_obj;
 	ROOM_INDEX_DATA *location;
 	char arg[MIL];
@@ -37,16 +37,16 @@ void do_teleport(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if ((!str_prefix(arg, "scan"))
-	    || (!str_prefix(arg, "index"))
-	    || (arg[0] == '\0')) {
+	if ((!str_prefix(arg, "scan")) || (!str_prefix(arg, "index")) || (arg[0] == '\0')) {
 		send_to_char("`BTeleport Index - Public Teleportation Systems\n\r", ch);
 		send_to_char("`4---------------------------------------------\n\r\n\r", ch);
 		send_to_char("`P 00000 - `5Unlisted\n\r\n\r", ch);
 
 		count = 0;
 		buf = new_buf();
-		for (obj = globalSystemState.object_head; obj != NULL; obj = obj->next) {
+        opending = object_iterator_start(&object_empty_filter);
+        while ((obj = opending) != NULL) {
+            opending = object_iterator(obj, &object_empty_filter);
 			if (!can_see_obj(ch, obj)
 			    || !is_name("teleporter_public", obj->name))
 				continue;
@@ -70,7 +70,9 @@ void do_teleport(CHAR_DATA *ch, char *argument)
 		if (IS_IMMORTAL(ch)) {
 			count = 0;
 			buf = new_buf();
-			for (obj = globalSystemState.object_head; obj != NULL; obj = obj->next) {
+            opending = object_iterator_start(&object_empty_filter);
+            while ((obj = opending) != NULL) {
+                opending = object_iterator(obj, &object_empty_filter);
 				if (!can_see_obj(ch, obj)
 				    || !is_name("teleporter_private", obj->name))
 					continue;

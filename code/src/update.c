@@ -1350,16 +1350,17 @@ static void char_update(void)
 ***************************************************************************/
 static void obj_update(void)
 {
-	OBJ_DATA *obj;
-	OBJ_DATA *obj_next;
+	OBJ_DATA *obj, *opending;
 	AFFECT_DATA *paf;
 	AFFECT_DATA *paf_next;
 
-	for (obj = globalSystemState.object_head; obj != NULL; obj = obj_next) {
+    opending = object_iterator_start(&object_empty_filter);
+    while ((obj = opending) != NULL) {
 		CHAR_DATA *rch;
 		char *message;
 
-		obj_next = obj->next;
+        opending = object_iterator(obj, &object_empty_filter);
+
 		/* go through affects and decrement */
 		for (paf = obj->affected; paf != NULL; paf = paf_next) {
 			paf_next = paf->next;
@@ -1447,9 +1448,7 @@ static void obj_update(void)
 			}
 		}
 
-		if ((obj->item_type == ITEM_CORPSE_PC
-		     || obj->wear_loc == WEAR_FLOAT)
-		    && obj->contains) {
+		if ((obj->item_type == ITEM_CORPSE_PC || obj->wear_loc == WEAR_FLOAT) && obj->contains != NULL) {
 			OBJ_DATA *t_obj, *next_obj;
 
 			for (t_obj = obj->contains; t_obj != NULL; t_obj = next_obj) {
@@ -1476,8 +1475,6 @@ static void obj_update(void)
 		}
 		extract_obj(obj);
 	}
-
-	return;
 }
 
 /*

@@ -128,7 +128,6 @@ typedef void DO_FUN(/*@partial@*/CHAR_DATA * ch, char *argument);
 #define HERO                    LEVEL_HERO
 
 struct system_state {
-    /*@null@*/OBJ_DATA *object_head;                          /* All objects in the game. */
     bool wizlock;                                   /* Game is wizlocked. */
     bool newlock;                                   /* Game is newlocked. */
     time_t current_time;                            /* Time of this pulse. */
@@ -2490,6 +2489,7 @@ DESCRIPTOR_DATA *descriptor_iterator(DESCRIPTOR_DATA *current, const DESCRIPTOR_
 typedef struct object_iterator_filter OBJECT_ITERATOR_FILTER;
 struct object_iterator_filter {
     const char *name;
+    OBJ_INDEX_DATA *object_template;
 };
 extern const OBJECT_ITERATOR_FILTER object_empty_filter;
 

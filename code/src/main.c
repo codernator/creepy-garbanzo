@@ -17,7 +17,7 @@ extern void deafen_port(int listen_control);
 
 
 SYSTEM_STATE globalSystemState = {
-    NULL, false, false, 0, false, false, ""
+    false, false, 0, false, false, ""
 };
 
 

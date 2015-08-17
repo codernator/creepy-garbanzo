@@ -232,11 +232,14 @@ void do_cuo(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_tally(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
+	OBJ_DATA *obj, *opending;
 	int unique_tally = 0;
 
-	for (obj = globalSystemState.object_head; obj != NULL; obj = obj->next) {
+    opending = object_iterator_start(&object_empty_filter);
+    while ((obj = opending) != NULL) {
 		CHAR_DATA *vch;
+
+        opending = object_iterator(obj, &object_empty_filter);
 
 		/* if it is carried by nobody or it is carried by a mob */
 		if (((vch = obj->carried_by) != NULL && IS_NPC(vch))
@@ -251,7 +254,6 @@ void do_tally(CHAR_DATA *ch, char *argument)
 
 	/* need to fix colors here */
 	printf_to_char(ch, "`gUnique Items:  %d currently in the wilderness.``\n\r", unique_tally);
-	return;
 }
 
 
@@ -263,14 +265,14 @@ void do_tally(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_untally(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
-	OBJ_DATA *obj_next;
+	OBJ_DATA *obj, *opending;
 	int tally = 0;
 
-	for (obj = globalSystemState.object_head; obj != NULL; obj = obj_next) {
+    opending = object_iterator_start(&object_empty_filter);
+    while ((obj = opending) != NULL) {
 		CHAR_DATA *vch;
 
-		obj_next = obj->next;
+        opending = object_iterator(obj, &object_empty_filter);
 		if ((vch = obj->carried_by) == NULL)
 			continue;
 
@@ -284,7 +286,6 @@ void do_untally(CHAR_DATA *ch, char *argument)
 	}
 
 	printf_to_char(ch, "`gThere were %d unique items extracted.`x\n\r", tally);
-	return;
 }
 
 

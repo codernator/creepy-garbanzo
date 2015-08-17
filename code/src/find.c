@@ -117,16 +117,9 @@ const struct cmp_vars_obj_data obj_flags[] =
 };
 
 
-
-
-
-/***************************************************************************
-*	do_owhere
-*
-*	new syntax:
-*		owhere <var> <value>
-*
-***************************************************************************/
+/**
+ * owhere <var> <value>
+ */
 void do_owhere(CHAR_DATA *ch, char *argument)
 {
 	BUFFER *buffer;
@@ -182,14 +175,13 @@ void do_owhere(CHAR_DATA *ch, char *argument)
 
 	if (argument[0] == '?' || argument[0] == '\0') {
 		clear_buf(buffer);
-		sprintf(buf, "`#SYNTAX``:\n\r"
-			"       owhere %s <value>:\n\r\n\r", arg);
+		sprintf(buf, "`#SYNTAX``:\n\r    owhere %s <value>:\n\r\n\r", arg);
 		add_buf(buffer, buf);
 
-		(*cmp_fn)(globalSystemState.object_head, argument, buffer);
+		(*cmp_fn)(object_iterator_start(&object_empty_filter), argument, buffer);
 		page_to_char(buf_string(buffer), ch);
 	} else {
-		OBJ_DATA *obj;
+		OBJ_DATA *obj, *opending;
 		OBJ_DATA *in_obj;
 		char *clr1;
 		char *clr2;
@@ -197,7 +189,10 @@ void do_owhere(CHAR_DATA *ch, char *argument)
 
 		number = 0;
 
-		for (obj = globalSystemState.object_head; obj != NULL; obj = obj->next) {
+        opending = object_iterator_start(&object_empty_filter);
+        while ((obj = opending) != NULL) {
+            opending = object_iterator(obj, &object_empty_filter);
+
 			if (can_see_obj(ch, obj)
 			    && (*cmp_fn)(obj, argument, NULL)) {
 				number++;

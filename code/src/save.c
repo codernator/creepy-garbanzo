@@ -1829,14 +1829,11 @@ static void fread_obj(CHAR_DATA *ch, FILE *fp)
 					}
 
 					if (!new_format) {
-						obj->next = globalSystemState.object_head;
-						globalSystemState.object_head = obj;
+                        object_list_add(obj);
 						obj->obj_idx->count++;
 					}
 
-					if (!obj->obj_idx->new_format
-					    && obj->item_type == ITEM_ARMOR
-					    && obj->value[1] == 0) {
+					if (!obj->obj_idx->new_format && obj->item_type == ITEM_ARMOR && obj->value[1] == 0) {
 						obj->value[1] = obj->value[0];
 						obj->value[2] = obj->value[0];
 					}
