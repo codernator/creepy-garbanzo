@@ -2332,7 +2332,7 @@ OBJ_DATA *create_object(OBJ_INDEX_DATA *obj_idx, int level)
         return NULL;
 	}
 
-	obj = new_obj();
+	obj = new_object();
 
 	obj->obj_idx = obj_idx;
 	obj->in_room = NULL;
@@ -3140,16 +3140,8 @@ void do_dump(CHAR_DATA *ch, char *argument)
 	fprintf(fp, "ObjProt	%10ld(%12ld bytes)\n", top_obj_index, top_obj_index * (long)(sizeof(*obj_idx)));
 
 	/* objects */
-	count = 0;
-	count_free = 0;
-	for (obj = globalSystemState.object_head; obj != NULL; obj = obj->next) {
-		count++;
-		for (af = obj->affected; af != NULL; af = af->next)
-			aff_count++;
-	}
-
-	for (obj = obj_free; obj != NULL; obj = obj->next)
-		count_free++;
+	count = object_list_count();
+	count_free = object_recycle_count();
 
 	fprintf(fp, "Objs	%10ld(%12ld bytes), %10ld free(%12ld bytes)\n",
 		count,

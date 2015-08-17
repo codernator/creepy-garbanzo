@@ -223,10 +223,11 @@ struct nickname_data {
 
 /* Descriptor (channel) structure. */
 struct descriptor_data {
-    DESCRIPTOR_DATA *next;
-    DESCRIPTOR_DATA *snoop_by;
-    CHAR_DATA *character;
-    CHAR_DATA *original;
+    /*@shared@*/DESCRIPTOR_DATA *next;
+    /*@shared@*/DESCRIPTOR_DATA *prev;
+    /*@shared@*/DESCRIPTOR_DATA *snoop_by;
+    /*@shared@*/CHAR_DATA *character;
+    /*@shared@*/CHAR_DATA *original;
     bool valid;
     bool pending_delete;
     char *host;
@@ -1608,39 +1609,40 @@ struct obj_index_data {
 * object_data* a single instance of an object
 ***************************************************************************/
 struct obj_data {
-    OBJ_DATA *  next;
-    OBJ_DATA *  next_content;
-    OBJ_DATA *  contains;
-    OBJ_DATA *  in_obj;
-    OBJ_DATA *  on;
-    CHAR_DATA *  carried_by;
-    CHAR_DATA *  target;
-    EXTRA_DESCR_DATA * extra_descr;
-    AFFECT_DATA *  affected;
-    OBJ_INDEX_DATA * obj_idx;
-    ROOM_INDEX_DATA * in_room;
-    bool   valid;
-    bool   enchanted;
-    char *   owner;
-    char *   name;
-    char *   short_descr;
-    char *   description;
-    char *   inote;
-    int   plevel;
-    int   xp_tolevel;
-    int   exp;
-    int   item_type;
-    long   extra_flags;
-    long   extra2_flags;
-    long   wear_flags;
-    int   wear_loc;
-    int   weight;
-    unsigned int  cost;
-    int   level;
-    int   condition;
-    char *   material;
-    int   timer;
-    long   value[5];
+    /*@shared@*/OBJ_DATA *next;
+    /*@shared@*/OBJ_DATA *prev;
+    /*@shared@*/OBJ_DATA *next_content;
+    /*@shared@*/OBJ_DATA *contains;
+    /*@shared@*/OBJ_DATA *in_obj;
+    /*@shared@*/OBJ_DATA *on;
+    /*@shared@*/CHAR_DATA *carried_by;
+    /*@shared@*/CHAR_DATA *target;
+    /*@shared@*/EXTRA_DESCR_DATA *extra_descr;
+    /*@shared@*/AFFECT_DATA *affected;
+    /*@shared@*/OBJ_INDEX_DATA *obj_idx;
+    /*@shared@*/ROOM_INDEX_DATA *in_room;
+    bool valid;
+    bool enchanted;
+    char *owner;
+    char *name;
+    char *short_descr;
+    char *description;
+    char *inote;
+    int plevel;
+    int xp_tolevel;
+    int exp;
+    int item_type;
+    long extra_flags;
+    long extra2_flags;
+    long wear_flags;
+    int wear_loc;
+    int weight;
+    unsigned int cost;
+    int level;
+    int condition;
+    char *material;
+    int timer;
+    long value[5];
 };
 
 
@@ -2474,7 +2476,6 @@ struct descriptor_iterator_filter {
 };
 extern const DESCRIPTOR_ITERATOR_FILTER descriptor_empty_filter;
 
-
 void descriptor_list_add(DESCRIPTOR_DATA *d);
 void descriptor_list_remove(DESCRIPTOR_DATA *d);
 DESCRIPTOR_DATA * new_descriptor(void);
@@ -2483,7 +2484,24 @@ int descriptor_list_count();
 int descriptor_recycle_count();
 DESCRIPTOR_DATA *descriptor_iterator_start(const DESCRIPTOR_ITERATOR_FILTER *filter);
 DESCRIPTOR_DATA *descriptor_iterator(DESCRIPTOR_DATA *current, const DESCRIPTOR_ITERATOR_FILTER *filter);
+/* ~descriptor.c */
 
+/* object.c */
+typedef struct object_iterator_filter OBJECT_ITERATOR_FILTER;
+struct object_iterator_filter {
+    const char *name;
+};
+extern const OBJECT_ITERATOR_FILTER object_empty_filter;
+
+void object_list_add(OBJ_DATA *d);
+void object_list_remove(OBJ_DATA *d);
+OBJ_DATA * new_object(void);
+void free_object(OBJ_DATA * d);
+int object_list_count();
+int object_recycle_count();
+OBJ_DATA *object_iterator_start(const OBJECT_ITERATOR_FILTER *filter);
+OBJ_DATA *object_iterator(OBJ_DATA *current, const OBJECT_ITERATOR_FILTER *filter);
+/* ~object.c */
 
 
 #endif  /* __MERC_H */

@@ -30,10 +30,6 @@ void free_extra_descr(EXTRA_DESCR_DATA * ed);
 AFFECT_DATA * new_affect(void);
 void free_affect(AFFECT_DATA * af);
 
-/* object recycling */
-OBJ_DATA * new_obj(void);
-void free_obj(OBJ_DATA * obj);
-
 
 /* character recyling */
 CHAR_DATA * new_char(void);

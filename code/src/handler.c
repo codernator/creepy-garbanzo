@@ -1421,7 +1421,7 @@ void extract_obj(OBJ_DATA *obj)
 	}
 
 	--obj->obj_idx->count;
-	free_obj(obj);
+	free_object(obj);
 	return;
 }
 

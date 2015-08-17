@@ -1701,7 +1701,7 @@ static void fread_obj(CHAR_DATA *ch, FILE *fp)
 	}
 
 	if (obj == NULL) { /* either not found or old style */
-		obj = new_obj();
+		obj = new_object();
 		obj->name = str_dup("");
 		obj->short_descr = str_dup("");
 		obj->description = str_dup("");
@@ -1820,11 +1820,11 @@ static void fread_obj(CHAR_DATA *ch, FILE *fp)
 				/* if(!fNest || !fVnum ||obj->obj_idx == NULL) */
 				if (!fNest || (fVnum && obj->obj_idx == NULL)) {
 					log_bug("Fread_obj: incomplete object.");
-					free_obj(obj);
+					free_object(obj);
 					return;
 				} else {
 					if (!fVnum) {
-						free_obj(obj);
+						free_object(obj);
 						obj = create_object(get_obj_index(OBJ_VNUM_DUMMY), 0);
 					}
 
