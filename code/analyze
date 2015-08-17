@@ -6,6 +6,6 @@ clear
 #              -dump analysis/posix
 
 
-splint -DLINUX -Iinclude +skip-sys-headers -macroparams src/main.c
+splint -DLINUX -Iinclude +skip-sys-headers -macroparams src/descriptor.c
 
 

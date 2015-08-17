@@ -4,7 +4,6 @@ extern void free_affect(AFFECT_DATA *af);
 extern void free_extra_descr(EXTRA_DESCR_DATA *ed);
 
 
-static const OBJ_DATA obj_zero;
 static OBJ_DATA head_node;
 static OBJ_DATA recycle_node;
 static bool passes(OBJ_DATA *testee, const OBJECT_ITERATOR_FILTER *filter);
@@ -23,17 +22,19 @@ void object_list_add(OBJ_DATA *d)
 
 void object_list_remove(OBJ_DATA *d)
 {
-    d->prev->next = d->next;
-    if (d->next != NULL)
+    if (d->prev != NULL) {
+        d->prev->next = d->next;
+    }
+    if (d->next != NULL) {
         d->next->prev = d->prev;
+    }
     d->next = NULL;
     d->prev = NULL;
 }
 
 OBJ_DATA *new_object(void)
 {
-	static OBJ_DATA obj_zero;
-	OBJ_DATA *obj;
+	/*@shared@*/OBJ_DATA *obj;
 
 	if (recycle_node.next == NULL) {
 		obj = alloc_perm((unsigned int)sizeof(*obj));
@@ -41,7 +42,6 @@ OBJ_DATA *new_object(void)
 		obj = recycle_node.next;
 		recycle_node.next = obj->next;
 	}
-	*obj = obj_zero;
 	VALIDATE(obj);
 
 	return obj;
@@ -49,10 +49,10 @@ OBJ_DATA *new_object(void)
 
 void free_object(OBJ_DATA *obj)
 {
-	AFFECT_DATA *paf;
-	AFFECT_DATA *paf_next;
-	EXTRA_DESCR_DATA *ed;
-	EXTRA_DESCR_DATA *ed_next;
+	/*@shared@*/AFFECT_DATA *paf;
+	/*@shared@*/AFFECT_DATA *paf_next;
+	/*@shared@*/EXTRA_DESCR_DATA *ed;
+	/*@shared@*/EXTRA_DESCR_DATA *ed_next;
 
 	if (!IS_VALID(obj))
 		return;
@@ -123,7 +123,7 @@ OBJ_DATA *object_iterator(OBJ_DATA *current, const OBJECT_ITERATOR_FILTER *filte
 
 bool passes(OBJ_DATA *testee, const OBJECT_ITERATOR_FILTER *filter)
 {
-    if (filter->name != NULL && filter->name[0] != '\0' && str_cmp(filter->name, testee->name)) {
+    if (filter->name != NULL && filter->name[0] != '\0' && testee->name != NULL && str_cmp(filter->name, testee->name)) {
         /** name filter specified but does not match current object. */
         return false;
     }

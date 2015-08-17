@@ -1,10 +1,9 @@
 #include "merc.h"
 
 /* exportable */
-const DESCRIPTOR_ITERATOR_FILTER descriptor_empty_filter = { .all = false };
+const DESCRIPTOR_ITERATOR_FILTER descriptor_empty_filter = { .all = false, .must_playing = false, .descriptor = 0, .skip_character = NULL };
 
 
-static const DESCRIPTOR_DATA d_zero;
 static DESCRIPTOR_DATA head_node;
 static DESCRIPTOR_DATA recycle_head_node;
 static bool passes(DESCRIPTOR_DATA *testee, const DESCRIPTOR_ITERATOR_FILTER *filter);
@@ -22,9 +21,12 @@ void descriptor_list_add(DESCRIPTOR_DATA *d)
 
 void descriptor_list_remove(DESCRIPTOR_DATA *d) 
 {
-    d->prev->next = d->next;
-    if (d->next != NULL)
+    if (d->prev != NULL) {
+        d->prev->next = d->next;
+    }
+    if (d->next != NULL) {
         d->next->prev = d->prev;
+    }
     d->next = NULL;
     d->prev = NULL;
 }
@@ -84,7 +86,6 @@ DESCRIPTOR_DATA *new_descriptor(void)
 		recycle_head_node.next= d->next;
 	}
 
-	*d = d_zero;
 	VALIDATE(d);
 
 	d->connected = CON_GET_ANSI;

@@ -568,42 +568,6 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 
 		do_look(ch, "auto");
 
-		if (ch->level > 300 && ch->vernew <= 3) {
-			if (ch->level <= 600) {
-				if (IS_IMMORTAL(ch)) {
-				} else {
-					ch->level = 300;
-					ch->vernew = 4;
-					send_to_char("\n\r`^Reverting level back to 300.``\n\r `#O`&M`#G your level `&300`# now`3!`#?`3!``\n\r", ch);
-				}
-			}
-		}
-
-		if (ch->vernew <= 4) {
-			if (!IS_IMMORTAL(ch)) {
-				LEARNED *learned;
-
-				for (learned = ch->pcdata->skills; learned != NULL; learned = learned->next)
-					if (learned->percent > 75)
-						learned->percent = 75;
-			}
-			ch->vernew = 5;
-		}
-
-		if (ch->vernew == 5) {
-			if (!IS_IMMORTAL(ch)) {
-				LEARNED *learned;
-
-				for (learned = ch->pcdata->skills; learned != NULL; learned = learned->next) {
-					if (learned->percent > 75)
-						learned->percent = UMIN(100, 85 + (learned->percent - 75));
-					if (learned->percent == 75)
-						learned->percent = 85;
-				}
-			}
-			ch->vernew = 6;
-		}
-
 		wiznet("$N has left real life behind.", ch, NULL, WIZ_LOGINS, WIZ_SITES, get_trust(ch));
 
 		if (ch->pet != NULL) {

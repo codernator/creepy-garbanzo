@@ -61,7 +61,6 @@ void violence_update(void)
 		ch_next = ch->next;
 
 		if ((victim = ch->fighting) == NULL || ch->in_room == NULL) {
-			ch->phased = false;
 			continue;
 		}
 
@@ -1284,9 +1283,6 @@ bool is_safe(CHAR_DATA *ch, CHAR_DATA *victim)
 	if (victim->in_room == NULL || ch->in_room == NULL)
 		return true;
 
-	if (victim->phased)
-		return true;
-
 	if (victim->fighting == ch || victim == ch)
 		return false;
 
@@ -1386,9 +1382,6 @@ bool is_safe_spell(CHAR_DATA *ch, CHAR_DATA *victim, bool area)
 		return false;
 
 	if (victim->in_room == NULL || ch->in_room == NULL)
-		return true;
-
-	if (victim->phased)
 		return true;
 
 	if (victim == ch && area)

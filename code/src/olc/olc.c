@@ -1231,15 +1231,7 @@ void do_alist(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 bool show_version(CHAR_DATA *ch, char *argument)
 {
-	send_to_char(OLCVERSION, ch);
-	send_to_char("\n\r", ch);
-	send_to_char(AUTHOR, ch);
-	send_to_char("\n\r", ch);
-	send_to_char(DATE, ch);
-	send_to_char("\n\r", ch);
-	send_to_char(CREDITS, ch);
-	send_to_char("\n\r", ch);
-
+    printf_to_char(ch, "%s\n\r%s\n\r%s\n\r%s\n\r", OLCVERSION, AUTHOR, DATE, CREDITS);
 	return false;
 }
 

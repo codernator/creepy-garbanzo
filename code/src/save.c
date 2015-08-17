@@ -140,8 +140,7 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 	fprintf(fp, "Name %s~\n", ch->name);
 	fprintf(fp, "Id   %ld\n", ch->id);
 	fprintf(fp, "LogO %ld\n", (long)globalSystemState.current_time);
-	fprintf(fp, "Vers %d\n", 5);
-	fprintf(fp, "Vernew %d\n", ch->vernew);
+	fprintf(fp, "Version %d\n", 5);
 
 	if (ch->short_descr[0] != '\0')
 		fprintf(fp, "ShD  %s~\n", ch->short_descr);
@@ -828,17 +827,6 @@ bool load_char_obj(DESCRIPTOR_DATA *d, char *name)
 		ch->parts = race_table[ch->race].parts;
 	}
 
-
-	if (found && ch->version < 2) {
-		if ((learned = create_learned_group("rom basics")) != NULL)
-			add_learned_group(ch, learned);
-		if ((learned = create_learned_group(class_table[ch->class].base_group)) != NULL)
-			add_learned_group(ch, learned);
-	}
-
-	/* ream gold */
-	if (found && ch->version < 4)
-		ch->gold /= 100;
 	return found;
 }
 
@@ -1427,8 +1415,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 			break;
 		case 'V':
 			KEY("Version", ch->version, fread_number(fp));
-			KEY("Vernew", ch->vernew, fread_number(fp));
-			KEY("Vers", ch->version, fread_number(fp));
 			if (!str_cmp(word, "Vnum")) {
 				ch->mob_idx = get_mob_index(fread_number(fp));
 				fMatch = true;

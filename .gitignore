@@ -6,5 +6,6 @@ copyover.txt
 shutdown.txt
 *.err
 *.out
+*.dmp
 *~
 
