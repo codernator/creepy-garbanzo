@@ -128,7 +128,7 @@ typedef void DO_FUN(/*@partial@*/CHAR_DATA * ch, char *argument);
 #define HERO                    LEVEL_HERO
 
 struct system_state {
-    OBJ_DATA *object_head;                          /* All objects in the game. */
+    /*@null@*/OBJ_DATA *object_head;                          /* All objects in the game. */
     bool wizlock;                                   /* Game is wizlocked. */
     bool newlock;                                   /* Game is newlocked. */
     time_t current_time;                            /* Time of this pulse. */

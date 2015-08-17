@@ -26,7 +26,7 @@ static void init_signals();
 int main(int argc, char **argv)
 {
 	bool recovering = false;
-    int port, control;
+    int port, control = 0;
 
 	init_signals();
 
@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 		}
 
 		/* Are we recovering from a copyover? */
-		if (argv[2] && argv[2][0]) {
+		if ((argv[2] != NULL) && (argv[2][0] != '\0')) {
 			recovering = true;
 			control = atoi(argv[3]);
 		} else {
@@ -68,14 +68,18 @@ int main(int argc, char **argv)
 	deafen_port(control);
 
 	log_string("Normal termination of game.");
-	_Exit(0);
+    return 0;
 }
 
 void init_signals()
 {
-	signal(SIGBUS, sig_handler);
-	signal(SIGTERM, sig_handler);
-	signal(SIGABRT, sig_handler);
-	signal(SIGSEGV, sig_handler);
+#ifdef S_SPLINT_S
+#define SIGBUS 0
+#endif
+    //TODO - more sophisticated signal handling.
+	(void)signal(SIGBUS, sig_handler);
+	(void)signal(SIGTERM, sig_handler);
+	(void)signal(SIGABRT, sig_handler);
+	(void)signal(SIGSEGV, sig_handler);
 }
 
