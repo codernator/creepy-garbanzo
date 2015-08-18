@@ -8,9 +8,6 @@
 
 
 char last_command[MSL];
-
-DISABLED_DATA *disabled_first;
-
 char *repeater(char *s, int i);
 
 
@@ -135,7 +132,6 @@ const struct cmd_type cmd_table[] =
 	{ "dice",	      do_dice,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "delet",	      do_delet,	       POS_DEAD,     0,	 LOG_ALWAYS, 0 },
 	{ "delete",	      do_delete,       POS_STANDING, 0,	 LOG_NORMAL, 1 },
-	{ "disable",	  do_disable,      POS_DEAD,     L7, LOG_ALWAYS, 1 },
 	{ "nickname",	  do_nickname,     POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "nofollow",	  do_nofollow,     POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "noloot",	      do_noloot,       POS_DEAD,     0,	 LOG_NORMAL, 1 },
@@ -494,11 +490,6 @@ void interpret(CHAR_DATA *ch, char *argument)
 
 	if (!found) {
         send_to_char("```COMMAND NOT FOUND``\n\r", ch);
-		return;
-	}
-
-	if (check_disabled(ch, DISABLED_CMD, cmd_table[cmd].name)) {
-		send_to_char("This command has been temporarily disabled.\n\r", ch);
 		return;
 	}
 

@@ -242,8 +242,6 @@ void free_char(CHAR_DATA *ch)
 	OBJ_DATA *obj_next;
 	AFFECT_DATA *paf;
 	AFFECT_DATA *paf_next;
-	DISABLED_DATA *disabled;
-	DISABLED_DATA *disabled_next;
 
 	if (!IS_VALID(ch))
 		return;
@@ -262,12 +260,6 @@ void free_char(CHAR_DATA *ch)
 		affect_remove(ch, paf);
 	}
 	ch->affected = NULL;
-
-	for (disabled = ch->disabled; disabled != NULL; disabled = disabled_next) {
-		disabled_next = disabled->next;
-		free_disabled(disabled);
-	}
-	ch->disabled = NULL;
 
 	free_string(ch->name);
 	free_string(ch->short_descr);

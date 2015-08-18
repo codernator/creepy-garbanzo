@@ -61,7 +61,6 @@ typedef struct room_index_data ROOM_INDEX_DATA;
 typedef struct shop_data SHOP_DATA;
 typedef struct time_info_data TIME_INFO_DATA;
 typedef struct weather_data WEATHER_DATA;
-typedef struct disabled_data DISABLED_DATA;
 typedef struct auction_data AUCTION_DATA;
 
 typedef struct mprog_list MPROG_LIST;
@@ -248,18 +247,6 @@ struct descriptor_data {
     int idle;
 };
 
-
-#define DISABLED_CMD    1
-#define DISABLED_SPELL  2
-
-struct disabled_data {
- DISABLED_DATA * next;
- char *command;
- char *disabled_by;
- int level;
- int type;
- bool valid;
-};
 
 /* TO types for act. */
 #define TO_ROOM         0
@@ -1364,7 +1351,6 @@ struct char_data {
     /*@shared@*/CHAR_DATA *master;
     /*@shared@*/CHAR_DATA *leader;
     /*@shared@*/CHAR_DATA *fighting;
-    /*@shared@*/CHAR_DATA *target;
     /*@shared@*/CHAR_DATA *linked;
     /*@shared@*/CHAR_DATA *reply;
     /*@shared@*/CHAR_DATA *pet;
@@ -1372,8 +1358,6 @@ struct char_data {
     /*@shared@*/CHAR_DATA *mobmem;
     /*@shared@*/CHAR_DATA *dream;
     /*@shared@*/CHAR_DATA *mprog_target;
-    /*@shared@*/CHAR_DATA *symbiosis;
-    /*@shared@*/MEM_DATA *memory;
     /*@shared@*//*@null@*/MOB_INDEX_DATA *mob_idx;
     /*@shared@*/DESCRIPTOR_DATA *desc;
     /*@shared@*/AFFECT_DATA *affected;
@@ -1385,7 +1369,6 @@ struct char_data {
     /*@shared@*/AREA_DATA *zone;
     /*@shared@*/PC_DATA *pcdata;
     /*@shared@*/NICKNAME_DATA *nicknames;
-    /*@shared@*/DISABLED_DATA *disabled;
     bool valid;
     /*@shared@*/char *name;
     long id;
@@ -2060,7 +2043,6 @@ extern SYSTEM_STATE globalSystemState;
 
 
 extern MPROG_CODE *mprog_list;
-extern DISABLED_DATA *disabled_first;
 
 
 extern bool log_all;
@@ -2117,14 +2099,13 @@ extern ROOM_INDEX_DATA *room_index_hash [MAX_KEY_HASH];
 #define AREA_FOLDER      "./db/area/"
 #define AREA_LIST        "./db/area.lst"          /* List of areas */
 #define BAN_FILE         "./db/ban.txt"
-#define DISABLED_FILE    "./db/disabled.txt"      /* disabled commands */
 #define HEADLINE_FILE    "./db/headline.txt"
 #define HELP_FILE        "./db/area/help.are"
 #define NOTE_FILE        "./db/notes.not"         /* note thread */
 #define SHUTDOWN_FILE    "./shutdown.txt"         /* For 'shutdown' */
 #define COPYOVER_FILE    "./copyover.txt"
 
-#define END_MARKER       "END"                    /* for load_disabled() and save_disabled() */
+#define END_MARKER       "END"
 
 
 
@@ -2412,17 +2393,6 @@ void gain_condition(CHAR_DATA * ch, int condition, long value);
 void update_handler(void);
 void restore_char(CHAR_DATA * ch);
 void strip_negative_affects(CHAR_DATA * ch);
-
-/* disable.c */
-DISABLED_DATA *new_disabled(void);
-void free_disabled(DISABLED_DATA * disabled);
-void disable_show(CHAR_DATA * ch, DISABLED_DATA * list);
-void disable_cmd(CHAR_DATA * ch, char *argument, DISABLED_DATA * *disabled_list);
-void disable_spell(CHAR_DATA * ch, char *argument, DISABLED_DATA * *disabled_list);
-void disable_all(CHAR_DATA * ch, char *argument, DISABLED_DATA * *disabled_list);
-bool check_disabled(CHAR_DATA * ch, int type, char *cmd);
-void load_disabled(void);
-void save_disabled(void);
 
 /* lookup.c */
 int race_lookup(const char *name);

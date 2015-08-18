@@ -349,8 +349,6 @@ void boot_db()
 	area_update();
 	log_string("Loading Message Threads..");
 	load_threads();
-	log_string("Loading Disabled List..");
-	load_disabled();
 	log_string("Loading Bans..");
 	load_bans();
 	log_string("Loading Songs..");

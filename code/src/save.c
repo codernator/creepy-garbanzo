@@ -130,7 +130,6 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 {
 	AFFECT_DATA *paf;
 	NICKNAME_DATA *ntemp;
-	DISABLED_DATA *disabled;
 	LEARNED *learned;
 	int pos;
 	int idx;
@@ -395,14 +394,6 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 				paf->location,
 				paf->bitvector);
 		}
-	}
-
-	for (disabled = ch->disabled; disabled != NULL; disabled = disabled->next) {
-		fprintf(fp, "Disabled '%s' %d %d %s\n",
-			disabled->command,
-			disabled->type,
-			disabled->level,
-			disabled->disabled_by);
 	}
 
 	fprintf(fp, "End\n\n");
@@ -1090,55 +1081,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 			KEY("Desc", ch->description, fread_string(fp));
 			KEY("Dwin", ch->duelwin, fread_number(fp));
 			KEY("Dlos", ch->duelloss, fread_number(fp));
-
-			if (!str_cmp(word, "Disabled")) {
-				DISABLED_DATA *disabled;
-				char *name;
-				int type;
-				bool disabled_found = false;
-				int iter;
-
-				name = fread_word(fp);
-				type = fread_number(fp);
-
-				switch (type) {
-				case DISABLED_CMD:
-					for (iter = 0; cmd_table[iter].name[0] != '\0'; iter++) {
-						if (!str_cmp(cmd_table[iter].name, name)) {
-							disabled_found = true;
-							break;
-						}
-					}
-					break;
-				case DISABLED_SPELL:
-				{
-					SKILL *skill;
-					for (skill = skill_list; skill != NULL; skill = skill->next) {
-						if (!str_cmp(skill->name, name)) {
-							disabled_found = true;
-							break;
-						}
-					}
-				}
-				break;
-				}
-
-				if (!disabled_found) {
-					sprintf(buf, "Skipping unknown command for char: %s.", ch->name);
-					fread_number(fp);       /* level */
-					fread_word(fp);         /* disabled_by */
-				} else {
-					disabled = new_disabled();
-					disabled->command = str_dup(name);
-					disabled->type = type;
-					disabled->level = fread_number(fp);
-					disabled->disabled_by = str_dup(fread_word(fp));
-					disabled->next = ch->disabled;
-					ch->disabled = disabled;
-				}
-			}
-
-
 			break;
 
 		case 'E':

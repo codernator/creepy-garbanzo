@@ -498,7 +498,6 @@ void do_mstat(CHAR_DATA *ch, char *argument)
 {
 	AFFECT_DATA *paf;
 	CHAR_DATA *victim;
-	DISABLED_DATA *disabled;
 	SKILL *skill;
 	char arg[MIL];
 
@@ -689,16 +688,4 @@ void do_mstat(CHAR_DATA *ch, char *argument)
 				       paf->level);
 		}
 	}
-
-	if (!IS_NPC(victim)) {
-		for (disabled = victim->disabled; disabled != NULL; disabled = disabled->next) {
-			printf_to_char(ch, "Disabled: %-18.17s %3d     %-14s %-12s\n\r",
-				       disabled->command,
-				       disabled->level,
-				       disabled->disabled_by,
-				       (disabled->type == DISABLED_CMD) ? "command" : "spell");
-		}
-	}
-
-	return;
 }

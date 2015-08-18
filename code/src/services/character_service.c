@@ -792,7 +792,6 @@ void show_char_to_char_0(CHAR_DATA *victim, CHAR_DATA *ch)
 	if (!IS_NPC(victim) && IS_SET(victim->act, PLR_KILLER)) strcat(buf, "-```1K```!i```1LLER``- ");
 	if (!IS_NPC(victim) && IS_SET(victim->act, PLR_THIEF)) strcat(buf, "-```8TH``i```8EF``- ");
 	if (!IS_NPC(victim) && IS_SET(victim->act, PLR_LINKDEAD)) strcat(buf, "`7[`8LINKDEAD`7] ");
-	if ((victim == ch->target)) strcat(buf, "`&[`7TARGET`&]`7 ");
 	if (victim->position == victim->start_pos && victim->long_descr[0] != '\0') {
 		strcat(buf, victim->long_descr);
 		send_to_char(buf, ch);

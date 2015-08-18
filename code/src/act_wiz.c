@@ -3049,7 +3049,7 @@ void do_pnlist(CHAR_DATA *ch, char *argument)
 
 	send_to_char("Listing all connected penalized characters:\n\r", ch);
 	send_to_char("+----------------------------------------------------------------------+\n\r", ch);
-	send_to_char("Name     | Log| Idt| Klr| Thi| SnP| Per| Pns| Dis\n\r", ch);
+	send_to_char("Name     | Log| Idt| Klr| Thi| SnP| Per| Pns\n\r", ch);
 	send_to_char("+----------------------------------------------------------------------+\n\r", ch);
 
     dpending = descriptor_iterator_start(&descriptor_empty_filter);
@@ -3066,13 +3066,12 @@ void do_pnlist(CHAR_DATA *ch, char *argument)
 			continue;
 
 		printf_to_char(ch,
-			       "%-13s%-9s%-9s%-9s%-9s%-9s\n\r",
+			       "%-13s%-9s%-9s%-9s%-9s\n\r",
 			       wch->name,
 			       IS_SET(wch->act, PLR_LOG) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->act, PLR_KILLER) ? "`!X`7" : "`8-`7 ",
 			       IS_SET(wch->act, PLR_THIEF) ? "`!X`7" : "`8-`7 ",
-			       IS_SET(wch->act, PLR_PERMIT) ? "`!X`7" : "`8-`7 ",
-			       (wch->disabled != NULL) ? "`!X`7" : "`8-`7 ");
+			       IS_SET(wch->act, PLR_PERMIT) ? "`!X`7" : "`8-`7 ");
 	}
 
 	send_to_char("+---------------------------------------------------------------------------+\n\r", ch);

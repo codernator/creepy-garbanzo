@@ -15,7 +15,7 @@ _OBJ=act_comm.o act_combat.o act_enter.o act_info.o act_move.o act_obj.o act_wiz
      affects.o alias.o at.o auction.o \
      ban.o bank.o bit.o \
      character.o combat_roll.o comm.o const.o \
-     db.o disable.o descriptor.o \
+     db.o descriptor.o \
      effects.o enchant.o \
      fight.o find.o flags.o for.o \
      handler.o healer.o help.o \

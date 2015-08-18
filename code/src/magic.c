@@ -367,11 +367,6 @@ void do_cast(CHAR_DATA *ch, char *argument)
 	}
 
 
-	if (check_disabled(ch, DISABLED_SPELL, skill->name)) {
-		send_to_char("This spell has been temporarily disabled.\n\r", ch);
-		return;
-	}
-
 	if (ch->position < skill->min_pos) {
 		send_to_char("You're too distracted.\n\r", ch);
 		return;
@@ -712,11 +707,6 @@ void obj_cast_spell(int		sn,
 	skill = resolve_skill_sn(sn);
 	if (skill == NULL || skill->spells == NULL) {
 		log_bug("Obj_cast_spell: bad sn %d.", sn);
-		return;
-	}
-
-	if (check_disabled(ch, DISABLED_SPELL, skill->name)) {
-		send_to_char("This spell has been temporarily disabled.\n\r", ch);
 		return;
 	}
 

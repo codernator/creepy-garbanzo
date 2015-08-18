@@ -142,7 +142,6 @@ DECLARE_DO_FUN(do_deny);
 DECLARE_DO_FUN(do_deposit);
 DECLARE_DO_FUN(do_description);
 DECLARE_DO_FUN(do_dice);
-DECLARE_DO_FUN(do_disable);
 DECLARE_DO_FUN(do_disarm);
 DECLARE_DO_FUN(do_disconnect);
 DECLARE_DO_FUN(do_disenchant);

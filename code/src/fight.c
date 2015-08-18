@@ -2023,16 +2023,11 @@ void group_gain(CHAR_DATA *ch, CHAR_DATA *victim)
 		if (!is_same_group(gch, ch) || IS_NPC(gch))
 			continue;
 
-		if (is_affected(gch, skill_lookup("symbiosis"))
-		    && (ch == gch || ch->symbiosis == gch)) {
-			xp = xp_compute(gch, victim, gch->level);
-		} else {
-			if (check == true || members >= 6)
-				send_to_char("You are out of range or this group is too large, your experience gain is reduced.\n\r", gch);
-			else
-				group_levels = gch->level * 4 / 3;
-			xp = xp_compute(gch, victim, group_levels);
-		}
+        if (check == true || members >= 6)
+            send_to_char("You are out of range or this group is too large, your experience gain is reduced.\n\r", gch);
+        else
+            group_levels = gch->level * 4 / 3;
+        xp = xp_compute(gch, victim, group_levels);
 
 		sprintf(buf, "You receive %d experience points.\n\r", xp);
 		send_to_char(buf, gch);
