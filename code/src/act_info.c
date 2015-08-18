@@ -1041,12 +1041,6 @@ void do_score(CHAR_DATA *ch, char *argument)
 
 	send_to_char(buf, ch);
 
-
-	if (!IS_NPC(ch) && ((ch->duelwin != 0) || (ch->duelloss != 0))) {
-		sprintf(buf, "You have won `O%d`7 duels and lost `O%d`7 duels.\n\r", ch->duelwin, ch->duelloss);
-		send_to_char(buf, ch);
-	}
-
 /* RT shows exp to level */
 	if (!IS_NPC(ch) && ch->level < LEVEL_HERO) {
 		sprintf(buf,

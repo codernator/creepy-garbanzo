@@ -1402,10 +1402,6 @@ struct char_data {
     unsigned int gold;
     unsigned int silver;
     int exp;
-    time_t duel_start;
-    int duelwin;
-    int duelloss;
-    int safe_timer;
     long act;
     int color;
     unsigned long channels_enabled;
@@ -1425,7 +1421,6 @@ struct char_data {
     int hitroll;
     int damroll;
     long armor[4];
-    long rpoint[11];
     int wimpy;
     int perm_stat[MAX_STATS];
     int mod_stat[MAX_STATS];
@@ -1438,7 +1433,6 @@ struct char_data {
     int dam_type;
     int start_pos;
     int default_pos;
-    int countdown;
     long deathroom;
     int mprog_delay;
     int mLag;                   /* added by Monrick */

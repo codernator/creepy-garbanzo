@@ -217,7 +217,6 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 	fprintf(fp, "Pdea %ld\n", ch->pcdata->pdeaths);
 	fprintf(fp, "Mkil %ld\n", ch->pcdata->mobkills);
 	fprintf(fp, "Mdea %ld\n", ch->pcdata->mobdeaths);
-	fprintf(fp, "Sftm %d\n", ch->safe_timer);
 	fprintf(fp, "ChannelsE %s\n", print_flags(ch->channels_enabled));
 	fprintf(fp, "ChannelsD %s\n", print_flags(ch->channels_denied));
 	fprintf(fp, "Comm %s\n", print_flags(ch->comm));
@@ -256,18 +255,6 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 		ch->armor[0], ch->armor[1],
 		ch->armor[2], ch->armor[3]);
 
-	fprintf(fp, "Rpoint %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld\n",
-		ch->rpoint[0],
-		ch->rpoint[1],
-		ch->rpoint[2],
-		ch->rpoint[3],
-		ch->rpoint[4],
-		ch->rpoint[5],
-		ch->rpoint[6],
-		ch->rpoint[7],
-		ch->rpoint[8],
-		ch->rpoint[9],
-		ch->rpoint[10]);
 	if (ch->wimpy != 0)
 		fprintf(fp, "Wimp  %d\n", ch->wimpy);
 
@@ -1076,8 +1063,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 			KEY("Dcry", ch->pcdata->deathcry, fread_string(fp));
 			KEY("Description", ch->description, fread_string(fp));
 			KEY("Desc", ch->description, fread_string(fp));
-			KEY("Dwin", ch->duelwin, fread_number(fp));
-			KEY("Dlos", ch->duelloss, fread_number(fp));
 			break;
 
 		case 'E':
@@ -1275,17 +1260,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 				KEY("RPNot", ch->pcdata->last_rpnote, (time_t)fread_long(fp));
 				ch->pcdata->last_read[NOTE_RPNOTE] = ch->pcdata->last_rpnote;
 			}
-
-			if (!str_cmp(word, "Rpoint")) {
-				int i;
-
-				for (i = 0; i < 11; i++)
-					ch->rpoint[i] = fread_number(fp);
-
-				fMatch = true;
-				break;
-			}
-
 			break;
 
 		case 'S':
@@ -1296,7 +1270,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 			KEY("Sex", ch->sex, fread_number(fp));
 			KEY("ShortDescr", ch->short_descr, fread_string(fp));
 			KEY("ShD", ch->short_descr, fread_string(fp));
-			KEY("Sftm", ch->safe_timer, fread_number(fp));
 			KEY("Silver_in_bank", ch->pcdata->silver_in_bank, fread_uint(fp));
 			KEY("Silv", ch->silver, fread_uint(fp));
 
