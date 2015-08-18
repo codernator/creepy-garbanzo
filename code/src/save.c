@@ -152,7 +152,6 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 	if (ch->prompt != NULL || !str_cmp(ch->prompt, "<%hhp %mm %vmv> "))
 		fprintf(fp, "Prom %s~\n", ch->prompt);
 	fprintf(fp, "Race %s~\n", pc_race_table[ch->race].name);
-	fprintf(fp, "Inote %s~\n", ch->inote);
 
 	fprintf(fp, "Sex  %d\n", ch->sex);
 	fprintf(fp, "Cla  %d\n", ch->class);
@@ -540,8 +539,6 @@ static void fwrite_obj(CHAR_DATA *ch, OBJ_DATA *obj, FILE *fp, int iNest)
 
 	if (obj->description != obj->obj_idx->description)
 		fprintf(fp, "Desc %s~\n", obj->description);
-
-	fprintf(fp, "Inote %s~\n", obj->inote);
 
 	if (obj->extra_flags != obj->obj_idx->extra_flags)
 		fprintf(fp, "ExtF %ld\n", obj->extra_flags);
@@ -1170,7 +1167,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 			KEY("InvisLevel", ch->invis_level, fread_number(fp));
 			KEY("Inco", ch->incog_level, fread_number(fp));
 			KEY("Invi", ch->invis_level, fread_number(fp));
-			KEY("Inote", ch->inote, fread_string(fp));
 			break;
 
 		case 'J':
@@ -1633,7 +1629,6 @@ static void fread_obj(CHAR_DATA *ch, FILE *fp)
 		obj->name = str_dup("");
 		obj->short_descr = str_dup("");
 		obj->description = str_dup("");
-		obj->inote = str_dup("");
 	}
 
 	fNest = false;
@@ -1794,7 +1789,6 @@ static void fread_obj(CHAR_DATA *ch, FILE *fp)
 			break;
 
 		case 'I':
-			KEY("Inote", obj->inote, fread_string(fp));
 			KEY("ItemType", obj->item_type, fread_number(fp));
 			KEY("Ityp", obj->item_type, fread_number(fp));
 			break;

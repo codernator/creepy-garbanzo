@@ -1376,7 +1376,6 @@ struct char_data {
     /*@shared@*/char *short_descr;
     /*@shared@*/char *long_descr;
     /*@shared@*/char *description;
-    /*@shared@*/char *inote;
     /*@shared@*/char *prompt;
     long group;
     int sex;
@@ -1591,7 +1590,6 @@ struct obj_data {
     char *name;
     char *short_descr;
     char *description;
-    char *inote;
     int plevel;
     int xp_tolevel;
     int exp;

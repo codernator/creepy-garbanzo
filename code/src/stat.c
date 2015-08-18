@@ -7,16 +7,17 @@
 #include "interp.h"
 
 
-/***************************************************************************
-*	function definitions
-***************************************************************************/
 extern ROOM_INDEX_DATA * find_location(CHAR_DATA * ch, char *arg);
 
-/***************************************************************************
-*	do_stat
-*
-*	entry function that subs out to 3 separate stat functions
-***************************************************************************/
+
+static void show_room_stats(CHAR_DATA *ch, char *argument);
+static void show_object_stats(CHAR_DATA *ch, char *argument);
+static void show_mob_stats(CHAR_DATA *ch, char *argument);
+
+
+/**
+ * entry function into various game entity statistics.
+ */
 void do_stat(CHAR_DATA *ch, char *argument)
 {
 	OBJ_DATA *obj;
@@ -40,34 +41,34 @@ void do_stat(CHAR_DATA *ch, char *argument)
 	}
 
 	if (!str_cmp(arg, "room")) {
-		do_rstat(ch, string);
+		show_room_stats(ch, string);
 		return;
 	}
 
 	if (!str_cmp(arg, "obj")) {
-		do_ostat(ch, string);
+		show_object_stats(ch, string);
 		return;
 	}
 	if (!str_cmp(arg, "char") || !str_cmp(arg, "mob")) {
-		do_mstat(ch, string);
+		show_mob_stats(ch, string);
 		return;
 	}
 
 	obj = get_obj_world(ch, argument);
 	if (obj != NULL) {
-		do_ostat(ch, argument);
+		show_object_stats(ch, argument);
 		return;
 	}
 
 	victim = get_char_world(ch, argument);
 	if (victim != NULL) {
-		do_mstat(ch, argument);
+		show_mob_stats(ch, argument);
 		return;
 	}
 
 	location = find_location(ch, argument);
 	if (location != NULL) {
-		do_rstat(ch, argument);
+		show_room_stats(ch, argument);
 		return;
 	}
 
@@ -75,12 +76,10 @@ void do_stat(CHAR_DATA *ch, char *argument)
 }
 
 
-/***************************************************************************
-*	do_rstat
-*
-*	show statistics for a room
-***************************************************************************/
-void do_rstat(CHAR_DATA *ch, char *argument)
+/**
+ * show statistics for a room
+ */
+void show_room_stats(CHAR_DATA *ch, char *argument)
 {
 	ROOM_INDEX_DATA *location;
 	OBJ_DATA *obj;
@@ -184,33 +183,10 @@ void do_rstat(CHAR_DATA *ch, char *argument)
 
 
 
-/***************************************************************************
-*	do_ostat
-*
-*	show statistics for an object
-***************************************************************************/
-void do_iostat(CHAR_DATA *ch, char *argument)
-{
-	OBJ_DATA *obj;
-	char arg[MIL];
-
-	one_argument(argument, arg);
-	if (arg[0] == '\0') {
-		send_to_char("iStat what?\n\r", ch);
-		return;
-	}
-
-	if ((obj = get_obj_world(ch, argument)) == NULL) {
-		send_to_char("Nothing like that in hell, earth, or heaven.\n\r", ch);
-		return;
-	}
-
-	send_to_char("Current inotes for this object:\n\r", ch);
-	printf_to_char(ch, "%s\n\r", obj->inote);
-	return;
-}
-
-void do_ostat(CHAR_DATA *ch, char *argument)
+/**
+ * show statistics for an object
+ */
+void show_object_stats(CHAR_DATA *ch, char *argument)
 {
 	AFFECT_DATA *paf;
 	OBJ_DATA *obj;
@@ -489,12 +465,10 @@ void do_ostat(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-/***************************************************************************
-*	do_mstat
-*
-*	show statistics for a character
-***************************************************************************/
-void do_mstat(CHAR_DATA *ch, char *argument)
+/**
+ * show statistics for a character
+ */
+void show_mob_stats(CHAR_DATA *ch, char *argument)
 {
 	AFFECT_DATA *paf;
 	CHAR_DATA *victim;
