@@ -1481,20 +1481,10 @@ void spell_cancellation(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 
 
 	for (skill_idx = skill_list; skill_idx != NULL; skill_idx = skill_idx->next) {
-/*                if (!str_cmp(skill_idx->skill->name,"voodoo")) */
-		if (is_affected(victim, gsp_voodoo)) {
-			if (number_range(1, 3) == 3) {
-				if (IS_SET(skill_idx->flags, SPELL_CANCELABLE)) {
-					if (check_dispel(level, victim, skill_idx))
-						found = true;
-				}
-			}
-		} else {
-			if (IS_SET(skill_idx->flags, SPELL_CANCELABLE)) {
-				if (check_dispel(level, victim, skill_idx))
-					found = true;
-			}
-		}
+        if (IS_SET(skill_idx->flags, SPELL_CANCELABLE)) {
+            if (check_dispel(level, victim, skill_idx))
+                found = true;
+        }
 	}
 
 	if (found)

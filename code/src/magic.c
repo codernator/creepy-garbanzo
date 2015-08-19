@@ -332,7 +332,6 @@ void do_cast(CHAR_DATA *ch, char *argument)
 	int chance;
 	int level;
 	int level_mod;
-	bool voodoo;
 
 	/*
 	 * Switched NPC's can cast spells, but others can't.
@@ -384,7 +383,6 @@ void do_cast(CHAR_DATA *ch, char *argument)
 	wait = skill->wait;
 	level_mod = (get_curr_stat(ch, STAT_INT) + get_curr_stat(ch, STAT_WIS)) / 6;
 	level = (IS_NPC(ch) || class_table[ch->class].fMana) ? ch->level : (int)((ch->level * 7) / 8);
-	voodoo = false;
 
 	switch (skill->target) {
 	default:
@@ -408,15 +406,7 @@ void do_cast(CHAR_DATA *ch, char *argument)
 				    && obj->item_type == ITEM_DOLL
 				    && obj->target != NULL
 				    && is_name(argument, obj->target->name)) {
-					victim = obj->target;
-
-					if (!is_affected(victim, gsp_voodoo)) {
-						send_to_char("That victim is no longer hexxed by your voodoo.\n\r", ch);
-						obj->target = NULL;
-						return;
-					}
-
-					voodoo = true;
+                        victim = obj->target;
 				} else {
 					send_to_char("``They aren`8'``t here.\n\r", ch);
 					return;
@@ -424,7 +414,7 @@ void do_cast(CHAR_DATA *ch, char *argument)
 			}
 		}
 
-		if (is_affected(victim, gsp_anti_magic_aura) && !voodoo) {
+		if (is_affected(victim, gsp_anti_magic_aura)) {
 			send_to_char("Your magic has no effect on them.\n\r", ch);
 			return;
 		}
@@ -474,14 +464,6 @@ void do_cast(CHAR_DATA *ch, char *argument)
 				    && obj->target != NULL
 				    && is_name(argument, obj->target->name)) {
 					victim = obj->target;
-
-					if (!is_affected(victim, gsp_voodoo)) {
-						send_to_char("That victim is no longer hexxed by your voodoo.\n\r", ch);
-						obj->target = NULL;
-						return;
-					}
-
-					voodoo = true;
 				} else {
 					send_to_char("They aren't here.\n\r", ch);
 					return;
@@ -489,7 +471,7 @@ void do_cast(CHAR_DATA *ch, char *argument)
 			}
 		}
 
-		if (is_affected(victim, gsp_anti_magic_aura) && !voodoo) {
+		if (is_affected(victim, gsp_anti_magic_aura)) {
 			send_to_char("Your magic has no effect on them.\n\r", ch);
 			return;
 		}
@@ -540,19 +522,11 @@ void do_cast(CHAR_DATA *ch, char *argument)
 			   && obj->target != NULL
 			   && is_name(argument, obj->target->name)) {
 			victim = obj->target;
-
-			if (!is_affected(victim, gsp_voodoo)) {
-				send_to_char("That victim is no longer hexxed by your voodoo.\n\r", ch);
-				obj->target = NULL;
-				return;
-			}
-
 			target = TARGET_CHAR;
-			voodoo = true;
 		}
 
 		if (target == TARGET_CHAR) { /* check the sanity of the attack */
-			if (is_affected(victim, gsp_anti_magic_aura) && !voodoo) {
+			if (is_affected(victim, gsp_anti_magic_aura)) {
 				send_to_char("Your magic has no effect on them.\n\r", ch);
 				return;
 			}
@@ -610,10 +584,6 @@ void do_cast(CHAR_DATA *ch, char *argument)
 	if (str_cmp(skill->name, "ventriloquate"))
 		say_spell(ch, skill);
 
-	if (voodoo == true) {
-		mana = mana * 2;
-		wait = wait * 2;
-	}
 	if (ch->level < LEVEL_IMMORTAL) {
 		if (is_affected(ch, gsp_deft))
 			wait /= 2;

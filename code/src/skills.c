@@ -50,7 +50,6 @@ SKILL *gsp_darkness;
 SKILL *gsp_invisibility;
 SKILL *gsp_mass_invisibility;
 SKILL *gsp_sleep;
-SKILL *gsp_voodoo;
 SKILL *gsp_hide;
 SKILL *gsp_sneak;
 SKILL *gsp_gate;
@@ -130,7 +129,6 @@ static const struct skill_resolve_type {
     { "invisibility", &gsp_invisibility },
     { "mass invisibility", &gsp_mass_invisibility },
     { "sleep", &gsp_sleep },
-    { "voodoo", &gsp_voodoo },
     { "hide", &gsp_hide },
     { "sneak", &gsp_sneak },
     { "nexus", &gsp_nexus },

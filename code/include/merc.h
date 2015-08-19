@@ -1951,7 +1951,6 @@ extern SKILL *gsp_darkness;
 extern SKILL *gsp_invisibility;
 extern SKILL *gsp_mass_invisibility;
 extern SKILL *gsp_sleep;
-extern SKILL *gsp_voodoo;
 extern SKILL *gsp_hide;
 extern SKILL *gsp_sneak;
 extern SKILL *gsp_nexus;
