@@ -697,7 +697,6 @@ bool load_char_obj(DESCRIPTOR_DATA *d, char *name)
 	ch->pcdata->gold_in_bank = 0;
 	ch->pcdata->prefix = str_dup("");
 	ch->pcdata->last_bank = 0;
-	ch->last_fight = 0;
 	ch->pcdata->killer_time = 0;
 	ch->pcdata->thief_time = 0;
 

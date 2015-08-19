@@ -1080,7 +1080,6 @@ static void char_update(void)
 		AFFECT_DATA *paf_next;
 
 		ch_next = ch->next;
-		ch->ticks_since_last_fight++;
 
 		if (ch->dream != NULL) {
 			int base;
@@ -1292,15 +1291,12 @@ static void char_update(void)
  *                      do_quit(ch, "");
  *              }
  */
-		if ((!IS_NPC(ch)) && (IS_SET(ch->act, PLR_LINKDEAD))
-		    && (!IS_IMMORTAL(ch))) {
-			if (ch->last_fight && (globalSystemState.current_time - ch->last_fight < 60)) {
-				impnet("`OAutomation`7: Killing [`8LINKDEAD`7] player $N", ch, NULL, IMN_AUTO, 0, 0);
-				if (IS_SET(ch->comm, COMM_AFK))
-					REMOVE_BIT(ch->comm, COMM_AFK);
-				do_quit(ch, "");
-				return;
-			}
+		if ((!IS_NPC(ch)) && (IS_SET(ch->act, PLR_LINKDEAD)) && (!IS_IMMORTAL(ch))) {
+            impnet("`OAutomation`7: Killing [`8LINKDEAD`7] player $N", ch, NULL, IMN_AUTO, 0, 0);
+            if (IS_SET(ch->comm, COMM_AFK))
+                REMOVE_BIT(ch->comm, COMM_AFK);
+            do_quit(ch, "");
+            return;
 		}
 
 		if (IS_SET(ch->comm, COMM_TICKS))

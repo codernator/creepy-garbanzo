@@ -440,13 +440,6 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
 		}
 	}
 
-	if (ch->last_fight
-	    && (globalSystemState.current_time - ch->last_fight < 90)
-	    && !ch->pcdata->confirm_delete) {
-		send_to_char("You must wait 90 seconds after a pfight before you can quit.\n\r", ch);
-		return;
-	}
-
 	if (ch->position == POS_FIGHTING) {
 		send_to_char("No way! You are fighting.\n\r", ch);
 		return;

@@ -502,7 +502,6 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 		char_list = ch;
 
 		d->connected = CON_PLAYING;
-		ch->ticks_since_last_fight = 10;
 		reset_char(ch);
 
 		if (ch->level == 0) {

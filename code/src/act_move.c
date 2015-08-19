@@ -339,8 +339,7 @@ void do_push(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if (IS_SET(ch->in_room->room_flags, ROOM_NO_PUSH_NO_DRAG)
-	    && (victim->ticks_since_last_fight > 3)) {
+	if (IS_SET(ch->in_room->room_flags, ROOM_NO_PUSH_NO_DRAG)) {
 		send_to_char("You can't do that here.\n\r", ch);
 		return;
 	}
@@ -374,10 +373,6 @@ void do_push(CHAR_DATA *ch, char *argument)
 	if ((get_curr_stat(ch, STAT_STR) > get_curr_stat(victim, STAT_STR))
 	    || (get_curr_stat(ch, STAT_STR) == get_curr_stat(victim, STAT_STR) && result <= fail)) {
 		push_char(ch, victim, door, false);
-		if (!IS_NPC(ch))
-			victim->last_fight = time(NULL);
-		if (!IS_NPC(victim))
-			ch->last_fight = time(NULL);
 	} else {
 		act("$n tries unsuccessfully to push $N.\n\r", ch, NULL, victim, TO_ROOM);
 		act("$N looks at you with contempt and ignores you.\n\r", ch, NULL, victim, TO_CHAR);
@@ -440,8 +435,7 @@ void do_drag(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if (IS_SET(ch->in_room->room_flags, ROOM_NO_PUSH_NO_DRAG)
-	    && (victim->ticks_since_last_fight > 3)) {
+	if (IS_SET(ch->in_room->room_flags, ROOM_NO_PUSH_NO_DRAG)) {
 		send_to_char("You can't do that here.\n\r", ch);
 		return;
 	}
@@ -475,8 +469,6 @@ void do_drag(CHAR_DATA *ch, char *argument)
 	if ((get_curr_stat(ch, STAT_STR) > get_curr_stat(victim, STAT_STR))
 	    || (get_curr_stat(ch, STAT_STR) == get_curr_stat(victim, STAT_STR) && result <= fail)) {
 		drag_char(ch, victim, door, false);
-		victim->last_fight = time(NULL);
-		ch->last_fight = time(NULL);
 	} else {
 		printf_to_char(victim, "%s tries to drag you, but fails.\n\r", ch->name);
 		act("$n tries unsuccessfully to drag $M.\n\r", ch, NULL, victim, TO_NOTVICT);
@@ -1660,12 +1652,6 @@ void do_hide(CHAR_DATA *ch, char *argument)
 
 	if ((skill = gsp_hide) == NULL) {
 		send_to_char("Huh?", ch);
-		return;
-	}
-
-
-	if (ch->last_fight && (globalSystemState.current_time - ch->last_fight < 90)) {
-		send_to_char("You can't hide, your opponent can hear your heartbeat!\n\r", ch);
 		return;
 	}
 

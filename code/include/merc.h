@@ -1386,8 +1386,6 @@ struct char_data {
     int lines;                          /* for the pager */
     time_t logon;
     time_t llogoff;
-    time_t last_fight;
-    int ticks_since_last_fight;
     int timer;
     int wait;
     int hit;

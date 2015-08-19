@@ -1145,9 +1145,6 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
 			mp_percent_trigger(victim, ch, NULL, NULL, TRIG_DEATH);
 		}
 
-		if (!IS_NPC(victim))
-			victim->ticks_since_last_fight += 20;
-
 		raw_kill(victim, ch);
 		if (ch != victim && !IS_NPC(ch)) {
 			if (IS_SET(victim->act, PLR_KILLER))
@@ -1291,7 +1288,7 @@ bool is_safe(CHAR_DATA *ch, CHAR_DATA *victim)
 				return false;
 
 			if (victim->level - ch->level >= 20 || ch->level - victim->level >= 20) {
-				if ((victim->level > ch->level) || (ch->ticks_since_last_fight <= 25 && victim->ticks_since_last_fight <= 25)) {
+				if ((victim->level > ch->level)) {
 					/*
 					 * send_to_char("You charge into the fray!\n\r",ch);
 					 * continue;
@@ -1300,13 +1297,6 @@ bool is_safe(CHAR_DATA *ch, CHAR_DATA *victim)
 					send_to_char("They are out of your attack range!\n\r", ch);
 					return true;
 				}
-			}
-
-			if (ch != victim) {
-				ch->last_fight = time(NULL);
-				victim->last_fight = time(NULL);
-				ch->ticks_since_last_fight = 0;
-				victim->ticks_since_last_fight = 0;
 			}
 		}
 	}
@@ -1882,9 +1872,6 @@ void raw_kill(CHAR_DATA *victim, CHAR_DATA *killer)
 		if (victim->pcdata->deathcry != NULL)
 			broadcast_channel(victim, channels_find(CHANNEL_SHOUT), NULL, victim->pcdata->deathcry);
 	}
-
-	if (!IS_NPC(victim))
-		victim->ticks_since_last_fight += 20;
 
 	if (victim->desc)
 		do_die(victim, "");
