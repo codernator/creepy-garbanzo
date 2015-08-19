@@ -316,7 +316,7 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 			ch->pcdata->condition[4]);
 
 		fprintf(fp, "Color %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n",
-			ch->color,
+			ch->use_ansi_color,
 			(int)ch->pcdata->color_hp,
 			(int)ch->pcdata->color_mana,
 			(int)ch->pcdata->color_move,
@@ -1034,7 +1034,7 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 
 			if (!str_cmp(word, "Color")) {
 				log_string("Reading colors");
-				ch->color = fread_number(fp);
+				ch->use_ansi_color = fread_number(fp);
 				ch->pcdata->color_hp = (byte)fread_number(fp);
 				ch->pcdata->color_mana = (byte)fread_number(fp);
 				ch->pcdata->color_move = (byte)fread_number(fp);

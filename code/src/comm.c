@@ -881,7 +881,7 @@ void process_color(CHAR_DATA *ch, char a)
 void send_to_char(char *txt, CHAR_DATA *ch)
 {
 	char *a, *b;
-	int length, l, c = 0, foo, curlen = 0;
+	int length, l, c = 0, curlen = 0;
 
 /*    a=txt; */
 	length = (int)strlen(txt);
@@ -898,58 +898,6 @@ void send_to_char(char *txt, CHAR_DATA *ch)
 				curlen++;
 				a++;
 				c++;
-
-				if ((is_affected(ch, skill_lookup("bad trip")))
-				    && (c >= 10)
-				    && (ch->color == 1)) {
-					foo = number_range(0, 13);
-
-					switch (foo) {
-					case 0:
-						write_to_buffer(ch->desc, "[0;31m", 7);
-						break;
-					case 1:
-						write_to_buffer(ch->desc, "[0;32m", 7);
-						break;
-					case 2:
-						write_to_buffer(ch->desc, "[0;33m", 7);
-						break;
-					case 3:
-						write_to_buffer(ch->desc, "[0;34m", 7);
-						break;
-					case 4:
-						write_to_buffer(ch->desc, "[0;35m", 7);
-						break;
-					case 5:
-						write_to_buffer(ch->desc, "[0;36m", 7);
-						break;
-					case 6:
-						write_to_buffer(ch->desc, "[0;37m", 7);
-						break;
-					case 7:
-						write_to_buffer(ch->desc, "[1;31m", 7);
-						break;
-					case 8:
-						write_to_buffer(ch->desc, "[1;32m", 7);
-						break;
-					case 9:
-						write_to_buffer(ch->desc, "[1;33m", 7);
-						break;
-					case 10:
-						write_to_buffer(ch->desc, "[1;34m", 7);
-						break;
-					case 11:
-						write_to_buffer(ch->desc, "[1;35m", 7);
-						break;
-					case 12:
-						write_to_buffer(ch->desc, "[1;36m", 7);
-						break;
-					default:
-						write_to_buffer(ch->desc, "[1;37m", 7);
-						break;
-					}
-					c = 0;
-				}
 			}
 
 			if (l)
@@ -958,7 +906,7 @@ void send_to_char(char *txt, CHAR_DATA *ch)
 			if (*a != '\0') {
 				a++;
 				curlen++;
-				if (curlen < length && ch->color) {
+				if (curlen < length && ch->use_ansi_color) {
 					process_color(ch, *a++);
 					curlen++;
 				} else {

@@ -1398,7 +1398,7 @@ struct char_data {
     unsigned int silver;
     int exp;
     long act;
-    int color;
+    bool use_ansi_color;
     unsigned long channels_enabled;
     unsigned long channels_denied;
     long comm;   /* RT added to pad the vector */

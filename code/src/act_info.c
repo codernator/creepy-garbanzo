@@ -379,11 +379,11 @@ void do_color(CHAR_DATA *ch, char *argument)
 	DENY_NPC(ch);
 
 	if (argument[0] == '\0') {
-		if (ch->color) {
-			ch->color = 0;
+		if (ch->use_ansi_color) {
+			ch->use_ansi_color = false;
 			send_to_char("Ansi color turned off.\n\r", ch);
 		} else {
-			ch->color = 1;
+			ch->use_ansi_color = true;
 			send_to_char("Ansi color turned on.\n\r", ch);
 		}
 	} else {

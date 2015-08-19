@@ -220,7 +220,7 @@ CHAR_DATA *new_char(void)
 	ch->max_mana = 100;
 	ch->move = 100;
 	ch->max_move = 100;
-	ch->color = 0;
+	ch->use_ansi_color = false;
 
 	for (iter = 0; iter < MAX_STATS; iter++) {
 		ch->perm_stat[iter] = 13;
