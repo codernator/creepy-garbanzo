@@ -1390,7 +1390,6 @@ struct char_data {
     int ticks_since_last_fight;
     int timer;
     int wait;
-    int daze;
     int hit;
     int max_hit;
     int mana;
@@ -1890,7 +1889,6 @@ enum e_harvey_proctor_is { hp_pissed_off, hp_irritated, hp_off_his_rocker, hp_ag
 
 
 #define WAIT_STATE(ch, npulse)  (set_wait((ch), (npulse)))
-#define DAZE_STATE(ch, npulse)  (set_daze((ch), (npulse)))
 
 #define HAS_TRIGGER(ch, trig)    (IS_SET((ch)->mob_idx->mprog_flags, (trig)))
 #define IS_SWITCHED(ch)         (ch->desc && ch->desc->original)
@@ -2114,7 +2112,6 @@ bool is_same_group(CHAR_DATA * ach, CHAR_DATA * bch);
 /** somewhere */
 int get_item_apply_val(char *name);
 void set_wait(CHAR_DATA * ch, int pulse);
-void set_daze(CHAR_DATA * ch, int pulse);
 void set_bash(CHAR_DATA * ch, int pulse);
 
 

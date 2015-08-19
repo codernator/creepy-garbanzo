@@ -501,12 +501,6 @@ void shock_effect(void *vo, int level, int dam, int target)
 	if (target == TARGET_CHAR) {
 		CHAR_DATA *victim = (CHAR_DATA *)vo;
 
-		/* daze and confused? */
-		if (!saves_spell(level / 4 + dam / 20, victim, DAM_LIGHTNING)) {
-			send_to_char("Your muscles stop responding.\n\r", victim);
-			DAZE_STATE(victim, UMAX(12, level / 4 + dam / 20));
-		}
-
 		/* toast some gear */
 		for (obj = victim->carrying; obj != NULL; obj = obj_next) {
 			obj_next = obj->next_content;

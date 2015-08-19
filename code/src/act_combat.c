@@ -308,7 +308,6 @@ void do_flee(/*@dependent@*/CHAR_DATA *ch, /*@unused@*/char *argument)
 		if ((pexit = was_in->exit[door]) == 0
 		    || pexit->u1.to_room == NULL
 		    || IS_SET(pexit->exit_info, EX_CLOSED)
-		    || number_range(0, ch->daze) != 0
 		    || (IS_NPC(ch)
 			&& IS_SET(pexit->u1.to_room->room_flags, ROOM_NO_MOB)))
 			continue;

@@ -177,10 +177,6 @@ void game_loop(int port, int control)
 				}
 			}
 
-			if (d->character != NULL && d->character->daze > 0) {
-				--d->character->daze;
-            }
-
 			if (d->character != NULL && d->character->wait > 0) {
 				--d->character->wait;
 				continue;
@@ -1271,25 +1267,6 @@ void set_wait(CHAR_DATA *ch, int len)
 
 	/* set the wait time */
 	ch->wait = UMAX(ch->wait, len);
-}
-
-void set_daze(CHAR_DATA *ch, int len)
-{
-	int mod;
-
-	if (ch == NULL || IS_IMMORTAL(ch))
-		return;
-
-	/* length is decreased by DEX maxxed out at 1/2 len + 1*/
-	mod = get_curr_stat(ch, STAT_CON) / 100;
-	mod = UMIN((len / 2) + 1, mod);
-
-
-	/* subtract the modifier */
-	len -= mod;
-
-	/* set the wait time */
-	ch->daze = UMAX(ch->daze, len);
 }
 
 /**
