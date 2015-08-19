@@ -389,7 +389,6 @@ EDIT(medit_clone){
 	mob_idx->form = pClone->form;
 	mob_idx->parts = pClone->parts;
 	mob_idx->size = pClone->size;
-	mob_idx->drained = pClone->drained;
 
 	free_string(mob_idx->material);
 	mob_idx->material = str_dup(pClone->material);

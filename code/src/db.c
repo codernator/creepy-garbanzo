@@ -1043,7 +1043,6 @@ void load_mobiles(FILE *fp)
 		CHECK_POS(mob_idx->size, (int)size_lookup(fread_word(fp)), "size");
 
 		/*mob_idx->size = size_lookup(fread_word(fp));*/
-		mob_idx->drained = mob_idx->level;
 		mob_idx->material = str_dup(fread_word(fp));
 
 		for (;; ) {

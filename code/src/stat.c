@@ -566,16 +566,12 @@ void show_mob_stats(CHAR_DATA *ch, char *argument)
 	printf_to_char(ch, "Fighting: %s\n\r", victim->fighting ? victim->fighting->name : "(none)");
 
 	if (!IS_NPC(victim)) {
-		printf_to_char(ch, "Thirst: %d  Hunger: %d  Feed: %d  Drained: %d  Full: %d\n\r",
+		printf_to_char(ch, "Thirst: %d  Hunger: %d  Feed: %d  Full: %d\n\r",
 			       victim->pcdata->condition[COND_THIRST],
 			       victim->pcdata->condition[COND_HUNGER],
 			       victim->pcdata->condition[COND_FEED],
-			       victim->drained,
 			       victim->pcdata->condition[COND_FULL]);
 	}
-
-	if (IS_NPC(victim))
-		printf_to_char(ch, "Blood remaining: %d\n\r", victim->drained);
 
 	printf_to_char(ch, "Carry number: %d  Carry weight: %d\n\r",
 		       victim->carry_number,

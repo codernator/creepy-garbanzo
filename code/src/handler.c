@@ -10,7 +10,6 @@
 
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern void affect_modify(CHAR_DATA * ch, AFFECT_DATA * paf, bool fAdd);
-extern void blood_rage(CHAR_DATA * ch);
 extern long parse_long(char *test);
 extern void affect_join_obj(OBJ_DATA * obj, AFFECT_DATA * paf);
 
@@ -481,17 +480,7 @@ void reset_char(CHAR_DATA *ch)
 	ch->hitroll = 0;
 	ch->damroll = 0;
 	ch->saving_throw = 0;
-	/* because humans are so average
-	 * instead of rooted somewhere in magic,
-	 *  their saving throw vs. magical attacks
-	 * is stronger -- -1/5 of the level
-	 *
-	 * if( ch->race == race_lookup("human"))
-	 * {
-	 *      ch->saving_throw -= ch->level / 5;
-	 * }
-	 */
-/* now start adding back the effects */
+
 	for (loc = 0; loc < MAX_WEAR; loc++) {
 		obj = get_eq_char(ch, loc);
 		if (obj == NULL)
@@ -687,9 +676,6 @@ void reset_char(CHAR_DATA *ch)
 		}
 	}
 
-	/* reset werebest blood rage */
-	blood_rage(ch);
-
     /* make sure sex is RIGHT!!!! */
 	if (ch->sex < 0 || ch->sex > 2)
 		ch->sex = ch->pcdata->true_sex;
@@ -768,10 +754,7 @@ int get_max_train(CHAR_DATA *ch, int stat)
 	} else {
 		max = pc_race_table[ch->race].max_train_stats[stat];
 		if (class_table[ch->class].attr_prime == stat) {
-			if (ch->race == race_lookup("human"))
-				max += 3;
-			else
-				max += 2;
+            max += 2;
 		}
 	}
 

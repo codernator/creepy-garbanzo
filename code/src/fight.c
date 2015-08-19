@@ -244,22 +244,6 @@ void multi_hit(CHAR_DATA *ch, CHAR_DATA *victim, int dt)
 	if (ch->fighting != victim)
 		return;
 
-	if (ch->race == race_lookup("mutant")) {
-		chance = number_percent();
-		if (chance <= 10) {
-			one_attack(ch, victim, dt, weapon);
-
-			if ((off_weapon = get_eq_char(ch, WEAR_SECONDARY)) != NULL)
-				one_attack(ch, victim, dt, weapon);
-
-			if ((off_weapon = get_eq_char(ch, WEAR_THIRD)) != NULL)
-				one_attack(ch, victim, dt, off_weapon);
-
-			if (IS_AFFECTED(ch, AFF_HASTE))
-				one_attack(ch, victim, dt, weapon);
-		}
-	}
-
 	if (IS_AFFECTED(ch, AFF_HASTE))
 		one_attack(ch, victim, dt, weapon);
 
@@ -336,22 +320,6 @@ void multi_hit(CHAR_DATA *ch, CHAR_DATA *victim, int dt)
 				return;
 		}
 	}
-
-	if (ch->race == race_lookup("dragon")
-	    && (skill = gsp_tooth_and_claw) != NULL) {
-		chance = get_learned_percent(ch, skill);
-		if (chance > number_percent()) {
-			check_improve(ch, skill, true, 6);
-			one_attack(ch, victim, skill->sn, NULL);
-
-			if ((ch->hit / ch->max_hit) * 10 >= 2) {
-				send_to_char("`!You snarl in pain and rage and strike again!``\n\r", ch);
-				one_attack(ch, victim, skill->sn, NULL);
-			}
-		}
-	}
-
-	return;
 }
 
 
@@ -978,7 +946,6 @@ bool one_hit(CHAR_DATA *ch, CHAR_DATA *victim, int dt, OBJ_DATA *wield)
 int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool show)
 {
 	OBJ_DATA *corpse;
-	int race;
 	bool immune;
 
 	if (victim->position == POS_DEAD)
@@ -1049,19 +1016,6 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
 		|| (IS_AFFECTED(victim, AFF_PROTECT_GOOD) && IS_GOOD(ch))))
 		dam -= dam / 4;
 
-	if (ch->race != (race = race_lookup("vampire"))) {
-		if (dam > 1 && !IS_NPC(ch) && ch->pcdata->condition[COND_HUNGER] < -50 && ch->level < LEVEL_IMMORTAL && ch->pcdata->condition[COND_HUNGER] != -151) {
-			if (ch->pcdata->condition[COND_HUNGER] >= -75)
-				dam -= dam / 4;
-			else if (ch->pcdata->condition[COND_HUNGER] >= -100)
-				dam /= 2;
-			else if (ch->pcdata->condition[COND_HUNGER] >= -125)
-				dam = dam / 4;
-			else
-				dam = dam / 100;
-		}
-	}
-
 
 	immune = false;
 	/* check for parry, dodge, and shield block */
@@ -1106,18 +1060,6 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
 	    && victim->level >= LEVEL_IMMORTAL
 	    && victim->hit < 1)
 		victim->hit = 1;
-
-	/* giants channel move into hp */
-	if (victim->race == race_lookup("giant") && victim->hit < 1) {
-		/* if the victims move is greater than
-		 * the amount of damage taken, then
-		 * set the victims hp to 1 and subtract
-		 * the damage from move */
-		if (victim->move > dam) {
-			victim->move -= dam;
-			victim->hit = 1;
-		}
-	}
 
 	update_pos(victim);
 

@@ -84,8 +84,6 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
 	ROOM_INDEX_DATA *to_room;
 	EXIT_DATA *pexit;
 	char buf[MSL];
-	int race;
-
 
 	if (door < 0 || door > 5) {
 		log_bug("Do_move: bad door %d.", door);
@@ -194,18 +192,6 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
 		}
 
 		WAIT_STATE(ch, 1);
-		if (ch->race != (race = race_lookup("vampire"))) {
-			if (!IS_NPC(ch) && ch->pcdata->condition[COND_THIRST] < -50 && ch->level < LEVEL_IMMORTAL) {
-				if (ch->pcdata->condition[COND_THIRST] >= -75)
-					move *= 2;
-				else if (ch->pcdata->condition[COND_THIRST] >= -100)
-					move *= 4;
-				else if (ch->pcdata->condition[COND_THIRST] >= -125)
-					move *= 8;
-				else if (ch->pcdata->condition[COND_THIRST] != -151)
-					move *= 16;
-			}
-		}
 		ch->move -= move;
 	}
 

@@ -3488,13 +3488,6 @@ void spell_druid_call(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int targ
 void spell_anti_magic_aura(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
 	AFFECT_DATA af;
-	int race;
-
-
-	if (!IS_NPC(ch) && ch->race != (race = race_lookup("centaur"))) {
-		send_to_char("Uh huh... suuuuurrrreee.\n\r", ch);
-		return;
-	}
 
 	remove_all_affects(ch);
 

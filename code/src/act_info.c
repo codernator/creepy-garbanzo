@@ -939,75 +939,42 @@ void do_worth(CHAR_DATA *ch, char *argument)
 
 void do_score(CHAR_DATA *ch, char *argument)
 {
-	char buf[MSL];
 	char hours[MSL];
 	char mins[MSL];
 	char secs[MSL];
 	int i;
-	int race;
 
-	sprintf(buf, "You are %s%s, level %d, ",
-		ch->name,
-		IS_NPC(ch) ? "" : ch->pcdata->title, ch->level);
-	send_to_char(buf, ch);
+	printf_to_char(ch, "You are %s%s, level %d, ", ch->name, IS_NPC(ch) ? "" : ch->pcdata->title, ch->level);
 
 	if (!IS_NPC(ch)) {
-		sprintf(buf, "%d years old``.\n\r",
-			get_age(ch));
-		send_to_char(buf, ch);
+		printf_to_char(ch, "%d years old``.\n\r", get_age(ch));
 	}
-	sprintf(buf,
-		"`O=================================================================``\n\r");
 
-	send_to_char(buf, ch);
+	send_to_char("`O=================================================================``\n\r", ch);
 
 
-	sprintf(buf, "`7You have played a total of:`6 %d `7hours,`6 %d `7minutes,`6 %d `7seconds``\n\r",
-		get_hours_played(ch),
-		get_minutes_played(ch),
-		get_seconds_played(ch));
-	send_to_char(buf, ch);
+	printf_to_char(ch, "`7You have played a total of:`6 %d `7hours,`6 %d `7minutes,`6 %d `7seconds``\n\r", get_hours_played(ch), get_minutes_played(ch), get_seconds_played(ch));
 
 	sprintf(hours, "%2.2d", get_session_hours(ch));
 	sprintf(mins, "%2.2d", get_session_minutes(ch));
 	sprintf(secs, "%2.2d", get_session_seconds(ch));
 
-	sprintf(buf, "`7This session:`6 %s `7hours,`6 %s `7minutes,`6 %s `7seconds``\n\r", hours, mins, secs);
-	send_to_char(buf, ch);
+	printf_to_char(ch, "`7This session:`6 %s `7hours,`6 %s `7minutes,`6 %s `7seconds``\n\r", hours, mins, secs);
 
 	if (get_trust(ch) != ch->level) {
-		sprintf(buf, "You are trusted at level ```#%d``.\n\r",
-			get_trust(ch));
-		send_to_char(buf, ch);
+		printf_to_char(ch, "You are trusted at level ```#%d``.\n\r", get_trust(ch));
 	}
 
-	sprintf(buf, "Race```8: ``%s  Sex```8: ``%s  Class`8: ``%s\n\r",
-		race_table[ch->race].name,
-		ch->sex == 0 ? "Pat" : ch->sex == 1 ? "dude" : "chick",
-		class_table[ch->class].name);
-	send_to_char(buf, ch);
-
-	sprintf(buf,
-		"You have ```!%d``/```1%d ``hit, ```@%d``/```2%d ``mana, ```O%d``/```4%d ``movement.\n\r",
-		ch->hit, ch->max_hit,
-		ch->mana, ch->max_mana,
-		ch->move, ch->max_move);
-	send_to_char(buf, ch);
+	printf_to_char(ch, "Race```8: ``%s  Sex```8: ``%s  Class`8: ``%s\n\r", race_table[ch->race].name, ch->sex == 0 ? "Pat" : ch->sex == 1 ? "dude" : "chick", class_table[ch->class].name);
+	printf_to_char(ch, "You have ```!%d``/```1%d ``hit, ```@%d``/```2%d ``mana, ```O%d``/```4%d ``movement.\n\r", ch->hit, ch->max_hit, ch->mana, ch->max_mana, ch->move, ch->max_move);
 
 	if (!IS_NPC(ch)) {
-		sprintf(buf,
-			"You have ```6%d ``practices and ```6%d ``training sessions.\n\r",
-			ch->pcdata->practice, ch->pcdata->train);
-		send_to_char(buf, ch);
+		printf_to_char(ch, "You have ```6%d ``practices and ```6%d ``training sessions.\n\r", ch->pcdata->practice, ch->pcdata->train);
 	}
 
-	sprintf(buf,
-		"You are carrying ```P%d``/```5%d ``items with weight ```P%d``/```5%d ``pounds.\n\r",
-		ch->carry_number, can_carry_n(ch),
-		ch->carry_weight / 10, can_carry_w(ch) / 10);
-	send_to_char(buf, ch);
+	printf_to_char(ch, "You are carrying ```P%d``/```5%d ``items with weight ```P%d``/```5%d ``pounds.\n\r", ch->carry_number, can_carry_n(ch), ch->carry_weight / 10, can_carry_w(ch) / 10);
 
-	sprintf(buf,
+	printf_to_char(ch,
 		"Str```8: ``%d```8(``%d```8)  ``Int```8: ``%d```8(``%d```8)  ``Wis```8: ``%d```8(``%d```8)  ``Dex```8: ``%d```8(``%d```8)  ``Con```8: ``%d```8(``%d```8)  ``Luck```8: ``%d```8(``%d```8)``\n\r",
 		ch->perm_stat[STAT_STR],
 		get_curr_stat(ch, STAT_STR),
@@ -1021,43 +988,22 @@ void do_score(CHAR_DATA *ch, char *argument)
 		get_curr_stat(ch, STAT_CON),
 		ch->perm_stat[STAT_LUCK],
 		get_curr_stat(ch, STAT_LUCK));
-	send_to_char(buf, ch);
 
-	sprintf(buf,
-		"`O=================================================================``\n\r");
+	send_to_char("`O=================================================================``\n\r", ch);
 
-	send_to_char(buf, ch);
+	printf_to_char(ch, "You have scored ```@%d ``exp, and have ```#%u ``gold and ```&%u ``silver coins.\n\r", ch->exp, ch->gold, ch->silver);
 
-
-	sprintf(buf,
-		"You have scored ```@%d ``exp, and have ```#%u ``gold and ```&%u ``silver coins.\n\r",
-		ch->exp, ch->gold, ch->silver);
-	send_to_char(buf, ch);
-
-
-
-	sprintf(buf,
-		"`O=================================================================``\n\r");
-
-	send_to_char(buf, ch);
+	send_to_char("`O=================================================================``\n\r", ch);
 
 /* RT shows exp to level */
 	if (!IS_NPC(ch) && ch->level < LEVEL_HERO) {
-		sprintf(buf,
-			"You need ```!%d ``exp to level.\n\r",
-			((ch->level + 1) * exp_per_level(ch, ch->pcdata->points) - ch->exp));
-		send_to_char(buf, ch);
+		printf_to_char(ch, "You need ```!%d ``exp to level.\n\r", ((ch->level + 1) * exp_per_level(ch, ch->pcdata->points) - ch->exp));
 	}
 
-	sprintf(buf, "Wimpy set to ```1%d ``hit points.\n\r", ch->wimpy);
-	send_to_char(buf, ch);
+	printf_to_char(ch, "Wimpy set to ```1%d ``hit points.\n\r", ch->wimpy);
 
-	if (!IS_NPC(ch) && (ch->race != (race = race_lookup("vampire")))
-	    && ch->pcdata->condition[COND_THIRST] == 0)
+	if (!IS_NPC(ch) && ch->pcdata->condition[COND_THIRST] == 0)
 		send_to_char("You are thirsty.\n\r", ch);
-	if (!IS_NPC(ch) && (ch->race == (race = race_lookup("vampire")))
-	    && ch->pcdata->condition[COND_HUNGER] == 0)
-		send_to_char("You must `1feed`7.\n\r", ch);
 
 	switch (ch->position) {
 	case POS_DEAD:
@@ -1086,19 +1032,15 @@ void do_score(CHAR_DATA *ch, char *argument)
 		break;
 	}
 
-	sprintf(buf,
-		"`O=================================================================``\n\r");
-
-	send_to_char(buf, ch);
+	send_to_char("`O=================================================================``\n\r", ch);
 
 /* print AC values */
 	if (ch->level >= 25) {
-		sprintf(buf, "Armor`8: ``pierce`8: `1%ld  ``bash`8: `1%ld  ``slash`8: `1%ld  ``magic`8: `1%ld``\n\r",
+		printf_to_char(ch, "Armor`8: ``pierce`8: `1%ld  ``bash`8: `1%ld  ``slash`8: `1%ld  ``magic`8: `1%ld``\n\r",
 			GET_AC(ch, AC_PIERCE),
 			GET_AC(ch, AC_BASH),
 			GET_AC(ch, AC_SLASH),
 			GET_AC(ch, AC_EXOTIC));
-		send_to_char(buf, ch);
 	}
 	if (ch->level <= 25) {
 		for (i = 0; i < 4; i++) {
@@ -1125,41 +1067,39 @@ void do_score(CHAR_DATA *ch, char *argument)
 			send_to_char("You are ", ch);
 
 			if (GET_AC(ch, i) >= 101)
-				sprintf(buf, "hopelessly vulnerable to %s.\n\r", temp);
+				printf_to_char(ch, "hopelessly vulnerable to %s.\n\r", temp);
 			else if (GET_AC(ch, i) >= 80)
-				sprintf(buf, "defenseless against %s.\n\r", temp);
+				printf_to_char(ch, "defenseless against %s.\n\r", temp);
 			else if (GET_AC(ch, i) >= 50)
-				sprintf(buf, "barely protected from %s.\n\r", temp);
+				printf_to_char(ch, "barely protected from %s.\n\r", temp);
 			else if (GET_AC(ch, i) >= 25)
-				sprintf(buf, "slightly armored against %s.\n\r", temp);
+				printf_to_char(ch, "slightly armored against %s.\n\r", temp);
 			else if (GET_AC(ch, i) >= 0)
-				sprintf(buf, "somewhat armored against %s.\n\r", temp);
+				printf_to_char(ch, "somewhat armored against %s.\n\r", temp);
 			else if (GET_AC(ch, i) >= 0)
-				sprintf(buf, "armored against %s.\n\r", temp);
+				printf_to_char(ch, "armored against %s.\n\r", temp);
 			else if (GET_AC(ch, i) >= -25)
-				sprintf(buf, "well-armored against %s.\n\r", temp);
+				printf_to_char(ch, "well-armored against %s.\n\r", temp);
 			else if (GET_AC(ch, i) >= -50)
-				sprintf(buf, "very well-armored against %s.\n\r", temp);
+				printf_to_char(ch, "very well-armored against %s.\n\r", temp);
 			else if (GET_AC(ch, i) >= -80)
-				sprintf(buf, "heavily armored against %s.\n\r", temp);
+				printf_to_char(ch, "heavily armored against %s.\n\r", temp);
 			else if (GET_AC(ch, i) >= -110)
-				sprintf(buf, "superbly armored against %s.\n\r", temp);
+				printf_to_char(ch, "superbly armored against %s.\n\r", temp);
 			else if (GET_AC(ch, i) >= -150)
-				sprintf(buf, "almost invulnerable to %s.\n\r", temp);
+				printf_to_char(ch, "almost invulnerable to %s.\n\r", temp);
 			else if (GET_AC(ch, i) >= -250)
-				sprintf(buf, "divinely armored against %s.\n\r", temp);
+				printf_to_char(ch, "divinely armored against %s.\n\r", temp);
 			else if (GET_AC(ch, i) >= -500)
-				sprintf(buf, "near invinceable against %s.\n\r", temp);
+				printf_to_char(ch, "near invinceable against %s.\n\r", temp);
 			else if (GET_AC(ch, i) >= -1000)
-				sprintf(buf, "armored like a tank against %s.\n\r", temp);
+				printf_to_char(ch, "armored like a tank against %s.\n\r", temp);
 			else if (GET_AC(ch, i) >= -3000)
-				sprintf(buf, "armored like an immortal against %s.\n\r", temp);
+				printf_to_char(ch, "armored like an immortal against %s.\n\r", temp);
 			else if (GET_AC(ch, i) >= -30000)
-				sprintf(buf, "armored beyond belief against %s.\n\r", temp);
+				printf_to_char(ch, "armored beyond belief against %s.\n\r", temp);
 			else
-				sprintf(buf, "an immortal.  Damage from %s means squat.\n\r", temp);
-
-			send_to_char(buf, ch);
+				printf_to_char(ch, "an immortal.  Damage from %s means squat.\n\r", temp);
 		}
 	}
 
@@ -1179,16 +1119,11 @@ void do_score(CHAR_DATA *ch, char *argument)
 	if (ch->tLag != 0)
 		printf_to_char(ch, "Their Lag modified by: `#%d%``\n\r", ch->tLag);
 	if (!IS_NPC(ch)) {
-		sprintf(buf,
-			"`O=================================================================``\n\r");
-
-		send_to_char(buf, ch);
+		send_to_char("`O=================================================================``\n\r", ch);
 
 
-		sprintf(buf, "You have `!killed`` `P%ld`` mobs, and have been `!killed by`` `5%ld`` mobs.\n\r", ch->pcdata->mobkills, ch->pcdata->mobdeaths);
-		send_to_char(buf, ch);
-		sprintf(buf, "You have `!killed`` `P%ld`` players, and have been `!killed by`` `5%ld`` players.\n\r", ch->pcdata->pkills, ch->pcdata->pdeaths);
-		send_to_char(buf, ch);
+		printf_to_char(ch, "You have `!killed`` `P%ld`` mobs, and have been `!killed by`` `5%ld`` mobs.\n\r", ch->pcdata->mobkills, ch->pcdata->mobdeaths);
+		printf_to_char(ch, "You have `!killed`` `P%ld`` players, and have been `!killed by`` `5%ld`` players.\n\r", ch->pcdata->pkills, ch->pcdata->pdeaths);
 	}
 
 /* RT wizinvis and holy light */
@@ -1200,26 +1135,21 @@ void do_score(CHAR_DATA *ch, char *argument)
 			send_to_char("off", ch);
 
 		if (ch->invis_level) {
-			sprintf(buf, "  ```@W```Pi```@Z```Pi```8: ``level %d", ch->invis_level);
-			send_to_char(buf, ch);
+			printf_to_char(ch, "  ```@W```Pi```@Z```Pi```8: ``level %d", ch->invis_level);
 		}
 
 		if (ch->incog_level) {
-			sprintf(buf, "  ```6Incog```^nito```8: ``level %d", ch->incog_level);
-			send_to_char(buf, ch);
+			printf_to_char(ch, "  ```6Incog```^nito```8: ``level %d", ch->incog_level);
 		}
 		send_to_char("\n\r", ch);
 	}
 
 	if (ch->level >= 15) {
-		sprintf(buf, "```^Hitroll```6: ``%d  ```^Damroll```6: ``%d ```^Saves```6: ``%d.\n\r",
-			GET_HITROLL(ch), GET_DAMROLL(ch), ch->saving_throw);
-		send_to_char(buf, ch);
+		printf_to_char(ch, "```^Hitroll```6: ``%d  ```^Damroll```6: ``%d ```^Saves```6: ``%d.\n\r", GET_HITROLL(ch), GET_DAMROLL(ch), ch->saving_throw);
 	}
 
 	if (ch->level >= 10) {
-		sprintf(buf, "Alignment```8: ``%d.  ", ch->alignment);
-		send_to_char(buf, ch);
+		printf_to_char(ch, "Alignment```8: ``%d.  ", ch->alignment);
 	}
 
 	send_to_char("You are ", ch);
@@ -2202,7 +2132,7 @@ void show_damage_display(CHAR_DATA *ch, CHAR_DATA *victim)
 	int percent;
 
 	/* if the victims race is human and it is a PC, it shows nothing*/
-	if (IS_NPC(victim) || victim->race != race_lookup("human")) {
+	if (IS_NPC(victim)) {
 		strcpy(buf, PERS(victim, ch));
 
 		if (victim->max_hit > 0)
@@ -2229,11 +2159,6 @@ void show_damage_display(CHAR_DATA *ch, CHAR_DATA *victim)
 
 		buf[0] = UPPER(buf[0]);
 		send_to_char(buf, ch);
-
-		/* add this to allow humans to see actual stats	- does not*/
-		/* work with a human victim if the victim is a PC*/
-		if (ch->race == race_lookup("human"))
-			printf_to_char(ch, "\n\r%s `^has `6%ld`^ hit points and `6%ld `^mana.``\n\r", PERS(victim, ch), victim->hit, victim->mana);
 	}
 }
 

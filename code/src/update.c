@@ -24,7 +24,6 @@ extern bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1
 ***************************************************************************/
 
 void gain_object_exp(CHAR_DATA * ch, OBJ_DATA * obj, int gain);
-extern void blood_rage(CHAR_DATA * ch);
 extern void random_drop(void);
 void update_pktimer(CHAR_DATA * ch);
 static void add_cache_affect(OBJ_DATA * obj, int bit, int sn, int level, int mod);
@@ -261,8 +260,6 @@ void advance_level(CHAR_DATA *ch, int level)
 		       total_prac, ch->pcdata->practice,
 		       total_train, ch->pcdata->train);
 
-	blood_rage(ch);
-
 	return;
 }
 
@@ -404,7 +401,6 @@ static int hit_gain(CHAR_DATA *ch)
 {
 	int gain;
 	int number;
-	int race;
 
 	if (ch->in_room == NULL)
 		return 0;
@@ -478,9 +474,6 @@ static int hit_gain(CHAR_DATA *ch)
 	if (IS_AFFECTED(ch, AFF_SLOW))
 		gain *= 2;
 
-	if (ch->race == (race = race_lookup("vampire")))
-		gain *= 3;
-
 	return UMIN(gain, ch->max_hit - ch->hit);
 }
 
@@ -495,7 +488,6 @@ static int mana_gain(CHAR_DATA *ch)
 {
 	int gain;
 	int number;
-	int race;
 
 	if (ch->in_room == NULL)
 		return 0;
@@ -570,9 +562,6 @@ static int mana_gain(CHAR_DATA *ch)
 	if (IS_AFFECTED(ch, AFF_SLOW))
 		gain *= 2;
 
-	if (ch->race == (race = race_lookup("vampire")))
-		gain *= 3;
-
 	return UMIN(gain, ch->max_mana - ch->mana);
 }
 
@@ -585,7 +574,6 @@ static int mana_gain(CHAR_DATA *ch)
 static int move_gain(CHAR_DATA *ch)
 {
 	int gain;
-	int race;
 
 	if (ch->in_room == NULL)
 		return 0;
@@ -625,9 +613,6 @@ static int move_gain(CHAR_DATA *ch)
 	if (IS_AFFECTED(ch, AFF_SLOW))
 		gain *= 2;
 
-	if (ch->race == (race = race_lookup("vampire")))
-		gain *= 3;
-
 	return UMIN(gain, ch->max_move - ch->move);
 }
 
@@ -640,12 +625,8 @@ static int move_gain(CHAR_DATA *ch)
 void gain_condition(CHAR_DATA *ch, int condition_idx, long value)
 {
 	long condition;
-	int race;
 
-	if (value == 0
-	    || IS_NPC(ch)
-	    || ch->level >= LEVEL_IMMORTAL
-	    || condition_idx > COND_MAX)
+	if (value == 0 || IS_NPC(ch) || ch->level >= LEVEL_IMMORTAL || condition_idx > COND_MAX)
 		return;
 
 	condition = ch->pcdata->condition[condition_idx];
@@ -653,31 +634,21 @@ void gain_condition(CHAR_DATA *ch, int condition_idx, long value)
 		return;
 
 	ch->pcdata->condition[condition_idx] = URANGE(-150l, condition + value, 48l);
-	if (ch->race != (race = race_lookup("vampire"))) {
-		if (ch->pcdata->condition[condition_idx] <= 0) {
-			switch (condition_idx) {
-			case COND_THIRST:
-				send_to_char("`6D`^r`6i`^n`6k `^M`6e``.\n\r", ch);
-				if (condition <= -70)
-					send_to_char("Perhaps you had better get something to drink...\n\r", ch);
-				break;
+    if (ch->pcdata->condition[condition_idx] <= 0) {
+        switch (condition_idx) {
+        case COND_THIRST:
+            send_to_char("`6D`^r`6i`^n`6k `^M`6e``.\n\r", ch);
+            if (condition <= -70)
+                send_to_char("Perhaps you had better get something to drink...\n\r", ch);
+            break;
 
-			case COND_HUNGER:
-				send_to_char("`#E`3a`#t `3M`#e``.\n\r", ch);
-				if (condition <= -70)
-					send_to_char("Perhaps you had better eat...\n\r", ch);
-				break;
-			}
-		}
-	} else {
-		if (ch->pcdata->condition[condition_idx] <= 0) {
-			switch (condition_idx) {
-			case COND_FEED:
-				send_to_char("You lust for `1blood``.\n\r", ch);
-				break;
-			}
-		}
-	}
+        case COND_HUNGER:
+            send_to_char("`#E`3a`#t `3M`#e``.\n\r", ch);
+            if (condition <= -70)
+                send_to_char("Perhaps you had better eat...\n\r", ch);
+            break;
+        }
+    }
 
 	return;
 }
@@ -787,9 +758,6 @@ static void mobile_update(void)
 				act("$n gets $p.", ch, obj_best, NULL, TO_ROOM);
 			}
 		}
-
-		if (ch->drained < ch->level)
-			ch->drained += (10);
 
 		/*Mob Memory by Urgo 7/28/96 */
 		if (ch->mobmem != NULL && ch->in_room->people != NULL) {

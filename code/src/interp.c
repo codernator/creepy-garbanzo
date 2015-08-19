@@ -68,7 +68,6 @@ const struct cmd_type cmd_table[] =
 	{ "sit",	      do_sit,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "sockets",	  do_sockets,      POS_DEAD,     L2, LOG_NORMAL, 1 },
 	{ "stand",	      do_stand,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
-	{ "veil",	      do_veil,	       POS_STANDING, 0,	 LOG_NORMAL, 1 },
 	{ "finger",	      do_finger,       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "unlock",	      do_unlock,       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "wield",	      do_wear,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
@@ -78,7 +77,6 @@ const struct cmd_type cmd_table[] =
 	/*  Informational commands.  */
 	{ "affects",	  do_affects,      POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "areas",	      do_areas,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
-	{ "breathe",	  do_breathe,      POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
 	{ "bug",	      do_bug,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "changes",	  do_changes,      POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "commands",	  do_commands,     POS_DEAD,     0,	 LOG_NORMAL, 1 },
@@ -203,22 +201,12 @@ const struct cmd_type cmd_table[] =
 	/* Combat commands.*/
 
 	{ "bash",	      do_bash,	       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
-	{ "bite",	      do_bite,	       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
-	{ "feed",	      do_feed,	       POS_STANDING, 0,	 LOG_NORMAL, 1 },
-	{ "crush",	      do_crush,	       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
 	{ "disarm",	      do_disarm,       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
 	{ "deft",	      do_deft,	       POS_STANDING, 0,	 LOG_NORMAL, 1 },
 	{ "dash",	      do_dash,	       POS_STANDING, 0,	 LOG_NORMAL, 1 },
 	{ "flee",	      do_flee,	       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
-	{ "hiss",	      do_hiss,	       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
 	{ "intimidate",	  do_intimidate,   POS_STANDING, 0,	 LOG_NORMAL, 1 },
-	{ "kick",	      do_kick,	       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
-	{ "kneecap",	  do_kneecap,      POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
-	{ "rake",	      do_rake,	       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
-	{ "dream",	      do_dream,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "rescue",	      do_rescue,       POS_FIGHTING, 0,	 LOG_NORMAL, 0 },
-	{ "throw",	      do_throw,	       POS_FIGHTING, 0,	 LOG_NORMAL, 0 },
-	{ "shriek",	      do_shriek,       POS_FIGHTING, 0,	 LOG_NORMAL, 1 },
 
 /*  Mob command interpreter(placed here for faster scan...)  */
 
@@ -240,7 +228,6 @@ const struct cmd_type cmd_table[] =
 	{ "qui",	      do_qui,	       POS_DEAD,     0,	 LOG_NORMAL, 0 },
 	{ "quit",	      do_quit,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "radio",	      do_radio,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
-	{ "regenerate",	  do_regenerate,   POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "save",	      do_save,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "sleep",	      do_sleep,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "sneak",	      do_sneak,	       POS_STANDING, 0,	 LOG_NORMAL, 1 },
@@ -258,8 +245,6 @@ const struct cmd_type cmd_table[] =
 	{ "color",	      do_color,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "scribe",	      do_scribe,       POS_STANDING, 0,	 LOG_NORMAL, 1 },
 	{ "brew",	      do_brew,	       POS_STANDING, 0,	 LOG_NORMAL, 1 },
-	{ "dust",	      do_dust,	       POS_STANDING, 0,	 LOG_NORMAL, 1 },
-	{ "sprinkle",	  do_sprinkle,     POS_STANDING, 0,	 LOG_NORMAL, 1 },
 
 	/*  Blacksmith commands  */
 
@@ -325,7 +310,6 @@ const struct cmd_type cmd_table[] =
 	{ "gecho",	      do_echo,	       POS_DEAD,     L8, LOG_ALWAYS, 1 },
 	{ "holylight",	  do_holylight,    POS_DEAD,     IM, LOG_NORMAL, 1 },
 	{ "incognito",	  do_incognito,    POS_DEAD,     IM, LOG_NORMAL, 1 },
-	{ "invisible",	  do_invisible,    POS_DEAD,     0,	 LOG_NORMAL, 0 },
 	{ "log",	      do_log,	       POS_DEAD,     ML, LOG_ALWAYS, 1 },
 	{ "memory",	      do_memory,       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "mwhere",	      do_mwhere,       POS_DEAD,     L5, LOG_NORMAL, 1 },

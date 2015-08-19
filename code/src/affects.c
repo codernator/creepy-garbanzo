@@ -883,33 +883,3 @@ void affect_poison(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
 }
 
 
-
-
-/***************************************************************************
-*	blood_rage
-*
-*	add the blood rage affect to a werebeast
-***************************************************************************/
-void blood_rage(CHAR_DATA *ch)
-{
-	AFFECT_DATA af;
-	SKILL *skill;
-
-	if (ch->race == race_lookup("werebeast")
-	    && (skill = skill_lookup("blood rage")) != NULL) {
-		affect_strip(ch, skill);
-
-		af.where = TO_AFFECTS;
-		af.type = skill->sn;
-		af.skill = skill;
-		af.level = 0;
-		af.modifier = ch->level;
-		af.duration = -1;
-		af.bitvector = 0;
-		af.location = APPLY_HITROLL;
-		affect_to_char(ch, &af);
-
-		af.location = APPLY_DAMROLL;
-		affect_to_char(ch, &af);
-	}
-}

@@ -1313,7 +1313,6 @@ struct mob_index_data {
  long  form;
  long  parts;
  int  size;
- int  drained;
  char *  material;
  long  mprog_flags;
 };
@@ -1384,7 +1383,6 @@ struct char_data {
     int level;
     int trust;
     int played;
-    int drained;
     int lines;                          /* for the pager */
     time_t logon;
     time_t llogoff;

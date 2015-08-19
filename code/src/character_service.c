@@ -128,22 +128,13 @@ void look_equipment(CHAR_DATA *ch) {
 			send_to_char(where_name[iWear].desc, ch);
 
 			if (where_name[iWear].wear_loc == WEAR_THIRD) {
-				if ((ch->race) == (race_lookup("mutant")))
-					send_to_char("`1     --Empty--``\r\n", ch);
-				else
-					send_to_char("`1     --Not Available--``\r\n", ch);
+                send_to_char("`1     --Not Available--``\r\n", ch);
 			} else {
 				if ((where_name[iWear].wear_loc == WEAR_FINGER_L2)) {
-					if ((ch->race) == (race_lookup("human")))
-						send_to_char("`1     --Empty--``\r\n", ch);
-					else
-						send_to_char("`1     --Not Available--``\r\n", ch);
+                    send_to_char("`1     --Not Available--``\r\n", ch);
 				} else {
 					if ((where_name[iWear].wear_loc == WEAR_FINGER_R2)) {
-						if ((ch->race) == (race_lookup("human")))
-							send_to_char("`1     --Empty--``\r\n", ch);
-						else
-							send_to_char("`1     --Not Available--``\r\n", ch);
+                        send_to_char("`1     --Not Available--``\r\n", ch);
 					} else {
 						send_to_char("`1     --Empty--``\r\n", ch);
 					}
@@ -909,9 +900,6 @@ void show_char_to_char_0(CHAR_DATA *victim, CHAR_DATA *ch)
 
 void show_char_to_char_1(CHAR_DATA *victim, CHAR_DATA *ch)
 {
-	char buf[10000];
-	int race;
-
 	if (can_see(victim, ch)) {
 		if (ch == victim) {
 			act("$n looks at $mself.", ch, NULL, NULL, TO_ROOM);
@@ -928,20 +916,6 @@ void show_char_to_char_1(CHAR_DATA *victim, CHAR_DATA *ch)
 
 	show_damage_display(ch, victim);
 
-	if ((ch->race == (race = race_lookup("vampire"))) && (IS_NPC(victim))) {
-		sprintf(buf, "%s ", victim->name);
-		send_to_char(buf, ch);
-
-		if (victim->drained >= (9 * (victim->level / 10)))
-            send_to_char("looks quite healthy and `!pink``.\n\r", ch);
-        else if (victim->drained >= (7 * (victim->level / 10)))
-            send_to_char("looks slightly `&pale``.\n\r", ch);
-        else if (victim->drained >= (5 * (victim->level / 10)))
-            send_to_char("looks rather pale.\n\r", ch);
-        else if (victim->drained >= (3 * (victim->level / 10)))
-            send_to_char("looks quite pale.\n\r", ch);
-	}
-
 	return;
 }
 
@@ -949,10 +923,8 @@ void show_char_to_char_2(CHAR_DATA *victim, CHAR_DATA *ch)
 {
 	OBJ_DATA *obj;
 	SKILL *skill_peek;
-	char buf[MSL];
 	int iWear;
 	bool found;
-	int race;
 
 	if (can_see(victim, ch)) {
 		if (ch == victim) {
@@ -964,12 +936,6 @@ void show_char_to_char_2(CHAR_DATA *victim, CHAR_DATA *ch)
 	}
 
 	show_damage_display(ch, victim);
-
-	if ((ch->race == (race = race_lookup("vampire"))) && (IS_NPC(victim))) {
-		sprintf(buf, "%s ", victim->name);
-		send_to_char(buf, ch);
-		if (victim->drained >= (9 * (victim->level / 10))) send_to_char("looks quite healthy and `!pink``.\n\r", ch); else if (victim->drained >= (7 * (victim->level / 10))) send_to_char("looks slightly `&pale``.\n\r", ch); else if (victim->drained >= (5 * (victim->level / 10))) send_to_char("looks rather pale.\n\r", ch); else if (victim->drained >= (3 * (victim->level / 10))) send_to_char("looks quite pale.\n\r", ch);
-	}
 
 	found = false;
 	for (iWear = 0; where_name[iWear].wear_loc >= 0; iWear++) {

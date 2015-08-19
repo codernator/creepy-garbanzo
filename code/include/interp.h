@@ -198,8 +198,6 @@ DECLARE_DO_FUN(do_incognito);
 DECLARE_DO_FUN(do_inlay);
 DECLARE_DO_FUN(do_intimidate);
 DECLARE_DO_FUN(do_inventory);
-DECLARE_DO_FUN(do_invisible);
-DECLARE_DO_FUN(do_kick);
 DECLARE_DO_FUN(do_kill);
 DECLARE_DO_FUN(do_laston);
 DECLARE_DO_FUN(do_list);
@@ -260,7 +258,6 @@ DECLARE_DO_FUN(do_reboo);
 DECLARE_DO_FUN(do_reboot);
 DECLARE_DO_FUN(do_recho);
 DECLARE_DO_FUN(do_recite);
-DECLARE_DO_FUN(do_regenerate);
 DECLARE_DO_FUN(do_remove);
 DECLARE_DO_FUN(do_rename);
 DECLARE_DO_FUN(do_repair);
@@ -315,7 +312,6 @@ DECLARE_DO_FUN(do_tally);
 DECLARE_DO_FUN(do_team);
 DECLARE_DO_FUN(do_teamtalk);
 DECLARE_DO_FUN(do_teleport);
-DECLARE_DO_FUN(do_throw);
 DECLARE_DO_FUN(do_tick);
 DECLARE_DO_FUN(do_time);
 DECLARE_DO_FUN(do_title);
@@ -355,35 +351,6 @@ DECLARE_DO_FUN(do_worldflag);
 DECLARE_DO_FUN(do_worth);
 DECLARE_DO_FUN(do_zap);
 DECLARE_DO_FUN(do_zecho);
-
-/***************************************************************************
-*	blacksmith
-***************************************************************************/
-DECLARE_DO_FUN(do_engulf);
-DECLARE_DO_FUN(do_poison);
-DECLARE_DO_FUN(do_electrify);
-DECLARE_DO_FUN(do_energize);
-DECLARE_DO_FUN(do_chill);
-DECLARE_DO_FUN(do_sharpen);
-DECLARE_DO_FUN(do_estimate);
-
-/***************************************************************************
-*	race commands
-***************************************************************************/
-DECLARE_DO_FUN(do_bite);
-DECLARE_DO_FUN(do_breathe);
-DECLARE_DO_FUN(do_crush);
-DECLARE_DO_FUN(do_dream);
-DECLARE_DO_FUN(do_dust);
-DECLARE_DO_FUN(do_feed);
-DECLARE_DO_FUN(do_hiss);
-DECLARE_DO_FUN(do_kneecap);
-DECLARE_DO_FUN(do_rake);
-DECLARE_DO_FUN(do_shriek);
-DECLARE_DO_FUN(do_sprinkle);
-DECLARE_DO_FUN(do_veil);
-
-
 DECLARE_DO_FUN(do_die);
 DECLARE_DO_FUN(do_imprint);
 DECLARE_DO_FUN(do_ovnum);
@@ -395,6 +362,18 @@ DECLARE_DO_FUN(do_pload);
 DECLARE_DO_FUN(do_punloa);
 DECLARE_DO_FUN(do_punload);
 DECLARE_DO_FUN(do_wpeace);
+
+
+/***************************************************************************
+*	blacksmith
+***************************************************************************/
+DECLARE_DO_FUN(do_engulf);
+DECLARE_DO_FUN(do_poison);
+DECLARE_DO_FUN(do_electrify);
+DECLARE_DO_FUN(do_energize);
+DECLARE_DO_FUN(do_chill);
+DECLARE_DO_FUN(do_sharpen);
+DECLARE_DO_FUN(do_estimate);
 
 /***************************************************************************
 *	message commands

@@ -379,7 +379,6 @@ static bool set_char_sex(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
 ***************************************************************************/
 static bool set_char_race(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
 {
-	OBJ_DATA *obj;
 	int value;
 	char buf[MSL];
 	bool gobbed = false;
@@ -403,9 +402,7 @@ static bool set_char_race(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
 	/* no sense in beating a dead horse...
 	*  added by Monrick, 1/2008            */
 	if (vch->race == value) {
-		printf_to_char(ch, "%s is already a %s!\n\r",
-			       capitalize(IS_NPC(vch) ? vch->short_descr : vch->name),
-			       race_table[value].name);
+		printf_to_char(ch, "%s is already a %s!\n\r", capitalize(IS_NPC(vch) ? vch->short_descr : vch->name), race_table[value].name);
 		return false;
 	}
 
@@ -423,44 +420,9 @@ static bool set_char_race(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
 
 		/* when you're not a vampire anymore, there's no need
 		 *         to feed... auto-checks for gobstopper */
-		if (vch->race == race_lookup("vampire")) {
-			printf_to_char(ch, "    Changing feed to hunger/thirst...\n\r");
-
-			if (vch->pcdata->condition[COND_FEED] == -151) {
-				printf_to_char(ch, "    Gobstopper detected...Transferred...\n\r");
-				gobbed = true;
-			} else {
-				send_to_char("You will never again feel the lust for `1blood``...\n\r", vch);
-				gobbed = false;
-			}
-
-			vch->pcdata->condition[COND_HUNGER] = vch->pcdata->condition[COND_FEED];
-			vch->pcdata->condition[COND_THIRST] = vch->pcdata->condition[COND_FEED];
-			vch->pcdata->condition[COND_FEED] = -151;
-
-
-			send_to_char("    Feed successfully switched to hunger/thirst.\n\r", ch);
-		}
-
-		/* when you're not a human anymore, get rid of those
-		 *     extra rings */
-		if (vch->race == race_lookup("human")) {
-			send_to_char("    Checking for extra rings and removing...\n\r", ch);
-			if ((obj = get_eq_char(vch, WEAR_FINGER_L2)) != NULL) {
-				unequip_char(vch, obj);
-				act("$n stops being so greedy and removes $p.", vch, obj, NULL, TO_ROOM);
-				act("You stop being so greedy and remove $p.", vch, obj, NULL, TO_CHAR);
-			}
-			if ((obj = get_eq_char(vch, WEAR_FINGER_R2)) != NULL) {
-				unequip_char(vch, obj);
-				act("$n stops being so greedy and removes $p.", vch, obj, NULL, TO_ROOM);
-				act("You stop being so greedy and remove $p.", vch, obj, NULL, TO_CHAR);
-			}
-		}
 
 		printf_to_char(ch, "  All %s special effects removed.\n\r", race_table[vch->race].name);
-		printf_to_char(vch, "Your body morphs from a %s into a ",
-			       capitalize(race_table[vch->race].name));
+		printf_to_char(vch, "Your body morphs from a %s into a ", capitalize(race_table[vch->race].name));
 		printf_to_char(vch, "%s.\n\r", capitalize(race_table[value].name));
 	}
 
@@ -477,25 +439,6 @@ static bool set_char_race(CHAR_DATA *ch, CHAR_DATA *vch, char *argument)
 
 		/* now that you're a vampire, you'll need to feed instead of
 		 * ... auto-checks for gobstopper */
-		if (vch->race == race_lookup("vampire")) {
-			printf_to_char(ch, "    Changing hunger/thirst to feed...\n\r");
-
-			if ((vch->pcdata->condition[COND_HUNGER] == -151)
-			    && (vch->pcdata->condition[COND_THIRST] == -151)) {
-				printf_to_char(ch, "    Gobstopper detected...Transferred...\n\r");
-				gobbed = true;
-			} else {
-				send_to_char("You will never again need to eat, though you might feel a bit `1th`!i`1rsty``...\n\r", vch);
-				gobbed = false;
-			}
-
-			vch->pcdata->condition[COND_FEED] = UMIN(vch->pcdata->condition[COND_HUNGER],
-								 vch->pcdata->condition[COND_THIRST]);
-			vch->pcdata->condition[COND_HUNGER] = -151;
-			vch->pcdata->condition[COND_THIRST] = -151;
-
-			send_to_char("    Hunger/thirst successfully switched to feed.\n\r", ch);
-		}
 
 		if (gobbed)
 			send_to_char("Your `OG`@o`1b`#s`Pt`@o`1p`#p`Pe`Or`` effect is still in place...\n\r", vch);

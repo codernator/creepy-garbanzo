@@ -1616,7 +1616,6 @@ void do_drink(CHAR_DATA *ch, char *argument)
 	char arg[MIL];
 	long amount;
 	long liquid;
-	int race;
 
 	DENY_NPC(ch);
 
@@ -1673,28 +1672,6 @@ void do_drink(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if (ch->race == (race = race_lookup("vampire"))) {
-		act("$n screams $p burns $s insides.", ch, obj, NULL, TO_ROOM);
-		act("You scream as $p burns your insides.", ch, obj, NULL, TO_CHAR);
-
-		if (ch->hit - ch->level * 10 > -100)
-			ch->hit -= ch->level * 10;
-		else
-			ch->hit = -100;
-
-		if (ch->mana - ch->level * 10 > -100)
-			ch->mana -= ch->level * 10;
-		else
-			ch->mana = -100;
-
-		if (ch->move - ch->level * 10 > -100)
-			ch->move -= ch->level * 10;
-		else
-			ch->move = -100;
-
-		return;
-	}
-
 	act("$n drinks $T from $p.", ch, obj, liq_table[liquid].liq_name, TO_ROOM);
 	act("You drink $T from $p.", ch, obj, liq_table[liquid].liq_name, TO_CHAR);
 
@@ -1748,7 +1725,6 @@ void do_eat(CHAR_DATA *ch, char *argument)
 {
 	OBJ_DATA *obj;
 	char arg[MIL];
-	int race;
 
 	one_argument(argument, arg);
 	if (arg[0] == '\0') {
@@ -1772,40 +1748,10 @@ void do_eat(CHAR_DATA *ch, char *argument)
 			return;
 		}
 
-		if ((obj->item_type == ITEM_FOOD)
-		    && (ch->race == (race = race_lookup("vampire")))) {
-			send_to_char("Eat food?  You forget, you're a vampire!\n\r", ch);
-			return;
-		}
-
 		if (!IS_NPC(ch) && ch->pcdata->condition[COND_FULL] > 48) {
 			send_to_char("You are too full to eat more.\n\r", ch);
 			return;
 		}
-	}
-
-	if (ch->race == (race = race_lookup("vampire"))
-	    && (obj->item_type != ITEM_PILL)
-	    && (!IS_IMMORTAL(ch))) {
-		act("$n screams $p burns $s insides.", ch, obj, NULL, TO_ROOM);
-		act("You scream as $p burns your insides.", ch, obj, NULL, TO_CHAR);
-
-		if (ch->hit - ch->level * 10 > -100)
-			ch->hit -= ch->level * 10;
-		else
-			ch->hit = -100;
-
-		if (ch->mana - ch->level * 10 > -100)
-			ch->mana -= ch->level * 10;
-		else
-			ch->mana = -100;
-
-		if (ch->move - ch->level * 10 > -100)
-			ch->move -= ch->level * 10;
-		else
-			ch->move = -100;
-		extract_obj(obj);
-		return;
 	}
 
 	act("$n eats $p.", ch, obj, NULL, TO_ROOM);
@@ -1916,17 +1862,15 @@ void wear_obj(CHAR_DATA *ch, OBJ_DATA *obj, bool fReplace)
 	}
 
 	if (CAN_WEAR(obj, ITEM_WEAR_FINGER)) {
-		int race = race_lookup("human");
-
 		/* 08-09-2002 - joe - added for human 4 rings*/
 		if (get_eq_char(ch, WEAR_FINGER_L) != NULL
 		    && get_eq_char(ch, WEAR_FINGER_R) != NULL
-		    && (ch->race == race && get_eq_char(ch, WEAR_FINGER_L2) != NULL)
-		    && (ch->race == race && get_eq_char(ch, WEAR_FINGER_R2) != NULL)
+		    && (get_eq_char(ch, WEAR_FINGER_L2) != NULL)
+		    && (get_eq_char(ch, WEAR_FINGER_R2) != NULL)
 		    && !remove_obj(ch, WEAR_FINGER_L, fReplace)
 		    && !remove_obj(ch, WEAR_FINGER_R, fReplace)
-		    && (ch->race == race && !remove_obj(ch, WEAR_FINGER_L2, fReplace))
-		    && (ch->race == race && !remove_obj(ch, WEAR_FINGER_R2, fReplace)))
+		    && (!remove_obj(ch, WEAR_FINGER_L2, fReplace))
+		    && (!remove_obj(ch, WEAR_FINGER_R2, fReplace)))
 			return;
 
 		if (get_eq_char(ch, WEAR_FINGER_L) == NULL) {
@@ -1944,22 +1888,19 @@ void wear_obj(CHAR_DATA *ch, OBJ_DATA *obj, bool fReplace)
 		}
 
 		/* 08-09-2002 - joe - added for human 4 rings*/
-		if (ch->race == race_lookup("human")) {
-			if (get_eq_char(ch, WEAR_FINGER_L2) == NULL) {
-				act("$n wears $p on $s second left finger.", ch, obj, NULL, TO_ROOM);
-				act("You wear $p on your second left finger.", ch, obj, NULL, TO_CHAR);
-				equip_char(ch, obj, WEAR_FINGER_L2);
-				return;
-			}
+        if (get_eq_char(ch, WEAR_FINGER_L2) == NULL) {
+            act("$n wears $p on $s second left finger.", ch, obj, NULL, TO_ROOM);
+            act("You wear $p on your second left finger.", ch, obj, NULL, TO_CHAR);
+            equip_char(ch, obj, WEAR_FINGER_L2);
+            return;
+        }
 
-			if (get_eq_char(ch, WEAR_FINGER_R2) == NULL) {
-				act("$n wears $p on $s second right finger.", ch, obj, NULL, TO_ROOM);
-				act("You wear $p on your second right finger.", ch, obj, NULL, TO_CHAR);
-				equip_char(ch, obj, WEAR_FINGER_R2);
-				return;
-			}
-		}
-
+        if (get_eq_char(ch, WEAR_FINGER_R2) == NULL) {
+            act("$n wears $p on $s second right finger.", ch, obj, NULL, TO_ROOM);
+            act("You wear $p on your second right finger.", ch, obj, NULL, TO_CHAR);
+            equip_char(ch, obj, WEAR_FINGER_R2);
+            return;
+        }
 
 		log_bug("Wear_obj: no free finger.");
 		send_to_char("You already wear two rings.\n\r", ch);
@@ -3599,39 +3540,6 @@ void do_dice(CHAR_DATA *ch, char *argument)
 	act(buf, ch, obj, NULL, TO_CHAR);
 	act(buf, ch, obj, NULL, TO_ROOM);
 }
-
-
-/***************************************************************************
-*	do_sprinkle
-***************************************************************************/
-void do_sprinkle(CHAR_DATA *ch, char *argument)
-{
-	OBJ_DATA *dust;
-	char arg1[MIL];
-
-	argument = one_argument(argument, arg1);
-	if ((dust = get_obj_carry(ch, arg1)) == NULL) {
-		send_to_char("You are not carrying any dust!\n\r", ch);
-		return;
-	}
-
-	if (dust->obj_idx->vnum != OBJ_VNUM_BLANK_PILL) {
-		send_to_char("You can only sprinkle dust!\n\r", ch);
-		return;
-	}
-
-	act("$n sprinkles some dust around $mself.", ch, dust, NULL, TO_ROOM);
-	act("You sprinkle some dust around yourself.", ch, dust, NULL, TO_CHAR);
-
-	obj_cast_spell((int)dust->value[1], (int)(UMAX(LEVEL_HERO, dust->value[0])), ch, ch, dust);
-	obj_cast_spell((int)dust->value[2], (int)(UMAX(LEVEL_HERO, dust->value[0])), ch, ch, dust);
-	obj_cast_spell((int)dust->value[3], (int)(UMAX(LEVEL_HERO, dust->value[0])), ch, ch, dust);
-	obj_cast_spell((int)dust->value[4], (int)(UMAX(LEVEL_HERO, dust->value[0])), ch, ch, dust);
-
-	extract_obj(dust);
-	return;
-}
-
 
 /***************************************************************************
 *   do_objident
