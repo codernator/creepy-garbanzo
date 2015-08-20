@@ -2944,10 +2944,7 @@ void *alloc_perm(unsigned int sMem)
 
 
 
-/*
- * Duplicate a string into dynamic memory.
- * Fread_strings are read-only and shared.
- */
+/** Duplicate a string into memory. Fread_strings are read-only and shared. */
 char *str_dup(const char *str)
 {
 	char *str_new;

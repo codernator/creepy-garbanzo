@@ -473,7 +473,6 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
 		REMOVE_BIT(ch->act, PLR_LINKDEAD);
 	affect_strip(ch, gsp_deft);
 	affect_strip(ch, gsp_dash);
-	affect_strip(ch, skill_lookup("blood rage"));
 
 	save_char_obj(ch);
 	id = ch->id;

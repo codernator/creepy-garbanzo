@@ -689,10 +689,8 @@ const struct spell_lookup_type spell_lookup_table[] =
     { "lightning breath", spell_lightning_breath },
     { "general purpose", spell_general_purpose },
     { "high explosive", spell_high_explosive },
-    { "blood boil", spell_blood_boil },
     { "equipment invis", spell_equipment_invis },
     { "noremove", spell_noremove },
-    { "cure blood", spell_cure_blood },
     { "shatter curse", spell_shatter_curse },
     { "web", spell_web },
     { "displacement", spell_displacement },
@@ -774,10 +772,7 @@ char *affect_fn_name(AFFECT_FUN *fn)
     return "";
 }
 
-/**
- * lookup a dynamic skill - try to get a skill that is as
- * acurate as possible
- */
+/** lookup a dynamic skill - try to get a skill that is as accurate as possible */
 SKILL *skill_lookup(char *name)
 {
     SKILL *skill;
@@ -788,27 +783,20 @@ SKILL *skill_lookup(char *name)
 
     skill_tmp = NULL;
     for (skill = skill_list; skill != NULL; skill = skill->next) {
-        /* short circuit the loop if we know that they dont match */
         if (name[0] != skill->name[0])
             continue;
 
-        /* if we have an exact match on name, then return it */
         if (!str_cmp(name, skill->name))
             return skill;
 
-        /* if we have a partial name then we need to do some funk */
         if (skill_tmp == NULL && !str_prefix(name, skill->name))
-            /* set a temporary variable */
             skill_tmp = skill;
-
     }
 
     return skill_tmp;
 }
 
-/**
- * lookup a dynamic group
- */
+/** lookup a dynamic group */
 GROUP *group_lookup(char *name)
 {
     GROUP *group;

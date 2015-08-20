@@ -17,7 +17,6 @@ heal_cmd_table[] =
 	{ "critical",  "cure critical",	    "judicandus scrubette", 50000 },
 	{ "heal",      "heal",		    "scrubus maximus",	    40000 },
 	{ "blindness", "cure blindness",    "judicandus noselacri", 25000 },
-	{ "blood",     "cure blood",	    "judicandus jhena",	    55000 },
 	{ "poison",    "cure poison",	    "judicandus sausabru",  25000 },
 	{ "curse",     "remove curse",	    "candussido judifgz",   50000 },
 	{ "uncurse",   "remove curse",	    "candussido judifgz",   50000 },

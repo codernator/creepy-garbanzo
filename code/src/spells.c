@@ -24,12 +24,7 @@ extern SKILL *gsp_portal;
 extern SKILL *gsp_sneak;
 
 
-/***************************************************************************
-*	spell definitions
-***************************************************************************/
-/***************************************************************************
-*	spell_acid_blast
-***************************************************************************/
+
 void spell_acid_blast(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
 	CHAR_DATA *victim = (CHAR_DATA *)vo;
@@ -43,11 +38,6 @@ void spell_acid_blast(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int targ
 	return;
 }
 
-
-
-/***************************************************************************
-*	spell_armor
-***************************************************************************/
 void spell_armor(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
 	CHAR_DATA *victim = (CHAR_DATA *)vo;
@@ -76,93 +66,6 @@ void spell_armor(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, c
 		act("$N is protected by your `@m`2a`&g`2i`@c``.", ch, NULL, victim, TO_CHAR);
 	return;
 }
-
-
-
-
-
-
-/***************************************************************************
-*	spell_blood_boil
-***************************************************************************/
-void spell_blood_boil(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	CHAR_DATA *victim = (CHAR_DATA *)vo;
-	AFFECT_DATA af;
-	int result;
-	int fail;
-	int dam;
-
-	dam = dice(level, number_range(15, 25));
-	if (saves_spell(level, victim, DAM_FIRE))
-		dam /= 2;
-
-	damage(ch, victim, dam, skill->sn, DAM_FIRE, true);
-
-	fail = 50;
-	result = number_percent();
-	if (result <= fail) {
-		if (is_affected(victim, skill)) {
-			AFFECT_DATA *paf;
-
-			for (paf = victim->affected; paf != NULL; paf = paf->next) {
-				if (paf->type == skill->sn
-				    && paf->modifier != 100
-				    && paf->location != APPLY_DEX
-				    && paf->location != APPLY_STR) {
-					affect_strip(victim, skill);
-					af.where = TO_AFFECTS;
-					af.skill = skill;
-					af.type = skill->sn;
-					af.level = level;
-					af.duration = (level / 15);
-					af.modifier = 100;
-					af.bitvector = 0;
-
-					af.location = APPLY_SAVING_SPELL;
-					affect_to_char(victim, &af);
-				}
-			}
-		} else {
-			af.where = TO_AFFECTS;
-			af.type = skill->sn;
-			af.skill = skill;
-			af.level = level;
-			af.duration = (level / 15);
-			af.modifier = 50;
-			af.bitvector = 0;
-
-			af.location = APPLY_SAVING_SPELL;
-			affect_to_char(victim, &af);
-
-			af.level = level * 1 / 2;
-			af.duration = level / 2;
-			af.location = APPLY_DEX;
-			af.modifier = (level / 100) * -3;
-			affect_to_char(victim, &af);
-
-			fail = 85;
-			if (result <= fail) {
-				af.location = APPLY_STR;
-				affect_to_char(victim, &af);
-			}
-
-			send_to_char("You scream in agony as your blood begins to boil..\n\r", victim);
-			act("$n screams in agony as $s blood begins to boil..", victim, NULL, NULL, TO_ROOM);
-			return;
-		}
-	}
-
-	if (!is_affected(victim, skill)) {
-		if (victim != ch)
-			send_to_char("Your target's blood did not boil any faster.\n\r", ch);
-		else
-			send_to_char("Your blood does not boil any faster.\n\r", victim);
-	}
-	return;
-}
-
-
 
 void spell_bless(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
@@ -883,33 +786,6 @@ void spell_cure_critical(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 		send_to_char("Ok.\n\r", ch);
 	return;
 }
-
-
-/* RT ripped off to cure blood disorders ..     */
-void spell_cure_blood(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	CHAR_DATA *victim = (CHAR_DATA *)vo;
-	SKILL *skill_blood_boil;
-
-	skill_blood_boil = skill_lookup("blood boil");
-	if (!is_affected(victim, skill_blood_boil)) {
-		if (victim == ch)
-			send_to_char("You aren't `2i`8l`&l``.\n\r", ch);
-		else
-			act("$N doesn't appear to have a blood disorder.", ch, NULL, victim, TO_CHAR);
-
-		return;
-	}
-
-	if (check_dispel(level, victim, skill_blood_boil)) {
-		send_to_char("Your `!b`1l`!o`1o`!d`` cools.\n\r", victim);
-		act("$n looks relieved as $s `!s`1o`!r`1e`!s`` vanish.", victim, NULL, NULL, TO_ROOM);
-	} else {
-		send_to_char("`!S`1pell `!failed``.\n\r", ch);
-	}
-}
-
-
 
 void spell_cure_light(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
@@ -3246,7 +3122,7 @@ void spell_revive(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, 
 	int xMana;
 	int maxGain;
 	int idx;
-	char *strip_affs[] = { "poison",	  "blindness", "sleep",    "blood boil", "" };
+	char *strip_affs[] = { "poison", "blindness", "sleep", "" };
 
 	diff = 0;
 	if (ch->mana <= 0) {

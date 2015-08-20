@@ -151,11 +151,9 @@ DECLARE_SPELL_FUN(spell_general_purpose);
 DECLARE_SPELL_FUN(spell_high_explosive);
 DECLARE_SPELL_FUN(spell_fst);
 DECLARE_SPELL_FUN(spell_create_feast);
-DECLARE_SPELL_FUN(spell_blood_boil);
 DECLARE_SPELL_FUN(spell_make_bag);
 DECLARE_SPELL_FUN(spell_equipment_invis);
 DECLARE_SPELL_FUN(spell_noremove);
-DECLARE_SPELL_FUN(spell_cure_blood);
 DECLARE_SPELL_FUN(spell_shatter_curse);
 DECLARE_SPELL_FUN(spell_web);
 
