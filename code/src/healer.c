@@ -17,7 +17,6 @@ heal_cmd_table[] =
 	{ "critical",  "cure critical",	    "judicandus scrubette", 50000 },
 	{ "heal",      "heal",		    "scrubus maximus",	    40000 },
 	{ "blindness", "cure blindness",    "judicandus noselacri", 25000 },
-	{ "disease",   "cure disease",	    "judicandus eugzagz",   25000 },
 	{ "blood",     "cure blood",	    "judicandus jhena",	    55000 },
 	{ "poison",    "cure poison",	    "judicandus sausabru",  25000 },
 	{ "curse",     "remove curse",	    "candussido judifgz",   50000 },
@@ -62,9 +61,7 @@ void do_heal(CHAR_DATA *ch, char *argument)
 		send_to_char("  critic```8:  ``cure critical wounds  ```#500``gold\n\r", ch);
 		send_to_char("  heal```8:    ``healing spell         ```#400``gold\n\r", ch);
 		send_to_char("  blind```8:   ``cure blindness        ```#250``gold\n\r", ch);
-		send_to_char("  disease```8: ``cure disease          ```#250``gold\n\r", ch);
 		send_to_char("  poison```8:  ``cure poison           ```#250``gold\n\r", ch);
-		send_to_char("  blood`8:   ``cure blood diseases   ```#550``gold\n\r", ch);
 		send_to_char("  uncurse```8: ``remove curse          ```#500``gold\n\r", ch);
 		send_to_char("  refresh```8: ``restore movement      ```#150``gold\n\r", ch);
 		send_to_char("  mana```8:    ``restore mana          ```#250``gold\n\r", ch);

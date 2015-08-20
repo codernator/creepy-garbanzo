@@ -16,7 +16,6 @@ extern SKILL *gsp_flail;
 extern SKILL *gsp_whip;
 extern SKILL *gsp_polearm;
 extern SKILL *gsp_hand_to_hand;
-extern SKILL *gsp_plague;
 extern SKILL *gsp_darkness;
 
 
@@ -264,9 +263,6 @@ int check_immune(CHAR_DATA *ch, int dam_type)
 		break;
 	case (DAM_MENTAL):
 		bit = IMM_MENTAL;
-		break;
-	case (DAM_DISEASE):
-		bit = IMM_DISEASE;
 		break;
 	case (DAM_DROWNING):
 		bit = IMM_DROWNING;
@@ -917,48 +913,8 @@ void char_to_room(CHAR_DATA *ch, ROOM_INDEX_DATA *pRoomIndex)
 		++ch->in_room->area->nplayer;
 	}
 
-	if ((obj = get_eq_char(ch, WEAR_LIGHT)) != NULL
-	    && obj->item_type == ITEM_LIGHT
-	    && obj->value[2] != 0)
+	if ((obj = get_eq_char(ch, WEAR_LIGHT)) != NULL && obj->item_type == ITEM_LIGHT && obj->value[2] != 0)
 		++ch->in_room->light;
-
-	if (IS_AFFECTED(ch, AFF_PLAGUE)) {
-		AFFECT_DATA *paf;
-		AFFECT_DATA af;
-		CHAR_DATA *vch;
-
-		paf = affect_find(ch->affected, gsp_plague);
-
-		if (paf == NULL) {
-			REMOVE_BIT(ch->affected_by, AFF_PLAGUE);
-			return;
-		}
-
-		if (paf->level == 1)
-			return;
-
-		if (gsp_plague != NULL) {
-			af.where = TO_AFFECTS;
-			af.type = gsp_plague->sn;
-			af.skill = gsp_plague;
-			af.level = (int)(paf->level - 1);
-			af.duration = (int)number_range(1, 2 * af.level);
-			af.location = APPLY_STR;
-			af.modifier = -5;
-			af.bitvector = AFF_PLAGUE;
-
-			for (vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room) {
-				if (!saves_spell(af.level - 2, vch, DAM_DISEASE)
-				    && !IS_IMMORTAL(vch)
-				    && !IS_AFFECTED(vch, AFF_PLAGUE)
-				    && number_bits(6) == 0) {
-					send_to_char("You feel hot and feverish.\n\r", vch);
-					act("$n shivers and looks very ill.", vch, NULL, NULL, TO_ROOM);
-					affect_join(vch, &af);
-				}
-			}
-		}
-	}
 }
 
 

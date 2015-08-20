@@ -852,7 +852,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 	bool fMatch;
 	int count = 0;
 	time_t lastlogoff = globalSystemState.current_time;
-	int percent;
 
 	log_string("Loading %s.", ch->name);
 
@@ -1066,17 +1065,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 
 		case 'E':
 			if (!str_cmp(word, "End")) {
-				/* adjust hp mana move up  -- here for speed's sake */
-				percent = (int)((globalSystemState.current_time - lastlogoff) * 25 / (2 * 60 * 60));
-
-				percent = UMIN(percent, 100);
-
-				if (percent > 0 && !IS_AFFECTED(ch, AFF_POISON)
-				    && !IS_AFFECTED(ch, AFF_PLAGUE)) {
-					ch->hit += (ch->max_hit - ch->hit) * percent / 100;
-					ch->mana += (ch->max_mana - ch->mana) * percent / 100;
-					ch->move += (ch->max_move - ch->move) * percent / 100;
-				}
 				return;
 			}
 
@@ -1357,8 +1345,6 @@ static void fread_pet(CHAR_DATA *ch, FILE *fp)
 	char *word;
 	CHAR_DATA *pet;
 	bool fMatch;
-	time_t lastlogoff = globalSystemState.current_time;
-	int percent;
 
 	word = feof(fp) ? "END" : fread_word(fp);
 	if (!str_cmp(word, "Vnum")) {
@@ -1491,16 +1477,6 @@ static void fread_pet(CHAR_DATA *ch, FILE *fp)
 				pet->leader = ch;
 				pet->master = ch;
 				ch->pet = pet;
-
-				percent = (int)((globalSystemState.current_time - lastlogoff) * 25 / (2 * 60 * 60));
-				percent = UMIN(percent, 100);
-
-				if (percent > 0 && !IS_AFFECTED(ch, AFF_POISON)
-				    && !IS_AFFECTED(ch, AFF_PLAGUE)) {
-					pet->hit += (pet->max_hit - pet->hit) * percent / 100;
-					pet->mana += (pet->max_mana - pet->mana) * percent / 100;
-					pet->move += (pet->max_move - pet->move) * percent / 100;
-				}
 				return;
 			}
 			KEY("Exp", pet->exp, fread_number(fp));
@@ -1528,7 +1504,7 @@ static void fread_pet(CHAR_DATA *ch, FILE *fp)
 		case 'L':
 			KEY("Levl", pet->level, fread_number(fp));
 			KEY("LnD", pet->long_descr, fread_string(fp));
-			KEY("LogO", lastlogoff, (time_t)fread_long(fp));
+			//KEY("LogO", lastlogoff, (time_t)fread_long(fp));
 			break;
 
 		case 'N':

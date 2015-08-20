@@ -64,7 +64,6 @@ DECLARE_SPELL_FUN(spell_create_spring);
 DECLARE_SPELL_FUN(spell_create_water);
 DECLARE_SPELL_FUN(spell_cure_blindness);
 DECLARE_SPELL_FUN(spell_cure_critical);
-DECLARE_SPELL_FUN(spell_cure_disease);
 DECLARE_SPELL_FUN(spell_cure_light);
 DECLARE_SPELL_FUN(spell_cure_poison);
 DECLARE_SPELL_FUN(spell_cure_serious);
@@ -118,7 +117,6 @@ DECLARE_SPELL_FUN(spell_meteor_storm);
 DECLARE_SPELL_FUN(spell_monsoon);       /* Added 6/12/96 Bors */
 DECLARE_SPELL_FUN(spell_nexus);
 DECLARE_SPELL_FUN(spell_pass_door);
-DECLARE_SPELL_FUN(spell_plague);
 DECLARE_SPELL_FUN(spell_pollenburst);   /* added 6/11/96 Bors */
 DECLARE_SPELL_FUN(spell_poison);
 DECLARE_SPELL_FUN(spell_portal);
@@ -155,12 +153,9 @@ DECLARE_SPELL_FUN(spell_fst);
 DECLARE_SPELL_FUN(spell_create_feast);
 DECLARE_SPELL_FUN(spell_blood_boil);
 DECLARE_SPELL_FUN(spell_make_bag);
-DECLARE_SPELL_FUN(spell_black_plague);
-DECLARE_SPELL_FUN(spell_black_mantle);   /*  recreated 4/02 Shez  */
 DECLARE_SPELL_FUN(spell_equipment_invis);
 DECLARE_SPELL_FUN(spell_noremove);
 DECLARE_SPELL_FUN(spell_cure_blood);
-DECLARE_SPELL_FUN(spell_fear);
 DECLARE_SPELL_FUN(spell_shatter_curse);
 DECLARE_SPELL_FUN(spell_web);
 
@@ -182,8 +177,6 @@ DECLARE_AFFECT_FUN(affect_parasitic_cloud);
 /*******************************************************************************
 *	character affects
 *******************************************************************************/
-DECLARE_AFFECT_FUN(affect_black_plague);
-DECLARE_AFFECT_FUN(affect_disease);
 DECLARE_AFFECT_FUN(affect_burning_flames);
 DECLARE_AFFECT_FUN(affect_poison);
 

@@ -6,7 +6,6 @@
 
 
 extern SKILL *gsp_fast_healing;
-extern SKILL *gsp_black_plague;
 extern SKILL *gsp_meditation;
 extern SKILL *gsp_burning_flames;
 
@@ -466,12 +465,6 @@ static int hit_gain(CHAR_DATA *ch)
 	if (IS_AFFECTED(ch, AFF_POISON))
 		gain /= 4;
 
-	if (IS_AFFECTED(ch, AFF_PLAGUE))
-		gain /= 8;
-
-	if (is_affected(ch, gsp_black_plague))
-		gain /= 10;
-
 	if (IS_AFFECTED(ch, AFF_HASTE))
 		gain /= 2;
 
@@ -554,12 +547,6 @@ static int mana_gain(CHAR_DATA *ch)
 	if (IS_AFFECTED(ch, AFF_POISON))
 		gain /= 4;
 
-	if (IS_AFFECTED(ch, AFF_PLAGUE))
-		gain /= 8;
-
-	if (is_affected(ch, gsp_black_plague))
-		gain /= 10;
-
 	if (IS_AFFECTED(ch, AFF_HASTE))
 		gain /= 2;
 
@@ -607,9 +594,6 @@ static int move_gain(CHAR_DATA *ch)
 
 	if (IS_AFFECTED(ch, AFF_POISON))
 		gain /= 4;
-
-	if (is_affected(ch, gsp_black_plague))
-		gain /= 10;
 
 	if (IS_AFFECTED(ch, AFF_HASTE))
 		gain /= 2;

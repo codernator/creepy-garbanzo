@@ -23,64 +23,55 @@
  * skill_lookup, particularly in the battle system, was just
  * unmanagable.
  */
+
+SKILL *gsp_aggressive_parry;
 SKILL *gsp_axe;
+SKILL *gsp_banzai;
+SKILL *gsp_bless;
+SKILL *gsp_blindness;
+SKILL *gsp_burning_flames;
+SKILL *gsp_curse;
 SKILL *gsp_dagger;
+SKILL *gsp_darkness;
+SKILL *gsp_dash;
+SKILL *gsp_deft;
+SKILL *gsp_detect_magic;
+SKILL *gsp_dodge;
+SKILL *gsp_enhanced_damage;
+SKILL *gsp_evade;
+SKILL *gsp_faerie_fog;
+SKILL *gsp_fast_healing;
+SKILL *gsp_fifth_attack;
 SKILL *gsp_flail;
+SKILL *gsp_flanking;
+SKILL *gsp_fourth_attack;
+SKILL *gsp_frenzy;
+SKILL *gsp_gate;
+SKILL *gsp_haggle;
+SKILL *gsp_hand_to_hand;
+SKILL *gsp_haste;
+SKILL *gsp_haven;
+SKILL *gsp_hide;
+SKILL *gsp_invisibility;
 SKILL *gsp_mace;
+SKILL *gsp_mana_vortex;
+SKILL *gsp_mass_invisibility;
+SKILL *gsp_meditation;
+SKILL *gsp_nexus;
+SKILL *gsp_parry;
+SKILL *gsp_peek;
+SKILL *gsp_poison;
 SKILL *gsp_polearm;
+SKILL *gsp_portal;
+SKILL *gsp_second_attack;
 SKILL *gsp_shield_block;
+SKILL *gsp_sleep;
+SKILL *gsp_sneak;
 SKILL *gsp_spear;
 SKILL *gsp_sword;
-SKILL *gsp_whip;
-
-/* skill lookup return values for frequently  used skills */
-SKILL *gsp_hand_to_hand;
-SKILL *gsp_aggressive_parry;
-SKILL *gsp_second_attack;
 SKILL *gsp_third_attack;
-SKILL *gsp_fourth_attack;
-SKILL *gsp_fifth_attack;
-SKILL *gsp_poison;
 SKILL *gsp_web;
-SKILL *gsp_banzai;
-SKILL *gsp_enhanced_damage;
-SKILL *gsp_flanking;
-SKILL *gsp_whirlwind;
-SKILL *gsp_darkness;
-SKILL *gsp_invisibility;
-SKILL *gsp_mass_invisibility;
-SKILL *gsp_sleep;
-SKILL *gsp_hide;
-SKILL *gsp_sneak;
-SKILL *gsp_gate;
-SKILL *gsp_portal;
-SKILL *gsp_nexus;
-SKILL *gsp_blindness;
-SKILL *gsp_fear;
-SKILL *gsp_evade;
-SKILL *gsp_dodge;
-SKILL *gsp_parry;
-SKILL *gsp_plague;
-SKILL *gsp_deft;
-SKILL *gsp_dash;
-SKILL *gsp_black_mantle;
-SKILL *gsp_fast_healing;
-SKILL *gsp_black_plague;
-SKILL *gsp_meditation;
-SKILL *gsp_burning_flames;
-SKILL *gsp_peek;
-SKILL *gsp_detect_magic;
-SKILL *gsp_faerie_fog;
-SKILL *gsp_haste;
-SKILL *gsp_haggle;
-SKILL *gsp_bless;
-SKILL *gsp_obless;
-SKILL *gsp_curse;
-SKILL *gsp_frenzy;
-
-/* room affects */
-SKILL *gsp_haven;
-SKILL *gsp_mana_vortex;
+SKILL *gsp_whip;
 
 
 int gn_max_skill_sn;
@@ -128,15 +119,10 @@ static const struct skill_resolve_type {
     { "portal", &gsp_portal },
     { "gate", &gsp_gate },
     { "blindness", &gsp_blindness },
-    { "fear", &gsp_fear },
-    { "plague", &gsp_plague },
     { "deft", &gsp_deft },
     { "dash", &gsp_dash },
-    { "black mantle", &gsp_black_mantle },
     { "fast healing", &gsp_fast_healing },
-    { "black plague", &gsp_black_plague },
     { "meditation", &gsp_meditation },
-    { "black plague", &gsp_black_plague },
     { "burning flames", &gsp_burning_flames },
     { "peek", &gsp_peek },
     { "detect magic", &gsp_detect_magic },
@@ -619,7 +605,6 @@ const struct spell_lookup_type spell_lookup_table[] =
     { "create water", spell_create_water },
     { "cure blindness", spell_cure_blindness },
     { "cure critical", spell_cure_critical },
-    { "cure disease", spell_cure_disease },
     { "cure light", spell_cure_light },
     { "cure poison", spell_cure_poison },
     { "cure serious", spell_cure_serious },
@@ -673,7 +658,6 @@ const struct spell_lookup_type spell_lookup_table[] =
     { "monsoon", spell_monsoon },
     { "nexus", spell_nexus },
     { "pass door", spell_pass_door },
-    { "plague", spell_plague },
     { "pollenburst", spell_pollenburst },
     { "poison", spell_poison },
     { "portal", spell_portal },
@@ -706,12 +690,9 @@ const struct spell_lookup_type spell_lookup_table[] =
     { "general purpose", spell_general_purpose },
     { "high explosive", spell_high_explosive },
     { "blood boil", spell_blood_boil },
-    { "black plague", spell_black_plague },
-    { "black mantle", spell_black_mantle },
     { "equipment invis", spell_equipment_invis },
     { "noremove", spell_noremove },
     { "cure blood", spell_cure_blood },
-    { "fear", spell_fear },
     { "shatter curse", spell_shatter_curse },
     { "web", spell_web },
     { "displacement", spell_displacement },
@@ -728,8 +709,6 @@ const struct affect_lookup_type affect_lookup_table[] =
 {
     { "displacement",    affect_displacement },
     { "parasitic cloud", affect_parasitic_cloud },
-    { "black plague",    affect_black_plague },
-    { "disease",         affect_disease },
     { "burning flames",  affect_burning_flames },
     { "poison",         affect_poison },
     { "",             NULL },

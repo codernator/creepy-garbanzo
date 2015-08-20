@@ -97,7 +97,7 @@ typedef void DO_FUN(/*@partial@*/CHAR_DATA * ch, char *argument);
 #define MAX_SKILL               285
 #define MAX_GROUP               35
 #define MAX_ALIAS               200
-#define MAX_CLASS               15
+#define MAX_CLASS               4
 #define MAX_PC_RACE             15
 #define MAX_LEVEL               610
 #define MAX_GET                 30
@@ -572,7 +572,6 @@ struct kill_data {
 #define DAM_HOLY                10
 #define DAM_ENERGY              11
 #define DAM_MENTAL              12
-#define DAM_DISEASE             13
 #define DAM_DROWNING            14
 #define DAM_LIGHT               15
 #define DAM_OTHER               16
@@ -627,7 +626,6 @@ struct kill_data {
 #define IMM_HOLY                (N)
 #define IMM_ENERGY              (O)
 #define IMM_MENTAL              (P)
-#define IMM_DISEASE             (Q)
 #define IMM_DROWNING            (R)
 #define IMM_LIGHT               (S)
 #define IMM_SOUND               (T)
@@ -653,7 +651,6 @@ struct kill_data {
 #define RES_HOLY                (N)
 #define RES_ENERGY              (O)
 #define RES_MENTAL              (P)
-#define RES_DISEASE             (Q)
 #define RES_DROWNING            (R)
 #define RES_LIGHT               (S)
 #define RES_SOUND               (T)
@@ -679,7 +676,6 @@ struct kill_data {
 #define VULN_HOLY               (N)
 #define VULN_ENERGY             (O)
 #define VULN_MENTAL             (P)
-#define VULN_DISEASE            (Q)
 #define VULN_DROWNING           (R)
 #define VULN_LIGHT              (S)
 #define VULN_SOUND              (T)
@@ -768,7 +764,6 @@ struct kill_data {
 #define AFF_PASS_DOOR           (U)
 #define AFF_HASTE               (V)
 #define AFF_CALM                (W)
-#define AFF_PLAGUE              (X)
 #define AFF_WEAKEN              (Y)
 #define AFF_DARK_VISION         (Z)
 #define AFF_BERSERK             (aa)

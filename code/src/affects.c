@@ -747,86 +747,8 @@ void affect_parasitic_cloud(SKILL *skill, void *target, int type, AFFECT_DATA *p
 /***************************************************************************
 *	character affects
 ***************************************************************************/
-/**************************************************************************
- *	affect_black_plague
- *
- *	do the black plague affect for a character
- ***************************************************************************/
-void affect_black_plague(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
-{
-	CHAR_DATA *ch = (CHAR_DATA *)target;
-	int dam;
-
-	if (paf->level == 1)
-		return;
-
-	if ((type = AFFECT_TYPE_CHAR) && paf != NULL && ch != NULL) {
-		if (ch->in_room == NULL)
-			return;
-
-		act("Blood gushes from $n's pores as the black plague slowly eats away at $s body.",
-		    ch, NULL, NULL, TO_ROOM);
-		send_to_char("Blood gushes from your pores as the black plague slowly eats away at your body.\n\r", ch);
 
 
-		dam = 50 * UMIN(ch->level, (int)(paf->level / 5 + 1));
-		ch->mana -= dam;
-		ch->move -= dam;
-		damage(ch, ch, dam, skill->sn, DAM_DISEASE, false);
-	}
-}
-
-
-/**************************************************************************
- *	affect_disease
- *
- *	do the disease affect for a character
- ***************************************************************************/
-void affect_disease(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
-{
-	CHAR_DATA *ch = (CHAR_DATA *)target;
-	CHAR_DATA *vch;
-	AFFECT_DATA af;
-	int dam;
-
-
-	if (paf->level == 1) {
-		REMOVE_BIT(ch->affected_by, AFF_PLAGUE);
-		return;
-	}
-
-	if ((type = AFFECT_TYPE_CHAR) && paf != NULL && ch != NULL) {
-		if (ch->in_room == NULL)
-			return;
-
-		af.where = TO_AFFECTS;
-		af.type = skill->sn;
-		af.skill = skill;
-		af.level = paf->level;
-		af.duration = (int)(number_range(1, 2 * af.level));
-		af.location = APPLY_STR;
-		af.modifier = -5;
-		af.bitvector = AFF_PLAGUE;
-
-		for (vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room) {
-			if (!saves_spell(af.level + 5, vch, DAM_DISEASE)
-			    && !IS_IMMORTAL(vch)
-			    && !IS_AFFECTED(vch, AFF_PLAGUE) && number_bits(4) == 0) {
-				send_to_char("You feel hot and feverish.\n\r", vch);
-				act("$n shivers and looks very ill.", vch, NULL, NULL, TO_ROOM);
-				affect_join(vch, &af);
-			}
-		}
-
-		act("$n writhes in agony as plague sores erupt from $s skin.", ch, NULL, NULL, TO_ROOM);
-		send_to_char("You writhe in agony from the plague.\n\r", ch);
-
-		dam = 20 * UMIN(ch->level, (int)(paf->level / 5 + 1));
-		ch->mana -= dam;
-		ch->move -= dam;
-		damage(ch, ch, dam, skill->sn, DAM_DISEASE, false);
-	}
-}
 
 
 /**************************************************************************

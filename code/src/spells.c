@@ -8,8 +8,6 @@
 #include "interp.h"
 
 
-extern SKILL *gsp_black_mantle;
-extern SKILL *gsp_black_plague;
 extern SKILL *gsp_bless;
 extern SKILL *gsp_blindness;
 extern SKILL *gsp_burning_flames;
@@ -21,7 +19,6 @@ extern SKILL *gsp_haste;
 extern SKILL *gsp_invisibility;
 extern SKILL *gsp_mass_invisibility;
 extern SKILL *gsp_nexus;
-extern SKILL *gsp_plague;
 extern SKILL *gsp_poison;
 extern SKILL *gsp_portal;
 extern SKILL *gsp_sneak;
@@ -80,49 +77,6 @@ void spell_armor(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, c
 	return;
 }
 
-
-/***************************************************************************
-*	spell_black_plague
-***************************************************************************/
-void spell_black_plague(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	CHAR_DATA *victim = (CHAR_DATA *)vo;
-	AFFECT_DATA af;
-
-	if (IS_SET(ch->imm_flags, IMM_DISEASE)) {
-		send_to_char("They are immune.\n\r", ch);
-		return;
-	}
-
-	if (saves_spell(level, victim, DAM_DISEASE)
-	    || (is_affected(victim, skill))
-	    || (IS_NPC(victim) && IS_SET(victim->act, ACT_UNDEAD))) {
-		if (ch == victim)
-			send_to_char("You start `6s`^w`7e`&at`7i`^n`6g`` heavily, but nothing happens.\n\r", ch);
-		else
-			act("$N appears to have a better immune system than you thought.", ch, NULL, victim, TO_CHAR);
-		return;
-	}
-
-	af.where = TO_AFFECTS;
-	af.type = skill->sn;
-	af.skill = skill;
-	af.level = level;
-	af.duration = level * 1 / 3;
-	af.location = APPLY_STR;
-	af.modifier = -1 * (level / 20);
-	af.bitvector = 0;
-	affect_to_char(victim, &af);
-
-	af.location = APPLY_DEX;
-	af.modifier = -1 * (level / 30);
-	affect_to_char(victim, &af);
-
-	send_to_char("You sweat from your pores as the `8black`` plague invades your body.\n\r", victim);
-	act("$n starts sweating `1b`!l`1oo`!d`` from pores all over $s body.", victim, NULL, NULL, TO_NOTVICT);
-	if (ch->in_room != victim->in_room)
-		act("$N starts sweating `1b`!l`1oo`!d`` from pores all over $s body.", ch, NULL, victim, TO_CHAR);
-}
 
 
 
@@ -920,11 +874,6 @@ void spell_cure_critical(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 	CHAR_DATA *victim = (CHAR_DATA *)vo;
 	int heal;
 
-	if (is_affected(victim, gsp_black_mantle)) {
-		send_to_char("The mantle of black magic aborbs any attempt to heal you!\n\r", victim);
-		return;
-	}
-
 	heal = dice(3, 8) + level - 6;
 	victim->hit = UMIN(victim->hit + heal, victim->max_hit);
 	update_pos(victim);
@@ -935,56 +884,25 @@ void spell_cure_critical(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 	return;
 }
 
-/* RT added to cure plague */
-void spell_cure_disease(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	CHAR_DATA *victim = (CHAR_DATA *)vo;
 
-	if (!is_affected(victim, gsp_plague)) {
-		if (victim == ch)
-			send_to_char("You aren't `2i`8l`&l``.\n\r", ch);
-		else
-			act("$N doesn't appear to be`8d`7i`&s`@e`2a`@s`&e`7d``.", ch, NULL, victim, TO_CHAR);
-		return;
-	}
-
-	if (check_dispel(level, victim, gsp_plague)) {
-		send_to_char("Your `!s`1o`!r`1e`!s`` vanish.\n\r", victim);
-		act("$n looks relieved as $s `!s`1o`!r`1e`!s`` vanish.", victim, NULL, NULL, TO_ROOM);
-	} else {
-		send_to_char("`!S`1pell `!failed``.\n\r", ch);
-	}
-}
-
-
-/* RT ripped off to cure blood diseases ..     */
+/* RT ripped off to cure blood disorders ..     */
 void spell_cure_blood(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
 	CHAR_DATA *victim = (CHAR_DATA *)vo;
 	SKILL *skill_blood_boil;
 
 	skill_blood_boil = skill_lookup("blood boil");
-	if (!is_affected(victim, gsp_black_plague)
-	    && !is_affected(victim, skill_blood_boil)) {
+	if (!is_affected(victim, skill_blood_boil)) {
 		if (victim == ch)
 			send_to_char("You aren't `2i`8l`&l``.\n\r", ch);
 		else
-			act("$N doesn't appear to be diseased.", ch, NULL, victim, TO_CHAR);
+			act("$N doesn't appear to have a blood disorder.", ch, NULL, victim, TO_CHAR);
 
 		return;
 	}
 
-
 	if (check_dispel(level, victim, skill_blood_boil)) {
 		send_to_char("Your `!b`1l`!o`1o`!d`` cools.\n\r", victim);
-		act("$n looks relieved as $s `!s`1o`!r`1e`!s`` vanish.", victim, NULL, NULL, TO_ROOM);
-	} else {
-		send_to_char("`!S`1pell `!failed``.\n\r", ch);
-	}
-
-
-	if (check_dispel(level, victim, gsp_black_plague)) {
-		send_to_char("Your `!s`1o`!r`1e`!s`` vanish.\n\r", victim);
 		act("$n looks relieved as $s `!s`1o`!r`1e`!s`` vanish.", victim, NULL, NULL, TO_ROOM);
 	} else {
 		send_to_char("`!S`1pell `!failed``.\n\r", ch);
@@ -997,11 +915,6 @@ void spell_cure_light(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int targ
 {
 	CHAR_DATA *victim = (CHAR_DATA *)vo;
 	int heal;
-
-	if (is_affected(victim, gsp_black_mantle)) {
-		send_to_char("The mantle of black magic aborbs any attempt to heal you!\n\r", victim);
-		return;
-	}
 
 	heal = dice(1, 8) + level / 3;
 	victim->hit = UMIN(victim->hit + heal, victim->max_hit);
@@ -1041,11 +954,6 @@ void spell_cure_serious(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 {
 	CHAR_DATA *victim = (CHAR_DATA *)vo;
 	int heal;
-
-	if (is_affected(victim, gsp_black_mantle)) {
-		send_to_char("The mantle of black magic aborbs any attempt to heal you!\n\r", victim);
-		return;
-	}
 
 	heal = dice(2, 8) + level / 2;
 	victim->hit = UMIN(victim->hit + heal, victim->max_hit);
@@ -2511,11 +2419,6 @@ void spell_heal(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, ch
 {
 	CHAR_DATA *victim = (CHAR_DATA *)vo;
 
-	if (is_affected(victim, gsp_black_mantle)) {
-		send_to_char("The mantle of black magic aborbs any attempt to heal you!\n\r", victim);
-		return;
-	}
-
 	victim->hit = UMIN(victim->hit + 400, victim->max_hit);
 	update_pos(victim);
 
@@ -2880,12 +2783,7 @@ void spell_mass_healing(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 	skill_refresh = skill_lookup("refresh");
 
 	for (gch = ch->in_room->people; gch != NULL; gch = gch->next_in_room) {
-		if ((IS_NPC(ch) && IS_NPC(gch))
-		    || (!IS_NPC(ch) && !IS_NPC(gch))) {
-			if (is_affected(gch, gsp_black_mantle)) {
-				send_to_char("The mantle of black magic aborbs any attempt to heal you!\n\r", gch);
-				return;
-			}
+		if ((IS_NPC(ch) && IS_NPC(gch)) || (!IS_NPC(ch) && !IS_NPC(gch))) {
 			cast_spell(ch, skill_heal, level, gch, TARGET_CHAR, argument);
 			cast_spell(ch, skill_refresh, level, gch, TARGET_CHAR, argument);
 		}
@@ -2955,35 +2853,6 @@ void spell_pass_door(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int targe
 	act("$n turns `1t`!r`&an`7slu`&ce`!n`1t``.", victim, NULL, NULL, TO_ROOM);
 	send_to_char("You turn `1t`!r`&an`7slu`&ce`!n`1t``.\n\r", victim);
 	return;
-}
-
-/* RT plague spell, very nasty */
-void spell_plague(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	CHAR_DATA *victim = (CHAR_DATA *)vo;
-	AFFECT_DATA af;
-
-	if (saves_spell(level, victim, DAM_DISEASE)
-	    || (IS_NPC(victim) && IS_SET(victim->act, ACT_UNDEAD))) {
-		if (ch == victim)
-			send_to_char("You feel momentarily `@i`2l`@l``, but it passes.\n\r", ch);
-		else
-			act("$N seems to be `2un`8a`7f`&fe`7c`8t`2ed``.", ch, NULL, victim, TO_CHAR);
-		return;
-	}
-
-	af.where = TO_AFFECTS;
-	af.type = skill->sn;
-	af.skill = skill;
-	af.level = level * 1 / 2;
-	af.duration = level;
-	af.location = APPLY_STR;
-	af.modifier = -5;
-	af.bitvector = AFF_PLAGUE;
-	affect_join(victim, &af);
-
-	send_to_char("You `1scream ``in `!agony`` as `@pl`7ag`@ue`` sores erupt from your skin.\n\r", victim);
-	act("$n `1screams`` in `!agony`` as `@p`7lagu`@e`` sores erupt from $s skin.", victim, NULL, NULL, TO_ROOM);
 }
 
 void spell_extinguish_flames(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
@@ -3377,20 +3246,11 @@ void spell_revive(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, 
 	int xMana;
 	int maxGain;
 	int idx;
-	char *strip_affs[] =
-	{ "poison",	  "blindness",
-	  "plague",	  "sleep",    "blood boil",
-	  "black plague", "" };
+	char *strip_affs[] = { "poison",	  "blindness", "sleep",    "blood boil", "" };
 
 	diff = 0;
 	if (ch->mana <= 0) {
 		send_to_char("Your spell sputters and fizzles!!\n\r", ch);
-		return;
-	}
-
-	if ((gsp_black_mantle != NULL)
-	    && is_affected(ch, gsp_black_mantle)) {
-		send_to_char("The mantle of black magic aborbs any attempt to heal you!\n\r", ch);
 		return;
 	}
 
@@ -5243,74 +5103,6 @@ void spell_acidic_rain(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int tar
 	}
 }
 
-
-/***************************************************************************
-*	spell_fear
-***************************************************************************/
-void spell_fear(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	CHAR_DATA *victim = (CHAR_DATA *)vo;
-	AFFECT_DATA af;
-
-	if (saves_spell(level, victim, DAM_MENTAL)) {
-		act("You failed to strike fear into the heart of $N..", ch, NULL, victim, TO_CHAR);
-		return;
-	}
-
-	send_to_char("You suddenly feel afraid of the world.\n\r", victim);
-	do_flee(victim, "");
-
-	af.where = TO_AFFECTS;
-	af.type = skill->sn;
-	af.skill = skill;
-	af.level = level;
-	af.duration = number_range(3, 8);
-	af.location = APPLY_NONE;
-	af.modifier = 0;
-	af.bitvector = 0;
-	affect_to_char(victim, &af);
-
-	act("$N looks very afraid ..", ch, NULL, victim, TO_CHAR);
-	return;
-}
-
-/***************************************************************************
-*       spell_black_mantle
-***************************************************************************/
-void spell_black_mantle(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	CHAR_DATA *victim = (CHAR_DATA *)vo;
-	AFFECT_DATA af;
-	int rand;
-
-	if (saves_spell(level, victim, DAM_NEGATIVE)
-	    || (is_affected(victim, skill))) {
-		if (ch == victim)
-			send_to_char("You foolishly target your mantle of black magic upon yourself, but nothing happens.\n\r", ch);
-		else
-			act("$N pauses briefly and shivers, but your `8black mantle`` fails to take hold.\n\r", ch, NULL, victim, TO_CHAR);
-		return;
-	}
-
-	rand = number_range(1, 2);
-	rand++;
-
-	af.where = TO_AFFECTS;
-	af.type = skill->sn;
-	af.skill = skill;
-	af.level = level;
-	af.duration = rand;
-	af.location = APPLY_NONE;
-	af.modifier = 0;
-	af.bitvector = 0;
-
-	affect_to_char(victim, &af);
-
-	send_to_char("You scream in fear as a mantle of `8black magic`` prevents your body from healing!\n\r", victim);
-	act("$n screams as they realize they cannot heal!\n\r", victim, NULL, NULL, TO_NOTVICT);
-	if (ch->in_room != victim->in_room)
-		act("$N screams as they realize they cannot heal!", ch, NULL, victim, TO_CHAR);
-}
 
 /***************************************************************************
 *       spell_super_speed

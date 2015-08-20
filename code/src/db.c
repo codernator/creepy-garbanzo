@@ -2126,20 +2126,6 @@ CHAR_DATA *create_mobile(MOB_INDEX_DATA *mob_idx)
 			}
 		}
 
-		if (check_affected(mob, "fear")) {
-			if ((skill = skill_lookup("fear")) != NULL) {
-				af.where = TO_AFFECTS;
-				af.type = skill->sn;
-				af.skill = skill;
-				af.level = mob->level;
-				af.duration = -1;
-				af.location = APPLY_NONE;
-				af.modifier = 0;
-				af.bitvector = 0;
-				affect_to_char(mob, &af);
-			}
-		}
-
 		if (IS_AFFECTED(mob, AFF_HASTE)) {
 			if ((skill = skill_lookup("haste")) != NULL) {
 				af.where = TO_AFFECTS;
