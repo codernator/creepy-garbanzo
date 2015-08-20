@@ -11,6 +11,8 @@ extern void spell_charm_person(SKILL *skill, int level, CHAR_DATA *ch, void *vo,
 extern void set_fighting(CHAR_DATA *ch, CHAR_DATA *victim);
 extern int battlefield_count(void);
 
+extern SKILL* gsp_hand_to_hand;
+
 /*
  * Generate a random door.
  */
@@ -25,9 +27,7 @@ void do_bash(CHAR_DATA *ch, char *argument)
 	SKILL *skill;
 	char arg[MIL];
 	int chance;
-	int evade;
 	int total;
-	int percent;
 
 	if ((skill = skill_lookup("bash")) == NULL) {
 		send_to_char("Huh?\n\r", ch);
@@ -56,18 +56,6 @@ void do_bash(CHAR_DATA *ch, char *argument)
 	if (is_affected(victim, skill)) {
 		act("$N is already off balance!.", ch, NULL, victim, TO_CHAR);
 		return;
-	}
-
-	evade = get_learned_percent(victim, gsp_evade);
-
-	if (evade > 0) {
-		evade = URANGE(20, evade, 50);
-		if (number_percent() <= evade) {
-			act("$n charges you and tries to knock you down, but you evade them!", ch, NULL, victim, TO_VICT);
-			act("You try to bash $N, but they evade you!", ch, NULL, victim, TO_CHAR);
-			WAIT_STATE(ch, 2 * PULSE_VIOLENCE);
-			return;
-		}
 	}
 
 	if (victim->position < POS_FIGHTING) {
@@ -117,10 +105,6 @@ void do_bash(CHAR_DATA *ch, char *argument)
 
 /* level */
 	chance += (ch->level - victim->level);
-
-	if (!IS_NPC(victim)
-	    && chance < (percent = get_learned_percent(victim, gsp_dodge)))
-		chance -= 3 * (percent - chance);
 
 /* now the attack */
 	if (number_percent() < chance) {

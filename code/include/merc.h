@@ -1076,7 +1076,6 @@ struct kill_data {
 #define ROOM_INDOORS            (D)
 
 #define ROOM_NO_PUSH_NO_DRAG    (F)
-#define ROOM_NODREAM            (G)
 #define ROOM_PORTALONLY         (H)
 
 #define ROOM_PRIVATE            (J)
@@ -1355,7 +1354,6 @@ struct char_data {
     /*@shared@*/CHAR_DATA *pet;
     /*@shared@*/CHAR_DATA *mob_wuss;
     /*@shared@*/CHAR_DATA *mobmem;
-    /*@shared@*/CHAR_DATA *dream;
     /*@shared@*/CHAR_DATA *mprog_target;
     /*@shared@*//*@null@*/MOB_INDEX_DATA *mob_idx;
     /*@shared@*/DESCRIPTOR_DATA *desc;
@@ -1919,79 +1917,6 @@ extern const struct     liq_type liq_table[];
 /* max skill number */
 extern int gn_max_skill_sn;
 extern int gn_max_group_sn;
-
-/* skills for weapons */
-extern SKILL *gsp_axe;
-extern SKILL *gsp_dagger;
-extern SKILL *gsp_flail;
-extern SKILL *gsp_mace;
-extern SKILL *gsp_polearm;
-extern SKILL *gsp_shield_block;
-extern SKILL *gsp_spear;
-extern SKILL *gsp_sword;
-extern SKILL *gsp_whip;
-
-/* pointers to frequently used skills */
-extern SKILL *gsp_hand_to_hand;
-extern SKILL *gsp_aggressive_parry;
-extern SKILL *gsp_second_attack;
-extern SKILL *gsp_third_attack;
-extern SKILL *gsp_fourth_attack;
-extern SKILL *gsp_fifth_attack;
-extern SKILL *gsp_parry;
-extern SKILL *gsp_dodge;
-extern SKILL *gsp_evade;
-extern SKILL *gsp_poison;
-extern SKILL *gsp_web;
-extern SKILL *gsp_banzai;
-extern SKILL *gsp_enhanced_damage;
-extern SKILL *gsp_flanking;
-extern SKILL *gsp_whirlwind;
-extern SKILL *gsp_darkness;
-extern SKILL *gsp_invisibility;
-extern SKILL *gsp_mass_invisibility;
-extern SKILL *gsp_sleep;
-extern SKILL *gsp_hide;
-extern SKILL *gsp_sneak;
-extern SKILL *gsp_nexus;
-extern SKILL *gsp_portal;
-extern SKILL *gsp_gate;
-extern SKILL *gsp_blindness;
-extern SKILL *gsp_fear;
-extern SKILL *gsp_evade;
-extern SKILL *gsp_dodge;
-extern SKILL *gsp_parry;
-extern SKILL *gsp_plague;
-extern SKILL *gsp_deft;
-extern SKILL *gsp_dash;
-extern SKILL *gsp_black_mantle;
-extern SKILL *gsp_fast_healing;
-extern SKILL *gsp_meditation;
-extern SKILL *gsp_black_plague;
-extern SKILL *gsp_burning_flames;
-extern SKILL *gsp_peek;
-extern SKILL *gsp_detect_magic;
-extern SKILL *gsp_faerie_fog;
-extern SKILL *gsp_haste;
-extern SKILL *gsp_haggle;
-extern SKILL *gsp_bless;
-extern SKILL *gsp_obless;
-extern SKILL *gsp_curse;
-extern SKILL *gsp_frenzy;
-
-
-/* race skills */
-extern SKILL *gsp_supernatural_speed;
-extern SKILL *gsp_tooth_and_claw;
-extern SKILL *gsp_veil;
-extern SKILL *gsp_anti_magic_aura;
-extern SKILL *gsp_dream;
-
-
-/* room affects */
-extern SKILL *gsp_haven;
-extern SKILL *gsp_mana_vortex;
-
 
 
 

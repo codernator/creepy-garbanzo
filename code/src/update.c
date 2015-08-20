@@ -1,10 +1,14 @@
 #include "merc.h"
 #include "magic.h"
 #include "channels.h"
-
-
 #include <stdio.h>
 #include <string.h>
+
+
+extern SKILL *gsp_fast_healing;
+extern SKILL *gsp_black_plague;
+extern SKILL *gsp_meditation;
+extern SKILL *gsp_burning_flames;
 
 /***************************************************************************
 *	function prototypes
@@ -1080,31 +1084,6 @@ static void char_update(void)
 		AFFECT_DATA *paf_next;
 
 		ch_next = ch->next;
-
-		if (ch->dream != NULL) {
-			int base;
-
-			act("Focusing on a well known point $n dreams away.", ch, NULL, NULL, TO_ROOM);
-			send_to_char("You dream to the well known destination.\n\r", ch);
-			char_from_room(ch);
-			char_to_room(ch, ch->dream->in_room);
-
-			if (number_percent() > 25) {
-				base = ch->max_hit - ch->hit;
-				base /= 2;
-				ch->hit += base;
-			}
-
-			if (number_percent() > 25) {
-				base = ch->max_mana - ch->mana;
-				base /= 2;
-				ch->mana += base;
-			}
-
-			act("$n dreams of this room, then `8a`7pp`&ea`7r`8s.``", ch, NULL, NULL, TO_ROOM);
-			do_look(ch, "auto");
-			ch->dream = NULL;
-		}
 
 		/* Timers on kill+thief flags */
 		if (!IS_NPC(ch)) {

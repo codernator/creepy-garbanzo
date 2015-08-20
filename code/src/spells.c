@@ -8,6 +8,24 @@
 #include "interp.h"
 
 
+extern SKILL *gsp_black_mantle;
+extern SKILL *gsp_black_plague;
+extern SKILL *gsp_bless;
+extern SKILL *gsp_blindness;
+extern SKILL *gsp_burning_flames;
+extern SKILL *gsp_curse;
+extern SKILL *gsp_faerie_fog;
+extern SKILL *gsp_frenzy;
+extern SKILL *gsp_gate;
+extern SKILL *gsp_haste;
+extern SKILL *gsp_invisibility;
+extern SKILL *gsp_mass_invisibility;
+extern SKILL *gsp_nexus;
+extern SKILL *gsp_plague;
+extern SKILL *gsp_poison;
+extern SKILL *gsp_portal;
+extern SKILL *gsp_sneak;
+
 
 /***************************************************************************
 *	spell definitions
@@ -3474,31 +3492,6 @@ void spell_druid_call(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int targ
 	return;
 }
 
-
-void spell_anti_magic_aura(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
-{
-	AFFECT_DATA af;
-
-	remove_all_affects(ch);
-
-	af.where = TO_AFFECTS;
-	af.type = skill->sn;
-	af.skill = skill;
-	af.level = level;
-	af.duration = UMIN((level / 50), 6);
-	af.location = APPLY_NONE;
-	af.modifier = 0;
-	af.bitvector = 0;
-	affect_to_char(ch, &af);
-
-	act("$n shimmers for a moment", ch, NULL, NULL, TO_ROOM);
-	send_to_char("You are cut off from the source.\n\r", ch);
-
-	return;
-}
-
-
-
 void spell_shield(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
 	CHAR_DATA *victim = (CHAR_DATA *)vo;
@@ -3527,8 +3520,6 @@ void spell_shield(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, 
 	send_to_char("You are surrounded by a force `2s`@h`&ie`@l`2d``.\n\r", victim);
 	return;
 }
-
-
 
 void spell_shocking_grasp(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {

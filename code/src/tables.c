@@ -408,7 +408,6 @@ const struct flag_type room_flags[] = {
     { "indoors",      ROOM_INDOORS,         true },
     { "law",          ROOM_LAW,             true },
     { "no_pushdrag",  ROOM_NO_PUSH_NO_DRAG, true },
-    { "nodream",      ROOM_NODREAM,         true },
     { "nogate",       ROOM_NOGATE,          true },
     { "noportal",     ROOM_NOPORTAL,        true },
     { "nosummon",     ROOM_NOSUMMON,        true },

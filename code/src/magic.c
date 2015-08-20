@@ -9,6 +9,10 @@
 
 
 
+extern SKILL *gsp_deft;
+extern SKILL *gsp_dash;
+extern SKILL *gsp_mana_vortex;
+
 
 /***************************************************************************
 *	local functions
@@ -344,11 +348,6 @@ void do_cast(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if (is_affected(ch, gsp_anti_magic_aura)) {
-		send_to_char("You can not manipulate magical energies at the moment.\n\r", ch);
-		return;
-	}
-
 	skill = spell_lookup(ch, spell);
 	if (skill == NULL || skill->spells == NULL) {
 		send_to_char("You don`8'``t know that `1s`!p`&e`!l`1l``!\n\r", ch);
@@ -414,11 +413,6 @@ void do_cast(CHAR_DATA *ch, char *argument)
 			}
 		}
 
-		if (is_affected(victim, gsp_anti_magic_aura)) {
-			send_to_char("Your magic has no effect on them.\n\r", ch);
-			return;
-		}
-
 		if ((victim->level <= 10)
 		    && (!IS_NPC(victim))) {
 			send_to_char("Newbies are protected from `3s`2c`3u`2m`` like you!\n\r", ch);
@@ -471,11 +465,6 @@ void do_cast(CHAR_DATA *ch, char *argument)
 			}
 		}
 
-		if (is_affected(victim, gsp_anti_magic_aura)) {
-			send_to_char("Your magic has no effect on them.\n\r", ch);
-			return;
-		}
-
 		vo = (void *)victim;
 		target = TARGET_CHAR;
 		break;
@@ -526,11 +515,6 @@ void do_cast(CHAR_DATA *ch, char *argument)
 		}
 
 		if (target == TARGET_CHAR) { /* check the sanity of the attack */
-			if (is_affected(victim, gsp_anti_magic_aura)) {
-				send_to_char("Your magic has no effect on them.\n\r", ch);
-				return;
-			}
-
 			if (is_safe_spell(ch, victim, false) && victim != ch) {
 				send_to_char("Not on that target.\n\r", ch);
 				return;

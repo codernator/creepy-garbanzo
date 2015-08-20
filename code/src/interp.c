@@ -6,6 +6,8 @@
 #include "recycle.h"
 
 
+extern SKILL *gsp_hide;
+
 
 char last_command[MSL];
 char *repeater(char *s, int i);

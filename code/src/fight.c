@@ -9,6 +9,27 @@
 #include "channels.h"
 
 
+extern SKILL *gsp_web;
+extern SKILL *gsp_banzai;
+extern SKILL *gsp_second_attack;
+extern SKILL *gsp_aggressive_parry;
+extern SKILL *gsp_third_attack;
+extern SKILL *gsp_fourth_attack;
+extern SKILL *gsp_fifth_attack;
+extern SKILL *gsp_enhanced_damage;
+extern SKILL *gsp_aggressive_parry;
+extern SKILL *gsp_flanking;
+extern SKILL *gsp_poison;
+extern SKILL *gsp_invisibility;
+extern SKILL *gsp_mass_invisibility;
+extern SKILL *gsp_darkness;
+extern SKILL *gsp_haven;
+extern SKILL *gsp_parry;
+extern SKILL *gsp_evade;
+extern SKILL *gsp_shield_block;
+extern SKILL *gsp_dodge;
+extern SKILL *gsp_sleep;
+
 
 extern bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
 extern void mp_hprct_trigger(CHAR_DATA * mob, CHAR_DATA * ch);
@@ -346,11 +367,10 @@ void mob_hit(CHAR_DATA *ch, CHAR_DATA *victim, int dt)
 	}
 
 	if (IS_AFFECTED(ch, AFF_HASTE)
-	    /* || (is_affected(ch, gsn_veil)) */
 	    || (IS_SET(ch->off_flags, OFF_FAST) && !IS_AFFECTED(ch, AFF_SLOW)))
 		one_attack(ch, victim, dt, weapon);
 
-	chance = 50; /* get_skill(ch, gsn_second_attack) / 2; */
+	chance = 50; 
 	if (IS_AFFECTED(ch, AFF_SLOW) && !IS_SET(ch->off_flags, OFF_FAST))
 		chance /= 2;
 
@@ -360,7 +380,7 @@ void mob_hit(CHAR_DATA *ch, CHAR_DATA *victim, int dt)
 			return;
 	}
 
-	chance = 30; /* get_skill(ch, gsn_third_attack) / 4; */
+	chance = 30;
 	if (IS_AFFECTED(ch, AFF_SLOW) && !IS_SET(ch->off_flags, OFF_FAST))
 		chance = 0;
 
@@ -389,7 +409,7 @@ void mob_hit(CHAR_DATA *ch, CHAR_DATA *victim, int dt)
 }
 
 
-static inline void validate_attack_type(int *dt, CHAR_DATA *ch, OBJ_DATA *wield)
+static void validate_attack_type(int *dt, CHAR_DATA *ch, OBJ_DATA *wield)
 {
 	/*
 	 * Figure out the type of damage message.
@@ -404,48 +424,25 @@ static inline void validate_attack_type(int *dt, CHAR_DATA *ch, OBJ_DATA *wield)
 	}
 }
 
-static inline int get_dam_type(CHAR_DATA *ch, int dt, OBJ_DATA *wield)
+static int get_dam_type(CHAR_DATA *ch, int dt, OBJ_DATA *wield)
 {
 	int dam_type = -1;
 
-	if (gsp_tooth_and_claw != NULL && dam_type == gsp_tooth_and_claw->sn) {
-		int number;
+    if (dt < TYPE_HIT) {
+        dam_type = wield != NULL
+               ? attack_table[wield->value[3]].damage
+               : attack_table[ch->dam_type].damage;
+    } else {
+        dam_type = attack_table[dt - TYPE_HIT].damage;
+    }
 
-		number = number_range(1, 4);
-		switch (number) {
-		case 1:
-			dam_type = DAM_OTHER;
-			break;
-		case 2:
-			dam_type = DAM_SLASH;
-			break;
-		case 3:
-			dam_type = DAM_PIERCE;
-			break;
-		case 4:
-			dam_type = DAM_ILLUSION;
-			break;
-		default:
-			dam_type = DAM_BASH;
-			break;
-		}
-	} else {
-		if (dt < TYPE_HIT) {
-			dam_type = wield != NULL
-				   ? attack_table[wield->value[3]].damage
-				   : attack_table[ch->dam_type].damage;
-		} else {
-			dam_type = attack_table[dt - TYPE_HIT].damage;
-		}
-
-		if (dam_type == -1)
-			dam_type = DAM_BASH;
-	}
+    if (dam_type == -1)
+        dam_type = DAM_BASH;
 
 	return dam_type;
 }
 
-inline int lookup_class_table_index(CHAR_DATA *ch)
+int lookup_class_table_index(CHAR_DATA *ch)
 {
 	if (IS_NPC(ch)) {
 		if (IS_SET(ch->act, ACT_WARRIOR))
@@ -776,9 +773,6 @@ bool one_hit(CHAR_DATA *ch, CHAR_DATA *victim, int dt, OBJ_DATA *wield)
 	else if (victim->position < POS_FIGHTING)
 		dam = dam * 3 / 2;
 
-	if (gsp_tooth_and_claw != NULL && dt == gsp_tooth_and_claw->sn)
-		dam = dam * 3 / 2;
-
 	if (wield != NULL) {
 		if (dt == get_skill_number("displace")) {
 			if (wield->value[0] != 2)
@@ -949,9 +943,6 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
 		return 0;
 
 	furniture_check(ch);
-
-	if (is_affected(ch, gsp_veil))
-		dam = (dam * 12) / 10;
 
 	if (IS_AFFECTED(ch, AFF_CALLOUSED))
 		dam = (dam * 11) / 10;
@@ -1481,17 +1472,6 @@ bool check_parry(CHAR_DATA *ch, CHAR_DATA *victim)
 	if (number_percent() >= chance + victim->level - ch->level)
 		return false;
 
-	/* check for supernatural speed */
-	if (is_affected(victim, gsp_supernatural_speed)) {
-		int rush;
-
-		/* get a target percentage */
-		rush = (IS_NPC(ch)) ? 75 : (ch->class == class_lookup("warrior")) ? 65 : 50;
-
-		if (rush < number_percent())
-			return false;
-	}
-
 	act("```^You parry $n's attack.``", ch, NULL, victim, TO_VICT);
 	act("```6$N parries your attack.``", ch, NULL, victim, TO_CHAR);
 
@@ -1577,18 +1557,6 @@ bool check_dodge(CHAR_DATA *ch, CHAR_DATA *victim)
 
 	if (number_percent() >= chance + victim->level - ch->level)
 		return false;
-
-
-	/* check for supernatural speed */
-	if (is_affected(victim, gsp_supernatural_speed)) {
-		int rush;
-
-		/* get a target percentage */
-		rush = (IS_NPC(ch)) ? 75 : (ch->class == class_lookup("warrior")) ? 65 : 50;
-
-		if (rush < number_percent())
-			return false;
-	}
 
 	act("```^You dodge $n's attack.``", ch, NULL, victim, TO_VICT);
 	act("```6$N dodges your attack.``", ch, NULL, victim, TO_CHAR);
@@ -2312,29 +2280,6 @@ void dam_message(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, bool immune)
 			attack = attack_table[0].name;
 		}
 
-		if (dt == gsp_tooth_and_claw->sn) {
-			int number;
-
-			number = number_range(1, 4);
-			switch (number) {
-			case 1:
-				attack = "tail swipe";
-				break;
-			case 2:
-				attack = "claw swipe";
-				break;
-			case 3:
-				attack = "wing buffet";
-				break;
-			case 4:
-				attack = "bite";
-				break;
-			default:
-				attack = "charge";
-				break;
-			}
-		}
-
 		if (immune) {
 			if (victim == NULL) {
 				sprintf(buf1, "$n is unaffected by the %s.", attack);
@@ -2432,9 +2377,6 @@ int max_damage(CHAR_DATA *ch, CHAR_DATA *victim, int dt, int dam)
 				if (!str_cmp(class_table[victim->class].name, "warrior")
 				    || !str_cmp(class_table[victim->class].name, "thief"))
 					value = (value * 3) / 4;
-
-				if (is_affected(ch, gsp_veil))
-					value = (value * 6) / 5;
 			}
 
 			return value;

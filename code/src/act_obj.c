@@ -17,6 +17,10 @@ extern unsigned int parse_unsigned_int(char *string);
 extern void mp_bribe_trigger(CHAR_DATA * mob, CHAR_DATA * ch, long amount);
 extern void mp_give_trigger(CHAR_DATA * mob, CHAR_DATA * ch, OBJ_DATA * obj);
 
+extern SKILL *gsp_poison;
+extern SKILL *gsp_hand_to_hand;
+extern SKILL *gsp_haggle;
+
 /*
  * Local functions.
  */

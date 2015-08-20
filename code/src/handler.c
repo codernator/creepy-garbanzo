@@ -7,6 +7,18 @@
 #include "olc.h"
 #include "interp.h"
 
+extern SKILL *gsp_sword;
+extern SKILL *gsp_dagger;
+extern SKILL *gsp_spear;
+extern SKILL *gsp_mace;
+extern SKILL *gsp_axe;
+extern SKILL *gsp_flail;
+extern SKILL *gsp_whip;
+extern SKILL *gsp_polearm;
+extern SKILL *gsp_hand_to_hand;
+extern SKILL *gsp_plague;
+extern SKILL *gsp_darkness;
+
 
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern void affect_modify(CHAR_DATA * ch, AFFECT_DATA * paf, bool fAdd);

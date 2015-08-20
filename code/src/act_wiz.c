@@ -16,6 +16,9 @@
 DECLARE_DO_FUN(do_grestore);
 DECLARE_DO_FUN(do_rrestore);
 
+extern SKILL *gsp_deft;
+extern SKILL *gsp_dash;
+
 extern long top_mob_index;
 extern long top_obj_index;
 extern bool copyover();

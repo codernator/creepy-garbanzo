@@ -134,7 +134,6 @@ DECLARE_SPELL_FUN(spell_ring_of_fire);          /* added 9/23/96 Bors */
 DECLARE_SPELL_FUN(spell_sanctuary);
 DECLARE_SPELL_FUN(spell_super_speed);
 DECLARE_SPELL_FUN(spell_druid_call);
-DECLARE_SPELL_FUN(spell_anti_magic_aura);
 DECLARE_SPELL_FUN(spell_shocking_grasp);
 DECLARE_SPELL_FUN(spell_shield);
 DECLARE_SPELL_FUN(spell_sleep);

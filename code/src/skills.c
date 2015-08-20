@@ -78,13 +78,6 @@ SKILL *gsp_obless;
 SKILL *gsp_curse;
 SKILL *gsp_frenzy;
 
-/* race skills */
-SKILL *gsp_supernatural_speed;
-SKILL *gsp_tooth_and_claw;
-SKILL *gsp_veil;
-SKILL *gsp_anti_magic_aura;
-SKILL *gsp_dream;
-
 /* room affects */
 SKILL *gsp_haven;
 SKILL *gsp_mana_vortex;
@@ -153,12 +146,6 @@ static const struct skill_resolve_type {
     { "bless", &gsp_bless },
     { "curse", &gsp_curse },
     { "frenzy", &gsp_frenzy },
-
-    /* race skills */
-    { "supernatural speed", &gsp_supernatural_speed },
-    { "tooth and claw", &gsp_tooth_and_claw },
-    { "veil", &gsp_veil },
-    { "anti-magic aura", &gsp_anti_magic_aura },
 
     /* room affects */
     { "haven", &gsp_haven },
@@ -701,7 +688,6 @@ const struct spell_lookup_type spell_lookup_table[] =
     { "sanctuary", spell_sanctuary },
     { "super speed", spell_super_speed },
     { "druid call", spell_druid_call },
-    { "anti magic aura", spell_anti_magic_aura },
     { "shocking grasp", spell_shocking_grasp },
     { "shield", spell_shield },
     { "sleep", spell_sleep },

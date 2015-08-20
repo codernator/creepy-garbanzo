@@ -5,6 +5,12 @@
 #include "recycle.h"
 
 
+extern SKILL *gsp_detect_magic;
+extern SKILL *gsp_faerie_fog;
+extern SKILL *gsp_web;
+extern SKILL *gsp_peek;
+
+
 
 // TODO - used by look
 extern DO_FUN do_exits;
@@ -583,10 +589,6 @@ void stand(CHAR_DATA *ch, OBJ_DATA *on)
     }
 
     // Notify.
-	if (ch->dream != NULL && ch->position != POS_SLEEPING) {
-		send_to_char("Your dreams are interrupted\n\r", ch);
-		ch->dream = NULL;
-	}
 
 	switch (ch->position) {
     default:

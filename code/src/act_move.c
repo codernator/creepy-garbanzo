@@ -12,6 +12,14 @@ extern bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1
 extern bool mp_exit_trigger(CHAR_DATA * ch, int dir);
 extern void mp_greet_trigger(CHAR_DATA * ch);
 
+extern SKILL *gsp_faerie_fog;
+extern SKILL *gsp_invisibility;
+extern SKILL *gsp_mass_invisibility;
+extern SKILL *gsp_sneak;
+extern SKILL *gsp_hide;
+extern SKILL *gsp_darkness;
+extern SKILL *gsp_web;
+
 /***************************************************************************
 *	direction constants
 ***************************************************************************/
@@ -193,12 +201,6 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
 
 		WAIT_STATE(ch, 1);
 		ch->move -= move;
-	}
-
-	if (is_affected(ch, gsp_fear)) {
-		send_to_char("You feel too afraid to move..\n\r", ch);
-		WAIT_STATE(ch, 2);
-		return;
 	}
 
 	if (!IS_AFFECTED(ch, AFF_SNEAK) && ch->invis_level < LEVEL_HERO) {
@@ -1869,13 +1871,6 @@ void do_rest(CHAR_DATA *ch, char *argument)
 		ch->position = POS_RESTING;
 		break;
 	}
-
-	if (ch->dream != NULL && ch->position != POS_SLEEPING) {
-		send_to_char("Your dreams are interrupted\n\r", ch);
-		ch->dream = NULL;
-	}
-
-	return;
 }
 
 

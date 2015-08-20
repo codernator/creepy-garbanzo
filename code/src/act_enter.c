@@ -84,11 +84,6 @@ void do_enter(CHAR_DATA *ch, char *argument)
 			return;
 		}
 
-		if (is_affected(ch, gsp_fear)) {
-			send_to_char("It looks too unstabe for you to enter..\n\r", ch);
-			return;
-		}
-
 		act("$n steps into $p.", ch, portal, NULL, TO_ROOM);
 
 		if (IS_SET(portal->value[2], GATE_NORMAL_EXIT))
