@@ -316,7 +316,6 @@ const struct cmd_type cmd_table[] =
 	{ "memory",	      do_memory,       POS_DEAD,     0,	 LOG_NORMAL, 1 },
 	{ "mwhere",	      do_mwhere,       POS_DEAD,     L5, LOG_NORMAL, 1 },
 	{ "owhere",	      do_owhere,       POS_DEAD,     L5, LOG_NORMAL, 1 },
-	{ "outfit",	      do_outfit,       POS_DEAD,     IM, LOG_ALWAYS, 1 },
 	{ "peace",	      do_peace,	       POS_DEAD,     IM, LOG_NORMAL, 1 },
 	{ "wpeace",	      do_wpeace,       POS_DEAD,     IM, LOG_NORMAL, 1 },
 	{ "penalty",	  do_penalty,      POS_DEAD,     0,	 LOG_NORMAL, 1 },

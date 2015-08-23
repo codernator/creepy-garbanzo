@@ -15,684 +15,682 @@ static char log_buf[MIL];
 
 void nanny(DESCRIPTOR_DATA *d, char *argument)
 {
-	DESCRIPTOR_DATA *d_old;
-	CHAR_DATA *ch;
-	LEARNED *learned;
-	char buf[MSL];
-	char arg[MIL];
-	char *pwdnew;
-	char *p;
-	int class_idx;
-	int race_idx;
-	int weapon_idx;
-	int idx;
-	int rnd;
-	bool found;
-	extern char *help_greeting;
-	char *the_greeting;
+    DESCRIPTOR_DATA *d_old;
+    CHAR_DATA *ch;
+    LEARNED *learned;
+    char buf[MSL];
+    char arg[MIL];
+    char *pwdnew;
+    char *p;
+    int class_idx;
+    int race_idx;
+    int weapon_idx;
+    int idx;
+    int rnd;
+    bool found;
+    extern char *help_greeting;
+    char *the_greeting;
 
-	while (is_space(*argument))
-		argument++;
+    while (is_space(*argument))
+        argument++;
 
-	ch = d->character;
+    ch = d->character;
 
-	switch (d->connected) {
-	default:
-		log_bug("Nanny: bad d->connected %d.", d->connected);
-		close_socket(d);
-		return;
+    switch (d->connected) {
+    default:
+        log_bug("Nanny: bad d->connected %d.", d->connected);
+        close_socket(d);
+        return;
 
-	case CON_GET_ANSI:
-		/* Kyndig: they can only input y or n - else close them */
-		if (argument[0] == '\0') {
-			close_socket(d);
-			return;
-		}
-
-		if ((argument[0] == 'y') || (argument[0] == 'Y'))
-			the_greeting = help_greeting;
-		else
-			the_greeting = help_greeting;
-
-		if (the_greeting[0] == '.')
-			write_to_buffer(d, the_greeting + 1, 0);
-		else
-			write_to_buffer(d, the_greeting, 0);
-		d->connected = CON_GET_NAME;
-		break;
-
-	case CON_GET_NAME:
-		if (argument[0] == '\0') {
-			close_socket(d);
-			return;
-		}
-
-		argument[0] = UPPER(argument[0]);
-		if (!check_parse_name(argument)) {
-			write_to_buffer(d, "Illegal name.  Disconnecting.\n\r", 0);
-			close_socket(d);
-			return;
-		}
-
-		log_string("char name enterred %s", argument);
-
-		found = load_char_obj(d, argument);
-		ch = d->character;
-
-		if (IS_SET(ch->act, PLR_DENY)) {
-			log_string("Denying access to %s@%s.", argument, d->host);
-			write_to_buffer(d, "Boom Biddy Bye Bye.\n\r", 0);
-			close_socket(d);
-			return;
-		}
-
-		if (check_ban(d->host, BAN_PERMIT) && !IS_SET(ch->act, PLR_PERMIT)) {
-			write_to_buffer(d, "Your site has been banned from this mud.   Boom Biddy Bye Bye.\n\r", 0);
-			close_socket(d);
-			return;
-		}
-
-		if (check_reconnect(d, argument, false)) {
-			found = true;
-		} else {
-			if (globalSystemState.wizlock && !IS_IMMORTAL(ch)) {
-				write_to_buffer(d, "The game is wizlocked.\n\r", 0);
-				close_socket(d);
-				return;
-			}
-		}
-
-		if (found) {
-			snprintf(buf, 32, "Password: %s", (char *)echo_off_str);
-			write_to_buffer(d, buf, 0);
-			d->connected = CON_GET_OLD_PASSWORD;
-		} else {
-			/* New player */
-			if (globalSystemState.newlock) {
-				write_to_buffer(d, "The game is newlocked.\n\r", 0);
-				close_socket(d);
-				return;
-			}
-
-			if (check_ban(d->host, BAN_NEWBIES)) {
-				write_to_buffer(d, "New players are not allowed from your site.\n\r", 0);
-				close_socket(d);
-				return;
-			}
-
-			sprintf(buf, "Did I get that right, %s(Y/N)? ", argument);
-			write_to_buffer(d, buf, 0);
-			d->connected = CON_CONFIRM_NEW_NAME;
-		}
-		break;
-
-	case CON_GET_OLD_PASSWORD:
-		write_to_buffer(d, "\n\r", 2);
-
-		if (strcmp(crypt(argument, ch->pcdata->pwd), ch->pcdata->pwd)) {
-			write_to_buffer(d, "Wrong password.  Boom Biddy Bye Bye.\n\r", 0);
-			close_socket(d);
-			return;
-		}
-
-		write_to_buffer(d, (char *)echo_on_str, 0);
-
-		if (check_playing(d, ch->name) || check_reconnect(d, ch->name, true)) {
-			return;
+    case CON_GET_ANSI:
+        /* Kyndig: they can only input y or n - else close them */
+        if (argument[0] == '\0') {
+            close_socket(d);
+            return;
         }
 
-		(void)snprintf(log_buf, MIL, "%s@%s has connected.", ch->name, d->host);
-		log_string(log_buf);
+        if ((argument[0] == 'y') || (argument[0] == 'Y'))
+            the_greeting = help_greeting;
+        else
+            the_greeting = help_greeting;
 
-		wiznet(log_buf, NULL, NULL, WIZ_SITES, 0, get_trust(ch));
-		(void)snprintf(log_buf, MIL, "%s has entered the world.", ch->name);
+        if (the_greeting[0] == '.')
+            write_to_buffer(d, the_greeting + 1, 0);
+        else
+            write_to_buffer(d, the_greeting, 0);
+        d->connected = CON_GET_NAME;
+        break;
 
-		if (IS_SET(ch->act, PLR_LINKDEAD))
-			REMOVE_BIT(ch->act, PLR_LINKDEAD);
+    case CON_GET_NAME:
+        if (argument[0] == '\0') {
+            close_socket(d);
+            return;
+        }
 
-		if (IS_SET(ch->comm, COMM_AFK))
-			REMOVE_BIT(ch->comm, COMM_AFK);
+        argument[0] = UPPER(argument[0]);
+        if (!check_parse_name(argument)) {
+            write_to_buffer(d, "Illegal name.  Disconnecting.\n\r", 0);
+            close_socket(d);
+            return;
+        }
 
-		if (IS_IMMORTAL(ch)) {
-			ch->invis_level = get_trust(ch);
-			do_help(ch, "imotd");
-			d->connected = CON_READ_IMOTD;
-		} else {
-			do_help(ch, "motd");
-			d->connected = CON_READ_MOTD;
-		}
-		break;
+        log_string("char name enterred %s", argument);
 
-	/* RT code for breaking link */
-	case CON_BREAK_CONNECT:
-		switch (*argument) {
-		case 'y':
-		case 'Y': {
+        found = load_char_obj(d, argument);
+        ch = d->character;
+
+        if (IS_SET(ch->act, PLR_DENY)) {
+            log_string("Denying access to %s@%s.", argument, d->host);
+            write_to_buffer(d, "Boom Biddy Bye Bye.\n\r", 0);
+            close_socket(d);
+            return;
+        }
+
+        if (check_ban(d->host, BAN_PERMIT) && !IS_SET(ch->act, PLR_PERMIT)) {
+            write_to_buffer(d, "Your site has been banned from this mud.   Boom Biddy Bye Bye.\n\r", 0);
+            close_socket(d);
+            return;
+        }
+
+        if (check_reconnect(d, argument, false)) {
+            found = true;
+        } else {
+            if (globalSystemState.wizlock && !IS_IMMORTAL(ch)) {
+                write_to_buffer(d, "The game is wizlocked.\n\r", 0);
+                close_socket(d);
+                return;
+            }
+        }
+
+        if (found) {
+            snprintf(buf, 32, "Password: %s", (char *)echo_off_str);
+            write_to_buffer(d, buf, 0);
+            d->connected = CON_GET_OLD_PASSWORD;
+        } else {
+            /* New player */
+            if (globalSystemState.newlock) {
+                write_to_buffer(d, "The game is newlocked.\n\r", 0);
+                close_socket(d);
+                return;
+            }
+
+            if (check_ban(d->host, BAN_NEWBIES)) {
+                write_to_buffer(d, "New players are not allowed from your site.\n\r", 0);
+                close_socket(d);
+                return;
+            }
+
+            sprintf(buf, "Did I get that right, %s(Y/N)? ", argument);
+            write_to_buffer(d, buf, 0);
+            d->connected = CON_CONFIRM_NEW_NAME;
+        }
+        break;
+
+    case CON_GET_OLD_PASSWORD:
+        write_to_buffer(d, "\n\r", 2);
+
+        if (strcmp(crypt(argument, ch->pcdata->pwd), ch->pcdata->pwd)) {
+            write_to_buffer(d, "Wrong password.  Boom Biddy Bye Bye.\n\r", 0);
+            close_socket(d);
+            return;
+        }
+
+        write_to_buffer(d, (char *)echo_on_str, 0);
+
+        if (check_playing(d, ch->name) || check_reconnect(d, ch->name, true)) {
+            return;
+        }
+
+        (void)snprintf(log_buf, MIL, "%s@%s has connected.", ch->name, d->host);
+        log_string(log_buf);
+
+        wiznet(log_buf, NULL, NULL, WIZ_SITES, 0, get_trust(ch));
+        (void)snprintf(log_buf, MIL, "%s has entered the world.", ch->name);
+
+        if (IS_SET(ch->act, PLR_LINKDEAD))
+            REMOVE_BIT(ch->act, PLR_LINKDEAD);
+
+        if (IS_SET(ch->comm, COMM_AFK))
+            REMOVE_BIT(ch->comm, COMM_AFK);
+
+        if (IS_IMMORTAL(ch)) {
+            ch->invis_level = get_trust(ch);
+            do_help(ch, "imotd");
+            d->connected = CON_READ_IMOTD;
+        } else {
+            do_help(ch, "motd");
+            d->connected = CON_READ_MOTD;
+        }
+        break;
+
+    /* RT code for breaking link */
+    case CON_BREAK_CONNECT:
+        switch (*argument) {
+        case 'y':
+        case 'Y': {
             DESCRIPTOR_DATA *dpending;
 
             dpending = descriptor_iterator_start(&descriptor_empty_filter);
             while ((d_old = dpending) != NULL) {
                 dpending = descriptor_iterator(d_old, &descriptor_empty_filter);
 
-				if (d_old == d || d_old->character == NULL)
-					continue;
+                if (d_old == d || d_old->character == NULL)
+                    continue;
 
-				if (str_cmp(ch->name, d_old->original ? d_old->original->name : d_old->character->name))
-					continue;
+                if (str_cmp(ch->name, d_old->original ? d_old->original->name : d_old->character->name))
+                    continue;
 
-				close_socket(d_old);
-			}
-
-			if (check_reconnect(d, ch->name, true)) {
-				return;
+                close_socket(d_old);
             }
 
-			write_to_buffer(d, "Reconnect attempt failed.\n\rName: ", 0);
-			if (d->character != NULL) {
-				free_char(d->character);
-				d->character = NULL;
-			}
+            if (check_reconnect(d, ch->name, true)) {
+                return;
+            }
 
-			d->connected = CON_GET_NAME;
-			break;
+            write_to_buffer(d, "Reconnect attempt failed.\n\rName: ", 0);
+            if (d->character != NULL) {
+                free_char(d->character);
+                d->character = NULL;
+            }
+
+            d->connected = CON_GET_NAME;
+            break;
         }
         case 'n':
         case 'N':
-			write_to_buffer(d, "Name: ", 0);
-			if (d->character != NULL) {
-				free_char(d->character);
-				d->character = NULL;
-			}
-			d->connected = CON_GET_NAME;
-			break;
+            write_to_buffer(d, "Name: ", 0);
+            if (d->character != NULL) {
+                free_char(d->character);
+                d->character = NULL;
+            }
+            d->connected = CON_GET_NAME;
+            break;
 
-		default:
-			write_to_buffer(d, "Please type Y or N? Or I if you are an idiot.", 0);
-			break;
-		}
-		break;
+        default:
+            write_to_buffer(d, "Please type Y or N? Or I if you are an idiot.", 0);
+            break;
+        }
+        break;
 
-	case CON_CONFIRM_NEW_NAME:
-		switch (*argument) {
-		case 'y':
-		case 'Y':
-			sprintf(buf, "New character.\n\rGive me a password for %s: %s", ch->name, (char *)echo_off_str);
-			write_to_buffer(d, buf, 0);
-			d->connected = CON_GET_NEW_PASSWORD;
-			break;
+    case CON_CONFIRM_NEW_NAME:
+        switch (*argument) {
+        case 'y':
+        case 'Y':
+            sprintf(buf, "New character.\n\rGive me a password for %s: %s", ch->name, (char *)echo_off_str);
+            write_to_buffer(d, buf, 0);
+            d->connected = CON_GET_NEW_PASSWORD;
+            break;
 
-		case 'n':
-		case 'N':
-			write_to_buffer(d, "Ok, what IS it, then? ", 0);
-			free_char(d->character);
-			d->character = NULL;
-			d->connected = CON_GET_NAME;
-			break;
+        case 'n':
+        case 'N':
+            write_to_buffer(d, "Ok, what IS it, then? ", 0);
+            free_char(d->character);
+            d->character = NULL;
+            d->connected = CON_GET_NAME;
+            break;
 
-		default:
-			write_to_buffer(d, "Please type Yes or No? ", 0);
-			break;
-		}
-		break;
+        default:
+            write_to_buffer(d, "Please type Yes or No? ", 0);
+            break;
+        }
+        break;
 
-	case CON_GET_NEW_PASSWORD:
-		write_to_buffer(d, "\n\r", 2);
+    case CON_GET_NEW_PASSWORD:
+        write_to_buffer(d, "\n\r", 2);
 
-		if (strlen(argument) < 5) {
-			write_to_buffer(d, "Password must be at least five characters long.\n\rPassword: ", 0);
-			return;
-		}
+        if (strlen(argument) < 5) {
+            write_to_buffer(d, "Password must be at least five characters long.\n\rPassword: ", 0);
+            return;
+        }
 
-		pwdnew = crypt(argument, ch->name);
-		for (p = pwdnew; *p != '\0'; p++) {
-			if (*p == '~') {
-				write_to_buffer(d, "New password not acceptable, try again.\n\rPassword: ", 0);
-				return;
-			}
-		}
+        pwdnew = crypt(argument, ch->name);
+        for (p = pwdnew; *p != '\0'; p++) {
+            if (*p == '~') {
+                write_to_buffer(d, "New password not acceptable, try again.\n\rPassword: ", 0);
+                return;
+            }
+        }
 
-		free_string(ch->pcdata->pwd);
-		ch->pcdata->pwd = str_dup(pwdnew);
-		write_to_buffer(d, "Please retype password: ", 0);
-		d->connected = CON_CONFIRM_NEW_PASSWORD;
-		break;
+        free_string(ch->pcdata->pwd);
+        ch->pcdata->pwd = str_dup(pwdnew);
+        write_to_buffer(d, "Please retype password: ", 0);
+        d->connected = CON_CONFIRM_NEW_PASSWORD;
+        break;
 
-	case CON_CONFIRM_NEW_PASSWORD:
-		write_to_buffer(d, "\n\r", 2);
+    case CON_CONFIRM_NEW_PASSWORD:
+        write_to_buffer(d, "\n\r", 2);
 
-		if (strcmp(crypt(argument, ch->pcdata->pwd), ch->pcdata->pwd)) {
-			write_to_buffer(d, "Passwords don't match.\n\rRetype password: ", 0);
-			d->connected = CON_GET_NEW_PASSWORD;
-			return;
-		}
+        if (strcmp(crypt(argument, ch->pcdata->pwd), ch->pcdata->pwd)) {
+            write_to_buffer(d, "Passwords don't match.\n\rRetype password: ", 0);
+            d->connected = CON_GET_NEW_PASSWORD;
+            return;
+        }
 
-		write_to_buffer(d, (char *)echo_on_str, 0);
-		write_to_buffer(d, "The following races are available:\n\r  ", 0);
-		for (race_idx = 1; race_table[race_idx].name != NULL; race_idx++) {
-			if (!race_table[race_idx].pc_race)
-				break;
-			write_to_buffer(d, race_table[race_idx].name, 0);
-			write_to_buffer(d, " ", 1);
-		}
-
-		write_to_buffer(d, "\n\r", 0);
-		write_to_buffer(d, "What is your race(help for more information)? ", 0);
-		d->connected = CON_GET_NEW_RACE;
-		break;
-
-	case CON_GET_NEW_RACE:
-		one_argument(argument, arg);
-
-		if (!strcmp(arg, "help")) {
-			argument = one_argument(argument, arg);
-			if (argument[0] == '\0')
-				do_help(ch, "race");
-			else
-				do_help(ch, argument);
-			write_to_buffer(d, "What is your race(help for more information)? ", 0);
-			break;
-		}
-
-		race_idx = race_lookup(argument);
-
-		if (race_idx == 0 || !race_table[race_idx].pc_race) {
-			write_to_buffer(d, "That is not a valid race.\n\r", 0);
-			write_to_buffer(d, "The following races are available:\n\r  ", 0);
-			for (race_idx = 1; race_table[race_idx].name != NULL; race_idx++) {
-				if (!race_table[race_idx].pc_race)
-					break;
-				write_to_buffer(d, race_table[race_idx].name, 0);
-				write_to_buffer(d, " ", 1);
-			}
-			write_to_buffer(d, "\n\r", 0);
-			write_to_buffer(d, "What is your race?(help for more information) ", 0);
-			break;
-		}
-
-		ch->race = race_idx;
-		/* initialize stats */
-		for (idx = 0; idx < MAX_STATS; idx++)
-			ch->perm_stat[idx] = pc_race_table[race_idx].stats[idx];
-
-		ch->affected_by = ch->affected_by | race_table[race_idx].aff;
-		ch->imm_flags = ch->imm_flags | race_table[race_idx].imm;
-		ch->res_flags = ch->res_flags | race_table[race_idx].res;
-		ch->vuln_flags = ch->vuln_flags | race_table[race_idx].vuln;
-		ch->form = race_table[race_idx].form;
-		ch->parts = race_table[race_idx].parts;
-		ch->pcdata->points = pc_race_table[race_idx].points;
-		ch->size = pc_race_table[race_idx].size;
-
-		/* add skills */
-		for (idx = 0; idx < 5; idx++) {
-			if (pc_race_table[race_idx].skills[idx] == NULL)
-				break;
-
-			learned = create_learned_skill(pc_race_table[race_idx].skills[idx], 75);
-			if (learned != NULL) {
-				add_learned_skill(ch, learned);
-			} else {
-				learned = create_learned_group(pc_race_table[race_idx].skills[idx]);
-				if (learned != NULL)
-					add_learned_group(ch, learned);
-			}
-		}
-
-		write_to_buffer(d, "\n\rWhat is your sex(M/F)? ", 0);
-		d->connected = CON_GET_NEW_SEX;
-		break;
-
-	case CON_GET_NEW_SEX:
-		switch (argument[0]) {
-		case 'm':
-		case 'M':
-			ch->sex = SEX_MALE;
-			ch->pcdata->true_sex = SEX_MALE;
-			break;
-		case 'f':
-		case 'F':
-			ch->sex = SEX_FEMALE;
-			ch->pcdata->true_sex = SEX_FEMALE;
-			break;
-		default:
-			write_to_buffer(d, "\n\rThat's not a sex.\n\rWhat IS your sex? ", 0);
-			return;
-		}
-
-		write_to_buffer(d, "\n\r", 0);
-		do_help(ch, "class");
-		write_to_buffer(d, "Select a class: ", 0);
-		d->connected = CON_GET_NEW_CLASS;
-		break;
-
-	case CON_GET_NEW_CLASS:
-		one_argument(argument, arg);
-
-		if (!strcmp(arg, "help")) {
-			argument = one_argument(argument, arg);
-			if (argument[0] == '\0')
-				do_help(ch, "class");
-			else
-				do_help(ch, argument);
-			write_to_buffer(d, "What is your class? ", 0);
-			break;
-		}
-
-		class_idx = class_lookup(argument);
-
-		if (class_idx == -1) {
-			write_to_buffer(d, "\n\rThat's not a class.\n\rWhat IS your class? ", 0);
-			return;
-		}
-
-		if (!(class_table[class_idx].canCreate)) {
-			write_to_buffer(d, "\n\rThat class is not available.\n\rWhat IS your class? ", 0);
-			return;
-		}
-
-		ch->class = class_idx;
-		ch->alignment = class_table[class_idx].dAlign; /* New!!! Added by Monrick */
-
-		(void)snprintf(log_buf, MIL, "%s@%s new player.", ch->name, d->host);
-		log_string(log_buf);
-		wiznet("Newbie alert!  $N sighted.", ch, NULL, WIZ_NEWBIE, 0, 0);
-		wiznet(log_buf, NULL, NULL, WIZ_SITES, 0, get_trust(ch));
-
-		if ((learned = create_learned_group("rom basics")) != NULL)
-			add_learned_group(ch, learned);
-		if ((learned = create_learned_group(class_table[ch->class].base_group)) != NULL)
-			add_learned_group(ch, learned);
-
-		write_to_buffer(d, "\n\r", 2);
-
-		list_group_costs(ch);
-		write_to_buffer(d, "You already have the following skills:\n\r", 0);
-
-		do_help(ch, "menu choice");
-		d->connected = CON_GEN_GROUPS;
-		break;
-
-	case CON_PICK_WEAPON:
-		write_to_buffer(d, "\n\r", 2);
-
-		weapon_idx = weapon_lookup(argument);
-		if (weapon_idx == -1 || (learned = get_learned(ch, weapon_table[weapon_idx].name)) == NULL) {
-			write_to_buffer(d, "That's not a valid selection. Choices are:\n\r", 0);
-			buf[0] = '\0';
-			for (idx = 0; weapon_table[idx].name != NULL; idx++) {
-				if ((learned = get_learned(ch, weapon_table[idx].name)) != NULL) {
-					strcat(buf, weapon_table[idx].name);
-					strcat(buf, " ");
-				}
-			}
-
-			strcat(buf, "\n\rYour choice? ");
-			write_to_buffer(d, buf, 0);
-			return;
-		}
-
-		if ((learned = create_learned_skill(weapon_table[weapon_idx].name, 40)) != NULL)
-			add_learned_skill(ch, learned);
-		write_to_buffer(d, "\n\r", 2);
-		do_help(ch, "motd");
-		d->connected = CON_READ_MOTD;
-		break;
-
-	case CON_GEN_GROUPS:
-	{
-		bool found;
-
-		send_to_char("\n\r", ch);
-
-		if (!str_cmp(argument, "done")) {
-			sprintf(buf, "Creation points: %d\n\r", ch->pcdata->points);
-			send_to_char(buf, ch);
-			sprintf(buf, "Experience per level: %d\n\r", exp_per_level(ch, ch->pcdata->points));
-
-			send_to_char(buf, ch);
-			buf[0] = '\0';
-			found = false;
-			for (idx = 0; weapon_table[idx].name != NULL; idx++) {
-				if ((learned = get_learned(ch, weapon_table[idx].name)) != NULL) {
-					if (!found) {
-						write_to_buffer(d, "\n\r", 2);
-						write_to_buffer(d, "Please pick a weapon from the following choices:\n\r", 0);
-						found = true;
-					}
-
-					strcat(buf, weapon_table[idx].name);
-					strcat(buf, " ");
-				}
-			}
-
-			if (found) {
-				strcat(buf, "\n\rYour choice? ");
-				write_to_buffer(d, buf, 0);
-				d->connected = CON_PICK_WEAPON;
-				break;
-			} else {
-				write_to_buffer(d, "You must choose at least one weapon skill.\n\r", 0);
-			}
-		}
-
-		if (!parse_gen_groups(ch, argument))
-			send_to_char("Choices are: list,learned,premise,add,drop,inform,help, and done.\n\r", ch);
-
-		do_help(ch, "menu choice");
-		break;
-	}
-	case CON_READ_IMOTD:
-		write_to_buffer(d, "\n\r", 2);
-		do_help(ch, "motd");
-		d->connected = CON_READ_MOTD;
-		break;
-
-	case CON_READ_MOTD:
-		if (ch->pcdata == NULL || ch->pcdata->pwd[0] == '\0') {
-			write_to_buffer(d, "Warning! Null password!\n\r", 0);
-			write_to_buffer(d, "Please report old password with bug.\n\r", 0);
-			write_to_buffer(d, "Type 'password null <new password>' to fix.\n\r", 0);
-		}
-
-		if (ch->played < 0)
-			ch->played = 0;
-
-		write_to_buffer(d, "\n\rMake sure you know the rules!  Refresh your memory regularly!\n\r\n\r", 0);
-		ch->next = char_list;
-		char_list = ch;
-
-		d->connected = CON_PLAYING;
-		reset_char(ch);
-
-		if (ch->level == 0) {
-			ch->perm_stat[class_table[ch->class].attr_prime] += 3;
-
-			ch->level = 1;
-			ch->exp = exp_per_level(ch, ch->pcdata->points);
-			ch->hit = ch->max_hit;
-			ch->mana = ch->max_mana;
-			ch->move = ch->max_move;
-
-			ch->pcdata->train = 3;
-			ch->pcdata->practice = 5;
-			ch->gold = 10000;
-
-			sprintf(buf, "is `&new`` to this realm.");
-			set_title(ch, buf);
-
-			do_outfit(ch, "");
-			obj_to_char(create_object(get_obj_index(OBJ_VNUM_MAP), 0), ch);
-
-			char_to_room(ch, get_room_index(ROOM_VNUM_SCHOOL));
-			rnd = number_range(0, 9);
-
-			switch (rnd) {
-			case (0):
-				do_deathcry(ch, "Oh dear. Oswald will be rather perturbed. I am dead.");
-				break;
-			case (1):
-				do_deathcry(ch, "`2*`@gleep`2*`! I'm DEAD.");
-				break;
-			case (2):
-				do_deathcry(ch, "Oh NO! Not again!!");
-				break;
-			case (3):
-				do_deathcry(ch, "The weasels! THE WEASELS!!! AAAGH!!");
-				break;
-            case (4):
-                do_deathcry(ch, "I see a light.");
+        write_to_buffer(d, (char *)echo_on_str, 0);
+        write_to_buffer(d, "The following races are available:\n\r  ", 0);
+        for (race_idx = 1; race_table[race_idx].name != NULL; race_idx++) {
+            if (!race_table[race_idx].pc_race)
                 break;
-			default:
-				do_deathcry(ch, "AAAAAAAAAAAAAAAAAARGH! I'm DEAD!!");
-			}
+            write_to_buffer(d, race_table[race_idx].name, 0);
+            write_to_buffer(d, " ", 1);
+        }
 
-			send_to_char("\n\r", ch);
-			do_help(ch, "NEWBIE INFO");
-			send_to_char("\n\r", ch);
-		} else if (ch->in_room != NULL) {
-			char_to_room(ch, ch->in_room);
-		} else if (IS_IMMORTAL(ch)) {
-			char_to_room(ch, get_room_index(ROOM_VNUM_CHAT));
-		} else {
-			char_to_room(ch, get_room_index(ROOM_VNUM_TEMPLE));
-		}
+        write_to_buffer(d, "\n\r", 0);
+        write_to_buffer(d, "What is your race(help for more information)? ", 0);
+        d->connected = CON_GET_NEW_RACE;
+        break;
 
-		if (ch->pcdata->killer_time != 0)
-			ch->pcdata->killer_time = time(NULL);
+    case CON_GET_NEW_RACE:
+        one_argument(argument, arg);
 
-		if (ch->pcdata->thief_time != 0)
-			ch->pcdata->thief_time = time(NULL);
+        if (!strcmp(arg, "help")) {
+            argument = one_argument(argument, arg);
+            if (argument[0] == '\0')
+                do_help(ch, "race");
+            else
+                do_help(ch, argument);
+            write_to_buffer(d, "What is your race(help for more information)? ", 0);
+            break;
+        }
 
-		act("$n has entered the game.", ch, NULL, NULL, TO_ROOM);
+        race_idx = race_lookup(argument);
 
-		do_look(ch, "auto");
+        if (race_idx == 0 || !race_table[race_idx].pc_race) {
+            write_to_buffer(d, "That is not a valid race.\n\r", 0);
+            write_to_buffer(d, "The following races are available:\n\r  ", 0);
+            for (race_idx = 1; race_table[race_idx].name != NULL; race_idx++) {
+                if (!race_table[race_idx].pc_race)
+                    break;
+                write_to_buffer(d, race_table[race_idx].name, 0);
+                write_to_buffer(d, " ", 1);
+            }
+            write_to_buffer(d, "\n\r", 0);
+            write_to_buffer(d, "What is your race?(help for more information) ", 0);
+            break;
+        }
 
-		wiznet("$N has left real life behind.", ch, NULL, WIZ_LOGINS, WIZ_SITES, get_trust(ch));
+        ch->race = race_idx;
+        /* initialize stats */
+        for (idx = 0; idx < MAX_STATS; idx++)
+            ch->perm_stat[idx] = pc_race_table[race_idx].stats[idx];
 
-		if (ch->pet != NULL) {
-			char_to_room(ch->pet, ch->in_room);
-			act("$n has entered the game.", ch->pet, NULL, NULL, TO_ROOM);
-		}
+        ch->affected_by = ch->affected_by | race_table[race_idx].aff;
+        ch->imm_flags = ch->imm_flags | race_table[race_idx].imm;
+        ch->res_flags = ch->res_flags | race_table[race_idx].res;
+        ch->vuln_flags = ch->vuln_flags | race_table[race_idx].vuln;
+        ch->form = race_table[race_idx].form;
+        ch->parts = race_table[race_idx].parts;
+        ch->pcdata->points = pc_race_table[race_idx].points;
+        ch->size = pc_race_table[race_idx].size;
 
-		if (ch->level > MAX_LEVEL)
-			ch->trust = 1;
+        /* add skills */
+        for (idx = 0; idx < 5; idx++) {
+            if (pc_race_table[race_idx].skills[idx] == NULL)
+                break;
 
-		do_unread(ch, "");
-		break;
-	}
+            learned = create_learned_skill(pc_race_table[race_idx].skills[idx], 75);
+            if (learned != NULL) {
+                add_learned_skill(ch, learned);
+            } else {
+                learned = create_learned_group(pc_race_table[race_idx].skills[idx]);
+                if (learned != NULL)
+                    add_learned_group(ch, learned);
+            }
+        }
 
-	return;
+        write_to_buffer(d, "\n\rWhat is your sex(M/F)? ", 0);
+        d->connected = CON_GET_NEW_SEX;
+        break;
+
+    case CON_GET_NEW_SEX:
+        switch (argument[0]) {
+        case 'm':
+        case 'M':
+            ch->sex = SEX_MALE;
+            ch->pcdata->true_sex = SEX_MALE;
+            break;
+        case 'f':
+        case 'F':
+            ch->sex = SEX_FEMALE;
+            ch->pcdata->true_sex = SEX_FEMALE;
+            break;
+        default:
+            write_to_buffer(d, "\n\rThat's not a sex.\n\rWhat IS your sex? ", 0);
+            return;
+        }
+
+        write_to_buffer(d, "\n\r", 0);
+        do_help(ch, "class");
+        write_to_buffer(d, "Select a class: ", 0);
+        d->connected = CON_GET_NEW_CLASS;
+        break;
+
+    case CON_GET_NEW_CLASS:
+        one_argument(argument, arg);
+
+        if (!strcmp(arg, "help")) {
+            argument = one_argument(argument, arg);
+            if (argument[0] == '\0')
+                do_help(ch, "class");
+            else
+                do_help(ch, argument);
+            write_to_buffer(d, "What is your class? ", 0);
+            break;
+        }
+
+        class_idx = class_lookup(argument);
+
+        if (class_idx == -1) {
+            write_to_buffer(d, "\n\rThat's not a class.\n\rWhat IS your class? ", 0);
+            return;
+        }
+
+        if (!(class_table[class_idx].canCreate)) {
+            write_to_buffer(d, "\n\rThat class is not available.\n\rWhat IS your class? ", 0);
+            return;
+        }
+
+        ch->class = class_idx;
+        ch->alignment = class_table[class_idx].dAlign; /* New!!! Added by Monrick */
+
+        (void)snprintf(log_buf, MIL, "%s@%s new player.", ch->name, d->host);
+        log_string(log_buf);
+        wiznet("Newbie alert!  $N sighted.", ch, NULL, WIZ_NEWBIE, 0, 0);
+        wiznet(log_buf, NULL, NULL, WIZ_SITES, 0, get_trust(ch));
+
+        if ((learned = create_learned_group("rom basics")) != NULL)
+            add_learned_group(ch, learned);
+        if ((learned = create_learned_group(class_table[ch->class].base_group)) != NULL)
+            add_learned_group(ch, learned);
+
+        write_to_buffer(d, "\n\r", 2);
+
+        list_group_costs(ch);
+        write_to_buffer(d, "You already have the following skills:\n\r", 0);
+
+        do_help(ch, "menu choice");
+        d->connected = CON_GEN_GROUPS;
+        break;
+
+    case CON_PICK_WEAPON:
+        write_to_buffer(d, "\n\r", 2);
+
+        weapon_idx = weapon_lookup(argument);
+        if (weapon_idx == -1 || (learned = get_learned(ch, weapon_table[weapon_idx].name)) == NULL) {
+            write_to_buffer(d, "That's not a valid selection. Choices are:\n\r", 0);
+            buf[0] = '\0';
+            for (idx = 0; weapon_table[idx].name != NULL; idx++) {
+                if ((learned = get_learned(ch, weapon_table[idx].name)) != NULL) {
+                    strcat(buf, weapon_table[idx].name);
+                    strcat(buf, " ");
+                }
+            }
+
+            strcat(buf, "\n\rYour choice? ");
+            write_to_buffer(d, buf, 0);
+            return;
+        }
+
+        if ((learned = create_learned_skill(weapon_table[weapon_idx].name, 40)) != NULL)
+            add_learned_skill(ch, learned);
+        write_to_buffer(d, "\n\r", 2);
+        do_help(ch, "motd");
+        d->connected = CON_READ_MOTD;
+        break;
+
+    case CON_GEN_GROUPS:
+    {
+        bool found;
+
+        send_to_char("\n\r", ch);
+
+        if (!str_cmp(argument, "done")) {
+            sprintf(buf, "Creation points: %d\n\r", ch->pcdata->points);
+            send_to_char(buf, ch);
+            sprintf(buf, "Experience per level: %d\n\r", exp_per_level(ch, ch->pcdata->points));
+
+            send_to_char(buf, ch);
+            buf[0] = '\0';
+            found = false;
+            for (idx = 0; weapon_table[idx].name != NULL; idx++) {
+                if ((learned = get_learned(ch, weapon_table[idx].name)) != NULL) {
+                    if (!found) {
+                        write_to_buffer(d, "\n\r", 2);
+                        write_to_buffer(d, "Please pick a weapon from the following choices:\n\r", 0);
+                        found = true;
+                    }
+
+                    strcat(buf, weapon_table[idx].name);
+                    strcat(buf, " ");
+                }
+            }
+
+            if (found) {
+                strcat(buf, "\n\rYour choice? ");
+                write_to_buffer(d, buf, 0);
+                d->connected = CON_PICK_WEAPON;
+                break;
+            } else {
+                write_to_buffer(d, "You must choose at least one weapon skill.\n\r", 0);
+            }
+        }
+
+        if (!parse_gen_groups(ch, argument))
+            send_to_char("Choices are: list,learned,premise,add,drop,inform,help, and done.\n\r", ch);
+
+        do_help(ch, "menu choice");
+        break;
+    }
+    case CON_READ_IMOTD:
+        write_to_buffer(d, "\n\r", 2);
+        do_help(ch, "motd");
+        d->connected = CON_READ_MOTD;
+        break;
+
+    case CON_READ_MOTD:
+        if (ch->pcdata == NULL || ch->pcdata->pwd[0] == '\0') {
+            write_to_buffer(d, "Warning! Null password!\n\r", 0);
+            write_to_buffer(d, "Please report old password with bug.\n\r", 0);
+            write_to_buffer(d, "Type 'password null <new password>' to fix.\n\r", 0);
+        }
+
+        if (ch->played < 0)
+            ch->played = 0;
+
+        write_to_buffer(d, "\n\rMake sure you know the rules!  Refresh your memory regularly!\n\r\n\r", 0);
+        ch->next = char_list;
+        char_list = ch;
+
+        d->connected = CON_PLAYING;
+        reset_char(ch);
+
+        if (ch->level == 0) {
+            ch->perm_stat[class_table[ch->class].attr_prime] += 3;
+
+            ch->level = 1;
+            ch->exp = exp_per_level(ch, ch->pcdata->points);
+            ch->hit = ch->max_hit;
+            ch->mana = ch->max_mana;
+            ch->move = ch->max_move;
+
+            ch->pcdata->train = 3;
+            ch->pcdata->practice = 5;
+            ch->gold = 10000;
+
+            set_title(ch, "is `&new`` to this realm.");
+
+            obj_to_char(create_object(get_obj_index(OBJ_VNUM_MAP), 0), ch);
+
+            char_to_room(ch, get_room_index(ROOM_VNUM_SCHOOL));
+            rnd = number_range(0, 9);
+
+            switch (rnd) {
+            case (0):
+                do_deathcry(ch, "Oh dear. Oswald will be rather perturbed. I am dead.");
+                break;
+            case (1):
+                do_deathcry(ch, "`2*`@gleep`2*`! I'm DEAD.");
+                break;
+            case (2):
+                do_deathcry(ch, "Oh NO! Not again!!");
+                break;
+            case (3):
+                do_deathcry(ch, "The weasels! THE WEASELS!!! AAAGH!!");
+                break;
+                        case (4):
+                            do_deathcry(ch, "I see a light.");
+                            break;
+            default:
+                do_deathcry(ch, "AAAAAAAAAAAAAAAAAARGH! I'm DEAD!!");
+            }
+
+            send_to_char("\n\r", ch);
+            do_help(ch, "NEWBIE INFO");
+            send_to_char("\n\r", ch);
+        } else if (ch->in_room != NULL) {
+            char_to_room(ch, ch->in_room);
+        } else if (IS_IMMORTAL(ch)) {
+            char_to_room(ch, get_room_index(ROOM_VNUM_CHAT));
+        } else {
+            char_to_room(ch, get_room_index(ROOM_VNUM_TEMPLE));
+        }
+
+        if (ch->pcdata->killer_time != 0)
+            ch->pcdata->killer_time = time(NULL);
+
+        if (ch->pcdata->thief_time != 0)
+            ch->pcdata->thief_time = time(NULL);
+
+        act("$n has entered the game.", ch, NULL, NULL, TO_ROOM);
+
+        do_look(ch, "auto");
+
+        wiznet("$N has left real life behind.", ch, NULL, WIZ_LOGINS, WIZ_SITES, get_trust(ch));
+
+        if (ch->pet != NULL) {
+            char_to_room(ch->pet, ch->in_room);
+            act("$n has entered the game.", ch->pet, NULL, NULL, TO_ROOM);
+        }
+
+        if (ch->level > MAX_LEVEL)
+            ch->trust = 1;
+
+        do_unread(ch, "");
+        break;
+    }
+
+    return;
 }
 
 /***************************************************************************
-*	check_parse_name
+*    check_parse_name
 *
-*	check a name to see if it is acceptable
+*    check a name to see if it is acceptable
 ***************************************************************************/
 bool check_parse_name(char *name)
 {
-	extern MOB_INDEX_DATA *mob_index_hash[MAX_KEY_HASH];
-	MOB_INDEX_DATA *pMobIndex;
-	int hash;
-	char *pc;
+    extern MOB_INDEX_DATA *mob_index_hash[MAX_KEY_HASH];
+    MOB_INDEX_DATA *pMobIndex;
+    int hash;
+    char *pc;
 
-	/*
-	 * Reserved words.
-	 */
-	if (is_name(name, "all auto immortal imp self someone something the you your none socket who anonymous fuck")) {
-		return false;
+    /*
+     * Reserved words.
+     */
+    if (is_name(name, "all auto immortal imp self someone something the you your none socket who anonymous fuck")) {
+        return false;
     }
 
-	if (!str_infix(name, "fuck")
-	        || !str_infix(name, "shit")
-	        || !str_infix(name, "frog")
-	        || !str_infix(name, "cum")
-	        || !str_infix(name, "lick")
-	        || !str_infix(name, "george")
-	        || !str_infix(name, "kerry")
-	        || !str_infix(name, "jim")
-	        || !str_infix(name, "twat")
-	        || !str_infix(name, "bert")
-	        || !str_infix(name, "death")
-	        || !str_infix(name, "kill")
-	        || !str_infix(name, "satan")
-	        || !str_infix(name, "pink")
-	        || !str_infix(name, "blade")
-	        || !str_infix(name, "suck")
-	        || !str_infix(name, "ihate")
-	        || !str_infix(name, "pussy")
-	        || !str_infix(name, "uoykcuf")
-	        || !str_infix(name, "kcuf")
-	        || !str_infix(name, "monger")
-	        || !str_infix(name, "tard")
-	        || !str_infix(name, "idiot")
-	        || !str_infix(name, "cunt")
-	        || !str_infix(name, "crap")
-	        || !str_infix(name, "penis")
-	        || !str_infix(name, "asshole")
-	        || !str_infix(name, "vagina")
-	        || !str_cmp(name, "ass")) {
-		return false;
+    if (!str_infix(name, "fuck")
+            || !str_infix(name, "shit")
+            || !str_infix(name, "frog")
+            || !str_infix(name, "cum")
+            || !str_infix(name, "lick")
+            || !str_infix(name, "george")
+            || !str_infix(name, "kerry")
+            || !str_infix(name, "jim")
+            || !str_infix(name, "twat")
+            || !str_infix(name, "bert")
+            || !str_infix(name, "death")
+            || !str_infix(name, "kill")
+            || !str_infix(name, "satan")
+            || !str_infix(name, "pink")
+            || !str_infix(name, "blade")
+            || !str_infix(name, "suck")
+            || !str_infix(name, "ihate")
+            || !str_infix(name, "pussy")
+            || !str_infix(name, "uoykcuf")
+            || !str_infix(name, "kcuf")
+            || !str_infix(name, "monger")
+            || !str_infix(name, "tard")
+            || !str_infix(name, "idiot")
+            || !str_infix(name, "cunt")
+            || !str_infix(name, "crap")
+            || !str_infix(name, "penis")
+            || !str_infix(name, "asshole")
+            || !str_infix(name, "vagina")
+            || !str_cmp(name, "ass")) {
+        return false;
     }
 
 
     /*
      * Length restrictions.
      */
-	if (strlen(name) < 2 || strlen(name) > MAX_NAME_LENGTH) {
-		return false;
+    if (strlen(name) < 2 || strlen(name) > MAX_NAME_LENGTH) {
+        return false;
     }
 
     /*
      * Alphanumerics only.
      */
-	for (pc = name; *pc != '\0'; pc++) {
-		if (!is_alpha(*pc))
-			return false;
-	}
+    for (pc = name; *pc != '\0'; pc++) {
+        if (!is_alpha(*pc))
+            return false;
+    }
 
-	/*
-	 * Edwin's been here too. JR -- 10/15/00
-	 *
-	 * Check names of people playing. Yes, this is necessary for multiple
-	 * newbies with the same name (thanks Saro)
-	 */
-	{
-		int count = 0;
+    /*
+     * Edwin's been here too. JR -- 10/15/00
+     *
+     * Check names of people playing. Yes, this is necessary for multiple
+     * newbies with the same name (thanks Saro)
+     */
+    {
+        int count = 0;
         DESCRIPTOR_DATA *d, *dpending;
 
         dpending = descriptor_iterator_start(&descriptor_empty_filter);
         while ((d = dpending) != NULL) {
             dpending = descriptor_iterator(d, &descriptor_empty_filter);
 
-			if (d->connected != CON_PLAYING 
+            if (d->connected != CON_PLAYING 
                     && d->character != NULL
                     && d->character->name
-			        && d->character->name[0] 
+                    && d->character->name[0] 
                     && !str_cmp(d->character->name, name)) {
-				count++;
-				close_socket(d);
-			}
-		}
-		if (count) {
-			(void)snprintf(log_buf, MIL, "Double newbie alert (%s)", name);
-			wiznet(log_buf, NULL, NULL, WIZ_LOGINS, 0, 0);
-			return false;
-		}
-	}
+                count++;
+                close_socket(d);
+            }
+        }
+        if (count) {
+            (void)snprintf(log_buf, MIL, "Double newbie alert (%s)", name);
+            wiznet(log_buf, NULL, NULL, WIZ_LOGINS, 0, 0);
+            return false;
+        }
+    }
 
     /*
      * Prevent players from naming themselves after mobs.
      */
-	for (hash = 0; hash < MAX_KEY_HASH; hash++) {
-		for (pMobIndex = mob_index_hash[hash]; pMobIndex != NULL; pMobIndex = pMobIndex->next) {
-			if (is_name(name, pMobIndex->player_name)) {
-				return false;
+    for (hash = 0; hash < MAX_KEY_HASH; hash++) {
+        for (pMobIndex = mob_index_hash[hash]; pMobIndex != NULL; pMobIndex = pMobIndex->next) {
+            if (is_name(name, pMobIndex->player_name)) {
+                return false;
             }
         }
-	}
+    }
 
-	return true;
+    return true;
 }
 
 
@@ -702,44 +700,44 @@ bool check_parse_name(char *name)
  */
 bool check_reconnect(DESCRIPTOR_DATA *d, char *name, bool reconnect)
 {
-	CHAR_DATA *ch;
+    CHAR_DATA *ch;
 
-	for (ch = char_list; ch != NULL; ch = ch->next) {
-		if (!IS_NPC(ch) && (!reconnect || ch->desc == NULL) && !str_cmp(d->character->name, ch->name)) {
-			if (reconnect == false) {
-				free_string(d->character->pcdata->pwd);
-				d->character->pcdata->pwd = str_dup(ch->pcdata->pwd);
-			} else {
-				OBJ_DATA *obj;
+    for (ch = char_list; ch != NULL; ch = ch->next) {
+        if (!IS_NPC(ch) && (!reconnect || ch->desc == NULL) && !str_cmp(d->character->name, ch->name)) {
+            if (reconnect == false) {
+                free_string(d->character->pcdata->pwd);
+                d->character->pcdata->pwd = str_dup(ch->pcdata->pwd);
+            } else {
+                OBJ_DATA *obj;
 
-				free_char(d->character);
-				d->character = ch;
-				ch->desc = d;
-				ch->timer = 0;
+                free_char(d->character);
+                d->character = ch;
+                ch->desc = d;
+                ch->timer = 0;
 
-				send_to_char("Reconnecting. Type replay to see missed tells.\n\r", ch);
-				do_unread(ch, NULL);
+                send_to_char("Reconnecting. Type replay to see missed tells.\n\r", ch);
+                do_unread(ch, NULL);
 
-				act("$n has reconnected.", ch, NULL, NULL, TO_ROOM);
+                act("$n has reconnected.", ch, NULL, NULL, TO_ROOM);
 
-				if ((obj = get_eq_char(ch, WEAR_LIGHT)) != NULL
-				    && obj->item_type == ITEM_LIGHT
-				    && obj->value[2] != 0
-				    && ch->in_room->light > 0)
-					--ch->in_room->light;
+                if ((obj = get_eq_char(ch, WEAR_LIGHT)) != NULL
+                    && obj->item_type == ITEM_LIGHT
+                    && obj->value[2] != 0
+                    && ch->in_room->light > 0)
+                    --ch->in_room->light;
 
-				(void)snprintf(log_buf, MIL, "%s@%s reconnected.", ch->name, d->host);
-				log_string(log_buf);
-				wiznet("$N groks the fullness of $S link.", ch, NULL, WIZ_LINKS, 0, 0);
+                (void)snprintf(log_buf, MIL, "%s@%s reconnected.", ch->name, d->host);
+                log_string(log_buf);
+                wiznet("$N groks the fullness of $S link.", ch, NULL, WIZ_LINKS, 0, 0);
 
-				REMOVE_BIT(ch->act, PLR_LINKDEAD);
-				d->connected = CON_PLAYING;
-			}
-			return true;
-		}
-	}
+                REMOVE_BIT(ch->act, PLR_LINKDEAD);
+                d->connected = CON_PLAYING;
+            }
+            return true;
+        }
+    }
 
-	return false;
+    return false;
 }
 
 
@@ -750,48 +748,48 @@ bool check_reconnect(DESCRIPTOR_DATA *d, char *name, bool reconnect)
 bool check_playing(DESCRIPTOR_DATA *d, char *name)
 {
     DESCRIPTOR_DATA *dpending;
-	DESCRIPTOR_DATA *dold;
+    DESCRIPTOR_DATA *dold;
 
     dpending = descriptor_iterator_start(&descriptor_empty_filter);
     while ((dold = dpending) != NULL) {
         dpending = descriptor_iterator(dold, &descriptor_empty_filter);
 
-		if (dold != d
+        if (dold != d
                 && dold->character != NULL
                 && dold->connected != CON_GET_NAME
                 && dold->connected != CON_GET_OLD_PASSWORD
                 && !str_cmp(name, (dold->original) ? dold->original->name : dold->character->name)) {
-			write_to_buffer(d, "That character is already playing.\n\r", 0);
-			write_to_buffer(d, "Do you wish to connect anyway(Y/N)?", 0);
-			d->connected = CON_BREAK_CONNECT;
-			return true;
-		}
-	}
+            write_to_buffer(d, "That character is already playing.\n\r", 0);
+            write_to_buffer(d, "Do you wish to connect anyway(Y/N)?", 0);
+            d->connected = CON_BREAK_CONNECT;
+            return true;
+        }
+    }
 
-	return false;
+    return false;
 }
 
 
 /***************************************************************************
-*	stop_idling
+*    stop_idling
 *
-*	bring a character back from the void if they have
-*	poofed off to limbo
+*    bring a character back from the void if they have
+*    poofed off to limbo
 ***************************************************************************/
 void stop_idling(CHAR_DATA *ch)
 {
-	if (ch == NULL
-	    || ch->desc == NULL
-	    || ch->desc->connected != CON_PLAYING
-	    || ch->was_in_room == NULL
-	    || ch->in_room != get_room_index(ROOM_VNUM_LIMBO))
-		return;
+    if (ch == NULL
+        || ch->desc == NULL
+        || ch->desc->connected != CON_PLAYING
+        || ch->was_in_room == NULL
+        || ch->in_room != get_room_index(ROOM_VNUM_LIMBO))
+        return;
 
-	ch->timer = 0;
-	char_from_room(ch);
-	char_to_room(ch, ch->was_in_room);
-	ch->was_in_room = NULL;
-	act("$n has returned from the void.", ch, NULL, NULL, TO_ROOM);
+    ch->timer = 0;
+    char_from_room(ch);
+    char_to_room(ch, ch->was_in_room);
+    ch->was_in_room = NULL;
+    act("$n has returned from the void.", ch, NULL, NULL, TO_ROOM);
 
-	return;
+    return;
 }

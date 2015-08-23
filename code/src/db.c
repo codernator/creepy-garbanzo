@@ -2312,7 +2312,7 @@ OBJ_DATA *create_object(OBJ_INDEX_DATA *obj_idx, int level)
 	if (obj_idx == NULL) {
 		bug("Create_object: NULL obj_idx.", 0);
 		raise(SIGABRT);
-        return NULL;
+		return NULL;
 	}
 
 	obj = new_object();
