@@ -39,6 +39,16 @@
 *  all the previous coders who released their source code.                *
 *                                                                         *
 ***************************************************************************/
+/***************************************************************************
+ *                                                                         *
+ *  MOBprograms for ROM 2.4 v0.98g (C) M.Nylander 1996                     *
+ *  Based on MERC 2.2 MOBprograms concept by N'Atas-ha.                    *
+ *  Written and adapted to ROM 2.4 by                                      *
+ *          Markku Nylander (markku.nylander@uta.fi)                       *
+ *  This code may be copied and distributed as per the ROM license.        *
+ *                                                                         *
+ ***************************************************************************/
+
 * -- Furey  26 Jan 1993
 /***************************************************************************
 *       Teleport code chunk, written by Eo. Completed on 08-22-1996        *
@@ -60,6 +70,7 @@
 *    Written by Dalamar      *
 *  for Bad Trip MUD 4/29/09  *
 *****************************/
+/** Thanks to Morgenes for the bug fix here! (evil/good item zap) */
 
 /*  Nickname by Spaceboy    */
 

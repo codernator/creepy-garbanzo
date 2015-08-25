@@ -202,7 +202,6 @@ struct weather_data {
 #define CON_GET_NEW_RACE        6
 #define CON_GET_NEW_SEX         7
 #define CON_GET_NEW_CLASS       8
-#define CON_GET_ALIGNMENT       9
 #define CON_DEFAULT_CHOICE      10
 #define CON_GEN_GROUPS          11
 #define CON_PICK_WEAPON         12
@@ -330,7 +329,6 @@ struct class_type {
  /* New Structure Parts, Added by Monrick 3/31/2008 */
  bool canCreate;     /* class can be chosen at creation */
  char * shortDesc;   /* description for help file */
- int dAlign;         /* default alignment */
 };
 
 struct item_type {
@@ -547,7 +545,6 @@ struct kill_data {
 #define ACT_MAGE                (R)
 #define ACT_THIEF               (S)
 #define ACT_WARRIOR             (T)
-#define ACT_NOALIGN             (U)
 #define ACT_NOPURGE             (V)
 #define ACT_OUTDOORS            (W)
 #define ACT_INDOORS             (Y)
@@ -597,7 +594,6 @@ struct kill_data {
 #define OFF_TRIP                (N)
 #define OFF_CRUSH               (O)
 #define ASSIST_ALL              (P)
-#define ASSIST_ALIGN            (Q)
 #define ASSIST_RACE             (R)
 #define ASSIST_PLAYERS          (S)
 #define ASSIST_GUARD            (T)
@@ -743,19 +739,15 @@ struct kill_data {
 /* Bits for 'affected_by'. * Used in #MOBILES. */
 #define AFF_POLLEN              (A)
 #define AFF_INVISIBLE           (B)
-#define AFF_DETECT_EVIL         (C)
 #define AFF_DETECT_INVIS        (D)
 #define AFF_DETECT_MAGIC        (E)
 #define AFF_DRUID_CALL          (F)
-#define AFF_DETECT_GOOD         (G)
 #define AFF_SANCTUARY           (H)
 #define AFF_FAERIE_FIRE         (I)
 #define AFF_INFRARED            (J)
 #define AFF_CURSE               (K)
 #define AFF_BLIND               (L)
 #define AFF_POISON              (M)
-#define AFF_PROTECT_EVIL        (N)
-#define AFF_PROTECT_GOOD        (O)
 #define AFF_SNEAK               (P)
 #define AFF_HIDE                (Q)
 #define AFF_SLEEP               (R)
@@ -895,14 +887,10 @@ struct kill_data {
 #define ITEM_HUM                (B)
 #define ITEM_DARK               (C)
 #define ITEM_LOCK               (D)
-#define ITEM_EVIL               (E)
 #define ITEM_INVIS              (F)
 #define ITEM_MAGIC              (G)
 #define ITEM_NODROP             (H)
 #define ITEM_BLESS              (I)
-#define ITEM_ANTI_GOOD          (J)
-#define ITEM_ANTI_EVIL          (K)
-#define ITEM_ANTI_NEUTRAL       (L)
 #define ITEM_NOREMOVE           (M)
 #define ITEM_INVENTORY          (N)
 #define ITEM_NOPURGE            (O)
@@ -1287,7 +1275,6 @@ struct mob_index_data {
  char *  description;
  long  act;
  long  affected_by;
- int  alignment;
  int  level;
  int  hitroll;
  int  hit[3];
@@ -1405,7 +1392,6 @@ struct char_data {
     int carry_weight;
     int carry_number;
     int saving_throw;
-    int alignment;
     int hitroll;
     int damroll;
     long armor[4];
@@ -1866,9 +1852,6 @@ enum e_harvey_proctor_is { hp_pissed_off, hp_irritated, hp_off_his_rocker, hp_ag
 #define IS_AFFECTED(ch, sn)     (IS_SET((ch)->affected_by, (sn)))
 
 #define GET_AGE(ch)             ((int)(17 + ((ch)->played + globalSystemState.current_time - (ch)->logon) / 72000))
-#define IS_GOOD(ch)             (ch->alignment >= 350)
-#define IS_EVIL(ch)             (ch->alignment <= -350)
-#define IS_NEUTRAL(ch)          (!IS_GOOD(ch) && !IS_EVIL(ch))
 #define IS_LINK_DEAD(ch)        ((!IS_NPC(ch)) && ch->desc == NULL)
 #define IS_AWAKE(ch)            (ch->position > POS_SLEEPING)
 

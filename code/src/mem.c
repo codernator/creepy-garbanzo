@@ -1,15 +1,15 @@
 /***************************************************************************
-*  File: mem.c                                                            *
-*                                                                         *
-*  Much time and thought has gone into this software and you are          *
-*  benefitting.  We hope that you share your changes too.  What goes      *
-*  around, comes around.                                                  *
-*                                                                         *
-*  This code was freely distributed with the The Isles 1.1 source code,   *
-*  and has been used here for OLC - OLC would not be what it is without   *
-*  all the previous coders who released their source code.                *
-*                                                                         *
-***************************************************************************/
+ *  File: mem.c                                                            *
+ *                                                                         *
+ *  Much time and thought has gone into this software and you are          *
+ *  benefitting.  We hope that you share your changes too.  What goes      *
+ *  around, comes around.                                                  *
+ *                                                                         *
+ *  This code was freely distributed with the The Isles 1.1 source code,   *
+ *  and has been used here for OLC - OLC would not be what it is without   *
+ *  all the previous coders who released their source code.                *
+ *                                                                         *
+ ***************************************************************************/
 #include <stdio.h>
 #include "merc.h"
 
@@ -46,183 +46,183 @@ void free_mprog(MPROG_LIST * mp);
 
 RESET_DATA *new_reset_data(void)
 {
-	RESET_DATA *reset;
+    RESET_DATA *reset;
 
-	if (!reset_free) {
-		reset = alloc_perm((unsigned int)sizeof(*reset));
-		top_reset++;
-	} else {
-		reset = reset_free;
-		reset_free = reset_free->next;
-	}
+    if (!reset_free) {
+	reset = alloc_perm((unsigned int)sizeof(*reset));
+	top_reset++;
+    } else {
+	reset = reset_free;
+	reset_free = reset_free->next;
+    }
 
-	reset->next = NULL;
-	reset->command = 'X';
-	reset->arg1 = 0;
-	reset->arg2 = 0;
-	reset->arg3 = 0;
-	reset->arg4 = 0;
+    reset->next = NULL;
+    reset->command = 'X';
+    reset->arg1 = 0;
+    reset->arg2 = 0;
+    reset->arg3 = 0;
+    reset->arg4 = 0;
 
-	return reset;
+    return reset;
 }
 
 
 
 void free_reset_data(RESET_DATA *reset)
 {
-	reset->next = reset_free;
-	reset_free = reset;
-	return;
+    reset->next = reset_free;
+    reset_free = reset;
+    return;
 }
 
 
 
 AREA_DATA *new_area(void)
 {
-	AREA_DATA *pArea;
-	char buf[MIL];
+    AREA_DATA *pArea;
+    char buf[MIL];
 
-	if (!area_free) {
-		pArea = alloc_perm((unsigned int)sizeof(*pArea));
-		top_area++;
-	} else {
-		pArea = area_free;
-		area_free = area_free->next;
-	}
+    if (!area_free) {
+	pArea = alloc_perm((unsigned int)sizeof(*pArea));
+	top_area++;
+    } else {
+	pArea = area_free;
+	area_free = area_free->next;
+    }
 
-	pArea->next = NULL;
-	pArea->name = str_dup("New area");
-	pArea->area_flags = AREA_ADDED;
-	pArea->security = 1;
-	pArea->builders = str_dup("None");
-	pArea->min_vnum = 0;
-	pArea->max_vnum = 0;
-	pArea->age = 0;
-	pArea->nplayer = 0;
-	pArea->empty = true;
+    pArea->next = NULL;
+    pArea->name = str_dup("New area");
+    pArea->area_flags = AREA_ADDED;
+    pArea->security = 1;
+    pArea->builders = str_dup("None");
+    pArea->min_vnum = 0;
+    pArea->max_vnum = 0;
+    pArea->age = 0;
+    pArea->nplayer = 0;
+    pArea->empty = true;
 
-	pArea->vnum = top_area - 1;
+    pArea->vnum = top_area - 1;
 
-	sprintf(buf, "area%ld.are", pArea->vnum);
-	pArea->file_name = str_dup(buf);
+    sprintf(buf, "area%ld.are", pArea->vnum);
+    pArea->file_name = str_dup(buf);
 
-	return pArea;
+    return pArea;
 }
 
 
 
 void free_area(AREA_DATA *pArea)
 {
-	free_string(pArea->name);
-	free_string(pArea->file_name);
-	free_string(pArea->builders);
-	free_string(pArea->credits);
+    free_string(pArea->name);
+    free_string(pArea->file_name);
+    free_string(pArea->builders);
+    free_string(pArea->credits);
 
-	pArea->next = area_free->next;
-	area_free = pArea;
-	return;
+    pArea->next = area_free->next;
+    area_free = pArea;
+    return;
 }
 
 
 
 EXIT_DATA *new_exit(void)
 {
-	EXIT_DATA *exit;
+    EXIT_DATA *exit;
 
-	if (!exit_free) {
-		exit = alloc_perm((unsigned int)sizeof(*exit));
-		top_exit++;
-	} else {
-		exit = exit_free;
-		exit_free = exit_free->next;
-	}
+    if (!exit_free) {
+	exit = alloc_perm((unsigned int)sizeof(*exit));
+	top_exit++;
+    } else {
+	exit = exit_free;
+	exit_free = exit_free->next;
+    }
 
-	exit->u1.to_room = NULL;                  /* ROM OLC */
-	exit->next = NULL;
-/*  exit->vnum         =   0;                        ROM OLC */
-	exit->exit_info = 0;
-	exit->key = 0;
-	exit->keyword = &str_empty[0];
-	exit->description = &str_empty[0];
-	exit->rs_flags = 0;
+    exit->u1.to_room = NULL;                  /* ROM OLC */
+    exit->next = NULL;
+    /*  exit->vnum         =   0;                        ROM OLC */
+    exit->exit_info = 0;
+    exit->key = 0;
+    exit->keyword = &str_empty[0];
+    exit->description = &str_empty[0];
+    exit->rs_flags = 0;
 
-	return exit;
+    return exit;
 }
 
 
 
 void free_exit(EXIT_DATA *exit)
 {
-	free_string(exit->keyword);
-	free_string(exit->description);
+    free_string(exit->keyword);
+    free_string(exit->description);
 
-	exit->next = exit_free;
-	exit_free = exit;
-	return;
+    exit->next = exit_free;
+    exit_free = exit;
+    return;
 }
 
 
 ROOM_INDEX_DATA *new_room_index(void)
 {
-	ROOM_INDEX_DATA *room;
-	int door;
+    ROOM_INDEX_DATA *room;
+    int door;
 
-	if (!room_index_free) {
-		room = alloc_perm((unsigned int)sizeof(*room));
-		top_room++;
-	} else {
-		room = room_index_free;
-		room_index_free = room_index_free->next;
-	}
+    if (!room_index_free) {
+	room = alloc_perm((unsigned int)sizeof(*room));
+	top_room++;
+    } else {
+	room = room_index_free;
+	room_index_free = room_index_free->next;
+    }
 
-	room->next = NULL;
-	room->people = NULL;
-	room->contents = NULL;
-	room->extra_descr = NULL;
-	room->area = NULL;
-	room->affected = NULL;
+    room->next = NULL;
+    room->people = NULL;
+    room->contents = NULL;
+    room->extra_descr = NULL;
+    room->area = NULL;
+    room->affected = NULL;
 
-	for (door = 0; door < MAX_DIR; door++)
-		room->exit[door] = NULL;
+    for (door = 0; door < MAX_DIR; door++)
+	room->exit[door] = NULL;
 
-	room->name = &str_empty[0];
-	room->description = &str_empty[0];
-	room->owner = &str_empty[0];
-	room->vnum = 0;
-	room->room_flags = 0;
-	room->light = 0;
-	room->sector_type = 0;
-	room->heal_rate = 100;
-	room->mana_rate = 100;
+    room->name = &str_empty[0];
+    room->description = &str_empty[0];
+    room->owner = &str_empty[0];
+    room->vnum = 0;
+    room->room_flags = 0;
+    room->light = 0;
+    room->sector_type = 0;
+    room->heal_rate = 100;
+    room->mana_rate = 100;
 
-	return room;
+    return room;
 }
 
 
 
 void free_room_index(ROOM_INDEX_DATA *room)
 {
-	EXTRA_DESCR_DATA *extra;
-	RESET_DATA *reset;
-	long door;
+    EXTRA_DESCR_DATA *extra;
+    RESET_DATA *reset;
+    long door;
 
-	free_string(room->name);
-	free_string(room->description);
-	free_string(room->owner);
+    free_string(room->name);
+    free_string(room->description);
+    free_string(room->owner);
 
-	for (door = 0; door < MAX_DIR; door++)
-		if (room->exit[door])
-			free_exit(room->exit[door]);
+    for (door = 0; door < MAX_DIR; door++)
+	if (room->exit[door])
+	    free_exit(room->exit[door]);
 
-	for (extra = room->extra_descr; extra; extra = extra->next)
-		free_extra_descr(extra);
+    for (extra = room->extra_descr; extra; extra = extra->next)
+	free_extra_descr(extra);
 
-	for (reset = room->reset_first; reset; reset = reset->next)
-		free_reset_data(reset);
+    for (reset = room->reset_first; reset; reset = reset->next)
+	free_reset_data(reset);
 
-	room->next = room_index_free;
-	room_index_free = room;
-	return;
+    room->next = room_index_free;
+    room_index_free = room;
+    return;
 }
 
 extern AFFECT_DATA *affect_free;
@@ -230,209 +230,208 @@ extern AFFECT_DATA *affect_free;
 
 SHOP_DATA *new_shop(void)
 {
-	SHOP_DATA *shop;
-	int buy;
+    SHOP_DATA *shop;
+    int buy;
 
-	if (!shop_free) {
-		shop = alloc_perm((unsigned int)sizeof(*shop));
-		top_shop++;
-	} else {
-		shop = shop_free;
-		shop_free = shop_free->next;
-	}
+    if (!shop_free) {
+	shop = alloc_perm((unsigned int)sizeof(*shop));
+	top_shop++;
+    } else {
+	shop = shop_free;
+	shop_free = shop_free->next;
+    }
 
-	shop->next = NULL;
-	shop->keeper = 0;
+    shop->next = NULL;
+    shop->keeper = 0;
 
-	for (buy = 0; buy < MAX_TRADE; buy++)
-		shop->buy_type[buy] = 0;
+    for (buy = 0; buy < MAX_TRADE; buy++)
+	shop->buy_type[buy] = 0;
 
-	shop->profit_buy = 100;
-	shop->profit_sell = 100;
-	shop->open_hour = 0;
-	shop->close_hour = 23;
+    shop->profit_buy = 100;
+    shop->profit_sell = 100;
+    shop->open_hour = 0;
+    shop->close_hour = 23;
 
-	return shop;
+    return shop;
 }
 
 
 
 void free_shop(SHOP_DATA *shop)
 {
-	shop->next = shop_free;
-	shop_free = shop;
-	return;
+    shop->next = shop_free;
+    shop_free = shop;
+    return;
 }
 
 
 
 OBJ_INDEX_DATA *new_obj_index(void)
 {
-	OBJ_INDEX_DATA *obj;
-	int value;
+    OBJ_INDEX_DATA *obj;
+    int value;
 
-	if (!obj_index_free) {
-		obj = alloc_perm((unsigned int)sizeof(*obj));
-		top_obj_index++;
-	} else {
-		obj = obj_index_free;
-		obj_index_free = obj_index_free->next;
-	}
+    if (!obj_index_free) {
+	obj = alloc_perm((unsigned int)sizeof(*obj));
+	top_obj_index++;
+    } else {
+	obj = obj_index_free;
+	obj_index_free = obj_index_free->next;
+    }
 
-	obj->next = NULL;
-	obj->extra_descr = NULL;
-	obj->affected = NULL;
-	obj->area = NULL;
-	obj->name = str_dup("no name");
-	obj->short_descr = str_dup("(no short description)");
-	obj->description = str_dup("(no description)");
-	obj->vnum = 0;
-	obj->item_type = ITEM_TRASH;
-	obj->extra_flags = 0;
-	obj->extra2_flags = 0;
-	obj->wear_flags = 0;
-	obj->count = 0;
-	obj->weight = 0;
-	obj->cost = 0;
-	obj->material = str_dup("unknown");             /* ROM */
-	obj->condition = 100;                           /* ROM */
+    obj->next = NULL;
+    obj->extra_descr = NULL;
+    obj->affected = NULL;
+    obj->area = NULL;
+    obj->name = str_dup("no name");
+    obj->short_descr = str_dup("(no short description)");
+    obj->description = str_dup("(no description)");
+    obj->vnum = 0;
+    obj->item_type = ITEM_TRASH;
+    obj->extra_flags = 0;
+    obj->extra2_flags = 0;
+    obj->wear_flags = 0;
+    obj->count = 0;
+    obj->weight = 0;
+    obj->cost = 0;
+    obj->material = str_dup("unknown");             /* ROM */
+    obj->condition = 100;                           /* ROM */
 
-	for (value = 0; value < 5; value++)             /* 5 - ROM */
-		obj->value[value] = 0;
+    for (value = 0; value < 5; value++)             /* 5 - ROM */
+	obj->value[value] = 0;
 
-	obj->new_format = true;    /* ROM */
+    obj->new_format = true;    /* ROM */
 
-	return obj;
+    return obj;
 }
 
 
 
 void free_obj_index(OBJ_INDEX_DATA *obj)
 {
-	EXTRA_DESCR_DATA *extra;
-	AFFECT_DATA *paf;
+    EXTRA_DESCR_DATA *extra;
+    AFFECT_DATA *paf;
 
-	free_string(obj->name);
-	free_string(obj->short_descr);
-	free_string(obj->description);
+    free_string(obj->name);
+    free_string(obj->short_descr);
+    free_string(obj->description);
 
-	for (paf = obj->affected; paf; paf = paf->next)
-		free_affect(paf);
+    for (paf = obj->affected; paf; paf = paf->next)
+	free_affect(paf);
 
-	for (extra = obj->extra_descr; extra; extra = extra->next)
-		free_extra_descr(extra);
+    for (extra = obj->extra_descr; extra; extra = extra->next)
+	free_extra_descr(extra);
 
-	obj->next = obj_index_free;
-	obj_index_free = obj;
-	return;
+    obj->next = obj_index_free;
+    obj_index_free = obj;
+    return;
 }
 
 
 
 MOB_INDEX_DATA *new_mob_index(void)
 {
-	MOB_INDEX_DATA *mob;
+    MOB_INDEX_DATA *mob;
 
-	if (!mob_index_free) {
-		mob = alloc_perm((unsigned int)sizeof(*mob));
-		top_mob_index++;
-	} else {
-		mob = mob_index_free;
-		mob_index_free = mob_index_free->next;
-	}
+    if (!mob_index_free) {
+	mob = alloc_perm((unsigned int)sizeof(*mob));
+	top_mob_index++;
+    } else {
+	mob = mob_index_free;
+	mob_index_free = mob_index_free->next;
+    }
 
-	mob->next = NULL;
-	mob->shop = NULL;
-	mob->area = NULL;
-	mob->player_name = str_dup("no name");
-	mob->short_descr = str_dup("(no short description)");
-	mob->long_descr = str_dup("(no long description)\n\r");
-	mob->description = &str_empty[0];
-	mob->vnum = 0;
-	mob->count = 0;
-	mob->killed = 0;
-	mob->sex = 0;
-	mob->level = 0;
-	mob->act = ACT_IS_NPC;
-	mob->affected_by = 0;
-	mob->alignment = 0;
-	mob->hitroll = 0;
-	mob->race = race_lookup("human");
-	mob->form = 0;
-	mob->parts = 0;
-	mob->imm_flags = 0;
-	mob->res_flags = 0;
-	mob->vuln_flags = 0;
-	mob->material = str_dup("unknown");
-	mob->off_flags = 0;
-	mob->size = SIZE_MEDIUM;
-	mob->ac[AC_PIERCE] = 0;
-	mob->ac[AC_BASH] = 0;
-	mob->ac[AC_SLASH] = 0;
-	mob->ac[AC_EXOTIC] = 0;
-	mob->hit[DICE_NUMBER] = 0;
-	mob->hit[DICE_TYPE] = 0;
-	mob->hit[DICE_BONUS] = 0;
-	mob->mana[DICE_NUMBER] = 0;
-	mob->mana[DICE_TYPE] = 0;
-	mob->mana[DICE_BONUS] = 0;
-	mob->damage[DICE_NUMBER] = 0;
-	mob->damage[DICE_TYPE] = 0;
-	mob->damage[DICE_NUMBER] = 0;
-	mob->start_pos = POS_STANDING;
-	mob->default_pos = POS_STANDING;
-	mob->wealth = 0;
+    mob->next = NULL;
+    mob->shop = NULL;
+    mob->area = NULL;
+    mob->player_name = str_dup("no name");
+    mob->short_descr = str_dup("(no short description)");
+    mob->long_descr = str_dup("(no long description)\n\r");
+    mob->description = &str_empty[0];
+    mob->vnum = 0;
+    mob->count = 0;
+    mob->killed = 0;
+    mob->sex = 0;
+    mob->level = 0;
+    mob->act = ACT_IS_NPC;
+    mob->affected_by = 0;
+    mob->hitroll = 0;
+    mob->race = race_lookup("human");
+    mob->form = 0;
+    mob->parts = 0;
+    mob->imm_flags = 0;
+    mob->res_flags = 0;
+    mob->vuln_flags = 0;
+    mob->material = str_dup("unknown");
+    mob->off_flags = 0;
+    mob->size = SIZE_MEDIUM;
+    mob->ac[AC_PIERCE] = 0;
+    mob->ac[AC_BASH] = 0;
+    mob->ac[AC_SLASH] = 0;
+    mob->ac[AC_EXOTIC] = 0;
+    mob->hit[DICE_NUMBER] = 0;
+    mob->hit[DICE_TYPE] = 0;
+    mob->hit[DICE_BONUS] = 0;
+    mob->mana[DICE_NUMBER] = 0;
+    mob->mana[DICE_TYPE] = 0;
+    mob->mana[DICE_BONUS] = 0;
+    mob->damage[DICE_NUMBER] = 0;
+    mob->damage[DICE_TYPE] = 0;
+    mob->damage[DICE_NUMBER] = 0;
+    mob->start_pos = POS_STANDING;
+    mob->default_pos = POS_STANDING;
+    mob->wealth = 0;
 
-	mob->new_format = true;         /* ROM */
+    mob->new_format = true;         /* ROM */
 
-	return mob;
+    return mob;
 }
 
 
 
 void free_mob_index(MOB_INDEX_DATA *mob)
 {
-	free_string(mob->player_name);
-	free_string(mob->short_descr);
-	free_string(mob->long_descr);
-	free_string(mob->description);
-	free_mprog(mob->mprogs);
+    free_string(mob->player_name);
+    free_string(mob->short_descr);
+    free_string(mob->long_descr);
+    free_string(mob->description);
+    free_mprog(mob->mprogs);
 
-	free_shop(mob->shop);
+    free_shop(mob->shop);
 
-	mob->next = mob_index_free;
-	mob_index_free = mob;
-	return;
+    mob->next = mob_index_free;
+    mob_index_free = mob;
+    return;
 }
 
 static MPROG_CODE *mpcode_free;
 
 MPROG_CODE *new_mpcode(void)
 {
-	MPROG_CODE *mpcode;
+    MPROG_CODE *mpcode;
 
-	if (!mpcode_free) {
-		mpcode = alloc_perm((unsigned int)sizeof(*mpcode));
-		top_mprog_index++;
-	} else {
-		mpcode = mpcode_free;
-		mpcode_free = mpcode_free->next;
-	}
+    if (!mpcode_free) {
+	mpcode = alloc_perm((unsigned int)sizeof(*mpcode));
+	top_mprog_index++;
+    } else {
+	mpcode = mpcode_free;
+	mpcode_free = mpcode_free->next;
+    }
 
-	mpcode->vnum = 0;
-	mpcode->comment = str_dup("");
-	mpcode->code = str_dup("");
-	mpcode->next = NULL;
+    mpcode->vnum = 0;
+    mpcode->comment = str_dup("");
+    mpcode->code = str_dup("");
+    mpcode->next = NULL;
 
-	return mpcode;
+    return mpcode;
 }
 
 void free_mpcode(MPROG_CODE *mpcode)
 {
-	free_string(mpcode->comment);
-	free_string(mpcode->code);
+    free_string(mpcode->comment);
+    free_string(mpcode->code);
 
-	mpcode->next = mpcode_free;
-	mpcode_free = mpcode;
-	return;
+    mpcode->next = mpcode_free;
+    mpcode_free = mpcode;
+    return;
 }

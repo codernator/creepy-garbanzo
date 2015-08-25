@@ -249,7 +249,7 @@ const struct class_type class_table[MAX_CLASS] =
 		true,
 		"Mage basics", "maMagege default",
 		0.8f, 18.0f, 0.9f, 17.0f,
-		true, "Caster, Fast casting, destructive and defensive", 0
+		true, "Caster, Fast casting, destructive and defensive"
 	},
 	{
 		"Cleric", "Cle", STAT_WIS, OBJ_VNUM_SCHOOL_MACE,
@@ -259,7 +259,7 @@ const struct class_type class_table[MAX_CLASS] =
 		true,
 		"Cleric basics", "cleric default",
 		0.9f, 12.0f, 0.9f, 15.0f,
-		true, "Holy god worshipers, beneficial, healing", 0
+		true, "Holy god worshipers, beneficial, healing"
 	},
 	{
 		"Thief", "Thi", STAT_DEX, OBJ_VNUM_SCHOOL_DAGGER,
@@ -269,7 +269,7 @@ const struct class_type class_table[MAX_CLASS] =
 		false,
 		"thief basics", "thief default",
 		0.8f, 15.0f, 0.9f, 12.0f,
-		true, "Melee-based attacks, deceptive and quick", 0
+		true, "Melee-based attacks, deceptive and quick"
 	},
 	{
 		"Warrior", "War", STAT_STR, OBJ_VNUM_SCHOOL_SWORD,
@@ -279,7 +279,7 @@ const struct class_type class_table[MAX_CLASS] =
 		false,
 		"warrior basics", "warrior default",
 		1.0f, 10.0f, 1.0f, 12.0f,
-		true, "Aggressive and tough, melee and defensive", 0
+		true, "Aggressive and tough, melee and defensive"
 	}
 };
 

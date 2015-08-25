@@ -529,10 +529,9 @@ void show_mob_stats(CHAR_DATA *ch, char *argument)
 		printf_to_char(ch, " Gold in Bank: %d  Silver in Bank: %d\n\r",
 			       victim->pcdata->gold_in_bank, victim->pcdata->silver_in_bank);
 
-	printf_to_char(ch, "Lv: %d  Class: %s  Align: %d  Gold: %ld  Silver: %ld  Exp: %d\n\r",
+	printf_to_char(ch, "Lv: %d  Class: %s  Gold: %ld  Silver: %ld  Exp: %d\n\r",
 		       victim->level,
 		       IS_NPC(victim) ? "mobile" : class_table[victim->class].name,
-		       victim->alignment,
 		       victim->gold, victim->silver, victim->exp);
 
 	if (!IS_NPC(victim)) {

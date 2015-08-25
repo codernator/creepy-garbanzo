@@ -773,9 +773,6 @@ void show_char_to_char_0(CHAR_DATA *victim, CHAR_DATA *ch)
 	if (IS_AFFECTED(victim, AFF_CHARM)) strcat(buf, "```#(`cCharmed```#) ``");
 	if (IS_AFFECTED(victim, AFF_PASS_DOOR)) strcat(buf, "```6(```^Translucent```6) ``");
 	if (IS_AFFECTED(victim, AFF_FAERIE_FIRE)) strcat(buf, "```!(```PPink Aura```!) ``");
-	if (IS_EVIL(victim)
-	    && IS_AFFECTED(ch, AFF_DETECT_EVIL)) strcat(buf, "```8(```1Red Aura```8) ``");
-	if (IS_GOOD(victim) && IS_AFFECTED(ch, AFF_DETECT_GOOD)) strcat(buf, "```&(```#Golden Aura```&) ``");
 	if (IS_AFFECTED(victim, AFF_SANCTUARY)) strcat(buf, "(```&White Aura``) ");
 	if (IS_AFFECTED(victim, AFF_DRUID_CALL)) strcat(buf, "(`8Grey Aura``) ");
 	if (IS_AFFECTED(victim, AFF_CALLOUSED)) strcat(buf, "`&(`6C`^a`6ll`^ou`6s`^e`6d`&)`` ");
@@ -1088,8 +1085,6 @@ char *format_obj_to_char(OBJ_DATA *obj, CHAR_DATA *ch, bool fShort)
 		return buf;
 
 	if (IS_OBJ_STAT(obj, ITEM_INVIS) ||
-	    (IS_AFFECTED(ch, AFF_DETECT_EVIL) && IS_OBJ_STAT(obj, ITEM_EVIL)) ||
-	    (IS_AFFECTED(ch, AFF_DETECT_GOOD) && IS_OBJ_STAT(obj, ITEM_BLESS)) ||
 	    (IS_AFFECTED(ch, AFF_DETECT_MAGIC) && IS_OBJ_STAT(obj, ITEM_MAGIC)) ||
 	    IS_OBJ_STAT(obj, ITEM_GLOW) ||
 	    IS_OBJ_STAT(obj, ITEM_HUM) ||
@@ -1103,14 +1098,7 @@ char *format_obj_to_char(OBJ_DATA *obj, CHAR_DATA *ch, bool fShort)
 
 	if (IS_OBJ_STAT(obj, ITEM_INVIS))
 		strcat(buf, "```8I``");
-	if (IS_AFFECTED(ch, AFF_DETECT_EVIL)
-	    && IS_OBJ_STAT(obj, ITEM_EVIL))
-		strcat(buf, "```1E`8``");
-	if (IS_AFFECTED(ch, AFF_DETECT_GOOD)
-	    && IS_OBJ_STAT(obj, ITEM_BLESS))
-		strcat(buf, "```OG``");
-	if (IS_AFFECTED(ch, AFF_DETECT_MAGIC)
-	    && IS_OBJ_STAT(obj, ITEM_MAGIC))
+	if (IS_AFFECTED(ch, AFF_DETECT_MAGIC) && IS_OBJ_STAT(obj, ITEM_MAGIC))
 		strcat(buf, "```^M``");
 	if (IS_OBJ_STAT(obj, ITEM_GLOW))
 		strcat(buf, "```@G``");
@@ -1126,8 +1114,6 @@ char *format_obj_to_char(OBJ_DATA *obj, CHAR_DATA *ch, bool fShort)
 		strcat(buf, "```4B``");
 
 	if (IS_OBJ_STAT(obj, ITEM_INVIS) ||
-	    (IS_AFFECTED(ch, AFF_DETECT_EVIL) && IS_OBJ_STAT(obj, ITEM_EVIL)) ||
-	    (IS_AFFECTED(ch, AFF_DETECT_GOOD) && IS_OBJ_STAT(obj, ITEM_BLESS)) ||
 	    (IS_AFFECTED(ch, AFF_DETECT_MAGIC) && IS_OBJ_STAT(obj, ITEM_MAGIC)) ||
 	    IS_OBJ_STAT(obj, ITEM_GLOW) ||
 	    IS_OBJ_STAT(obj, ITEM_HUM) ||

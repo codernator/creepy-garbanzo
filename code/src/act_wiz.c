@@ -2497,9 +2497,6 @@ void do_sockets(CHAR_DATA *ch, char *argument)
 			case CON_GET_NEW_CLASS:
 				state = "Newbie: Selecting class";
 				break;
-			case CON_GET_ALIGNMENT:
-				state = "Newbie: Selecting align";
-				break;
 			case CON_DEFAULT_CHOICE:
 				state = "Newbie: Getting default";
 				break;

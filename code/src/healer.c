@@ -50,7 +50,6 @@ void do_heal(CHAR_DATA *ch, char *argument)
 	}
 
 	one_argument(argument, arg);
-	mob->alignment = ch->alignment;
 
 	if (argument[0] == '\0') {
 		/* display price list */

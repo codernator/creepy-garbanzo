@@ -244,7 +244,6 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 	if (ch->saving_throw != 0)
 		fprintf(fp, "Save  %d\n", ch->saving_throw);
 
-	fprintf(fp, "Alig  %d\n", ch->alignment);
 	if (ch->hitroll != 0)
 		fprintf(fp, "Hit   %d\n", ch->hitroll);
 
@@ -444,9 +443,6 @@ static void fwrite_pet(CHAR_DATA *pet, FILE *fp)
 	fprintf(fp, "Pos  %d\n", pet->position = POS_FIGHTING ? POS_STANDING : pet->position);
 	if (pet->saving_throw != 0)
 		fprintf(fp, "Save %d\n", pet->saving_throw);
-
-	if (pet->alignment != pet->mob_idx->alignment)
-		fprintf(fp, "Alig %d\n", pet->alignment);
 
 	if (pet->hitroll != pet->mob_idx->hitroll)
 		fprintf(fp, "Hit  %d\n", pet->hitroll);
@@ -874,8 +870,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 
 			KEY("AffectedBy", ch->affected_by, fread_flag(fp));
 			KEY("AfBy", ch->affected_by, fread_flag(fp));
-			KEY("Alignment", ch->alignment, fread_number(fp));
-			KEY("Alig", ch->alignment, fread_number(fp));
 			if (!str_cmp(word, "AucNot")) {
 				KEY("AucNot", ch->pcdata->last_aucnote, (time_t)fread_long(fp));
 				ch->pcdata->last_read[NOTE_AUCNOTE] = ch->pcdata->last_aucnote;
@@ -1375,7 +1369,6 @@ static void fread_pet(CHAR_DATA *ch, FILE *fp)
 		case 'A':
 			KEY("Act", pet->act, fread_flag(fp));
 			KEY("AfBy", pet->affected_by, fread_flag(fp));
-			KEY("Alig", pet->alignment, fread_number(fp));
 
 			if (!str_cmp(word, "ACs")) {
 				int i;

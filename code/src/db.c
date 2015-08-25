@@ -989,7 +989,6 @@ void load_mobiles(FILE *fp)
 		mob_idx->act = fread_flag(fp) | ACT_IS_NPC | race_table[mob_idx->race].act;
 		mob_idx->affected_by = fread_flag(fp) | race_table[mob_idx->race].aff;
 		mob_idx->shop = NULL;
-		mob_idx->alignment = fread_number(fp);
 		mob_idx->group = (int)fread_number(fp);
 
 		mob_idx->level = (int)fread_number(fp);
@@ -2015,7 +2014,6 @@ CHAR_DATA *create_mobile(MOB_INDEX_DATA *mob_idx)
 
 		mob->channels_denied = CHANNEL_SHOUT;
 		mob->affected_by = mob_idx->affected_by;
-		mob->alignment = mob_idx->alignment;
 		mob->level = mob_idx->level;
 		mob->hitroll = mob_idx->hitroll;
 		mob->damroll = mob_idx->damage[DICE_BONUS];
@@ -2139,39 +2137,10 @@ CHAR_DATA *create_mobile(MOB_INDEX_DATA *mob_idx)
 				affect_to_char(mob, &af);
 			}
 		}
-
-		if (IS_AFFECTED(mob, AFF_PROTECT_EVIL)) {
-			if ((skill = skill_lookup("protection evil")) != NULL) {
-				af.where = TO_AFFECTS;
-				af.type = skill->sn;
-				af.skill = skill;
-				af.level = mob->level;
-				af.duration = -1;
-				af.location = APPLY_SAVES;
-				af.modifier = -1;
-				af.bitvector = AFF_PROTECT_EVIL;
-				affect_to_char(mob, &af);
-			}
-		}
-
-		if (IS_AFFECTED(mob, AFF_PROTECT_GOOD)) {
-			if ((skill = skill_lookup("protection good")) != NULL) {
-				af.where = TO_AFFECTS;
-				af.type = skill->sn;
-				af.skill = skill;
-				af.level = mob->level;
-				af.duration = -1;
-				af.location = APPLY_SAVES;
-				af.modifier = -1;
-				af.bitvector = AFF_PROTECT_GOOD;
-				affect_to_char(mob, &af);
-			}
-		}
 	} else {
 		/* read in old format and convert */
 		mob->act = mob_idx->act;
 		mob->affected_by = mob_idx->affected_by;
-		mob->alignment = mob_idx->alignment;
 		mob->level = mob_idx->level;
 		mob->hitroll = mob_idx->hitroll;
 		mob->damroll = 0;
@@ -2269,7 +2238,6 @@ void clone_mobile(CHAR_DATA *parent, CHAR_DATA *clone)
 /*clone->practice   = parent->practice; */
 /*clone->train      = parent->train; */
 	clone->saving_throw = parent->saving_throw;
-	clone->alignment = parent->alignment;
 	clone->hitroll = parent->hitroll;
 	clone->damroll = parent->damroll;
 	clone->wimpy = parent->wimpy;
