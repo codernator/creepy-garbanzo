@@ -1,38 +1,3 @@
-/***************************************************************************
- *   Original Diku Mud copyright (C) 1990, 1991 by Sebastian Hammer,        *
- *   Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
- *                                                                              *
- *   Merc Diku Mud improvments copyright (C) 1992, 1993 by Michael          *
- *   Chastain, Michael Quan, and Mitchell Tse.                              *
- *	                                                                       *
- *   In order to use any part of this Merc Diku Mud, you must comply with   *
- *   both the original Diku license in 'license.doc' as well the Merc	   *
- *   license in 'license.txt'.  In particular, you may not remove either of *
- *   these copyright notices.                                               *
- *                                                                              *
- *   Much time and thought has gone into this software and you are          *
- *   benefitting.  We hope that you share your changes too.  What goes      *
- *   around, comes around.                                                  *
- ***************************************************************************/
-
-/***************************************************************************
- *   ROM 2.4 is copyright 1993-1998 Russ Taylor                             *
- *   ROM has been brought to you by the ROM consortium                      *
- *       Russ Taylor (rtaylor@hypercube.org)                                *
- *       Gabrielle Taylor (gtaylor@hypercube.org)                           *
- *       Brian Moore (zump@rom.org)                                         *
- *   By using this code, you have agreed to follow the terms of the         *
- *   ROM license, in the file Rom24/doc/rom.license                         *
- ***************************************************************************/
-
-/***************************************************************************
- *	includes
- ***************************************************************************/
-//#include <sys/time.h>
-//#include <stdint.h>
-//#include <string.h>
-//#include <stdlib.h>
-//#include <ctype.h>
 #include <stdio.h>
 #include "merc.h"
 #include "interp.h"
@@ -43,17 +8,17 @@
 #include "find.h"
 
 
-const struct cmp_vars_obj_index_data obj_idx_flags[] =
+const struct cmp_vars_obj_index_data objprototype_flags[] =
 {
-    { "name",   &obj_idx_cmp_name	},
-    { "short",  &obj_idx_cmp_short	},
-    { "long",   &obj_idx_cmp_long	},
-    { "type",   &obj_idx_cmp_type	},
-    { "extra",  &obj_idx_cmp_extra	},
-    { "wear",   &obj_idx_cmp_wear	},
-    { "weight", &obj_idx_cmp_weight },
-    { "cost",   &obj_idx_cmp_cost	},
-    { "level",  &obj_idx_cmp_level	},
+    { "name",   &objprototype_cmp_name	},
+    { "short",  &objprototype_cmp_short	},
+    { "long",   &objprototype_cmp_long	},
+    { "type",   &objprototype_cmp_type	},
+    { "extra",  &objprototype_cmp_extra	},
+    { "wear",   &objprototype_cmp_wear	},
+    { "weight", &objprototype_cmp_weight },
+    { "cost",   &objprototype_cmp_cost	},
+    { "level",  &objprototype_cmp_level	},
     { "",	    NULL		}
 };
 
@@ -214,7 +179,7 @@ void do_owhere(CHAR_DATA *ch, char *argument)
 		    clr2 = uncolor_str(PERS(in_obj->carried_by, ch));
 		    sprintf(buf, "%-3d %-7ld  %-26.26s  %-25.25s  %-7ld\n\r",
 			    number,
-			    obj->obj_idx->vnum,
+			    obj->objprototype->vnum,
 			    clr1,
 			    clr2,
 			    in_obj->carried_by->in_room->vnum);
@@ -226,7 +191,7 @@ void do_owhere(CHAR_DATA *ch, char *argument)
 
 		    sprintf(buf, "%-3d %-7ld  %-26.26s  %-25.25s  %-7ld\n\r",
 			    number,
-			    obj->obj_idx->vnum,
+			    obj->objprototype->vnum,
 			    clr1,
 			    clr2,
 			    in_obj->in_room->vnum);
@@ -237,7 +202,7 @@ void do_owhere(CHAR_DATA *ch, char *argument)
 
 		    sprintf(buf, "%-3d %-7ld  %-26.26s\n\r",
 			    number,
-			    obj->obj_idx->vnum,
+			    obj->objprototype->vnum,
 			    clr1);
 		    free_string(clr1);
 		}
@@ -268,7 +233,7 @@ bool obj_cmp_vnum(OBJ_DATA *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL)
 	add_buf(buf, "search by an object's vnum.\n\r");
-    return cmp_fn_number(((obj->obj_idx != NULL) ? obj->obj_idx->vnum : 0), arg);
+    return cmp_fn_number(((obj->objprototype != NULL) ? obj->objprototype->vnum : 0), arg);
 }
 
 /***************************************************************************
@@ -788,8 +753,8 @@ static void help_ovnum_properties(CHAR_DATA *ch)
 
     add_buf(buffer, "`#QUERY``: ovnum: searchable property list\n\r");
 
-    for (iter = 0; obj_idx_flags[iter].var[0] != '\0'; iter++) {
-	snprintf(buf, MIL, "%-18.17s", obj_idx_flags[iter].var);
+    for (iter = 0; objprototype_flags[iter].var[0] != '\0'; iter++) {
+	snprintf(buf, MIL, "%-18.17s", objprototype_flags[iter].var);
 	add_buf(buffer, buf);
 	if ((iter % 2) == 1)
 	    add_buf(buffer, "\n\r");
@@ -912,16 +877,16 @@ void do_ovnum(CHAR_DATA *ch, char *argument)
 	sprintf(buf, "`#QUERY``: ovnum %s\n\r\n\r", original_argument);
 	add_buf(buffer, buf);
 
-	for (iter = 0; obj_idx_flags[iter].var[0] != '\0'; iter++) {
-	    if (!str_prefix(arg, obj_idx_flags[iter].var)) {
-		cmp_fn = (OBJ_IDX_CMP_FN *)obj_idx_flags[iter].fn;
+	for (iter = 0; objprototype_flags[iter].var[0] != '\0'; iter++) {
+	    if (!str_prefix(arg, objprototype_flags[iter].var)) {
+		cmp_fn = (OBJ_IDX_CMP_FN *)objprototype_flags[iter].fn;
 		argument = one_argument(argument, arg);
 		break;
 	    }
 	}
 
 	if (cmp_fn == NULL)
-	    cmp_fn = obj_idx_cmp_name;
+	    cmp_fn = objprototype_cmp_name;
 
 	argument = get_search_vnum_range(ch, argument, arg, buffer, &high_vnum, &low_vnum);
 
@@ -979,9 +944,9 @@ void do_ovnum(CHAR_DATA *ch, char *argument)
 
 
 /***************************************************************************
- *	obj_idx_cmp_name
+ *	objprototype_cmp_name
  ***************************************************************************/
-bool obj_idx_cmp_name(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
+bool objprototype_cmp_name(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL)
 	add_buf(buf, "search by an object's name.\n\r");
@@ -989,9 +954,9 @@ bool obj_idx_cmp_name(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
 }
 
 /***************************************************************************
- *	obj_idx_cmp_short
+ *	objprototype_cmp_short
  ***************************************************************************/
-bool obj_idx_cmp_short(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
+bool objprototype_cmp_short(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL)
 	add_buf(buf, "search by an object's short description.\n\r");
@@ -999,9 +964,9 @@ bool obj_idx_cmp_short(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
 }
 
 /***************************************************************************
- *	obj_idx_cmp_long
+ *	objprototype_cmp_long
  ***************************************************************************/
-bool obj_idx_cmp_long(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
+bool objprototype_cmp_long(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL)
 	add_buf(buf, "search by an object's long description.\n\r");
@@ -1009,9 +974,9 @@ bool obj_idx_cmp_long(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
 }
 
 /***************************************************************************
- *	obj_idx_cmp_type
+ *	objprototype_cmp_type
  ***************************************************************************/
-bool obj_idx_cmp_type(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
+bool objprototype_cmp_type(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
 	add_buf(buf, "search by an object's type.\n\r");
@@ -1021,9 +986,9 @@ bool obj_idx_cmp_type(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
 }
 
 /***************************************************************************
- *	obj_idx_cmp_weight
+ *	objprototype_cmp_weight
  ***************************************************************************/
-bool obj_idx_cmp_weight(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
+bool objprototype_cmp_weight(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL)
 	add_buf(buf, "search by an object's weight.\n\r");
@@ -1031,9 +996,9 @@ bool obj_idx_cmp_weight(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
 }
 
 /***************************************************************************
- *	obj_idx_cmp_cost
+ *	objprototype_cmp_cost
  ***************************************************************************/
-bool obj_idx_cmp_cost(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
+bool objprototype_cmp_cost(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL)
 	add_buf(buf, "search by an object's cost.\n\r");
@@ -1041,9 +1006,9 @@ bool obj_idx_cmp_cost(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
 }
 
 /***************************************************************************
- *	obj_idx_cmp_level
+ *	objprototype_cmp_level
  ***************************************************************************/
-bool obj_idx_cmp_level(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
+bool objprototype_cmp_level(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL)
 	add_buf(buf, "search by an object's level.\n\r");
@@ -1051,9 +1016,9 @@ bool obj_idx_cmp_level(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
 }
 
 /***************************************************************************
- *	obj_idx_cmp_extra
+ *	objprototype_cmp_extra
  ***************************************************************************/
-bool obj_idx_cmp_extra(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
+bool objprototype_cmp_extra(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
 	add_buf(buf, "search by an object's extra flags.\n\r");
@@ -1063,9 +1028,9 @@ bool obj_idx_cmp_extra(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
 }
 
 /***************************************************************************
- *	obj_idx_cmp_wear
+ *	objprototype_cmp_wear
  ***************************************************************************/
-bool obj_idx_cmp_wear(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
+bool objprototype_cmp_wear(OBJECTPROTOTYPE *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
 	add_buf(buf, "search by an object's wear flags.\n\r");

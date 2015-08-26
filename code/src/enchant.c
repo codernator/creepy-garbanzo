@@ -497,7 +497,7 @@ unsigned int repair_cost(OBJ_DATA *obj, char *stat)
 	bool found = false;
 
 	if (!obj->enchanted) {
-		for (paf = obj->obj_idx->affected; paf != NULL; paf = paf->next) {
+		for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
 			for (idx = 0; item_affect_stats[idx].stat[0] != '\0'; idx++) {
 				if (paf->location == (int)item_affect_stats[idx].flag) {
 					if ((item_affect_stats[idx].is_negative && paf->modifier < 0)
@@ -562,7 +562,7 @@ void enchant_item(OBJ_DATA *obj)
 	AFFECT_DATA *new_af;
 
 	if (!obj->enchanted) {
-		for (copy = obj->obj_idx->affected; copy != NULL; copy = copy_next) {
+		for (copy = obj->objprototype->affected; copy != NULL; copy = copy_next) {
 			copy_next = copy->next;
 
 			new_af = new_affect();

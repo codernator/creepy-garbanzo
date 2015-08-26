@@ -935,7 +935,7 @@ void spell_enchant_armor(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 
     /* find the bonuses */
     if (!obj->enchanted) {
-	for (paf = obj->obj_idx->affected; paf != NULL; paf = paf->next) {
+	for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
 	    if (paf->location == APPLY_AC) {
 		ac_bonus = (int)paf->modifier;
 		ac_found = true;
@@ -1011,7 +1011,7 @@ void spell_enchant_armor(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 
 	obj->enchanted = true;
 
-	for (paf = obj->obj_idx->affected; paf != NULL; paf = paf->next) {
+	for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
 	    af_new = new_affect();
 
 	    af_new->next = obj->affected;
@@ -1100,7 +1100,7 @@ void spell_enchant_weapon(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int 
 
     /* find the bonuses */
     if (!obj->enchanted) {
-	for (paf = obj->obj_idx->affected; paf != NULL; paf = paf->next) {
+	for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
 	    if (paf->location == APPLY_HITROLL) {
 		hit_bonus = (int)paf->modifier;
 		hit_found = true;
@@ -1179,7 +1179,7 @@ void spell_enchant_weapon(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int 
 
 	obj->enchanted = true;
 
-	for (paf = obj->obj_idx->affected; paf != NULL; paf = paf->next) {
+	for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
 	    af_new = new_affect();
 
 	    af_new->next = obj->affected;
@@ -3665,8 +3665,8 @@ void spell_fireblade(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int targe
     OBJ_DATA *weapon;
 
     if ((old_weapon = get_eq_char(ch, WEAR_WIELD)) != NULL) {
-	if (old_weapon->obj_idx != NULL
-		&& old_weapon->obj_idx->vnum == OBJ_VNUM_FIREBLADE) {
+	if (old_weapon->objprototype != NULL
+		&& old_weapon->objprototype->vnum == OBJ_VNUM_FIREBLADE) {
 	    unequip_char(ch, old_weapon);
 	    extract_obj(old_weapon);
 	    act("The light in the room dims.", ch, NULL, NULL, TO_ROOM);

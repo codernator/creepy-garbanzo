@@ -1,12 +1,22 @@
 #include "merc.h"
+#include <assert.h>
 
+
+
+/** exports */
+
+
+/** imports */
 extern void free_affect(AFFECT_DATA *af);
 extern void free_extra_descr(EXTRA_DESCR_DATA *ed);
 
 
+/** locals */
 static OBJECTPROTOTYPE head_node;
 static OBJECTPROTOTYPE recycle_node;
 static bool passes(OBJECTPROTOTYPE *testee, const OBJECTPROTOTYPE_FILTER *filter);
+static void allocate_more(void);
+
 
 //static OBJECTPROTOTYPE *objectprototype_hash[MAX_KEY_HASH];
 
@@ -19,11 +29,11 @@ const OBJECTPROTOTYPE_FILTER objectprototype_empty_filter;
  */
 OBJECTPROTOTYPE *objectprototype_getbyvnum(long vnum)
 {
-    //OBJECTPROTOTYPE *obj_idx;
+    //OBJECTPROTOTYPE *objprototype;
 
-    //for (obj_idx = obj_index_hash[vnum % MAX_KEY_HASH]; obj_idx != NULL; obj_idx = obj_idx->next)
-	//if (obj_idx->vnum == vnum)
-	    //return obj_idx;
+    //for (objprototype = obj_index_hash[vnum % MAX_KEY_HASH]; objprototype != NULL; objprototype = objprototype->next)
+	//if (objprototype->vnum == vnum)
+	    //return objprototype;
 
     OBJECTPROTOTYPE *current;
     OBJECTPROTOTYPE *pending;
@@ -37,103 +47,146 @@ OBJECTPROTOTYPE *objectprototype_getbyvnum(long vnum)
     return NULL;
 }
 
-void objectprototype_list_add(OBJECTPROTOTYPE *prototypedata)
+OBJECTPROTOTYPE *new_objectprototype(long vnum)
 {
-    //long hashkey;
+    OBJECTPROTOTYPE *prototypedata;
 
-    prototypedata->prev = &head_node;
-    if (head_node.next != NULL)
-	head_node.next->prev = prototypedata;
+    allocate_more();
 
-    prototypedata->next = head_node.next;
-    head_node.next = prototypedata;
+    prototypedata = recycle_node.next;
+    assert(prototypedata != NULL);
 
-    //hashkey = prototypedata->vnum % MAX_KEY_HASH;
-    //obj_idx->next = obj_index_hash[hash_idx];
-    //objectprototype_hash[hash_idx] = obj_idx;
-}
-
-void objectprototype_list_remove(OBJECTPROTOTYPE *prototypedata)
-{
-    if (prototypedata->prev != NULL) {
-	prototypedata->prev->next = prototypedata->next;
-    }
-    if (prototypedata->next != NULL) {
-	prototypedata->next->prev = prototypedata->prev;
-    }
-    prototypedata->next = NULL;
-    prototypedata->prev = NULL;
-}
-
-OBJECTPROTOTYPE *new_objectprototype(void)
-{
-    /*@shared@*/OBJECTPROTOTYPE *objectprototype;
-
-    if (recycle_node.next == NULL) {
-	objectprototype = alloc_perm((unsigned int)sizeof(*objectprototype));
-    } else {
-	objectprototype = recycle_node.next;
-	recycle_node.next = objectprototype->next;
-    }
-    VALIDATE(objectprototype);
-
-    objectprototype->next = NULL;
-    objectprototype->extra_descr = NULL;
-    objectprototype->affected = NULL;
-    objectprototype->area = NULL;
-    objectprototype->name = str_dup("no name");
-    objectprototype->short_descr = str_dup("(no short description)");
-    objectprototype->description = str_dup("(no description)");
-    objectprototype->vnum = 0;
-    objectprototype->item_type = ITEM_TRASH;
-    objectprototype->extra_flags = 0;
-    objectprototype->extra2_flags = 0;
-    objectprototype->wear_flags = 0;
-    objectprototype->count = 0;
-    objectprototype->weight = 0;
-    objectprototype->cost = 0;
-    objectprototype->material = str_dup("unknown");             /* ROM */
-    objectprototype->condition = 100;                           /* ROM */
-
+    VALIDATE(prototypedata);
+    /** Default values */
     {
-	int value;
-	for (value = 0; value < 5; value++)             /* 5 - ROM */
-	    objectprototype->value[value] = 0;
+	prototypedata->vnum = vnum;
+	prototypedata->extra_descr = NULL;
+	prototypedata->affected = NULL;
+	prototypedata->area = NULL;
+	prototypedata->name = str_dup("no name");
+	prototypedata->short_descr = str_dup("(no short description)");
+	prototypedata->description = str_dup("(no description)");
+	prototypedata->item_type = ITEM_TRASH;
+	prototypedata->extra_flags = 0;
+	prototypedata->extra2_flags = 0;
+	prototypedata->wear_flags = 0;
+	prototypedata->count = 0;
+	prototypedata->weight = 0;
+	prototypedata->cost = 0;
+	prototypedata->material = str_dup("unknown");             /* ROM */
+	prototypedata->condition = 100;                           /* ROM */
+
+	{
+	    int value;
+	    for (value = 0; value < 5; value++)             /* 5 - ROM */
+		prototypedata->value[value] = 0;
+	}
     }
 
-    return objectprototype;
+    /** Swap lists. */
+    {
+	OBJECTPROTOTYPE *headnext;
+
+	assert(recycle_node.next == prototypedata);
+	recycle_node.next = prototypedata->next;
+
+	prototypedata->prev = &head_node;
+	headnext = head_node.next;
+	if (headnext != NULL) {
+	    assert(headnext->prev == &head_node);
+	    headnext->prev = prototypedata;
+	}
+
+	prototypedata->next = headnext;
+	head_node.next = prototypedata;
+    }
+
+    /** Store in hash table. */
+    {
+	//long hashkey;
+	//hashkey = prototypedata->vnum % MAX_KEY_HASH;
+	//objprototype->next = obj_index_hash[hash_idx];
+	//objectprototype_hash[hash_idx] = objprototype;
+    }
+
+    return prototypedata;
 }
 
-void free_objectprototype(OBJECTPROTOTYPE *objectprototype)
+OBJECTPROTOTYPE *free_objectprototype(OBJECTPROTOTYPE *prototypedata)
 {
-    /*@shared@*/AFFECT_DATA *paf;
-    /*@shared@*/AFFECT_DATA *paf_next;
-    /*@shared@*/EXTRA_DESCR_DATA *ed;
-    /*@shared@*/EXTRA_DESCR_DATA *ed_next;
+    assert(prototypedata != NULL);
+    assert(prototypedata != &head_node);
+    assert(IS_VALID(prototypedata));
 
-    if (!IS_VALID(objectprototype))
-	return;
+    /** Move to the recycle list */
+    { 
+	OBJECTPROTOTYPE *prev;
 
-    //TODO - affects management.
-    for (paf = objectprototype->affected; paf != NULL; paf = paf_next) {
-	paf_next = paf->next;
-	free_affect(paf);
+	prev = prototypedata->prev;
+
+	/** Assertion - only the head node has a NULL previous. */
+	assert(prev != NULL);
+	assert(prev->next == prototypedata);
+	/*@-mustfreeonly@*///** due to assertion prev->next == prototypedata */
+	prev->next = prototypedata->next;
+	/*@+mustfreeonly@*/
+
+	if (prototypedata->next != NULL) {
+	    assert(prototypedata->next->prev == prototypedata);
+	    prototypedata->next->prev = prev;
+	}
+
+	prototypedata->next = recycle_node.next;
+	prototypedata->prev = NULL; /* recycle list is a stack structure (LIFO), so no need for prev. */
+	prototypedata->next_hash = NULL;
+	prototypedata->prev_hash = NULL;
+	prototypedata->area = NULL;
+	recycle_node.next = prototypedata;
+	
+	if (prototypedata->prev != NULL) {
+	    prototypedata->prev->next = prototypedata->next;
+	}
+	if (prototypedata->next != NULL) {
+	    prototypedata->next->prev = prototypedata->prev;
+	}
+	prototypedata->next = NULL;
+	prototypedata->prev = NULL;
     }
 
-    //TODO - extras managment.
-    for (ed = objectprototype->extra_descr; ed != NULL; ed = ed_next) {
-	ed_next = ed->next;
-	free_extra_descr(ed);
+    INVALIDATE(prototypedata);
+
+    /** Clean up affects */
+    if (prototypedata->affected != NULL) {
+	//TODO - affects management.
+	/*@dependent@*/AFFECT_DATA *paf;
+	/*@dependent@*/AFFECT_DATA *paf_next;
+	for (paf = prototypedata->affected; paf != NULL; paf = paf_next) {
+	    paf_next = paf->next;
+	    free_affect(paf);
+	}
+	prototypedata->affected = NULL;
     }
-    objectprototype->extra_descr = NULL;
 
-    free_string(objectprototype->name);
-    free_string(objectprototype->description);
-    free_string(objectprototype->short_descr);
-    INVALIDATE(objectprototype);
+    /** Clean up extra descriptions */
+    if (prototypedata->extra_descr != NULL) {
+	//TODO - extras managment.
+	/*@dependent@*/EXTRA_DESCR_DATA *ed;
+	/*@dependent@*/EXTRA_DESCR_DATA *ed_next;
+	for (ed = prototypedata->extra_descr; ed != NULL; ed = ed_next) {
+	    ed_next = ed->next;
+	    free_extra_descr(ed);
+	}
+	prototypedata->extra_descr = NULL;
+    }
 
-    objectprototype->next = recycle_node.next;
-    recycle_node.next = objectprototype;
+    /** Clean up strings */
+    {
+	if (prototypedata->name != NULL) free_string(prototypedata->name);
+	if (prototypedata->description != NULL) free_string(prototypedata->description);
+	if (prototypedata->short_descr != NULL) free_string(prototypedata->short_descr);
+    }
+
+    return NULL;
 }
 
 int objectprototype_list_count()
@@ -185,3 +238,11 @@ bool passes(OBJECTPROTOTYPE *testee, const OBJECTPROTOTYPE_FILTER *filter)
 
     return true;
 }
+
+void allocate_more() 
+{
+    if (recycle_node.next == NULL) {
+	recycle_node.next = alloc_perm((unsigned int)sizeof(recycle_node));
+    }
+}
+

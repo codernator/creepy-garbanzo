@@ -1380,7 +1380,7 @@ EDIT(redit_oreset){
 	pReset->command = 'P';
 	pReset->arg1 = obj->vnum;
 	pReset->arg2 = 0;
-	pReset->arg3 = to_obj->obj_idx->vnum;
+	pReset->arg3 = to_obj->objprototype->vnum;
 	pReset->arg4 = 1;
 	add_reset(room, pReset, 0);
 
@@ -1391,9 +1391,9 @@ EDIT(redit_oreset){
 	printf_to_char(ch, "%s(%d) has been loaded into "
 		"%s(%d) and added to resets.\n\r",
 		capitalize(newobj->short_descr),
-		newobj->obj_idx->vnum,
+		newobj->objprototype->vnum,
 		to_obj->short_descr,
-		to_obj->obj_idx->vnum);
+		to_obj->objprototype->vnum);
 	act("$n has created $p!", ch, newobj, NULL, TO_ROOM);
 	return true;
     }

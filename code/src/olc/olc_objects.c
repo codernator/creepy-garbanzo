@@ -776,14 +776,12 @@ EDIT(oedit_create){
 	return false;
     }
 
-    pObj = new_objectprototype();
-    pObj->vnum = value;
+    pObj = new_objectprototype(value);
     pObj->area = pArea;
 
     if (value > top_vnum_obj)
 	top_vnum_obj = value;
 
-    objectprototype_list_add(pObj);
     ch->desc->ed_data = (void *)pObj;
 
     send_to_char("Object Created.\n\r", ch);

@@ -1224,7 +1224,7 @@ bool has_key(CHAR_DATA *ch, long key)
 	OBJ_DATA *obj;
 
 	for (obj = ch->carrying; obj != NULL; obj = obj->next_content)
-		if (obj->obj_idx->vnum == key)
+		if (obj->objprototype->vnum == key)
 			return true;
 
 	return false;

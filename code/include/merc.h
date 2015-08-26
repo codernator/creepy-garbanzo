@@ -1,9 +1,34 @@
 #include <time.h>
 #include <stdbool.h>
 #include "sysinternals.h"
+#include <signal.h>
 
 #if !defined(__MERC_H)
 #define __MERC_H
+
+
+#ifdef S_SPLINT_S
+#define _Exit exit
+#endif
+
+
+#define ABORT \
+{ \
+    if (raise(SIGABRT) != 0) { \
+	_Exit(EXIT_FAILURE); \
+    } \
+    return; \
+}
+
+#define RABORT(rv) \
+{ \
+    if (raise(SIGABRT) != 0) { \
+	_Exit(EXIT_FAILURE); \
+    } \
+    return rv; \
+}
+
+
 
 #define DECLARE_DO_FUN(fun)             DO_FUN fun
 #define DECLARE_SPELL_FUN(fun)          SPELL_FUN fun
@@ -1494,20 +1519,22 @@ struct extra_descr_data {
 /***************************************************************************
  * object specific structures
  ***************************************************************************/
-struct objectprototype {
-    OBJECTPROTOTYPE *next;
-    OBJECTPROTOTYPE *prev;
+/*@abstract@*/struct objectprototype {
+    /*@owned@*//*@null@*/OBJECTPROTOTYPE *next;
+    /*@dependent@*//*@null@*/OBJECTPROTOTYPE *prev;
+    /*@dependent@*//*@null@*/OBJECTPROTOTYPE *next_hash;
+    /*@dependent@*//*@null@*/OBJECTPROTOTYPE *prev_hash;
     bool valid;
 
-    EXTRA_DESCR_DATA *extra_descr;
-    AFFECT_DATA *affected;
-    AREA_DATA *area;
-    char *name;
-    char *short_descr;
-    char *description;
+    /*@dependent@*//*@null@*/EXTRA_DESCR_DATA *extra_descr;
+    /*@dependent@*//*@null@*/AFFECT_DATA *affected;
+    /*@dependent@*//*@null@*/AREA_DATA *area;
+    /*@shared@*//*@null@*/char *name;
+    /*@shared@*//*@null@*/char *short_descr;
+    /*@shared@*//*@null@*/char *description;
     long vnum;
     long reset_num;
-    char *material;
+    /*@shared@*//*@null@*/char *material;
     int item_type;
     long extra_flags;
     long extra2_flags;
@@ -1539,7 +1566,7 @@ struct obj_data {
     /*@null@*/CHAR_DATA *target;
     /*@null@*/EXTRA_DESCR_DATA *extra_descr;
     /*@null@*/AFFECT_DATA *affected;
-    /*@null@*/OBJECTPROTOTYPE *obj_idx;
+    /*@null@*/OBJECTPROTOTYPE *objprototype;
     /*@null@*/ROOM_INDEX_DATA *in_room;
     bool valid;
     bool enchanted;
@@ -2043,14 +2070,13 @@ void area_update(void);
 /* creation/cloning */
 CHAR_DATA *create_mobile(MOB_INDEX_DATA * mob_idx);
 void clone_mobile(CHAR_DATA * parent, CHAR_DATA * clone);
-OBJ_DATA *create_object(OBJECTPROTOTYPE * obj_idx, int level);
+OBJ_DATA *create_object(OBJECTPROTOTYPE * objprototype, int level);
 void clone_object(OBJ_DATA * parent, OBJ_DATA * clone);
 void clear_char(CHAR_DATA * ch);
 
 /* find functions  */
 char *get_extra_descr(const char *name, EXTRA_DESCR_DATA * ed);
 MOB_INDEX_DATA *get_mob_index(long vnum);
-OBJECTPROTOTYPE *objectprototype_getbyvnum(long vnum);
 ROOM_INDEX_DATA *get_room_index(long vnum);
 
 
@@ -2058,7 +2084,7 @@ ROOM_INDEX_DATA *get_room_index(long vnum);
 void *alloc_mem(unsigned int sMem);
 void *alloc_perm(unsigned int sMem);
 void free_mem(void *pMem, unsigned int sMem);
-/*@only@*/char *str_dup(const char *str);
+/*@shared@*/char *str_dup(const char *str);
 void free_string(char *pstr);
 
 /* number manipulation */
@@ -2147,7 +2173,7 @@ void extract_obj(OBJ_DATA * obj);
 void extract_char(CHAR_DATA * ch, bool fPull);
 CHAR_DATA *get_char_room(CHAR_DATA * ch, char *argument);
 CHAR_DATA *get_char_world(CHAR_DATA * ch, char *argument);
-OBJ_DATA *get_obj_type(OBJECTPROTOTYPE * obj_idxData);
+OBJ_DATA *get_obj_type(OBJECTPROTOTYPE * objprototypeData);
 OBJ_DATA *get_obj_list(CHAR_DATA * ch, char *argument, OBJ_DATA * list);
 OBJ_DATA *get_obj_carry(CHAR_DATA * ch, char *argument);
 OBJ_DATA *get_obj_wear(CHAR_DATA * ch, char *argument);
@@ -2320,14 +2346,13 @@ struct objectprototype_filter {
 };
 extern const OBJECTPROTOTYPE_FILTER objectprototype_empty_filter;
 
-void objectprototype_list_add(OBJECTPROTOTYPE *prototypedata);
-void objectprototype_list_remove(OBJECTPROTOTYPE *prototypedata);
-/*@partial@*/OBJECTPROTOTYPE * new_objectprototype(void);
-void free_objectprototype(OBJECTPROTOTYPE *templatedata);
+/*@dependent@*//*@partial@*/OBJECTPROTOTYPE *new_objectprototype(long vnum);
+/*@null@*/OBJECTPROTOTYPE *free_objectprototype(/*@owned@*/OBJECTPROTOTYPE *templatedata);
 int objectprototype_list_count();
 int objectprototype_recycle_count();
-/*@null@*/OBJECTPROTOTYPE *objectprototype_iterator_start(const OBJECTPROTOTYPE_FILTER *filter);
-/*@null@*/OBJECTPROTOTYPE *objectprototype_iterator(OBJECTPROTOTYPE *current, const OBJECTPROTOTYPE_FILTER *filter);
+/*@dependent@*//*@null@*/OBJECTPROTOTYPE *objectprototype_iterator_start(const OBJECTPROTOTYPE_FILTER *filter);
+/*@dependent@*//*@null@*/OBJECTPROTOTYPE *objectprototype_iterator(OBJECTPROTOTYPE *current, const OBJECTPROTOTYPE_FILTER *filter);
+/*@dependent@*//*@null@*/OBJECTPROTOTYPE *objectprototype_getbyvnum(long vnum);
 /* ~objectprototype.c */
 
 #endif  /* __MERC_H */

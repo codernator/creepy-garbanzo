@@ -223,7 +223,7 @@ void look_extras(CHAR_DATA *ch, char *name, int number) {
 				}
 			}
 
-			pdesc = get_extra_descr(name, obj->obj_idx->extra_descr);
+			pdesc = get_extra_descr(name, obj->objprototype->extra_descr);
 			if (pdesc != NULL) {
 				if (++count == number) {
 					send_to_char(pdesc, ch);
@@ -252,7 +252,7 @@ void look_extras(CHAR_DATA *ch, char *name, int number) {
 				}
 			}
 
-			pdesc = get_extra_descr(name, obj->obj_idx->extra_descr);
+			pdesc = get_extra_descr(name, obj->objprototype->extra_descr);
 			if (pdesc != NULL) {
 				if (++count == number) {
 					send_to_char(pdesc, ch);
@@ -660,13 +660,13 @@ void get_obj(CHAR_DATA *ch, OBJ_DATA *obj, OBJ_DATA *container)
 
 
 	if (container != NULL) {
-		if (container->obj_idx->vnum == OBJ_VNUM_PIT
+		if (container->objprototype->vnum == OBJ_VNUM_PIT
 		    && get_trust(ch) < obj->level) {
 			send_to_char("You are not powerful enough to use it.\n\r", ch);
 			return;
 		}
 
-		if (container->obj_idx->vnum == OBJ_VNUM_PIT
+		if (container->objprototype->vnum == OBJ_VNUM_PIT
 		    && !CAN_WEAR(container, ITEM_TAKE)
 		    && !IS_OBJ_STAT(obj, ITEM_HAD_TIMER))
 			obj->timer = 0;

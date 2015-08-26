@@ -128,7 +128,7 @@ bool passes(OBJ_DATA *testee, const OBJECT_ITERATOR_FILTER *filter)
 	return false;
     }
 
-    if (filter->object_template != NULL && filter->object_template != testee->obj_idx) {
+    if (filter->object_template != NULL && filter->object_template != testee->objprototype) {
 	return false;
     }
 

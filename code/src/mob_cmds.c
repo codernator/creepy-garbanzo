@@ -506,7 +506,7 @@ void do_mpmload(CHAR_DATA *ch, char *argument)
  */
 void do_mpoload(CHAR_DATA *ch, char *argument)
 {
-    OBJECTPROTOTYPE *obj_idx;
+    OBJECTPROTOTYPE *objprototype;
     OBJ_DATA *obj;
     char arg[MIL];
     int level;
@@ -578,12 +578,12 @@ void do_mpoload(CHAR_DATA *ch, char *argument)
     else if (arg[0] == 'W' || arg[0] == 'w')
 	to_wear = true;
 
-    if ((obj_idx = objectprototype_getbyvnum(vnum)) == NULL) {
+    if ((objprototype = objectprototype_getbyvnum(vnum)) == NULL) {
 	log_bug("mpoload - bad vnum arg from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 	return;
     }
 
-    obj = create_object(obj_idx, level);
+    obj = create_object(objprototype, level);
     if ((to_wear || !to_room)
 	    && CAN_WEAR(obj, ITEM_TAKE)) {
 	obj_to_char(obj, ch);
@@ -1274,7 +1274,7 @@ void do_mpremove(CHAR_DATA *ch, char *argument)
 
     for (obj = victim->carrying; obj; obj = obj_next) {
 	obj_next = obj->next_content;
-	if (fAll || obj->obj_idx->vnum == vnum) {
+	if (fAll || obj->objprototype->vnum == vnum) {
 	    unequip_char(ch, obj);
 	    obj_from_char(obj);
 	    extract_obj(obj);

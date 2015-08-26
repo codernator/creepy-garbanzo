@@ -256,7 +256,7 @@ void do_get2(CHAR_DATA *ch, char *argument)
 				if ((arg1[3] == '\0' || is_name(&arg1[4], obj->name))
 				    && can_see_obj(ch, obj)) {
 					found = true;
-					if (container->obj_idx->vnum == OBJ_VNUM_PIT
+					if (container->objprototype->vnum == OBJ_VNUM_PIT
 					    && !IS_IMMORTAL(ch)) {
 						send_to_char("Don't be so greedy!\n\r", ch);
 						return;
@@ -408,7 +408,7 @@ void do_get(CHAR_DATA *ch, char *argument)
 				obj_next = obj->next_content;
 				if ((arg1[3] == '\0' || is_name(&arg1[4], obj->name)) && can_see_obj(ch, obj)) {
 					found = true;
-					if (container->obj_idx->vnum == OBJ_VNUM_PIT && !IS_IMMORTAL(ch)) {
+					if (container->objprototype->vnum == OBJ_VNUM_PIT && !IS_IMMORTAL(ch)) {
 						send_to_char("Don't be so greedy!\n\r", ch);
 						return;
 					}
@@ -518,7 +518,7 @@ void do_put2(CHAR_DATA *ch, char *argument)
 			return;
 		}
 
-		if (container->obj_idx->vnum == OBJ_VNUM_PIT
+		if (container->objprototype->vnum == OBJ_VNUM_PIT
 		    && !CAN_WEAR(container, ITEM_TAKE)) {
 			if (obj->timer)
 				SET_BIT(obj->extra_flags, ITEM_HAD_TIMER);
@@ -550,7 +550,7 @@ void do_put2(CHAR_DATA *ch, char *argument)
 			    && can_drop_obj(ch, obj)
 			    && (long)(get_obj_weight(obj) + get_true_weight(container)) <= (container->value[0] * 10l)
 			    && (long)(get_obj_weight(obj)) < (container->value[3] * 10l)) {
-				if (container->obj_idx->vnum == OBJ_VNUM_PIT && !CAN_WEAR(obj, ITEM_TAKE)) {
+				if (container->objprototype->vnum == OBJ_VNUM_PIT && !CAN_WEAR(obj, ITEM_TAKE)) {
 					if (obj->timer)
 						SET_BIT(obj->extra_flags, ITEM_HAD_TIMER);
 					else
@@ -586,7 +586,7 @@ void do_put2(CHAR_DATA *ch, char *argument)
 			    && can_drop_obj(ch, obj)
 			    && (long)(get_obj_weight(obj) + get_true_weight(container)) <= (container->value[0] * 10l)
 			    && (long)(get_obj_weight(obj)) < (container->value[3] * 10l)) {
-				if (container->obj_idx->vnum == OBJ_VNUM_PIT
+				if (container->objprototype->vnum == OBJ_VNUM_PIT
 				    && !CAN_WEAR(obj, ITEM_TAKE)) {
 					if (obj->timer)
 						SET_BIT(obj->extra_flags, ITEM_HAD_TIMER);
@@ -683,7 +683,7 @@ void do_put(CHAR_DATA *ch, char *argument)
 		}
 
 		item_ctr = 0;
-		if (container->obj_idx->vnum == OBJ_VNUM_PIT
+		if (container->objprototype->vnum == OBJ_VNUM_PIT
 		    && !CAN_WEAR(container, ITEM_TAKE)) {
 			if (obj->timer)
 				SET_BIT(obj->extra_flags, ITEM_HAD_TIMER);
@@ -723,7 +723,7 @@ void do_put(CHAR_DATA *ch, char *argument)
 			    && can_drop_obj(ch, obj)
 			    && (long)(get_obj_weight(obj) + get_true_weight(container)) <= (container->value[0] * 10l)
 			    && (long)(get_obj_weight(obj)) < (container->value[3] * 10l)) {
-				if (container->obj_idx->vnum == OBJ_VNUM_PIT
+				if (container->objprototype->vnum == OBJ_VNUM_PIT
 				    && !CAN_WEAR(obj, ITEM_TAKE)) {
 					if (obj->timer)
 						SET_BIT(obj->extra_flags, ITEM_HAD_TIMER);
@@ -812,7 +812,7 @@ void do_drop2(CHAR_DATA *ch, char *argument)
 		for (obj = ch->in_room->contents; obj != NULL; obj = obj_next) {
 			obj_next = obj->next_content;
 
-			switch (obj->obj_idx->vnum) {
+			switch (obj->objprototype->vnum) {
 			case OBJ_VNUM_SILVER_ONE:
 				silver += 1;
 				extract_obj(obj);
@@ -991,7 +991,7 @@ void do_drop(CHAR_DATA *ch, char *argument)
 		for (obj = ch->in_room->contents; obj != NULL; obj = obj_next) {
 			obj_next = obj->next_content;
 
-			switch (obj->obj_idx->vnum) {
+			switch (obj->objprototype->vnum) {
 			case OBJ_VNUM_SILVER_ONE:
 				silver += 1;
 				extract_obj(obj);
@@ -1747,7 +1747,7 @@ void do_eat(CHAR_DATA *ch, char *argument)
 			return;
 		}
 
-		if (obj->obj_idx->vnum == OBJ_VNUM_BLANK_PILL) {
+		if (obj->objprototype->vnum == OBJ_VNUM_BLANK_PILL) {
 			send_to_char("That has to be 'sprinkled', not eaten.\n\r", ch);
 			return;
 		}
@@ -2751,7 +2751,7 @@ void obj_to_keeper(OBJ_DATA *obj, CHAR_DATA *ch)
 	for (t_obj = ch->carrying; t_obj != NULL; t_obj = t_obj_next) {
 		t_obj_next = t_obj->next_content;
 
-		if (obj->obj_idx == t_obj->obj_idx
+		if (obj->objprototype == t_obj->objprototype
 		    && !str_cmp(obj->short_descr, t_obj->short_descr)) {
 			if (IS_OBJ_STAT(t_obj, ITEM_INVENTORY)) {
 				extract_obj(obj);
@@ -2799,7 +2799,7 @@ OBJ_DATA *get_obj_keeper(CHAR_DATA *ch, CHAR_DATA *keeper, char *argument)
 				return obj;
 
 			while (obj->next_content != NULL &&
-			       obj->obj_idx == obj->next_content->obj_idx &&
+			       obj->objprototype == obj->next_content->objprototype &&
 			       !str_cmp(obj->short_descr, obj->next_content->short_descr))
 				obj = obj->next_content;
 		}
@@ -2837,7 +2837,7 @@ unsigned int get_cost(CHAR_DATA *keeper, OBJ_DATA *obj, bool fBuy)
 			for (obj_inv = keeper->carrying;
 			     obj_inv != NULL;
 			     obj_inv = obj_inv->next_content) {
-				if (obj->obj_idx == obj_inv->obj_idx
+				if (obj->objprototype == obj_inv->objprototype
 				    && !str_cmp(obj->short_descr, obj_inv->short_descr)) {
 					if (IS_OBJ_STAT(obj_inv, ITEM_INVENTORY))
 						cost /= 2;
@@ -3000,7 +3000,7 @@ void do_buy(CHAR_DATA *ch, char *argument)
 			for (t_obj = obj->next_content;
 			     count < number && t_obj != NULL;
 			     t_obj = t_obj->next_content) {
-				if (t_obj->obj_idx == obj->obj_idx
+				if (t_obj->objprototype == obj->objprototype
 				    && !str_cmp(t_obj->short_descr, obj->short_descr))
 					count++;
 				else
@@ -3081,7 +3081,7 @@ void do_buy(CHAR_DATA *ch, char *argument)
 
 		for (count = 0; count < number; count++) {
 			if (IS_SET(obj->extra_flags, ITEM_INVENTORY)) {
-				t_obj = create_object(obj->obj_idx, obj->level);
+				t_obj = create_object(obj->objprototype, obj->level);
 			} else {
 				t_obj = obj;
 				obj = obj->next_content;
@@ -3166,7 +3166,7 @@ void do_list(CHAR_DATA *ch, char *argument)
 					count = 1;
 
 					while (obj->next_content != NULL &&
-					       obj->obj_idx == obj->next_content->obj_idx &&
+					       obj->objprototype == obj->next_content->objprototype &&
 					       !str_cmp(obj->short_descr, obj->next_content->short_descr)) {
 						obj = obj->next_content;
 						count++;

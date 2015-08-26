@@ -24,7 +24,7 @@ void affect_enchant(OBJ_DATA *obj)
 
 		obj->enchanted = true;
 
-		for (paf = obj->obj_idx->affected; paf != NULL; paf = paf->next) {
+		for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
 			af_new = new_affect();
 
 			af_new->next = obj->affected;
@@ -293,7 +293,7 @@ void affect_check(CHAR_DATA *ch, int where, long vector)
 		if (obj->enchanted)
 			continue;
 
-		for (paf = obj->obj_idx->affected; paf != NULL; paf = paf->next) {
+		for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
 			if (paf->where == where && paf->bitvector == vector) {
 				switch (where) {
 				case TO_AFFECTS:

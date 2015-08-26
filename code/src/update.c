@@ -1349,7 +1349,7 @@ static void obj_update(void)
 	    }
 	} else if (obj->in_room != NULL
 		&& (rch = obj->in_room->people) != NULL) {
-	    if (!(obj->in_obj && obj->in_obj->obj_idx->vnum == OBJ_VNUM_PIT
+	    if (!(obj->in_obj && obj->in_obj->objprototype->vnum == OBJ_VNUM_PIT
 			&& !CAN_WEAR(obj->in_obj, ITEM_TAKE))) {
 		act(message, rch, obj, NULL, TO_ROOM);
 		act(message, rch, obj, NULL, TO_CHAR);

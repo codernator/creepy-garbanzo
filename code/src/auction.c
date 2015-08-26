@@ -133,7 +133,7 @@ void do_auction(CHAR_DATA *ch, char *argument)
 	if (currentAuction.item != NULL && !str_cmp(arg1, "clone")) {
 	    OBJ_DATA *obj_new = NULL;
 
-	    obj_new = create_object(currentAuction.item->obj_idx, currentAuction.item->level);
+	    obj_new = create_object(currentAuction.item->objprototype, currentAuction.item->level);
 	    clone_object(currentAuction.item, obj_new);
 	    obj_to_char(obj_new, ch);
 	    recursive_clone(ch, currentAuction.item, obj_new);

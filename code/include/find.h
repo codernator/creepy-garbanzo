@@ -82,15 +82,15 @@ struct cmp_vars_obj_index_data {
     OBJ_IDX_CMP_FN *fn;
 };
 
-bool obj_idx_cmp_name(OBJECTPROTOTYPE * obj, char *arg, BUFFER * buf);
-bool obj_idx_cmp_short(OBJECTPROTOTYPE * obj, char *arg, BUFFER * buf);
-bool obj_idx_cmp_long(OBJECTPROTOTYPE * obj, char *arg, BUFFER * buf);
-bool obj_idx_cmp_type(OBJECTPROTOTYPE * obj, char *arg, BUFFER * buf);
-bool obj_idx_cmp_extra(OBJECTPROTOTYPE * obj, char *arg, BUFFER * buf);
-bool obj_idx_cmp_wear(OBJECTPROTOTYPE * obj, char *arg, BUFFER * buf);
-bool obj_idx_cmp_weight(OBJECTPROTOTYPE * obj, char *arg, BUFFER * buf);
-bool obj_idx_cmp_cost(OBJECTPROTOTYPE * obj, char *arg, BUFFER * buf);
-bool obj_idx_cmp_level(OBJECTPROTOTYPE * obj, char *arg, BUFFER * buf);
+bool objprototype_cmp_name(OBJECTPROTOTYPE * obj, char *arg, BUFFER * buf);
+bool objprototype_cmp_short(OBJECTPROTOTYPE * obj, char *arg, BUFFER * buf);
+bool objprototype_cmp_long(OBJECTPROTOTYPE * obj, char *arg, BUFFER * buf);
+bool objprototype_cmp_type(OBJECTPROTOTYPE * obj, char *arg, BUFFER * buf);
+bool objprototype_cmp_extra(OBJECTPROTOTYPE * obj, char *arg, BUFFER * buf);
+bool objprototype_cmp_wear(OBJECTPROTOTYPE * obj, char *arg, BUFFER * buf);
+bool objprototype_cmp_weight(OBJECTPROTOTYPE * obj, char *arg, BUFFER * buf);
+bool objprototype_cmp_cost(OBJECTPROTOTYPE * obj, char *arg, BUFFER * buf);
+bool objprototype_cmp_level(OBJECTPROTOTYPE * obj, char *arg, BUFFER * buf);
 
 
 /***************************************************************************

@@ -207,8 +207,8 @@ void show_object_stats(CHAR_DATA *ch, char *argument)
 
     printf_to_char(ch, "Name(s): %s\n\r", obj->name);
     printf_to_char(ch, "Vnum: %d  Format: %s  Resets: %d\n\r",
-	    obj->obj_idx->vnum,
-	    item_type_name(obj), obj->obj_idx->reset_num);
+	    obj->objprototype->vnum,
+	    item_type_name(obj), obj->objprototype->reset_num);
 
     printf_to_char(ch, "Owner: %s\n\r", (obj->owner != NULL) ? obj->owner : "none");
     printf_to_char(ch, "Short description: %s\n\rLong description: %s\n\r",
@@ -367,7 +367,7 @@ void show_object_stats(CHAR_DATA *ch, char *argument)
     }
 
 
-    if (obj->extra_descr != NULL || obj->obj_idx->extra_descr != NULL) {
+    if (obj->extra_descr != NULL || obj->objprototype->extra_descr != NULL) {
 	EXTRA_DESCR_DATA *ed;
 
 	send_to_char("Extra description keywords: '", ch);
@@ -378,7 +378,7 @@ void show_object_stats(CHAR_DATA *ch, char *argument)
 		send_to_char(" ", ch);
 	}
 
-	for (ed = obj->obj_idx->extra_descr; ed != NULL; ed = ed->next) {
+	for (ed = obj->objprototype->extra_descr; ed != NULL; ed = ed->next) {
 	    send_to_char(ed->keyword, ch);
 	    if (ed->next != NULL)
 		send_to_char(" ", ch);
@@ -425,7 +425,7 @@ void show_object_stats(CHAR_DATA *ch, char *argument)
     }
 
     if (!obj->enchanted) {
-	for (paf = obj->obj_idx->affected; paf != NULL; paf = paf->next) {
+	for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
 	    printf_to_char(ch, "Affects %s by %d, level %d.\n\r",
 		    affect_loc_name(paf->location),
 		    paf->modifier, paf->level);

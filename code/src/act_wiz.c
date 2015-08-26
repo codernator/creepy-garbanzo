@@ -1722,7 +1722,7 @@ void recursive_clone(CHAR_DATA *ch, OBJ_DATA *obj, OBJ_DATA *clone)
 
     for (c_obj = obj->contains; c_obj != NULL; c_obj = c_obj->next_content) {
 	if (obj_check(ch, c_obj)) {
-	    t_obj = create_object(c_obj->obj_idx, 0);
+	    t_obj = create_object(c_obj->objprototype, 0);
 	    clone_object(c_obj, t_obj);
 	    obj_to_obj(t_obj, clone);
 	    recursive_clone(ch, c_obj, t_obj);
@@ -1801,7 +1801,7 @@ void do_clone(CHAR_DATA *ch, char *argument)
 	    OBJ_DATA *clone = NULL;
 
 	    for (iter = 0; iter < count; iter++) {
-		clone = create_object(obj->obj_idx, 0);
+		clone = create_object(obj->objprototype, 0);
 		clone_object(obj, clone);
 
 		if (obj->carried_by != NULL)
@@ -1847,7 +1847,7 @@ void do_clone(CHAR_DATA *ch, char *argument)
 
 		    for (obj = mob->carrying; obj != NULL; obj = obj->next_content) {
 			if (obj_check(ch, obj)) {
-			    OBJ_DATA *new_obj = create_object(obj->obj_idx, 0);
+			    OBJ_DATA *new_obj = create_object(obj->objprototype, 0);
 			    clone_object(obj, new_obj);
 			    recursive_clone(ch, obj, new_obj);
 			    obj_to_char(new_obj, clone);

@@ -504,38 +504,38 @@ static void fwrite_obj(CHAR_DATA *ch, OBJ_DATA *obj, FILE *fp, int iNest)
 	fwrite_obj(ch, obj->next_content, fp, iNest);
 
     fprintf(fp, "#O\n");
-    fprintf(fp, "Vnum %ld\n", obj->obj_idx->vnum);
+    fprintf(fp, "Vnum %ld\n", obj->objprototype->vnum);
     if (obj->enchanted)
 	fprintf(fp, "Enchanted\n");
 
     fprintf(fp, "Nest %d\n", iNest);
 
 
-    if (obj->name != obj->obj_idx->name)
+    if (obj->name != obj->objprototype->name)
 	fprintf(fp, "Name %s~\n", obj->name);
 
-    if (obj->short_descr != obj->obj_idx->short_descr)
+    if (obj->short_descr != obj->objprototype->short_descr)
 	fprintf(fp, "ShD  %s~\n", obj->short_descr);
 
-    if (obj->description != obj->obj_idx->description)
+    if (obj->description != obj->objprototype->description)
 	fprintf(fp, "Desc %s~\n", obj->description);
 
-    if (obj->extra_flags != obj->obj_idx->extra_flags)
+    if (obj->extra_flags != obj->objprototype->extra_flags)
 	fprintf(fp, "ExtF %ld\n", obj->extra_flags);
 
-    if (obj->extra2_flags != obj->obj_idx->extra2_flags)
+    if (obj->extra2_flags != obj->objprototype->extra2_flags)
 	fprintf(fp, "Ex2F %ld\n", obj->extra2_flags);
 
-    if (obj->wear_flags != obj->obj_idx->wear_flags)
+    if (obj->wear_flags != obj->objprototype->wear_flags)
 	fprintf(fp, "WeaF %ld\n", obj->wear_flags);
 
-    if (obj->item_type != obj->obj_idx->item_type)
+    if (obj->item_type != obj->objprototype->item_type)
 	fprintf(fp, "Ityp %d\n", obj->item_type);
 
-    if (obj->weight != obj->obj_idx->weight)
+    if (obj->weight != obj->objprototype->weight)
 	fprintf(fp, "Wt   %d\n", obj->weight);
 
-    if (obj->condition != obj->obj_idx->condition)
+    if (obj->condition != obj->objprototype->condition)
 	fprintf(fp, "Cond %d\n", obj->condition);
 
     /* variable data */
@@ -548,18 +548,18 @@ static void fwrite_obj(CHAR_DATA *ch, OBJ_DATA *obj, FILE *fp, int iNest)
     if (obj->xp_tolevel > 0)
 	fprintf(fp, "Xptolevel %d\n", obj->xp_tolevel);
 
-    if (obj->level != obj->obj_idx->level)
+    if (obj->level != obj->objprototype->level)
 	fprintf(fp, "Lev  %d\n", obj->level);
 
     if (obj->timer != 0)
 	fprintf(fp, "Time %d\n", obj->timer);
 
     fprintf(fp, "Cost %u\n", obj->cost);
-    if (obj->value[0] != obj->obj_idx->value[0]
-	    || obj->value[1] != obj->obj_idx->value[1]
-	    || obj->value[2] != obj->obj_idx->value[2]
-	    || obj->value[3] != obj->obj_idx->value[3]
-	    || obj->value[4] != obj->obj_idx->value[4]) {
+    if (obj->value[0] != obj->objprototype->value[0]
+	    || obj->value[1] != obj->objprototype->value[1]
+	    || obj->value[2] != obj->objprototype->value[2]
+	    || obj->value[3] != obj->objprototype->value[3]
+	    || obj->value[4] != obj->objprototype->value[4]) {
 	fprintf(fp, "Val  %ld %ld %ld %ld %ld\n",
 		obj->value[0], obj->value[1], obj->value[2],
 		obj->value[3], obj->value[4]);
@@ -1675,8 +1675,8 @@ static void fread_obj(CHAR_DATA *ch, FILE *fp)
 		}
 
 		if (!str_cmp(word, "End")) {
-		    /* if(!fNest || !fVnum ||obj->obj_idx == NULL) */
-		    if (!fNest || (fVnum && obj->obj_idx == NULL)) {
+		    /* if(!fNest || !fVnum ||obj->objprototype == NULL) */
+		    if (!fNest || (fVnum && obj->objprototype == NULL)) {
 			log_bug("Fread_obj: incomplete object.");
 			free_object(obj);
 			return;
@@ -1692,7 +1692,7 @@ static void fread_obj(CHAR_DATA *ch, FILE *fp)
 			    wear = obj->wear_loc;
 			    extract_obj(obj);
 
-			    obj = create_object(obj->obj_idx, 0);
+			    obj = create_object(obj->objprototype, 0);
 			    obj->wear_loc = wear;
 			}
 
@@ -1740,7 +1740,7 @@ static void fread_obj(CHAR_DATA *ch, FILE *fp)
 
 	    case 'O':
 		if (!str_cmp(word, "Oldstyle")) {
-		    if (obj->obj_idx != NULL)
+		    if (obj->objprototype != NULL)
 			make_new = true;
 		    fMatch = true;
 		}
@@ -1784,7 +1784,7 @@ static void fread_obj(CHAR_DATA *ch, FILE *fp)
 		    obj->value[2] = fread_number(fp);
 		    obj->value[3] = fread_number(fp);
 		    if (obj->item_type == ITEM_WEAPON && obj->value[0] == 0)
-			obj->value[0] = obj->obj_idx->value[0];
+			obj->value[0] = obj->objprototype->value[0];
 		    fMatch = true;
 		    break;
 		}
@@ -1803,7 +1803,7 @@ static void fread_obj(CHAR_DATA *ch, FILE *fp)
 		    long vnum;
 
 		    vnum = fread_number(fp);
-		    if ((obj->obj_idx = objectprototype_getbyvnum(vnum)) == NULL) {
+		    if ((obj->objprototype = objectprototype_getbyvnum(vnum)) == NULL) {
 			log_bug("Fread_obj: bad vnum %d.", vnum);
 		    } else {
 			fVnum = true;

@@ -6,6 +6,6 @@ clear
 #              -dump analysis/posix
 
 
-splint -DLINUX -Iinclude +skip-sys-headers src/password.c
+splint -DLINUX -Iinclude +skip-sys-headers src/objectprototype.c
 
 

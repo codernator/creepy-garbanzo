@@ -408,7 +408,7 @@ void reset_char(CHAR_DATA *ch)
 		continue;
 
 	    if (!obj->enchanted) {
-		for (af = obj->obj_idx->affected; af != NULL; af = af->next) {
+		for (af = obj->objprototype->affected; af != NULL; af = af->next) {
 		    mod = af->modifier;
 		    switch (af->location) {
 			case APPLY_SEX:
@@ -490,7 +490,7 @@ void reset_char(CHAR_DATA *ch)
 	    ch->armor[i] -= apply_ac(obj, loc, i);
 
 	if (!obj->enchanted) {
-	    for (af = obj->obj_idx->affected; af != NULL; af = af->next) {
+	    for (af = obj->objprototype->affected; af != NULL; af = af->next) {
 		mod = af->modifier;
 		switch (af->location) {
 		    case APPLY_STR:
@@ -1047,7 +1047,7 @@ void equip_char(CHAR_DATA *ch, OBJ_DATA *obj, int iWear)
 		(ch->in_room != NULL && ch->in_room->area != NULL) ? ch->in_room->area->file_name : 0,
 		ch->name,
 		(ch->in_room != NULL) ? ch->in_room->vnum : 0,
-		obj->obj_idx->vnum);
+		obj->objprototype->vnum);
 
 	return;
     }
@@ -1057,7 +1057,7 @@ void equip_char(CHAR_DATA *ch, OBJ_DATA *obj, int iWear)
     obj->wear_loc = iWear;
 
     if (!obj->enchanted)
-	for (paf = obj->obj_idx->affected; paf != NULL; paf = paf->next)
+	for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next)
 	    if (paf->location != APPLY_SPELL_AFFECT)
 		affect_modify(ch, paf, true);
     for (paf = obj->affected; paf != NULL; paf = paf->next)
@@ -1095,7 +1095,7 @@ void unequip_char(CHAR_DATA *ch, OBJ_DATA *obj)
     obj->wear_loc = -1;
 
     if (!obj->enchanted) {
-	for (paf = obj->obj_idx->affected; paf != NULL; paf = paf->next) {
+	for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
 	    if (paf->location == APPLY_SPELL_AFFECT) {
 		for (lpaf = ch->affected; lpaf != NULL; lpaf = lpaf_next) {
 		    lpaf_next = lpaf->next;
@@ -1150,7 +1150,7 @@ int count_obj_list(OBJECTPROTOTYPE *pObjIndex, OBJ_DATA *list)
 
     nMatch = 0;
     for (obj = list; obj != NULL; obj = obj->next_content)
-	if (obj->obj_idx == pObjIndex)
+	if (obj->objprototype == pObjIndex)
 	    nMatch++;
 
     return nMatch;
@@ -1236,7 +1236,7 @@ void obj_to_obj(OBJ_DATA *obj, OBJ_DATA *obj_to)
     obj->in_room = NULL;
     obj->carried_by = NULL;
 
-    if (obj_to->obj_idx->vnum == OBJ_VNUM_PIT)
+    if (obj_to->objprototype->vnum == OBJ_VNUM_PIT)
 	obj->cost = 0;
 
     for (; obj_to != NULL; obj_to = obj_to->in_obj) {
@@ -1321,7 +1321,7 @@ void extract_obj(OBJ_DATA *obj)
     }
 
     object_list_remove(obj);
-    --obj->obj_idx->count;
+    --obj->objprototype->count;
     free_object(obj);
     return;
 }
@@ -1477,9 +1477,9 @@ CHAR_DATA *get_char_world(CHAR_DATA *ch, char *argument)
  *
  * find an object with a given index data
  ***************************************************************************/
-OBJ_DATA *get_obj_type(OBJECTPROTOTYPE *obj_idx)
+OBJ_DATA *get_obj_type(OBJECTPROTOTYPE *objprototype)
 {
-    const struct object_iterator_filter filter = { .object_template = obj_idx };
+    const struct object_iterator_filter filter = { .object_template = objprototype };
     return object_iterator_start(&filter);
 }
 
@@ -1714,7 +1714,7 @@ OBJ_DATA *create_money(unsigned int gold, unsigned int silver)
  ***************************************************************************/
 int get_obj_number(OBJ_DATA *obj)
 {
-    OBJ_DATA *obj_idx;
+    OBJ_DATA *objprototype;
     int number;
 
     if (obj->item_type == ITEM_CONTAINER
@@ -1728,10 +1728,10 @@ int get_obj_number(OBJ_DATA *obj)
     else
 	number = 1;
 
-    for (obj_idx = obj->contains;
-	    obj_idx != NULL;
-	    obj_idx = obj_idx->next_content)
-	number += get_obj_number(obj_idx);
+    for (objprototype = obj->contains;
+	    objprototype != NULL;
+	    objprototype = objprototype->next_content)
+	number += get_obj_number(objprototype);
 
     return number;
 }
@@ -1744,14 +1744,14 @@ int get_obj_number(OBJ_DATA *obj)
  ***************************************************************************/
 int get_obj_weight(OBJ_DATA *obj)
 {
-    OBJ_DATA *obj_idx;
+    OBJ_DATA *objprototype;
     int weight;
 
     weight = obj->weight;
-    for (obj_idx = obj->contains;
-	    obj_idx != NULL;
-	    obj_idx = obj_idx->next_content)
-	weight += get_obj_weight(obj_idx) * WEIGHT_MULT(obj) / 100;
+    for (objprototype = obj->contains;
+	    objprototype != NULL;
+	    objprototype = objprototype->next_content)
+	weight += get_obj_weight(objprototype) * WEIGHT_MULT(obj) / 100;
 
     return weight;
 }
@@ -1764,14 +1764,14 @@ int get_obj_weight(OBJ_DATA *obj)
  ***************************************************************************/
 int get_true_weight(OBJ_DATA *obj)
 {
-    OBJ_DATA *obj_idx;
+    OBJ_DATA *objprototype;
     int weight;
 
     weight = obj->weight;
-    for (obj_idx = obj->contains;
-	    obj_idx != NULL;
-	    obj_idx = obj_idx->next_content)
-	weight += get_obj_weight(obj_idx);
+    for (objprototype = obj->contains;
+	    objprototype != NULL;
+	    objprototype = objprototype->next_content)
+	weight += get_obj_weight(objprototype);
 
     return weight;
 }
@@ -2381,7 +2381,7 @@ void identify_item(CHAR_DATA *ch, OBJ_DATA *obj)
     }
 
     if (!obj->enchanted) {
-	for (paf = obj->obj_idx->affected; paf != NULL; paf = paf->next) {
+	for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
 	    if (paf->location != APPLY_NONE && paf->modifier != 0) {
 		printf_to_char(ch, "Affects %s by %d",
 			affect_loc_name((long)paf->location),
