@@ -2290,12 +2290,11 @@ void do_log(CHAR_DATA *ch, char *argument)
 	}
 
     if (!str_cmp(arg, "all")) {
-	if (log_all) {
-	    log_all = false;
-	    send_to_char("Log ALL off.\n\r", ch);
-	} else {
-	    log_all = true;
+	globalSystemState.log_all = !globalSystemState.log_all;
+	if (globalSystemState.log_all) {
 	    send_to_char("Log ALL on.\n\r", ch);
+	} else {
+	    send_to_char("Log ALL off.\n\r", ch);
 	}
 	return;
     }

@@ -1834,7 +1834,6 @@ void raw_kill(CHAR_DATA *victim, CHAR_DATA *killer)
 
     if (IS_NPC(victim)) {
 	victim->mob_idx->killed++;
-	kill_table[URANGE(0, victim->level, MAX_LEVEL - 1)].killed++;
 	extract_char(victim, true);
 
 	return;

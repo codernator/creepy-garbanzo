@@ -15,62 +15,21 @@
 #include "channels.h"
 
 
-
-extern long flag_lookup(const char *word, const struct flag_type *flag_table);
-extern int _filbuf(FILE *);
-extern void init_mm(void);
-extern unsigned int fread_uint(FILE *fp);
-extern long fread_long(FILE *fp);
-extern bool is_space(const char test);
-
-
-
-extern OBJ_DATA *obj_free;
-extern CHAR_DATA *char_free;
-extern PC_DATA *pcdata_free;
-extern AFFECT_DATA *affect_free;
-
+/** exports */
+char str_empty[1];
 CHAR_DATA *char_list;
 NOTE_DATA *note_list;
-
 HELP_DATA *help_first;
-static HELP_DATA *help_last;
 HELP_AREA *had_list;
-
 MPROG_CODE *mprog_list;
-
 SHOP_DATA *shop_first;
 SHOP_DATA *shop_last;
-
 NOTE_DATA *note_free;
-KILL_DATA kill_table[MAX_LEVEL];
-
-
 char *help_greeting;
-static char *ahelp_greeting;
-static char *ahelp_greeting2;
-
-int reboot_tick_counter = -1;
-int copyover_tick_counter = -1;
-TIME_INFO_DATA time_info;
-WEATHER_DATA weather_info;
-
-
-/***************************************************************************
- *	local vars
- ***************************************************************************/
 MOB_INDEX_DATA *mob_index_hash[MAX_KEY_HASH];
 ROOM_INDEX_DATA *room_index_hash[MAX_KEY_HASH];
-static char *string_hash[MAX_KEY_HASH];
-
 AREA_DATA *area_first;
 AREA_DATA *area_last;
-static AREA_DATA *current_area;
-
-static char *string_space;
-static char *top_string;
-char str_empty[1];
-
 int top_affect;
 int top_area;
 int top_ed;
@@ -80,17 +39,37 @@ long top_mob_index;
 int top_reset;
 long top_room;
 int top_shop;
-
 long top_vnum_room;
 long top_vnum_mob;
 long top_vnum_obj;
 long top_mprog_index;
-
 int mobile_count = 0;
 
 
+/** imports */
+extern long flag_lookup(const char *word, const struct flag_type *flag_table);
+extern int _filbuf(FILE *);
+extern void init_mm(void);
+extern unsigned int fread_uint(FILE *fp);
+extern long fread_long(FILE *fp);
+extern bool is_space(const char test);
+extern OBJ_DATA *obj_free;
+extern CHAR_DATA *char_free;
+extern PC_DATA *pcdata_free;
+extern AFFECT_DATA *affect_free;
+
+
+/** locals */
+static char *string_hash[MAX_KEY_HASH];
+static char *ahelp_greeting;
+static char *ahelp_greeting2;
+static AREA_DATA *current_area;
+static HELP_DATA *help_last;
+static char *string_space;
+static char *top_string;
 static void bug_long(const char *str, long param);
 static void bug(const char *str, int param);
+
 
 /***************************************************************************
  *	memory management
@@ -163,40 +142,40 @@ static void init_time()
     long lmonth;
 
     lhour = (long)((globalSystemState.current_time - 650336715l) / (PULSE_TICK / PULSE_PER_SECOND));
-    time_info.hour = (int)(lhour % 24l);
+    globalGameState.gametime->hour = (int)(lhour % 24l);
     lday = (int)(lhour / 24);
-    time_info.day = (int)(lday % 35l);
+    globalGameState.gametime->day = (int)(lday % 35l);
     lmonth = lday / 35l;
-    time_info.month = (int)(lmonth % 17l);
-    time_info.year = (int)(lmonth / 17l);
+    globalGameState.gametime->month = (int)(lmonth % 17l);
+    globalGameState.gametime->year = (int)(lmonth / 17l);
 
-    if (time_info.hour < 5)
-	weather_info.sunlight = SUN_DARK;
-    else if (time_info.hour < 6)
-	weather_info.sunlight = SUN_RISE;
-    else if (time_info.hour < 19)
-	weather_info.sunlight = SUN_LIGHT;
-    else if (time_info.hour < 20)
-	weather_info.sunlight = SUN_SET;
+    if (globalGameState.gametime->hour < 5)
+	globalGameState.weather->sunlight = SUN_DARK;
+    else if (globalGameState.gametime->hour < 6)
+	globalGameState.weather->sunlight = SUN_RISE;
+    else if (globalGameState.gametime->hour < 19)
+	globalGameState.weather->sunlight = SUN_LIGHT;
+    else if (globalGameState.gametime->hour < 20)
+	globalGameState.weather->sunlight = SUN_SET;
     else
-	weather_info.sunlight = SUN_DARK;
+	globalGameState.weather->sunlight = SUN_DARK;
 
-    weather_info.change = 0;
-    weather_info.mmhg = 960;
+    globalGameState.weather->change = 0;
+    globalGameState.weather->mmhg = 960;
 
-    if (time_info.month >= 7 && time_info.month <= 12)
-	weather_info.mmhg += number_range(1, 50);
+    if (globalGameState.gametime->month >= 7 && globalGameState.gametime->month <= 12)
+	globalGameState.weather->mmhg += number_range(1, 50);
     else
-	weather_info.mmhg += number_range(1, 80);
+	globalGameState.weather->mmhg += number_range(1, 80);
 
-    if (weather_info.mmhg <= 980)
-	weather_info.sky = SKY_LIGHTNING;
-    else if (weather_info.mmhg <= 1000)
-	weather_info.sky = SKY_RAINING;
-    else if (weather_info.mmhg <= 1020)
-	weather_info.sky = SKY_CLOUDY;
+    if (globalGameState.weather->mmhg <= 980)
+	globalGameState.weather->sky = SKY_LIGHTNING;
+    else if (globalGameState.weather->mmhg <= 1000)
+	globalGameState.weather->sky = SKY_RAINING;
+    else if (globalGameState.weather->mmhg <= 1020)
+	globalGameState.weather->sky = SKY_CLOUDY;
     else
-	weather_info.sky = SKY_CLOUDLESS;
+	globalGameState.weather->sky = SKY_CLOUDLESS;
 }
 
 
@@ -1093,8 +1072,6 @@ void load_mobiles(FILE *fp)
 
 	top_vnum_mob = top_vnum_mob < vnum ? vnum : top_vnum_mob;
 	assign_area_vnum(vnum);
-
-	kill_table[URANGE(0, mob_idx->level, MAX_LEVEL - 1)].number++;
     }
 
     return;

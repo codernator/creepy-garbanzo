@@ -1871,7 +1871,7 @@ static void set_reboot(CHAR_DATA *ch, char *argument)
 	    sprintf(buf, " Reboot in %d ticks.", num_ticks);
 	    do_echo(NULL, buf);
 
-	    reboot_tick_counter = num_ticks;
+	    globalSystemState.reboot_tick_counter = num_ticks;
 	} else {
 	    if ((ch->invis_level == ch->level) || (ch->incog_level == ch->level))
 		sprintf(buf, " Reboot sequence terminated by someone.");
@@ -1880,7 +1880,7 @@ static void set_reboot(CHAR_DATA *ch, char *argument)
 
 	    do_echo(NULL, buf);
 
-	    reboot_tick_counter = -1;
+	    globalSystemState.reboot_tick_counter = -1;
 	}
     } else {
 	send_to_char("Value must be numeric.\n\r", ch);
@@ -1920,7 +1920,7 @@ static void set_copyover(CHAR_DATA *ch, char *argument)
 	    sprintf(buf, " Copyover in %d ticks.", num_ticks);
 	    do_echo(NULL, buf);
 
-	    copyover_tick_counter = num_ticks;
+	    globalSystemState.copyover_tick_counter = num_ticks;
 	} else {
 	    if ((ch->invis_level == ch->level) || (ch->incog_level == ch->level))
 		sprintf(buf, " Copyover sequence terminated by someone.");
@@ -1929,7 +1929,7 @@ static void set_copyover(CHAR_DATA *ch, char *argument)
 
 	    do_echo(NULL, buf);
 
-	    copyover_tick_counter = -1;
+	    globalSystemState.copyover_tick_counter = -1;
 	}
     } else {
 	send_to_char("Value must be numeric.\n\r", ch);

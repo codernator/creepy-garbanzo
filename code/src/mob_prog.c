@@ -376,7 +376,7 @@ static bool cmd_eval(long vnum, char *line, int check,
 	case CHK_ORDER:
 	    rval = get_order(mob); break;
 	case CHK_HOUR:
-	    rval = time_info.hour; break;
+	    rval = globalGameState.gametime->hour; break;
 	default:;
     }
 

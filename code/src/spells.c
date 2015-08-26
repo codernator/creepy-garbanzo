@@ -136,7 +136,7 @@ void spell_call_lightning(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int 
 	return;
     }
 
-    if (weather_info.sky < SKY_RAINING) {
+    if (globalGameState.weather->sky < SKY_RAINING) {
 	send_to_char("``You need bad `Ow`^e`6ath`^e`Or``.\n\r", ch);
 	return;
     }
@@ -144,8 +144,7 @@ void spell_call_lightning(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int 
     dam = dice(level / 2, 8);
 
     send_to_char("`@M`2o`@t`2a``'s lightning strikes your foes!\n\r", ch);
-    act("$n calls `@M`2o`@t`2a``'s lightning to strike $s foes! `1BLAM``",
-	    ch, NULL, NULL, TO_ROOM);
+    act("$n calls `@M`2o`@t`2a``'s lightning to strike $s foes! `1BLAM``", ch, NULL, NULL, TO_ROOM);
 
     for (vch = char_list; vch != NULL; vch = vch_next) {
 	vch_next = vch->next;
@@ -153,23 +152,14 @@ void spell_call_lightning(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int 
 	    continue;
 	if (vch->in_room == ch->in_room) {
 	    if (vch != ch && (IS_NPC(ch) ? !IS_NPC(vch) : IS_NPC(vch))) {
-		damage(ch,
-			vch,
-			saves_spell(level, vch, DAM_LIGHTNING) ? dam / 2 : dam,
-			skill->sn,
-			DAM_LIGHTNING,
-			true);
+		damage(ch, vch, saves_spell(level, vch, DAM_LIGHTNING) ? dam / 2 : dam, skill->sn, DAM_LIGHTNING, true);
 	    }
 	    continue;
 	}
 
-	if (vch->in_room->area == ch->in_room->area
-		&& IS_OUTSIDE(vch)
-		&& IS_AWAKE(vch))
+	if (vch->in_room->area == ch->in_room->area && IS_OUTSIDE(vch) && IS_AWAKE(vch))
 	    send_to_char("`&Lightning ```#f`&l`#a`&s`#h`&e`#s`` in the sky.\n\r", vch);
     }
-
-    return;
 }
 
 /* RT calm spell stops all fighting in the room */
@@ -535,9 +525,9 @@ void spell_colour_spray(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 void spell_control_weather(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
     if (!str_cmp(argument, "better"))
-	weather_info.change += dice(level / 3, 4);
+	globalGameState.weather->change += dice(level / 3, 4);
     else if (!str_cmp(argument, "worse"))
-	weather_info.change -= dice(level / 3, 4);
+	globalGameState.weather->change -= dice(level / 3, 4);
     else
 	send_to_char("Do you want it to get `!better ``or `8worse``?\n\r", ch);
 
@@ -566,7 +556,7 @@ void spell_create_water(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 	return;
     }
 
-    water = (long)(level * (weather_info.sky >= SKY_RAINING ? 4 : 2));
+    water = (long)(level * (globalGameState.weather->sky >= SKY_RAINING ? 4 : 2));
     water = UMIN(water, obj->value[0] - obj->value[1]);
 
     if (water > 0) {

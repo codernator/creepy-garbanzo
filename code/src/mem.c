@@ -13,9 +13,18 @@
 #include <stdio.h>
 #include "merc.h"
 
-/*
- * Globals
- */
+
+/** exports */
+EXTRA_DESCR_DATA *extra_descr_free;
+HELP_DATA *help_free;
+HELP_DATA *help_last;
+void free_extra_descr(EXTRA_DESCR_DATA * extra);
+void free_affect(AFFECT_DATA * af);
+void free_mprog(MPROG_LIST * mp);
+
+
+/** imports */
+extern char str_empty[1];
 extern int top_reset;
 extern int top_area;
 extern long top_exit;
@@ -25,20 +34,13 @@ extern long top_mob_index;
 extern int top_mprog_index;
 
 
+/** locals */
 static AREA_DATA *area_free;
-EXTRA_DESCR_DATA *extra_descr_free;
 static EXIT_DATA *exit_free;
 static ROOM_INDEX_DATA *room_index_free;
 static SHOP_DATA *shop_free;
 static MOB_INDEX_DATA *mob_index_free;
 static RESET_DATA *reset_free;
-HELP_DATA *help_free;
-HELP_DATA *help_last;
-
-
-void free_extra_descr(EXTRA_DESCR_DATA * extra);
-void free_affect(AFFECT_DATA * af);
-void free_mprog(MPROG_LIST * mp);
 
 
 

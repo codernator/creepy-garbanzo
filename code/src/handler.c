@@ -1810,12 +1810,10 @@ bool room_is_dark(CHAR_DATA *ch, ROOM_INDEX_DATA *room)
     if (IS_SET(room->room_flags, ROOM_DARK))
 	return true;
 
-    if (room->sector_type == SECT_INSIDE
-	    || room->sector_type == SECT_CITY)
+    if (room->sector_type == SECT_INSIDE || room->sector_type == SECT_CITY)
 	return false;
 
-    if (weather_info.sunlight == SUN_SET
-	    || weather_info.sunlight == SUN_DARK)
+    if (globalGameState.weather->sunlight == SUN_SET || globalGameState.weather->sunlight == SUN_DARK)
 	return true;
 
     return false;

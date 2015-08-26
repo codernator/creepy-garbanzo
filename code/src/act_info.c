@@ -1225,7 +1225,7 @@ void do_time(CHAR_DATA *ch, char *argument)
     char *suf;
     int day;
 
-    day = time_info.day + 1;
+    day = globalGameState.gametime->day + 1;
     switch (day) {
 	case 1:
 	    suf = "st";
@@ -1248,11 +1248,11 @@ void do_time(CHAR_DATA *ch, char *argument)
 	    day_name[day % 7],
 	    day,
 	    suf,
-	    month_name[time_info.month]);
+	    month_name[globalGameState.gametime->month]);
 
     printf_to_char(ch, "The current time is %d o'clock %s.\n\r",
-	    (time_info.hour % 12 == 0) ? 12 : time_info.hour % 12,
-	    time_info.hour >= 12 ? "pm" : "am");
+	    (globalGameState.gametime->hour % 12 == 0) ? 12 : globalGameState.gametime->hour % 12,
+	    globalGameState.gametime->hour >= 12 ? "pm" : "am");
 
     send_to_char("\n\r\n\r`1-`!-----------------------------------------------------------------------------`1-``\n\r", ch);
 
@@ -2030,17 +2030,13 @@ void do_laston(CHAR_DATA *ch, char *argument)
 	return;
     }
 
-    sprintf(buf, "`@Acid-Fiend-1 tells you '`t%s was last here on %s`@'`7",
-	    victim->name, (char *)ctime(&victim->llogoff));
-    send_to_char(buf, ch);
+    printf_to_char(ch, "`@Acid-Fiend-1 tells you '`t%s was last here on %s`@'`7", victim->name, (char *)ctime(&victim->llogoff));
     free_pcdata(victim->pcdata);
     free_char(victim);
-    return;
 }
 
 void print_weather(CHAR_DATA *ch)
 {
-    static char buf[MSL];
     static char *const sky_look[4] =
     {
 	"`Ocloudless``",
@@ -2049,16 +2045,7 @@ void print_weather(CHAR_DATA *ch)
 	"lit by flashes of `8l`&i`8ghtning``"
     };
 
-    buf[0] = '\0';
-
-
-    sprintf(buf, "The sky is %s and %s\n\r",
-	    sky_look[weather_info.sky],
-	    weather_info.change >= 0
-	    ? "rainy."
-	    : "snowing."
-	   );
-    send_to_char(buf, ch);
+    printf_to_char(ch, "The sky is %s and %s\n\r", sky_look[globalGameState.weather->sky], globalGameState.weather->change >= 0 ? "rainy." : "snowing.");
 }
 
 void do_weather(CHAR_DATA *ch, char *argument)
@@ -2076,7 +2063,6 @@ void do_die(CHAR_DATA *ch, char *argument)
     do_help(ch, "BLOW");
     return;
 }
-
 
 HELP_DATA *find_help(CHAR_DATA *ch, char *name)
 {

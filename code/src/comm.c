@@ -33,6 +33,28 @@
 #define STDOUT_FILENO 1
 #endif
 
+
+/** exports */
+static WEATHER_DATA weather = { 
+    .mmhg = 0,
+    .change = 0,
+    .sky = 0,
+    .sunlight = 0
+};
+
+static TIME_INFO_DATA gametime = {
+    .hour = 0,
+    .day = 0,
+    .month = 0,
+    .year = 0
+};
+
+GAME_STATE globalGameState = {
+    .weather = &weather,
+    .gametime = &gametime
+};
+
+
 /** OS-dependent declarations. */
 extern int close(int fd);
 extern int gettimeofday(struct timeval *tp, struct timezone *tzp);
@@ -1223,11 +1245,13 @@ void sig_handler(int sig)
     fatal_error_in_progress = 1;
     psignal(sig, "Auto shutdown invoked.");
     log_bug("Critical signal received %d", sig);
+    log_to(LOG_SINK_LASTCMD, NULL, "%s", globalSystemState.last_command);
     auto_shutdown();
 
     /* Now reraise the signal. We reactivate the signal’s default handling, which is to 
      * terminate the process. We could just call exit or abort,  but reraising the signal 
-     * sets the return status from the process correctly.
+     * sets the return status from the process correctly, and, more importantly, gives us
+     * a core dump.
      */
     signal(sig, SIG_DFL);
     raise(sig);

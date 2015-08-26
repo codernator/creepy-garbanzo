@@ -8,18 +8,17 @@
 #include "magic.h"
 #include "interp.h"
 
+/** exports */
 
+/** imports */
+extern ROOM_INDEX_DATA *find_location(CHAR_DATA * ch, char *arg);
+extern char str_empty[1];
 
-
-/***************************************************************************
-*	local functions
-***************************************************************************/
+/** locals */
 static void string_room(CHAR_DATA * ch, char *arg);
 static void string_char(CHAR_DATA * ch, char *arg);
 static void string_obj(CHAR_DATA * ch, char *arg);
 static void realloc_string(char **src, char *str);
-
-extern ROOM_INDEX_DATA *find_location(CHAR_DATA * ch, char *arg);
 
 
 

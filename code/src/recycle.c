@@ -7,7 +7,16 @@
 #include <signal.h>
 
 
+/** exports */
+
+/** imports */
+extern char str_empty[1];
 extern NOTE_DATA *note_free;
+
+/** locals */
+
+
+
 
 NOTE_DATA *new_note()
 {

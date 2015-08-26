@@ -828,104 +828,103 @@ static void weather_update(void)
 
     buf[0] = '\0';
 
-    switch (++time_info.hour) {
+    switch (++globalGameState.gametime->hour) {
 	case 5:
-	    weather_info.sunlight = SUN_LIGHT;
+	    globalGameState.weather->sunlight = SUN_LIGHT;
 	    strcat(buf, "A new day has begun.\n\r");
 	    break;
 
 	case 6:
-	    weather_info.sunlight = SUN_RISE;
+	    globalGameState.weather->sunlight = SUN_RISE;
 	    strcat(buf, "The `#sun`` rises in the east.\n\r");
 	    break;
 
 	case 19:
-	    weather_info.sunlight = SUN_SET;
+	    globalGameState.weather->sunlight = SUN_SET;
 	    strcat(buf, "The `#sun`` slowly disappears in the west.\n\r");
 	    break;
 
 	case 20:
-	    weather_info.sunlight = SUN_DARK;
+	    globalGameState.weather->sunlight = SUN_DARK;
 	    strcat(buf, "The `8night`` has begun.\n\r");
 	    break;
 
 	case 24:
-	    time_info.hour = 0;
-	    time_info.day++;
+	    globalGameState.gametime->hour = 0;
+	    globalGameState.gametime->day++;
 	    break;
     }
 
-    if (time_info.day >= 35) {
-	time_info.day = 0;
-	time_info.month++;
+    if (globalGameState.gametime->day >= 35) {
+	globalGameState.gametime->day = 0;
+	globalGameState.gametime->month++;
     }
 
-    if (time_info.month >= 17) {
-	time_info.month = 0;
-	time_info.year++;
+    if (globalGameState.gametime->month >= 17) {
+	globalGameState.gametime->month = 0;
+	globalGameState.gametime->year++;
     }
 
     /*
      * Weather change.
      */
-    if (time_info.month >= 9 && time_info.month <= 16)
-	diff = weather_info.mmhg > 985 ? -2 : 2;
+    if (globalGameState.gametime->month >= 9 && globalGameState.gametime->month <= 16)
+	diff = globalGameState.weather->mmhg > 985 ? -2 : 2;
     else
-	diff = weather_info.mmhg > 1015 ? -2 : 2;
+	diff = globalGameState.weather->mmhg > 1015 ? -2 : 2;
 
-    weather_info.change += diff * dice(1, 4) + dice(2, 6) - dice(2, 6);
-    weather_info.change = UMAX(weather_info.change, -12);
-    weather_info.change = UMIN(weather_info.change, 12);
+    globalGameState.weather->change += diff * dice(1, 4) + dice(2, 6) - dice(2, 6);
+    globalGameState.weather->change = UMAX(globalGameState.weather->change, -12);
+    globalGameState.weather->change = UMIN(globalGameState.weather->change, 12);
 
-    weather_info.mmhg += weather_info.change;
-    weather_info.mmhg = UMAX(weather_info.mmhg, 960);
-    weather_info.mmhg = UMIN(weather_info.mmhg, 1040);
+    globalGameState.weather->mmhg += globalGameState.weather->change;
+    globalGameState.weather->mmhg = UMAX(globalGameState.weather->mmhg, 960);
+    globalGameState.weather->mmhg = UMIN(globalGameState.weather->mmhg, 1040);
 
-    switch (weather_info.sky) {
+    switch (globalGameState.weather->sky) {
 	default:
-	    log_bug("Weather_update: bad sky %d.", weather_info.sky);
-	    weather_info.sky = SKY_CLOUDLESS;
+	    log_bug("Weather_update: bad sky %d.", globalGameState.weather->sky);
+	    globalGameState.weather->sky = SKY_CLOUDLESS;
 	    break;
 
 	case SKY_CLOUDLESS:
-	    if (weather_info.mmhg < 990
-		    || (weather_info.mmhg < 1010 && number_bits(2) == 0)) {
+	    if (globalGameState.weather->mmhg < 990
+		    || (globalGameState.weather->mmhg < 1010 && number_bits(2) == 0)) {
 		strcat(buf, "The sky is getting cloudy.\n\r");
-		weather_info.sky = SKY_CLOUDY;
+		globalGameState.weather->sky = SKY_CLOUDY;
 	    }
 	    break;
 
 	case SKY_CLOUDY:
-	    if (weather_info.mmhg < 970
-		    || (weather_info.mmhg < 990 && number_bits(2) == 0)) {
+	    if (globalGameState.weather->mmhg < 970
+		    || (globalGameState.weather->mmhg < 990 && number_bits(2) == 0)) {
 		strcat(buf, "It starts to rain.\n\r");
-		weather_info.sky = SKY_RAINING;
+		globalGameState.weather->sky = SKY_RAINING;
 	    }
 
-	    if (weather_info.mmhg > 1030 && number_bits(2) == 0) {
+	    if (globalGameState.weather->mmhg > 1030 && number_bits(2) == 0) {
 		strcat(buf, "The clouds disappear.\n\r");
-		weather_info.sky = SKY_CLOUDLESS;
+		globalGameState.weather->sky = SKY_CLOUDLESS;
 	    }
 	    break;
 
 	case SKY_RAINING:
-	    if (weather_info.mmhg < 970 && number_bits(2) == 0) {
+	    if (globalGameState.weather->mmhg < 970 && number_bits(2) == 0) {
 		strcat(buf, "Lightning flashes in the sky.\n\r");
-		weather_info.sky = SKY_LIGHTNING;
+		globalGameState.weather->sky = SKY_LIGHTNING;
 	    }
 
-	    if (weather_info.mmhg > 1030
-		    || (weather_info.mmhg > 1010 && number_bits(2) == 0)) {
+	    if (globalGameState.weather->mmhg > 1030
+		    || (globalGameState.weather->mmhg > 1010 && number_bits(2) == 0)) {
 		strcat(buf, "The rain stopped.\n\r");
-		weather_info.sky = SKY_CLOUDY;
+		globalGameState.weather->sky = SKY_CLOUDY;
 	    }
 	    break;
 
 	case SKY_LIGHTNING:
-	    if (weather_info.mmhg > 1010
-		    || (weather_info.mmhg > 990 && number_bits(2) == 0)) {
+	    if (globalGameState.weather->mmhg > 1010 || (globalGameState.weather->mmhg > 990 && number_bits(2) == 0)) {
 		strcat(buf, "The lightning has stopped.\n\r");
-		weather_info.sky = SKY_RAINING;
+		globalGameState.weather->sky = SKY_RAINING;
 	    }
 	    break;
     }
@@ -1532,32 +1531,30 @@ void update_handler(void)
 	impnet("`2TICK!`7", NULL, NULL, IMN_TICKS, 0, 0);
 	pulse_point = PULSE_TICK;
 	globalSystemState.tickset = false;
-	if (reboot_tick_counter > 0) {
-	    reboot_tick_counter--;
-	    sprintf(buf, " `6R`6`^e`&b`^o`6ot`` in %d tick%s.",
-		    reboot_tick_counter,
-		    reboot_tick_counter == 1 ? "" : "s");
+	if (globalSystemState.reboot_tick_counter > 0) {
+	    globalSystemState.reboot_tick_counter--;
+	    sprintf(buf, " `6R`6`^e`&b`^o`6ot`` in %d tick%s.", globalSystemState.reboot_tick_counter, globalSystemState.reboot_tick_counter == 1 ? "" : "s");
 	    do_echo(NULL, buf);
 	}
 
-	if (!reboot_tick_counter)
-	    do_reboot(NULL, "");
-
-	if (copyover_tick_counter > 0) {
-	    copyover_tick_counter--;
-	    sprintf(buf, " `6C`6`^op`&yo`^ve`6r`` in %d tick%s.",
-		    copyover_tick_counter,
-		    copyover_tick_counter == 1 ? "" : "s");
+	if (globalSystemState.copyover_tick_counter > 0) {
+	    globalSystemState.copyover_tick_counter--;
+	    sprintf(buf, " `6C`6`^op`&yo`^ve`6r`` in %d tick%s.", globalSystemState.copyover_tick_counter, globalSystemState.copyover_tick_counter == 1 ? "" : "s");
 	    do_echo(NULL, buf);
 	}
-
-	if (!copyover_tick_counter)
-	    do_copyover(NULL, "");
 
 	weather_update();
 	char_update();
 	obj_update();
 	impnet("`!Update`7: Characters/Object/Weather/WhoOut have been updated.", NULL, NULL, IMN_UPDATES, 0, 0);
+
+	if (!globalSystemState.reboot_tick_counter) {
+	    do_reboot(NULL, "");
+	}
+
+	if (!globalSystemState.copyover_tick_counter) {
+	    do_copyover(NULL, "");
+	}
     }
 
     auction_update();

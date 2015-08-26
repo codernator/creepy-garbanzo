@@ -2721,12 +2721,12 @@ CHAR_DATA *find_keeper(CHAR_DATA *ch)
 		return NULL;
 	}
 
-	if (time_info.hour < shop->open_hour) {
+	if (globalGameState.gametime->hour < shop->open_hour) {
 		broadcast_channel(keeper, channels_find(CHANNEL_SAY), NULL, "Sorry, I am closed. Come back later.");
 		return NULL;
 	}
 
-	if (time_info.hour > shop->close_hour) {
+	if (globalGameState.gametime->hour > shop->close_hour) {
 		broadcast_channel(keeper, channels_find(CHANNEL_SAY), NULL, "Sorry, I am closed. Come back tomorrow.");
 		return NULL;
 	}

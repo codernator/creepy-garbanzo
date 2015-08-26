@@ -66,6 +66,7 @@ typedef struct mprog_list MPROG_LIST;
 typedef struct mprog_code MPROG_CODE;
 typedef struct help_area_data HELP_AREA;
 typedef struct system_state SYSTEM_STATE;
+typedef struct game_state GAME_STATE;
 
 
 /* required for new skill system */
@@ -126,12 +127,24 @@ typedef void DO_FUN(/*@partial@*/CHAR_DATA * ch, char *argument);
 #define HERO                    LEVEL_HERO
 
 struct system_state {
-    bool wizlock;                                   /* Game is wizlocked. */
-    bool newlock;                                   /* Game is newlocked. */
-    time_t current_time;                            /* Time of this pulse. */
-    bool tickset;                                   /* Force a tick? whaat? --Eo */
-    bool merc_down;                                 /* Shutdown */
+    time_t current_time;            /* Time of this pulse. */
+    bool tickset;                   /* Force a tick? whaat? --Eo */
+    bool merc_down;                 /* Shutdown */
     char boot_time[MIL];
+
+    bool wizlock;                   /* Game is wizlocked. */
+    bool newlock;                   /* Game is newlocked. */
+    bool log_all;
+    char last_command[MSL];	    /* In case of failure, log this. */
+
+    int copyover_tick_counter;      /* schedule copyover */
+    int reboot_tick_counter;        /* schedule reboot */
+};
+
+
+struct game_state {
+    WEATHER_DATA *weather;
+    TIME_INFO_DATA *gametime;
 };
 
 
@@ -1891,31 +1904,20 @@ extern int gn_max_group_sn;
 #define MAX_DIR 6
 #define NO_FLAG -99     /* Must not be used in flags or stats. */
 
+/* Global variables. */
+extern SYSTEM_STATE globalSystemState;
+extern GAME_STATE globalGameState;
+
 /* Global Constants */
 extern char *const dir_name        [];
 extern const int rev_dir         [];                 /* int - ROM OLC */
-
-
-/* Global variables. */
 extern AREA_DATA *area_first;
 extern AREA_DATA *area_last;
 extern SHOP_DATA *shop_last;
 extern HELP_DATA *help_first;
 extern SHOP_DATA *shop_first;
 extern CHAR_DATA *char_list;
-extern SYSTEM_STATE globalSystemState;
-
-
 extern MPROG_CODE *mprog_list;
-
-
-extern bool log_all;
-extern KILL_DATA kill_table[];
-extern TIME_INFO_DATA time_info;
-extern WEATHER_DATA weather_info;
-extern int reboot_tick_counter;
-extern int copyover_tick_counter;
-extern char last_command[MSL];
 extern int top_affect;
 extern int top_area;
 extern int top_ed;
@@ -1925,12 +1927,7 @@ extern int top_shop;
 extern long top_vnum_mob;
 extern long top_vnum_obj;
 extern long top_vnum_room;
-extern char str_empty       [1];
-extern bool wizlock;
-extern bool newlock;
-extern bool debugging;
 extern MOB_INDEX_DATA *mob_index_hash  [MAX_KEY_HASH];
-extern OBJECTPROTOTYPE *obj_index_hash  [MAX_KEY_HASH];
 extern ROOM_INDEX_DATA *room_index_hash [MAX_KEY_HASH];
 
 

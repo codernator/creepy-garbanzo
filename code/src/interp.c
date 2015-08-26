@@ -9,7 +9,6 @@
 extern SKILL *gsp_hide;
 
 
-char last_command[MSL];
 char *repeater(char *s, int i);
 
 
@@ -18,11 +17,6 @@ char *repeater(char *s, int i);
 #define LOG_NORMAL      0
 #define LOG_ALWAYS      1
 #define LOG_NEVER       2
-
-
-/* Log-all switch. */
-
-bool log_all = false;
 
 
 /* Command table. */
@@ -398,7 +392,7 @@ void interpret(CHAR_DATA *ch, char *argument)
      */
 	strcpy(logline, argument);
 	strcpy(buf, argument);
-	sprintf(last_command, "The last command was by %s in room[%ld] : %s.", ch->name, ch->in_room->vnum, buf);
+	sprintf(globalSystemState.last_command, "The last command was by %s in room[%ld] : %s.", ch->name, ch->in_room->vnum, buf);
 
 	if (!is_alpha(argument[0]) && !is_digit(argument[0])) {
 		command[0] = argument[0];
@@ -461,7 +455,7 @@ void interpret(CHAR_DATA *ch, char *argument)
 		wiznet(wiznet_message, ch, NULL, WIZ_PLOG, 0, get_trust(ch));
 	}
 
-	if (log_all) {
+	if (globalSystemState.log_all) {
 		log_to(LOG_SINK_ALL, "NULL", "[%s] -- '%s'", ch->name, logline);
 		sprintf(wiznet_message, "`4Log `O%s(all)`4: `O%s``", ch->name, logline);
 		wiznet(wiznet_message, ch, NULL, WIZ_ALOG, 0, get_trust(ch));
