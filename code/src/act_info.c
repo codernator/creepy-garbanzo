@@ -37,32 +37,6 @@ static OBJ_DATA *rgObjNest[MAX_NEST];
 extern void fread_char(CHAR_DATA * ch, FILE * fp);
 
 
-/* One time use only toggle that changes char from NPK to PK
- * Fayth 9/4/00 -- created for use on Crucible, used for Bad Trip by permission from Cruc Owner
- */
-void do_gopk(CHAR_DATA *ch, char *argument)
-{
-    /* NPCs, obviously, are not subject to PK/NPK designation*/
-    if (IS_NPC(ch)) {
-	send_to_char("Not on NPCs.\n\r", ch);
-	return;
-    }
-
-    /* No argument with first use of go_pk command*/
-    if (argument[0] != '\0') {
-	send_to_char("Just type go_pk.  No argument.\n\r", ch);
-	return;
-    }
-
-    /* Warn player of permanence of PK status*/
-    send_to_char("Type go_pk again to confirm this command.\n\r", ch);
-    send_to_char("WARNING: this command is irreversible.\n\r", ch);
-    send_to_char("Once you are PK, you cannot go back to NPK.\n\r", ch);
-    send_to_char("Typing go_pk with an argument will undo go_pk status.\n\r", ch);
-    ch->pcdata->confirm_pk = true;
-    return;
-}
-
 /* changes your scroll */
 void do_scroll(CHAR_DATA *ch, char *argument)
 {

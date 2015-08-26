@@ -1439,7 +1439,6 @@ struct pc_data {
     int  points;
     bool confirm_delete;
     bool confirm_suicide;
-    bool confirm_pkills;
     /*@shared@*/char *alias[MAX_ALIAS];
     /*@shared@*/char *alias_sub[MAX_ALIAS];
     /*@shared@*/char *ignore[MAX_IGNORE];
@@ -1477,7 +1476,6 @@ struct pc_data {
     int rank;
     unsigned int extendedlevel;
     long extendedexp;
-    bool confirm_pk;
     /*@shared@*/char *restring_name;
     /*@shared@*/char *restring_short;
     /*@shared@*/char *restring_long;

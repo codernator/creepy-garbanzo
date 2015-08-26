@@ -180,7 +180,6 @@ DECLARE_DO_FUN(do_get);
 DECLARE_DO_FUN(do_give);
 DECLARE_DO_FUN(do_glance);
 DECLARE_DO_FUN(do_gobstopper);
-DECLARE_DO_FUN(do_gopk);
 DECLARE_DO_FUN(do_goto);
 DECLARE_DO_FUN(do_grant);
 DECLARE_DO_FUN(do_group);

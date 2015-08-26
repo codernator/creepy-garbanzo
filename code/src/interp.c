@@ -140,7 +140,6 @@ const struct cmd_type cmd_table[] =
 	/*  Communication commands.  */
 
 	{ "afk",	      do_afk,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
-	{ "go_pk",	      do_gopk,	       POS_SLEEPING, 0,	 LOG_ALWAYS, 1 },
 	{ "channel",      command_channel, POS_DEAD,     0,  LOG_NORMAL, 0 },
 
 	{ "note",	      do_note,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
