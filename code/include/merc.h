@@ -61,7 +61,6 @@ typedef struct room_index_data ROOM_INDEX_DATA;
 typedef struct shop_data SHOP_DATA;
 typedef struct time_info_data TIME_INFO_DATA;
 typedef struct weather_data WEATHER_DATA;
-typedef struct auction_data AUCTION_DATA;
 
 typedef struct mprog_list MPROG_LIST;
 typedef struct mprog_code MPROG_CODE;
@@ -414,30 +413,6 @@ struct note_data {
     char *  text;
     time_t  date_stamp;
 };
-
-/*auction_data structure*/
-struct auction_data {
-    OBJ_DATA * item;
-    CHAR_DATA * seller;
-    CHAR_DATA * buyer;
-    unsigned int bet;
-    int  going;
-    int  pulse;
-    unsigned int reserve;
-    int  type;
-};
-
-/* auction type information*/
-struct auction_types {
-    char *  name;
-    char *  display;
-    int  type;
-    unsigned int min_reserve;
-    unsigned int max_reserve;
-    bool  is_coins;
-};
-
-extern const struct auction_types auction_type_table[];
 
 /* message type information*/
 struct message_types {
@@ -1927,7 +1902,6 @@ extern AREA_DATA *area_last;
 extern SHOP_DATA *shop_last;
 extern HELP_DATA *help_first;
 extern SHOP_DATA *shop_first;
-extern AUCTION_DATA *auction;
 extern CHAR_DATA *char_list;
 extern SYSTEM_STATE globalSystemState;
 

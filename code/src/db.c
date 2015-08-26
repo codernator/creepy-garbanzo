@@ -55,9 +55,6 @@ int copyover_tick_counter = -1;
 TIME_INFO_DATA time_info;
 WEATHER_DATA weather_info;
 
-AUCTION_DATA *auction;
-
-
 
 /***************************************************************************
  *	local vars
@@ -310,13 +307,6 @@ void boot_db()
     init_mm();
     init_time();
 
-    auction = (AUCTION_DATA *)malloc(sizeof(AUCTION_DATA));  /* DOH!!! */
-    if (auction == NULL) {
-	bug("Cannot allocate memory for the AUCTION_DATA structure - could note allocate %d bytes", (int)sizeof(AUCTION_DATA));
-	raise(SIGABRT);
-	return;
-    }
-    auction->item = NULL;   /* nothing is being sold */
 
     /* load skills */
     log_string("Loading Skills..");
@@ -2642,8 +2632,6 @@ char *fread_string_eol(FILE *fp)
     }
 }
 
-
-
 /*
  * Allocate some ordinary memory,
  *   with the expectation of freeing it someday.
@@ -2680,8 +2668,6 @@ void *alloc_mem(unsigned int sMem)
 
     return pMem;
 }
-
-
 
 /*
  * Free some memory.
@@ -2724,8 +2710,7 @@ void free_mem(void *pMem, unsigned int sMem)
 
 /*
  * Allocate some permanent memory.
- * Permanent memory is never freed,
- *   pointers into it may be copied safely.
+ * Permanent memory is never freed, pointers into it may be copied safely.
  */
 void *alloc_perm(unsigned int sMem)
 {
@@ -2758,8 +2743,6 @@ void *alloc_perm(unsigned int sMem)
     return pMem;
 }
 
-
-
 /** Duplicate a string into memory. Fread_strings are read-only and shared. */
 char *str_dup(const char *str)
 {
@@ -2775,8 +2758,6 @@ char *str_dup(const char *str)
     strcpy(str_new, str);
     return str_new;
 }
-
-
 
 /*
  * Free a string.

@@ -1,0 +1,131 @@
+/* ********************************************************************
+ * Raise dead, based off the find familiar code
+ * April 4 1998 by Gothar
+ *
+ * This skill allows your players to have a companion like those loveable pets in the pet shops.
+ *  gothar@magma.ca
+ * mcco0055@algonquinc.on.ca
+ *
+ * Implemented for BT by Monrick, March 2008
+ * ******************************************************************** */
+void do_familiar(/*@dependent@*/CHAR_DATA *ch, /*@unused@*/char *argument)
+{
+	MOB_INDEX_DATA *pMobIndex;
+	CHAR_DATA *mount;
+	SKILL *skill;
+	int i, chance;
+
+	if ((skill = skill_lookup("raise dead")) == NULL) {
+		send_to_char("Huh?\n\r", ch);
+		return;
+	}
+
+	if ((chance = get_learned_percent(ch, skill)) <= 0) {
+		send_to_char("You don't know where to start.\n\r", ch);
+		return;
+	}
+
+	if (chance <= number_percent()) {
+		send_to_char("You can't seem to concentrate.\n\r", ch);
+		return;
+	}
+
+	if (ch->pet != NULL) {
+		send_to_char("You all ready have a summoned creature.\n\r", ch);
+		return;
+	}
+
+	if (ch->position == POS_FIGHTING) {
+		send_to_char("You can't study the ritual while in combat!\n\r", ch);
+		return;
+	}
+
+	/* can't cast the spell in these sectors */
+	if (ch->in_room->sector_type == SECT_INSIDE
+	    || ch->in_room->sector_type == SECT_WATER_SWIM
+	    || ch->in_room->sector_type == SECT_WATER_NOSWIM
+	    || ch->in_room->sector_type == SECT_UNDERWATER
+	    || ch->in_room->sector_type == SECT_AIR) {
+		send_to_char("The gods forbid you from raising the dead here.\n\r", ch);
+		return;
+	}
+
+	mount = create_mobile(pMobIndex);
+
+	mount->level = (int)(number_fuzzy(5) * number_fuzzy(273));
+	mount->mana = mount->max_mana = 5339;
+	mount->hit = mount->max_hit = (number_fuzzy(2194) * number_fuzzy(3) * number_fuzzy(3) * number_fuzzy(3) + 3728);
+	for (i = 0; i < 4; i++)
+		mount->armor[i] = -(number_fuzzy(13294) * (number_fuzzy(8)));
+	mount->hitroll = (int)(number_fuzzy(434) * (number_fuzzy(8)));
+	mount->damroll = (int)(number_fuzzy(163) * (number_fuzzy(8) + number_fuzzy(15)));
+/*   mount->int = 25; */
+
+	/* free up the old mob names */
+	free_string(mount->description);
+	free_string(mount->name);
+	free_string(mount->short_descr);
+	free_string(mount->long_descr);
+
+	/* terrain*/
+	switch (ch->in_room->sector_type) {
+	case (SECT_CITY):
+	case (SECT_FIELD):
+/* Your basic zombie */
+		mount->description =
+			str_dup("The decaying corpse of a once might warrior stands before you.\n\r"
+				"You can feel the dirt and disease crawling off this animated corpse.\n\r");
+		mount->short_descr = str_dup("zombie warrior");
+		mount->long_descr = str_dup("The body of a rotting animated body stands here.\n\r");
+		mount->name = str_dup("summoned zombie");
+		mount->dam_type = 14; /* scratch */
+		break;
+
+/* Your basic skeleton */
+	case (SECT_FOREST):  /* skeleton */
+	case (SECT_HILLS):
+		mount->description =
+			str_dup("You see a skeleton of a decomped half giant. A blue aura radiates from around him.\n\r"
+				"Though this animated creature is devoid of flesh you can feel the power radiate from him\n\r");
+		mount->short_descr = str_dup("skeleton half giant");
+		mount->long_descr = str_dup("A animated skeleton stands here defending its master.\n\r");
+		mount->name = str_dup("summoned skeleton");
+		mount->dam_type = 46; /* claw */
+		break;
+	case (SECT_MOUNTAIN):
+/*Specter */
+		mount->description =
+			str_dup("The spectral remains of what appears to have once been an elf floats before you with a eerie blue glow. Its face is locked in a never ending scream of pain and suffering.\n\r");
+		mount->short_descr = str_dup("Specter");
+		mount->long_descr = str_dup("A translucent glowing form of a elf floats here..\n\r");
+		mount->name = str_dup("familiar mountain lion");
+		mount->dam_type = 39;   /* bite */
+		break;
+	case (SECT_DESERT):             /* Mummy*/
+		mount->description =
+			str_dup("The dried out husk of a tribal warrior with a never ending thirst stands before you.\n\r"
+				"The mummified remains glow with a faint blue aura of dark magic.\n\r");
+
+		mount->short_descr = str_dup("mummy");
+		mount->long_descr = str_dup("A mummified tribal warrior stands here\n\r");
+		mount->name = str_dup("mummy warrior");
+		mount->dam_type = 33; /* suction */
+		break;
+	}
+	/* player seen stuff here */
+	sit(ch, NULL);
+	char_to_room(mount, ch->in_room);
+	act("You kneel to the ground and begin to carve dark symbols into the ground. You prepare the spell to call a $N!.", ch, NULL, mount, TO_CHAR);
+	act("$n kneles to the ground and begins carving dark symbols into the ground. $n calls to a $N!", ch, NULL, mount, TO_ROOM);     WAIT_STATE(ch, 2 * PULSE_MOBILE);
+	add_follower(mount, ch);
+	mount->leader = ch;
+	ch->pet = mount;
+	stand(ch, NULL);
+
+	SET_BIT(mount->act, ACT_PET);
+	SET_BIT(mount->affected_by, AFF_CHARM);
+	ch->move /= 2; /* physically draining lose of move */
+	check_improve(ch, skill, true, 6);
+}
+
+

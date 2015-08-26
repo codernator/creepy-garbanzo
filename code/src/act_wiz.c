@@ -13,29 +13,30 @@
 #include <string.h>
 
 
-DECLARE_DO_FUN(do_grestore);
-DECLARE_DO_FUN(do_rrestore);
+/** exports */
+void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is, const char *message);
 
+
+/** imports */
 extern SKILL *gsp_deft;
 extern SKILL *gsp_dash;
 
 extern long top_mob_index;
 extern bool copyover();
-
 extern AFFECT_DATA *affect_free;
+extern bool is_auction_participant(CHAR_DATA *ch);
+extern OBJ_DATA *get_auction_item();
+extern ROOM_INDEX_DATA *find_location(CHAR_DATA * ch, char *arg);
+extern void reset_area(AREA_DATA * pArea);
+extern bool add_alias(CHAR_DATA * ch, char *alias, char *cmd);
+extern bool set_char_hunger(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
+extern bool set_char_thirst(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
+extern bool set_char_feed(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
 
-
-ROOM_INDEX_DATA *find_location(CHAR_DATA * ch, char *arg);
-
-void reset_area(AREA_DATA * pArea);
-void fry_char(CHAR_DATA * ch, char *argument);
-bool add_alias(CHAR_DATA * ch, char *alias, char *cmd);
-
-bool set_char_hunger(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
-bool set_char_thirst(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
-bool set_char_feed(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
-
-void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is, const char *message);
+/** locals */
+static DECLARE_DO_FUN(do_grestore);
+static DECLARE_DO_FUN(do_rrestore);
+static void fry_char(CHAR_DATA * ch, char *argument);
 
 
 void do_order(CHAR_DATA *ch, char *argument)
@@ -428,7 +429,6 @@ void do_qui(CHAR_DATA *ch, /*@unused@*/ char *argument)
 void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
 {
     DESCRIPTOR_DATA *d;
-    char buf[MSL];
     char strsave[2*MIL];
     long id;
 
@@ -452,9 +452,13 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
 	return;
     }
 
-    if (auction->item != NULL && ((ch == auction->buyer) || (ch == auction->seller))) {
-	(void)snprintf(buf, 2 * MIL, "Wait until the auctioning of %s is over.\n\r", auction->item->short_descr);
-	send_to_char(buf, ch);
+    if (is_auction_participant(ch)) {
+	OBJ_DATA *item = get_auction_item();
+	if (item == NULL) {
+	    log_bug("%s reported as auction participant with no auction item.", ch->name);
+	} else {
+	    printf_to_char(ch, "Wait until the auctioning of %s is over.\n\r", item->short_descr);
+	}
 	return;
     }
 
