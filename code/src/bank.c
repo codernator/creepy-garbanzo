@@ -201,7 +201,7 @@ void report_balance(CHAR_DATA *ch)
 void give_receipt(CHAR_DATA *ch, unsigned int amount, const char *action, const char *tender, OBJ_DATA *atm)
 {
 	char buf[MAX_INPUT_LENGTH];
-	OBJ_DATA *receipt = create_object(get_obj_index(OBJ_VNUM_RECEIPT), 0);
+	OBJ_DATA *receipt = create_object(objectprototype_getbyvnum(OBJ_VNUM_RECEIPT), 0);
 
 	sprintf(buf, "%s deposits some %s.", ch->name, tender);
 	act(buf, ch, NULL, NULL, TO_ROOM);

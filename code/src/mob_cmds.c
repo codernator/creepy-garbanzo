@@ -1,10 +1,10 @@
 /***************************************************************************
-*                                                                         *
-*  Based on MERC 2.2 MOBprograms by N'Atas-ha.                            *
-*  Written and adapted to ROM 2.4 by                                      *
-*          Markku Nylander(markku.nylander@uta.fi)                       *
-*                                                                         *
-***************************************************************************/
+ *                                                                         *
+ *  Based on MERC 2.2 MOBprograms by N'Atas-ha.                            *
+ *  Written and adapted to ROM 2.4 by                                      *
+ *          Markku Nylander(markku.nylander@uta.fi)                       *
+ *                                                                         *
+ ***************************************************************************/
 
 #include <stdio.h>
 #include "merc.h"
@@ -56,44 +56,44 @@ extern ROOM_INDEX_DATA *find_location(CHAR_DATA *, char *);
  */
 const struct  mob_cmd_type mob_cmd_table   [] =
 {
-	{ "asound",	do_mpasound	},
-	{ "gecho",	do_mpgecho	},
-	{ "zecho",	do_mpzecho	},
-	{ "kill",	do_mpkill	},
-	{ "assist",	do_mpassist	},
-	{ "junk",	do_mpjunk	},
-	{ "echo",	do_mpecho	},
-	{ "echoaround", do_mpechoaround },
-	{ "echoat",	do_mpechoat	},
-	{ "mload",	do_mpmload	},
-	{ "oload",	do_mpoload	},
-	{ "purge",	do_mppurge	},
-	{ "goto",	do_mpgoto	},
-	{ "at",		do_mpat		},
-	{ "transfer",	do_mptransfer	},
-	{ "gtransfer",	do_mpgtransfer	},
-	{ "otransfer",	do_mpotransfer	},
-	{ "force",	do_mpforce	},
-	{ "gforce",	do_mpgforce	},
-	{ "vforce",	do_mpvforce	},
-	{ "cast",	do_mpcast	},
-	{ "damage",	do_mpdamage	},
-	{ "remember",	do_mpremember	},
-	{ "forget",	do_mpforget	},
-	{ "delay",	do_mpdelay	},
-	{ "cancel",	do_mpcancel	},
-	{ "call",	do_mpcall	},
-	{ "flee",	do_mpflee	},
-	{ "remove",	do_mpremove	},
-	{ "",		0		}
+    { "asound",	do_mpasound	},
+    { "gecho",	do_mpgecho	},
+    { "zecho",	do_mpzecho	},
+    { "kill",	do_mpkill	},
+    { "assist",	do_mpassist	},
+    { "junk",	do_mpjunk	},
+    { "echo",	do_mpecho	},
+    { "echoaround", do_mpechoaround },
+    { "echoat",	do_mpechoat	},
+    { "mload",	do_mpmload	},
+    { "oload",	do_mpoload	},
+    { "purge",	do_mppurge	},
+    { "goto",	do_mpgoto	},
+    { "at",		do_mpat		},
+    { "transfer",	do_mptransfer	},
+    { "gtransfer",	do_mpgtransfer	},
+    { "otransfer",	do_mpotransfer	},
+    { "force",	do_mpforce	},
+    { "gforce",	do_mpgforce	},
+    { "vforce",	do_mpvforce	},
+    { "cast",	do_mpcast	},
+    { "damage",	do_mpdamage	},
+    { "remember",	do_mpremember	},
+    { "forget",	do_mpforget	},
+    { "delay",	do_mpdelay	},
+    { "cancel",	do_mpcancel	},
+    { "call",	do_mpcall	},
+    { "flee",	do_mpflee	},
+    { "remove",	do_mpremove	},
+    { "",		0		}
 };
 
 void do_mob(CHAR_DATA *ch, char *argument)
 {
-	if (ch->desc != NULL && get_trust(ch) < MAX_LEVEL)
-		return;
+    if (ch->desc != NULL && get_trust(ch) < MAX_LEVEL)
+	return;
 
-	mob_interpret(ch, argument);
+    mob_interpret(ch, argument);
 }
 
 
@@ -103,64 +103,64 @@ void do_mob(CHAR_DATA *ch, char *argument)
  */
 void mob_interpret(CHAR_DATA *ch, char *argument)
 {
-	char command[MIL];
-	int cmd;
+    char command[MIL];
+    int cmd;
 
-	argument = one_argument(argument, command);
+    argument = one_argument(argument, command);
 
-	/*
-	 * Look for command in command table.
-	 */
-	for (cmd = 0; mob_cmd_table[cmd].name[0] != '\0'; cmd++) {
-		if (command[0] == mob_cmd_table[cmd].name[0]
-		    && !str_prefix(command, mob_cmd_table[cmd].name)) {
-			(*mob_cmd_table[cmd].do_fun)(ch, argument);
-			tail_chain();
-			return;
-		}
+    /*
+     * Look for command in command table.
+     */
+    for (cmd = 0; mob_cmd_table[cmd].name[0] != '\0'; cmd++) {
+	if (command[0] == mob_cmd_table[cmd].name[0]
+		&& !str_prefix(command, mob_cmd_table[cmd].name)) {
+	    (*mob_cmd_table[cmd].do_fun)(ch, argument);
+	    tail_chain();
+	    return;
 	}
+    }
 
-	log_bug("mob_interpret: invalid cmd from mob %d: '%s'", IS_NPC(ch) ? ch->mob_idx->vnum : 0, command);
+    log_bug("mob_interpret: invalid cmd from mob %d: '%s'", IS_NPC(ch) ? ch->mob_idx->vnum : 0, command);
 }
 
 char *mprog_type_to_name(int type)
 {
-	switch (type) {
+    switch (type) {
 	case TRIG_ACT:
-		return "ACT";
+	    return "ACT";
 	case TRIG_SPEECH:
-		return "SPEECH";
+	    return "SPEECH";
 	case TRIG_RANDOM:
-		return "RANDOM";
+	    return "RANDOM";
 	case TRIG_FIGHT:
-		return "FIGHT";
+	    return "FIGHT";
 	case TRIG_HPCNT:
-		return "HPCNT";
+	    return "HPCNT";
 	case TRIG_DEATH:
-		return "DEATH";
+	    return "DEATH";
 	case TRIG_ENTRY:
-		return "ENTRY";
+	    return "ENTRY";
 	case TRIG_GREET:
-		return "GREET";
+	    return "GREET";
 	case TRIG_GRALL:
-		return "GRALL";
+	    return "GRALL";
 	case TRIG_GIVE:
-		return "GIVE";
+	    return "GIVE";
 	case TRIG_BRIBE:
-		return "BRIBE";
+	    return "BRIBE";
 	case TRIG_KILL:
-		return "KILL";
+	    return "KILL";
 	case TRIG_DELAY:
-		return "DELAY";
+	    return "DELAY";
 	case TRIG_SURR:
-		return "SURRENDER";
+	    return "SURRENDER";
 	case TRIG_EXIT:
-		return "EXIT";
+	    return "EXIT";
 	case TRIG_EXALL:
-		return "EXALL";
+	    return "EXALL";
 	default:
-		return "ERROR";
-	}
+	    return "ERROR";
+    }
 }
 
 /*
@@ -170,46 +170,46 @@ char *mprog_type_to_name(int type)
  */
 void do_mpstat(CHAR_DATA *ch, char *argument)
 {
-	MPROG_LIST *mprg;
-	CHAR_DATA *victim;
-	int idx;
+    MPROG_LIST *mprg;
+    CHAR_DATA *victim;
+    int idx;
 
-	if (argument[0] == '\0') {
-		send_to_char("Mpstat whom?\n\r", ch);
-		return;
-	}
-
-	if ((victim = get_char_world(ch, argument)) == NULL) {
-		send_to_char("No such creature.\n\r", ch);
-		return;
-	}
-
-	if (!IS_NPC(victim)) {
-		send_to_char("That is not a mobile.\n\r", ch);
-		return;
-	}
-
-
-	printf_to_char(ch, "Mobile #%-6d [%s]\n\r", victim->mob_idx->vnum, victim->short_descr);
-
-	printf_to_char(ch, "Delay   %-6d [%s]\n\r",
-		       victim->mprog_delay,
-		       victim->mprog_target == NULL ? "No target" : victim->mprog_target->name);
-
-	if (!victim->mob_idx->mprog_flags) {
-		send_to_char("[No programs set]\n\r", ch);
-		return;
-	}
-
-	for (idx = 0, mprg = victim->mob_idx->mprogs; mprg != NULL; mprg = mprg->next) {
-		printf_to_char(ch, "[%2d] Trigger [%-8s] Program [%4d] Phrase [%s]\n\r",
-			       ++idx,
-			       mprog_type_to_name(mprg->trig_type),
-			       mprg->vnum,
-			       mprg->trig_phrase);
-	}
-
+    if (argument[0] == '\0') {
+	send_to_char("Mpstat whom?\n\r", ch);
 	return;
+    }
+
+    if ((victim = get_char_world(ch, argument)) == NULL) {
+	send_to_char("No such creature.\n\r", ch);
+	return;
+    }
+
+    if (!IS_NPC(victim)) {
+	send_to_char("That is not a mobile.\n\r", ch);
+	return;
+    }
+
+
+    printf_to_char(ch, "Mobile #%-6d [%s]\n\r", victim->mob_idx->vnum, victim->short_descr);
+
+    printf_to_char(ch, "Delay   %-6d [%s]\n\r",
+	    victim->mprog_delay,
+	    victim->mprog_target == NULL ? "No target" : victim->mprog_target->name);
+
+    if (!victim->mob_idx->mprog_flags) {
+	send_to_char("[No programs set]\n\r", ch);
+	return;
+    }
+
+    for (idx = 0, mprg = victim->mob_idx->mprogs; mprg != NULL; mprg = mprg->next) {
+	printf_to_char(ch, "[%2d] Trigger [%-8s] Program [%4d] Phrase [%s]\n\r",
+		++idx,
+		mprog_type_to_name(mprg->trig_type),
+		mprg->vnum,
+		mprg->trig_phrase);
+    }
+
+    return;
 }
 
 /*
@@ -219,17 +219,17 @@ void do_mpstat(CHAR_DATA *ch, char *argument)
  */
 void do_mpdump(CHAR_DATA *ch, char *argument)
 {
-	MPROG_CODE *mprg;
-	char buf[MIL];
+    MPROG_CODE *mprg;
+    char buf[MIL];
 
-	one_argument(argument, buf);
+    one_argument(argument, buf);
 
-	if ((mprg = get_mprog_index(parse_long(buf))) == NULL) {
-		send_to_char("No such MOBprogram.\n\r", ch);
-		return;
-	}
+    if ((mprg = get_mprog_index(parse_long(buf))) == NULL) {
+	send_to_char("No such MOBprogram.\n\r", ch);
+	return;
+    }
 
-	page_to_char(mprg->code, ch);
+    page_to_char(mprg->code, ch);
 }
 
 /*
@@ -240,23 +240,23 @@ void do_mpdump(CHAR_DATA *ch, char *argument)
 void do_mpgecho(CHAR_DATA *ch, char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
-	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *d;
     DESCRIPTOR_DATA *dpending;
 
-	if (argument[0] == '\0') {
-		log_bug("MpGEcho: missing argument from vnum %d", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
+    if (argument[0] == '\0') {
+	log_bug("MpGEcho: missing argument from vnum %d", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	return;
+    }
 
     dpending = descriptor_iterator_start(&playing_filter);
     while ((d = dpending) != NULL) {
-        dpending = descriptor_iterator(d, &playing_filter);
-        if (IS_IMMORTAL(d->character))
-            send_to_char("Mob echo> ", d->character);
+	dpending = descriptor_iterator(d, &playing_filter);
+	if (IS_IMMORTAL(d->character))
+	    send_to_char("Mob echo> ", d->character);
 
-        send_to_char(argument, d->character);
-        send_to_char("\n\r", d->character);
-	}
+	send_to_char(argument, d->character);
+	send_to_char("\n\r", d->character);
+    }
 }
 
 /*
@@ -267,28 +267,28 @@ void do_mpgecho(CHAR_DATA *ch, char *argument)
 void do_mpzecho(CHAR_DATA *ch, char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
-	DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *d;
     DESCRIPTOR_DATA *dpending;
 
-	if (argument[0] == '\0') {
-		log_bug("MpZEcho: missing argument from vnum %d", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
+    if (argument[0] == '\0') {
+	log_bug("MpZEcho: missing argument from vnum %d", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	return;
+    }
 
-	if (ch->in_room == NULL)
-		return;
+    if (ch->in_room == NULL)
+	return;
 
     dpending = descriptor_iterator_start(&playing_filter);
     while ((d = dpending) != NULL) {
-        dpending = descriptor_iterator(d, &playing_filter);
-		if (d->character->in_room != NULL && d->character->in_room->area == ch->in_room->area) {
-			if (IS_IMMORTAL(d->character))
-				send_to_char("Mob echo> ", d->character);
+	dpending = descriptor_iterator(d, &playing_filter);
+	if (d->character->in_room != NULL && d->character->in_room->area == ch->in_room->area) {
+	    if (IS_IMMORTAL(d->character))
+		send_to_char("Mob echo> ", d->character);
 
-			send_to_char(argument, d->character);
-			send_to_char("\n\r", d->character);
-		}
+	    send_to_char(argument, d->character);
+	    send_to_char("\n\r", d->character);
 	}
+    }
 }
 
 /*
@@ -298,26 +298,26 @@ void do_mpzecho(CHAR_DATA *ch, char *argument)
  */
 void do_mpasound(CHAR_DATA *ch, char *argument)
 {
-	ROOM_INDEX_DATA *was_in_room;
-	int door;
+    ROOM_INDEX_DATA *was_in_room;
+    int door;
 
-	if (argument[0] == '\0')
-		return;
-
-	was_in_room = ch->in_room;
-	for (door = 0; door < 6; door++) {
-		EXIT_DATA *pexit;
-
-		if ((pexit = was_in_room->exit[door]) != NULL
-		    && pexit->u1.to_room != NULL
-		    && pexit->u1.to_room != was_in_room) {
-			ch->in_room = pexit->u1.to_room;
-			act_new(argument, ch, NULL, NULL, TO_ROOM, POS_RESTING, false);
-		}
-	}
-
-	ch->in_room = was_in_room;
+    if (argument[0] == '\0')
 	return;
+
+    was_in_room = ch->in_room;
+    for (door = 0; door < 6; door++) {
+	EXIT_DATA *pexit;
+
+	if ((pexit = was_in_room->exit[door]) != NULL
+		&& pexit->u1.to_room != NULL
+		&& pexit->u1.to_room != was_in_room) {
+	    ch->in_room = pexit->u1.to_room;
+	    act_new(argument, ch, NULL, NULL, TO_ROOM, POS_RESTING, false);
+	}
+    }
+
+    ch->in_room = was_in_room;
+    return;
 }
 
 /*
@@ -327,17 +327,17 @@ void do_mpasound(CHAR_DATA *ch, char *argument)
  */
 void do_mpechoaround(CHAR_DATA *ch, char *argument)
 {
-	CHAR_DATA *victim;
-	char arg[MIL];
+    CHAR_DATA *victim;
+    char arg[MIL];
 
-	argument = one_argument(argument, arg);
-	if (arg[0] == '\0')
-		return;
+    argument = one_argument(argument, arg);
+    if (arg[0] == '\0')
+	return;
 
-	if ((victim = get_char_room(ch, arg)) == NULL)
-		return;
+    if ((victim = get_char_room(ch, arg)) == NULL)
+	return;
 
-	act(argument, ch, NULL, victim, TO_NOTVICT);
+    act(argument, ch, NULL, victim, TO_NOTVICT);
 }
 
 /*
@@ -347,17 +347,17 @@ void do_mpechoaround(CHAR_DATA *ch, char *argument)
  */
 void do_mpechoat(CHAR_DATA *ch, char *argument)
 {
-	CHAR_DATA *victim;
-	char arg[MIL];
+    CHAR_DATA *victim;
+    char arg[MIL];
 
-	argument = one_argument(argument, arg);
-	if (arg[0] == '\0' || argument[0] == '\0')
-		return;
+    argument = one_argument(argument, arg);
+    if (arg[0] == '\0' || argument[0] == '\0')
+	return;
 
-	if ((victim = get_char_room(ch, arg)) == NULL)
-		return;
+    if ((victim = get_char_room(ch, arg)) == NULL)
+	return;
 
-	act(argument, ch, NULL, victim, TO_VICT);
+    act(argument, ch, NULL, victim, TO_VICT);
 }
 
 /*
@@ -367,10 +367,10 @@ void do_mpechoat(CHAR_DATA *ch, char *argument)
  */
 void do_mpecho(CHAR_DATA *ch, char *argument)
 {
-	if (argument[0] == '\0')
-		return;
+    if (argument[0] == '\0')
+	return;
 
-	act(argument, ch, NULL, NULL, TO_ROOM);
+    act(argument, ch, NULL, NULL, TO_ROOM);
 }
 
 
@@ -381,27 +381,27 @@ void do_mpecho(CHAR_DATA *ch, char *argument)
  */
 void do_mpkill(CHAR_DATA *ch, char *argument)
 {
-	CHAR_DATA *victim;
-	char arg[MIL];
+    CHAR_DATA *victim;
+    char arg[MIL];
 
-	one_argument(argument, arg);
+    one_argument(argument, arg);
 
-	if (arg[0] == '\0')
-		return;
-
-	if ((victim = get_char_room(ch, arg)) == NULL)
-		return;
-
-	if (victim == ch || IS_NPC(victim) || ch->position == POS_FIGHTING)
-		return;
-
-	if (IS_AFFECTED(ch, AFF_CHARM) && ch->master == victim) {
-		log_bug("MpKill - Charmed mob attacking master from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
-
-	multi_hit(ch, victim, TYPE_UNDEFINED);
+    if (arg[0] == '\0')
 	return;
+
+    if ((victim = get_char_room(ch, arg)) == NULL)
+	return;
+
+    if (victim == ch || IS_NPC(victim) || ch->position == POS_FIGHTING)
+	return;
+
+    if (IS_AFFECTED(ch, AFF_CHARM) && ch->master == victim) {
+	log_bug("MpKill - Charmed mob attacking master from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	return;
+    }
+
+    multi_hit(ch, victim, TYPE_UNDEFINED);
+    return;
 }
 
 /*
@@ -411,21 +411,21 @@ void do_mpkill(CHAR_DATA *ch, char *argument)
  */
 void do_mpassist(CHAR_DATA *ch, char *argument)
 {
-	CHAR_DATA *victim;
-	char arg[MIL];
+    CHAR_DATA *victim;
+    char arg[MIL];
 
-	one_argument(argument, arg);
-	if (arg[0] == '\0')
-		return;
-
-	if ((victim = get_char_room(ch, arg)) == NULL)
-		return;
-
-	if (victim == ch || ch->fighting != NULL || victim->fighting == NULL)
-		return;
-
-	multi_hit(ch, victim->fighting, TYPE_UNDEFINED);
+    one_argument(argument, arg);
+    if (arg[0] == '\0')
 	return;
+
+    if ((victim = get_char_room(ch, arg)) == NULL)
+	return;
+
+    if (victim == ch || ch->fighting != NULL || victim->fighting == NULL)
+	return;
+
+    multi_hit(ch, victim->fighting, TYPE_UNDEFINED);
+    return;
 }
 
 
@@ -438,37 +438,37 @@ void do_mpassist(CHAR_DATA *ch, char *argument)
  */
 void do_mpjunk(CHAR_DATA *ch, char *argument)
 {
-	char arg[MIL];
-	OBJ_DATA *obj;
-	OBJ_DATA *obj_next;
+    char arg[MIL];
+    OBJ_DATA *obj;
+    OBJ_DATA *obj_next;
 
-	one_argument(argument, arg);
+    one_argument(argument, arg);
 
-	if (arg[0] == '\0')
-		return;
+    if (arg[0] == '\0')
+	return;
 
-	if (str_cmp(arg, "all") && str_prefix("all.", arg)) {
-		if ((obj = get_obj_wear(ch, arg)) != NULL) {
-			unequip_char(ch, obj);
-			extract_obj(obj);
-			return;
-		}
-
-		if ((obj = get_obj_carry(ch, arg)) == NULL)
-			return;
-		extract_obj(obj);
-	} else {
-		for (obj = ch->carrying; obj != NULL; obj = obj_next) {
-			obj_next = obj->next_content;
-			if (arg[3] == '\0' || is_name(&arg[4], obj->name)) {
-				if (obj->wear_loc != WEAR_NONE)
-					unequip_char(ch, obj);
-				extract_obj(obj);
-			}
-		}
+    if (str_cmp(arg, "all") && str_prefix("all.", arg)) {
+	if ((obj = get_obj_wear(ch, arg)) != NULL) {
+	    unequip_char(ch, obj);
+	    extract_obj(obj);
+	    return;
 	}
 
-	return;
+	if ((obj = get_obj_carry(ch, arg)) == NULL)
+	    return;
+	extract_obj(obj);
+    } else {
+	for (obj = ch->carrying; obj != NULL; obj = obj_next) {
+	    obj_next = obj->next_content;
+	    if (arg[3] == '\0' || is_name(&arg[4], obj->name)) {
+		if (obj->wear_loc != WEAR_NONE)
+		    unequip_char(ch, obj);
+		extract_obj(obj);
+	    }
+	}
+    }
+
+    return;
 }
 
 
@@ -479,24 +479,24 @@ void do_mpjunk(CHAR_DATA *ch, char *argument)
  */
 void do_mpmload(CHAR_DATA *ch, char *argument)
 {
-	MOB_INDEX_DATA *pMobIndex;
-	CHAR_DATA *victim;
-	char arg[MIL];
-	int vnum;
+    MOB_INDEX_DATA *pMobIndex;
+    CHAR_DATA *victim;
+    char arg[MIL];
+    int vnum;
 
-	one_argument(argument, arg);
+    one_argument(argument, arg);
 
-	if (ch->in_room == NULL || arg[0] == '\0' || !is_number(arg))
-		return;
-
-	vnum = parse_long(arg);
-	if ((pMobIndex = get_mob_index(vnum)) == NULL) {
-		log_bug("Mpmload: bad mob index(%d) from mob %d", vnum, IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
-	victim = create_mobile(pMobIndex);
-	char_to_room(victim, ch->in_room);
+    if (ch->in_room == NULL || arg[0] == '\0' || !is_number(arg))
 	return;
+
+    vnum = parse_long(arg);
+    if ((pMobIndex = get_mob_index(vnum)) == NULL) {
+	log_bug("Mpmload: bad mob index(%d) from mob %d", vnum, IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	return;
+    }
+    victim = create_mobile(pMobIndex);
+    char_to_room(victim, ch->in_room);
+    return;
 }
 
 /*
@@ -506,94 +506,94 @@ void do_mpmload(CHAR_DATA *ch, char *argument)
  */
 void do_mpoload(CHAR_DATA *ch, char *argument)
 {
-	OBJ_INDEX_DATA *obj_idx;
-	OBJ_DATA *obj;
-	char arg[MIL];
-	int level;
-	long vnum;
-	bool to_room;
-	bool to_wear;
+    OBJECTPROTOTYPE *obj_idx;
+    OBJ_DATA *obj;
+    char arg[MIL];
+    int level;
+    long vnum;
+    bool to_room;
+    bool to_wear;
 
-	argument = one_argument(argument, arg);
+    argument = one_argument(argument, arg);
 
-	if (!str_prefix(arg, "random")) {
-		char mm_buf[MIL];
-		int min_vnum;
-		int max_vnum;
+    if (!str_prefix(arg, "random")) {
+	char mm_buf[MIL];
+	int min_vnum;
+	int max_vnum;
 
-		argument = one_argument(argument, mm_buf);
-		min_vnum = 0;
-		max_vnum = 0;
-		if (is_number(mm_buf))
-			min_vnum = parse_long(mm_buf);
+	argument = one_argument(argument, mm_buf);
+	min_vnum = 0;
+	max_vnum = 0;
+	if (is_number(mm_buf))
+	    min_vnum = parse_long(mm_buf);
 
-		if (min_vnum <= 0) {
-			log_bug("mpoload - bad minimum number for random range %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-			return;
-		}
-
-		argument = one_argument(argument, mm_buf);
-		if (is_number(mm_buf))
-			max_vnum = parse_long(mm_buf);
-		max_vnum = UMAX(min_vnum, max_vnum);
-
-		vnum = number_range(min_vnum, max_vnum);
-	} else {
-		if (arg[0] == '\0' || !is_number(arg)) {
-			log_bug("mpoload - bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-			return;
-		}
-
-		vnum = parse_long(arg);
+	if (min_vnum <= 0) {
+	    log_bug("mpoload - bad minimum number for random range %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	    return;
 	}
 
-	argument = one_argument(argument, arg);
-	if (arg[0] == '\0') {
-/*		level = get_trust(ch);  */
-		level = -1;
-	} else {
-		if (!is_number(arg)) {
-			log_bug("mpoload - bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-			return;
-		}
+	argument = one_argument(argument, mm_buf);
+	if (is_number(mm_buf))
+	    max_vnum = parse_long(mm_buf);
+	max_vnum = UMAX(min_vnum, max_vnum);
 
-		level = parse_int(arg);
-		if (level < 0 || level > get_trust(ch)) {
-			log_bug("mpoload - bad level from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-			return;
-		}
+	vnum = number_range(min_vnum, max_vnum);
+    } else {
+	if (arg[0] == '\0' || !is_number(arg)) {
+	    log_bug("mpoload - bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	    return;
 	}
 
-	argument = one_argument(argument, arg);
-	/*
-	 * Added 3rd argument
-	 * omitted - load to mobile's inventory
-	 * 'R'     - load to room
-	 * 'W'     - load to mobile and force wear
-	 */
-	to_room = false;
-	to_wear = false;
-	if (arg[0] == 'R' || arg[0] == 'r')
-		to_room = true;
-	else if (arg[0] == 'W' || arg[0] == 'w')
-		to_wear = true;
+	vnum = parse_long(arg);
+    }
 
-	if ((obj_idx = get_obj_index(vnum)) == NULL) {
-		log_bug("mpoload - bad vnum arg from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
+    argument = one_argument(argument, arg);
+    if (arg[0] == '\0') {
+	/*		level = get_trust(ch);  */
+	level = -1;
+    } else {
+	if (!is_number(arg)) {
+	    log_bug("mpoload - bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	    return;
 	}
 
-	obj = create_object(obj_idx, level);
-	if ((to_wear || !to_room)
-	    && CAN_WEAR(obj, ITEM_TAKE)) {
-		obj_to_char(obj, ch);
-		if (to_wear)
-			wear_obj(ch, obj, true);
-	} else {
-		obj_to_room(obj, ch->in_room);
+	level = parse_int(arg);
+	if (level < 0 || level > get_trust(ch)) {
+	    log_bug("mpoload - bad level from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	    return;
 	}
+    }
 
+    argument = one_argument(argument, arg);
+    /*
+     * Added 3rd argument
+     * omitted - load to mobile's inventory
+     * 'R'     - load to room
+     * 'W'     - load to mobile and force wear
+     */
+    to_room = false;
+    to_wear = false;
+    if (arg[0] == 'R' || arg[0] == 'r')
+	to_room = true;
+    else if (arg[0] == 'W' || arg[0] == 'w')
+	to_wear = true;
+
+    if ((obj_idx = objectprototype_getbyvnum(vnum)) == NULL) {
+	log_bug("mpoload - bad vnum arg from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 	return;
+    }
+
+    obj = create_object(obj_idx, level);
+    if ((to_wear || !to_room)
+	    && CAN_WEAR(obj, ITEM_TAKE)) {
+	obj_to_char(obj, ch);
+	if (to_wear)
+	    wear_obj(ch, obj, true);
+    } else {
+	obj_to_room(obj, ch->in_room);
+    }
+
+    return;
 }
 
 /*
@@ -605,47 +605,47 @@ void do_mpoload(CHAR_DATA *ch, char *argument)
  */
 void do_mppurge(CHAR_DATA *ch, char *argument)
 {
-	char arg[MIL];
-	CHAR_DATA *victim;
-	OBJ_DATA *obj;
+    char arg[MIL];
+    CHAR_DATA *victim;
+    OBJ_DATA *obj;
 
-	one_argument(argument, arg);
+    one_argument(argument, arg);
 
-	if (arg[0] == '\0') {
-		/* 'purge' */
-		CHAR_DATA *vnext;
-		OBJ_DATA *obj_next;
+    if (arg[0] == '\0') {
+	/* 'purge' */
+	CHAR_DATA *vnext;
+	OBJ_DATA *obj_next;
 
-		for (victim = ch->in_room->people; victim != NULL; victim = vnext) {
-			vnext = victim->next_in_room;
-			if (IS_NPC(victim) && victim != ch
-			    && !IS_SET(victim->act, ACT_NOPURGE))
-				extract_char(victim, true);
-		}
-
-		for (obj = ch->in_room->contents; obj != NULL; obj = obj_next) {
-			obj_next = obj->next_content;
-			if (!IS_SET(obj->extra_flags, ITEM_NOPURGE))
-				extract_obj(obj);
-		}
-
-		return;
+	for (victim = ch->in_room->people; victim != NULL; victim = vnext) {
+	    vnext = victim->next_in_room;
+	    if (IS_NPC(victim) && victim != ch
+		    && !IS_SET(victim->act, ACT_NOPURGE))
+		extract_char(victim, true);
 	}
 
-	if ((victim = get_char_room(ch, arg)) == NULL) {
-		if ((obj = get_obj_here(ch, arg)))
-			extract_obj(obj);
-		else
-			log_bug("Mppurge - Bad argument from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
+	for (obj = ch->in_room->contents; obj != NULL; obj = obj_next) {
+	    obj_next = obj->next_content;
+	    if (!IS_SET(obj->extra_flags, ITEM_NOPURGE))
+		extract_obj(obj);
 	}
 
-	if (!IS_NPC(victim)) {
-		log_bug("Mppurge - Purging a PC from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
-	extract_char(victim, true);
 	return;
+    }
+
+    if ((victim = get_char_room(ch, arg)) == NULL) {
+	if ((obj = get_obj_here(ch, arg)))
+	    extract_obj(obj);
+	else
+	    log_bug("Mppurge - Bad argument from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	return;
+    }
+
+    if (!IS_NPC(victim)) {
+	log_bug("Mppurge - Purging a PC from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	return;
+    }
+    extract_char(victim, true);
+    return;
 }
 
 
@@ -656,30 +656,30 @@ void do_mppurge(CHAR_DATA *ch, char *argument)
  */
 void do_mpgoto(CHAR_DATA *ch, char *argument)
 {
-	ROOM_INDEX_DATA *location;
-	char arg[MIL];
+    ROOM_INDEX_DATA *location;
+    char arg[MIL];
 
-	one_argument(argument, arg);
-	if (arg[0] == '\0') {
-		log_bug("Mpgoto - No argument from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
-
-	if (!str_cmp(arg, "random")) {
-		if ((location = get_random_room(ch, NULL)) == NULL)
-			return;
-	} else if ((location = find_location(ch, arg)) == NULL) {
-		log_bug("Mpgoto - No such location from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
-
-	if (ch->fighting != NULL)
-		stop_fighting(ch, true);
-
-	char_from_room(ch);
-	char_to_room(ch, location);
-
+    one_argument(argument, arg);
+    if (arg[0] == '\0') {
+	log_bug("Mpgoto - No argument from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 	return;
+    }
+
+    if (!str_cmp(arg, "random")) {
+	if ((location = get_random_room(ch, NULL)) == NULL)
+	    return;
+    } else if ((location = find_location(ch, arg)) == NULL) {
+	log_bug("Mpgoto - No such location from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	return;
+    }
+
+    if (ch->fighting != NULL)
+	stop_fighting(ch, true);
+
+    char_from_room(ch);
+    char_to_room(ch, location);
+
+    return;
 }
 
 /*
@@ -689,44 +689,44 @@ void do_mpgoto(CHAR_DATA *ch, char *argument)
  */
 void do_mpat(CHAR_DATA *ch, char *argument)
 {
-	char arg[MIL];
-	ROOM_INDEX_DATA *location;
-	ROOM_INDEX_DATA *original;
-	CHAR_DATA *wch;
-	OBJ_DATA *on;
+    char arg[MIL];
+    ROOM_INDEX_DATA *location;
+    ROOM_INDEX_DATA *original;
+    CHAR_DATA *wch;
+    OBJ_DATA *on;
 
-	argument = one_argument(argument, arg);
+    argument = one_argument(argument, arg);
 
-	if (arg[0] == '\0' || argument[0] == '\0') {
-		log_bug("Mpat - Bad argument from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
-
-	if ((location = find_location(ch, arg)) == NULL) {
-		log_bug("Mpat - No such location from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
-
-	original = ch->in_room;
-	on = ch->on;
-	char_from_room(ch);
-	char_to_room(ch, location);
-	interpret(ch, argument);
-
-	/*
-	 * See if 'ch' still exists before continuing!
-	 * Handles 'at XXXX quit' case.
-	 */
-	for (wch = char_list; wch != NULL; wch = wch->next) {
-		if (wch == ch) {
-			char_from_room(ch);
-			char_to_room(ch, original);
-			ch->on = on;
-			break;
-		}
-	}
-
+    if (arg[0] == '\0' || argument[0] == '\0') {
+	log_bug("Mpat - Bad argument from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 	return;
+    }
+
+    if ((location = find_location(ch, arg)) == NULL) {
+	log_bug("Mpat - No such location from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	return;
+    }
+
+    original = ch->in_room;
+    on = ch->on;
+    char_from_room(ch);
+    char_to_room(ch, location);
+    interpret(ch, argument);
+
+    /*
+     * See if 'ch' still exists before continuing!
+     * Handles 'at XXXX quit' case.
+     */
+    for (wch = char_list; wch != NULL; wch = wch->next) {
+	if (wch == ch) {
+	    char_from_room(ch);
+	    char_to_room(ch, original);
+	    ch->on = on;
+	    break;
+	}
+    }
+
+    return;
 }
 
 /*
@@ -737,61 +737,61 @@ void do_mpat(CHAR_DATA *ch, char *argument)
  */
 void do_mptransfer(CHAR_DATA *ch, char *argument)
 {
-	char arg1[MIL];
-	char arg2[MIL];
-	char buf[MSL];
-	ROOM_INDEX_DATA *location;
-	CHAR_DATA *victim;
+    char arg1[MIL];
+    char arg2[MIL];
+    char buf[MSL];
+    ROOM_INDEX_DATA *location;
+    CHAR_DATA *victim;
 
-	argument = one_argument(argument, arg1);
-	argument = one_argument(argument, arg2);
+    argument = one_argument(argument, arg1);
+    argument = one_argument(argument, arg2);
 
-	if (arg1[0] == '\0') {
-		log_bug("Mptransfer - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
-
-	if (!str_cmp(arg1, "all")) {
-		CHAR_DATA *victim_next;
-
-		for (victim = ch->in_room->people; victim != NULL; victim = victim_next) {
-			victim_next = victim->next_in_room;
-			if (!IS_NPC(victim)) {
-				sprintf(buf, "%s %s", victim->name, arg2);
-				do_mptransfer(ch, buf);
-			}
-		}
-		return;
-	}
-
-	/*
-	 * Thanks to Grodyn for the optional location parameter.
-	 */
-	if (arg2[0] == '\0') {
-		location = ch->in_room;
-	} else {
-		if ((location = find_location(ch, arg2)) == NULL) {
-			log_bug("Mptransfer - No such location from vnum %ld.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-			return;
-		}
-
-		if (room_is_private(location))
-			return;
-	}
-
-	if ((victim = get_char_world(ch, arg1)) == NULL)
-		return;
-
-	if (victim->in_room == NULL)
-		return;
-
-	if (victim->fighting != NULL)
-		stop_fighting(victim, true);
-	char_from_room(victim);
-	char_to_room(victim, location);
-	do_look(victim, "auto");
-
+    if (arg1[0] == '\0') {
+	log_bug("Mptransfer - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 	return;
+    }
+
+    if (!str_cmp(arg1, "all")) {
+	CHAR_DATA *victim_next;
+
+	for (victim = ch->in_room->people; victim != NULL; victim = victim_next) {
+	    victim_next = victim->next_in_room;
+	    if (!IS_NPC(victim)) {
+		sprintf(buf, "%s %s", victim->name, arg2);
+		do_mptransfer(ch, buf);
+	    }
+	}
+	return;
+    }
+
+    /*
+     * Thanks to Grodyn for the optional location parameter.
+     */
+    if (arg2[0] == '\0') {
+	location = ch->in_room;
+    } else {
+	if ((location = find_location(ch, arg2)) == NULL) {
+	    log_bug("Mptransfer - No such location from vnum %ld.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	    return;
+	}
+
+	if (room_is_private(location))
+	    return;
+    }
+
+    if ((victim = get_char_world(ch, arg1)) == NULL)
+	return;
+
+    if (victim->in_room == NULL)
+	return;
+
+    if (victim->fighting != NULL)
+	stop_fighting(victim, true);
+    char_from_room(victim);
+    char_to_room(victim, location);
+    do_look(victim, "auto");
+
+    return;
 }
 
 /*
@@ -801,30 +801,30 @@ void do_mptransfer(CHAR_DATA *ch, char *argument)
  */
 void do_mpgtransfer(CHAR_DATA *ch, char *argument)
 {
-	char arg1[MIL];
-	char arg2[MIL];
-	char buf[MSL];
-	CHAR_DATA *who, *victim, *victim_next;
+    char arg1[MIL];
+    char arg2[MIL];
+    char buf[MSL];
+    CHAR_DATA *who, *victim, *victim_next;
 
-	argument = one_argument(argument, arg1);
-	argument = one_argument(argument, arg2);
+    argument = one_argument(argument, arg1);
+    argument = one_argument(argument, arg2);
 
-	if (arg1[0] == '\0') {
-		log_bug("Mpgtransfer - Bad syntax from vnum %l.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
-
-	if ((who = get_char_room(ch, arg1)) == NULL)
-		return;
-
-	for (victim = ch->in_room->people; victim; victim = victim_next) {
-		victim_next = victim->next_in_room;
-		if (is_same_group(who, victim)) {
-			sprintf(buf, "%s %s", victim->name, arg2);
-			do_mptransfer(ch, buf);
-		}
-	}
+    if (arg1[0] == '\0') {
+	log_bug("Mpgtransfer - Bad syntax from vnum %l.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 	return;
+    }
+
+    if ((who = get_char_room(ch, arg1)) == NULL)
+	return;
+
+    for (victim = ch->in_room->people; victim; victim = victim_next) {
+	victim_next = victim->next_in_room;
+	if (is_same_group(who, victim)) {
+	    sprintf(buf, "%s %s", victim->name, arg2);
+	    do_mptransfer(ch, buf);
+	}
+    }
+    return;
 }
 
 /*
@@ -835,40 +835,40 @@ void do_mpgtransfer(CHAR_DATA *ch, char *argument)
  */
 void do_mpforce(CHAR_DATA *ch, char *argument)
 {
-	char arg[MIL];
+    char arg[MIL];
 
-	argument = one_argument(argument, arg);
+    argument = one_argument(argument, arg);
 
-	if (arg[0] == '\0' || argument[0] == '\0') {
-		log_bug("Mpforce - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
-
-	if (!str_cmp(arg, "all")) {
-		CHAR_DATA *vch;
-		CHAR_DATA *vch_next;
-
-		for (vch = char_list; vch != NULL; vch = vch_next) {
-			vch_next = vch->next;
-
-			if (vch->in_room == ch->in_room
-			    && get_trust(vch) < get_trust(ch)
-			    && can_see(ch, vch))
-				interpret(vch, argument);
-		}
-	} else {
-		CHAR_DATA *victim;
-
-		if ((victim = get_char_room(ch, arg)) == NULL)
-			return;
-
-		if (victim == ch)
-			return;
-
-		interpret(victim, argument);
-	}
-
+    if (arg[0] == '\0' || argument[0] == '\0') {
+	log_bug("Mpforce - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 	return;
+    }
+
+    if (!str_cmp(arg, "all")) {
+	CHAR_DATA *vch;
+	CHAR_DATA *vch_next;
+
+	for (vch = char_list; vch != NULL; vch = vch_next) {
+	    vch_next = vch->next;
+
+	    if (vch->in_room == ch->in_room
+		    && get_trust(vch) < get_trust(ch)
+		    && can_see(ch, vch))
+		interpret(vch, argument);
+	}
+    } else {
+	CHAR_DATA *victim;
+
+	if ((victim = get_char_room(ch, arg)) == NULL)
+	    return;
+
+	if (victim == ch)
+	    return;
+
+	interpret(victim, argument);
+    }
+
+    return;
 }
 
 /*
@@ -878,29 +878,29 @@ void do_mpforce(CHAR_DATA *ch, char *argument)
  */
 void do_mpgforce(CHAR_DATA *ch, char *argument)
 {
-	char arg[MIL];
-	CHAR_DATA *victim, *vch, *vch_next;
+    char arg[MIL];
+    CHAR_DATA *victim, *vch, *vch_next;
 
-	argument = one_argument(argument, arg);
+    argument = one_argument(argument, arg);
 
-	if (arg[0] == '\0' || argument[0] == '\0') {
-		log_bug("MpGforce - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
-
-	if ((victim = get_char_room(ch, arg)) == NULL)
-		return;
-
-	if (victim == ch)
-		return;
-
-	for (vch = victim->in_room->people; vch != NULL; vch = vch_next) {
-		vch_next = vch->next_in_room;
-
-		if (is_same_group(victim, vch))
-			interpret(vch, argument);
-	}
+    if (arg[0] == '\0' || argument[0] == '\0') {
+	log_bug("MpGforce - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 	return;
+    }
+
+    if ((victim = get_char_room(ch, arg)) == NULL)
+	return;
+
+    if (victim == ch)
+	return;
+
+    for (vch = victim->in_room->people; vch != NULL; vch = vch_next) {
+	vch_next = vch->next_in_room;
+
+	if (is_same_group(victim, vch))
+	    interpret(vch, argument);
+    }
+    return;
 }
 
 /*
@@ -910,31 +910,31 @@ void do_mpgforce(CHAR_DATA *ch, char *argument)
  */
 void do_mpvforce(CHAR_DATA *ch, char *argument)
 {
-	CHAR_DATA *victim, *victim_next;
-	char arg[MIL];
-	long vnum;
+    CHAR_DATA *victim, *victim_next;
+    char arg[MIL];
+    long vnum;
 
-	argument = one_argument(argument, arg);
+    argument = one_argument(argument, arg);
 
-	if (arg[0] == '\0' || argument[0] == '\0') {
-		log_bug("MpVforce - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
-
-	if (!is_number(arg)) {
-		log_bug("MpVforce - Non-number argument vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
-
-	vnum = parse_long(arg);
-
-	for (victim = char_list; victim; victim = victim_next) {
-		victim_next = victim->next;
-		if (IS_NPC(victim) && victim->mob_idx->vnum == vnum
-		    && ch != victim && victim->fighting == NULL)
-			interpret(victim, argument);
-	}
+    if (arg[0] == '\0' || argument[0] == '\0') {
+	log_bug("MpVforce - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 	return;
+    }
+
+    if (!is_number(arg)) {
+	log_bug("MpVforce - Non-number argument vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	return;
+    }
+
+    vnum = parse_long(arg);
+
+    for (victim = char_list; victim; victim = victim_next) {
+	victim_next = victim->next;
+	if (IS_NPC(victim) && victim->mob_idx->vnum == vnum
+		&& ch != victim && victim->fighting == NULL)
+	    interpret(victim, argument);
+    }
+    return;
 }
 
 
@@ -948,56 +948,56 @@ void do_mpvforce(CHAR_DATA *ch, char *argument)
  */
 void do_mpcast(CHAR_DATA *ch, char *argument)
 {
-	CHAR_DATA *vch;
-	OBJ_DATA *obj;
-	SKILL *skill;
-	void *victim = NULL;
-	char spell[MIL];
-	char target[MIL];
+    CHAR_DATA *vch;
+    OBJ_DATA *obj;
+    SKILL *skill;
+    void *victim = NULL;
+    char spell[MIL];
+    char target[MIL];
 
-	argument = one_argument(argument, spell);
-	one_argument(argument, target);
+    argument = one_argument(argument, spell);
+    one_argument(argument, target);
 
-	if (spell[0] == '\0') {
-		log_bug("MpCast - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
+    if (spell[0] == '\0') {
+	log_bug("MpCast - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	return;
+    }
 
-	if ((skill = skill_lookup(spell)) == NULL) {
-		log_bug("MpCast - No such spell from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
+    if ((skill = skill_lookup(spell)) == NULL) {
+	log_bug("MpCast - No such spell from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	return;
+    }
 
-	vch = get_char_room(ch, target);
-	obj = get_obj_here(ch, target);
+    vch = get_char_room(ch, target);
+    obj = get_obj_here(ch, target);
 
-	switch (skill->target) {
+    switch (skill->target) {
 	default:
-		return;
+	    return;
 	case TAR_IGNORE:
-		break;
+	    break;
 	case TAR_CHAR_OFFENSIVE:
-		if (vch == NULL || vch == ch)
-			return;
+	    if (vch == NULL || vch == ch)
+		return;
 
-		victim = (void *)vch;
-		break;
+	    victim = (void *)vch;
+	    break;
 	case TAR_CHAR_DEFENSIVE:
-		victim = (vch == NULL) ? (void *)ch : (void *)vch;
-		break;
+	    victim = (vch == NULL) ? (void *)ch : (void *)vch;
+	    break;
 	case TAR_CHAR_SELF:
-		victim = (void *)ch;
-		break;
+	    victim = (void *)ch;
+	    break;
 	case TAR_OBJ_CHAR_DEF:
 	case TAR_OBJ_CHAR_OFF:
 	case TAR_OBJ_INV:
-		if (obj == NULL)
-			return;
-		victim = (void *)obj;
-	}
+	    if (obj == NULL)
+		return;
+	    victim = (void *)obj;
+    }
 
-	cast_spell(ch, skill, ch->level, victim, TARGET_CHAR, argument);
-	return;
+    cast_spell(ch, skill, ch->level, victim, TARGET_CHAR, argument);
+    return;
 }
 
 /*
@@ -1008,64 +1008,64 @@ void do_mpcast(CHAR_DATA *ch, char *argument)
  */
 void do_mpdamage(CHAR_DATA *ch, char *argument)
 {
-	CHAR_DATA *victim = NULL, *victim_next;
-	char target[MIL],
-	     min[MIL],
-	     max[MIL];
-	int low, high;
-	bool fAll = false, fKill = false;
+    CHAR_DATA *victim = NULL, *victim_next;
+    char target[MIL],
+	 min[MIL],
+	 max[MIL];
+    int low, high;
+    bool fAll = false, fKill = false;
 
-	argument = one_argument(argument, target);
-	argument = one_argument(argument, min);
-	argument = one_argument(argument, max);
+    argument = one_argument(argument, target);
+    argument = one_argument(argument, min);
+    argument = one_argument(argument, max);
 
-	if (target[0] == '\0') {
-		log_bug("MpDamage - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
-	if (!str_cmp(target, "all"))
-		fAll = true;
-	else if ((victim = get_char_room(ch, target)) == NULL)
-		return;
-
-	if (is_number(min)) {
-		low = parse_int(min);
-	} else {
-		log_bug("MpDamage - Bad damage min vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
-	if (is_number(max)) {
-		high = parse_int(max);
-	} else {
-		log_bug("MpDamage - Bad damage max vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
-	one_argument(argument, target);
-
-	/*
-	 * If kill parameter is omitted, this command is "safe" and will not
-	 * kill the victim.
-	 */
-
-	if (target[0] != '\0')
-		fKill = true;
-	if (fAll) {
-		for (victim = ch->in_room->people; victim; victim = victim_next) {
-			victim_next = victim->next_in_room;
-			if (victim != ch) {
-				damage(victim, victim,
-				       fKill ?
-				       number_range(low, high) : UMIN(victim->hit, number_range(low, high)),
-				       TYPE_UNDEFINED, DAM_NONE, false);
-			}
-		}
-	} else {
-		damage(victim, victim,
-		       fKill ?
-		       number_range(low, high) : UMIN(victim->hit, number_range(low, high)),
-		       TYPE_UNDEFINED, DAM_NONE, false);
-	}
+    if (target[0] == '\0') {
+	log_bug("MpDamage - Bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 	return;
+    }
+    if (!str_cmp(target, "all"))
+	fAll = true;
+    else if ((victim = get_char_room(ch, target)) == NULL)
+	return;
+
+    if (is_number(min)) {
+	low = parse_int(min);
+    } else {
+	log_bug("MpDamage - Bad damage min vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	return;
+    }
+    if (is_number(max)) {
+	high = parse_int(max);
+    } else {
+	log_bug("MpDamage - Bad damage max vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	return;
+    }
+    one_argument(argument, target);
+
+    /*
+     * If kill parameter is omitted, this command is "safe" and will not
+     * kill the victim.
+     */
+
+    if (target[0] != '\0')
+	fKill = true;
+    if (fAll) {
+	for (victim = ch->in_room->people; victim; victim = victim_next) {
+	    victim_next = victim->next_in_room;
+	    if (victim != ch) {
+		damage(victim, victim,
+			fKill ?
+			number_range(low, high) : UMIN(victim->hit, number_range(low, high)),
+			TYPE_UNDEFINED, DAM_NONE, false);
+	    }
+	}
+    } else {
+	damage(victim, victim,
+		fKill ?
+		number_range(low, high) : UMIN(victim->hit, number_range(low, high)),
+		TYPE_UNDEFINED, DAM_NONE, false);
+    }
+    return;
 }
 
 /*
@@ -1076,13 +1076,13 @@ void do_mpdamage(CHAR_DATA *ch, char *argument)
  */
 void do_mpremember(CHAR_DATA *ch, char *argument)
 {
-	char arg[MIL];
+    char arg[MIL];
 
-	one_argument(argument, arg);
-	if (arg[0] != '\0')
-		ch->mprog_target = get_char_world(ch, arg);
-	else
-		log_bug("MpRemember: missing argument from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+    one_argument(argument, arg);
+    if (arg[0] != '\0')
+	ch->mprog_target = get_char_world(ch, arg);
+    else
+	log_bug("MpRemember: missing argument from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
 }
 
 /*
@@ -1092,7 +1092,7 @@ void do_mpremember(CHAR_DATA *ch, char *argument)
  */
 void do_mpforget(CHAR_DATA *ch, char *argument)
 {
-	ch->mprog_target = NULL;
+    ch->mprog_target = NULL;
 }
 
 /*
@@ -1104,14 +1104,14 @@ void do_mpforget(CHAR_DATA *ch, char *argument)
  */
 void do_mpdelay(CHAR_DATA *ch, char *argument)
 {
-	char arg[MIL];
+    char arg[MIL];
 
-	one_argument(argument, arg);
-	if (!is_number(arg)) {
-		log_bug("MpDelay: invalid arg from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
-	ch->mprog_delay = parse_int(arg);
+    one_argument(argument, arg);
+    if (!is_number(arg)) {
+	log_bug("MpDelay: invalid arg from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	return;
+    }
+    ch->mprog_delay = parse_int(arg);
 }
 
 /*
@@ -1121,7 +1121,7 @@ void do_mpdelay(CHAR_DATA *ch, char *argument)
  */
 void do_mpcancel(CHAR_DATA *ch, char *argument)
 {
-	ch->mprog_delay = -1;
+    ch->mprog_delay = -1;
 }
 /*
  * Lets the mobile to call another MOBprogram withing a MOBprogram.
@@ -1135,33 +1135,33 @@ void do_mpcancel(CHAR_DATA *ch, char *argument)
  */
 void do_mpcall(CHAR_DATA *ch, char *argument)
 {
-	char arg[MIL];
-	CHAR_DATA *vch;
-	OBJ_DATA *obj1, *obj2;
-	MPROG_CODE *prg;
-	extern void program_flow(long, char *, CHAR_DATA *, CHAR_DATA *, const void *, const void *);
+    char arg[MIL];
+    CHAR_DATA *vch;
+    OBJ_DATA *obj1, *obj2;
+    MPROG_CODE *prg;
+    extern void program_flow(long, char *, CHAR_DATA *, CHAR_DATA *, const void *, const void *);
 
-	argument = one_argument(argument, arg);
-	if (arg[0] == '\0') {
-		log_bug("MpCall: missing arguments from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
-	if ((prg = get_mprog_index(parse_long(arg))) == NULL) {
-		log_bug("MpCall: invalid prog from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
-	vch = NULL;
-	obj1 = obj2 = NULL;
-	argument = one_argument(argument, arg);
-	if (arg[0] != '\0')
-		vch = get_char_room(ch, arg);
-	argument = one_argument(argument, arg);
-	if (arg[0] != '\0')
-		obj1 = get_obj_here(ch, arg);
-	argument = one_argument(argument, arg);
-	if (arg[0] != '\0')
-		obj2 = get_obj_here(ch, arg);
-	program_flow(prg->vnum, prg->code, ch, vch, (void *)obj1, (void *)obj2);
+    argument = one_argument(argument, arg);
+    if (arg[0] == '\0') {
+	log_bug("MpCall: missing arguments from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	return;
+    }
+    if ((prg = get_mprog_index(parse_long(arg))) == NULL) {
+	log_bug("MpCall: invalid prog from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	return;
+    }
+    vch = NULL;
+    obj1 = obj2 = NULL;
+    argument = one_argument(argument, arg);
+    if (arg[0] != '\0')
+	vch = get_char_room(ch, arg);
+    argument = one_argument(argument, arg);
+    if (arg[0] != '\0')
+	obj1 = get_obj_here(ch, arg);
+    argument = one_argument(argument, arg);
+    if (arg[0] != '\0')
+	obj2 = get_obj_here(ch, arg);
+    program_flow(prg->vnum, prg->code, ch, vch, (void *)obj1, (void *)obj2);
 }
 
 /*
@@ -1172,39 +1172,39 @@ void do_mpcall(CHAR_DATA *ch, char *argument)
  */
 void do_mpflee(CHAR_DATA *ch, char *argument)
 {
-	ROOM_INDEX_DATA *was_in;
-	EXIT_DATA *pexit;
-	int door, attempt, dir;
+    ROOM_INDEX_DATA *was_in;
+    EXIT_DATA *pexit;
+    int door, attempt, dir;
 
-	if (ch->fighting == NULL)
-		return;
+    if (ch->fighting == NULL)
+	return;
 
-	if ((was_in = ch->in_room) == NULL)
-		return;
+    if ((was_in = ch->in_room) == NULL)
+	return;
 
-	attempt = 0;
-	door = -1;
-	for (dir = 0; dir < 6; dir++) {
-		if ((pexit = was_in->exit[dir]) == 0
-		    || pexit->u1.to_room == NULL
-		    || IS_SET(pexit->exit_info, EX_CLOSED)
-		    || (IS_NPC(ch)
-			&& IS_SET(pexit->u1.to_room->room_flags, ROOM_NO_MOB))) {
-			continue;
-		} else {
-			if (number_range(0, attempt) == 0)
-				door = dir;
-			attempt++;
-		}
+    attempt = 0;
+    door = -1;
+    for (dir = 0; dir < 6; dir++) {
+	if ((pexit = was_in->exit[dir]) == 0
+		|| pexit->u1.to_room == NULL
+		|| IS_SET(pexit->exit_info, EX_CLOSED)
+		|| (IS_NPC(ch)
+		    && IS_SET(pexit->u1.to_room->room_flags, ROOM_NO_MOB))) {
+	    continue;
+	} else {
+	    if (number_range(0, attempt) == 0)
+		door = dir;
+	    attempt++;
 	}
+    }
 
-	if (door >= 0) {
-		stop_fighting(ch, true);
-		act("$n has fled!", ch, NULL, NULL, TO_ROOM);
-		move_char(ch, door, false);
-		if (ch->in_room != was_in)
-			return;
-	}
+    if (door >= 0) {
+	stop_fighting(ch, true);
+	act("$n has fled!", ch, NULL, NULL, TO_ROOM);
+	move_char(ch, door, false);
+	if (ch->in_room != was_in)
+	    return;
+    }
 }
 
 /*
@@ -1215,33 +1215,33 @@ void do_mpflee(CHAR_DATA *ch, char *argument)
  */
 void do_mpotransfer(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
-	ROOM_INDEX_DATA *location;
-	char arg[MIL];
-	char buf[MIL];
+    OBJ_DATA *obj;
+    ROOM_INDEX_DATA *location;
+    char arg[MIL];
+    char buf[MIL];
 
-	argument = one_argument(argument, arg);
-	if (arg[0] == '\0') {
-		log_bug("MpOTransfer - Missing argument from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
+    argument = one_argument(argument, arg);
+    if (arg[0] == '\0') {
+	log_bug("MpOTransfer - Missing argument from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	return;
+    }
 
-	one_argument(argument, buf);
-	if ((location = find_location(ch, buf)) == NULL) {
-		log_bug("MpOTransfer - No such location from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	}
-	if ((obj = get_obj_here(ch, arg)) == NULL)
-		return;
+    one_argument(argument, buf);
+    if ((location = find_location(ch, buf)) == NULL) {
+	log_bug("MpOTransfer - No such location from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	return;
+    }
+    if ((obj = get_obj_here(ch, arg)) == NULL)
+	return;
 
-	if (obj->carried_by == NULL) {
-		obj_from_room(obj);
-	} else {
-		if (obj->wear_loc != WEAR_NONE)
-			unequip_char(ch, obj);
-		obj_from_char(obj);
-	}
-	obj_to_room(obj, location);
+    if (obj->carried_by == NULL) {
+	obj_from_room(obj);
+    } else {
+	if (obj->wear_loc != WEAR_NONE)
+	    unequip_char(ch, obj);
+	obj_from_char(obj);
+    }
+    obj_to_room(obj, location);
 }
 
 /*
@@ -1252,32 +1252,32 @@ void do_mpotransfer(CHAR_DATA *ch, char *argument)
  */
 void do_mpremove(CHAR_DATA *ch, char *argument)
 {
-	CHAR_DATA *victim;
-	OBJ_DATA *obj, *obj_next;
-	long vnum = 0;
-	bool fAll = false;
-	char arg[MIL];
+    CHAR_DATA *victim;
+    OBJ_DATA *obj, *obj_next;
+    long vnum = 0;
+    bool fAll = false;
+    char arg[MIL];
 
-	argument = one_argument(argument, arg);
-	if ((victim = get_char_room(ch, arg)) == NULL)
-		return;
+    argument = one_argument(argument, arg);
+    if ((victim = get_char_room(ch, arg)) == NULL)
+	return;
 
-	one_argument(argument, arg);
-	if (!str_cmp(arg, "all")) {
-		fAll = true;
-	} else if (!is_number(arg)) {
-		log_bug("MpRemove: Invalid object from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-		return;
-	} else {
-		vnum = parse_long(arg);
+    one_argument(argument, arg);
+    if (!str_cmp(arg, "all")) {
+	fAll = true;
+    } else if (!is_number(arg)) {
+	log_bug("MpRemove: Invalid object from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+	return;
+    } else {
+	vnum = parse_long(arg);
+    }
+
+    for (obj = victim->carrying; obj; obj = obj_next) {
+	obj_next = obj->next_content;
+	if (fAll || obj->obj_idx->vnum == vnum) {
+	    unequip_char(ch, obj);
+	    obj_from_char(obj);
+	    extract_obj(obj);
 	}
-
-	for (obj = victim->carrying; obj; obj = obj_next) {
-		obj_next = obj->next_content;
-		if (fAll || obj->obj_idx->vnum == vnum) {
-			unequip_char(ch, obj);
-			obj_from_char(obj);
-			extract_obj(obj);
-		}
-	}
+    }
 }

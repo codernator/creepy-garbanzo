@@ -518,7 +518,7 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 
 		set_title(ch, "is `&new`` to this realm.");
 
-		obj_to_char(create_object(get_obj_index(OBJ_VNUM_MAP), 0), ch);
+		obj_to_char(create_object(objectprototype_getbyvnum(OBJ_VNUM_MAP), 0), ch);
 
 		char_to_room(ch, get_room_index(ROOM_VNUM_SCHOOL));
 		rnd = number_range(0, 9);

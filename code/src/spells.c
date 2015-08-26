@@ -1625,7 +1625,7 @@ void spell_floating_disc(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 	return;
     }
 
-    disc = create_object(get_obj_index(OBJ_VNUM_DISC), 0);
+    disc = create_object(objectprototype_getbyvnum(OBJ_VNUM_DISC), 0);
     disc->value[0] = ch->level * 10;        /* 10 pounds per level capacity */
     disc->value[3] = ch->level * 5;         /* 5 pounds per level max per item */
     disc->timer = ch->level * 2 - number_range(0, level / 2);
@@ -3485,7 +3485,7 @@ void spell_portal(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, 
     }
 
 
-    portal = create_object(get_obj_index(OBJ_VNUM_PORTAL), 0);
+    portal = create_object(objectprototype_getbyvnum(OBJ_VNUM_PORTAL), 0);
     portal->timer = 2 + level / 25;
     portal->value[0] = 1;
     portal->value[3] = victim->in_room->vnum;
@@ -3519,7 +3519,7 @@ void spell_nexus(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, c
     to_room = victim->in_room;
 
     /* portal one */
-    portal = create_object(get_obj_index(OBJ_VNUM_PORTAL), 0);
+    portal = create_object(objectprototype_getbyvnum(OBJ_VNUM_PORTAL), 0);
     portal->timer = 1 + level / 10;
     portal->value[3] = victim->in_room->vnum;
 
@@ -3529,7 +3529,7 @@ void spell_nexus(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, c
     act("$p `8s`&w`7ir`&l`8s`` into `@existence``.", ch, portal, NULL, TO_CHAR);
 
     /* portal two */
-    portal = create_object(get_obj_index(OBJ_VNUM_PORTAL), 0);
+    portal = create_object(objectprototype_getbyvnum(OBJ_VNUM_PORTAL), 0);
     portal->timer = 1 + level / 10;
     portal->value[3] = ch->in_room->vnum;
 
@@ -3685,7 +3685,7 @@ void spell_fireblade(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int targe
 	}
 	unequip_char(ch, old_weapon);
     }
-    weapon = create_object(get_obj_index(OBJ_VNUM_FIREBLADE), 0);
+    weapon = create_object(objectprototype_getbyvnum(OBJ_VNUM_FIREBLADE), 0);
 
     weapon->level = ch->level;
     weapon->timer = ch->level / 4;

@@ -1,28 +1,3 @@
-/**************************************************************************
- *  File: olc_save.c                                                       *
- *                                                                         *
- *  Much time and thought has gone into this software and you are          *
- *  benefitting.  We hope that you share your changes too.  What goes      *
- *  around, comes around.                                                  *
- *                                                                         *
- *  This code was freely distributed with the The Isles 1.1 source code,   *
- *  and has been used here for OLC - OLC would not be what it is without   *
- *  all the previous coders who released their source code.                *
- *                                                                         *
- ***************************************************************************/
-/* OLC_SAVE.C
- * This takes care of saving all the .are information.
- * Notes:
- * -If a good syntax checker is used for setting vnum ranges of areas
- *  then it would become possible to just cycle through vnums instead
- *  of using the hash_idx stuff and checking that the room or reset or
- *  mob etc is part of that area.
- */
-
-
-/***************************************************************************
- *	includes
- ***************************************************************************/
 #include <stdio.h>
 #include <string.h>
 #include "merc.h"
@@ -278,7 +253,7 @@ static void save_mobiles(FILE *fp, AREA_DATA *area)
  *
  *	save a single object
  ***************************************************************************/
-static void save_object(FILE *fp, OBJ_INDEX_DATA *pObjIndex)
+static void save_object(FILE *fp, OBJECTPROTOTYPE *pObjIndex)
 {
     AFFECT_DATA *pAf;
     EXTRA_DESCR_DATA *extra;
@@ -432,13 +407,13 @@ static void save_object(FILE *fp, OBJ_INDEX_DATA *pObjIndex)
  ***************************************************************************/
 static void save_objects(FILE *fp, AREA_DATA *area)
 {
-    OBJ_INDEX_DATA *pObj;
+    OBJECTPROTOTYPE *pObj;
     long iter;
 
     fprintf(fp, "#OBJECTS\n");
 
     for (iter = area->min_vnum; iter <= area->max_vnum; iter++)
-	if ((pObj = get_obj_index(iter)))
+	if ((pObj = objectprototype_getbyvnum(iter)))
 	    save_object(fp, pObj);
 
     fprintf(fp, "#0\n\n\n\n");
@@ -958,8 +933,7 @@ void do_asave(CHAR_DATA *ch, char *argument)
 
     /* save the area that is currently being edited */
     if (!str_prefix(arg, "area")) {
-	if (ch == NULL
-		|| ch->desc == NULL)
+	if (ch == NULL || ch->desc == NULL)
 	    return;
 
 	if (ch->desc->editor == ED_NONE) {
@@ -975,7 +949,7 @@ void do_asave(CHAR_DATA *ch, char *argument)
 		area = ch->in_room->area;
 		break;
 	    case ED_OBJECT:
-		area = ((OBJ_INDEX_DATA *)ch->desc->ed_data)->area;
+		area = ((OBJECTPROTOTYPE *)ch->desc->ed_data)->area;
 		break;
 	    case ED_MOBILE:
 		area = ((MOB_INDEX_DATA *)ch->desc->ed_data)->area;
@@ -989,8 +963,7 @@ void do_asave(CHAR_DATA *ch, char *argument)
 		break;
 	}
 
-	if (area == NULL
-		|| !IS_BUILDER(ch, area)) {
+	if (area == NULL || !IS_BUILDER(ch, area)) {
 	    send_to_char("You are not a builder for this area.\n\r", ch);
 	    return;
 	}

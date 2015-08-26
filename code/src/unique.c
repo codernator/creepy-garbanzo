@@ -165,7 +165,7 @@ void do_cuo(CHAR_DATA *ch, char *argument)
 
 	number_objects = UMAX(1, parse_int(argument));
 	for (idx = 0; idx < number_objects; idx++) {
-		if ((obj = create_object(get_obj_index(OBJ_UNIQUE_DUMMY), 0)) == NULL) {
+		if ((obj = create_object(objectprototype_getbyvnum(OBJ_UNIQUE_DUMMY), 0)) == NULL) {
 			send_to_char("Bug with OBJ_UNIQUE_DUMMY\n\r", ch);
 			return;
 		}

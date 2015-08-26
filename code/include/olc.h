@@ -1,39 +1,15 @@
-/****************************************************************************
-*  File: olc.h                                                              *
-*                                                                           *
-*  Much time and thought has gone into this software and you are            *
-*  benefitting.  We hope that you share your changes too.  What goes        *
-*  around, comes around.                                                    *
-*                                                                           *
-*  This code was freely distributed with the The Isles 1.1 source code,     *
-*  and has been used here for OLC - OLC would not be what it is without     *
-*  all the previous coders who released their source code.                  *
-*                                                                           *
-****************************************************************************/
-/****************************************************************************
-*	This is a header file for all the OLC files.  Feel free to copy it into *
-*	merc.h if you wish.  Many of these routines may be handy elsewhere in   *
-*	the code.  -Jason Dinkel                                                *
-****************************************************************************/
-
-
-/***************************************************************************
-* The version info.  Please use this info when reporting bugs.
-* It is displayed in the game by typing 'version' while editing.
-* Do not remove these from the code - by request of Jason Dinkel
-***************************************************************************/
 #define OLCVERSION      "ILAB Online Creation [Beta 1.0, ROM 2.3 modified]\n\r" \
-	"     Port a ROM 2.4 v1.8\n\r"
+    "     Port a ROM 2.4 v1.8\n\r"
 
 #define AUTHOR  "     By Jason(jdinkel@mines.colorado.edu)\n\r" \
-	"     Modified for use with ROM 2.3\n\r"        \
-	"     By Hans Birkeland (hansbi@ifi.uio.no)\n\r" \
-	"     Modificado para uso en ROM 2.4b6\n\r"     \
-	"     Por Ivan Toledo (itoledo@ctcreuna.cl)\n\r"
+    "     Modified for use with ROM 2.3\n\r"        \
+"     By Hans Birkeland (hansbi@ifi.uio.no)\n\r" \
+"     Modificado para uso en ROM 2.4b6\n\r"     \
+"     Por Ivan Toledo (itoledo@ctcreuna.cl)\n\r"
 
 #define DATE    "     (Apr. 7, 1995 - ROM mod, Apr 16, 1995)\n\r" \
-	"     (Port a ROM 2.4 - Nov 2, 1996)\n\r" \
-	"     Version actual : 1.8 - Sep 8, 1998\n\r"
+    "     (Port a ROM 2.4 - Nov 2, 1996)\n\r" \
+"     Version actual : 1.8 - Sep 8, 1998\n\r"
 
 #define CREDITS "     Original by Surreality(cxw197@psu.edu) and Locke(locke@lm.com)"
 
@@ -81,8 +57,8 @@ void muedit(CHAR_DATA * ch, char *argument);
  * Structure for an OLC editor command.
  */
 struct olc_cmd_type {
-	char *const	name;
-	OLC_FUN *	olc_fn;
+    char *const	name;
+    OLC_FUN *	olc_fn;
 };
 
 
@@ -91,8 +67,8 @@ struct olc_cmd_type {
  * Structure for an OLC editor startup command.
  */
 struct  editor_cmd_type {
-	char *const	name;
-	DO_FUN *	do_fn;
+    char *const	name;
+    DO_FUN *	do_fn;
 };
 
 enum medit_auto_config_type { mact_easy, mact_normal, mact_hard, mact_insane };
@@ -117,16 +93,16 @@ extern const struct olc_cmd_type muedit_table[];
 
 /* macros */
 #define ALT_FLAGVALUE_SET(_blargh, _table, _arg)                \
-	{                                                                                                       \
-		long blah = flag_value(_table, _arg);                   \
-		_blargh = (blah == NO_FLAG) ? 0 : blah;                  \
-	}
+{                                                                                                       \
+    long blah = flag_value(_table, _arg);                   \
+    _blargh = (blah == NO_FLAG) ? 0 : blah;                  \
+}
 
 #define ALT_FLAGVALUE_TOGGLE(_blargh, _table, _arg)             \
-	{                                                                                                       \
-		long blah = flag_value(_table, _arg);                   \
-		_blargh ^= (blah == NO_FLAG) ? 0 : blah;                 \
-	}
+{                                                                                                       \
+    long blah = flag_value(_table, _arg);                   \
+    _blargh ^= (blah == NO_FLAG) ? 0 : blah;                 \
+}
 
 #define TOGGLE_BIT(var, bit)    ((var) ^= (bit))
 
@@ -314,7 +290,7 @@ DECLARE_OLC_FUN(muedit_text);
 
 /* Return pointers to what is being edited. */
 #define EDIT_MOB(ch, mob)       (mob = (MOB_INDEX_DATA *)ch->desc->ed_data)
-#define EDIT_OBJ(ch, obj)       (obj = (OBJ_INDEX_DATA *)ch->desc->ed_data)
+#define EDIT_OBJ(ch, obj)       (obj = (OBJECTPROTOTYPE *)ch->desc->ed_data)
 #define EDIT_ROOM(ch, room)     (room = ch->in_room)
 #define EDIT_AREA(ch, area)     (area = (AREA_DATA *)ch->desc->ed_data)
 #define EDIT_MPCODE(ch, code)   (code = (MPROG_CODE *)ch->desc->ed_data)
@@ -329,9 +305,6 @@ void free_room_index(ROOM_INDEX_DATA * pRoom);
 /* mob indexes */
 MOB_INDEX_DATA *new_mob_index(void);
 void free_mob_index(MOB_INDEX_DATA * pMob);
-/* object indexes */
-OBJ_INDEX_DATA *new_obj_index(void);
-void free_obj_index(OBJ_INDEX_DATA * pObj);
 /* extra descriptions */
 extern EXTRA_DESCR_DATA *new_extra_descr(void);
 extern void free_extra_descr(EXTRA_DESCR_DATA * pExtra);

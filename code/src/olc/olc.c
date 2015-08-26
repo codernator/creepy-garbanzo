@@ -1,20 +1,3 @@
-/***********************************************************************
- *  File: olc.c                                                            *
- *                                                                         *
- *  Much time and thought has gone into this software and you are          *
- *  benefitting.  We hope that you share your changes too.  What goes      *
- *  around, comes around.                                                  *
- *                                                                         *
- *  This code was freely distributed with the The Isles 1.1 source code,   *
- *  and has been used here for OLC - OLC would not be what it is without   *
- *  all the previous coders who released their source code.                *
- *                                                                         *
- ***************************************************************************/
-
-
-/***************************************************************************
- *	includes
- ***************************************************************************/
 #include <string.h>
 #include <stdio.h>
 #include "merc.h"
@@ -317,7 +300,7 @@ char *olc_ed_vnum(CHAR_DATA *ch)
 {
     AREA_DATA *pArea;
     ROOM_INDEX_DATA *pRoom;
-    OBJ_INDEX_DATA *pObj;
+    OBJECTPROTOTYPE *pObj;
     MOB_INDEX_DATA *pMob;
     MPROG_CODE *pMprog;
     HELP_DATA *pHelp;
@@ -336,7 +319,7 @@ char *olc_ed_vnum(CHAR_DATA *ch)
 	    sprintf(buf, "%ld", pRoom ? pRoom->vnum : 0);
 	    break;
 	case ED_OBJECT:
-	    pObj = (OBJ_INDEX_DATA *)ch->desc->ed_data;
+	    pObj = (OBJECTPROTOTYPE *)ch->desc->ed_data;
 	    sprintf(buf, "%ld", pObj ? pObj->vnum : 0);
 	    break;
 	case ED_MOBILE:
@@ -596,7 +579,7 @@ void redit(CHAR_DATA *ch, char *argument)
 void oedit(CHAR_DATA *ch, char *argument)
 {
     AREA_DATA *pArea;
-    OBJ_INDEX_DATA *pObj;
+    OBJECTPROTOTYPE *pObj;
     char arg[MSL];
     char command[MIL];
     int cmd;
@@ -814,10 +797,10 @@ static void display_resets(CHAR_DATA *ch)
 	    "==== ======== ============= =================== ======== ===== ===========\n\r", ch);
 
     for (pReset = pRoom->reset_first; pReset; pReset = pReset->next) {
-	OBJ_INDEX_DATA *pObj;
+	OBJECTPROTOTYPE *pObj;
 	MOB_INDEX_DATA *pMobIndex;
-	OBJ_INDEX_DATA *pObjIndex;
-	OBJ_INDEX_DATA *pObjToIndex;
+	OBJECTPROTOTYPE *pObjIndex;
+	OBJECTPROTOTYPE *pObjToIndex;
 	ROOM_INDEX_DATA *pRoomIndex;
 	ROOM_INDEX_DATA *pRoomIndexPrev;
 
@@ -866,7 +849,7 @@ static void display_resets(CHAR_DATA *ch)
 		break;
 
 	    case 'O':
-		if (!(pObjIndex = get_obj_index(pReset->arg1))) {
+		if (!(pObjIndex = objectprototype_getbyvnum(pReset->arg1))) {
 		    printf_buf(final, "Load Object - Bad Object %d\n\r", pReset->arg1);
 		    continue;
 		}
@@ -889,13 +872,13 @@ static void display_resets(CHAR_DATA *ch)
 		break;
 
 	    case 'P':
-		if (!(pObjIndex = get_obj_index(pReset->arg1))) {
+		if (!(pObjIndex = objectprototype_getbyvnum(pReset->arg1))) {
 		    printf_buf(final, "Put Object - Bad Object %d\n\r", pReset->arg1);
 		    continue;
 		}
 
 		pObj = pObjIndex;
-		if (!(pObjToIndex = get_obj_index(pReset->arg3))) {
+		if (!(pObjToIndex = objectprototype_getbyvnum(pReset->arg3))) {
 		    printf_buf(final, "Put Object - Bad To Object %d\n\r", pReset->arg3);
 		    continue;
 		}
@@ -913,7 +896,7 @@ static void display_resets(CHAR_DATA *ch)
 
 	    case 'G':
 	    case 'E':
-		if (!(pObjIndex = get_obj_index(pReset->arg1))) {
+		if (!(pObjIndex = objectprototype_getbyvnum(pReset->arg1))) {
 		    printf_buf(final, "Give/Equip Object - Bad Object %d\n\r", pReset->arg1);
 		    continue;
 		}
@@ -1122,9 +1105,9 @@ void do_resets(CHAR_DATA *ch, char *argument)
 		pReset->arg1 = parse_int(arg3);
 
 		if (!str_prefix(arg4, "inside")) {
-		    OBJ_INDEX_DATA *temp;
+		    OBJECTPROTOTYPE *temp;
 
-		    temp = get_obj_index(is_number(arg5) ? parse_int(arg5) : 1);
+		    temp = objectprototype_getbyvnum(is_number(arg5) ? parse_int(arg5) : 1);
 		    if (temp == NULL
 			    || ((temp->item_type != ITEM_CONTAINER)
 				&& (temp->item_type != ITEM_CORPSE_NPC))) {
@@ -1136,7 +1119,7 @@ void do_resets(CHAR_DATA *ch, char *argument)
 		    pReset->arg3 = is_number(arg5) ? parse_int(arg5) : 1;
 		    pReset->arg4 = is_number(arg7) ? parse_int(arg7) : 1;
 		} else if (!str_cmp(arg4, "room")) {
-		    if (get_obj_index(parse_int(arg3)) == NULL) {
+		    if (objectprototype_getbyvnum(parse_int(arg3)) == NULL) {
 			send_to_char("Vnum doest not exist.\n\r", ch);
 			return;
 		    }
@@ -1149,7 +1132,7 @@ void do_resets(CHAR_DATA *ch, char *argument)
 			send_to_char("Resets: '? wear-loc'\n\r", ch);
 			return;
 		    }
-		    if (get_obj_index(parse_int(arg3)) == NULL) {
+		    if (objectprototype_getbyvnum(parse_int(arg3)) == NULL) {
 			send_to_char("Vnum does not exist.\n\r", ch);
 			return;
 		    }

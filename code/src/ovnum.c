@@ -60,7 +60,7 @@ typedef bool CHECK_EXISTS_FN (long vnum);
 
 static bool check_exists_object(long vnum)
 {
-	return get_obj_index(vnum) != NULL;
+	return objectprototype_getbyvnum(vnum) != NULL;
 }
 
 static bool check_exists_mob(long vnum)

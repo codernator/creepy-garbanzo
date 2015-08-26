@@ -107,14 +107,14 @@ void do_heal(CHAR_DATA *ch, char *argument)
 	if (number_range(1, 300) == 13) {
 		send_to_char("A quivering cube of `@green`` jello whispers '`8Psst! here!``'\nA quivering cube of `@green`` jello hands you something.\n", ch);
 
-		acid = create_object(get_obj_index(32), 0);
+		acid = create_object(objectprototype_getbyvnum(32), 0);
 		obj_to_char(acid, ch);
 	}
 
 	if (number_range(1, 300) == 7) {
 		send_to_char("A quivering cube of `@green`` jello whispers '`8Psst! here!``'\nA quivering cube of `@green`` jello hands you something.\n", ch);
 
-		acid = create_object(get_obj_index(470), 0);
+		acid = create_object(objectprototype_getbyvnum(470), 0);
 		obj_to_char(acid, ch);
 	}
 

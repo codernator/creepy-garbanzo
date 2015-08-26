@@ -22,7 +22,6 @@ extern long top_exit;
 extern int top_ed;
 extern long top_room;
 extern long top_mob_index;
-extern long top_obj_index;
 extern int top_mprog_index;
 
 
@@ -30,7 +29,6 @@ static AREA_DATA *area_free;
 EXTRA_DESCR_DATA *extra_descr_free;
 static EXIT_DATA *exit_free;
 static ROOM_INDEX_DATA *room_index_free;
-static OBJ_INDEX_DATA *obj_index_free;
 static SHOP_DATA *shop_free;
 static MOB_INDEX_DATA *mob_index_free;
 static RESET_DATA *reset_free;
@@ -261,69 +259,6 @@ void free_shop(SHOP_DATA *shop)
 {
     shop->next = shop_free;
     shop_free = shop;
-    return;
-}
-
-
-
-OBJ_INDEX_DATA *new_obj_index(void)
-{
-    OBJ_INDEX_DATA *obj;
-    int value;
-
-    if (!obj_index_free) {
-	obj = alloc_perm((unsigned int)sizeof(*obj));
-	top_obj_index++;
-    } else {
-	obj = obj_index_free;
-	obj_index_free = obj_index_free->next;
-    }
-
-    obj->next = NULL;
-    obj->extra_descr = NULL;
-    obj->affected = NULL;
-    obj->area = NULL;
-    obj->name = str_dup("no name");
-    obj->short_descr = str_dup("(no short description)");
-    obj->description = str_dup("(no description)");
-    obj->vnum = 0;
-    obj->item_type = ITEM_TRASH;
-    obj->extra_flags = 0;
-    obj->extra2_flags = 0;
-    obj->wear_flags = 0;
-    obj->count = 0;
-    obj->weight = 0;
-    obj->cost = 0;
-    obj->material = str_dup("unknown");             /* ROM */
-    obj->condition = 100;                           /* ROM */
-
-    for (value = 0; value < 5; value++)             /* 5 - ROM */
-	obj->value[value] = 0;
-
-    obj->new_format = true;    /* ROM */
-
-    return obj;
-}
-
-
-
-void free_obj_index(OBJ_INDEX_DATA *obj)
-{
-    EXTRA_DESCR_DATA *extra;
-    AFFECT_DATA *paf;
-
-    free_string(obj->name);
-    free_string(obj->short_descr);
-    free_string(obj->description);
-
-    for (paf = obj->affected; paf; paf = paf->next)
-	free_affect(paf);
-
-    for (extra = obj->extra_descr; extra; extra = extra->next)
-	free_extra_descr(extra);
-
-    obj->next = obj_index_free;
-    obj_index_free = obj;
     return;
 }
 

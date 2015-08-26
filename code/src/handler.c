@@ -1143,7 +1143,7 @@ void unequip_char(CHAR_DATA *ch, OBJ_DATA *obj)
 /**
  * Count occurrences of an obj in a list.
  */
-int count_obj_list(OBJ_INDEX_DATA *pObjIndex, OBJ_DATA *list)
+int count_obj_list(OBJECTPROTOTYPE *pObjIndex, OBJ_DATA *list)
 {
     OBJ_DATA *obj;
     int nMatch;
@@ -1477,7 +1477,7 @@ CHAR_DATA *get_char_world(CHAR_DATA *ch, char *argument)
  *
  * find an object with a given index data
  ***************************************************************************/
-OBJ_DATA *get_obj_type(OBJ_INDEX_DATA *obj_idx)
+OBJ_DATA *get_obj_type(OBJECTPROTOTYPE *obj_idx)
 {
     const struct object_iterator_filter filter = { .object_template = obj_idx };
     return object_iterator_start(&filter);
@@ -1667,11 +1667,11 @@ OBJ_DATA *create_money(unsigned int gold, unsigned int silver)
 
     /* create the object - assign short desc where applicable */
     if (gold == 0 && silver == 1) {
-	obj = create_object(get_obj_index(OBJ_VNUM_SILVER_ONE), 0);
+	obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_SILVER_ONE), 0);
     } else if (gold == 1 && silver == 0) {
-	obj = create_object(get_obj_index(OBJ_VNUM_GOLD_ONE), 0);
+	obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_GOLD_ONE), 0);
     } else if (silver == 0) {
-	obj = create_object(get_obj_index(OBJ_VNUM_GOLD_SOME), 0);
+	obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_GOLD_SOME), 0);
 
 	sprintf(buf, obj->short_descr, gold);
 	free_string(obj->short_descr);
@@ -1680,7 +1680,7 @@ OBJ_DATA *create_money(unsigned int gold, unsigned int silver)
 	obj->value[1] = (long)gold;
 	obj->cost = gold;
     } else if (gold == 0) {
-	obj = create_object(get_obj_index(OBJ_VNUM_SILVER_SOME), 0);
+	obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_SILVER_SOME), 0);
 
 	sprintf(buf, obj->short_descr, silver);
 	free_string(obj->short_descr);
@@ -1689,7 +1689,7 @@ OBJ_DATA *create_money(unsigned int gold, unsigned int silver)
 	obj->value[0] = (long)silver;
 	obj->cost = silver;
     } else {
-	obj = create_object(get_obj_index(OBJ_VNUM_COINS), 0);
+	obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_COINS), 0);
 
 	sprintf(buf, obj->short_descr, silver, gold);
 	free_string(obj->short_descr);
@@ -2345,15 +2345,7 @@ void identify_item(CHAR_DATA *ch, OBJ_DATA *obj)
 		    break;
 	    }
 
-	    if (obj->obj_idx->new_format) {
-		printf_to_char(ch, "Damage is %dd%d(average %d).\n\r",
-			obj->value[1], obj->value[2],
-			(1 + obj->value[2]) * obj->value[1] / 2);
-	    } else {
-		printf_to_char(ch, "Damage is %d to %d(average %d).\n\r",
-			obj->value[1], obj->value[2],
-			(obj->value[1] + obj->value[2]) / 2);
-	    }
+	    printf_to_char(ch, "Damage is %dd%d(average %d).\n\r", obj->value[1], obj->value[2], (1 + obj->value[2]) * obj->value[1] / 2);
 
 	    printf_to_char(ch, "Damage noun is %s.\n\r", attack_table[obj->value[3]].noun);
 

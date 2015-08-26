@@ -23,7 +23,7 @@ _OBJ=act_comm.o act_combat.o act_enter.o act_info.o act_move.o act_obj.o act_wiz
      libfile.o logging.o lookup.o \
      magic.o main.o mem.o mob_cmds.o mob_prog.o mobs.o \
      nanny.o nickname.o note.o \
-     object.o object_service.o ovnum.o \
+     object.o objectprototype.o ovnum.o \
      race.o recycle.o repair.o restring.o \
      save.o scan.o set.o skills.o socketio.o spells.o stat.o \
      tables.o teleport.o temp.o \

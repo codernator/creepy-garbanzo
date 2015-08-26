@@ -719,22 +719,13 @@ bool one_hit(CHAR_DATA *ch, CHAR_DATA *victim, int dt, OBJ_DATA *wield)
 	return false;
     }
 
-    if (IS_NPC(ch) && (!ch->mob_idx->new_format || wield == NULL)) {
-	if (!ch->mob_idx->new_format) {
-	    dam = number_range(ch->level / 2, ch->level * 3 / 2);
-	    if (wield != NULL)
-		dam += dam / 2;
-	} else {
-	    dam = dice(ch->damage[DICE_NUMBER], ch->damage[DICE_TYPE]);
-	}
+    if (IS_NPC(ch) && wield == NULL) {
+	dam = dice(ch->damage[DICE_NUMBER], ch->damage[DICE_TYPE]);
     } else {
 	if (sn != -1)
 	    check_improve(ch, resolve_skill_sn(sn), true, 5);
 	if (wield != NULL) {
-	    if (wield->obj_idx->new_format)
-		dam = dice((int)wield->value[1], (int)(wield->value[2]) * skill / 100);
-	    else
-		dam = number_range((int)(wield->value[1] * skill / 100), (int)(wield->value[2] * skill / 100));
+	    dam = dice((int)wield->value[1], (int)(wield->value[2]) * skill / 100);
 
 	    if (get_eq_char(ch, WEAR_SHIELD) == NULL)        /* no shield = more */
 		dam = dam * 11 / 10;
@@ -1642,7 +1633,7 @@ void make_corpse(CHAR_DATA *ch)
 
     if (IS_NPC(ch)) {
 	name = ch->short_descr;
-	corpse = create_object(get_obj_index(OBJ_VNUM_CORPSE_NPC), 0);
+	corpse = create_object(objectprototype_getbyvnum(OBJ_VNUM_CORPSE_NPC), 0);
 	corpse->timer = number_range(3, 6);
 	if (ch->gold > 0) {
 	    obj_to_obj(create_money(ch->gold, ch->silver), corpse);
@@ -1652,7 +1643,7 @@ void make_corpse(CHAR_DATA *ch)
 	corpse->cost = 0;
     } else {
 	name = ch->name;
-	corpse = create_object(get_obj_index(OBJ_VNUM_CORPSE_PC), 0);
+	corpse = create_object(objectprototype_getbyvnum(OBJ_VNUM_CORPSE_PC), 0);
 	corpse->timer = number_range(25, 40);
 	corpse->owner = str_dup(ch->name);
 	corpse->value[0] = 0;
@@ -1791,7 +1782,7 @@ void death_cry(CHAR_DATA *ch, CHAR_DATA *killer)
 	char *name;
 
 	name = IS_NPC(ch) ? ch->short_descr : ch->name;
-	obj = create_object(get_obj_index(vnum), 0);
+	obj = create_object(objectprototype_getbyvnum(vnum), 0);
 	obj->timer = number_range(4, 7);
 
 	sprintf(buf, obj->short_descr, name);
