@@ -7,9 +7,21 @@
 #include <string.h>
 
 
+
+/** exports */
 const unsigned char echo_off_str [] = { (unsigned char)IAC, (unsigned char)WILL, (unsigned char)TELOPT_ECHO, (unsigned char)'\0' };
 const unsigned char echo_on_str  [] = { (unsigned char)IAC, (unsigned char)WONT, (unsigned char)TELOPT_ECHO, (unsigned char)'\0' };
 const unsigned char go_ahead_str [] = { (unsigned char)IAC, (unsigned char)GA, (unsigned char)'\0' };
+
+
+/** imports */
+extern char *password_encrypt(const char *plain);
+extern bool password_matches(char *existing, const char *plain);
+extern int password_acceptance(const char *plain);
+extern const char *password_accept_message(int code);
+
+
+/** locals */
 static char log_buf[MIL];
 
 
@@ -20,8 +32,6 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
     LEARNED *learned;
     char buf[MSL];
     char arg[MIL];
-    char *pwdnew;
-    char *p;
     int class_idx;
     int race_idx;
     int weapon_idx;
@@ -129,7 +139,7 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 	case CON_GET_OLD_PASSWORD:
 	    write_to_buffer(d, "\n\r", 2);
 
-	    if (strcmp(crypt(argument, ch->pcdata->pwd), ch->pcdata->pwd)) {
+	    if (!password_matches(ch->pcdata->pwd, argument)) {
 		write_to_buffer(d, "Wrong password.  Boom Biddy Bye Bye.\n\r", 0);
 		close_socket(d);
 		return;
@@ -236,31 +246,27 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 	    break;
 
 	case CON_GET_NEW_PASSWORD:
-	    write_to_buffer(d, "\n\r", 2);
+	    {
+		int passaccept;
 
-	    if (strlen(argument) < 5) {
-		write_to_buffer(d, "Password must be at least five characters long.\n\rPassword: ", 0);
-		return;
-	    }
-
-	    pwdnew = crypt(argument, ch->name);
-	    for (p = pwdnew; *p != '\0'; p++) {
-		if (*p == '~') {
-		    write_to_buffer(d, "New password not acceptable, try again.\n\rPassword: ", 0);
+		write_to_buffer(d, "\n\r", 2);
+		passaccept = password_acceptance(argument);
+		if (passaccept != 0) {
+		    write_to_buffer(d, password_accept_message(passaccept), 0);
+		    write_to_buffer(d, "\n\rPassword: ", 0);
 		    return;
 		}
+		free_string(ch->pcdata->pwd);
+		ch->pcdata->pwd = password_encrypt(argument);
+		write_to_buffer(d, "Please retype password: ", 0);
+		d->connected = CON_CONFIRM_NEW_PASSWORD;
 	    }
-
-	    free_string(ch->pcdata->pwd);
-	    ch->pcdata->pwd = str_dup(pwdnew);
-	    write_to_buffer(d, "Please retype password: ", 0);
-	    d->connected = CON_CONFIRM_NEW_PASSWORD;
 	    break;
 
 	case CON_CONFIRM_NEW_PASSWORD:
 	    write_to_buffer(d, "\n\r", 2);
 
-	    if (strcmp(crypt(argument, ch->pcdata->pwd), ch->pcdata->pwd)) {
+	    if (!password_matches(ch->pcdata->pwd, argument)) {
 		write_to_buffer(d, "Passwords don't match.\n\rRetype password: ", 0);
 		d->connected = CON_GET_NEW_PASSWORD;
 		return;
@@ -487,12 +493,6 @@ void nanny(DESCRIPTOR_DATA *d, char *argument)
 	    break;
 
 	case CON_READ_MOTD:
-	    if (ch->pcdata == NULL || ch->pcdata->pwd[0] == '\0') {
-		write_to_buffer(d, "Warning! Null password!\n\r", 0);
-		write_to_buffer(d, "Please report old password with bug.\n\r", 0);
-		write_to_buffer(d, "Type 'password null <new password>' to fix.\n\r", 0);
-	    }
-
 	    if (ch->played < 0)
 		ch->played = 0;
 

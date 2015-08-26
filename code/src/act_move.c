@@ -28,6 +28,7 @@ char *const dir_name[] =
 	"north", "east", "south", "west", "up", "down"
 };
 
+/** Direction index to get back after going forward. */
 const int rev_dir[] =
 {
 	2, 3, 0, 1, 5, 4

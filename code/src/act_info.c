@@ -14,6 +14,10 @@
 
 
 extern void string_append(CHAR_DATA * ch, char **string);
+extern char *password_encrypt(const char *plain);
+extern bool password_matches(char *existing, const char *plain);
+extern int password_acceptance(const char *plain);
+extern const char *password_accept_message(int code);
 
 
 void do_at(CHAR_DATA * ch, char *argument);
@@ -31,13 +35,6 @@ extern void show_char_to_char_2(CHAR_DATA * victim, CHAR_DATA * ch);
 #define MAX_NEST        100
 static OBJ_DATA *rgObjNest[MAX_NEST];
 extern void fread_char(CHAR_DATA * ch, FILE * fp);
-
-
-
-
-
-
-
 
 
 /* One time use only toggle that changes char from NPK to PK
@@ -1700,9 +1697,8 @@ void do_password(CHAR_DATA *ch, char *argument)
     char arg1[MIL];
     char arg2[MIL];
     char *pArg;
-    char *pwdnew;
-    char *p;
     char cEnd;
+    int passaccept;
 
     if (IS_NPC(ch))
 	return;
@@ -1750,32 +1746,20 @@ void do_password(CHAR_DATA *ch, char *argument)
 	return;
     }
 
-    if (strcmp(crypt(arg1, ch->pcdata->pwd), ch->pcdata->pwd)) {
+    if (!password_matches(ch->pcdata->pwd, arg1)) {
 	WAIT_STATE(ch, 40);
 	send_to_char("Wrong password.  Wait 10 seconds.\n\r", ch);
 	return;
     }
 
-    if (strlen(arg2) < 5) {
-	send_to_char(
-		"New password must be at least five characters long.\n\r", ch);
+    passaccept = password_acceptance(arg2);
+    if (passaccept != 0) {
+	printf_to_char(ch, "%s", password_accept_message(passaccept));
 	return;
     }
 
-    /*
-     * No tilde allowed because of player file format.
-     */
-    pwdnew = crypt(arg2, ch->name);
-    for (p = pwdnew; *p != '\0'; p++) {
-	if (*p == '~') {
-	    send_to_char(
-		    "New password not acceptable, try again.\n\r", ch);
-	    return;
-	}
-    }
-
     free_string(ch->pcdata->pwd);
-    ch->pcdata->pwd = str_dup(pwdnew);
+    ch->pcdata->pwd = password_encrypt(arg2);
     save_char_obj(ch);
     send_to_char("Password changed... Hope you remember it.\n\r", ch);
     return;

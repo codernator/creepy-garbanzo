@@ -27,6 +27,7 @@ typedef int SOCKET;
 #endif
 
 
+
 typedef int sh_int;
 
 typedef enum e_one_attack_result {
@@ -1909,8 +1910,8 @@ extern SYSTEM_STATE globalSystemState;
 extern GAME_STATE globalGameState;
 
 /* Global Constants */
-extern char *const dir_name        [];
-extern const int rev_dir         [];                 /* int - ROM OLC */
+extern char *const dir_name[];
+extern const int rev_dir[];                 /* int - ROM OLC */
 extern AREA_DATA *area_first;
 extern AREA_DATA *area_last;
 extern SHOP_DATA *shop_last;
@@ -1931,9 +1932,7 @@ extern MOB_INDEX_DATA *mob_index_hash  [MAX_KEY_HASH];
 extern ROOM_INDEX_DATA *room_index_hash [MAX_KEY_HASH];
 
 
-//char *crypt(const char *key, const char *salt);
 
-#define crypt(value, salt)   (value)
 
 
 /***************************************************************************
