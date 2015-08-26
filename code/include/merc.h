@@ -225,7 +225,7 @@ struct weather_data {
 #define CON_COPYOVER_RECOVER    17
 
 struct nickname_data {
-    /*@shared@*//*@null@*/NICKNAME_DATA *next;
+    /*@null@*/NICKNAME_DATA *next;
     char *name;
     char *nickname;
 };
@@ -233,11 +233,11 @@ struct nickname_data {
 
 /* Descriptor (channel) structure. */
 struct descriptor_data {
-    /*@shared@*//*@null@*/DESCRIPTOR_DATA *next;
-    /*@shared@*//*@null@*/DESCRIPTOR_DATA *prev;
-    /*@shared@*//*@null@*/DESCRIPTOR_DATA *snoop_by;
-    /*@shared@*//*@null@*/CHAR_DATA *character;
-    /*@shared@*//*@null@*/CHAR_DATA *original;
+    /*@null@*/DESCRIPTOR_DATA *next;
+    /*@null@*/DESCRIPTOR_DATA *prev;
+    /*@null@*/DESCRIPTOR_DATA *snoop_by;
+    /*@null@*/CHAR_DATA *character;
+    /*@null@*/CHAR_DATA *original;
     bool valid;
     bool pending_delete;
     char *host;
@@ -248,7 +248,7 @@ struct descriptor_data {
     char incomm[MIL];
     char inlast[MIL];
     int repeat;
-    /*@shared@*/char *outbuf;
+    char *outbuf;
     int outsize;
     int outtop;
     char *showstr_head;
@@ -444,9 +444,9 @@ extern const struct message_types message_type_table[];
 
 
 struct affect_data {
-    /*@shared@*/AFFECT_DATA * next;
+    AFFECT_DATA * next;
     bool valid;
-    /*@shared@*/SKILL *skill;
+    SKILL *skill;
     int where;
     int type;
     int level;
@@ -1315,36 +1315,36 @@ struct mem_data {
  * player
  ***************************************************************************/
 struct char_data {
-    /*@shared@*/CHAR_DATA *next;
-    /*@shared@*/CHAR_DATA *next_in_room;
-    /*@shared@*/CHAR_DATA *master;
-    /*@shared@*/CHAR_DATA *leader;
-    /*@shared@*/CHAR_DATA *fighting;
-    /*@shared@*/CHAR_DATA *linked;
-    /*@shared@*/CHAR_DATA *reply;
-    /*@shared@*/CHAR_DATA *pet;
-    /*@shared@*/CHAR_DATA *mob_wuss;
-    /*@shared@*/CHAR_DATA *mobmem;
-    /*@shared@*/CHAR_DATA *mprog_target;
-    /*@shared@*//*@null@*/MOB_INDEX_DATA *mob_idx;
-    /*@shared@*/DESCRIPTOR_DATA *desc;
-    /*@shared@*/AFFECT_DATA *affected;
-    /*@shared@*/NOTE_DATA *pnote;
-    /*@shared@*/OBJ_DATA *carrying;
-    /*@shared@*/OBJ_DATA *on;
-    /*@shared@*/ROOM_INDEX_DATA *in_room;
-    /*@shared@*/ROOM_INDEX_DATA *was_in_room;
-    /*@shared@*/AREA_DATA *zone;
-    /*@shared@*/PC_DATA *pcdata;
-    /*@shared@*/NICKNAME_DATA *nicknames;
+    CHAR_DATA *next;
+    CHAR_DATA *next_in_room;
+    CHAR_DATA *master;
+    CHAR_DATA *leader;
+    CHAR_DATA *fighting;
+    CHAR_DATA *linked;
+    CHAR_DATA *reply;
+    CHAR_DATA *pet;
+    CHAR_DATA *mob_wuss;
+    CHAR_DATA *mobmem;
+    CHAR_DATA *mprog_target;
+    /*@null@*/MOB_INDEX_DATA *mob_idx;
+    DESCRIPTOR_DATA *desc;
+    AFFECT_DATA *affected;
+    NOTE_DATA *pnote;
+    OBJ_DATA *carrying;
+    OBJ_DATA *on;
+    ROOM_INDEX_DATA *in_room;
+    ROOM_INDEX_DATA *was_in_room;
+    AREA_DATA *zone;
+    PC_DATA *pcdata;
+    NICKNAME_DATA *nicknames;
     bool valid;
-    /*@shared@*/char *name;
+    char *name;
     long id;
     int version;
-    /*@shared@*/char *short_descr;
-    /*@shared@*/char *long_descr;
-    /*@shared@*/char *description;
-    /*@shared@*/char *prompt;
+    char *short_descr;
+    char *long_descr;
+    char *description;
+    char *prompt;
     long group;
     int sex;
     int race;
@@ -1409,15 +1409,15 @@ struct char_data {
  * data specific to a player
  ***************************************************************************/
 struct pc_data {
-    /*@shared@*//*@null@*/PC_DATA *next;
-    /*@shared@*/BUFFER *buffer;
+    /*@null@*/PC_DATA *next;
+    BUFFER *buffer;
     bool valid;
-    /*@shared@*/char *pwd;
-    /*@shared@*/char *bamfin;
-    /*@shared@*/char *bamfout;
-    /*@shared@*/char *title;
-    /*@shared@*/char *grestore_string;
-    /*@shared@*/char *rrestore_string;
+    char *pwd;
+    char *bamfin;
+    char *bamfout;
+    char *title;
+    char *grestore_string;
+    char *rrestore_string;
     time_t last_note;
     time_t last_idea;
     time_t last_penalty;
@@ -1427,21 +1427,21 @@ struct pc_data {
     time_t last_aucnote;
     time_t last_build;
     time_t last_read[NOTE_MAX];
-    /*@shared@*/char *who_thing;
-    /*@shared@*/char *filter[MAX_FORGET];
+    char *who_thing;
+    char *filter[MAX_FORGET];
     int perm_hit;
     int perm_mana;
     int perm_move;
     int true_sex;
     int last_level;
     long condition[COND_MAX];
-    /*@shared@*/LEARNED *skills;
+    LEARNED *skills;
     int  points;
     bool confirm_delete;
     bool confirm_suicide;
-    /*@shared@*/char *alias[MAX_ALIAS];
-    /*@shared@*/char *alias_sub[MAX_ALIAS];
-    /*@shared@*/char *ignore[MAX_IGNORE];
+    char *alias[MAX_ALIAS];
+    char *alias_sub[MAX_ALIAS];
+    char *ignore[MAX_IGNORE];
     byte color_combat_s;
     byte color_combat_condition_s;
     byte color_combat_condition_o;
@@ -1460,31 +1460,31 @@ struct pc_data {
     unsigned int gold_in_bank;
     long wiznet;
     long impnet;
-    /*@shared@*/char *prefix;
+    char *prefix;
     long pkills;
     long pdeaths;
     long mobkills;
     long mobdeaths;
-    /*@shared@*/char *deathcry;
+    char *deathcry;
     int practice;
     int train;
     time_t killer_time;
     time_t thief_time;
-    /*@shared@*/char *  afk_message;
+    char *  afk_message;
     time_t last_bank;
     int security;
     int rank;
     unsigned int extendedlevel;
     long extendedexp;
-    /*@shared@*/char *restring_name;
-    /*@shared@*/char *restring_short;
-    /*@shared@*/char *restring_long;
-    /*@shared@*/char *history;
+    char *restring_name;
+    char *restring_short;
+    char *restring_long;
+    char *history;
 };
 
 
 struct extra_descr_data {
-    /*@shared@*/EXTRA_DESCR_DATA *next;
+    EXTRA_DESCR_DATA *next;
     bool valid;
     char *keyword;        /* Keyword in look/examine */
     char *description;    /* What to see    */
@@ -1529,18 +1529,18 @@ struct objectprototype {
  * object_data* a single instance of an object
  ***************************************************************************/
 struct obj_data {
-    /*@shared@*//*@null@*/OBJ_DATA *next;
-    /*@shared@*//*@null@*/OBJ_DATA *prev;
-    /*@shared@*//*@null@*/OBJ_DATA *next_content;
-    /*@shared@*//*@null@*/OBJ_DATA *contains;
-    /*@shared@*//*@null@*/OBJ_DATA *in_obj;
-    /*@shared@*//*@null@*/OBJ_DATA *on;
-    /*@shared@*//*@null@*/CHAR_DATA *carried_by;
-    /*@shared@*//*@null@*/CHAR_DATA *target;
-    /*@shared@*//*@null@*/EXTRA_DESCR_DATA *extra_descr;
-    /*@shared@*//*@null@*/AFFECT_DATA *affected;
-    /*@shared@*//*@null@*/OBJECTPROTOTYPE *obj_idx;
-    /*@shared@*//*@null@*/ROOM_INDEX_DATA *in_room;
+    /*@null@*/OBJ_DATA *next;
+    /*@null@*/OBJ_DATA *prev;
+    /*@null@*/OBJ_DATA *next_content;
+    /*@null@*/OBJ_DATA *contains;
+    /*@null@*/OBJ_DATA *in_obj;
+    /*@null@*/OBJ_DATA *on;
+    /*@null@*/CHAR_DATA *carried_by;
+    /*@null@*/CHAR_DATA *target;
+    /*@null@*/EXTRA_DESCR_DATA *extra_descr;
+    /*@null@*/AFFECT_DATA *affected;
+    /*@null@*/OBJECTPROTOTYPE *obj_idx;
+    /*@null@*/ROOM_INDEX_DATA *in_room;
     bool valid;
     bool enchanted;
     char *owner;
@@ -2048,17 +2048,17 @@ void clone_object(OBJ_DATA * parent, OBJ_DATA * clone);
 void clear_char(CHAR_DATA * ch);
 
 /* find functions  */
-/*@shared@*/char *get_extra_descr(const char *name, EXTRA_DESCR_DATA * ed);
-/*@shared@*/MOB_INDEX_DATA *get_mob_index(long vnum);
-/*@shared@*/OBJECTPROTOTYPE *objectprototype_getbyvnum(long vnum);
-/*@shared@*/ROOM_INDEX_DATA *get_room_index(long vnum);
+char *get_extra_descr(const char *name, EXTRA_DESCR_DATA * ed);
+MOB_INDEX_DATA *get_mob_index(long vnum);
+OBJECTPROTOTYPE *objectprototype_getbyvnum(long vnum);
+ROOM_INDEX_DATA *get_room_index(long vnum);
 
 
 /* memory management */
-/*@shared@*/void *alloc_mem(unsigned int sMem);
-/*@shared@*/void *alloc_perm(unsigned int sMem);
+void *alloc_mem(unsigned int sMem);
+void *alloc_perm(unsigned int sMem);
 void free_mem(void *pMem, unsigned int sMem);
-/*@shared@*//*@only@*/char *str_dup(const char *str);
+/*@only@*/char *str_dup(const char *str);
 void free_string(char *pstr);
 
 /* number manipulation */
@@ -2135,7 +2135,7 @@ void char_to_room(CHAR_DATA * ch, ROOM_INDEX_DATA * pRoomIndex);
 void obj_to_char(OBJ_DATA * obj, CHAR_DATA * ch);
 void obj_from_char(OBJ_DATA * obj);
 long apply_ac(OBJ_DATA * obj, int iWear, int type);
-/*@shared@*/OBJ_DATA *get_eq_char(CHAR_DATA * ch, int iWear);
+OBJ_DATA *get_eq_char(CHAR_DATA * ch, int iWear);
 void equip_char(CHAR_DATA * ch, OBJ_DATA * obj, int iWear);
 void unequip_char(CHAR_DATA * ch, OBJ_DATA * obj);
 int count_obj_list(OBJECTPROTOTYPE * obj, OBJ_DATA * list);
@@ -2145,15 +2145,15 @@ void obj_to_obj(OBJ_DATA * obj, OBJ_DATA * obj_to);
 void obj_from_obj(OBJ_DATA * obj);
 void extract_obj(OBJ_DATA * obj);
 void extract_char(CHAR_DATA * ch, bool fPull);
-/*@shared@*/CHAR_DATA *get_char_room(CHAR_DATA * ch, char *argument);
-/*@shared@*/CHAR_DATA *get_char_world(CHAR_DATA * ch, char *argument);
-/*@shared@*/OBJ_DATA *get_obj_type(OBJECTPROTOTYPE * obj_idxData);
-/*@shared@*/OBJ_DATA *get_obj_list(CHAR_DATA * ch, char *argument, OBJ_DATA * list);
-/*@shared@*/OBJ_DATA *get_obj_carry(CHAR_DATA * ch, char *argument);
-/*@shared@*/OBJ_DATA *get_obj_wear(CHAR_DATA * ch, char *argument);
-/*@shared@*/OBJ_DATA *get_obj_here(CHAR_DATA * ch, char *argument);
-/*@shared@*/OBJ_DATA *get_obj_world(CHAR_DATA * ch, char *argument);
-/*@shared@*/OBJ_DATA *create_money(unsigned int gold, unsigned int silver);
+CHAR_DATA *get_char_room(CHAR_DATA * ch, char *argument);
+CHAR_DATA *get_char_world(CHAR_DATA * ch, char *argument);
+OBJ_DATA *get_obj_type(OBJECTPROTOTYPE * obj_idxData);
+OBJ_DATA *get_obj_list(CHAR_DATA * ch, char *argument, OBJ_DATA * list);
+OBJ_DATA *get_obj_carry(CHAR_DATA * ch, char *argument);
+OBJ_DATA *get_obj_wear(CHAR_DATA * ch, char *argument);
+OBJ_DATA *get_obj_here(CHAR_DATA * ch, char *argument);
+OBJ_DATA *get_obj_world(CHAR_DATA * ch, char *argument);
+OBJ_DATA *create_money(unsigned int gold, unsigned int silver);
 int get_obj_number(OBJ_DATA * obj);
 int get_obj_weight(OBJ_DATA * obj);
 int get_true_weight(OBJ_DATA * obj);
@@ -2209,8 +2209,8 @@ char *room_affect(AFFECT_DATA * paf);
 void interpret(CHAR_DATA * ch, char *argument);
 int number_argument(char *argument, char *arg);
 int mult_argument(char *argument, char *arg);
-/*@shared@*/char *one_argument(char *argument, /*@out@*/ char *arg_first);
-/*@shared@*/char *one_line(char *base, char *buf);
+char *one_argument(char *argument, /*@out@*/ char *arg_first);
+char *one_line(char *base, char *buf);
 
 /* magic.c */
 void remove_all_affects(CHAR_DATA * victim);
@@ -2284,14 +2284,14 @@ struct descriptor_iterator_filter {
 };
 extern const DESCRIPTOR_ITERATOR_FILTER descriptor_empty_filter;
 
-void descriptor_list_add(/*@shared@*/DESCRIPTOR_DATA *d);
-void descriptor_list_remove(/*@shared@*/DESCRIPTOR_DATA *d);
-/*@shared@*/DESCRIPTOR_DATA * new_descriptor(void);
-void free_descriptor(/*@shared@*/DESCRIPTOR_DATA * d);
+void descriptor_list_add(DESCRIPTOR_DATA *d);
+void descriptor_list_remove(DESCRIPTOR_DATA *d);
+DESCRIPTOR_DATA * new_descriptor(void);
+void free_descriptor(DESCRIPTOR_DATA * d);
 int descriptor_list_count();
 int descriptor_recycle_count();
-/*@shared@*//*@null@*/DESCRIPTOR_DATA *descriptor_iterator_start(const DESCRIPTOR_ITERATOR_FILTER *filter);
-/*@shared@*//*@null@*/DESCRIPTOR_DATA *descriptor_iterator(/*@shared@*/DESCRIPTOR_DATA *current, const DESCRIPTOR_ITERATOR_FILTER *filter);
+/*@null@*/DESCRIPTOR_DATA *descriptor_iterator_start(const DESCRIPTOR_ITERATOR_FILTER *filter);
+/*@null@*/DESCRIPTOR_DATA *descriptor_iterator(DESCRIPTOR_DATA *current, const DESCRIPTOR_ITERATOR_FILTER *filter);
 /* ~descriptor.c */
 
 /* object.c */
@@ -2302,14 +2302,14 @@ struct object_iterator_filter {
 };
 extern const OBJECT_ITERATOR_FILTER object_empty_filter;
 
-void object_list_add(/*@shared@*/OBJ_DATA *d);
-void object_list_remove(/*@shared@*/OBJ_DATA *d);
-/*@shared@*//*@partial@*/OBJ_DATA * new_object(void);
-void free_object(/*@shared@*/OBJ_DATA * d);
+void object_list_add(OBJ_DATA *d);
+void object_list_remove(OBJ_DATA *d);
+/*@partial@*/OBJ_DATA * new_object(void);
+void free_object(OBJ_DATA * d);
 int object_list_count();
 int object_recycle_count();
-/*@shared@*//*@null@*/OBJ_DATA *object_iterator_start(const OBJECT_ITERATOR_FILTER *filter);
-/*@shared@*//*@null@*/OBJ_DATA *object_iterator(/*@shared@*/OBJ_DATA *current, const OBJECT_ITERATOR_FILTER *filter);
+/*@null@*/OBJ_DATA *object_iterator_start(const OBJECT_ITERATOR_FILTER *filter);
+/*@null@*/OBJ_DATA *object_iterator(OBJ_DATA *current, const OBJECT_ITERATOR_FILTER *filter);
 /* ~object.c */
 
 
@@ -2320,14 +2320,14 @@ struct objectprototype_filter {
 };
 extern const OBJECTPROTOTYPE_FILTER objectprototype_empty_filter;
 
-void objectprototype_list_add(/*@shared@*/OBJECTPROTOTYPE *prototypedata);
-void objectprototype_list_remove(/*@shared@*/OBJECTPROTOTYPE *prototypedata);
-/*@shared@*//*@partial@*/OBJECTPROTOTYPE * new_objectprototype(void);
-void free_objectprototype(/*@shared@*/OBJECTPROTOTYPE *templatedata);
+void objectprototype_list_add(OBJECTPROTOTYPE *prototypedata);
+void objectprototype_list_remove(OBJECTPROTOTYPE *prototypedata);
+/*@partial@*/OBJECTPROTOTYPE * new_objectprototype(void);
+void free_objectprototype(OBJECTPROTOTYPE *templatedata);
 int objectprototype_list_count();
 int objectprototype_recycle_count();
-/*@shared@*//*@null@*/OBJECTPROTOTYPE *objectprototype_iterator_start(const OBJECTPROTOTYPE_FILTER *filter);
-/*@shared@*//*@null@*/OBJECTPROTOTYPE *objectprototype_iterator(/*@shared@*/OBJECTPROTOTYPE *current, const OBJECTPROTOTYPE_FILTER *filter);
+/*@null@*/OBJECTPROTOTYPE *objectprototype_iterator_start(const OBJECTPROTOTYPE_FILTER *filter);
+/*@null@*/OBJECTPROTOTYPE *objectprototype_iterator(OBJECTPROTOTYPE *current, const OBJECTPROTOTYPE_FILTER *filter);
 /* ~objectprototype.c */
 
 #endif  /* __MERC_H */
