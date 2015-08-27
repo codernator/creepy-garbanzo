@@ -1,6 +1,7 @@
 #include "merc.h"
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 #ifndef OBJPROTO_MAX_KEY_HASH
 // Consult http://www.planetmath.org/goodhashtableprimes for a nice writeup on numbers to use.
@@ -60,34 +61,14 @@ OBJECTPROTOTYPE *new_objectprototype(long vnum)
 
     /** Default values */
     {
+	memset(prototypedata, 0, sizeof(OBJECTPROTOTYPE));
 	prototypedata->vnum = vnum;
-	prototypedata->extra_descr = NULL;
-	prototypedata->affected = NULL;
-	prototypedata->area = NULL;
 	prototypedata->name = str_dup("no name");
 	prototypedata->short_descr = str_dup("(no short description)");
 	prototypedata->description = str_dup("(no description)");
 	prototypedata->item_type = ITEM_TRASH;
-	prototypedata->extra_flags = 0;
-	prototypedata->extra2_flags = 0;
-	prototypedata->wear_flags = 0;
-	prototypedata->count = 0;
-	prototypedata->weight = 0;
-	prototypedata->cost = 0;
 	prototypedata->material = str_dup("unknown");             /* ROM */
 	prototypedata->condition = 100;                           /* ROM */
-	prototypedata->reset_num = 0;
-	prototypedata->level = 0;
-	prototypedata->timer = 0;
-	prototypedata->plevel = 0;
-	prototypedata->xp_tolevel = 0;
-	prototypedata->exp = 0;
-
-	{
-	    int value;
-	    for (value = 0; value < 5; value++)             /* 5 - ROM */
-		prototypedata->value[value] = 0;
-	}
     }
 
     /** Place on list. */
