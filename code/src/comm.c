@@ -135,7 +135,6 @@ void game_loop(int port, int control)
 	    dpending = descriptor_iterator(d, &allfilter);
 
 	    if (d->pending_delete) {
-		descriptor_list_remove(d);
 		free_descriptor(d);
 	    } else {
 		maxdesc = UMAX(maxdesc, (int)d->descriptor);
@@ -1401,11 +1400,8 @@ void copyover_recover()
 	    continue;
 	}
 
-	d = new_descriptor();
-	d->descriptor = desc;
-
+	d = new_descriptor(desc);
 	d->host = str_dup(host);
-	descriptor_list_add(d);
 	d->connected = CON_COPYOVER_RECOVER; /* -15, so close_socket frees the char */
 
 

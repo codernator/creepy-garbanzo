@@ -2307,12 +2307,9 @@ struct descriptor_iterator_filter {
 };
 extern const DESCRIPTOR_ITERATOR_FILTER descriptor_empty_filter;
 
-void descriptor_list_add(DESCRIPTOR_DATA *d);
-void descriptor_list_remove(DESCRIPTOR_DATA *d);
-DESCRIPTOR_DATA * new_descriptor(void);
+DESCRIPTOR_DATA * new_descriptor(SOCKET descriptor);
 void free_descriptor(DESCRIPTOR_DATA * d);
 int descriptor_list_count();
-int descriptor_recycle_count();
 /*@null@*/DESCRIPTOR_DATA *descriptor_iterator_start(const DESCRIPTOR_ITERATOR_FILTER *filter);
 /*@null@*/DESCRIPTOR_DATA *descriptor_iterator(DESCRIPTOR_DATA *current, const DESCRIPTOR_ITERATOR_FILTER *filter);
 /* ~descriptor.c */

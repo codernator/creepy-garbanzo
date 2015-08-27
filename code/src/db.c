@@ -2799,31 +2799,24 @@ void do_dump(CHAR_DATA *ch, char *argument)
     }
     for (fch = char_free; fch != NULL; fch = fch->next)
 	count_free++;
-
     fprintf(fp, "Mobs	%10ld(%12ld bytes), %10ld free(%ld bytes)\n", count, (long)count * (long)(sizeof(*fch)), count_free, (long)count_free * (long)(sizeof(*fch)));
 
     /* pcdata */
     count = 0;
     for (pc = pcdata_free; pc != NULL; pc = pc->next)
 	count++;
-
     fprintf(fp, "Pcdata	%10ld(%12ld bytes), %10ld free(%12ld bytes)\n", num_pcs, (long)num_pcs * (long)(sizeof(*pc)), count, (long)count * (long)(sizeof(*pc)));
 
     /* descriptors */
     count = descriptor_list_count();
-    count_free = descriptor_recycle_count();
+    fprintf(fp, "Descs	%10ld(%12ld bytes)\n", count, (long)count * (long)(sizeof(*d)));
 
-    fprintf(fp, "Descs	%10ld(%12ld bytes), %10ld free(%12ld bytes)\n", count, (long)count * (long)(sizeof(*d)), count_free, (long)count_free * (long)(sizeof(*d)));
-
-    {
-	const OBJECTPROTOTYPE stale;
-	count = objectprototype_list_count();
-	fprintf(fp, "ObjProt	%10ld(%12ld bytes)\n", count, count * (long)(sizeof(stale)));
-    }
+    /* objectprototypes */
+    count = objectprototype_list_count();
+    fprintf(fp, "ObjProt	%10ld(%12ld bytes)\n", count, count * (long)(sizeof(OBJECTPROTOTYPE)));
 
     /* objects */
     count = object_list_count();
-
     fprintf(fp, "Objs	%10ld(%12ld bytes)\n", count, (long)count * (long)(sizeof(*obj)));
 
     /* affects */
