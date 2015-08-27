@@ -2325,14 +2325,11 @@ struct object_iterator_filter {
 };
 extern const OBJECT_ITERATOR_FILTER object_empty_filter;
 
-void object_list_add(OBJ_DATA *d);
-void object_list_remove(OBJ_DATA *d);
-/*@partial@*/OBJ_DATA * new_object(void);
-void free_object(OBJ_DATA * d);
+/*@dependent@*/OBJ_DATA * new_object(OBJECTPROTOTYPE *prototypedata);
+void free_object(/*@owned@*/OBJ_DATA * d);
 int object_list_count();
-int object_recycle_count();
-/*@null@*/OBJ_DATA *object_iterator_start(const OBJECT_ITERATOR_FILTER *filter);
-/*@null@*/OBJ_DATA *object_iterator(OBJ_DATA *current, const OBJECT_ITERATOR_FILTER *filter);
+/*@dependent@*//*@null@*/OBJ_DATA *object_iterator_start(const OBJECT_ITERATOR_FILTER *filter);
+/*@dependent@*//*@null@*/OBJ_DATA *object_iterator(OBJ_DATA *current, const OBJECT_ITERATOR_FILTER *filter);
 /* ~object.c */
 
 
@@ -2346,7 +2343,6 @@ extern const OBJECTPROTOTYPE_FILTER objectprototype_empty_filter;
 /*@dependent@*/OBJECTPROTOTYPE *new_objectprototype(long vnum);
 void free_objectprototype(/*@owned@*/OBJECTPROTOTYPE *templatedata);
 int objectprototype_list_count();
-int objectprototype_recycle_count();
 /*@dependent@*//*@null@*/OBJECTPROTOTYPE *objectprototype_iterator_start(const OBJECTPROTOTYPE_FILTER *filter);
 /*@dependent@*//*@null@*/OBJECTPROTOTYPE *objectprototype_iterator(OBJECTPROTOTYPE *current, const OBJECTPROTOTYPE_FILTER *filter);
 /*@dependent@*//*@null@*/OBJECTPROTOTYPE *objectprototype_getbyvnum(long vnum);

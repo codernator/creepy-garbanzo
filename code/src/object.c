@@ -1,84 +1,92 @@
 #include "merc.h"
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
 
+
+/** exports */
+const OBJECT_ITERATOR_FILTER object_empty_filter;
+
+
+/** imports */
 extern void free_affect(AFFECT_DATA *af);
 extern void free_extra_descr(EXTRA_DESCR_DATA *ed);
 
 
+/** locals */
 static OBJ_DATA head_node;
-static OBJ_DATA recycle_node;
 static bool passes(OBJ_DATA *testee, const OBJECT_ITERATOR_FILTER *filter);
 
-const OBJECT_ITERATOR_FILTER object_empty_filter;
 
-void object_list_add(OBJ_DATA *d)
+
+
+OBJ_DATA *new_object(OBJECTPROTOTYPE *prototypedata)
 {
-    d->prev = &head_node;
-    if (head_node.next != NULL)
-	head_node.next->prev = d;
+    OBJ_DATA *obj;
 
-    d->next = head_node.next;
-    head_node.next = d;
-}
+    obj = malloc(sizeof(OBJ_DATA));
+    assert(obj != NULL);
 
-void object_list_remove(OBJ_DATA *d)
-{
-    if (d->prev != NULL) {
-	d->prev->next = d->next;
+    /** Default values */
+    {
+	memset(obj, 0, sizeof(OBJ_DATA));
+	obj->objprototype = prototypedata;
     }
-    if (d->next != NULL) {
-	d->next->prev = d->prev;
-    }
-    d->next = NULL;
-    d->prev = NULL;
-}
 
-OBJ_DATA *new_object(void)
-{
-    /*@shared@*/OBJ_DATA *obj;
+    /** Place on list. */
+    {
+	OBJ_DATA *headnext;
+	obj->prev = &head_node;
+	headnext = head_node.next;
+	if (headnext != NULL) {
+	    assert(headnext->prev == &head_node);
+	    headnext->prev = obj;
+	}
 
-    if (recycle_node.next == NULL) {
-	obj = alloc_perm((unsigned int)sizeof(*obj));
-    } else {
-	obj = recycle_node.next;
-	recycle_node.next = obj->next;
+	obj->next = headnext;
+	head_node.next = obj;
     }
-    VALIDATE(obj);
 
     return obj;
 }
 
 void free_object(OBJ_DATA *obj)
 {
-    /*@shared@*/AFFECT_DATA *paf;
-    /*@shared@*/AFFECT_DATA *paf_next;
-    /*@shared@*/EXTRA_DESCR_DATA *ed;
-    /*@shared@*/EXTRA_DESCR_DATA *ed_next;
+    assert(obj != NULL);
+    assert(obj != &head_node);
 
-    if (!IS_VALID(obj))
-	return;
 
-    //TODO - affect management.
-    for (paf = obj->affected; paf != NULL; paf = paf_next) {
-	paf_next = paf->next;
-	free_affect(paf);
+    /** Clean up affects. */
+    if (obj->affected != NULL) {
+	//TODO - affect management.
+	/*@dependent@*/AFFECT_DATA *paf;
+	/*@dependent@*/AFFECT_DATA *paf_next;
+	for (paf = obj->affected; paf != NULL; paf = paf_next) {
+	    paf_next = paf->next;
+	    free_affect(paf);
+	}
     }
-    obj->affected = NULL;
 
-    //TODO - extras managment.
-    for (ed = obj->extra_descr; ed != NULL; ed = ed_next) {
-	ed_next = ed->next;
-	free_extra_descr(ed);
+    /** Clean up extra descriptions */
+    if (obj->extra_descr != NULL) {
+	//TODO - extras managment.
+	/*@dependent@*/EXTRA_DESCR_DATA *ed;
+	/*@dependent@*/EXTRA_DESCR_DATA *ed_next;
+	for (ed = obj->extra_descr; ed != NULL; ed = ed_next) {
+	    ed_next = ed->next;
+	    free_extra_descr(ed);
+	}
     }
-    obj->extra_descr = NULL;
 
-    free_string(obj->name);
-    free_string(obj->description);
-    free_string(obj->short_descr);
-    free_string(obj->owner);
-    INVALIDATE(obj);
+    /** Clean up strings */
+    {
+	if (obj->name != NULL) free_string(obj->name);
+	if (obj->description != NULL) free_string(obj->description);
+	if (obj->short_descr != NULL) free_string(obj->short_descr);
+	if (obj->owner != NULL) free_string(obj->owner);
+    }
 
-    obj->next = recycle_node.next;
-    recycle_node.next = obj;
+    free(obj);
 }
 
 int object_list_count()
@@ -86,15 +94,6 @@ int object_list_count()
     OBJ_DATA *o;
     int counter = 0;
     for (o = head_node.next; o != NULL; o = o->next)
-	counter++;
-    return counter;
-}
-
-int object_recycle_count()
-{
-    OBJ_DATA *o;
-    int counter = 0;
-    for (o = recycle_node.next; o != NULL; o = o->next)
 	counter++;
     return counter;
 }
@@ -120,6 +119,19 @@ OBJ_DATA *object_iterator(OBJ_DATA *current, const OBJECT_ITERATOR_FILTER *filte
     return next;
 }
 
+inline bool is_situpon(OBJ_DATA *obj) {
+    return (obj->item_type == ITEM_FURNITURE) && (IS_SET(obj->value[2], SIT_ON)
+						    || IS_SET(obj->value[2], SIT_IN)
+						    || IS_SET(obj->value[2], SIT_AT));
+}
+
+inline bool is_standupon(OBJ_DATA *obj) {
+    return (obj->item_type == ITEM_FURNITURE && (IS_SET(obj->value[2], STAND_AT)
+						    || IS_SET(obj->value[2], STAND_ON)
+						    || IS_SET(obj->value[2], STAND_IN)));
+}
+
+
 
 bool passes(OBJ_DATA *testee, const OBJECT_ITERATOR_FILTER *filter)
 {
@@ -133,17 +145,5 @@ bool passes(OBJ_DATA *testee, const OBJECT_ITERATOR_FILTER *filter)
     }
 
     return true;
-}
-
-inline bool is_situpon(OBJ_DATA *obj) {
-    return (obj->item_type == ITEM_FURNITURE) && (IS_SET(obj->value[2], SIT_ON)
-						    || IS_SET(obj->value[2], SIT_IN)
-						    || IS_SET(obj->value[2], SIT_AT));
-}
-
-inline bool is_standupon(OBJ_DATA *obj) {
-    return (obj->item_type == ITEM_FURNITURE && (IS_SET(obj->value[2], STAND_AT)
-						    || IS_SET(obj->value[2], STAND_ON)
-						    || IS_SET(obj->value[2], STAND_IN)));
 }
 

@@ -1,12 +1,13 @@
-#include <stdio.h>
 #include "merc.h"
 #include "recycle.h"
 #include "interp.h"
 #include "tables.h"
 #include "lookup.h"
 #include "skills.h"
-#include "libfile.h"
 
+#include <stdio.h>
+#include "libfile.h"
+#include <assert.h>
 
 extern int _filbuf(FILE *);
 extern unsigned int fread_uint(FILE *fp);
@@ -1533,48 +1534,42 @@ static void fread_obj(CHAR_DATA *ch, FILE *fp)
 {
     OBJ_DATA *obj;
     char *word;
-    int iNest;
-    bool fMatch;
-    bool fNest;
-    bool fVnum;
-    bool first;
-    bool make_new;                          /* update object */
-
-    fVnum = false;
-    obj = NULL;
-    first = true;
-    make_new = false;
+    int iNest = 0;
+    bool fMatch = false;
+    long vnum; 
 
     word = feof(fp) ? "End" : fread_word(fp);
-    if (!str_cmp(word, "Vnum")) {
-	long vnum;
+    if (str_cmp(word, "Vnum") != 0) {
+	int lines_skipped;
 
-	first = false;
-
-	vnum = fread_number(fp);
-	if (objectprototype_getbyvnum(vnum) == NULL) {
-	    log_bug("Fread_obj: bad vnum %d.", vnum);
-	} else {
-	    obj = create_object(objectprototype_getbyvnum(vnum), -1);
-	}
-    }
-
-    if (obj == NULL) { /* either not found or old style */
-	obj = new_object();
-	obj->name = str_dup("");
-	obj->short_descr = str_dup("");
-	obj->description = str_dup("");
-    }
-
-    fNest = false;
-    fVnum = true;
-    iNest = 0;
-
-    for (;; ) {
-	if (first)
-	    first = false;
-	else
+	lines_skipped = 0;
+	for (;;) {
 	    word = feof(fp) ? "End" : fread_word(fp);
+	    if (str_cmp(word, "End") != 0)
+		break;
+	}
+	log_bug("Bad object format starting with word, %s. Skipping %d lines.", word, lines_skipped);
+	return;
+    }
+
+    vnum = fread_number(fp);
+    if (objectprototype_getbyvnum(vnum) == NULL) {
+	int lines_skipped;
+
+	lines_skipped = 0;
+	for (;;) {
+	    word = feof(fp) ? "End" : fread_word(fp);
+	    if (str_cmp(word, "End") != 0)
+		break;
+	}
+	log_bug("Bad vnum %ld. Skipping %d lines.", vnum, lines_skipped);
+	return;
+    }
+
+    obj = create_object(objectprototype_getbyvnum(vnum), -1);
+    assert(obj != NULL);
+    for (;;) {
+	word = feof(fp) ? "End" : fread_word(fp);
 	fMatch = false;
 
 	switch (UPPER(word[0])) {
@@ -1675,41 +1670,19 @@ static void fread_obj(CHAR_DATA *ch, FILE *fp)
 		}
 
 		if (!str_cmp(word, "End")) {
-		    /* if(!fNest || !fVnum ||obj->objprototype == NULL) */
-		    if (!fNest || (fVnum && obj->objprototype == NULL)) {
-			log_bug("Fread_obj: incomplete object.");
-			free_object(obj);
-			return;
-		    } else {
-			if (!fVnum) {
-			    free_object(obj);
-			    obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_DUMMY), 0);
-			}
-
-			if (make_new) {
+		    if (iNest == 0 || rgObjNest[iNest] == NULL) {
+			obj_to_char(obj, ch);
+			if (obj->wear_loc != WEAR_NONE) {
 			    int wear;
-
 			    wear = obj->wear_loc;
-			    extract_obj(obj);
-
-			    obj = create_object(obj->objprototype, 0);
-			    obj->wear_loc = wear;
+			    unequip_char(ch, obj);
+			    equip_char(ch, obj, wear);
 			}
-
-			if (iNest == 0 || rgObjNest[iNest] == NULL) {
-			    obj_to_char(obj, ch);
-			    if (obj->wear_loc != WEAR_NONE) {
-				int wear;
-				wear = obj->wear_loc;
-				unequip_char(ch, obj);
-				equip_char(ch, obj, wear);
-			    }
-			} else {
-			    obj_to_obj(obj, rgObjNest[iNest - 1]);
-			}
-
-			return;
+		    } else {
+			obj_to_obj(obj, rgObjNest[iNest - 1]);
 		    }
+
+		    return;
 		}
 		break;
 
@@ -1732,16 +1705,7 @@ static void fread_obj(CHAR_DATA *ch, FILE *fp)
 			log_bug("Fread_obj: bad nest %d.", iNest);
 		    } else {
 			rgObjNest[iNest] = obj;
-			fNest = true;
 		    }
-		    fMatch = true;
-		}
-		break;
-
-	    case 'O':
-		if (!str_cmp(word, "Oldstyle")) {
-		    if (obj->objprototype != NULL)
-			make_new = true;
 		    fMatch = true;
 		}
 		break;
@@ -1796,19 +1760,6 @@ static void fread_obj(CHAR_DATA *ch, FILE *fp)
 		    obj->value[3] = fread_number(fp);
 		    obj->value[4] = fread_number(fp);
 		    fMatch = true;
-		    break;
-		}
-
-		if (!str_cmp(word, "Vnum")) {
-		    long vnum;
-
-		    vnum = fread_number(fp);
-		    if ((obj->objprototype = objectprototype_getbyvnum(vnum)) == NULL) {
-			log_bug("Fread_obj: bad vnum %d.", vnum);
-		    } else {
-			fVnum = true;
-			fMatch = true;
-		    }
 		    break;
 		}
 		break;

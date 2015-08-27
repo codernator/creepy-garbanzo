@@ -2130,9 +2130,8 @@ OBJ_DATA *create_object(OBJECTPROTOTYPE *objprototype, int level)
 	RABORT(NULL);
     }
 
-    obj = new_object();
+    obj = new_object(objprototype);
 
-    obj->objprototype = objprototype;
     obj->in_room = NULL;
     obj->enchanted = false;
 
@@ -2215,7 +2214,6 @@ OBJ_DATA *create_object(OBJECTPROTOTYPE *objprototype, int level)
 	if (paf->location == APPLY_SPELL_AFFECT)
 	    affect_to_obj(obj, paf);
 
-    object_list_add(obj);
     objprototype->count++;
 
     return obj;
@@ -2825,9 +2823,8 @@ void do_dump(CHAR_DATA *ch, char *argument)
 
     /* objects */
     count = object_list_count();
-    count_free = object_recycle_count();
 
-    fprintf(fp, "Objs	%10ld(%12ld bytes), %10ld free(%12ld bytes)\n", count, (long)count * (long)(sizeof(*obj)), count_free, (long)count_free * (long)(sizeof(*obj)));
+    fprintf(fp, "Objs	%10ld(%12ld bytes)\n", count, (long)count * (long)(sizeof(*obj)));
 
     /* affects */
     count = 0;

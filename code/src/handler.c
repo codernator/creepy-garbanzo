@@ -1252,11 +1252,7 @@ void obj_to_obj(OBJ_DATA *obj, OBJ_DATA *obj_to)
     return;
 }
 
-
-
-/*
- * Move an object out of an object.
- */
+/** Move an object out of an object. */
 void obj_from_obj(OBJ_DATA *obj)
 {
     OBJ_DATA *obj_from;
@@ -1298,11 +1294,7 @@ void obj_from_obj(OBJ_DATA *obj)
     return;
 }
 
-
-
-/*
- * Extract an obj from the world.
- */
+/** Extract an obj from the world.  */
 void extract_obj(OBJ_DATA *obj)
 {
     OBJ_DATA *obj_content;
@@ -1320,19 +1312,11 @@ void extract_obj(OBJ_DATA *obj)
 	extract_obj(obj_content);
     }
 
-    object_list_remove(obj);
     --obj->objprototype->count;
     free_object(obj);
-    return;
 }
 
-
-
-
-
-/*
- * Extract a char from the world.
- */
+/** Extract a char from the world. */
 void extract_char(CHAR_DATA *ch, bool extract)
 {
     CHAR_DATA *wch;
@@ -1398,13 +1382,7 @@ void extract_char(CHAR_DATA *ch, bool extract)
     return;
 }
 
-
-
-/***************************************************************************
- * get_char_room
- *
- * get a character in the room
- ***************************************************************************/
+/** get a character in the room */
 CHAR_DATA *get_char_room(CHAR_DATA *ch, char *argument)
 {
     CHAR_DATA *rch;
