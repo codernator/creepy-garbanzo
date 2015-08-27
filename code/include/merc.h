@@ -1522,8 +1522,6 @@ struct extra_descr_data {
 /*@abstract@*/struct objectprototype {
     /*@owned@*//*@null@*/OBJECTPROTOTYPE *next;
     /*@dependent@*//*@null@*/OBJECTPROTOTYPE *prev;
-    /*@dependent@*//*@null@*/OBJECTPROTOTYPE *next_hash;
-    /*@dependent@*//*@null@*/OBJECTPROTOTYPE *prev_hash;
     bool valid;
 
     /*@dependent@*//*@null@*/EXTRA_DESCR_DATA *extra_descr;

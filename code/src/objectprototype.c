@@ -1,9 +1,12 @@
 #include "merc.h"
 #include <assert.h>
+#include <stdlib.h>
 
-
+#define OBJPROTO_MAX_KEY_HASH 87
+#define HASH_KEY(vnum) (vnum) % OBJPROTO_MAX_KEY_HASH
 
 /** exports */
+const OBJECTPROTOTYPE_FILTER objectprototype_empty_filter;
 
 
 /** imports */
@@ -12,16 +15,20 @@ extern void free_extra_descr(EXTRA_DESCR_DATA *ed);
 
 
 /** locals */
+typedef struct hash_entry HASH_ENTRY;
+struct hash_entry {
+    /*@only@*/HASH_ENTRY *next;
+    /*@dependent@*/OBJECTPROTOTYPE *entry;
+};
+
 static OBJECTPROTOTYPE head_node;
 static OBJECTPROTOTYPE recycle_node;
 static bool passes(OBJECTPROTOTYPE *testee, const OBJECTPROTOTYPE_FILTER *filter);
 static void allocate_more(void);
-
-
-//static OBJECTPROTOTYPE *objectprototype_hash[MAX_KEY_HASH];
-
-
-const OBJECTPROTOTYPE_FILTER objectprototype_empty_filter;
+/* an array of linked lists, with an empty head node. */
+static HASH_ENTRY lookup[OBJPROTO_MAX_KEY_HASH];
+static void lookup_add(/*@dependent@*/OBJECTPROTOTYPE *entry);
+static void lookup_remove(/*@dependent@*/OBJECTPROTOTYPE *entry);
 
 /*
  * Translates object virtual number to its obj index struct.
@@ -29,22 +36,16 @@ const OBJECTPROTOTYPE_FILTER objectprototype_empty_filter;
  */
 OBJECTPROTOTYPE *objectprototype_getbyvnum(long vnum)
 {
-    //OBJECTPROTOTYPE *objprototype;
+    HASH_ENTRY *hashentry;
+    long hashkey = HASH_KEY(vnum);
 
-    //for (objprototype = obj_index_hash[vnum % MAX_KEY_HASH]; objprototype != NULL; objprototype = objprototype->next)
-	//if (objprototype->vnum == vnum)
-	    //return objprototype;
+    for (hashentry = lookup[hashkey].next; 
+	 hashentry != NULL && hashentry->entry->vnum != vnum;
+	 hashentry = hashentry->next);
 
-    OBJECTPROTOTYPE *current;
-    OBJECTPROTOTYPE *pending;
-
-    pending = objectprototype_iterator_start(&objectprototype_empty_filter);
-    while ((current = pending) != NULL) {
-	pending = objectprototype_iterator(current, &objectprototype_empty_filter);
-	if (current->vnum == vnum)
-	    return current;
-    }
-    return NULL;
+    return hashentry == NULL 
+	? NULL 
+	: hashentry->entry;
 }
 
 OBJECTPROTOTYPE *new_objectprototype(long vnum)
@@ -102,12 +103,7 @@ OBJECTPROTOTYPE *new_objectprototype(long vnum)
     }
 
     /** Store in hash table. */
-    {
-	//long hashkey;
-	//hashkey = prototypedata->vnum % MAX_KEY_HASH;
-	//objprototype->next = obj_index_hash[hash_idx];
-	//objectprototype_hash[hash_idx] = objprototype;
-    }
+    lookup_add(prototypedata);
 
     return prototypedata;
 }
@@ -118,6 +114,9 @@ OBJECTPROTOTYPE *free_objectprototype(OBJECTPROTOTYPE *prototypedata)
     assert(prototypedata != &head_node);
     assert(IS_VALID(prototypedata));
 
+    /** Store in hash table. */
+    lookup_remove(prototypedata);
+
     /** Move to the recycle list */
     { 
 	OBJECTPROTOTYPE *prev;
@@ -127,7 +126,7 @@ OBJECTPROTOTYPE *free_objectprototype(OBJECTPROTOTYPE *prototypedata)
 	/** Assertion - only the head node has a NULL previous. */
 	assert(prev != NULL);
 	assert(prev->next == prototypedata);
-	/*@-mustfreeonly@*///** due to assertion prev->next == prototypedata */
+	/*@-mustfreeonly@*//** due to assertion prev->next == prototypedata */
 	prev->next = prototypedata->next;
 	/*@+mustfreeonly@*/
 
@@ -138,8 +137,6 @@ OBJECTPROTOTYPE *free_objectprototype(OBJECTPROTOTYPE *prototypedata)
 
 	prototypedata->next = recycle_node.next;
 	prototypedata->prev = NULL; /* recycle list is a stack structure (LIFO), so no need for prev. */
-	prototypedata->next_hash = NULL;
-	prototypedata->prev_hash = NULL;
 	prototypedata->area = NULL;
 	recycle_node.next = prototypedata;
 	
@@ -246,3 +243,37 @@ void allocate_more()
     }
 }
 
+void lookup_add(OBJECTPROTOTYPE *entry)
+{
+    HASH_ENTRY *node;
+    long hashkey;
+
+    hashkey = HASH_KEY(entry->vnum);
+    node = malloc(sizeof(HASH_ENTRY));
+    assert(node != NULL);
+    node->entry = entry;
+    node->next = lookup[hashkey].next;
+    lookup[hashkey].next = node;
+}
+
+void lookup_remove(OBJECTPROTOTYPE *entry)
+{
+    HASH_ENTRY *head;
+    HASH_ENTRY *prev;
+    HASH_ENTRY *next;
+    long hashkey;
+
+    hashkey = HASH_KEY(entry->vnum);
+    prev = &lookup[hashkey];
+    head = prev->next;
+    while (head != NULL && head->entry->vnum == entry->vnum) {
+	prev = head;
+	head = head->next;
+    }
+
+    assert(head != NULL);
+    next = head->next;
+    free(head);
+
+    prev->next = next;
+}
