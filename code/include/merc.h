@@ -1520,9 +1520,8 @@ struct extra_descr_data {
  * object specific structures
  ***************************************************************************/
 /*@abstract@*/struct objectprototype {
-    /*@owned@*//*@null@*/OBJECTPROTOTYPE *next;
-    /*@dependent@*//*@null@*/OBJECTPROTOTYPE *prev;
-    bool valid;
+    /*@owned@*//*@null@*//*@partial@*/OBJECTPROTOTYPE *next;
+    /*@dependent@*//*@null@*//*@partial@*/OBJECTPROTOTYPE *prev;
 
     /*@dependent@*//*@null@*/EXTRA_DESCR_DATA *extra_descr;
     /*@dependent@*//*@null@*/AFFECT_DATA *affected;
@@ -2344,8 +2343,8 @@ struct objectprototype_filter {
 };
 extern const OBJECTPROTOTYPE_FILTER objectprototype_empty_filter;
 
-/*@dependent@*//*@partial@*/OBJECTPROTOTYPE *new_objectprototype(long vnum);
-/*@null@*/OBJECTPROTOTYPE *free_objectprototype(/*@owned@*/OBJECTPROTOTYPE *templatedata);
+/*@dependent@*/OBJECTPROTOTYPE *new_objectprototype(long vnum);
+void free_objectprototype(/*@owned@*/OBJECTPROTOTYPE *templatedata);
 int objectprototype_list_count();
 int objectprototype_recycle_count();
 /*@dependent@*//*@null@*/OBJECTPROTOTYPE *objectprototype_iterator_start(const OBJECTPROTOTYPE_FILTER *filter);

@@ -2,7 +2,12 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#define OBJPROTO_MAX_KEY_HASH 87
+#ifndef OBJPROTO_MAX_KEY_HASH
+// Consult http://www.planetmath.org/goodhashtableprimes for a nice writeup on numbers to use.
+// Bear in mind that whatever value is used here translates to an array containing this number of elements.
+#define OBJPROTO_MAX_KEY_HASH 3079 
+#endif
+
 #define HASH_KEY(vnum) (vnum) % OBJPROTO_MAX_KEY_HASH
 
 /** exports */
@@ -22,13 +27,11 @@ struct hash_entry {
 };
 
 static OBJECTPROTOTYPE head_node;
-static OBJECTPROTOTYPE recycle_node;
 static bool passes(OBJECTPROTOTYPE *testee, const OBJECTPROTOTYPE_FILTER *filter);
-static void allocate_more(void);
 /* an array of linked lists, with an empty head node. */
 static HASH_ENTRY lookup[OBJPROTO_MAX_KEY_HASH];
-static void lookup_add(/*@dependent@*/OBJECTPROTOTYPE *entry);
-static void lookup_remove(/*@dependent@*/OBJECTPROTOTYPE *entry);
+static void lookup_add(long entrykey, /*@dependent@*/OBJECTPROTOTYPE *entry);
+static void lookup_remove(long entrykey, /*@dependent@*/OBJECTPROTOTYPE *entry);
 
 /*
  * Translates object virtual number to its obj index struct.
@@ -52,12 +55,9 @@ OBJECTPROTOTYPE *new_objectprototype(long vnum)
 {
     OBJECTPROTOTYPE *prototypedata;
 
-    allocate_more();
-
-    prototypedata = recycle_node.next;
+    prototypedata = malloc(sizeof(OBJECTPROTOTYPE));
     assert(prototypedata != NULL);
 
-    VALIDATE(prototypedata);
     /** Default values */
     {
 	prototypedata->vnum = vnum;
@@ -76,6 +76,12 @@ OBJECTPROTOTYPE *new_objectprototype(long vnum)
 	prototypedata->cost = 0;
 	prototypedata->material = str_dup("unknown");             /* ROM */
 	prototypedata->condition = 100;                           /* ROM */
+	prototypedata->reset_num = 0;
+	prototypedata->level = 0;
+	prototypedata->timer = 0;
+	prototypedata->plevel = 0;
+	prototypedata->xp_tolevel = 0;
+	prototypedata->exp = 0;
 
 	{
 	    int value;
@@ -84,12 +90,9 @@ OBJECTPROTOTYPE *new_objectprototype(long vnum)
 	}
     }
 
-    /** Swap lists. */
+    /** Place on list. */
     {
 	OBJECTPROTOTYPE *headnext;
-
-	assert(recycle_node.next == prototypedata);
-	recycle_node.next = prototypedata->next;
 
 	prototypedata->prev = &head_node;
 	headnext = head_node.next;
@@ -103,54 +106,18 @@ OBJECTPROTOTYPE *new_objectprototype(long vnum)
     }
 
     /** Store in hash table. */
-    lookup_add(prototypedata);
+    lookup_add(vnum, prototypedata);
 
     return prototypedata;
 }
 
-OBJECTPROTOTYPE *free_objectprototype(OBJECTPROTOTYPE *prototypedata)
+void free_objectprototype(OBJECTPROTOTYPE *prototypedata)
 {
     assert(prototypedata != NULL);
     assert(prototypedata != &head_node);
-    assert(IS_VALID(prototypedata));
 
-    /** Store in hash table. */
-    lookup_remove(prototypedata);
-
-    /** Move to the recycle list */
-    { 
-	OBJECTPROTOTYPE *prev;
-
-	prev = prototypedata->prev;
-
-	/** Assertion - only the head node has a NULL previous. */
-	assert(prev != NULL);
-	assert(prev->next == prototypedata);
-	/*@-mustfreeonly@*//** due to assertion prev->next == prototypedata */
-	prev->next = prototypedata->next;
-	/*@+mustfreeonly@*/
-
-	if (prototypedata->next != NULL) {
-	    assert(prototypedata->next->prev == prototypedata);
-	    prototypedata->next->prev = prev;
-	}
-
-	prototypedata->next = recycle_node.next;
-	prototypedata->prev = NULL; /* recycle list is a stack structure (LIFO), so no need for prev. */
-	prototypedata->area = NULL;
-	recycle_node.next = prototypedata;
-	
-	if (prototypedata->prev != NULL) {
-	    prototypedata->prev->next = prototypedata->next;
-	}
-	if (prototypedata->next != NULL) {
-	    prototypedata->next->prev = prototypedata->prev;
-	}
-	prototypedata->next = NULL;
-	prototypedata->prev = NULL;
-    }
-
-    INVALIDATE(prototypedata);
+    /** Remove from hash table. */
+    lookup_remove(prototypedata->vnum, prototypedata);
 
     /** Clean up affects */
     if (prototypedata->affected != NULL) {
@@ -161,7 +128,6 @@ OBJECTPROTOTYPE *free_objectprototype(OBJECTPROTOTYPE *prototypedata)
 	    paf_next = paf->next;
 	    free_affect(paf);
 	}
-	prototypedata->affected = NULL;
     }
 
     /** Clean up extra descriptions */
@@ -173,7 +139,6 @@ OBJECTPROTOTYPE *free_objectprototype(OBJECTPROTOTYPE *prototypedata)
 	    ed_next = ed->next;
 	    free_extra_descr(ed);
 	}
-	prototypedata->extra_descr = NULL;
     }
 
     /** Clean up strings */
@@ -183,7 +148,7 @@ OBJECTPROTOTYPE *free_objectprototype(OBJECTPROTOTYPE *prototypedata)
 	if (prototypedata->short_descr != NULL) free_string(prototypedata->short_descr);
     }
 
-    return NULL;
+    free(prototypedata);
 }
 
 int objectprototype_list_count()
@@ -191,15 +156,6 @@ int objectprototype_list_count()
     OBJECTPROTOTYPE *o;
     int counter = 0;
     for (o = head_node.next; o != NULL; o = o->next)
-	counter++;
-    return counter;
-}
-
-int objectprototype_recycle_count()
-{
-    OBJECTPROTOTYPE *o;
-    int counter = 0;
-    for (o = recycle_node.next; o != NULL; o = o->next)
 	counter++;
     return counter;
 }
@@ -236,19 +192,12 @@ bool passes(OBJECTPROTOTYPE *testee, const OBJECTPROTOTYPE_FILTER *filter)
     return true;
 }
 
-void allocate_more() 
-{
-    if (recycle_node.next == NULL) {
-	recycle_node.next = alloc_perm((unsigned int)sizeof(recycle_node));
-    }
-}
-
-void lookup_add(OBJECTPROTOTYPE *entry)
+void lookup_add(long entrykey, OBJECTPROTOTYPE *entry)
 {
     HASH_ENTRY *node;
     long hashkey;
 
-    hashkey = HASH_KEY(entry->vnum);
+    hashkey = HASH_KEY(entrykey);
     node = malloc(sizeof(HASH_ENTRY));
     assert(node != NULL);
     node->entry = entry;
@@ -256,14 +205,14 @@ void lookup_add(OBJECTPROTOTYPE *entry)
     lookup[hashkey].next = node;
 }
 
-void lookup_remove(OBJECTPROTOTYPE *entry)
+void lookup_remove(long entrykey, OBJECTPROTOTYPE *entry)
 {
     HASH_ENTRY *head;
     HASH_ENTRY *prev;
     HASH_ENTRY *next;
     long hashkey;
 
-    hashkey = HASH_KEY(entry->vnum);
+    hashkey = HASH_KEY(entrykey);
     prev = &lookup[hashkey];
     head = prev->next;
     while (head != NULL && head->entry->vnum == entry->vnum) {
