@@ -258,14 +258,14 @@ struct nickname_data {
 
 /* Descriptor (channel) structure. */
 struct descriptor_data {
-    /*@null@*/DESCRIPTOR_DATA *next;
-    /*@null@*/DESCRIPTOR_DATA *prev;
-    /*@null@*/DESCRIPTOR_DATA *snoop_by;
-    /*@null@*/CHAR_DATA *character;
-    /*@null@*/CHAR_DATA *original;
-    bool valid;
+    /*@owned@*//*@partial@*//*@null@*/DESCRIPTOR_DATA *next;
+    /*@dependent@*//*@partial@*//*@null@*/DESCRIPTOR_DATA *prev;
+
+    /*@dependent@*//*@null@*/DESCRIPTOR_DATA *snoop_by;
+    /*@dependent@*//*@null@*/CHAR_DATA *character;
+    /*@dependent@*//*@null@*/CHAR_DATA *original;
     bool pending_delete;
-    char *host;
+    /*@shared@*//*@null@*/char *host;
     SOCKET descriptor;
     int connected;
     bool fcommand;
@@ -273,13 +273,13 @@ struct descriptor_data {
     char incomm[MIL];
     char inlast[MIL];
     int repeat;
-    char *outbuf;
-    int outsize;
+    /*@owned@*//*@null@*/char *outbuf;
+    size_t outsize;
     int outtop;
-    char *showstr_head;
-    char *showstr_point;
-    void *ed_data;
-    char **ed_string;
+    /*@shared@*//*@null@*/char *showstr_head;
+    /*@shared@*//*@null@*/char *showstr_point;
+    /*@shared@*//*@null@*/void *ed_data;
+    /*@shared@*//*@null@*/char **ed_string;
     int editor;
     int idle;
 };
@@ -1275,41 +1275,41 @@ struct liq_type {
  ***************************************************************************/
 struct mob_index_data {
     MOB_INDEX_DATA *next;
-    SHOP_DATA * shop;
-    MPROG_LIST * mprogs;
-    AREA_DATA * area;
-    long  vnum;
-    long  group;
-    bool  new_format;
-    int  count;
-    int  killed;
-    char *  player_name;
-    char *  short_descr;
-    char *  long_descr;
-    char *  description;
-    long  act;
-    long  affected_by;
-    int  level;
-    int  hitroll;
-    int  hit[3];
-    int  mana[3];
-    int  damage[3];
-    long  ac[4];
-    int  dam_type;
-    long  off_flags;
-    long  imm_flags;
-    long  res_flags;
-    long  vuln_flags;
-    int  start_pos;
-    int  default_pos;
-    int  sex;
-    int  race;
+    SHOP_DATA *shop;
+    MPROG_LIST *mprogs;
+    AREA_DATA *area;
+    long vnum;
+    long group;
+    bool new_format;
+    int count;
+    int killed;
+    char *player_name;
+    char *short_descr;
+    char *long_descr;
+    char *description;
+    long act;
+    long affected_by;
+    int level;
+    int hitroll;
+    int hit[3];
+    int mana[3];
+    int damage[3];
+    long ac[4];
+    int dam_type;
+    long off_flags;
+    long imm_flags;
+    long res_flags;
+    long vuln_flags;
+    int start_pos;
+    int default_pos;
+    int sex;
+    int race;
     unsigned int wealth;
-    long  form;
-    long  parts;
-    int  size;
-    char *  material;
-    long  mprog_flags;
+    long form;
+    long parts;
+    int size;
+    char *material;
+    long mprog_flags;
 };
 
 
@@ -1552,25 +1552,24 @@ struct extra_descr_data {
 /***************************************************************************
  * object_data* a single instance of an object
  ***************************************************************************/
-struct obj_data {
-    /*@null@*/OBJ_DATA *next;
-    /*@null@*/OBJ_DATA *prev;
-    /*@null@*/OBJ_DATA *next_content;
-    /*@null@*/OBJ_DATA *contains;
-    /*@null@*/OBJ_DATA *in_obj;
-    /*@null@*/OBJ_DATA *on;
-    /*@null@*/CHAR_DATA *carried_by;
-    /*@null@*/CHAR_DATA *target;
-    /*@null@*/EXTRA_DESCR_DATA *extra_descr;
-    /*@null@*/AFFECT_DATA *affected;
-    /*@null@*/OBJECTPROTOTYPE *objprototype;
-    /*@null@*/ROOM_INDEX_DATA *in_room;
-    bool valid;
+/*@abstract@*/struct obj_data {
+    /*@owned@*//*@null@*//*@partial@*/OBJ_DATA *next;
+    /*@dependent@*//*@null@*//*@partial@*/OBJ_DATA *prev;
+    /*@dependent@*//*@null@*/OBJ_DATA *next_content;
+    /*@dependent@*//*@null@*/OBJ_DATA *contains;
+    /*@dependent@*//*@null@*/OBJ_DATA *in_obj;
+    /*@dependent@*//*@null@*/OBJ_DATA *on;
+    /*@dependent@*//*@null@*/CHAR_DATA *carried_by;
+    /*@dependent@*//*@null@*/CHAR_DATA *target;
+    /*@dependent@*//*@null@*/EXTRA_DESCR_DATA *extra_descr;
+    /*@dependent@*//*@null@*/AFFECT_DATA *affected;
+    /*@dependent@*//*@null@*/OBJECTPROTOTYPE *objprototype;
+    /*@dependent@*//*@null@*/ROOM_INDEX_DATA *in_room;
     bool enchanted;
-    char *owner;
-    char *name;
-    char *short_descr;
-    char *description;
+    /*@shared@*//*@null@*/char *owner;
+    /*@shared@*//*@null@*/char *name;
+    /*@shared@*//*@null@*/char *short_descr;
+    /*@shared@*//*@null@*/char *description;
     int plevel;
     int xp_tolevel;
     int exp;
@@ -1583,7 +1582,7 @@ struct obj_data {
     unsigned int cost;
     int level;
     int condition;
-    char *material;
+    /*@shared@*//*@null@*/char *material;
     int timer;
     long value[5];
 };
@@ -2307,11 +2306,11 @@ struct descriptor_iterator_filter {
 };
 extern const DESCRIPTOR_ITERATOR_FILTER descriptor_empty_filter;
 
-DESCRIPTOR_DATA * new_descriptor(SOCKET descriptor);
-void free_descriptor(DESCRIPTOR_DATA * d);
+/*@dependent@*/DESCRIPTOR_DATA * new_descriptor(SOCKET descriptor);
+void free_descriptor(/*@owned@*/DESCRIPTOR_DATA * d);
 int descriptor_list_count();
-/*@null@*/DESCRIPTOR_DATA *descriptor_iterator_start(const DESCRIPTOR_ITERATOR_FILTER *filter);
-/*@null@*/DESCRIPTOR_DATA *descriptor_iterator(DESCRIPTOR_DATA *current, const DESCRIPTOR_ITERATOR_FILTER *filter);
+/*@dependent@*//*@null@*/DESCRIPTOR_DATA *descriptor_iterator_start(const DESCRIPTOR_ITERATOR_FILTER *filter);
+/*@dependent@*//*@null@*/DESCRIPTOR_DATA *descriptor_iterator(DESCRIPTOR_DATA *current, const DESCRIPTOR_ITERATOR_FILTER *filter);
 /* ~descriptor.c */
 
 /* object.c */
@@ -2322,7 +2321,7 @@ struct object_iterator_filter {
 };
 extern const OBJECT_ITERATOR_FILTER object_empty_filter;
 
-/*@dependent@*/OBJ_DATA * new_object(OBJECTPROTOTYPE *prototypedata);
+/*@dependent@*/OBJ_DATA * new_object(/*@dependent@*/OBJECTPROTOTYPE *prototypedata);
 void free_object(/*@owned@*/OBJ_DATA * d);
 int object_list_count();
 /*@dependent@*//*@null@*/OBJ_DATA *object_iterator_start(const OBJECT_ITERATOR_FILTER *filter);

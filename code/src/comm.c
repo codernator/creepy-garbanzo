@@ -688,24 +688,27 @@ void write_to_buffer(DESCRIPTOR_DATA *d, const char *txt, int length)
     /** Expand the buffer as needed. */
     while (d->outtop + (int)strlen(txt) >= d->outsize) {
 	char *outbuf;
+	size_t bufsize;
+
+	bufsize = 2 * d->outsize;
 
 	if (d->outsize >= 32000) {
 	    log_bug("Buffer overflow. Closing.\n\r");
 	    close_socket(d);
 	    return;
 	}
-	outbuf = alloc_mem((unsigned int)(2 * d->outsize));
-	strncpy(outbuf, d->outbuf, (size_t)d->outtop);
-	free_mem(d->outbuf, (unsigned int)d->outsize);
+	outbuf = calloc(bufsize, sizeof(char));
+	if (d->outbuf != NULL) {
+	    strncpy(outbuf, d->outbuf, (size_t)d->outtop);
+	    free(d->outbuf);
+	}
 	d->outbuf = outbuf;
-	d->outsize *= 2;
+	d->outsize = bufsize;
     }
 
     /** Copy. */
-    /*  strcpy(d->outbuf + d->outtop, txt);  growl ..   */
     strncpy(d->outbuf + d->outtop, txt, (size_t)length);
     d->outtop += length;
-    return;
 }
 
 

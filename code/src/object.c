@@ -55,6 +55,26 @@ void free_object(OBJ_DATA *obj)
     assert(obj != NULL);
     assert(obj != &head_node);
 
+    /** Extract from list. */
+    {
+	OBJ_DATA *prev = obj->prev;
+	OBJ_DATA *next = obj->next;
+
+	assert(prev != NULL); /** because only the head node has no previous. */
+	prev->next = next;
+	if (next != NULL) {
+	    next->prev = prev;
+	}
+    }
+
+    /** Clean up strings */
+    {
+	if (obj->name != NULL) free_string(obj->name);
+	if (obj->description != NULL) free_string(obj->description);
+	if (obj->short_descr != NULL) free_string(obj->short_descr);
+	if (obj->owner != NULL) free_string(obj->owner);
+	if (obj->material != NULL) free_string(obj->material);
+    }
 
     /** Clean up affects. */
     if (obj->affected != NULL) {
@@ -76,14 +96,6 @@ void free_object(OBJ_DATA *obj)
 	    ed_next = ed->next;
 	    free_extra_descr(ed);
 	}
-    }
-
-    /** Clean up strings */
-    {
-	if (obj->name != NULL) free_string(obj->name);
-	if (obj->description != NULL) free_string(obj->description);
-	if (obj->short_descr != NULL) free_string(obj->short_descr);
-	if (obj->owner != NULL) free_string(obj->owner);
     }
 
     free(obj);

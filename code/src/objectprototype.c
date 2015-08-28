@@ -100,6 +100,18 @@ void free_objectprototype(OBJECTPROTOTYPE *prototypedata)
     /** Remove from hash table. */
     lookup_remove(prototypedata->vnum, prototypedata);
 
+    /** Extract from list. */
+    {
+	OBJECTPROTOTYPE *prev = prototypedata->prev;
+	OBJECTPROTOTYPE *next = prototypedata->next;
+
+	assert(prev != NULL); /** because only the head node has no previous. */
+	prev->next = next;
+	if (next != NULL) {
+	    next->prev = prev;
+	}
+    }
+
     /** Clean up affects */
     if (prototypedata->affected != NULL) {
 	//TODO - affects management.

@@ -36,16 +36,24 @@ _OBJ=act_comm.o act_combat.o act_enter.o act_info.o act_move.o act_obj.o act_wiz
 
 OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
 
+.PHONY: clean all install
+
+all: mainbuild
+
+prebuild:
+	splint -DLINUX -Iinclude src/objectprototype.c src/descriptor.c src/object.c
+
+mainbuild: prebuild
+	@$(MAKE) --no-print-directory $(EXE)
+
 $(EXE): $(OBJ) $(DEPS)
 	$(CC) $(L_FLAGS) -o $@ $(OBJ) $(BDIR)/sysinternals.a $(LIBS) -I$(IDIR)
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(C_FLAGS)
 
-.PHONY: clean
 clean:
 	rm -f $(ODIR)/*.o $(ODIR)/services/*.o $(ODIR)/olc/*.o  $(EXE)
 
-.PHONY: install
 install:
 	cp $(EXE) ../.

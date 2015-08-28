@@ -30,7 +30,9 @@ DESCRIPTOR_DATA *new_descriptor(SOCKET descriptor)
 	d->descriptor = descriptor;
 	d->connected = CON_GET_ANSI;
 	d->outsize = 2000;
-	d->outbuf = alloc_mem((unsigned int)d->outsize);
+	/*@-mustfreeonly@*/ /** obviously */
+	d->outbuf = calloc(d->outsize, sizeof(char));
+	/*@+mustfreeonly@*/
     }
 
 
@@ -58,9 +60,22 @@ void free_descriptor(DESCRIPTOR_DATA *d)
     assert(d != NULL);
     assert(d != &head_node);
 
+    /** Extract from list. */
+    {
+	DESCRIPTOR_DATA *prev = d->prev;
+	DESCRIPTOR_DATA *next = d->next;
+
+	assert(prev != NULL); /** because only the head node has no previous. */
+	prev->next = next;
+	if (next != NULL) {
+	    next->prev = prev;
+	}
+    }
+
     /** Clean up strings. */
     {
-	free_string(d->host);
+	if (d->host != NULL) free_string(d->host);
+	if (d->outbuf != NULL) free(d->outbuf);
     }
 
     free(d);
