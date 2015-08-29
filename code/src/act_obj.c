@@ -141,7 +141,7 @@ void do_get2(CHAR_DATA *ch, char *argument)
 	    found = false;
 	    for (obj = ch->in_room->contents; obj != NULL; obj = obj_next) {
 		obj_next = obj->next_content;
-		if (is_name(&arg1[0], obj->name) && can_see_obj(ch, obj)) {
+		if (is_name(&arg1[0], object_name_get(obj)) && can_see_obj(ch, obj)) {
 		    found = true;
 		    get_obj(ch, obj, NULL);
 		    i++;
@@ -161,8 +161,7 @@ void do_get2(CHAR_DATA *ch, char *argument)
 	    found = false;
 	    for (obj = ch->in_room->contents; obj != NULL; obj = obj_next) {
 		obj_next = obj->next_content;
-		if ((arg1[3] == '\0' || is_name(&arg1[4], obj->name))
-			&& can_see_obj(ch, obj)) {
+		if ((arg1[3] == '\0' || is_name(&arg1[4], object_name_get(obj))) && can_see_obj(ch, obj)) {
 		    found = true;
 		    get_obj(ch, obj, NULL);
 		}
@@ -206,7 +205,7 @@ void do_get2(CHAR_DATA *ch, char *argument)
 	}
 
 	if (IS_SET(container->value[1], CONT_CLOSED)) {
-	    act("The $d is closed.", ch, NULL, container->name, TO_CHAR);
+	    act("The $d is closed.", ch, NULL, object_name_get(container), TO_CHAR);
 	    return;
 	}
 
@@ -226,7 +225,7 @@ void do_get2(CHAR_DATA *ch, char *argument)
 	    found = false;
 	    for (obj = container->contains; obj != NULL; obj = obj_next) {
 		obj_next = obj->next_content;
-		if (is_name(&arg1[0], obj->name) && can_see_obj(ch, obj)) {
+		if (is_name(&arg1[0], object_name_get(obj)) && can_see_obj(ch, obj)) {
 		    found = true;
 		    get_obj(ch, obj, container);
 		    i++;
@@ -248,7 +247,7 @@ void do_get2(CHAR_DATA *ch, char *argument)
 	    found = false;
 	    for (obj = container->contains; obj != NULL; obj = obj_next) {
 		obj_next = obj->next_content;
-		if ((arg1[3] == '\0' || is_name(&arg1[4], obj->name))
+		if ((arg1[3] == '\0' || is_name(&arg1[4], object_name_get(obj)))
 			&& can_see_obj(ch, obj)) {
 		    found = true;
 		    if (container->objprototype->vnum == OBJ_VNUM_PIT
@@ -309,7 +308,7 @@ void do_get(CHAR_DATA *ch, char *argument)
 
 	    for (obj = ch->in_room->contents; obj != NULL; obj = obj_next) {
 		obj_next = obj->next_content;
-		if ((arg1[3] == '\0' || is_name(&arg1[4], obj->name))
+		if ((arg1[3] == '\0' || is_name(&arg1[4], object_name_get(obj)))
 			&& can_see_obj(ch, obj)) {
 		    found = true;
 		    get_obj(ch, obj, NULL);
@@ -358,7 +357,7 @@ void do_get(CHAR_DATA *ch, char *argument)
 	}
 
 	if (IS_SET(container->value[1], CONT_CLOSED)) {
-	    act("The $d is closed.", ch, NULL, container->name, TO_CHAR);
+	    act("The $d is closed.", ch, NULL, object_name_get(container), TO_CHAR);
 	    return;
 	}
 
@@ -379,7 +378,7 @@ void do_get(CHAR_DATA *ch, char *argument)
 	    for (obj = container->contains; obj != NULL; obj = obj_next) {
 		obj_next = obj->next_content;
 
-		if ((arg1[3] == '\0' || is_name(&arg1[4], obj->name)) && can_see_obj(ch, obj)) {
+		if ((arg1[3] == '\0' || is_name(&arg1[4], object_name_get(obj))) && can_see_obj(ch, obj)) {
 		    found = true;
 
 		    if (container->objprototype->vnum == OBJ_VNUM_PIT && !IS_IMMORTAL(ch)) {
@@ -457,7 +456,7 @@ void do_put2(CHAR_DATA *ch, char *argument)
     }
 
     if (IS_SET(container->value[1], CONT_CLOSED)) {
-	act("The $d is closed.", ch, NULL, container->name, TO_CHAR);
+	act("The $d is closed.", ch, NULL, object_name_get(container), TO_CHAR);
 	return;
     }
 
@@ -514,7 +513,7 @@ void do_put2(CHAR_DATA *ch, char *argument)
 	for (obj = ch->carrying; obj != NULL; obj = obj_next) {
 	    obj_next = obj->next_content;
 
-	    if ((is_name(&arg1[0], obj->name))
+	    if ((is_name(&arg1[0], object_name_get(obj)))
 		    && can_see_obj(ch, obj)
 		    && WEIGHT_MULT(obj) == 100
 		    && obj->wear_loc == WEAR_NONE
@@ -550,7 +549,7 @@ void do_put2(CHAR_DATA *ch, char *argument)
 	for (obj = ch->carrying; obj != NULL; obj = obj_next) {
 	    obj_next = obj->next_content;
 
-	    if ((arg1[3] == '\0' || is_name(&arg1[4], obj->name))
+	    if ((arg1[3] == '\0' || is_name(&arg1[4], object_name_get(obj)))
 		    && can_see_obj(ch, obj)
 		    && WEIGHT_MULT(obj) == 100
 		    && obj->wear_loc == WEAR_NONE
@@ -618,7 +617,7 @@ void do_put(CHAR_DATA *ch, char *argument)
     }
 
     if (IS_SET(container->value[1], CONT_CLOSED)) {
-	act("The $d is closed.", ch, NULL, container->name, TO_CHAR);
+	act("The $d is closed.", ch, NULL, object_name_get(container), TO_CHAR);
 	return;
     }
 
@@ -687,7 +686,7 @@ void do_put(CHAR_DATA *ch, char *argument)
 		send_to_char("You cannot put that item into a container.\n\r", ch);
 		continue;
 	    }
-	    if ((arg1[3] == '\0' || is_name(&arg1[4], obj->name))
+	    if ((arg1[3] == '\0' || is_name(&arg1[4], object_name_get(obj)))
 		    && can_see_obj(ch, obj)
 		    && WEIGHT_MULT(obj) == 100
 		    && obj->wear_loc == WEAR_NONE
@@ -848,7 +847,7 @@ void do_drop2(CHAR_DATA *ch, char *argument)
 	for (obj = ch->carrying; obj != NULL; obj = obj_next) {
 	    obj_next = obj->next_content;
 
-	    if ((is_name(&arg[0], obj->name))
+	    if ((is_name(&arg[0], object_name_get(obj)))
 		    && can_see_obj(ch, obj)
 		    && obj->wear_loc == WEAR_NONE
 		    && can_drop_obj(ch, obj)) {
@@ -883,7 +882,7 @@ void do_drop2(CHAR_DATA *ch, char *argument)
 	for (obj = ch->carrying; obj != NULL; obj = obj_next) {
 	    obj_next = obj->next_content;
 
-	    if ((arg[3] == '\0' || is_name(&arg[4], obj->name))
+	    if ((arg[3] == '\0' || is_name(&arg[4], object_name_get(obj)))
 		    && can_see_obj(ch, obj)
 		    && obj->wear_loc == WEAR_NONE
 		    && can_drop_obj(ch, obj)) {
@@ -1027,7 +1026,7 @@ void do_drop(CHAR_DATA *ch, char *argument)
 	    obj_next = obj->next_content;
 
 	    if ((arg[3] == '\0'
-			|| is_name(&arg[4], obj->name))
+			|| is_name(&arg[4], object_name_get(obj)))
 		    && can_see_obj(ch, obj)
 		    && obj->wear_loc == WEAR_NONE
 		    && can_drop_obj(ch, obj)) {
@@ -2487,7 +2486,7 @@ void do_donate(CHAR_DATA *ch, char *argument)
 	max_don = 0;
 	for (obj = ch->in_room->contents; obj != NULL; obj = obj_next) {
 	    obj_next = obj->next_content;
-	    if ((arg[3] == '\0' || is_name(&arg[4], obj->name))
+	    if ((arg[3] == '\0' || is_name(&arg[4], object_name_get(obj)))
 		    && count_users(obj) == 0
 		    && can_see_obj(ch, obj)) {
 		found = true;
@@ -2577,8 +2576,7 @@ void do_steal(CHAR_DATA *ch, char *argument)
 		sprintf(buf, "%s is a lousy thief!", ch->name);
 		break;
 	    case 1:
-		sprintf(buf, "%s couldn't rob %s way out of a paper bag!",
-			ch->name, (ch->sex == 2) ? "her" : "his");
+		sprintf(buf, "%s couldn't rob %s way out of a paper bag!", ch->name, (ch->sex == 2) ? "her" : "his");
 		break;
 	    case 2:
 		sprintf(buf, "%s tried to rob me!", ch->name);
@@ -2766,7 +2764,7 @@ GAMEOBJECT *get_obj_keeper(CHAR_DATA *ch, CHAR_DATA *keeper, char *argument)
 	if (obj->wear_loc == WEAR_NONE
 		&& can_see_obj(keeper, obj)
 		&& can_see_obj(ch, obj)
-		&& is_name(arg, obj->name)) {
+		&& is_name(arg, object_name_get(obj))) {
 	    if (++count == number)
 		return obj;
 
@@ -3125,8 +3123,7 @@ void do_list(CHAR_DATA *ch, char *argument)
 	    if (obj->wear_loc == WEAR_NONE
 		    && can_see_obj(ch, obj)
 		    && (cost = get_cost(keeper, obj, true)) > 0
-		    && (arg[0] == '\0'
-			|| is_name(arg, obj->name))) {
+		    && (arg[0] == '\0' || is_name(arg, object_name_get(obj)))) {
 		if (!found) {
 		    found = true;
 		    send_to_char("[Lv Price Qty] Item\n\r", ch);
@@ -3554,8 +3551,7 @@ void do_objident(CHAR_DATA *ch, char *argument)
 	    if (obj->wear_loc == WEAR_NONE
 		    && can_see_obj(ch, obj)
 		    && (cost = get_cost(keeper, obj, true)) > 0
-		    && (arg[0] == '\0'
-			|| is_name(arg, obj->name))) {
+		    && (arg[0] == '\0' || is_name(arg, object_name_get(obj)))) {
 		{
 		    if (!found) {
 			found = true;

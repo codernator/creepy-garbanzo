@@ -69,7 +69,7 @@ void object_free(GAMEOBJECT *obj)
 
     /** Clean up strings */
     {
-	if (obj->name != NULL) free_string(obj->name);
+	if (obj->override_name != NULL) free_string(obj->override_name);
 	if (obj->description != NULL) free_string(obj->description);
 	if (obj->short_descr != NULL) free_string(obj->short_descr);
 	if (obj->owner_name != NULL) free_string(obj->owner_name);
@@ -147,24 +147,32 @@ void object_ownername_set(GAMEOBJECT *object, CHAR_DATA *owner)
 	object->owner_name = str_dup(owner->name);
 }
 
+inline char *object_name_get(GAMEOBJECT *object)
+{
+    return object->override_name == NULL ? object->objprototype->name : object->override_name;
+}
+
+void object_name_set(GAMEOBJECT *object, char *name)
+{
+    if (object->override_name != NULL)
+	free_string(object->override_name);
+    object->override_name = str_dup(name);
+}
+
 
 inline bool is_situpon(GAMEOBJECT *obj) {
-    return (obj->item_type == ITEM_FURNITURE) && (IS_SET(obj->value[2], SIT_ON)
-						    || IS_SET(obj->value[2], SIT_IN)
-						    || IS_SET(obj->value[2], SIT_AT));
+    return (obj->item_type == ITEM_FURNITURE) && (IS_SET(obj->value[2], SIT_ON) || IS_SET(obj->value[2], SIT_IN) || IS_SET(obj->value[2], SIT_AT));
 }
 
 inline bool is_standupon(GAMEOBJECT *obj) {
-    return (obj->item_type == ITEM_FURNITURE && (IS_SET(obj->value[2], STAND_AT)
-						    || IS_SET(obj->value[2], STAND_ON)
-						    || IS_SET(obj->value[2], STAND_IN)));
+    return (obj->item_type == ITEM_FURNITURE && (IS_SET(obj->value[2], STAND_AT) || IS_SET(obj->value[2], STAND_ON) || IS_SET(obj->value[2], STAND_IN)));
 }
 
 
 
 bool passes(GAMEOBJECT *testee, const OBJECT_ITERATOR_FILTER *filter)
 {
-    if (filter->name != NULL && filter->name[0] != '\0' && testee->name != NULL && str_cmp(filter->name, testee->name)) {
+    if (filter->name != NULL && filter->name[0] != '\0' && testee->override_name != NULL && str_cmp(filter->name, testee->override_name)) {
 	/** name filter specified but does not match current object. */
 	return false;
     }

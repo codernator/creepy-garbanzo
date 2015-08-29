@@ -1527,7 +1527,7 @@ struct extra_descr_data {
     /*@dependent@*//*@null@*/EXTRA_DESCR_DATA *extra_descr;
     /*@dependent@*//*@null@*/AFFECT_DATA *affected;
     /*@dependent@*//*@null@*/AREA_DATA *area;
-    /*@shared@*//*@null@*/char *name;
+    /*@shared@*/char *name;
     /*@shared@*//*@null@*/char *short_descr;
     /*@shared@*//*@null@*/char *description;
     /*@shared@*//*@null@*/char *material;
@@ -1563,11 +1563,11 @@ struct extra_descr_data {
     /*@dependent@*//*@null@*/CHAR_DATA *target;
     /*@dependent@*//*@null@*/EXTRA_DESCR_DATA *extra_descr;
     /*@dependent@*//*@null@*/AFFECT_DATA *affected;
-    /*@dependent@*//*@null@*/OBJECTPROTOTYPE *objprototype;
+    /*@dependent@*/OBJECTPROTOTYPE *objprototype;
     /*@dependent@*//*@null@*/ROOM_INDEX_DATA *in_room;
     bool enchanted;
     /*@shared@*//*@null@*/char *owner_name;
-    /*@shared@*//*@null@*/char *name;
+    /*@shared@*//*@null@*/char *override_name;
     /*@shared@*//*@null@*/char *short_descr;
     /*@shared@*//*@null@*/char *description;
     int plevel;
@@ -2328,6 +2328,8 @@ int object_list_count();
 /*@dependent@*//*@null@*/GAMEOBJECT *object_iterator(GAMEOBJECT *current, const OBJECT_ITERATOR_FILTER *filter);
 /*@dependent@*//*@null@*/char *object_ownername_get(GAMEOBJECT *object);
 void object_ownername_set(GAMEOBJECT *object, CHAR_DATA *owner);
+/*@dependent@*/char *object_name_get(GAMEOBJECT *object);
+void object_name_set(GAMEOBJECT *object, /*@shared@*/char *name);
 /* ~object.c */
 
 

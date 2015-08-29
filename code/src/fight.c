@@ -2357,7 +2357,7 @@ void use_magical_item(CHAR_DATA *ch)
 	    do_quaff(ch, "potion");
 	    break;
 	case ITEM_PILL:
-	    sprintf(buf, "%s", cobj->name);
+	    sprintf(buf, "%s", object_name_get(cobj));
 	    do_eat(ch, buf);
 	    break;
     }

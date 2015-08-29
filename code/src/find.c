@@ -8,41 +8,61 @@
 #include "find.h"
 
 
-const struct cmp_vars_obj_index_data objprototype_flags[] =
+/** imports */
+extern void ovnum_find_empty(CHAR_DATA *ch, char *arg, BUFFER *out_buffer);
+extern void mvnum_find_empty(CHAR_DATA *ch, char *arg, BUFFER *out_buffer);
+extern AREA_DATA *grok_area(CHAR_DATA *ch, char *arg, BUFFER *out_buffer);
+
+
+/** locals */
+static const struct cmp_vars_obj_index_data objprototype_flags[] =
 {
-    { "name",   &objprototype_cmp_name	},
-    { "short",  &objprototype_cmp_short	},
-    { "long",   &objprototype_cmp_long	},
-    { "type",   &objprototype_cmp_type	},
-    { "extra",  &objprototype_cmp_extra	},
-    { "wear",   &objprototype_cmp_wear	},
+    { "name", &objprototype_cmp_name },
+    { "short", &objprototype_cmp_short },
+    { "long", &objprototype_cmp_long },
+    { "type", &objprototype_cmp_type },
+    { "extra", &objprototype_cmp_extra },
+    { "wear", &objprototype_cmp_wear },
     { "weight", &objprototype_cmp_weight },
-    { "cost",   &objprototype_cmp_cost	},
-    { "level",  &objprototype_cmp_level	},
-    { "",	    NULL		}
+    { "cost", &objprototype_cmp_cost },
+    { "level", &objprototype_cmp_level },
+    { "", NULL }
 };
 
-const struct cmp_vars_mob_index_data mob_idx_flags[] =
+static const struct cmp_vars_mob_index_data mob_idx_flags[] =
 {
-    { "name",     &mob_idx_cmp_name	   },
-    { "short",    &mob_idx_cmp_short   },
-    { "long",     &mob_idx_cmp_long	   },
-    { "race",     &mob_idx_cmp_race	   },
-    { "level",    &mob_idx_cmp_level   },
-    { "sex",      &mob_idx_cmp_sex	   },
-    { "gold",     &mob_idx_cmp_wealth  },
-    { "offense",  &mob_idx_cmp_offense },
-    { "form",     &mob_idx_cmp_form	   },
-    { "act",      &mob_idx_cmp_act	   },
-    { "",	      NULL		   }
+    { "name", &mob_idx_cmp_name },
+    { "short", &mob_idx_cmp_short },
+    { "long", &mob_idx_cmp_long },
+    { "race", &mob_idx_cmp_race },
+    { "level", &mob_idx_cmp_level },
+    { "sex", &mob_idx_cmp_sex },
+    { "gold", &mob_idx_cmp_wealth },
+    { "offense", &mob_idx_cmp_offense },
+    { "form", &mob_idx_cmp_form },
+    { "act", &mob_idx_cmp_act },
+    { "", NULL }
+};
+
+static const struct cmp_vars_gameobject obj_flags[] =
+{
+    { "vnum", &obj_cmp_vnum },
+    { "name", &obj_cmp_name },
+    { "short", &obj_cmp_short },
+    { "long", &obj_cmp_long },
+    { "type", &obj_cmp_type },
+    { "extra", &obj_cmp_extra },
+    { "wear", &obj_cmp_wear },
+    { "location", &obj_cmp_location },
+    { "weight", &obj_cmp_weight },
+    { "cost", &obj_cmp_cost },
+    { "level", &obj_cmp_level },
+    { "", NULL }
 };
 
 
 static void help_ovnum_properties(CHAR_DATA *ch);
 
-extern void ovnum_find_empty(CHAR_DATA *ch, char *arg, BUFFER *out_buffer);
-extern void mvnum_find_empty(CHAR_DATA *ch, char *arg, BUFFER *out_buffer);
-extern AREA_DATA *grok_area(CHAR_DATA *ch, char *arg, BUFFER *out_buffer);
 
 
 GAMEOBJECT *get_object_by_itemtype_and_room(int item_type, ROOM_INDEX_DATA *room, CHAR_DATA *ch)
@@ -62,24 +82,6 @@ GAMEOBJECT *get_object_by_itemtype_and_room(int item_type, ROOM_INDEX_DATA *room
 /***************************************************************************
  *	where functions - owhere mwhere
  ***************************************************************************/
-/***************************************************************************
- *	objects
- ***************************************************************************/
-const struct cmp_vars_gameobject obj_flags[] =
-{
-    { "vnum",     &obj_cmp_vnum	},
-    { "name",     &obj_cmp_name	},
-    { "short",    &obj_cmp_short	},
-    { "long",     &obj_cmp_long	},
-    { "type",     &obj_cmp_type	},
-    { "extra",    &obj_cmp_extra	},
-    { "wear",     &obj_cmp_wear	},
-    { "location", &obj_cmp_location },
-    { "weight",   &obj_cmp_weight	},
-    { "cost",     &obj_cmp_cost	},
-    { "level",    &obj_cmp_level	},
-    { "",	      NULL		}
-};
 
 
 /**
@@ -243,7 +245,7 @@ bool obj_cmp_name(GAMEOBJECT *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL)
 	add_buf(buf, "search by an object's name.\n\r");
-    return cmp_fn_string(obj->name, arg);
+    return cmp_fn_string(object_name_get(obj), arg);
 }
 
 /***************************************************************************

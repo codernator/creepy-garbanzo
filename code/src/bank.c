@@ -1,13 +1,8 @@
-
 /***************************************************************************
  * Oct 2009                                                                 *
  * Completely rewritten by Brandon Griffin (aka Codernator) to remove       *
  * c&p coding suckage.  Absorbed atm.c                                      *
  ****************************************************************************/
-
-/***************************************************************************
-*	includes
-***************************************************************************/
 #include <stdio.h>
 #include <string.h>
 #include "merc.h"
@@ -15,13 +10,14 @@
 #include "interp.h"
 
 
-
+/** imports */
 extern GAMEOBJECT *get_object_by_itemtype_and_room(int item_type, ROOM_INDEX_DATA *room, CHAR_DATA *ch);
 extern void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is, const char *message);
 extern int number_range(int from, int to);
 extern long parse_long(char *test);
 
 
+/** locals */
 static void complete_transaction(CHAR_DATA *ch, bool withdraw, unsigned int amount, unsigned int *purse, unsigned int *drawer, const char *tender, GAMEOBJECT *atm);
 static bool check_for_bank(CHAR_DATA *ch, /*@out@*/ GAMEOBJECT **atm);
 static void evaluate_transaction(CHAR_DATA *ch, bool withdraw, char *arg_amount, char *arg_tender);
@@ -32,191 +28,173 @@ static void report_balance(CHAR_DATA *ch);
 
 void do_atm_withdraw(CHAR_DATA *ch, char *argument)
 {
-	do_withdraw(ch, argument);
+    do_withdraw(ch, argument);
 }
 
 void do_atm_balance(CHAR_DATA *ch, char *argument)
 {
-	do_balance(ch, argument);
+    do_balance(ch, argument);
 }
 
 void do_atm_deposit(CHAR_DATA *ch, char *argument)
 {
-	do_deposit(ch, argument);
+    do_deposit(ch, argument);
 }
 
 
 void do_balance(CHAR_DATA *ch, char *vo)
 {
-	GAMEOBJECT *atm;
+    GAMEOBJECT *atm;
 
-	DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	if (check_for_bank(ch, &atm))
-		report_balance(ch);
+    if (check_for_bank(ch, &atm)) {
+	report_balance(ch);
+    }
 }
 
 void do_deposit(CHAR_DATA *ch, char *argument)
 {
-	char arg1[MAX_INPUT_LENGTH];
-	char arg2[MAX_INPUT_LENGTH];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
 
-	DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	argument = one_argument(argument, arg1);
-	argument = one_argument(argument, arg2);
+    argument = one_argument(argument, arg1);
+    argument = one_argument(argument, arg2);
 
-	evaluate_transaction(ch, false, arg1, arg2);
+    evaluate_transaction(ch, false, arg1, arg2);
 }
 
 void do_withdraw(CHAR_DATA *ch, char *argument)
 {
-	char arg1[MAX_INPUT_LENGTH];
-	char arg2[MAX_INPUT_LENGTH];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
 
-	DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	argument = one_argument(argument, arg1);
-	argument = one_argument(argument, arg2);
+    argument = one_argument(argument, arg1);
+    argument = one_argument(argument, arg2);
 
-	evaluate_transaction(ch, true, arg1, arg2);
+    evaluate_transaction(ch, true, arg1, arg2);
 }
 
 void evaluate_transaction(CHAR_DATA *ch, bool withdraw, char *arg_amount, char *arg_tender)
 {
-	char buf[MIL];
-	GAMEOBJECT *atm = NULL;
+    char buf[MIL];
+    GAMEOBJECT *atm = NULL;
 
-	if (check_for_bank(ch, &atm)) {
-		long parsed_arg = 0;
-		unsigned int amount = 0;
+    if (check_for_bank(ch, &atm)) {
+	long parsed_arg = 0;
+	unsigned int amount = 0;
 
-		find_money(ch);
+	find_money(ch);
 
-		if (arg_amount[0] == '\0' || !is_number(arg_amount)) {
-			snprintf(buf, MIL, "Try %s <amount> <gold or silver>.", withdraw ? "withdraw" : "deposit");
-			sick_harvey_proctor(ch, hp_irritated, buf);
-			return;
-		}
-
-		parsed_arg = parse_long(arg_amount);
-		if (parsed_arg <= 0) {
-			snprintf(buf, MIL, "If you want to %s money, use the %s command, Jackass.",
-				 withdraw ? "deposit" : "withdraw",
-				 withdraw ? "deposit" : "withdraw");
-			sick_harvey_proctor(ch, hp_irritated, buf);
-			return;
-		}
-
-		amount = (unsigned int)parsed_arg;
-
-		if (arg_tender[0] == '\0' || str_cmp(arg_tender, "gold") == 0)
-			complete_transaction(ch, withdraw, amount, &ch->gold, &ch->pcdata->gold_in_bank, "gold", atm);
-		else
-		if (str_cmp(arg_tender, "silver") == 0)
-			complete_transaction(ch, withdraw, amount, &ch->silver, &ch->pcdata->silver_in_bank, "silver", atm);
-		else
-			sick_harvey_proctor(ch, hp_pissed_off, "Look, jackass!  We only trade in gold and silver here!");
+	if (arg_amount[0] == '\0' || !is_number(arg_amount)) {
+	    snprintf(buf, MIL, "Try %s <amount> <gold or silver>.", withdraw ? "withdraw" : "deposit");
+	    sick_harvey_proctor(ch, hp_irritated, buf);
+	    return;
 	}
+
+	parsed_arg = parse_long(arg_amount);
+	if (parsed_arg <= 0) {
+	    snprintf(buf, MIL, "If you want to %s money, use the %s command, Jackass.", withdraw ? "deposit" : "withdraw", withdraw ? "deposit" : "withdraw");
+	    sick_harvey_proctor(ch, hp_irritated, buf);
+	    return;
+	}
+
+	amount = (unsigned int)parsed_arg;
+
+	if (arg_tender[0] == '\0' || str_cmp(arg_tender, "gold") == 0) {
+	    complete_transaction(ch, withdraw, amount, &ch->gold, &ch->pcdata->gold_in_bank, "gold", atm);
+	} else {
+	    if (str_cmp(arg_tender, "silver") == 0) {
+		complete_transaction(ch, withdraw, amount, &ch->silver, &ch->pcdata->silver_in_bank, "silver", atm);
+	    } else {
+		sick_harvey_proctor(ch, hp_pissed_off, "Look, jackass!  We only trade in gold and silver here!");
+	    }
+	}
+    }
 }
 
 void find_money(CHAR_DATA *ch)
 {
-	int j;
+    int j;
 
-	if ((ch->pcdata->last_bank - globalSystemState.current_time) > 86400) {
-		for (j = (int)((ch->pcdata->last_bank - globalSystemState.current_time) / 86400); j != 0; j--) {
-			ch->pcdata->gold_in_bank += ch->pcdata->gold_in_bank / 50;
-			ch->pcdata->silver_in_bank += ch->pcdata->silver_in_bank / 50;
-		}
-		ch->pcdata->last_bank = time(NULL);
+    if ((ch->pcdata->last_bank - globalSystemState.current_time) > 86400) {
+	for (j = (int)((ch->pcdata->last_bank - globalSystemState.current_time) / 86400); j != 0; j--) {
+	    ch->pcdata->gold_in_bank += ch->pcdata->gold_in_bank / 50;
+	    ch->pcdata->silver_in_bank += ch->pcdata->silver_in_bank / 50;
 	}
+	ch->pcdata->last_bank = time(NULL);
+    }
 
-	/* HACK!!! */
-	if ((ch->pcdata->gold_in_bank > 1000000u))
-		ch->pcdata->gold_in_bank = 1000000u;
+    /* HACK!!! */
+    if ((ch->pcdata->gold_in_bank > 1000000u))
+	ch->pcdata->gold_in_bank = 1000000u;
 
-	if ((ch->pcdata->silver_in_bank > 10000000u))
-		ch->pcdata->silver_in_bank = 10000000u;
+    if ((ch->pcdata->silver_in_bank > 10000000u))
+	ch->pcdata->silver_in_bank = 10000000u;
 }
 
 bool check_for_bank(CHAR_DATA *ch, /*@out@*/ GAMEOBJECT **atm)
 {
-	GAMEOBJECT *temp_atm = NULL;
+    GAMEOBJECT *temp_atm = NULL;
 
-	if (!IS_SET(ch->in_room->room_flags, ROOM_BANK)) {
-		temp_atm = get_object_by_itemtype_and_room(ITEM_ATM, ch->in_room, ch);
-		*atm = temp_atm;
-		if (temp_atm == NULL) {
-			send_to_char("There is no ATM here.\n\r", ch);
-			return false;
-		} else {
-			return true;
-		}
+    if (!IS_SET(ch->in_room->room_flags, ROOM_BANK)) {
+	temp_atm = get_object_by_itemtype_and_room(ITEM_ATM, ch->in_room, ch);
+	*atm = temp_atm;
+	if (temp_atm == NULL) {
+	    send_to_char("There is no ATM here.\n\r", ch);
+	    return false;
 	} else {
-		*atm = NULL;
-		return true;
+	    return true;
 	}
+    } else {
+	*atm = NULL;
+	return true;
+    }
 }
 
-void complete_transaction(CHAR_DATA *ch,
-			  bool withdraw,
-			  unsigned int amount,
-			  unsigned int *purse,
-			  unsigned int *drawer, const char *tender,
-			  GAMEOBJECT *atm)
+void complete_transaction(CHAR_DATA *ch, bool withdraw, unsigned int amount, unsigned int *purse, unsigned int *drawer, const char *tender, GAMEOBJECT *atm)
 {
-	char buf[MIL];
+    char buf[MIL];
 
-	if ((withdraw && *drawer < amount) || (!withdraw && *purse < amount)) {
-		snprintf(buf, MIL, "You don't have that much %s %s!", tender, withdraw ? "in your account" : "on you");
-		sick_harvey_proctor(ch, hp_irritated, buf);
+    if ((withdraw && *drawer < amount) || (!withdraw && *purse < amount)) {
+	snprintf(buf, MIL, "You don't have that much %s %s!", tender, withdraw ? "in your account" : "on you");
+	sick_harvey_proctor(ch, hp_irritated, buf);
+    } else {
+	if (withdraw) {
+	    *drawer -= amount;
+	    *purse += amount;
 	} else {
-		if (withdraw) {
-			*drawer -= amount;
-			*purse += amount;
-		} else {
-			*drawer += amount;
-			*purse -= amount;
-		}
-
-		report_balance(ch);
-
-		if (atm != NULL)
-			give_receipt(ch, amount, withdraw ? "Withdrawal" : "Deposit", tender, atm);
+	    *drawer += amount;
+	    *purse -= amount;
 	}
+
+	report_balance(ch);
+
+	if (atm != NULL)
+	    give_receipt(ch, amount, withdraw ? "Withdrawal" : "Deposit", tender, atm);
+    }
 }
 
 
 void report_balance(CHAR_DATA *ch)
 {
-	char buf[MAX_INPUT_LENGTH];
-
-	find_money(ch);
-	sprintf(buf, "You have %u gold and %u silver pieces in the bank.\n\r",
-		ch->pcdata->gold_in_bank, ch->pcdata->silver_in_bank);
-	send_to_char(buf, ch);
+    find_money(ch);
+    printf_to_char(ch, "You have %u gold and %u silver pieces in the bank.\n\r", ch->pcdata->gold_in_bank, ch->pcdata->silver_in_bank);
 }
 
 void give_receipt(CHAR_DATA *ch, unsigned int amount, const char *action, const char *tender, GAMEOBJECT *atm)
 {
-	char buf[MAX_INPUT_LENGTH];
-	GAMEOBJECT *receipt = create_object(objectprototype_getbyvnum(OBJ_VNUM_RECEIPT), 0);
+    char buf[MAX_INPUT_LENGTH];
 
-	sprintf(buf, "%s deposits some %s.", ch->name, tender);
-	act(buf, ch, NULL, NULL, TO_ROOM);
+    sprintf(buf, "%s deposits some %s.", ch->name, tender);
+    act(buf, ch, NULL, NULL, TO_ROOM);
 
-	sprintf(buf, "%s gives %s a receipt.", atm->short_descr, ch->name);
-	act(buf, ch, NULL, NULL, TO_ROOM);
+    sprintf(buf, "%s gives %s a receipt.", atm->short_descr, ch->name);
+    act(buf, ch, NULL, NULL, TO_ROOM);
 
-	send_to_char("The atm receipt materializes in your pocket.\n\r", ch);
-
-	sprintf(buf,
-		"obj receipt ed receipt ``%s - %s: `B%u %s  ``Balance: `#%ugp `&%usp``.",
-		ch->name,
-		action, amount, tender,
-		ch->pcdata->gold_in_bank,
-		ch->pcdata->silver_in_bank);
-	do_string(ch, buf);
-	obj_to_char(receipt, ch);
+    printf_to_char(ch, "``%s: `B%u %s  ``Balance: `#%ugp `&%usp``.", action, amount, tender, ch->pcdata->gold_in_bank, ch->pcdata->silver_in_bank);
 }

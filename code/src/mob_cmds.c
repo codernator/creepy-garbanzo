@@ -460,7 +460,7 @@ void do_mpjunk(CHAR_DATA *ch, char *argument)
     } else {
 	for (obj = ch->carrying; obj != NULL; obj = obj_next) {
 	    obj_next = obj->next_content;
-	    if (arg[3] == '\0' || is_name(&arg[4], obj->name)) {
+	    if (arg[3] == '\0' || is_name(&arg[4], object_name_get(obj))) {
 		if (obj->wear_loc != WEAR_NONE)
 		    unequip_char(ch, obj);
 		extract_obj(obj);

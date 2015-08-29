@@ -2010,23 +2010,19 @@ void spell_locate_object(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
     opending = object_iterator_start(&object_empty_filter);
     while ((obj = opending) != NULL) {
 	opending = object_iterator(obj, &object_empty_filter);
-	if (!can_see_obj(ch, obj) || !is_name(argument, obj->name)
-		|| IS_OBJ_STAT(obj, ITEM_NOLOCATE) || number_percent() > 2 * level
-		|| ch->level < obj->level)
+	if (!can_see_obj(ch, obj) || !is_name(argument, object_name_get(obj)) || IS_OBJ_STAT(obj, ITEM_NOLOCATE) || number_percent() > 2 * level || ch->level < obj->level)
 	    continue;
 
 	found = true;
 	number++;
 
-	for (in_obj = obj; in_obj->in_obj != NULL; in_obj = in_obj->in_obj) {
-	}
+	for (in_obj = obj; in_obj->in_obj != NULL; in_obj = in_obj->in_obj);
 
 	if (in_obj->carried_by != NULL && can_see(ch, in_obj->carried_by)) {
 	    if (can_see(in_obj->carried_by, ch))
 		printf_buf(buffer, "One is carried by %s\n\r", PERS(in_obj->carried_by, ch));
 	} else {
-	    if (IS_IMMORTAL(ch)
-		    && in_obj->in_room != NULL)
+	    if (IS_IMMORTAL(ch) && in_obj->in_room != NULL)
 		printf_buf(buffer, "One is in %s [Room %d]\n\r", in_obj->in_room->name, in_obj->in_room->vnum);
 	    else if (in_obj->in_room != NULL)
 		printf_buf(buffer, "One is in %s\n\r", in_obj->in_room->name);

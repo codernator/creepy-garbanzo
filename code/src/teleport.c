@@ -47,8 +47,7 @@ void do_teleport(CHAR_DATA *ch, char *argument)
 	opending = object_iterator_start(&object_empty_filter);
 	while ((obj = opending) != NULL) {
 	    opending = object_iterator(obj, &object_empty_filter);
-	    if (!can_see_obj(ch, obj)
-		    || !is_name("teleporter_public", obj->name))
+	    if (!can_see_obj(ch, obj) || !is_name("teleporter_public", object_name_get(obj)))
 		continue;
 
 	    count++;
@@ -73,8 +72,7 @@ void do_teleport(CHAR_DATA *ch, char *argument)
 	    opending = object_iterator_start(&object_empty_filter);
 	    while ((obj = opending) != NULL) {
 		opending = object_iterator(obj, &object_empty_filter);
-		if (!can_see_obj(ch, obj)
-			|| !is_name("teleporter_private", obj->name))
+		if (!can_see_obj(ch, obj) || !is_name("teleporter_private", object_name_get(obj)))
 		    continue;
 
 		count++;

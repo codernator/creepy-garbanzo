@@ -512,8 +512,8 @@ static void fwrite_obj(CHAR_DATA *ch, GAMEOBJECT *obj, FILE *fp, int iNest)
     fprintf(fp, "Nest %d\n", iNest);
 
 
-    if (obj->name != obj->objprototype->name)
-	fprintf(fp, "Name %s~\n", obj->name);
+    if (obj->override_name != NULL)
+	fprintf(fp, "Name %s~\n", obj->override_name);
 
     if (obj->short_descr != obj->objprototype->short_descr)
 	fprintf(fp, "ShD  %s~\n", obj->short_descr);
@@ -1697,7 +1697,7 @@ static void fread_obj(CHAR_DATA *ch, FILE *fp)
 		break;
 
 	    case 'N':
-		KEY("Name", obj->name, fread_string(fp));
+		KEY("Name", obj->override_name, fread_string(fp));
 
 		if (!str_cmp(word, "Nest")) {
 		    iNest = fread_number(fp);

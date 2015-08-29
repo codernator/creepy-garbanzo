@@ -232,7 +232,7 @@ void look_extras(CHAR_DATA *ch, char *name, int number) {
 					continue;
 				}
 			}
-			if (is_name(name, obj->name)) {
+			if (is_name(name, object_name_get(obj))) {
 				if (++count == number) {
 					send_to_char(obj->description, ch);
 					send_to_char("\n\r", ch);
@@ -261,7 +261,7 @@ void look_extras(CHAR_DATA *ch, char *name, int number) {
 			}
 		}
 
-		if (is_name(name, obj->name)) {
+		if (is_name(name, object_name_get(obj))) {
 			if (++count == number) {
 				send_to_char(obj->description, ch);
 				send_to_char("\n\r", ch);
@@ -639,13 +639,13 @@ void get_obj(CHAR_DATA *ch, GAMEOBJECT *obj, GAMEOBJECT *container)
 	if ((ch->carry_number + get_obj_number(obj)) > can_carry_n(ch)
 	    && (!IS_IMMORTAL(ch))) {
 		act("$d: you can't carry that many items.",
-		    ch, NULL, obj->name, TO_CHAR);
+		    ch, NULL, object_name_get(obj), TO_CHAR);
 		return;
 	}
 
 
 	if ((ch->carry_weight + get_obj_weight(obj)) > can_carry_w(ch)) {
-		act("$d: you can't carry that much weight.", ch, NULL, obj->name, TO_CHAR);
+		act("$d: you can't carry that much weight.", ch, NULL, object_name_get(obj), TO_CHAR);
 		return;
 	}
 

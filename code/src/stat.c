@@ -147,7 +147,7 @@ void show_room_stats(CHAR_DATA *ch, char *argument)
     send_to_char(".\n\rObjects:   ", ch);
     for (obj = location->contents; obj; obj = obj->next_content) {
 	send_to_char(" ", ch);
-	one_argument(obj->name, buf);
+	one_argument(object_name_get(obj), buf);
 	send_to_char(buf, ch);
     }
     send_to_char(".\n\r", ch);
@@ -205,7 +205,7 @@ void show_object_stats(CHAR_DATA *ch, char *argument)
 	return;
     }
 
-    printf_to_char(ch, "Name(s): %s\n\r", obj->name);
+    printf_to_char(ch, "Name(s): %s\n\r", object_name_get(obj));
     printf_to_char(ch, "Vnum: %d  Format: %s  Resets: %d\n\r", obj->objprototype->vnum, item_type_name(obj), obj->objprototype->reset_num);
     {
 	char *ownername = object_ownername_get(obj);

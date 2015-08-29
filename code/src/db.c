@@ -2143,7 +2143,7 @@ GAMEOBJECT *create_object(OBJECTPROTOTYPE *objprototype, int level)
 
     obj->wear_loc = -1;
 
-    obj->name = str_dup(objprototype->name);
+    object_name_set(obj, str_dup(objprototype->name));
     obj->short_descr = str_dup(objprototype->short_descr);
     obj->description = str_dup(objprototype->description);
     obj->material = str_dup(objprototype->material);
@@ -2230,7 +2230,7 @@ void clone_object(GAMEOBJECT *parent, GAMEOBJECT *clone)
 	return;
 
     /* start fixing the object */
-    clone->name = str_dup(parent->name);
+    object_name_set(clone, str_dup(object_name_get(parent)));
     clone->short_descr = str_dup(parent->short_descr);
     clone->description = str_dup(parent->description);
     clone->item_type = parent->item_type;

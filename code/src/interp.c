@@ -58,7 +58,6 @@ const struct cmd_type cmd_table[] =
 	{ "order",	      do_order,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
 	{ "practice",	  do_practice,     POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "rest",	      do_rest,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
-	{ "restring",	  do_restring,     POS_SLEEPING, 0,	 LOG_ALWAYS, 1 },
 	{ "repair",	      do_repair,       POS_STANDING, 0,	 LOG_NORMAL, 1 },
 	{ "raceinfo",	  do_raceinfo,     POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
 	{ "sit",	      do_sit,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
@@ -321,7 +320,6 @@ const struct cmd_type cmd_table[] =
 	{ "slot",	      do_slot,	       POS_DEAD,     L2, LOG_NORMAL, 1 },
 	{ "stat",	      do_stat,	       POS_DEAD,     L8, LOG_NORMAL, 1 },
 	{ "omnistat",	  do_omnistat,     POS_DEAD,     IM, LOG_NORMAL, 1 },
-	{ "string",	      do_string,       POS_DEAD,     IM, LOG_ALWAYS, 1 },
 	{ "switch",	      do_switch,       POS_DEAD,     L5, LOG_ALWAYS, 1 },
 	{ "wizinvis",	  do_winvis,       POS_DEAD,     IM, LOG_NORMAL, 1 },
 /*  { "vnum",         do_vnum,         POS_DEAD,     L4, LOG_NORMAL, 1 }, */

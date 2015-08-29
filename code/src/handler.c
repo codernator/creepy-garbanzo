@@ -1476,7 +1476,7 @@ GAMEOBJECT *get_obj_list(CHAR_DATA *ch, char *argument, GAMEOBJECT *list)
     number = number_argument(argument, arg);
     count = 0;
     for (obj = list; obj != NULL; obj = obj->next_content) {
-	if (can_see_obj(ch, obj) && is_name(arg, obj->name)) {
+	if (can_see_obj(ch, obj) && is_name(arg, object_name_get(obj))) {
 	    if (++count == number)
 		return obj;
 	}
@@ -1502,9 +1502,7 @@ GAMEOBJECT *get_obj_carry(CHAR_DATA *ch, char *argument)
     number = number_argument(argument, arg);
     count = 0;
     for (obj = ch->carrying; obj != NULL; obj = obj->next_content) {
-	if (obj->wear_loc == WEAR_NONE
-		&& (can_see_obj(ch, obj))
-		&& is_name(arg, obj->name)) {
+	if (obj->wear_loc == WEAR_NONE && (can_see_obj(ch, obj)) && is_name(arg, object_name_get(obj))) {
 	    if (++count == number)
 		return obj;
 	}
@@ -1529,9 +1527,7 @@ GAMEOBJECT *get_obj_wear(CHAR_DATA *ch, char *argument)
     number = number_argument(argument, arg);
     count = 0;
     for (obj = ch->carrying; obj != NULL; obj = obj->next_content) {
-	if (obj->wear_loc != WEAR_NONE
-		&& can_see_obj(ch, obj)
-		&& is_name(arg, obj->name)) {
+	if (obj->wear_loc != WEAR_NONE && can_see_obj(ch, obj) && is_name(arg, object_name_get(obj))) {
 	    if (++count == number)
 		return obj;
 	}
@@ -1585,7 +1581,7 @@ GAMEOBJECT *get_obj_world(CHAR_DATA *ch, char *argument)
     while ((obj = opending) != NULL) {
 	opending = object_iterator(obj, &object_empty_filter);
 
-	if (can_see_obj(ch, obj) && is_name(arg, obj->name)) {
+	if (can_see_obj(ch, obj) && is_name(arg, object_name_get(obj))) {
 	    if (++count == number)
 		return obj;
 	}
@@ -2226,7 +2222,7 @@ void identify_item(CHAR_DATA *ch, GAMEOBJECT *obj)
 
 
     printf_to_char(ch, "Object '%s' is type %s\n\rExtra flags %s.\n\r",
-	    obj->name,
+	    object_name_get(obj),
 	    item_type_name(obj),
 	    extra_bit_name((long)obj->extra_flags));
     printf_to_char(ch, "Extra2 flags %s\n\r"

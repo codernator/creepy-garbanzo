@@ -514,7 +514,7 @@ static bool cmd_eval(long vnum, char *line, int check,
 		    return lval_char != NULL && is_name(buf, lval_char->name);
 		case 'o':
 		case 'p':
-		    return lval_obj != NULL && is_name(buf, lval_obj->name);
+		    return lval_obj != NULL && is_name(buf, object_name_get(lval_obj));
 	    }
 	case CHK_POS:
 	    return lval_char != NULL && lval_char->position == position_lookup(buf);
@@ -631,11 +631,14 @@ static void expand_arg(char *buf,
 
 	switch (*str) {
 	    default:  log_bug("Expand_arg: bad code %d.", (int)*str);
-		      i = " <@@@> ";                        break;
+		      i = " <@@@> ";                        
+		      break;
 	    case 'i':
 		      one_argument(mob->name, fname);
-		      i = fname;                                      break;
-	    case 'I': i = mob->short_descr;                     break;
+		      i = fname;                                      
+		      break;
+	    case 'I': i = mob->short_descr;                     
+		      break;
 	    case 'n':
 		      i = someone;
 		      if (ch != NULL && can_see(mob, ch)) {
@@ -646,7 +649,8 @@ static void expand_arg(char *buf,
 	    case 'N':
 		      i = (ch != NULL && can_see(mob, ch))
 			  ? (IS_NPC(ch) ? ch->short_descr : ch->name)
-			  : someone;                                      break;
+			  : someone;                                      
+		      break;
 	    case 't':
 		      i = someone;
 		      if (vch != NULL && can_see(mob, vch)) {
@@ -657,7 +661,8 @@ static void expand_arg(char *buf,
 	    case 'T':
 		      i = (vch != NULL && can_see(mob, vch))
 			  ? (IS_NPC(vch) ? vch->short_descr : vch->name)
-			  : someone;                                      break;
+			  : someone;                                      
+		      break;
 	    case 'r':
 		      if (rch == NULL)
 			  rch = get_random_char(mob);
@@ -672,7 +677,8 @@ static void expand_arg(char *buf,
 			  rch = get_random_char(mob);
 		      i = (rch != NULL && can_see(mob, rch))
 			  ? (IS_NPC(ch) ? ch->short_descr : ch->name)
-			  : someone;                                       break;
+			  : someone;                                       
+		      break;
 	    case 'q':
 		      i = someone;
 		      if (mob->mprog_target != NULL && can_see(mob, mob->mprog_target)) {
@@ -683,84 +689,103 @@ static void expand_arg(char *buf,
 	    case 'Q':
 		      i = (mob->mprog_target != NULL && can_see(mob, mob->mprog_target))
 			  ? (IS_NPC(mob->mprog_target) ? mob->mprog_target->short_descr : mob->mprog_target->name)
-			  : someone;                                      break;
-	    case 'j': i = he_she  [URANGE(0, mob->sex, 2)];     break;
+			  : someone;                                      
+		      break;
+	    case 'j': i = he_she  [URANGE(0, mob->sex, 2)];     
+		      break;
 	    case 'e':
 		      i = (ch != NULL && can_see(mob, ch))
 			  ? he_she  [URANGE(0, ch->sex, 2)]
-			  : someone;                                      break;
+			  : someone;                                      
+		      break;
 	    case 'E':
 		      i = (vch != NULL && can_see(mob, vch))
 			  ? he_she  [URANGE(0, vch->sex, 2)]
-			  : someone;                                      break;
+			  : someone;                                      
+		      break;
 	    case 'J':
 		      i = (rch != NULL && can_see(mob, rch))
 			  ? he_she  [URANGE(0, rch->sex, 2)]
-			  : someone;                                      break;
+			  : someone;                                      
+		      break;
 	    case 'X':
 		      i = (mob->mprog_target != NULL && can_see(mob, mob->mprog_target))
 			  ? he_she  [URANGE(0, mob->mprog_target->sex, 2)]
-			  : someone;                                      break;
-	    case 'k': i = him_her [URANGE(0, mob->sex, 2)];     break;
+			  : someone;                                      
+		      break;
+	    case 'k': i = him_her [URANGE(0, mob->sex, 2)];     
+		      break;
 	    case 'm':
 		      i = (ch != NULL && can_see(mob, ch))
 			  ? him_her [URANGE(0, ch->sex, 2)]
-			  : someone;                                      break;
+			  : someone;                                      
+		      break;
 	    case 'M':
 		      i = (vch != NULL && can_see(mob, vch))
 			  ? him_her [URANGE(0, vch->sex, 2)]
-			  : someone;                                      break;
+			  : someone;                                      
+		      break;
 	    case 'K':
 		      if (rch == NULL)
 			  rch = get_random_char(mob);
 		      i = (rch != NULL && can_see(mob, rch))
 			  ? him_her [URANGE(0, rch->sex, 2)]
-			  : someone;                                      break;
+			  : someone;                                      
+		      break;
 	    case 'Y':
 		      i = (mob->mprog_target != NULL && can_see(mob, mob->mprog_target))
 			  ? him_her [URANGE(0, mob->mprog_target->sex, 2)]
-			  : someone;                                      break;
-	    case 'l': i = his_her [URANGE(0, mob->sex, 2)];    break;
+			  : someone;                                      
+		      break;
+	    case 'l': 
+		      i = his_her [URANGE(0, mob->sex, 2)];    
+		      break;
 	    case 's':
 		      i = (ch != NULL && can_see(mob, ch))
 			  ? his_her [URANGE(0, ch->sex, 2)]
-			  : someones;                                     break;
+			  : someones;                                     
+		      break;
 	    case 'S':
 		      i = (vch != NULL && can_see(mob, vch))
 			  ? his_her [URANGE(0, vch->sex, 2)]
-			  : someones;                                     break;
+			  : someones;                                     
+		      break;
 	    case 'L':
 		      if (rch == NULL)
 			  rch = get_random_char(mob);
 		      i = (rch != NULL && can_see(mob, rch))
 			  ? his_her [URANGE(0, rch->sex, 2)]
-			  : someones;                                     break;
+			  : someones;                                     
+		      break;
 	    case 'Z':
 		      i = (mob->mprog_target != NULL && can_see(mob, mob->mprog_target))
 			  ? his_her [URANGE(0, mob->mprog_target->sex, 2)]
-			  : someones;                                     break;
+			  : someones;                                     
+		      break;
 	    case 'o':
 		      i = something;
 		      if (obj1 != NULL && can_see_obj(mob, obj1)) {
-			  one_argument(obj1->name, fname);
+			  one_argument(object_name_get(obj1), fname);
 			  i = fname;
 		      }
 		      break;
 	    case 'O':
 		      i = (obj1 != NULL && can_see_obj(mob, obj1))
 			  ? obj1->short_descr
-			  : something;                                    break;
+			  : something;                                    
+		      break;
 	    case 'p':
 		      i = something;
 		      if (obj2 != NULL && can_see_obj(mob, obj2)) {
-			  one_argument(obj2->name, fname);
+			  one_argument(object_name_get(obj2), fname);
 			  i = fname;
 		      }
 		      break;
 	    case 'P':
 		      i = (obj2 != NULL && can_see_obj(mob, obj2))
 			  ? obj2->short_descr
-			  : something;                                    break;
+			  : something;                                    
+		      break;
 	}
 
 	++str;
@@ -1088,8 +1113,7 @@ void mp_give_trigger(CHAR_DATA *mob, CHAR_DATA *ch, GAMEOBJECT *obj)
 		while (*p != '\0') {
 		    p = one_argument(p, buf);
 
-		    if (is_name(buf, obj->name)
-			    || !str_cmp("all", buf)) {
+		    if (is_name(buf, object_name_get(obj)) || !str_cmp("all", buf)) {
 			program_flow(prg->vnum, prg->code, mob, ch, (void *)obj, NULL);
 			return;
 		    }

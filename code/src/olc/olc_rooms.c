@@ -756,7 +756,7 @@ EDIT(redit_show){
     printf_to_char(ch, "`&Objects``:     [");
     fcnt = false;
     for (obj = room->contents; obj; obj = obj->next_content) {
-	one_argument(obj->name, buf);
+	one_argument(object_name_get(obj), buf);
 	if (obj->next_content)
 	    printf_to_char(ch, "%s ", buf);
 	else
