@@ -206,36 +206,20 @@ void show_object_stats(CHAR_DATA *ch, char *argument)
     }
 
     printf_to_char(ch, "Name(s): %s\n\r", obj->name);
-    printf_to_char(ch, "Vnum: %d  Format: %s  Resets: %d\n\r",
-	    obj->objprototype->vnum,
-	    item_type_name(obj), obj->objprototype->reset_num);
-
-    printf_to_char(ch, "Owner: %s\n\r", (obj->owner != NULL) ? obj->owner : "none");
-    printf_to_char(ch, "Short description: %s\n\rLong description: %s\n\r",
-	    obj->short_descr, obj->description);
-
-    printf_to_char(ch, "Wear bits: %s\n\rExtra bits: %s\n\r",
-	    wear_bit_name(obj->wear_flags),
-	    extra_bit_name(obj->extra_flags));
-    printf_to_char(ch, "Extra2 bits: %s\n\r",
-	    extra2_bit_name(obj->extra2_flags));
-
-    printf_to_char(ch, "Number: %d/%d  Weight: %d/%d/%d(10th pounds)\n\r",
-	    1, get_obj_number(obj),
-	    obj->weight,
-	    get_obj_weight(obj),
-	    get_true_weight(obj));
-
-    printf_to_char(ch, "Level: %d  Cost: %d  Condition: %d  Timer: %d\n\r",
-	    obj->level,
-	    obj->cost,
-	    obj->condition,
-	    obj->timer);
+    printf_to_char(ch, "Vnum: %d  Format: %s  Resets: %d\n\r", obj->objprototype->vnum, item_type_name(obj), obj->objprototype->reset_num);
+    {
+	char *ownername = object_ownername_get(obj);
+	printf_to_char(ch, "Owner: %s\n\r", (ownername != NULL) ? ownername : "none");
+    }
+    printf_to_char(ch, "Short description: %s\n\rLong description: %s\n\r", obj->short_descr, obj->description); 
+    printf_to_char(ch, "Wear bits: %s\n\rExtra bits: %s\n\r", wear_bit_name(obj->wear_flags), extra_bit_name(obj->extra_flags));
+    printf_to_char(ch, "Extra2 bits: %s\n\r", extra2_bit_name(obj->extra2_flags));
+    printf_to_char(ch, "Number: %d/%d  Weight: %d/%d/%d(10th pounds)\n\r", 1, get_obj_number(obj), obj->weight, get_obj_weight(obj), get_true_weight(obj));
+    printf_to_char(ch, "Level: %d  Cost: %d  Condition: %d  Timer: %d\n\r", obj->level, obj->cost, obj->condition, obj->timer);
     if (IS_OBJ_STAT2(obj, ITEM_RELIC)) {
 	printf_to_char(ch, "Exp TNL: %d\n\r", obj->xp_tolevel);
 	printf_to_char(ch, "Exp: %d\n\r", obj->exp);
     }
-
     printf_to_char(ch, "In room: %d  In object: %s  Carried by: %s  Wear_loc: %d\n\r",
 	    obj->in_room == NULL ? 0 : obj->in_room->vnum,
 	    obj->in_obj == NULL ? "(none)" : obj->in_obj->short_descr,
@@ -243,13 +227,7 @@ void show_object_stats(CHAR_DATA *ch, char *argument)
 	    can_see(ch, obj->carried_by) ? obj->carried_by->name : "someone",
 	    obj->wear_loc);
 
-    printf_to_char(ch, "Values: %d %d %d %d %d\n\r",
-	    obj->value[0],
-	    obj->value[1],
-	    obj->value[2],
-	    obj->value[3],
-	    obj->value[4]);
-
+    printf_to_char(ch, "Values: %d %d %d %d %d\n\r", obj->value[0], obj->value[1], obj->value[2], obj->value[3], obj->value[4]);
 
     /* now give out vital statistics as per identify */
     switch (obj->item_type) {
@@ -274,18 +252,13 @@ void show_object_stats(CHAR_DATA *ch, char *argument)
 
 	case ITEM_WAND:
 	case ITEM_STAFF:
-	    printf_to_char(ch, "Has %d(%d) charges of level %d",
-		    obj->value[1],
-		    obj->value[2],
-		    obj->value[0]);
+	    printf_to_char(ch, "Has %d(%d) charges of level %d", obj->value[1], obj->value[2], obj->value[0]);
 	    if ((skill = resolve_skill_sn((int)obj->value[3])) != NULL)
 		printf_to_char(ch, " '%s'.\n\r", skill->name);
 	    break;
 
 	case ITEM_DRINK_CON:
-	    printf_to_char(ch, "It holds %s-colored %s.\n\r",
-		    liq_table[obj->value[2]].liq_color,
-		    liq_table[obj->value[2]].liq_name);
+	    printf_to_char(ch, "It holds %s-colored %s.\n\r", liq_table[obj->value[2]].liq_color, liq_table[obj->value[2]].liq_name);
 	    break;
 	case ITEM_SOCKETS:
 	    send_to_char("Gem type is: ", ch);
@@ -349,18 +322,11 @@ void show_object_stats(CHAR_DATA *ch, char *argument)
 	    break;
 
 	case ITEM_ARMOR:
-	    printf_to_char(ch, "Armor class is %d pierce, %d bash, %d slash, and %d vs. magic\n\r",
-		    obj->value[0],
-		    obj->value[1],
-		    obj->value[2],
-		    obj->value[3]);
+	    printf_to_char(ch, "Armor class is %d pierce, %d bash, %d slash, and %d vs. magic\n\r", obj->value[0], obj->value[1], obj->value[2], obj->value[3]);
 	    break;
 
 	case ITEM_CONTAINER:
-	    printf_to_char(ch, "Capacity: %d#  Maximum weight: %d#  flags: %s\n\r",
-		    obj->value[0],
-		    obj->value[3],
-		    cont_bit_name(obj->value[1]));
+	    printf_to_char(ch, "Capacity: %d#  Maximum weight: %d#  flags: %s\n\r", obj->value[0], obj->value[3], cont_bit_name(obj->value[1]));
 	    if (obj->value[4] != 100)
 		printf_to_char(ch, "Weight multiplier: %d%%\n\r", obj->value[4]);
 	    break;
@@ -453,8 +419,6 @@ void show_object_stats(CHAR_DATA *ch, char *argument)
 	    }
 	}
     }
-
-    return;
 }
 
 /**

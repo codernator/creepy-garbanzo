@@ -1645,7 +1645,7 @@ void make_corpse(CHAR_DATA *ch)
 	name = ch->name;
 	corpse = create_object(objectprototype_getbyvnum(OBJ_VNUM_CORPSE_PC), 0);
 	corpse->timer = number_range(25, 40);
-	corpse->owner = str_dup(ch->name);
+	object_ownername_set(corpse, ch);
 	corpse->value[0] = 0;
 
 	if (ch->level < LEVEL_IMMORTAL) {

@@ -1529,9 +1529,9 @@ struct extra_descr_data {
     /*@shared@*//*@null@*/char *name;
     /*@shared@*//*@null@*/char *short_descr;
     /*@shared@*//*@null@*/char *description;
+    /*@shared@*//*@null@*/char *material;
     long vnum;
     long reset_num;
-    /*@shared@*//*@null@*/char *material;
     int item_type;
     long extra_flags;
     long extra2_flags;
@@ -1566,7 +1566,7 @@ struct extra_descr_data {
     /*@dependent@*//*@null@*/OBJECTPROTOTYPE *objprototype;
     /*@dependent@*//*@null@*/ROOM_INDEX_DATA *in_room;
     bool enchanted;
-    /*@shared@*//*@null@*/char *owner;
+    /*@shared@*//*@null@*/char *owner_name;
     /*@shared@*//*@null@*/char *name;
     /*@shared@*//*@null@*/char *short_descr;
     /*@shared@*//*@null@*/char *description;
@@ -2326,6 +2326,8 @@ void object_free(/*@owned@*/GAMEOBJECT * d);
 int object_list_count();
 /*@dependent@*//*@null@*/GAMEOBJECT *object_iterator_start(const OBJECT_ITERATOR_FILTER *filter);
 /*@dependent@*//*@null@*/GAMEOBJECT *object_iterator(GAMEOBJECT *current, const OBJECT_ITERATOR_FILTER *filter);
+/*@dependent@*//*@null@*/char *object_ownername_get(GAMEOBJECT *object);
+void object_ownername_set(GAMEOBJECT *object, CHAR_DATA *owner);
 /* ~object.c */
 
 

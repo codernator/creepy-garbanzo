@@ -72,7 +72,7 @@ void object_free(GAMEOBJECT *obj)
 	if (obj->name != NULL) free_string(obj->name);
 	if (obj->description != NULL) free_string(obj->description);
 	if (obj->short_descr != NULL) free_string(obj->short_descr);
-	if (obj->owner != NULL) free_string(obj->owner);
+	if (obj->owner_name != NULL) free_string(obj->owner_name);
 	if (obj->material != NULL) free_string(obj->material);
     }
 
@@ -130,6 +130,23 @@ GAMEOBJECT *object_iterator(GAMEOBJECT *current, const OBJECT_ITERATOR_FILTER *f
 
     return next;
 }
+
+char *object_ownername_get(GAMEOBJECT *object)
+{
+    return object->owner_name;
+}
+
+void object_ownername_set(GAMEOBJECT *object, CHAR_DATA *owner)
+{
+    if (object->owner_name != NULL)
+	free_string(object->owner_name);
+
+    if (owner != NULL)
+	object->owner_name = NULL;
+    else
+	object->owner_name = str_dup(owner->name);
+}
+
 
 inline bool is_situpon(GAMEOBJECT *obj) {
     return (obj->item_type == ITEM_FURNITURE) && (IS_SET(obj->value[2], SIT_ON)
