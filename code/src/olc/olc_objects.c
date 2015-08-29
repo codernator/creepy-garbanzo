@@ -656,34 +656,20 @@ EDIT(oedit_show){
 
     EDIT_OBJ(ch, pObj);
 
-    printf_to_char(ch, "`&Name``:         [%s]\n\r`&Area``:        [%5d] %s\n\r",
-	    pObj->name,
-	    (!pObj->area) ? -1 : pObj->area->vnum,
-	    (!pObj->area) ? "No Area" : pObj->area->name);
+    printf_to_char(ch, "`&Name``:         [%s]\n\r`&Area``:        [%5d] %s\n\r", pObj->name, (!pObj->area) ? -1 : pObj->area->vnum, (!pObj->area) ? "No Area" : pObj->area->name);
 
-    printf_to_char(ch, "`&Vnum``:         [%5d]\n\r`&Type``:        [%s]\n\r",
-	    pObj->vnum,
-	    flag_string(type_flags, pObj->item_type));
+    printf_to_char(ch, "`&Vnum``:         [%5d]\n\r`&Type``:        [%s]\n\r", pObj->vnum, flag_string(type_flags, pObj->item_type));
 
     printf_to_char(ch, "`&Level``:        [%5d]\n\r", pObj->level);
-    printf_to_char(ch, "`&Wear flags``:   [%s]\n\r",
-	    flag_string(wear_flags, pObj->wear_flags));
-    printf_to_char(ch, "`&Extra flags``:  [%s]\n\r",
-	    flag_string(extra_flags, pObj->extra_flags));
-    printf_to_char(ch, "`&Extra2 flags``: [%s]\n\r",
-	    flag_string(extra2_flags, pObj->extra2_flags));
-    printf_to_char(ch, "`&Material``:     [%s]\n\r",
-	    pObj->material);
-    printf_to_char(ch, "`&Condition``:    [%5d]\n\r",
-	    pObj->condition);
-    printf_to_char(ch, "`&Timer``:        [%5d]\n\r",
-	    pObj->timer);
-    printf_to_char(ch, "`&Weight``:       [%5d]\n\r`&Cost``:        [%5d]\n\r",
-	    pObj->weight,
-	    pObj->cost);
+    printf_to_char(ch, "`&Wear flags``:   [%s]\n\r", flag_string(wear_flags, pObj->wear_flags));
+    printf_to_char(ch, "`&Extra flags``:  [%s]\n\r", flag_string(extra_flags, pObj->extra_flags));
+    printf_to_char(ch, "`&Extra2 flags``: [%s]\n\r", flag_string(extra2_flags, pObj->extra2_flags));
+    printf_to_char(ch, "`&Material``:     [%s]\n\r", pObj->material);
+    printf_to_char(ch, "`&Condition``:    [%5d]\n\r", pObj->condition);
+    printf_to_char(ch, "`&Timer``:        [%5d]\n\r", pObj->init_timer);
+    printf_to_char(ch, "`&Weight``:       [%5d]\n\r`&Cost``:        [%5d]\n\r", pObj->weight, pObj->cost);
 
-    printf_to_char(ch, "`&Xp to level``:  [%5d]\n\r",            /* ROM */
-	    pObj->xp_tolevel);
+    printf_to_char(ch, "`&Xp to level``:  [%5d]\n\r",            /* ROM */ pObj->xp_tolevel);
 
     if (pObj->extra_descr) {
 	EXTRA_DESCR_DATA *ed;
@@ -1432,12 +1418,7 @@ EDIT(oedit_material){
     return true;
 }
 
-/*****************************************************************************
- *	oedit_timer
- *
- *	edit the timer property of an object (auto destroy)
- *	Added by Monrick, 5/2008
- *****************************************************************************/
+/** edit the timer property of an object (auto destroy)	Added by Monrick, 5/2008 */
 EDIT(oedit_timer){
     OBJECTPROTOTYPE *pObj;
 
@@ -1447,7 +1428,7 @@ EDIT(oedit_timer){
 	return false;
     }
 
-    pObj->timer = parse_int(argument);
+    pObj->init_timer = parse_int(argument);
     send_to_char("Timer set.\n\r", ch);
     return true;
 }

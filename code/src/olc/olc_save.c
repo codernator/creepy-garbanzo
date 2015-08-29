@@ -352,7 +352,7 @@ static void save_object(FILE *fp, OBJECTPROTOTYPE *pObjIndex)
     fprintf(fp, "%d ", pObjIndex->level);
     fprintf(fp, "%d ", pObjIndex->weight);
     fprintf(fp, "%u ", pObjIndex->cost);
-    fprintf(fp, "%d ", pObjIndex->timer);
+    fprintf(fp, "%d ", pObjIndex->init_timer);
 
     if (pObjIndex->condition > 90) letter = 'P';
     else if (pObjIndex->condition > 75) letter = 'G';

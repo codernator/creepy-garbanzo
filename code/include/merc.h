@@ -1523,6 +1523,7 @@ struct extra_descr_data {
     /*@owned@*//*@null@*//*@partial@*/OBJECTPROTOTYPE *next;
     /*@dependent@*//*@null@*//*@partial@*/OBJECTPROTOTYPE *prev;
 
+    long vnum;
     /*@dependent@*//*@null@*/EXTRA_DESCR_DATA *extra_descr;
     /*@dependent@*//*@null@*/AFFECT_DATA *affected;
     /*@dependent@*//*@null@*/AREA_DATA *area;
@@ -1530,15 +1531,14 @@ struct extra_descr_data {
     /*@shared@*//*@null@*/char *short_descr;
     /*@shared@*//*@null@*/char *description;
     /*@shared@*//*@null@*/char *material;
-    long vnum;
     long reset_num;
     int item_type;
     long extra_flags;
     long extra2_flags;
     long wear_flags;
     int level;
+    int init_timer;
     int condition;
-    int timer;
     int count;
     int weight;
     int plevel;

@@ -1178,7 +1178,7 @@ void load_objects(FILE *fp)
 	objprototype->level = (int)fread_number(fp);
 	objprototype->weight = (int)fread_number(fp);
 	objprototype->cost = (unsigned int)fread_number(fp);
-	objprototype->timer = fread_number(fp);
+	objprototype->init_timer = fread_number(fp);
 
 	/* condition */
 	letter = fread_letter(fp);
@@ -2147,7 +2147,7 @@ GAMEOBJECT *create_object(OBJECTPROTOTYPE *objprototype, int level)
     obj->short_descr = str_dup(objprototype->short_descr);
     obj->description = str_dup(objprototype->description);
     obj->material = str_dup(objprototype->material);
-    obj->timer = objprototype->timer;
+    obj->timer = objprototype->init_timer;
     obj->item_type = objprototype->item_type;
     obj->extra_flags = objprototype->extra_flags;
     obj->wear_flags = objprototype->wear_flags;
