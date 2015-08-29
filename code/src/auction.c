@@ -11,18 +11,18 @@
 /** exports */
 void auction_update(void);
 bool is_auction_participant(CHAR_DATA *ch);
-/*@shared@*//*@null@*/OBJ_DATA *get_auction_item();
+/*@shared@*//*@null@*/GAMEOBJECT *get_auction_item();
 
 
 /** imports */
 extern bool is_digit(const char test);
-extern void recursive_clone(CHAR_DATA * ch, OBJ_DATA * obj, OBJ_DATA * clone);
+extern void recursive_clone(CHAR_DATA * ch, GAMEOBJECT * obj, GAMEOBJECT * clone);
 
 
 /** locals */
 typedef struct auction_data AUCTION_DATA;
 struct auction_data {
-    OBJ_DATA * item;
+    GAMEOBJECT * item;
     CHAR_DATA * seller;
     CHAR_DATA * buyer;
     unsigned int bet;
@@ -68,7 +68,7 @@ static const struct auction_types auction_type_table[] =
  ***************************************************************************/
 void do_auction(CHAR_DATA *ch, char *argument)
 {
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     char arg1[MIL];
     char arg2[MIL];
     char buf[MSL];
@@ -131,7 +131,7 @@ void do_auction(CHAR_DATA *ch, char *argument)
 	}
 
 	if (currentAuction.item != NULL && !str_cmp(arg1, "clone")) {
-	    OBJ_DATA *obj_new = NULL;
+	    GAMEOBJECT *obj_new = NULL;
 
 	    obj_new = create_object(currentAuction.item->objprototype, currentAuction.item->level);
 	    clone_object(currentAuction.item, obj_new);
@@ -370,7 +370,7 @@ inline bool is_auction_participant(CHAR_DATA *ch)
     return (currentAuction.item != NULL && ((ch == currentAuction.buyer) || (ch == currentAuction.seller)));
 }
 
-inline OBJ_DATA *get_auction_item()
+inline GAMEOBJECT *get_auction_item()
 {
     return currentAuction.item;
 }

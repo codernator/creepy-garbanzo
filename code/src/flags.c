@@ -219,7 +219,7 @@ void flag_set_char(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void flag_set_obj(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	char name[MIL];
 
 	argument = one_argument(argument, name);
@@ -689,7 +689,7 @@ void flag_room_room(CHAR_DATA *ch, void *target, char *argument)
 ***************************************************************************/
 void flag_obj_type(CHAR_DATA *ch, void *target, char *argument)
 {
-	OBJ_DATA *obj = (OBJ_DATA *)target;
+	GAMEOBJECT *obj = (GAMEOBJECT *)target;
 	long value;
 
 	if ((value = flag_value(type_flags, argument)) != NO_FLAG) {
@@ -709,7 +709,7 @@ void flag_obj_type(CHAR_DATA *ch, void *target, char *argument)
 ***************************************************************************/
 void flag_obj_wear(CHAR_DATA *ch, void *target, char *argument)
 {
-	OBJ_DATA *obj = (OBJ_DATA *)target;
+	GAMEOBJECT *obj = (GAMEOBJECT *)target;
 	long value;
 
 	if ((value = flag_value(wear_flags, argument)) != NO_FLAG) {
@@ -738,7 +738,7 @@ void flag_obj_wear(CHAR_DATA *ch, void *target, char *argument)
 ***************************************************************************/
 void flag_obj_extra(CHAR_DATA *ch, void *target, char *argument)
 {
-	OBJ_DATA *obj = (OBJ_DATA *)target;
+	GAMEOBJECT *obj = (GAMEOBJECT *)target;
 	long value;
 
 	if ((value = flag_value(extra_flags, argument)) != NO_FLAG) {
@@ -762,7 +762,7 @@ void flag_obj_extra(CHAR_DATA *ch, void *target, char *argument)
 
 void flag_obj_extra2(CHAR_DATA *ch, void *target, char *argument)
 {
-	OBJ_DATA *obj = (OBJ_DATA *)target;
+	GAMEOBJECT *obj = (GAMEOBJECT *)target;
 	long value;
 
 	if ((value = flag_value(extra2_flags, argument)) != NO_FLAG) {
@@ -791,7 +791,7 @@ void flag_obj_extra2(CHAR_DATA *ch, void *target, char *argument)
 ***************************************************************************/
 void flag_obj_wpn_class(CHAR_DATA *ch, void *target, char *argument)
 {
-	OBJ_DATA *obj = (OBJ_DATA *)target;
+	GAMEOBJECT *obj = (GAMEOBJECT *)target;
 	long value;
 
 
@@ -818,7 +818,7 @@ void flag_obj_wpn_class(CHAR_DATA *ch, void *target, char *argument)
 ***************************************************************************/
 void flag_obj_wpn_flags(CHAR_DATA *ch, void *target, char *argument)
 {
-	OBJ_DATA *obj = (OBJ_DATA *)target;
+	GAMEOBJECT *obj = (GAMEOBJECT *)target;
 	long value;
 
 
@@ -855,7 +855,7 @@ void flag_obj_wpn_flags(CHAR_DATA *ch, void *target, char *argument)
 ***************************************************************************/
 void flag_obj_wpn_damage(CHAR_DATA *ch, void *target, char *argument)
 {
-	OBJ_DATA *obj = (OBJ_DATA *)target;
+	GAMEOBJECT *obj = (GAMEOBJECT *)target;
 	long value;
 
 

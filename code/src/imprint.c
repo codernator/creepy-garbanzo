@@ -12,7 +12,7 @@
 /***************************************************************************
 *	local functions
 ***************************************************************************/
-int count_slots(OBJ_DATA * obj);
+int count_slots(GAMEOBJECT * obj);
 
 
 /***************************************************************************
@@ -23,7 +23,7 @@ int count_slots(OBJ_DATA * obj);
 ***************************************************************************/
 static void spell_imprint(SKILL *skill, int level, CHAR_DATA *ch, void *vo)
 {
-	OBJ_DATA *obj = (OBJ_DATA *)vo;
+	GAMEOBJECT *obj = (GAMEOBJECT *)vo;
 	LEVEL_INFO *level_info;
 	LEARNED *learned;
 	SKILL *skill_retro;
@@ -152,7 +152,7 @@ static void spell_imprint(SKILL *skill, int level, CHAR_DATA *ch, void *vo)
 ***************************************************************************/
 void do_brew(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	SKILL *skill;
 	LEARNED *learned_brew;
 	LEARNED *learned_spell;
@@ -280,7 +280,7 @@ void do_brew(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_scribe(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	SKILL *skill;
 	LEARNED *learned_scribe;
 	LEARNED *learned_spell;
@@ -410,7 +410,7 @@ void do_scribe(CHAR_DATA *ch, char *argument)
 /***************************************************************************
 *	count_slots
 ***************************************************************************/
-int count_slots(OBJ_DATA *obj)
+int count_slots(GAMEOBJECT *obj)
 {
 	SKILL *skill;
 	int slots;

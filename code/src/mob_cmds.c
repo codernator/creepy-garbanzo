@@ -439,8 +439,8 @@ void do_mpassist(CHAR_DATA *ch, char *argument)
 void do_mpjunk(CHAR_DATA *ch, char *argument)
 {
     char arg[MIL];
-    OBJ_DATA *obj;
-    OBJ_DATA *obj_next;
+    GAMEOBJECT *obj;
+    GAMEOBJECT *obj_next;
 
     one_argument(argument, arg);
 
@@ -507,7 +507,7 @@ void do_mpmload(CHAR_DATA *ch, char *argument)
 void do_mpoload(CHAR_DATA *ch, char *argument)
 {
     OBJECTPROTOTYPE *objprototype;
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     char arg[MIL];
     int level;
     long vnum;
@@ -607,14 +607,14 @@ void do_mppurge(CHAR_DATA *ch, char *argument)
 {
     char arg[MIL];
     CHAR_DATA *victim;
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
 
     one_argument(argument, arg);
 
     if (arg[0] == '\0') {
 	/* 'purge' */
 	CHAR_DATA *vnext;
-	OBJ_DATA *obj_next;
+	GAMEOBJECT *obj_next;
 
 	for (victim = ch->in_room->people; victim != NULL; victim = vnext) {
 	    vnext = victim->next_in_room;
@@ -693,7 +693,7 @@ void do_mpat(CHAR_DATA *ch, char *argument)
     ROOM_INDEX_DATA *location;
     ROOM_INDEX_DATA *original;
     CHAR_DATA *wch;
-    OBJ_DATA *on;
+    GAMEOBJECT *on;
 
     argument = one_argument(argument, arg);
 
@@ -949,7 +949,7 @@ void do_mpvforce(CHAR_DATA *ch, char *argument)
 void do_mpcast(CHAR_DATA *ch, char *argument)
 {
     CHAR_DATA *vch;
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     SKILL *skill;
     void *victim = NULL;
     char spell[MIL];
@@ -1137,7 +1137,7 @@ void do_mpcall(CHAR_DATA *ch, char *argument)
 {
     char arg[MIL];
     CHAR_DATA *vch;
-    OBJ_DATA *obj1, *obj2;
+    GAMEOBJECT *obj1, *obj2;
     MPROG_CODE *prg;
     extern void program_flow(long, char *, CHAR_DATA *, CHAR_DATA *, const void *, const void *);
 
@@ -1215,7 +1215,7 @@ void do_mpflee(CHAR_DATA *ch, char *argument)
  */
 void do_mpotransfer(CHAR_DATA *ch, char *argument)
 {
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     ROOM_INDEX_DATA *location;
     char arg[MIL];
     char buf[MIL];
@@ -1253,7 +1253,7 @@ void do_mpotransfer(CHAR_DATA *ch, char *argument)
 void do_mpremove(CHAR_DATA *ch, char *argument)
 {
     CHAR_DATA *victim;
-    OBJ_DATA *obj, *obj_next;
+    GAMEOBJECT *obj, *obj_next;
     long vnum = 0;
     bool fAll = false;
     char arg[MIL];

@@ -18,7 +18,7 @@ extern long fread_long(FILE *fp);
  ***************************************************************************/
 #define MAX_NEST        100
 
-static OBJ_DATA *rgObjNest[MAX_NEST];
+static GAMEOBJECT *rgObjNest[MAX_NEST];
 
 
 void fread_char(CHAR_DATA * ch, FILE * fp);
@@ -33,7 +33,7 @@ static bool load_rdesc(ROOM_INDEX_DATA * location, char *name);
  *	local functions
  ***************************************************************************/
 static void fwrite_char(CHAR_DATA * ch, FILE * fp);
-static void fwrite_obj(CHAR_DATA * ch, OBJ_DATA * obj, FILE * fp, int iNest);
+static void fwrite_obj(CHAR_DATA * ch, GAMEOBJECT * obj, FILE * fp, int iNest);
 static void fwrite_pet(CHAR_DATA * pet, FILE * fp);
 static void fwrite_rdesc(ROOM_INDEX_DATA * location, FILE * fp);
 static void fread_pet(CHAR_DATA * ch, FILE * fp);
@@ -494,7 +494,7 @@ static void fwrite_pet(CHAR_DATA *pet, FILE *fp)
 /***************************************************************************
  *	fwrite_obj
  ***************************************************************************/
-static void fwrite_obj(CHAR_DATA *ch, OBJ_DATA *obj, FILE *fp, int iNest)
+static void fwrite_obj(CHAR_DATA *ch, GAMEOBJECT *obj, FILE *fp, int iNest)
 {
     EXTRA_DESCR_DATA *ed;
     AFFECT_DATA *paf;
@@ -1532,7 +1532,7 @@ static void fread_pet(CHAR_DATA *ch, FILE *fp)
  ***************************************************************************/
 static void fread_obj(CHAR_DATA *ch, FILE *fp)
 {
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     char *word;
     int iNest = 0;
     bool fMatch = false;

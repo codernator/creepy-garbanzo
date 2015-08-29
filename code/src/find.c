@@ -45,9 +45,9 @@ extern void mvnum_find_empty(CHAR_DATA *ch, char *arg, BUFFER *out_buffer);
 extern AREA_DATA *grok_area(CHAR_DATA *ch, char *arg, BUFFER *out_buffer);
 
 
-OBJ_DATA *get_object_by_itemtype_and_room(int item_type, ROOM_INDEX_DATA *room, CHAR_DATA *ch)
+GAMEOBJECT *get_object_by_itemtype_and_room(int item_type, ROOM_INDEX_DATA *room, CHAR_DATA *ch)
 {
-    OBJ_DATA *instance = NULL;
+    GAMEOBJECT *instance = NULL;
 
     for (instance = room->contents; instance != NULL; instance = instance->next_content)
 	if (instance->item_type == item_type && (ch == NULL || can_see_obj(ch, instance)))
@@ -65,7 +65,7 @@ OBJ_DATA *get_object_by_itemtype_and_room(int item_type, ROOM_INDEX_DATA *room, 
 /***************************************************************************
  *	objects
  ***************************************************************************/
-const struct cmp_vars_obj_data obj_flags[] =
+const struct cmp_vars_gameobject obj_flags[] =
 {
     { "vnum",     &obj_cmp_vnum	},
     { "name",     &obj_cmp_name	},
@@ -146,8 +146,8 @@ void do_owhere(CHAR_DATA *ch, char *argument)
 	(*cmp_fn)(object_iterator_start(&object_empty_filter), argument, buffer);
 	page_to_char(buf_string(buffer), ch);
     } else {
-	OBJ_DATA *obj, *opending;
-	OBJ_DATA *in_obj;
+	GAMEOBJECT *obj, *opending;
+	GAMEOBJECT *in_obj;
 	char *clr1;
 	char *clr2;
 	int number;
@@ -229,7 +229,7 @@ void do_owhere(CHAR_DATA *ch, char *argument)
 /***************************************************************************
  *	obj_cmp_vnum
  ***************************************************************************/
-bool obj_cmp_vnum(OBJ_DATA *obj, char *arg, BUFFER *buf)
+bool obj_cmp_vnum(GAMEOBJECT *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL)
 	add_buf(buf, "search by an object's vnum.\n\r");
@@ -239,7 +239,7 @@ bool obj_cmp_vnum(OBJ_DATA *obj, char *arg, BUFFER *buf)
 /***************************************************************************
  *	obj_cmp_name
  ***************************************************************************/
-bool obj_cmp_name(OBJ_DATA *obj, char *arg, BUFFER *buf)
+bool obj_cmp_name(GAMEOBJECT *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL)
 	add_buf(buf, "search by an object's name.\n\r");
@@ -249,7 +249,7 @@ bool obj_cmp_name(OBJ_DATA *obj, char *arg, BUFFER *buf)
 /***************************************************************************
  *	obj_cmp_short
  ***************************************************************************/
-bool obj_cmp_short(OBJ_DATA *obj, char *arg, BUFFER *buf)
+bool obj_cmp_short(GAMEOBJECT *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL)
 	add_buf(buf, "search by an object's short description.\n\r");
@@ -259,7 +259,7 @@ bool obj_cmp_short(OBJ_DATA *obj, char *arg, BUFFER *buf)
 /***************************************************************************
  *	obj_cmp_long
  ***************************************************************************/
-bool obj_cmp_long(OBJ_DATA *obj, char *arg, BUFFER *buf)
+bool obj_cmp_long(GAMEOBJECT *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL)
 	add_buf(buf, "search by an object's long description.\n\r");
@@ -269,7 +269,7 @@ bool obj_cmp_long(OBJ_DATA *obj, char *arg, BUFFER *buf)
 /***************************************************************************
  *	obj_cmp_type
  ***************************************************************************/
-bool obj_cmp_type(OBJ_DATA *obj, char *arg, BUFFER *buf)
+bool obj_cmp_type(GAMEOBJECT *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
 	add_buf(buf, "search by an object's type.\n\r");
@@ -281,7 +281,7 @@ bool obj_cmp_type(OBJ_DATA *obj, char *arg, BUFFER *buf)
 /***************************************************************************
  *	obj_cmp_location
  ***************************************************************************/
-bool obj_cmp_location(OBJ_DATA *obj, char *arg, BUFFER *buf)
+bool obj_cmp_location(GAMEOBJECT *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
 	add_buf(buf, "search by an object's wear location.\n\r");
@@ -293,7 +293,7 @@ bool obj_cmp_location(OBJ_DATA *obj, char *arg, BUFFER *buf)
 /***************************************************************************
  *	obj_cmp_weight
  ***************************************************************************/
-bool obj_cmp_weight(OBJ_DATA *obj, char *arg, BUFFER *buf)
+bool obj_cmp_weight(GAMEOBJECT *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL)
 	add_buf(buf, "search by an object's weight.\n\r");
@@ -303,7 +303,7 @@ bool obj_cmp_weight(OBJ_DATA *obj, char *arg, BUFFER *buf)
 /***************************************************************************
  *	obj_cmp_cost
  ***************************************************************************/
-bool obj_cmp_cost(OBJ_DATA *obj, char *arg, BUFFER *buf)
+bool obj_cmp_cost(GAMEOBJECT *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL)
 	add_buf(buf, "search by an object's cost.\n\r");
@@ -313,7 +313,7 @@ bool obj_cmp_cost(OBJ_DATA *obj, char *arg, BUFFER *buf)
 /***************************************************************************
  *	obj_cmp_level
  ***************************************************************************/
-bool obj_cmp_level(OBJ_DATA *obj, char *arg, BUFFER *buf)
+bool obj_cmp_level(GAMEOBJECT *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL)
 	add_buf(buf, "search by an object's level.\n\r");
@@ -323,7 +323,7 @@ bool obj_cmp_level(OBJ_DATA *obj, char *arg, BUFFER *buf)
 /***************************************************************************
  *	obj_cmp_extra
  ***************************************************************************/
-bool obj_cmp_extra(OBJ_DATA *obj, char *arg, BUFFER *buf)
+bool obj_cmp_extra(GAMEOBJECT *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
 	add_buf(buf, "search by an object's wear location.\n\r");
@@ -335,7 +335,7 @@ bool obj_cmp_extra(OBJ_DATA *obj, char *arg, BUFFER *buf)
 /***************************************************************************
  *	obj_cmp_wear
  ***************************************************************************/
-bool obj_cmp_wear(OBJ_DATA *obj, char *arg, BUFFER *buf)
+bool obj_cmp_wear(GAMEOBJECT *obj, char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
 	add_buf(buf, "search by an object's wear location.\n\r");

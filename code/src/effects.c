@@ -4,8 +4,8 @@
 
 void acid_effect(void *vo, int level, int dam, int target)
 {
-	OBJ_DATA *obj;
-	OBJ_DATA *obj_next;
+	GAMEOBJECT *obj;
+	GAMEOBJECT *obj_next;
 
 	if (target == TARGET_ROOM) { /* nail objects on the floor */
 		ROOM_INDEX_DATA *room = (ROOM_INDEX_DATA *)vo;
@@ -29,12 +29,12 @@ void acid_effect(void *vo, int level, int dam, int target)
 	}
 
 	if (target == TARGET_OBJ) { /* toast an object */
-		OBJ_DATA *t_obj;
-		OBJ_DATA *n_obj;
+		GAMEOBJECT *t_obj;
+		GAMEOBJECT *n_obj;
 		int chance;
 		char *msg;
 
-		obj = (OBJ_DATA *)vo;
+		obj = (GAMEOBJECT *)vo;
 
 		if (IS_OBJ_STAT(obj, ITEM_BURN_PROOF)
 		    || IS_OBJ_STAT(obj, ITEM_NOPURGE)
@@ -155,13 +155,13 @@ void acid_effect(void *vo, int level, int dam, int target)
 
 void cold_effect(void *vo, int level, int dam, int target)
 {
-	OBJ_DATA *obj;
-	OBJ_DATA *obj_next;
+	GAMEOBJECT *obj;
+	GAMEOBJECT *obj_next;
 
 	if (target == TARGET_ROOM) { /* nail objects on the floor */
 		ROOM_INDEX_DATA *room = (ROOM_INDEX_DATA *)vo;
-		OBJ_DATA *obj;
-		OBJ_DATA *obj_next;
+		GAMEOBJECT *obj;
+		GAMEOBJECT *obj_next;
 
 		for (obj = room->contents; obj != NULL; obj = obj_next) {
 			obj_next = obj->next_content;
@@ -209,7 +209,7 @@ void cold_effect(void *vo, int level, int dam, int target)
 		int chance;
 		char *msg;
 
-		obj = (OBJ_DATA *)vo;
+		obj = (GAMEOBJECT *)vo;
 		if (IS_OBJ_STAT(obj, ITEM_BURN_PROOF)
 		    || IS_OBJ_STAT(obj, ITEM_NOPURGE)
 		    || number_range(0, 4) == 0)
@@ -259,8 +259,8 @@ void cold_effect(void *vo, int level, int dam, int target)
 
 void fire_effect(void *vo, int level, int dam, int target)
 {
-	OBJ_DATA *obj;
-	OBJ_DATA *obj_next;
+	GAMEOBJECT *obj;
+	GAMEOBJECT *obj_next;
 
 	if (target == TARGET_ROOM) {     /* nail objects on the floor */
 		ROOM_INDEX_DATA *room = (ROOM_INDEX_DATA *)vo;
@@ -313,12 +313,12 @@ void fire_effect(void *vo, int level, int dam, int target)
 	}
 
 	if (target == TARGET_OBJ) { /* toast an object */
-		OBJ_DATA *t_obj;
-		OBJ_DATA *n_obj;
+		GAMEOBJECT *t_obj;
+		GAMEOBJECT *n_obj;
 		int chance;
 		char *msg;
 
-		obj = (OBJ_DATA *)vo;
+		obj = (GAMEOBJECT *)vo;
 		if (IS_OBJ_STAT(obj, ITEM_BURN_PROOF)
 		    || IS_OBJ_STAT(obj, ITEM_NOPURGE)
 		    || number_range(0, 4) == 0)
@@ -398,8 +398,8 @@ void fire_effect(void *vo, int level, int dam, int target)
 
 void poison_effect(void *vo, int level, int dam, int target)
 {
-	OBJ_DATA *obj;
-	OBJ_DATA *obj_next;
+	GAMEOBJECT *obj;
+	GAMEOBJECT *obj_next;
 
 	if (target == TARGET_ROOM) { /* nail objects on the floor */
 		ROOM_INDEX_DATA *room = (ROOM_INDEX_DATA *)vo;
@@ -446,7 +446,7 @@ void poison_effect(void *vo, int level, int dam, int target)
 	if (target == TARGET_OBJ) { /* do some poisoning */
 		int chance;
 
-		obj = (OBJ_DATA *)vo;
+		obj = (GAMEOBJECT *)vo;
 
 		if (IS_OBJ_STAT(obj, ITEM_BURN_PROOF)
 		    || IS_OBJ_STAT(obj, ITEM_BLESS)
@@ -485,8 +485,8 @@ void poison_effect(void *vo, int level, int dam, int target)
 
 void shock_effect(void *vo, int level, int dam, int target)
 {
-	OBJ_DATA *obj;
-	OBJ_DATA *obj_next;
+	GAMEOBJECT *obj;
+	GAMEOBJECT *obj_next;
 
 	if (target == TARGET_ROOM) {
 		ROOM_INDEX_DATA *room = (ROOM_INDEX_DATA *)vo;
@@ -513,7 +513,7 @@ void shock_effect(void *vo, int level, int dam, int target)
 		int chance;
 		char *msg;
 
-		obj = (OBJ_DATA *)vo;
+		obj = (GAMEOBJECT *)vo;
 
 		if (IS_OBJ_STAT(obj, ITEM_BURN_PROOF)
 		    || IS_OBJ_STAT(obj, ITEM_NOPURGE)
@@ -559,7 +559,7 @@ void shock_effect(void *vo, int level, int dam, int target)
 	}
 }
 
-bool vorpal_effect(CHAR_DATA *ch, CHAR_DATA *victim, OBJ_DATA *wield)
+bool vorpal_effect(CHAR_DATA *ch, CHAR_DATA *victim, GAMEOBJECT *wield)
 {
 	int vorpal_chance = 0;
 

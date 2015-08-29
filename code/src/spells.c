@@ -537,7 +537,7 @@ void spell_control_weather(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int
 
 void spell_create_water(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
-    OBJ_DATA *obj = (OBJ_DATA *)vo;
+    GAMEOBJECT *obj = (GAMEOBJECT *)vo;
     long water;
 
 
@@ -790,7 +790,7 @@ void spell_detect_magic(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 
 void spell_detect_poison(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
-    OBJ_DATA *obj = (OBJ_DATA *)vo;
+    GAMEOBJECT *obj = (GAMEOBJECT *)vo;
 
     if (obj->item_type == ITEM_DRINK_CON || obj->item_type == ITEM_FOOD) {
 	if (obj->value[3] != 0)
@@ -911,7 +911,7 @@ void spell_earthquake(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int targ
 
 void spell_enchant_armor(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
-    OBJ_DATA *obj = (OBJ_DATA *)vo;
+    GAMEOBJECT *obj = (GAMEOBJECT *)vo;
     AFFECT_DATA *paf;
     int result;
     int fail;
@@ -1073,7 +1073,7 @@ void spell_enchant_armor(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 
 void spell_enchant_weapon(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
-    OBJ_DATA *obj = (OBJ_DATA *)vo;
+    GAMEOBJECT *obj = (GAMEOBJECT *)vo;
     AFFECT_DATA *paf;
     int result;
     int fail;
@@ -1431,12 +1431,12 @@ void spell_fireball(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target
 void spell_fireproof(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
     CHAR_DATA *victim;
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     AFFECT_DATA af;
 
     /* deal with the object case first */
     if (target == TARGET_OBJ) {
-	obj = (OBJ_DATA *)vo;
+	obj = (GAMEOBJECT *)vo;
 	if (IS_OBJ_STAT(obj, ITEM_BURN_PROOF)) {
 	    act("$p is already protected from `1b`!u`1r`!n`1i`!n`1g``.", ch, obj, NULL, TO_CHAR);
 	    return;
@@ -1607,7 +1607,7 @@ void spell_faerie_fog(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int targ
 
 void spell_floating_disc(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
-    OBJ_DATA *disc, *floating;
+    GAMEOBJECT *disc, *floating;
 
     floating = get_eq_char(ch, WEAR_FLOAT);
     if (floating != NULL && IS_OBJ_STAT(floating, ITEM_NOREMOVE)) {
@@ -1880,7 +1880,7 @@ void spell_heal_mana(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int targe
 
 void spell_identify(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
-    OBJ_DATA *obj = (OBJ_DATA *)vo;
+    GAMEOBJECT *obj = (GAMEOBJECT *)vo;
 
     identify_item(ch, obj);
     return;
@@ -1923,7 +1923,7 @@ void spell_invis(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, c
 
     /* object invisibility */
     if (target == TARGET_OBJ) {
-	OBJ_DATA *obj = (OBJ_DATA *)vo;
+	GAMEOBJECT *obj = (GAMEOBJECT *)vo;
 
 	if (IS_OBJ_STAT(obj, ITEM_INVIS)) {
 	    act("$p is already `8invisible``.", ch, obj, NULL, TO_CHAR);
@@ -1994,8 +1994,8 @@ void spell_lightning_bolt(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int 
 void spell_locate_object(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
     BUFFER *buffer;
-    OBJ_DATA *obj, *opending;
-    OBJ_DATA *in_obj;
+    GAMEOBJECT *obj, *opending;
+    GAMEOBJECT *in_obj;
     bool found;
     int number = 0;
     int max_found;
@@ -2267,12 +2267,12 @@ void spell_burning_flames(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int 
 void spell_poison(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
     CHAR_DATA *victim;
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     AFFECT_DATA af;
 
 
     if (target == TARGET_OBJ) {
-	obj = (OBJ_DATA *)vo;
+	obj = (GAMEOBJECT *)vo;
 
 	if (obj->item_type == ITEM_FOOD
 		|| obj->item_type == ITEM_DRINK_CON) {
@@ -2347,7 +2347,7 @@ void spell_poison(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, 
 
 void spell_recharge(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
-    OBJ_DATA *obj = (OBJ_DATA *)vo;
+    GAMEOBJECT *obj = (GAMEOBJECT *)vo;
     int percnt;
     int charges;
     int partial;
@@ -2423,11 +2423,11 @@ void spell_refresh(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target,
 void spell_remove_curse(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
     CHAR_DATA *victim;
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
 
     /* do object cases first */
     if (target == TARGET_OBJ) {
-	obj = (OBJ_DATA *)vo;
+	obj = (GAMEOBJECT *)vo;
 
 	if (IS_OBJ_STAT(obj, ITEM_NODROP)
 		|| IS_OBJ_STAT(obj, ITEM_NOREMOVE)) {
@@ -3063,7 +3063,7 @@ void spell_high_explosive(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int 
 
 void spell_equipment_invis(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
-    OBJ_DATA *obj = (OBJ_DATA *)vo;
+    GAMEOBJECT *obj = (GAMEOBJECT *)vo;
 
     if (obj->item_type == ITEM_WEAPON || obj->item_type == ITEM_ARMOR) {
 	if (!IS_OBJ_STAT(obj, ITEM_INVIS)) {
@@ -3082,7 +3082,7 @@ void spell_equipment_invis(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int
 
 void spell_noremove(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
-    OBJ_DATA *obj = (OBJ_DATA *)vo;
+    GAMEOBJECT *obj = (GAMEOBJECT *)vo;
 
     if (obj->item_type == ITEM_WEAPON || obj->item_type == ITEM_ARMOR) {
 	if (!IS_OBJ_STAT(obj, ITEM_NOREMOVE)) {
@@ -3106,12 +3106,12 @@ void spell_noremove(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target
 void spell_shatter_curse(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
     CHAR_DATA *victim;
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     bool found = false;
 
     /* do object cases first */
     if (target == TARGET_OBJ) {
-	obj = (OBJ_DATA *)vo;
+	obj = (GAMEOBJECT *)vo;
 
 	if (IS_OBJ_STAT(obj, ITEM_NODROP) || IS_OBJ_STAT(obj, ITEM_NOREMOVE)) {
 	    if (!IS_OBJ_STAT(obj, ITEM_NOUNCURSE) && !saves_dispel(level + 2, obj->level, 0)) {
@@ -3466,7 +3466,7 @@ void spell_farsight(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target
 void spell_portal(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
     CHAR_DATA *victim;
-    OBJ_DATA *portal;
+    GAMEOBJECT *portal;
 
     if ((victim = get_char_world(ch, argument)) == NULL
 	    || !can_trans_room(ch, victim, skill->sn)) {
@@ -3493,7 +3493,7 @@ void spell_portal(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, 
 void spell_nexus(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
     CHAR_DATA *victim;
-    OBJ_DATA *portal;
+    GAMEOBJECT *portal;
     ROOM_INDEX_DATA *to_room;
     ROOM_INDEX_DATA *from_room;
 
@@ -3661,8 +3661,8 @@ void spell_monsoon(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target,
  ***************************************************************************/
 void spell_fireblade(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument)
 {
-    OBJ_DATA *old_weapon;
-    OBJ_DATA *weapon;
+    GAMEOBJECT *old_weapon;
+    GAMEOBJECT *weapon;
 
     if ((old_weapon = get_eq_char(ch, WEAR_WIELD)) != NULL) {
 	if (old_weapon->objprototype != NULL

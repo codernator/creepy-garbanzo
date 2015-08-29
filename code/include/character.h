@@ -6,12 +6,12 @@ bool character_has_comm(/*@partial@*/CHAR_DATA *ch, long commflag);
 /* character_service.c */
 void toggle_afk(/*@partial@*/CHAR_DATA *ch, /*@null@*/char *message);
 void replay(/*@partial@*/CHAR_DATA *ch);
-void sit(/*@partial@*/CHAR_DATA *ch, /*@nulL@*//*@partial@*/OBJ_DATA *on);
-void stand(/*@partial@*/CHAR_DATA *ch, /*@nulL@*//*@partial@*/OBJ_DATA *on);
+void sit(/*@partial@*/CHAR_DATA *ch, /*@nulL@*//*@partial@*/GAMEOBJECT *on);
+void stand(/*@partial@*/CHAR_DATA *ch, /*@nulL@*//*@partial@*/GAMEOBJECT *on);
 void look_room(/*@partial@*/CHAR_DATA *ch, /*@partial@*/ROOM_INDEX_DATA *room);
-void look_object(/*@partial@*/CHAR_DATA *ch, /*@partial@*/OBJ_DATA *obj, char *argument);
+void look_object(/*@partial@*/CHAR_DATA *ch, /*@partial@*/GAMEOBJECT *obj, char *argument);
 void look_character(/*@partial@*/CHAR_DATA *ch, /*@partial@*/CHAR_DATA *victim);
 void look_extras(/*@partial@*/CHAR_DATA *ch, char *name, int number);
 void look_direction(/*@partial@*/CHAR_DATA *ch, int door);
 void look_equipment(/*@partial@*/CHAR_DATA *ch);
-void get_obj(/*@partial@*/CHAR_DATA * ch, /*@partial@*/OBJ_DATA * obj, /*@partial@*/OBJ_DATA * container);
+void get_obj(/*@partial@*/CHAR_DATA * ch, /*@partial@*/GAMEOBJECT * obj, /*@partial@*/GAMEOBJECT * container);

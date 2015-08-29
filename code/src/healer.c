@@ -32,7 +32,7 @@ heal_cmd_table[] =
 void do_heal(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *mob;
-	OBJ_DATA *acid;
+	GAMEOBJECT *acid;
 	SKILL *skill;
 	char arg[MIL];
 	unsigned int cost;

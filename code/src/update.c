@@ -22,7 +22,7 @@ extern AFFECT_DATA *new_affect(void);
 extern void auction_update(void);
 
 
-void gain_object_exp(CHAR_DATA * ch, OBJ_DATA * obj, int gain);
+void gain_object_exp(CHAR_DATA * ch, GAMEOBJECT * obj, int gain);
 void update_pktimer(CHAR_DATA * ch);
 char *who_string(CHAR_DATA * ch);
 
@@ -32,14 +32,14 @@ char *who_string(CHAR_DATA * ch);
  ***************************************************************************/
 static int save_number = 0;
 
-static void add_cache_affect(OBJ_DATA * obj, int bit, int sn, int level, int mod);
+static void add_cache_affect(GAMEOBJECT * obj, int bit, int sn, int level, int mod);
 static void mobile_update(void);
 static void weather_update(void);
 static int hit_gain(CHAR_DATA * ch);
 static int mana_gain(CHAR_DATA * ch);
 static int move_gain(CHAR_DATA * ch);
 static void char_update(void);
-static void advance_level_object(CHAR_DATA * ch, OBJ_DATA * obj);
+static void advance_level_object(CHAR_DATA * ch, GAMEOBJECT * obj);
 static void obj_update(void);
 static void aggr_update(void);
 static void room_update(void);
@@ -47,7 +47,7 @@ static void underwater_update(void);
 
 
 
-void gain_object_exp(CHAR_DATA *ch, OBJ_DATA *obj, int gain)
+void gain_object_exp(CHAR_DATA *ch, GAMEOBJECT *obj, int gain)
 {
     int leftover = 0;
 
@@ -72,7 +72,7 @@ void gain_object_exp(CHAR_DATA *ch, OBJ_DATA *obj, int gain)
     return;
 }
 
-static void advance_level_object(CHAR_DATA *ch, OBJ_DATA *obj)
+static void advance_level_object(CHAR_DATA *ch, GAMEOBJECT *obj)
 {
     int pbonus = number_range(5, 10);
     int bonus = number_range(4, 8);
@@ -109,7 +109,7 @@ static void advance_level_object(CHAR_DATA *ch, OBJ_DATA *obj)
  *	appends the affect to an existing affect if it already
  *	exists, otherwise it creates a new affect
  ***************************************************************************/
-static void add_cache_affect(OBJ_DATA *obj, int bit, int sn, int level, int mod)
+static void add_cache_affect(GAMEOBJECT *obj, int bit, int sn, int level, int mod)
 {
     AFFECT_DATA *paf;
     bool found = false;
@@ -706,8 +706,8 @@ static void mobile_update(void)
 	if (IS_SET(ch->act, ACT_SCAVENGER)
 		&& ch->in_room->contents != NULL
 		&& number_bits(6) == 0) {
-	    OBJ_DATA *obj;
-	    OBJ_DATA *obj_best;
+	    GAMEOBJECT *obj;
+	    GAMEOBJECT *obj_best;
 	    unsigned int max;
 
 	    max = 1;
@@ -1107,7 +1107,7 @@ static void char_update(void)
 	    update_pos(ch);
 
 	if (!IS_NPC(ch) && ch->level < LEVEL_IMMORTAL) {
-	    OBJ_DATA *obj;
+	    GAMEOBJECT *obj;
 
 	    if ((obj = get_eq_char(ch, WEAR_LIGHT)) != NULL
 		    && obj->item_type == ITEM_LIGHT
@@ -1258,7 +1258,7 @@ static void char_update(void)
  ***************************************************************************/
 static void obj_update(void)
 {
-    OBJ_DATA *obj, *opending;
+    GAMEOBJECT *obj, *opending;
     AFFECT_DATA *paf;
     AFFECT_DATA *paf_next;
 
@@ -1357,7 +1357,7 @@ static void obj_update(void)
 	}
 
 	if ((obj->item_type == ITEM_CORPSE_PC || obj->wear_loc == WEAR_FLOAT) && obj->contains != NULL) {
-	    OBJ_DATA *t_obj, *next_obj;
+	    GAMEOBJECT *t_obj, *next_obj;
 
 	    for (t_obj = obj->contains; t_obj != NULL; t_obj = next_obj) {
 		next_obj = t_obj->next_content;

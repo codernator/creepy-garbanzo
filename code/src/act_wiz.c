@@ -25,7 +25,7 @@ extern long top_mob_index;
 extern bool copyover();
 extern AFFECT_DATA *affect_free;
 extern bool is_auction_participant(CHAR_DATA *ch);
-extern OBJ_DATA *get_auction_item();
+extern GAMEOBJECT *get_auction_item();
 extern ROOM_INDEX_DATA *find_location(CHAR_DATA * ch, char *arg);
 extern void reset_area(AREA_DATA * pArea);
 extern bool add_alias(CHAR_DATA * ch, char *alias, char *cmd);
@@ -453,7 +453,7 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
     }
 
     if (is_auction_participant(ch)) {
-	OBJ_DATA *item = get_auction_item();
+	GAMEOBJECT *item = get_auction_item();
 	if (item == NULL) {
 	    log_bug("%s reported as auction participant with no auction item.", ch->name);
 	} else {
@@ -607,7 +607,7 @@ void do_wiznet(CHAR_DATA *ch, char *argument)
     }
 }
 
-void wiznet(char *string, /*@null@*/ CHAR_DATA *ch, /*@null@*/ OBJ_DATA *obj, long flag, long flag_skip, int min_level)
+void wiznet(char *string, /*@null@*/ CHAR_DATA *ch, /*@null@*/ GAMEOBJECT *obj, long flag, long flag_skip, int min_level)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
     DESCRIPTOR_DATA *d;
@@ -715,7 +715,7 @@ void do_impnet(CHAR_DATA *ch, char *argument)
     }
 }
 
-void impnet(char *string, CHAR_DATA *ch, OBJ_DATA *obj, long flag, long flag_skip, int min_level)
+void impnet(char *string, CHAR_DATA *ch, GAMEOBJECT *obj, long flag, long flag_skip, int min_level)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
     DESCRIPTOR_DATA *d;
@@ -948,7 +948,7 @@ void do_disconnect(CHAR_DATA *ch, char *argument)
 void do_chown(CHAR_DATA *ch, char *argument)
 {
     CHAR_DATA *victim;
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     char arg1[MIL];
     char arg2[MIL];
 
@@ -1702,7 +1702,7 @@ void do_return(CHAR_DATA *ch, char *argument)
 }
 
 /* trust levels for load and clone */
-bool obj_check(CHAR_DATA *ch, OBJ_DATA *obj)
+bool obj_check(CHAR_DATA *ch, GAMEOBJECT *obj)
 {
     if (IS_TRUSTED(ch, GOD)
 	    || (IS_TRUSTED(ch, IMMORTAL) && obj->level <= 20 && obj->cost <= 1000)
@@ -1715,10 +1715,10 @@ bool obj_check(CHAR_DATA *ch, OBJ_DATA *obj)
 }
 
 /* for clone, to insure that cloning goes many levels deep */
-void recursive_clone(CHAR_DATA *ch, OBJ_DATA *obj, OBJ_DATA *clone)
+void recursive_clone(CHAR_DATA *ch, GAMEOBJECT *obj, GAMEOBJECT *clone)
 {
-    OBJ_DATA *c_obj;
-    OBJ_DATA *t_obj;
+    GAMEOBJECT *c_obj;
+    GAMEOBJECT *t_obj;
 
     for (c_obj = obj->contains; c_obj != NULL; c_obj = c_obj->next_content) {
 	if (obj_check(ch, c_obj)) {
@@ -1734,7 +1734,7 @@ void recursive_clone(CHAR_DATA *ch, OBJ_DATA *obj, OBJ_DATA *clone)
 void do_clone(CHAR_DATA *ch, char *argument)
 {
     CHAR_DATA *mob;
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     char arg[MIL];
     char buf[MIL];
     char *rest;
@@ -1798,7 +1798,7 @@ void do_clone(CHAR_DATA *ch, char *argument)
 	    send_to_char("Your powers are not great enough for such a task.\n\r", ch);
 	    return;
 	} else {
-	    OBJ_DATA *clone = NULL;
+	    GAMEOBJECT *clone = NULL;
 
 	    for (iter = 0; iter < count; iter++) {
 		clone = create_object(obj->objprototype, 0);
@@ -1847,7 +1847,7 @@ void do_clone(CHAR_DATA *ch, char *argument)
 
 		    for (obj = mob->carrying; obj != NULL; obj = obj->next_content) {
 			if (obj_check(ch, obj)) {
-			    OBJ_DATA *new_obj = create_object(obj->objprototype, 0);
+			    GAMEOBJECT *new_obj = create_object(obj->objprototype, 0);
 			    clone_object(obj, new_obj);
 			    recursive_clone(ch, obj, new_obj);
 			    obj_to_char(new_obj, clone);
@@ -1949,7 +1949,7 @@ void do_mload(CHAR_DATA *ch, char *argument)
 void do_oload(CHAR_DATA *ch, char *argument)
 {
     OBJECTPROTOTYPE *pObjIndex;
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     char arg1[MIL];
     char arg2[MIL];
     char buf[MSL];
@@ -2003,7 +2003,7 @@ void do_purge(CHAR_DATA *ch, char *argument)
 {
     DESCRIPTOR_DATA *d;
     CHAR_DATA *victim;
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     char arg[MIL];
     char buf[100];
 
@@ -2014,7 +2014,7 @@ void do_purge(CHAR_DATA *ch, char *argument)
 	if (arg[0] == '\0') {
 	    /* 'purge' */
 	    CHAR_DATA *vnext;
-	    OBJ_DATA *obj_next;
+	    GAMEOBJECT *obj_next;
 
 	    for (victim = ch->in_room->people; victim != NULL; victim = vnext) {
 		vnext = victim->next_in_room;
@@ -3531,8 +3531,8 @@ void do_addalias(CHAR_DATA *ch, char *argument)
 void fry_char(CHAR_DATA *ch, char *argument)
 {
     DESCRIPTOR_DATA *d;
-    OBJ_DATA *obj;
-    OBJ_DATA *obj_next;
+    GAMEOBJECT *obj;
+    GAMEOBJECT *obj_next;
 
     DENY_NPC(ch)
 
@@ -3591,7 +3591,7 @@ void do_gobstopper(CHAR_DATA *ch, char *argument)
 
 void do_mrelic(CHAR_DATA *ch, char *argument)
 {
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     int i = 1500;
 
     if (argument[0] == '\0') {

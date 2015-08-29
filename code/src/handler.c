@@ -22,7 +22,7 @@ extern SKILL *gsp_darkness;
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern void affect_modify(CHAR_DATA * ch, AFFECT_DATA * paf, bool fAdd);
 extern long parse_long(char *test);
-extern void affect_join_obj(OBJ_DATA * obj, AFFECT_DATA * paf);
+extern void affect_join_obj(GAMEOBJECT * obj, AFFECT_DATA * paf);
 
 
 /**
@@ -169,7 +169,7 @@ bool is_friend(CHAR_DATA *ch, CHAR_DATA *victim)
     return false;
 }
 
-int count_users(OBJ_DATA *obj)
+int count_users(GAMEOBJECT *obj)
 {
     CHAR_DATA *fch;
     int count = 0;
@@ -300,7 +300,7 @@ int check_immune(CHAR_DATA *ch, int dam_type)
 ROOM_INDEX_DATA *find_location(CHAR_DATA *ch, char *arg)
 {
     CHAR_DATA *victim;
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
 
     if (is_number(arg))
 	return get_room_index(parse_long(arg));
@@ -315,7 +315,7 @@ ROOM_INDEX_DATA *find_location(CHAR_DATA *ch, char *arg)
 }
 
 
-int get_weapon_sn(CHAR_DATA *ch, OBJ_DATA *wield)
+int get_weapon_sn(CHAR_DATA *ch, GAMEOBJECT *wield)
 {
     SKILL *skill;
 
@@ -387,7 +387,7 @@ int get_weapon_skill(CHAR_DATA *ch, int sn)
  ***************************************************************************/
 void reset_char(CHAR_DATA *ch)
 {
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     AFFECT_DATA *af;
     int loc;
     long mod;
@@ -840,7 +840,7 @@ bool is_name(char *str, char *namelist)
  */
 void char_from_room(CHAR_DATA *ch)
 {
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
 
     if (ch->in_room == NULL) {
 	log_bug("Char_from_room: NULL.", 0);
@@ -880,7 +880,7 @@ void char_from_room(CHAR_DATA *ch)
 
 void char_to_room(CHAR_DATA *ch, ROOM_INDEX_DATA *pRoomIndex)
 {
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
 
     if (pRoomIndex == NULL) {
 	ROOM_INDEX_DATA *room;
@@ -914,7 +914,7 @@ void char_to_room(CHAR_DATA *ch, ROOM_INDEX_DATA *pRoomIndex)
 /**
  * Give an obj to a char.
  */
-void obj_to_char(OBJ_DATA *obj, CHAR_DATA *ch)
+void obj_to_char(GAMEOBJECT *obj, CHAR_DATA *ch)
 {
     obj->next_content = ch->carrying;
     ch->carrying = obj;
@@ -929,7 +929,7 @@ void obj_to_char(OBJ_DATA *obj, CHAR_DATA *ch)
 /**
  * Take an obj from its character.
  */
-void obj_from_char(OBJ_DATA *obj)
+void obj_from_char(GAMEOBJECT *obj)
 {
     CHAR_DATA *ch;
 
@@ -944,7 +944,7 @@ void obj_from_char(OBJ_DATA *obj)
     if (ch->carrying == obj) {
 	ch->carrying = obj->next_content;
     } else {
-	OBJ_DATA *prev;
+	GAMEOBJECT *prev;
 
 	for (prev = ch->carrying; prev != NULL; prev = prev->next_content) {
 	    if (prev->next_content == obj) {
@@ -966,7 +966,7 @@ void obj_from_char(OBJ_DATA *obj)
 /**
  * Find the ac value of an obj, including position effect.
  */
-long apply_ac(OBJ_DATA *obj, int iWear, int type)
+long apply_ac(GAMEOBJECT *obj, int iWear, int type)
 {
     if (obj->item_type != ITEM_ARMOR)
 	return 0;
@@ -1020,9 +1020,9 @@ long apply_ac(OBJ_DATA *obj, int iWear, int type)
 /**
  * Find a piece of eq on a character.
  */
-OBJ_DATA *get_eq_char(CHAR_DATA *ch, int iWear)
+GAMEOBJECT *get_eq_char(CHAR_DATA *ch, int iWear)
 {
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
 
     if (ch == NULL)
 	return NULL;
@@ -1037,7 +1037,7 @@ OBJ_DATA *get_eq_char(CHAR_DATA *ch, int iWear)
 /**
  * Equip a char with an obj.
  */
-void equip_char(CHAR_DATA *ch, OBJ_DATA *obj, int iWear)
+void equip_char(CHAR_DATA *ch, GAMEOBJECT *obj, int iWear)
 {
     AFFECT_DATA *paf;
     int i;
@@ -1073,7 +1073,7 @@ void equip_char(CHAR_DATA *ch, OBJ_DATA *obj, int iWear)
 /**
  * Unequip a char with an obj.
  */
-void unequip_char(CHAR_DATA *ch, OBJ_DATA *obj)
+void unequip_char(CHAR_DATA *ch, GAMEOBJECT *obj)
 {
     AFFECT_DATA *paf = NULL;
     AFFECT_DATA *lpaf = NULL;
@@ -1143,9 +1143,9 @@ void unequip_char(CHAR_DATA *ch, OBJ_DATA *obj)
 /**
  * Count occurrences of an obj in a list.
  */
-int count_obj_list(OBJECTPROTOTYPE *pObjIndex, OBJ_DATA *list)
+int count_obj_list(OBJECTPROTOTYPE *pObjIndex, GAMEOBJECT *list)
 {
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     int nMatch;
 
     nMatch = 0;
@@ -1159,7 +1159,7 @@ int count_obj_list(OBJECTPROTOTYPE *pObjIndex, OBJ_DATA *list)
 /**
  * Move an obj out of a room.
  */
-void obj_from_room(OBJ_DATA *obj)
+void obj_from_room(GAMEOBJECT *obj)
 {
     ROOM_INDEX_DATA *in_room;
     CHAR_DATA *ch;
@@ -1176,7 +1176,7 @@ void obj_from_room(OBJ_DATA *obj)
     if (obj == in_room->contents) {
 	in_room->contents = obj->next_content;
     } else {
-	OBJ_DATA *prev;
+	GAMEOBJECT *prev;
 
 	for (prev = in_room->contents; prev; prev = prev->next_content) {
 	    if (prev->next_content == obj) {
@@ -1201,7 +1201,7 @@ void obj_from_room(OBJ_DATA *obj)
 /*
  * Move an obj into a room.
  */
-void obj_to_room(OBJ_DATA *obj, ROOM_INDEX_DATA *pRoomIndex)
+void obj_to_room(GAMEOBJECT *obj, ROOM_INDEX_DATA *pRoomIndex)
 {
     /*    int max_obj;
      *
@@ -1228,7 +1228,7 @@ void obj_to_room(OBJ_DATA *obj, ROOM_INDEX_DATA *pRoomIndex)
 /*
  * Move an object into an object.
  */
-void obj_to_obj(OBJ_DATA *obj, OBJ_DATA *obj_to)
+void obj_to_obj(GAMEOBJECT *obj, GAMEOBJECT *obj_to)
 {
     obj->next_content = obj_to->contains;
     obj_to->contains = obj;
@@ -1253,9 +1253,9 @@ void obj_to_obj(OBJ_DATA *obj, OBJ_DATA *obj_to)
 }
 
 /** Move an object out of an object. */
-void obj_from_obj(OBJ_DATA *obj)
+void obj_from_obj(GAMEOBJECT *obj)
 {
-    OBJ_DATA *obj_from;
+    GAMEOBJECT *obj_from;
 
     if ((obj_from = obj->in_obj) == NULL) {
 	log_bug("Obj_from_obj: null obj_from.", 0);
@@ -1265,7 +1265,7 @@ void obj_from_obj(OBJ_DATA *obj)
     if (obj == obj_from->contains) {
 	obj_from->contains = obj->next_content;
     } else {
-	OBJ_DATA *prev;
+	GAMEOBJECT *prev;
 
 	for (prev = obj_from->contains; prev; prev = prev->next_content) {
 	    if (prev->next_content == obj) {
@@ -1295,10 +1295,10 @@ void obj_from_obj(OBJ_DATA *obj)
 }
 
 /** Extract an obj from the world.  */
-void extract_obj(OBJ_DATA *obj)
+void extract_obj(GAMEOBJECT *obj)
 {
-    OBJ_DATA *obj_content;
-    OBJ_DATA *obj_next;
+    GAMEOBJECT *obj_content;
+    GAMEOBJECT *obj_next;
 
     if (obj->in_room != NULL)
 	obj_from_room(obj);
@@ -1455,7 +1455,7 @@ CHAR_DATA *get_char_world(CHAR_DATA *ch, char *argument)
  *
  * find an object with a given index data
  ***************************************************************************/
-OBJ_DATA *get_obj_type(OBJECTPROTOTYPE *objprototype)
+GAMEOBJECT *get_obj_type(OBJECTPROTOTYPE *objprototype)
 {
     const struct object_iterator_filter filter = { .object_template = objprototype };
     return object_iterator_start(&filter);
@@ -1466,9 +1466,9 @@ OBJ_DATA *get_obj_type(OBJECTPROTOTYPE *objprototype)
  *
  * find an object in an arbitrary object list
  ***************************************************************************/
-OBJ_DATA *get_obj_list(CHAR_DATA *ch, char *argument, OBJ_DATA *list)
+GAMEOBJECT *get_obj_list(CHAR_DATA *ch, char *argument, GAMEOBJECT *list)
 {
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     char arg[MIL];
     int number;
     int count;
@@ -1492,9 +1492,9 @@ OBJ_DATA *get_obj_list(CHAR_DATA *ch, char *argument, OBJ_DATA *list)
  *
  * find an object in the characters inventory
  ***************************************************************************/
-OBJ_DATA *get_obj_carry(CHAR_DATA *ch, char *argument)
+GAMEOBJECT *get_obj_carry(CHAR_DATA *ch, char *argument)
 {
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     char arg[MIL];
     int number;
     int count;
@@ -1519,9 +1519,9 @@ OBJ_DATA *get_obj_carry(CHAR_DATA *ch, char *argument)
  *
  * find an object worn by the character
  ***************************************************************************/
-OBJ_DATA *get_obj_wear(CHAR_DATA *ch, char *argument)
+GAMEOBJECT *get_obj_wear(CHAR_DATA *ch, char *argument)
 {
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     char arg[MIL];
     int number;
     int count;
@@ -1547,9 +1547,9 @@ OBJ_DATA *get_obj_wear(CHAR_DATA *ch, char *argument)
  *
  * find an object in the room or in inventory or worn
  ***************************************************************************/
-OBJ_DATA *get_obj_here(CHAR_DATA *ch, char *argument)
+GAMEOBJECT *get_obj_here(CHAR_DATA *ch, char *argument)
 {
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
 
     obj = get_obj_list(ch, argument, ch->in_room->contents);
     if (obj != NULL)
@@ -1569,9 +1569,9 @@ OBJ_DATA *get_obj_here(CHAR_DATA *ch, char *argument)
  *
  * find an object somewhere in the world
  ***************************************************************************/
-OBJ_DATA *get_obj_world(CHAR_DATA *ch, char *argument)
+GAMEOBJECT *get_obj_world(CHAR_DATA *ch, char *argument)
 {
-    OBJ_DATA *obj, *opending;
+    GAMEOBJECT *obj, *opending;
     char arg[MIL];
     int number;
     int count = 0;
@@ -1632,10 +1632,10 @@ void deduct_cost(CHAR_DATA *ch, unsigned int cost)
  *
  * create money
  ***************************************************************************/
-OBJ_DATA *create_money(unsigned int gold, unsigned int silver)
+GAMEOBJECT *create_money(unsigned int gold, unsigned int silver)
 {
     char buf[MSL];
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
 
     if ((gold == 0 && silver == 0)) {
 	log_bug("create_money: zerod money: %u - %u", gold, silver);
@@ -1690,9 +1690,9 @@ OBJ_DATA *create_money(unsigned int gold, unsigned int silver)
  * certain object types count as 0 objects, containers
  * may contain several objects
  ***************************************************************************/
-int get_obj_number(OBJ_DATA *obj)
+int get_obj_number(GAMEOBJECT *obj)
 {
-    OBJ_DATA *objprototype;
+    GAMEOBJECT *objprototype;
     int number;
 
     if (obj->item_type == ITEM_CONTAINER
@@ -1720,9 +1720,9 @@ int get_obj_number(OBJ_DATA *obj)
  *
  * get an objects weight figuring in weight multiplers
  ***************************************************************************/
-int get_obj_weight(OBJ_DATA *obj)
+int get_obj_weight(GAMEOBJECT *obj)
 {
-    OBJ_DATA *objprototype;
+    GAMEOBJECT *objprototype;
     int weight;
 
     weight = obj->weight;
@@ -1740,9 +1740,9 @@ int get_obj_weight(OBJ_DATA *obj)
  * get an objects true weight - handles objects inside of
  * other objects
  ***************************************************************************/
-int get_true_weight(OBJ_DATA *obj)
+int get_true_weight(GAMEOBJECT *obj)
 {
-    OBJ_DATA *objprototype;
+    GAMEOBJECT *objprototype;
     int weight;
 
     weight = obj->weight;
@@ -1937,7 +1937,7 @@ bool can_see(CHAR_DATA *ch, CHAR_DATA *victim)
  *
  * can a character see an object?
  ***************************************************************************/
-bool can_see_obj(CHAR_DATA *ch, OBJ_DATA *obj)
+bool can_see_obj(CHAR_DATA *ch, GAMEOBJECT *obj)
 {
     if (!IS_NPC(ch) && IS_SET(ch->act, PLR_HOLYLIGHT))
 	return true;
@@ -1973,7 +1973,7 @@ bool can_see_obj(CHAR_DATA *ch, OBJ_DATA *obj)
  *
  * can a character drop an object?
  ***************************************************************************/
-bool can_drop_obj(CHAR_DATA *ch, OBJ_DATA *obj)
+bool can_drop_obj(CHAR_DATA *ch, GAMEOBJECT *obj)
 {
     if (!IS_SET(obj->extra_flags, ITEM_NODROP))
 	return true;
@@ -2001,7 +2001,7 @@ char *room_flag_bit_name(ROOM_INDEX_DATA *room)
  *
  * get the ascii name of an item type
  ***************************************************************************/
-char *item_type_name(OBJ_DATA *obj)
+char *item_type_name(GAMEOBJECT *obj)
 {
     return flag_string(type_flags, (long)obj->item_type);
 }
@@ -2218,7 +2218,7 @@ char *uncolor_str(char *txt)
 /***************************************************************************
  * identify_item
  ***************************************************************************/
-void identify_item(CHAR_DATA *ch, OBJ_DATA *obj)
+void identify_item(CHAR_DATA *ch, GAMEOBJECT *obj)
 {
     AFFECT_DATA *paf;
     int iter;
@@ -2452,7 +2452,7 @@ void identify_item(CHAR_DATA *ch, OBJ_DATA *obj)
  */
 void furniture_check(CHAR_DATA *ch)
 {
-    OBJ_DATA *obj_on;
+    GAMEOBJECT *obj_on;
 
     if (ch->on != NULL && IS_SET(ch->on->wear_flags, ITEM_TAKE)) {
 	obj_on = ch->on;

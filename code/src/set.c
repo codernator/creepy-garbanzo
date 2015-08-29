@@ -20,7 +20,7 @@ extern int flag_value(const struct flag_type *flag_table, char *argument);
 static bool set_integer_arg(int *value, char *argument);
 static bool set_uint_arg(unsigned int *value, char *argument);
 static bool set_long_arg(long *value, char *argument);
-static bool set_obj_value_idx(OBJ_DATA * obj, int idx, char *argument);
+static bool set_obj_value_idx(GAMEOBJECT * obj, int idx, char *argument);
 static void item_type_help(CHAR_DATA * ch, int item_type);
 
 /***************************************************************************
@@ -29,7 +29,7 @@ static void item_type_help(CHAR_DATA * ch, int item_type);
 typedef void SET_FN(CHAR_DATA * ch, char *argument);
 typedef bool SET_ROOM_FN(CHAR_DATA * ch, ROOM_INDEX_DATA * room, char *argument);
 typedef bool SET_CHAR_FN(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
-typedef bool SET_OBJ_FN(CHAR_DATA * ch, OBJ_DATA * obj, char *argument);
+typedef bool SET_OBJ_FN(CHAR_DATA * ch, GAMEOBJECT * obj, char *argument);
 
 static SET_FN set_character;
 static SET_FN set_object;
@@ -1172,7 +1172,7 @@ set_obj_cmd_table[] =
  ***************************************************************************/
 static void set_object(CHAR_DATA *ch, char *argument)
 {
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     char arg[MIL];
     char cmd[MIL];
     int idx;
@@ -1227,7 +1227,7 @@ static void set_object(CHAR_DATA *ch, char *argument)
  *
  *	set the value 0 property of an object
  ***************************************************************************/
-static bool set_obj_v0(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
+static bool set_obj_v0(CHAR_DATA *ch, GAMEOBJECT *obj, char *argument)
 {
     if (is_help(argument)) {
 	send_to_char("`#SYNTAX``: v0 <value>\n\r\n\r", ch);
@@ -1249,7 +1249,7 @@ static bool set_obj_v0(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
  *
  *	set the value 1 property of an object
  ***************************************************************************/
-static bool set_obj_v1(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
+static bool set_obj_v1(CHAR_DATA *ch, GAMEOBJECT *obj, char *argument)
 {
     if (is_help(argument)) {
 	send_to_char("`#SYNTAX``: v1 <value>\n\r\n\r", ch);
@@ -1270,7 +1270,7 @@ static bool set_obj_v1(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
  *
  *	set the value 2 property of an object
  ***************************************************************************/
-static bool set_obj_v2(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
+static bool set_obj_v2(CHAR_DATA *ch, GAMEOBJECT *obj, char *argument)
 {
     if (is_help(argument)) {
 	send_to_char("`#SYNTAX``: v2 <value>\n\r\n\r", ch);
@@ -1291,7 +1291,7 @@ static bool set_obj_v2(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
  *
  *	set the value 3 property of an object
  ***************************************************************************/
-static bool set_obj_v3(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
+static bool set_obj_v3(CHAR_DATA *ch, GAMEOBJECT *obj, char *argument)
 {
     if (is_help(argument)) {
 	send_to_char("`#SYNTAX``: v3 <value>\n\r\n\r", ch);
@@ -1313,7 +1313,7 @@ static bool set_obj_v3(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
  *
  *	set the value 0 property of an object
  ***************************************************************************/
-static bool set_obj_v4(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
+static bool set_obj_v4(CHAR_DATA *ch, GAMEOBJECT *obj, char *argument)
 {
     if (is_help(argument)) {
 	send_to_char("`#SYNTAX``: v4 <value>\n\r\n\r", ch);
@@ -1334,7 +1334,7 @@ static bool set_obj_v4(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
  *
  *	set the extra property of an object
  ***************************************************************************/
-static bool set_obj_extra(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
+static bool set_obj_extra(CHAR_DATA *ch, GAMEOBJECT *obj, char *argument)
 {
     if (is_help(argument)) {
 	int idx;
@@ -1378,7 +1378,7 @@ static bool set_obj_extra(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
  *
  *       set the extra2 property of an object
  ***************************************************************************/
-static bool set_obj_extra2(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
+static bool set_obj_extra2(CHAR_DATA *ch, GAMEOBJECT *obj, char *argument)
 {
     if (is_help(argument)) {
 	int idx;
@@ -1422,7 +1422,7 @@ static bool set_obj_extra2(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
  *
  *	set the wear flags property of an object
  ***************************************************************************/
-static bool set_obj_wear(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
+static bool set_obj_wear(CHAR_DATA *ch, GAMEOBJECT *obj, char *argument)
 {
     if (is_help(argument)) {
 	int idx;
@@ -1469,7 +1469,7 @@ static bool set_obj_wear(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
  *
  *	set the level of an object
  ***************************************************************************/
-static bool set_obj_level(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
+static bool set_obj_level(CHAR_DATA *ch, GAMEOBJECT *obj, char *argument)
 {
     if (is_help(argument)) {
 	send_to_char("`#SYNTAX``: level <level>\n\r", ch);
@@ -1487,7 +1487,7 @@ static bool set_obj_level(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
  *
  *	set the cost of an object
  ***************************************************************************/
-static bool set_obj_cost(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
+static bool set_obj_cost(CHAR_DATA *ch, GAMEOBJECT *obj, char *argument)
 {
     if (is_help(argument)) {
 	send_to_char("`#SYNTAX``: cost <amount>\n\r", ch);
@@ -1505,7 +1505,7 @@ static bool set_obj_cost(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
  *
  *	set the weight of an object
  ***************************************************************************/
-static bool set_obj_weight(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
+static bool set_obj_weight(CHAR_DATA *ch, GAMEOBJECT *obj, char *argument)
 {
     if (is_help(argument)) {
 	send_to_char("`#SYNTAX``: weight <amount>\n\r", ch);
@@ -1523,7 +1523,7 @@ static bool set_obj_weight(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
  *
  *	set the light value of a room
  ***************************************************************************/
-static bool set_obj_timer(CHAR_DATA *ch, OBJ_DATA *obj, char *argument)
+static bool set_obj_timer(CHAR_DATA *ch, GAMEOBJECT *obj, char *argument)
 {
     if (is_help(argument)) {
 	send_to_char("`#SYNTAX``: timer <number of ticks>\n\r", ch);
@@ -2025,7 +2025,7 @@ static bool set_long_arg(long *value, char *argument)
  *
  *	set an indexed value property of an item based on it's type
  *****************************************************************************/
-static bool set_obj_value_idx(OBJ_DATA *obj, int idx, char *argument)
+static bool set_obj_value_idx(GAMEOBJECT *obj, int idx, char *argument)
 {
     SKILL *skill;
     int value;

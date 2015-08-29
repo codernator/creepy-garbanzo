@@ -702,7 +702,7 @@ EDIT(redit_oshow){
  ***************************************************************************/
 EDIT(redit_show){
     ROOM_INDEX_DATA *room;
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     CHAR_DATA *rch;
     char buf[MSL];
     int door;
@@ -1319,8 +1319,8 @@ EDIT(redit_mreset){
 EDIT(redit_oreset){
     ROOM_INDEX_DATA *room;
     OBJECTPROTOTYPE *obj;
-    OBJ_DATA *newobj;
-    OBJ_DATA *to_obj;
+    GAMEOBJECT *newobj;
+    GAMEOBJECT *to_obj;
     CHAR_DATA *to_mob;
     RESET_DATA *pReset;
     char arg1[MIL];

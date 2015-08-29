@@ -707,7 +707,7 @@ bool check_reconnect(DESCRIPTOR_DATA *d, char *name, bool reconnect)
 		free_string(d->character->pcdata->pwd);
 		d->character->pcdata->pwd = str_dup(ch->pcdata->pwd);
 	    } else {
-		OBJ_DATA *obj;
+		GAMEOBJECT *obj;
 
 		free_char(d->character);
 		d->character = ch;

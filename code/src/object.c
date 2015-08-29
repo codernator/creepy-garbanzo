@@ -14,28 +14,28 @@ extern void free_extra_descr(EXTRA_DESCR_DATA *ed);
 
 
 /** locals */
-static OBJ_DATA head_node;
-static bool passes(OBJ_DATA *testee, const OBJECT_ITERATOR_FILTER *filter);
+static GAMEOBJECT head_node;
+static bool passes(GAMEOBJECT *testee, const OBJECT_ITERATOR_FILTER *filter);
 
 
 
 
-OBJ_DATA *object_new(OBJECTPROTOTYPE *prototypedata)
+GAMEOBJECT *object_new(OBJECTPROTOTYPE *prototypedata)
 {
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
 
-    obj = malloc(sizeof(OBJ_DATA));
+    obj = malloc(sizeof(GAMEOBJECT));
     assert(obj != NULL);
 
     /** Default values */
     {
-	memset(obj, 0, sizeof(OBJ_DATA));
+	memset(obj, 0, sizeof(GAMEOBJECT));
 	obj->objprototype = prototypedata;
     }
 
     /** Place on list. */
     {
-	OBJ_DATA *headnext;
+	GAMEOBJECT *headnext;
 	obj->prev = &head_node;
 	headnext = head_node.next;
 	if (headnext != NULL) {
@@ -50,15 +50,15 @@ OBJ_DATA *object_new(OBJECTPROTOTYPE *prototypedata)
     return obj;
 }
 
-void object_free(OBJ_DATA *obj)
+void object_free(GAMEOBJECT *obj)
 {
     assert(obj != NULL);
     assert(obj != &head_node);
 
     /** Extract from list. */
     {
-	OBJ_DATA *prev = obj->prev;
-	OBJ_DATA *next = obj->next;
+	GAMEOBJECT *prev = obj->prev;
+	GAMEOBJECT *next = obj->next;
 
 	assert(prev != NULL); /** because only the head node has no previous. */
 	prev->next = next;
@@ -103,21 +103,21 @@ void object_free(OBJ_DATA *obj)
 
 int object_list_count()
 {
-    OBJ_DATA *o;
+    GAMEOBJECT *o;
     int counter = 0;
     for (o = head_node.next; o != NULL; o = o->next)
 	counter++;
     return counter;
 }
 
-OBJ_DATA *object_iterator_start(const OBJECT_ITERATOR_FILTER *filter)
+GAMEOBJECT *object_iterator_start(const OBJECT_ITERATOR_FILTER *filter)
 {
     return object_iterator(&head_node, filter);
 }
 
-OBJ_DATA *object_iterator(OBJ_DATA *current, const OBJECT_ITERATOR_FILTER *filter)
+GAMEOBJECT *object_iterator(GAMEOBJECT *current, const OBJECT_ITERATOR_FILTER *filter)
 {
-    OBJ_DATA *next;
+    GAMEOBJECT *next;
 
     if (current == NULL) {
 	return NULL;
@@ -131,13 +131,13 @@ OBJ_DATA *object_iterator(OBJ_DATA *current, const OBJECT_ITERATOR_FILTER *filte
     return next;
 }
 
-inline bool is_situpon(OBJ_DATA *obj) {
+inline bool is_situpon(GAMEOBJECT *obj) {
     return (obj->item_type == ITEM_FURNITURE) && (IS_SET(obj->value[2], SIT_ON)
 						    || IS_SET(obj->value[2], SIT_IN)
 						    || IS_SET(obj->value[2], SIT_AT));
 }
 
-inline bool is_standupon(OBJ_DATA *obj) {
+inline bool is_standupon(GAMEOBJECT *obj) {
     return (obj->item_type == ITEM_FURNITURE && (IS_SET(obj->value[2], STAND_AT)
 						    || IS_SET(obj->value[2], STAND_ON)
 						    || IS_SET(obj->value[2], STAND_IN)));
@@ -145,7 +145,7 @@ inline bool is_standupon(OBJ_DATA *obj) {
 
 
 
-bool passes(OBJ_DATA *testee, const OBJECT_ITERATOR_FILTER *filter)
+bool passes(GAMEOBJECT *testee, const OBJECT_ITERATOR_FILTER *filter)
 {
     if (filter->name != NULL && filter->name[0] != '\0' && testee->name != NULL && str_cmp(filter->name, testee->name)) {
 	/** name filter specified but does not match current object. */

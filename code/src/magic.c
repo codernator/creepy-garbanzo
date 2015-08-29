@@ -24,7 +24,7 @@ static void say_spell(CHAR_DATA * ch, SKILL * skill);
 *	imported functions
 ***************************************************************************/
 extern bool remove_obj(CHAR_DATA * ch, int iWear, bool fReplace);
-extern void wear_obj(CHAR_DATA * ch, OBJ_DATA * obj, bool fReplace);
+extern void wear_obj(CHAR_DATA * ch, GAMEOBJECT * obj, bool fReplace);
 extern void dam_message(CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt, bool immune);
 
 
@@ -323,7 +323,7 @@ void remove_all_affects(CHAR_DATA *victim)
 void do_cast(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *victim;
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	LEARNED *learned;
 	LEVEL_INFO *level_info;
 	SKILL *skill;
@@ -648,7 +648,7 @@ void obj_cast_spell(int		sn,
 		    int		level,
 		    CHAR_DATA * ch,
 		    CHAR_DATA * victim,
-		    OBJ_DATA *	obj)
+		    GAMEOBJECT *	obj)
 {
 	SKILL *skill;
 	void *vo;
@@ -780,7 +780,7 @@ void obj_cast_spell(int		sn,
 ***************************************************************************/
 void do_quaff(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	char arg[MIL];
 
 	one_argument(argument, arg);
@@ -823,8 +823,8 @@ void do_quaff(CHAR_DATA *ch, char *argument)
 void do_recite(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *victim;
-	OBJ_DATA *scroll;
-	OBJ_DATA *obj;
+	GAMEOBJECT *scroll;
+	GAMEOBJECT *obj;
 	SKILL *skill;
 	char arg1[MIL];
 	char arg2[MIL];
@@ -889,7 +889,7 @@ void do_brandish(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *vch;
 	CHAR_DATA *vch_next;
-	OBJ_DATA *staff;
+	GAMEOBJECT *staff;
 	SKILL *skill;
 	SKILL *cast;
 
@@ -973,8 +973,8 @@ void do_brandish(CHAR_DATA *ch, char *argument)
 void do_zap(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *victim;
-	OBJ_DATA *wand;
-	OBJ_DATA *obj;
+	GAMEOBJECT *wand;
+	GAMEOBJECT *obj;
 	SKILL *skill;
 	char arg[MIL];
 

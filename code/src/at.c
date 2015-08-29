@@ -74,7 +74,7 @@ void do_at(CHAR_DATA *ch, char *argument)
 	ROOM_INDEX_DATA *original;
 	CHAR_DATA *wch = NULL;
 	CHAR_DATA *vch = NULL;
-	OBJ_DATA *on;
+	GAMEOBJECT *on;
 	char arg[MIL];
 	char cmd[MSL];
 

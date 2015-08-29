@@ -152,7 +152,7 @@ static void string_char(CHAR_DATA *ch, char *arg)
 ***************************************************************************/
 static void string_obj(CHAR_DATA *ch, char *arg)
 {
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	char arg1[MIL];
 	char arg2[MIL];
 
@@ -429,7 +429,7 @@ void do_restring(CHAR_DATA *ch, char *argument)
 	}
 
 	if (!str_prefix(cmd, "clone")) {
-		OBJ_DATA *obj;
+		GAMEOBJECT *obj;
 		CHAR_DATA *mob;
 
 		if ((obj = get_obj_carry(ch, argument)) != NULL) {

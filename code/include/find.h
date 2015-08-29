@@ -16,25 +16,25 @@ bool cmp_fn_index(long bit, char *arg, const struct flag_type *table, BUFFER * b
 /***************************************************************************
  *	objects
  ***************************************************************************/
-typedef bool OBJ_CMP_FN (OBJ_DATA *obj, char *arg, BUFFER *buf);
+typedef bool OBJ_CMP_FN (GAMEOBJECT *obj, char *arg, BUFFER *buf);
 
-struct cmp_vars_obj_data {
+struct cmp_vars_gameobject {
     char *		var;
     OBJ_CMP_FN *	fn;
 };
 
 
-bool obj_cmp_vnum(OBJ_DATA * obj, char *arg, BUFFER * buf);
-bool obj_cmp_name(OBJ_DATA * obj, char *arg, BUFFER * buf);
-bool obj_cmp_short(OBJ_DATA * obj, char *arg, BUFFER * buf);
-bool obj_cmp_long(OBJ_DATA * obj, char *arg, BUFFER * buf);
-bool obj_cmp_type(OBJ_DATA * obj, char *arg, BUFFER * buf);
-bool obj_cmp_extra(OBJ_DATA * obj, char *arg, BUFFER * buf);
-bool obj_cmp_wear(OBJ_DATA * obj, char *arg, BUFFER * buf);
-bool obj_cmp_location(OBJ_DATA * obj, char *arg, BUFFER * buf);
-bool obj_cmp_weight(OBJ_DATA * obj, char *arg, BUFFER * buf);
-bool obj_cmp_cost(OBJ_DATA * obj, char *arg, BUFFER * buf);
-bool obj_cmp_level(OBJ_DATA * obj, char *arg, BUFFER * buf);
+bool obj_cmp_vnum(GAMEOBJECT * obj, char *arg, BUFFER * buf);
+bool obj_cmp_name(GAMEOBJECT * obj, char *arg, BUFFER * buf);
+bool obj_cmp_short(GAMEOBJECT * obj, char *arg, BUFFER * buf);
+bool obj_cmp_long(GAMEOBJECT * obj, char *arg, BUFFER * buf);
+bool obj_cmp_type(GAMEOBJECT * obj, char *arg, BUFFER * buf);
+bool obj_cmp_extra(GAMEOBJECT * obj, char *arg, BUFFER * buf);
+bool obj_cmp_wear(GAMEOBJECT * obj, char *arg, BUFFER * buf);
+bool obj_cmp_location(GAMEOBJECT * obj, char *arg, BUFFER * buf);
+bool obj_cmp_weight(GAMEOBJECT * obj, char *arg, BUFFER * buf);
+bool obj_cmp_cost(GAMEOBJECT * obj, char *arg, BUFFER * buf);
+bool obj_cmp_level(GAMEOBJECT * obj, char *arg, BUFFER * buf);
 
 
 /***************************************************************************

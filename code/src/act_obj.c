@@ -15,7 +15,7 @@
 
 extern unsigned int parse_unsigned_int(char *string);
 extern void mp_bribe_trigger(CHAR_DATA * mob, CHAR_DATA * ch, long amount);
-extern void mp_give_trigger(CHAR_DATA * mob, CHAR_DATA * ch, OBJ_DATA * obj);
+extern void mp_give_trigger(CHAR_DATA * mob, CHAR_DATA * ch, GAMEOBJECT * obj);
 
 extern SKILL *gsp_poison;
 extern SKILL *gsp_hand_to_hand;
@@ -25,12 +25,12 @@ extern SKILL *gsp_haggle;
  * Local functions.
  */
 bool remove_obj(CHAR_DATA * ch, int iWear, bool fReplace);
-void wear_obj(CHAR_DATA * ch, OBJ_DATA * obj, bool fReplace);
+void wear_obj(CHAR_DATA * ch, GAMEOBJECT * obj, bool fReplace);
 CHAR_DATA *find_keeper(CHAR_DATA * ch);
-unsigned int get_cost(CHAR_DATA * keeper, OBJ_DATA * obj, bool fBuy);
-void obj_to_keeper(OBJ_DATA * obj, CHAR_DATA * ch);
-OBJ_DATA *get_obj_keeper(CHAR_DATA * ch, CHAR_DATA * keeper, char *argument);
-int count_slots(OBJ_DATA * obj);
+unsigned int get_cost(CHAR_DATA * keeper, GAMEOBJECT * obj, bool fBuy);
+void obj_to_keeper(GAMEOBJECT * obj, CHAR_DATA * ch);
+GAMEOBJECT *get_obj_keeper(CHAR_DATA * ch, CHAR_DATA * keeper, char *argument);
+int count_slots(GAMEOBJECT * obj);
 
 
 
@@ -39,7 +39,7 @@ int count_slots(OBJ_DATA * obj);
 *
 *	totally wacked because it never returns false
 ***************************************************************************/
-bool can_loot(CHAR_DATA *ch, OBJ_DATA *obj)
+bool can_loot(CHAR_DATA *ch, GAMEOBJECT *obj)
 {
 	CHAR_DATA *owner;
 	CHAR_DATA *wch;
@@ -75,7 +75,7 @@ bool can_loot(CHAR_DATA *ch, OBJ_DATA *obj)
 }
 
 
-void affect_join_obj(OBJ_DATA *obj, AFFECT_DATA *paf)
+void affect_join_obj(GAMEOBJECT *obj, AFFECT_DATA *paf)
 {
 	AFFECT_DATA *paf_old;
 
@@ -104,9 +104,9 @@ void do_get2(CHAR_DATA *ch, char *argument)
 	char arg1[MAX_INPUT_LENGTH];
 	char arg2[MAX_INPUT_LENGTH];
 	char rest[MAX_INPUT_LENGTH];/**/
-	OBJ_DATA *obj;
-	OBJ_DATA *obj_next;
-	OBJ_DATA *container;
+	GAMEOBJECT *obj;
+	GAMEOBJECT *obj_next;
+	GAMEOBJECT *container;
 	bool found;
 	int number, i = 0;                      /**/
 
@@ -281,9 +281,9 @@ void do_get2(CHAR_DATA *ch, char *argument)
 
 void do_get(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
-	OBJ_DATA *obj_next;
-	OBJ_DATA *container;
+	GAMEOBJECT *obj;
+	GAMEOBJECT *obj_next;
+	GAMEOBJECT *container;
 	char arg1[MIL];
 	char arg2[MIL];
 	bool found;
@@ -451,9 +451,9 @@ void do_put2(CHAR_DATA *ch, char *argument)
 	char arg1[MAX_INPUT_LENGTH];
 	char arg2[MAX_INPUT_LENGTH];
 	char rest[MAX_INPUT_LENGTH];
-	OBJ_DATA *container;
-	OBJ_DATA *obj;
-	OBJ_DATA *obj_next;
+	GAMEOBJECT *container;
+	GAMEOBJECT *obj;
+	GAMEOBJECT *obj_next;
 	int number, i = 0;                      /**/
 
 	number = mult_argument(argument, rest); /**/
@@ -613,9 +613,9 @@ void do_put2(CHAR_DATA *ch, char *argument)
 
 void do_put(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *container;
-	OBJ_DATA *obj;
-	OBJ_DATA *obj_next;
+	GAMEOBJECT *container;
+	GAMEOBJECT *obj;
+	GAMEOBJECT *obj_next;
 	char arg1[MIL];
 	char arg2[MIL];
 	int item_ctr;
@@ -764,8 +764,8 @@ void do_drop2(CHAR_DATA *ch, char *argument)
 {
 	char arg[MAX_INPUT_LENGTH];
 	char rest[MAX_INPUT_LENGTH];
-	OBJ_DATA *obj;
-	OBJ_DATA *obj_next;
+	GAMEOBJECT *obj;
+	GAMEOBJECT *obj_next;
 	bool found;
 	int number, i = 0;                      /**/
 
@@ -943,8 +943,8 @@ void do_drop2(CHAR_DATA *ch, char *argument)
 
 void do_drop(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
-	OBJ_DATA *obj_next;
+	GAMEOBJECT *obj;
+	GAMEOBJECT *obj_next;
 	char arg[MIL];
 	bool found;
 	int item_ctr;
@@ -1100,7 +1100,7 @@ void do_give2(CHAR_DATA *ch, char *argument)
 	char rest[MAX_INPUT_LENGTH];
 	char buf[MAX_STRING_LENGTH];
 	CHAR_DATA *victim;
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	int number, i = 0;                      /**/
 
 	number = mult_argument(argument, rest); /**/
@@ -1280,7 +1280,7 @@ void do_give2(CHAR_DATA *ch, char *argument)
 void do_give(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *victim;
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	char arg1[MIL];
 	char arg2[MIL];
 	char buf[MSL];
@@ -1449,8 +1449,8 @@ void do_give(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_fill(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
-	OBJ_DATA *fountain;
+	GAMEOBJECT *obj;
+	GAMEOBJECT *fountain;
 	char arg[MIL];
 	char buf[MSL];
 	bool found;
@@ -1512,8 +1512,8 @@ void do_fill(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_pour(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *out;
-	OBJ_DATA *in;
+	GAMEOBJECT *out;
+	GAMEOBJECT *in;
 	CHAR_DATA *vch = NULL;
 	char arg[MSL];
 	char buf[MSL];
@@ -1616,7 +1616,7 @@ void do_pour(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_drink(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	char arg[MIL];
 	long amount;
 	long liquid;
@@ -1727,7 +1727,7 @@ void do_drink(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_eat(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	char arg[MIL];
 
 	one_argument(argument, arg);
@@ -1820,7 +1820,7 @@ void do_eat(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 bool remove_obj(CHAR_DATA *ch, int iWear, bool fReplace)
 {
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 
 	if ((obj = get_eq_char(ch, iWear)) == NULL)
 		return true;
@@ -1845,7 +1845,7 @@ bool remove_obj(CHAR_DATA *ch, int iWear, bool fReplace)
 /***************************************************************************
 *	wear_obj
 ***************************************************************************/
-void wear_obj(CHAR_DATA *ch, OBJ_DATA *obj, bool fReplace)
+void wear_obj(CHAR_DATA *ch, GAMEOBJECT *obj, bool fReplace)
 {
 	char buf[MSL];
 
@@ -2073,7 +2073,7 @@ void wear_obj(CHAR_DATA *ch, OBJ_DATA *obj, bool fReplace)
 	}
 
 	if (CAN_WEAR(obj, ITEM_WEAR_SHIELD)) {
-		OBJ_DATA *weapon;
+		GAMEOBJECT *weapon;
 
 		if (!remove_obj(ch, WEAR_SHIELD, fReplace))
 			return;
@@ -2193,7 +2193,7 @@ void wear_obj(CHAR_DATA *ch, OBJ_DATA *obj, bool fReplace)
 ***************************************************************************/
 void do_wear(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	char arg[MIL];
 
 	one_argument(argument, arg);
@@ -2203,7 +2203,7 @@ void do_wear(CHAR_DATA *ch, char *argument)
 	}
 
 	if (!str_cmp(arg, "all")) {
-		OBJ_DATA *obj_next;
+		GAMEOBJECT *obj_next;
 
 		for (obj = ch->carrying; obj != NULL; obj = obj_next) {
 			obj_next = obj->next_content;
@@ -2229,7 +2229,7 @@ void do_wear(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_remove(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	char arg[MIL];
 
 	one_argument(argument, arg);
@@ -2239,7 +2239,7 @@ void do_remove(CHAR_DATA *ch, char *argument)
 	}
 
 	if (!str_cmp(arg, "all")) {
-		OBJ_DATA *obj_next;
+		GAMEOBJECT *obj_next;
 
 		for (obj = ch->carrying; obj != NULL; obj = obj_next) {
 			obj_next = obj->next_content;
@@ -2268,7 +2268,7 @@ void do_sacrifice(CHAR_DATA *ch, char *argument)
 		"`1L`!a`Or`!a`1h``", "`#P`3ee`#j``", "`&Mota``", "`5E`Po``", "`2D`@a`8i`7g`@e`2n``", "`2N`8i`2BB``", "`OP`^u`6c`7k``", "`&Sa`8to`&ri``"
 	};
 
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	CHAR_DATA *gch;
 	char arg[MIL];
 	char buf[MSL];
@@ -2290,7 +2290,7 @@ void do_sacrifice(CHAR_DATA *ch, char *argument)
 	god = god_name_table[number_range(0, MAX_GOD_NAME)];
 
 	if (!str_cmp(arg, "all")) {
-		OBJ_DATA *obj_next;
+		GAMEOBJECT *obj_next;
 		long total;
 
 		total = 0;
@@ -2432,7 +2432,7 @@ void do_sacrifice(CHAR_DATA *ch, char *argument)
 /***************************************************************************
 *	donate_obj
 ***************************************************************************/
-void donate_obj(CHAR_DATA *ch, OBJ_DATA *obj)
+void donate_obj(CHAR_DATA *ch, GAMEOBJECT *obj)
 {
 	char buf[MIL];
 
@@ -2474,9 +2474,9 @@ void donate_obj(CHAR_DATA *ch, OBJ_DATA *obj)
 ***************************************************************************/
 void do_donate(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	char arg[MIL];
-	OBJ_DATA *obj_next;
+	GAMEOBJECT *obj_next;
 	bool found;
 	int max_don;
 
@@ -2543,7 +2543,7 @@ void do_donate(CHAR_DATA *ch, char *argument)
 void do_steal(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *victim;
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	SKILL *skill_steal;
 	char buf[MSL];
 	char arg1[MIL];
@@ -2743,10 +2743,10 @@ CHAR_DATA *find_keeper(CHAR_DATA *ch)
 /***************************************************************************
 *	obj_to_keeper
 ***************************************************************************/
-void obj_to_keeper(OBJ_DATA *obj, CHAR_DATA *ch)
+void obj_to_keeper(GAMEOBJECT *obj, CHAR_DATA *ch)
 {
-	OBJ_DATA *t_obj;
-	OBJ_DATA *t_obj_next;
+	GAMEOBJECT *t_obj;
+	GAMEOBJECT *t_obj_next;
 
 	for (t_obj = ch->carrying; t_obj != NULL; t_obj = t_obj_next) {
 		t_obj_next = t_obj->next_content;
@@ -2781,9 +2781,9 @@ void obj_to_keeper(OBJ_DATA *obj, CHAR_DATA *ch)
 /***************************************************************************
 *	get_obj_keeper
 ***************************************************************************/
-OBJ_DATA *get_obj_keeper(CHAR_DATA *ch, CHAR_DATA *keeper, char *argument)
+GAMEOBJECT *get_obj_keeper(CHAR_DATA *ch, CHAR_DATA *keeper, char *argument)
 {
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	char arg[MIL];
 	int number;
 	int count;
@@ -2812,7 +2812,7 @@ OBJ_DATA *get_obj_keeper(CHAR_DATA *ch, CHAR_DATA *keeper, char *argument)
 /***************************************************************************
 *	get_cost
 ***************************************************************************/
-unsigned int get_cost(CHAR_DATA *keeper, OBJ_DATA *obj, bool fBuy)
+unsigned int get_cost(CHAR_DATA *keeper, GAMEOBJECT *obj, bool fBuy)
 {
 	unsigned int cost;
 
@@ -2822,7 +2822,7 @@ unsigned int get_cost(CHAR_DATA *keeper, OBJ_DATA *obj, bool fBuy)
 	if (fBuy) {
 		cost = (unsigned int)(obj->cost * keeper->mob_idx->shop->profit_buy / 100);
 	} else {
-		OBJ_DATA *obj_inv;
+		GAMEOBJECT *obj_inv;
 		int itype;
 
 		cost = 0;
@@ -2971,8 +2971,8 @@ void do_buy(CHAR_DATA *ch, char *argument)
 		return;
 	} else {
 		CHAR_DATA *keeper;
-		OBJ_DATA *obj;
-		OBJ_DATA *t_obj;
+		GAMEOBJECT *obj;
+		GAMEOBJECT *t_obj;
 		char arg[MIL];
 		int number;
 		int count = 1;
@@ -3138,7 +3138,7 @@ void do_list(CHAR_DATA *ch, char *argument)
 		return;
 	} else {
 		CHAR_DATA *keeper;
-		OBJ_DATA *obj;
+		GAMEOBJECT *obj;
 		unsigned int cost;
 		int count;
 		bool found;
@@ -3189,7 +3189,7 @@ void do_list(CHAR_DATA *ch, char *argument)
 void do_sell(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *keeper;
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	SKILL *skill_haggle;
 	char buf[MSL];
 	char arg[MIL];
@@ -3278,7 +3278,7 @@ void do_sell(CHAR_DATA *ch, char *argument)
 void do_value(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *keeper;
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	char buf[MSL];
 	char arg[MIL];
 	unsigned int cost;
@@ -3326,7 +3326,7 @@ void do_value(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_second(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	char buf[MSL];
 
 	if (argument[0] == '\0') {
@@ -3385,7 +3385,7 @@ void do_second(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_envenom(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	AFFECT_DATA af;
 	SKILL *skill_envenom;
 	SKILL *skill_poison;
@@ -3491,7 +3491,7 @@ void do_envenom(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_dice(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	char buf[MSL];
 	char tmp[MSL];
 	int number;
@@ -3555,7 +3555,7 @@ void do_objident(CHAR_DATA *ch, char *argument)
 		return;
 	} else {
 		CHAR_DATA *keeper;
-		OBJ_DATA *obj;
+		GAMEOBJECT *obj;
 		unsigned int cost;
 		bool found;
 		char arg[MIL];

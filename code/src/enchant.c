@@ -11,8 +11,8 @@
 * Repair code - 08-09-2002
 ***************************************************************************/
 static bool is_negative_affect(AFFECT_DATA * paf);
-static unsigned int repair_cost(OBJ_DATA * obj, char *stat);
-static void enchant_item(OBJ_DATA * obj);
+static unsigned int repair_cost(GAMEOBJECT * obj, char *stat);
+static void enchant_item(GAMEOBJECT * obj);
 
 /***************************************************************************
 *	item_affect_stats
@@ -51,7 +51,7 @@ item_affect_stats[] =
 ***************************************************************************/
 void do_enchant(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	AFFECT_DATA af;
 	char item[MIL];
 	char affect[MIL];
@@ -176,7 +176,7 @@ void do_enchant(CHAR_DATA *ch, char *argument)
 ***************************************************************************/
 void do_disenchant(CHAR_DATA *ch, char *argument)
 {
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	AFFECT_DATA *paf;
 	AFFECT_DATA *paf_next;
 	char item[MIL];
@@ -337,7 +337,7 @@ bool is_negative_affect(AFFECT_DATA *paf)
 void do_repair(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *mob;
-	OBJ_DATA *obj;
+	GAMEOBJECT *obj;
 	AFFECT_DATA *paf;
 	SKILL *skill_haggle;
 	char cmd[MSL];
@@ -489,7 +489,7 @@ void do_repair(CHAR_DATA *ch, char *argument)
 *
 *	get the cost to repair an item
 ***************************************************************************/
-unsigned int repair_cost(OBJ_DATA *obj, char *stat)
+unsigned int repair_cost(GAMEOBJECT *obj, char *stat)
 {
 	AFFECT_DATA *paf;
 	unsigned int cost = 0;
@@ -555,7 +555,7 @@ unsigned int repair_cost(OBJ_DATA *obj, char *stat)
 *	take item affects from an object index and copy them to the
 *	affects specific to the item
 ***************************************************************************/
-void enchant_item(OBJ_DATA *obj)
+void enchant_item(GAMEOBJECT *obj)
 {
 	AFFECT_DATA *copy;
 	AFFECT_DATA *copy_next;

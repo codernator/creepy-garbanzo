@@ -33,7 +33,7 @@ extern void show_char_to_char(CHAR_DATA * list, CHAR_DATA * ch);
 extern void show_char_to_char_2(CHAR_DATA * victim, CHAR_DATA * ch);
 
 #define MAX_NEST        100
-static OBJ_DATA *rgObjNest[MAX_NEST];
+static GAMEOBJECT *rgObjNest[MAX_NEST];
 extern void fread_char(CHAR_DATA * ch, FILE * fp);
 
 
@@ -589,7 +589,7 @@ void do_nosummon(CHAR_DATA *ch, char *argument)
 
 void do_lore(CHAR_DATA *ch, char *argument)
 {
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     SKILL *skill;
     char arg[MIL];
     int percent;
@@ -680,7 +680,7 @@ void do_glance(CHAR_DATA *ch, char *argument)
 void do_look(CHAR_DATA *ch, char *argument)
 {
     CHAR_DATA *victim;
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     char arg1[MIL];
     char arg2[MIL];
     char arg3[MIL];
@@ -749,7 +749,7 @@ void do_examine(CHAR_DATA *ch, char *argument)
 {
     char buf[MSL];
     char arg[MIL];
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
 
     one_argument(argument, arg);
 
@@ -1252,8 +1252,8 @@ void do_compare(CHAR_DATA *ch, char *argument)
 {
     char arg1[MIL];
     char arg2[MIL];
-    OBJ_DATA *obj1;
-    OBJ_DATA *obj2;
+    GAMEOBJECT *obj1;
+    GAMEOBJECT *obj2;
     long value1;
     long value2;
     char *msg;

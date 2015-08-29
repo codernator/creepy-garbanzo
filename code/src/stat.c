@@ -20,7 +20,7 @@ static void show_mob_stats(CHAR_DATA *ch, char *argument);
  */
 void do_stat(CHAR_DATA *ch, char *argument)
 {
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     ROOM_INDEX_DATA *location;
     CHAR_DATA *victim;
     char arg[MIL];
@@ -82,7 +82,7 @@ void do_stat(CHAR_DATA *ch, char *argument)
 void show_room_stats(CHAR_DATA *ch, char *argument)
 {
     ROOM_INDEX_DATA *location;
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     CHAR_DATA *rch;
     AFFECT_DATA *paf;
     SKILL *skill;
@@ -189,7 +189,7 @@ void show_room_stats(CHAR_DATA *ch, char *argument)
 void show_object_stats(CHAR_DATA *ch, char *argument)
 {
     AFFECT_DATA *paf;
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     SKILL *skill;
     char arg[MIL];
     int idx;

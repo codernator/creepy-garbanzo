@@ -54,7 +54,7 @@ extern void init_mm(void);
 extern unsigned int fread_uint(FILE *fp);
 extern long fread_long(FILE *fp);
 extern bool is_space(const char test);
-extern OBJ_DATA *obj_free;
+extern GAMEOBJECT *obj_free;
 extern CHAR_DATA *char_free;
 extern PC_DATA *pcdata_free;
 extern AFFECT_DATA *affect_free;
@@ -1609,9 +1609,9 @@ void reset_room(ROOM_INDEX_DATA *room)
     RESET_DATA *reset;
     CHAR_DATA *mob_it;
     CHAR_DATA *mob = NULL;
-    OBJ_DATA *obj = NULL;
+    GAMEOBJECT *obj = NULL;
     CHAR_DATA *last_mob = NULL;
-    OBJ_DATA *last_obj = NULL;
+    GAMEOBJECT *last_obj = NULL;
     int exit_dir;
     bool last;
 
@@ -2120,10 +2120,10 @@ void clone_mobile(CHAR_DATA *parent, CHAR_DATA *clone)
 /*
  * Create an instance of an object.
  */
-OBJ_DATA *create_object(OBJECTPROTOTYPE *objprototype, int level)
+GAMEOBJECT *create_object(OBJECTPROTOTYPE *objprototype, int level)
 {
     AFFECT_DATA *paf;
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
 
     if (objprototype == NULL) {
 	bug("Create_object: NULL objprototype.");
@@ -2220,7 +2220,7 @@ OBJ_DATA *create_object(OBJECTPROTOTYPE *objprototype, int level)
 }
 
 /* duplicate an object exactly -- except contents */
-void clone_object(OBJ_DATA *parent, OBJ_DATA *clone)
+void clone_object(GAMEOBJECT *parent, GAMEOBJECT *clone)
 {
     int i;
     AFFECT_DATA *paf;
@@ -2766,7 +2766,7 @@ void do_dump(CHAR_DATA *ch, char *argument)
     CHAR_DATA *fch;
     MOB_INDEX_DATA *mob_idx;
     PC_DATA *pc;
-    OBJ_DATA *obj;
+    GAMEOBJECT *obj;
     DESCRIPTOR_DATA *d;
     AFFECT_DATA *af;
     FILE *fp;

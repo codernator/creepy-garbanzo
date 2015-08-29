@@ -13,9 +13,9 @@ extern DECLARE_DO_FUN(do_help);
 
 void do_teleport(CHAR_DATA *ch, char *argument)
 {
-    OBJ_DATA *teleporter;
-    OBJ_DATA *obj, *opending;
-    OBJ_DATA *in_obj;
+    GAMEOBJECT *teleporter;
+    GAMEOBJECT *obj, *opending;
+    GAMEOBJECT *in_obj;
     ROOM_INDEX_DATA *location;
     char arg[MIL];
     BUFFER *buf;

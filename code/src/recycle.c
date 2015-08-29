@@ -247,8 +247,8 @@ CHAR_DATA *new_char(void)
 ***************************************************************************/
 void free_char(CHAR_DATA *ch)
 {
-	OBJ_DATA *obj;
-	OBJ_DATA *obj_next;
+	GAMEOBJECT *obj;
+	GAMEOBJECT *obj_next;
 	AFFECT_DATA *paf;
 	AFFECT_DATA *paf_next;
 
