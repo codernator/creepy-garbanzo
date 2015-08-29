@@ -776,7 +776,7 @@ EDIT(oedit_create){
 	return false;
     }
 
-    pObj = new_objectprototype(value);
+    pObj = objectprototype_new(value);
     pObj->area = pArea;
 
     if (value > top_vnum_obj)

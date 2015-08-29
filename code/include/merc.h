@@ -2306,8 +2306,8 @@ struct descriptor_iterator_filter {
 };
 extern const DESCRIPTOR_ITERATOR_FILTER descriptor_empty_filter;
 
-/*@dependent@*/DESCRIPTOR_DATA * new_descriptor(SOCKET descriptor);
-void free_descriptor(/*@owned@*/DESCRIPTOR_DATA * d);
+/*@dependent@*/DESCRIPTOR_DATA * descriptor_new(SOCKET descriptor);
+void descriptor_free(/*@owned@*/DESCRIPTOR_DATA * d);
 int descriptor_list_count();
 /*@dependent@*//*@null@*/DESCRIPTOR_DATA *descriptor_iterator_start(const DESCRIPTOR_ITERATOR_FILTER *filter);
 /*@dependent@*//*@null@*/DESCRIPTOR_DATA *descriptor_iterator(DESCRIPTOR_DATA *current, const DESCRIPTOR_ITERATOR_FILTER *filter);
@@ -2321,8 +2321,8 @@ struct object_iterator_filter {
 };
 extern const OBJECT_ITERATOR_FILTER object_empty_filter;
 
-/*@dependent@*/OBJ_DATA * new_object(/*@dependent@*/OBJECTPROTOTYPE *prototypedata);
-void free_object(/*@owned@*/OBJ_DATA * d);
+/*@dependent@*/OBJ_DATA * object_new(/*@dependent@*/OBJECTPROTOTYPE *prototypedata);
+void object_free(/*@owned@*/OBJ_DATA * d);
 int object_list_count();
 /*@dependent@*//*@null@*/OBJ_DATA *object_iterator_start(const OBJECT_ITERATOR_FILTER *filter);
 /*@dependent@*//*@null@*/OBJ_DATA *object_iterator(OBJ_DATA *current, const OBJECT_ITERATOR_FILTER *filter);
@@ -2336,8 +2336,8 @@ struct objectprototype_filter {
 };
 extern const OBJECTPROTOTYPE_FILTER objectprototype_empty_filter;
 
-/*@dependent@*/OBJECTPROTOTYPE *new_objectprototype(long vnum);
-void free_objectprototype(/*@owned@*/OBJECTPROTOTYPE *templatedata);
+/*@dependent@*/OBJECTPROTOTYPE *objectprototype_new(long vnum);
+void objectprototype_free(/*@owned@*/OBJECTPROTOTYPE *templatedata);
 int objectprototype_list_count();
 /*@dependent@*//*@null@*/OBJECTPROTOTYPE *objectprototype_iterator_start(const OBJECTPROTOTYPE_FILTER *filter);
 /*@dependent@*//*@null@*/OBJECTPROTOTYPE *objectprototype_iterator(OBJECTPROTOTYPE *current, const OBJECTPROTOTYPE_FILTER *filter);

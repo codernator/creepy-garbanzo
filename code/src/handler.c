@@ -1313,7 +1313,7 @@ void extract_obj(OBJ_DATA *obj)
     }
 
     --obj->objprototype->count;
-    free_object(obj);
+    object_free(obj);
 }
 
 /** Extract a char from the world. */

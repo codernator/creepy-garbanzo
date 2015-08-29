@@ -17,7 +17,7 @@ static bool passes(DESCRIPTOR_DATA *testee, const DESCRIPTOR_ITERATOR_FILTER *fi
 
 
 /** create a new descriptor */
-DESCRIPTOR_DATA *new_descriptor(SOCKET descriptor)
+DESCRIPTOR_DATA *descriptor_new(SOCKET descriptor)
 {
     DESCRIPTOR_DATA *d;
 
@@ -55,7 +55,7 @@ DESCRIPTOR_DATA *new_descriptor(SOCKET descriptor)
 }
 
 /** free a descriptor */
-void free_descriptor(DESCRIPTOR_DATA *d)
+void descriptor_free(DESCRIPTOR_DATA *d)
 {
     assert(d != NULL);
     assert(d != &head_node);

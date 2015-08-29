@@ -1098,7 +1098,7 @@ void load_objects(FILE *fp)
 	    ABORT;
 	}
 
-	objprototype = new_objectprototype(vnum);
+	objprototype = objectprototype_new(vnum);
 	objprototype->area = area_last;
 	objprototype->reset_num = 0;
 
@@ -2130,7 +2130,7 @@ OBJ_DATA *create_object(OBJECTPROTOTYPE *objprototype, int level)
 	RABORT(NULL);
     }
 
-    obj = new_object(objprototype);
+    obj = object_new(objprototype);
 
     obj->in_room = NULL;
     obj->enchanted = false;

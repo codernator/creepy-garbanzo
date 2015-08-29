@@ -20,7 +20,7 @@ static bool passes(OBJ_DATA *testee, const OBJECT_ITERATOR_FILTER *filter);
 
 
 
-OBJ_DATA *new_object(OBJECTPROTOTYPE *prototypedata)
+OBJ_DATA *object_new(OBJECTPROTOTYPE *prototypedata)
 {
     OBJ_DATA *obj;
 
@@ -50,7 +50,7 @@ OBJ_DATA *new_object(OBJECTPROTOTYPE *prototypedata)
     return obj;
 }
 
-void free_object(OBJ_DATA *obj)
+void object_free(OBJ_DATA *obj)
 {
     assert(obj != NULL);
     assert(obj != &head_node);

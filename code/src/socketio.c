@@ -59,15 +59,15 @@ void init_descriptor(int control)
 #endif
 
     if (fcntl(desc, F_SETFL, FNDELAY) == -1) {
-	perror("new_descriptor: fcntl: FNDELAY");
+	perror("descriptor_new: fcntl: FNDELAY");
 	return;
     }
 
-    dnew = new_descriptor(desc);
+    dnew = descriptor_new(desc);
 
     size = sizeof(sock);
     if (getpeername(desc, (struct sockaddr *)&sock, &size) < 0) {
-	perror("new_descriptor: getpeername");
+	perror("descriptor_new: getpeername");
 	dnew->host = str_dup("(unknown)");
     } else {
 	/*
@@ -93,7 +93,7 @@ void init_descriptor(int control)
     if (check_ban(dnew->host, BAN_ALL)) {
 	write_to_descriptor(desc, "Your site has been banned from this mud.\n\r", 0);
 	close(desc);
-	free_descriptor(dnew);
+	descriptor_free(dnew);
 	return;
     }
 

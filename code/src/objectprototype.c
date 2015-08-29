@@ -52,7 +52,7 @@ OBJECTPROTOTYPE *objectprototype_getbyvnum(long vnum)
 	: hashentry->entry;
 }
 
-OBJECTPROTOTYPE *new_objectprototype(long vnum)
+OBJECTPROTOTYPE *objectprototype_new(long vnum)
 {
     OBJECTPROTOTYPE *prototypedata;
 
@@ -92,7 +92,7 @@ OBJECTPROTOTYPE *new_objectprototype(long vnum)
     return prototypedata;
 }
 
-void free_objectprototype(OBJECTPROTOTYPE *prototypedata)
+void objectprototype_free(OBJECTPROTOTYPE *prototypedata)
 {
     assert(prototypedata != NULL);
     assert(prototypedata != &head_node);
