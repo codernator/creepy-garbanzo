@@ -3,18 +3,16 @@
  * Completely rewritten by Brandon Griffin (aka Codernator) to remove       *
  * c&p coding suckage.  Absorbed atm.c                                      *
  ****************************************************************************/
-#include <stdio.h>
-#include <string.h>
 #include "merc.h"
 #include "magic.h"
 #include "interp.h"
+#include <stdio.h>
+#include <string.h>
 
 
 /** imports */
 extern GAMEOBJECT *get_object_by_itemtype_and_room(int item_type, ROOM_INDEX_DATA *room, CHAR_DATA *ch);
 extern void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is, const char *message);
-extern int number_range(int from, int to);
-extern long parse_long(char *test);
 
 
 /** locals */
@@ -26,23 +24,23 @@ static void give_receipt(CHAR_DATA *ch, unsigned int amount, const char *action,
 static void report_balance(CHAR_DATA *ch);
 
 
-void do_atm_withdraw(CHAR_DATA *ch, char *argument)
+void do_atm_withdraw(CHAR_DATA *ch, const char *argument)
 {
     do_withdraw(ch, argument);
 }
 
-void do_atm_balance(CHAR_DATA *ch, char *argument)
+void do_atm_balance(CHAR_DATA *ch, const char *argument)
 {
     do_balance(ch, argument);
 }
 
-void do_atm_deposit(CHAR_DATA *ch, char *argument)
+void do_atm_deposit(CHAR_DATA *ch, const char *argument)
 {
     do_deposit(ch, argument);
 }
 
 
-void do_balance(CHAR_DATA *ch, char *vo)
+void do_balance(CHAR_DATA *ch, const char *vo)
 {
     GAMEOBJECT *atm;
 
@@ -53,7 +51,7 @@ void do_balance(CHAR_DATA *ch, char *vo)
     }
 }
 
-void do_deposit(CHAR_DATA *ch, char *argument)
+void do_deposit(CHAR_DATA *ch, const char *argument)
 {
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
@@ -66,7 +64,7 @@ void do_deposit(CHAR_DATA *ch, char *argument)
     evaluate_transaction(ch, false, arg1, arg2);
 }
 
-void do_withdraw(CHAR_DATA *ch, char *argument)
+void do_withdraw(CHAR_DATA *ch, const char *argument)
 {
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];

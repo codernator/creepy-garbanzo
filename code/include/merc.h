@@ -99,7 +99,7 @@ typedef struct game_state GAME_STATE;
 #include "skills.h"
 
 /* Function types. */
-typedef void DO_FUN(/*@partial@*/CHAR_DATA * ch, char *argument);
+typedef void DO_FUN(/*@partial@*/CHAR_DATA * ch, const char *argument);
 
 
 /*String and memory management parameters. */
@@ -1509,10 +1509,10 @@ struct pc_data {
 
 
 struct extra_descr_data {
-    EXTRA_DESCR_DATA *next;
+    /*@owned@*//*@null@*/EXTRA_DESCR_DATA *next;
     bool valid;
-    char *keyword;        /* Keyword in look/examine */
-    char *description;    /* What to see    */
+    /*@shared@*/char *keyword;        /* Keyword in look/examine */
+    /*@shared@*/char *description;    /* What to see    */
 };
 
 
@@ -1524,7 +1524,7 @@ struct extra_descr_data {
     /*@dependent@*//*@null@*//*@partial@*/OBJECTPROTOTYPE *prev;
 
     long vnum;
-    /*@dependent@*//*@null@*/EXTRA_DESCR_DATA *extra_descr;
+    /*@owned@*//*@null@*/EXTRA_DESCR_DATA *extra_descr;
     /*@dependent@*//*@null@*/AFFECT_DATA *affected;
     /*@dependent@*//*@null@*/AREA_DATA *area;
     /*@shared@*/char *name;
@@ -1561,7 +1561,7 @@ struct extra_descr_data {
     /*@dependent@*//*@null@*/GAMEOBJECT *on;
     /*@dependent@*//*@null@*/CHAR_DATA *carried_by;
     /*@dependent@*//*@null@*/CHAR_DATA *target;
-    /*@dependent@*//*@null@*/EXTRA_DESCR_DATA *extra_descr;
+    /*@owned@*//*@null@*/EXTRA_DESCR_DATA *extra_descr;
     /*@dependent@*//*@null@*/AFFECT_DATA *affected;
     /*@dependent@*/OBJECTPROTOTYPE *objprototype;
     /*@dependent@*//*@null@*/ROOM_INDEX_DATA *in_room;
@@ -2033,7 +2033,7 @@ void wiznet(char *string, /*@null@*/ CHAR_DATA * ch, /*@null@*/ GAMEOBJECT * obj
 void impnet(char *string, CHAR_DATA * ch, GAMEOBJECT * obj, long flag, long flag_skip, int min_level);
 
 /* alias.c */
-void substitute_alias(DESCRIPTOR_DATA * d, char *input);
+void substitute_alias(DESCRIPTOR_DATA * d, const char *input);
 
 
 /* ban.c */
@@ -2045,7 +2045,7 @@ void close_socket(DESCRIPTOR_DATA * dclose);
 void write_to_buffer(DESCRIPTOR_DATA * d, const char *txt, int length);
 void send_to_char(char *txt, /*@partial@*/CHAR_DATA * ch);
 void send_to_char_ascii(char *txt, /*@partial@*/CHAR_DATA * ch);
-void page_to_char(char *txt, /*@partial@*/CHAR_DATA * ch);
+void page_to_char(const char *txt, /*@partial@*/const CHAR_DATA * ch);
 void act(const char *format, /*@partial@*/CHAR_DATA * ch, /*@null@*/const void *arg1, /*@null@*/const void *arg2, int type);
 void act_new(const char *format, /*@partial@*/CHAR_DATA * ch, /*@null@*/const void *arg1, /*@null@*/const void *arg2, int type, int min_pos, bool mob_trigger);
 void printf_to_char(CHAR_DATA *, char *, ...);
@@ -2067,7 +2067,6 @@ void area_update(void);
 CHAR_DATA *create_mobile(MOB_INDEX_DATA * mob_idx);
 void clone_mobile(CHAR_DATA * parent, CHAR_DATA * clone);
 GAMEOBJECT *create_object(OBJECTPROTOTYPE * objprototype, int level);
-void clone_object(GAMEOBJECT * parent, GAMEOBJECT * clone);
 void clear_char(CHAR_DATA * ch);
 
 /* find functions  */
@@ -2090,7 +2089,6 @@ void smash_tilde(char *str);
 
 
 /* misc utility func. */
-void append_file(CHAR_DATA * ch, char *file, char *str);
 void tail_chain(void);
 
 /* olc/mprogs */
@@ -2151,7 +2149,7 @@ int get_max_train(CHAR_DATA * ch, int stat);
 int can_carry_n(CHAR_DATA * ch);
 int can_carry_w(CHAR_DATA * ch);
 int get_wield_weight(CHAR_DATA * ch);
-bool is_name(char *str, char *namelist);
+bool is_name(const char *str, const char *namelist);
 void char_from_room(CHAR_DATA * ch);
 void char_to_room(CHAR_DATA * ch, ROOM_INDEX_DATA * pRoomIndex);
 void obj_to_char(GAMEOBJECT * obj, CHAR_DATA * ch);
@@ -2167,14 +2165,14 @@ void obj_to_obj(GAMEOBJECT * obj, GAMEOBJECT * obj_to);
 void obj_from_obj(GAMEOBJECT * obj);
 void extract_obj(GAMEOBJECT * obj);
 void extract_char(CHAR_DATA * ch, bool fPull);
-CHAR_DATA *get_char_room(CHAR_DATA * ch, char *argument);
-CHAR_DATA *get_char_world(CHAR_DATA * ch, char *argument);
+CHAR_DATA *get_char_room(CHAR_DATA * ch, const char *argument);
+CHAR_DATA *get_char_world(CHAR_DATA * ch, const char *argument);
 GAMEOBJECT *get_obj_type(OBJECTPROTOTYPE * objprototypeData);
-GAMEOBJECT *get_obj_list(CHAR_DATA * ch, char *argument, GAMEOBJECT * list);
-GAMEOBJECT *get_obj_carry(CHAR_DATA * ch, char *argument);
-GAMEOBJECT *get_obj_wear(CHAR_DATA * ch, char *argument);
-GAMEOBJECT *get_obj_here(CHAR_DATA * ch, char *argument);
-GAMEOBJECT *get_obj_world(CHAR_DATA * ch, char *argument);
+GAMEOBJECT *get_obj_list(CHAR_DATA * ch, const char *argument, GAMEOBJECT * list);
+GAMEOBJECT *get_obj_carry(CHAR_DATA * ch, const char *argument);
+GAMEOBJECT *get_obj_wear(CHAR_DATA * ch, const char *argument);
+GAMEOBJECT *get_obj_here(CHAR_DATA * ch, const char *argument);
+GAMEOBJECT *get_obj_world(CHAR_DATA * ch, const char *argument);
 GAMEOBJECT *create_money(unsigned int gold, unsigned int silver);
 int get_obj_number(GAMEOBJECT * obj);
 int get_obj_weight(GAMEOBJECT * obj);
@@ -2208,7 +2206,7 @@ char *uncolor_str(char *txt);
 void identify_item(CHAR_DATA * ch, GAMEOBJECT * obj);
 bool is_help(char *argument);
 void furniture_check(CHAR_DATA * ch);
-ROOM_INDEX_DATA *find_location(CHAR_DATA * ch, char *arg);
+ROOM_INDEX_DATA *find_location(CHAR_DATA * ch, const char *arg);
 ROOM_INDEX_DATA *get_death_room(CHAR_DATA * ch);
 
 /* affects.c */
@@ -2228,10 +2226,10 @@ bool is_affected_room(ROOM_INDEX_DATA * room, SKILL * skill);
 char *room_affect(AFFECT_DATA * paf);
 
 /* interp.c */
-void interpret(CHAR_DATA * ch, char *argument);
-int number_argument(char *argument, char *arg);
-int mult_argument(char *argument, char *arg);
-char *one_argument(char *argument, /*@out@*/ char *arg_first);
+void interpret(CHAR_DATA * ch, const char *argument);
+int number_argument(const char *argument, char *arg);
+int mult_argument(const char *argument, char *arg);
+const char *one_argument(const char *argument, /*@out@*/ char *arg_first);
 char *one_line(char *base, char *buf);
 
 /* magic.c */
@@ -2288,6 +2286,7 @@ bool is_standupon(/*@partial@*/GAMEOBJECT *obj);
 #define LOG_SINK_PLAYER 3
 #define LOG_SINK_LASTCMD 4
 
+void append_file(CHAR_DATA *ch, const char *file, const char *str);
 void log_to(int log, char username[], const char *fmt, ...);
 void log_bug(const char *fmt, ...);
 void log_string(const char *fmt, ...);
@@ -2312,25 +2311,6 @@ int descriptor_list_count();
 /*@dependent@*//*@null@*/DESCRIPTOR_DATA *descriptor_iterator_start(const DESCRIPTOR_ITERATOR_FILTER *filter);
 /*@dependent@*//*@null@*/DESCRIPTOR_DATA *descriptor_iterator(DESCRIPTOR_DATA *current, const DESCRIPTOR_ITERATOR_FILTER *filter);
 /* ~descriptor.c */
-
-/* object.c */
-typedef struct object_iterator_filter OBJECT_ITERATOR_FILTER;
-struct object_iterator_filter {
-    /*@null@*/const char *name;
-    /*@null@*/OBJECTPROTOTYPE *object_template;
-};
-extern const OBJECT_ITERATOR_FILTER object_empty_filter;
-
-/*@dependent@*/GAMEOBJECT * object_new(/*@dependent@*/OBJECTPROTOTYPE *prototypedata);
-void object_free(/*@owned@*/GAMEOBJECT * d);
-int object_list_count();
-/*@dependent@*//*@null@*/GAMEOBJECT *object_iterator_start(const OBJECT_ITERATOR_FILTER *filter);
-/*@dependent@*//*@null@*/GAMEOBJECT *object_iterator(GAMEOBJECT *current, const OBJECT_ITERATOR_FILTER *filter);
-/*@dependent@*//*@null@*/char *object_ownername_get(GAMEOBJECT *object);
-void object_ownername_set(GAMEOBJECT *object, CHAR_DATA *owner);
-/*@dependent@*/char *object_name_get(GAMEOBJECT *object);
-void object_name_set(GAMEOBJECT *object, /*@shared@*/char *name);
-/* ~object.c */
 
 
 /* objectprototype.c */

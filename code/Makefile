@@ -41,7 +41,7 @@ OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
 all: mainbuild
 
 prebuild:
-	splint -DLINUX -Iinclude src/objectprototype.c src/descriptor.c src/object.c
+	splint -DLINUX -Iinclude -exportlocal src/objectprototype.c src/descriptor.c src/object.c
 
 mainbuild: prebuild
 	@$(MAKE) --no-print-directory $(EXE)

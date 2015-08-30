@@ -20,7 +20,6 @@ extern int password_acceptance(const char *plain);
 extern const char *password_accept_message(int code);
 
 
-void do_at(CHAR_DATA * ch, char *argument);
 HELP_DATA *find_help(CHAR_DATA * ch, char *name);
 void print_weather(CHAR_DATA * ch);
 
@@ -38,7 +37,7 @@ extern void fread_char(CHAR_DATA * ch, FILE * fp);
 
 
 /* changes your scroll */
-void do_scroll(CHAR_DATA *ch, char *argument)
+void do_scroll(CHAR_DATA *ch, const char *argument)
 {
     char arg[MIL];
     char buf[100];
@@ -82,34 +81,34 @@ void do_scroll(CHAR_DATA *ch, char *argument)
 
 /* RT Commands to replace news, motd, imotd, etc from ROM */
 
-void do_motd(CHAR_DATA *ch, char *argument)
+void do_motd(CHAR_DATA *ch, const char *argument)
 {
     do_help(ch, "motd");
 }
 
-void do_imotd(CHAR_DATA *ch, char *argument)
+void do_imotd(CHAR_DATA *ch, const char *argument)
 {
     do_help(ch, "imotd");
 }
 
-void do_rules(CHAR_DATA *ch, char *argument)
+void do_rules(CHAR_DATA *ch, const char *argument)
 {
     do_help(ch, "rules");
 }
 
-void do_story(CHAR_DATA *ch, char *argument)
+void do_story(CHAR_DATA *ch, const char *argument)
 {
     do_help(ch, "story");
 }
 
-void do_wizlist(CHAR_DATA *ch, char *argument)
+void do_wizlist(CHAR_DATA *ch, const char *argument)
 {
     do_help(ch, "wizlist");
 }
 
 /* RT this following section holds all the auto commands from ROM, as well as
  * replacements for config */
-void do_autolist(CHAR_DATA *ch, char *argument)
+void do_autolist(CHAR_DATA *ch, const char *argument)
 {
     /* lists most player flags */
     if (IS_NPC(ch))
@@ -200,7 +199,7 @@ void do_autolist(CHAR_DATA *ch, char *argument)
 	send_to_char("You accept followers.\n\r", ch);
 }
 
-void do_autoassist(CHAR_DATA *ch, char *argument)
+void do_autoassist(CHAR_DATA *ch, const char *argument)
 {
     if (IS_NPC(ch))
 	return;
@@ -214,7 +213,7 @@ void do_autoassist(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_autoeq(CHAR_DATA *ch, char *argument)
+void do_autoeq(CHAR_DATA *ch, const char *argument)
 {
     if (IS_NPC(ch))
 	return;
@@ -228,7 +227,7 @@ void do_autoeq(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_autoexit(CHAR_DATA *ch, char *argument)
+void do_autoexit(CHAR_DATA *ch, const char *argument)
 {
     if (IS_NPC(ch))
 	return;
@@ -242,7 +241,7 @@ void do_autoexit(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_autogold(CHAR_DATA *ch, char *argument)
+void do_autogold(CHAR_DATA *ch, const char *argument)
 {
     if (IS_NPC(ch))
 	return;
@@ -256,7 +255,7 @@ void do_autogold(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_autoloot(CHAR_DATA *ch, char *argument)
+void do_autoloot(CHAR_DATA *ch, const char *argument)
 {
     if (IS_NPC(ch))
 	return;
@@ -270,7 +269,7 @@ void do_autoloot(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_autosac(CHAR_DATA *ch, char *argument)
+void do_autosac(CHAR_DATA *ch, const char *argument)
 {
     if (IS_NPC(ch))
 	return;
@@ -284,7 +283,7 @@ void do_autosac(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_autosplit(CHAR_DATA *ch, char *argument)
+void do_autosplit(CHAR_DATA *ch, const char *argument)
 {
     if (IS_NPC(ch))
 	return;
@@ -298,7 +297,7 @@ void do_autosplit(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_brief(CHAR_DATA *ch, char *argument)
+void do_brief(CHAR_DATA *ch, const char *argument)
 {
     if (IS_SET(ch->comm, COMM_BRIEF)) {
 	send_to_char("Full descriptions activated.\n\r", ch);
@@ -309,7 +308,7 @@ void do_brief(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_compact(CHAR_DATA *ch, char *argument)
+void do_compact(CHAR_DATA *ch, const char *argument)
 {
     if (IS_SET(ch->comm, COMM_COMPACT)) {
 	send_to_char("Compact mode removed.\n\r", ch);
@@ -326,7 +325,7 @@ void send_color_status(CHAR_DATA *ch, char *a, char *c, byte b)
     send_to_char(c, ch);
 }
 
-void do_autoticks(CHAR_DATA *ch, char *argument)
+void do_autoticks(CHAR_DATA *ch, const char *argument)
 {
     if (IS_NPC(ch))
 	return;
@@ -340,7 +339,7 @@ void do_autoticks(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_color(CHAR_DATA *ch, char *argument)
+void do_color(CHAR_DATA *ch, const char *argument)
 {
     unsigned int i = 0;
     byte a = (byte)0;
@@ -478,7 +477,7 @@ void do_color(CHAR_DATA *ch, char *argument)
 }
 
 
-void do_show(CHAR_DATA *ch, char *argument)
+void do_show(CHAR_DATA *ch, /*@unused@*/const char *argument)
 {
     if (IS_SET(ch->comm, COMM_SHOW_AFFECTS)) {
 	send_to_char("Affects will no longer be shown in score.\n\r", ch);
@@ -489,7 +488,7 @@ void do_show(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_prompt(CHAR_DATA *ch, char *argument)
+void do_prompt(CHAR_DATA *ch, const char *argument)
 {
     char buf[MSL];
 
@@ -507,9 +506,7 @@ void do_prompt(CHAR_DATA *ch, char *argument)
     if (!strcmp(argument, "all")) {
 	strcpy(buf, "<%hhp %mm %vmv> ");
     } else {
-	if (strlen(argument) > 150) /*was 50*/
-	    argument[150] = '\0';
-	strcpy(buf, argument);
+	(void)strncpy(buf, argument, 150);
 	smash_tilde(buf);
 	if (str_suffix("%c", buf))
 	    strcat(buf, " ");
@@ -517,12 +514,11 @@ void do_prompt(CHAR_DATA *ch, char *argument)
 
     free_string(ch->prompt);
     ch->prompt = str_dup(buf);
-    sprintf(buf, "Prompt set to```8: ``%s\n\r", ch->prompt);
-    send_to_char(buf, ch);
+    printf_to_char(ch, "Prompt set to```8: ``%s\n\r", ch->prompt);
     return;
 }
 
-void do_combine(CHAR_DATA *ch, char *argument)
+void do_combine(CHAR_DATA *ch, const char *argument)
 {
     if (IS_SET(ch->comm, COMM_COMBINE)) {
 	send_to_char("Long inventory selected.\n\r", ch);
@@ -533,7 +529,7 @@ void do_combine(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_noloot(CHAR_DATA *ch, char *argument)
+void do_noloot(CHAR_DATA *ch, const char *argument)
 {
     if (IS_NPC(ch))
 	return;
@@ -547,7 +543,7 @@ void do_noloot(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_nofollow(CHAR_DATA *ch, char *argument)
+void do_nofollow(CHAR_DATA *ch, const char *argument)
 {
     if (IS_NPC(ch))
 	return;
@@ -566,7 +562,7 @@ void do_nofollow(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_nosummon(CHAR_DATA *ch, char *argument)
+void do_nosummon(CHAR_DATA *ch, const char *argument)
 {
     if (IS_NPC(ch)) {
 	if (IS_SET(ch->imm_flags, IMM_SUMMON)) {
@@ -587,7 +583,7 @@ void do_nosummon(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_lore(CHAR_DATA *ch, char *argument)
+void do_lore(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
     SKILL *skill;
@@ -625,7 +621,7 @@ void do_lore(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_glance(CHAR_DATA *ch, char *argument)
+void do_glance(CHAR_DATA *ch, const char *argument)
 {
     char arg1[MIL];
     char arg2[MIL];
@@ -677,7 +673,7 @@ void do_glance(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_look(CHAR_DATA *ch, char *argument)
+void do_look(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     GAMEOBJECT *obj;
@@ -745,13 +741,13 @@ void do_look(CHAR_DATA *ch, char *argument)
 }
 
 
-void do_examine(CHAR_DATA *ch, char *argument)
+void do_examine(CHAR_DATA *ch, const char *argument)
 {
     char buf[MSL];
     char arg[MIL];
     GAMEOBJECT *obj;
 
-    one_argument(argument, arg);
+    (void)one_argument(argument, arg);
 
     if (arg[0] == '\0') {
 	send_to_char("Aww no one wants to play doctor with you?\n\r", ch);
@@ -801,7 +797,7 @@ void do_examine(CHAR_DATA *ch, char *argument)
 /*
  * Thanks to Zrin for auto-exit part.
  */
-void do_exits(CHAR_DATA *ch, char *argument)
+void do_exits(CHAR_DATA *ch, const char *argument)
 {
     extern char *const dir_name[];
     EXIT_DATA *pexit;
@@ -888,7 +884,7 @@ void do_exits(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_worth(CHAR_DATA *ch, char *argument)
+void do_worth(CHAR_DATA *ch, const char *argument)
 {
     if (!IS_NPC(ch)) printf_to_char(ch, "Extended Experience Points: %ld, Extended Level: %d\n\r",
 	    ch->pcdata->extendedexp, ch->pcdata->extendedlevel);
@@ -908,7 +904,7 @@ void do_worth(CHAR_DATA *ch, char *argument)
 }
 
 
-void do_score(CHAR_DATA *ch, char *argument)
+void do_score(CHAR_DATA *ch, const char *argument)
 {
     char hours[MSL];
     char mins[MSL];
@@ -1126,7 +1122,7 @@ void do_score(CHAR_DATA *ch, char *argument)
 	do_affects(ch, "");
 }
 
-void do_affects(CHAR_DATA *ch, char *argument)
+void do_affects(CHAR_DATA *ch, const char *argument)
 {
     AFFECT_DATA *paf;
     AFFECT_DATA *paf_last = NULL;
@@ -1191,7 +1187,7 @@ char *const month_name[] =
     "the Long Shadows",   "the Ancient Darkness", "the Great Evil"
 };
 
-void do_time(CHAR_DATA *ch, char *argument)
+void do_time(CHAR_DATA *ch, const char *argument)
 {
     char *suf;
     int day;
@@ -1234,7 +1230,7 @@ void do_time(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_inventory(CHAR_DATA *ch, char *argument)
+void do_inventory(CHAR_DATA *ch, const char *argument)
 {
     send_to_char("You are carrying```8:``\n\r", ch);
     show_list_to_char(ch->carrying, ch, true, true);
@@ -1242,13 +1238,13 @@ void do_inventory(CHAR_DATA *ch, char *argument)
 }
 
 /* New do_equipment() function. Shows eq slots not worn.*/
-void do_equipment(CHAR_DATA *ch, /*@unused@*/char *argument)
+void do_equipment(CHAR_DATA *ch, /*@unused@*/const char *argument)
 {
     look_equipment(ch);
     return;
 }
 
-void do_compare(CHAR_DATA *ch, char *argument)
+void do_compare(CHAR_DATA *ch, const char *argument)
 {
     char arg1[MIL];
     char arg2[MIL];
@@ -1330,14 +1326,14 @@ void do_compare(CHAR_DATA *ch, char *argument)
 
 
 
-void do_credits(CHAR_DATA *ch, char *argument)
+void do_credits(CHAR_DATA *ch, const char *argument)
 {
     do_help(ch, "diku");
     return;
 }
 
 
-void do_here(CHAR_DATA *ch, char *argument)
+void do_here(CHAR_DATA *ch, const char *argument)
 {
     if (ch->desc == NULL)
 	return;
@@ -1370,14 +1366,14 @@ void do_here(CHAR_DATA *ch, char *argument)
 }
 
 
-void do_consider(CHAR_DATA *ch, char *argument)
+void do_consider(CHAR_DATA *ch, const char *argument)
 {
     char arg[MIL];
     CHAR_DATA *victim;
     char *msg;
     int diff;
 
-    one_argument(argument, arg);
+    (void)one_argument(argument, arg);
 
     if (arg[0] == '\0') {
 	send_to_char("Consider killing whom?\n\r", ch);
@@ -1443,21 +1439,21 @@ void set_title(CHAR_DATA *ch, char *title)
 /***************************************************************************
  *	do_title
  ***************************************************************************/
-void do_title(CHAR_DATA *ch, char *argument)
+void do_title(CHAR_DATA *ch, const char *argument)
 {
-    if (IS_NPC(ch))
-	return;
+    static char buf[MSL];
+
+    DENY_NPC(ch);
 
     if (argument[0] == '\0') {
 	send_to_char("Change your title to what?\n\r", ch);
 	return;
     }
 
-    if (strlen(argument) > MAX_TITLE_LENGTH)
-	argument[MAX_TITLE_LENGTH] = '\0';
 
-    smash_tilde(argument);
-    set_title(ch, argument);
+    strncpy(buf, argument, MAX_TITLE_LENGTH);
+    smash_tilde(buf);
+    set_title(ch, buf);
     send_to_char("Ok.\n\r", ch);
 }
 
@@ -1465,21 +1461,18 @@ void do_title(CHAR_DATA *ch, char *argument)
 /***************************************************************************
  *	do_deathcry
  ***************************************************************************/
-void do_deathcry(CHAR_DATA *ch, char *argument)
+void do_deathcry(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MSL];
+    static char buf[MSL];
     int rand;
 
-    if (IS_NPC(ch))
-	return;
+    DENY_NPC(ch);
 
-    if ((argument[0] == '\0')
-	    && (ch->pcdata->deathcry == NULL)) {
+    if ((argument[0] == '\0') && (ch->pcdata->deathcry == NULL)) {
 	send_to_char("Change your death cry to what?\n\r", ch);
 	return;
     } else if (argument[0] == '\0') {
-	sprintf(buf, "Your `1death `!cry`` is`8:`` %s\n\r", ch->pcdata->deathcry);
-	send_to_char(buf, ch);
+	printf_to_char(ch, "Your `1death `!cry`` is`8:`` %s\n\r", ch->pcdata->deathcry);
 	return;
     }
 
@@ -1518,85 +1511,85 @@ void do_deathcry(CHAR_DATA *ch, char *argument)
 	return;
     }
 
-    if (strlen(argument) > MIL)
-	argument[MIL] = '\0';
-
-    smash_tilde(argument);
-    ch->pcdata->deathcry = str_dup(argument);
-
-    sprintf(buf, "Your `1death `!cry`` is`8:`` %s\n\r", ch->pcdata->deathcry);
-    send_to_char(buf, ch);
+    (void)snprintf(buf, MIL, "%s", argument);
+    smash_tilde(buf);
+    ch->pcdata->deathcry = str_dup(buf);
+    printf_to_char(ch, "Your `1death `!cry`` is`8:`` %s\n\r", ch->pcdata->deathcry);
 }
 
 
 /***************************************************************************
  *	do_description
  ***************************************************************************/
-void do_description(CHAR_DATA *ch, char *argument)
+void do_description(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MSL];
 
-    if (IS_NPC(ch))
+    static char buf[MSL];
+
+    DENY_NPC(ch);
+
+    if (!str_prefix(argument, "edit")) {
+	string_append(ch, &ch->description);
 	return;
+    }
 
-    if (argument[0] != '\0') {
-	buf[0] = '\0';
-	smash_tilde(argument);
+    if (argument[0] == '-') {
+	int len, buf_len;
+	bool found = false;
 
-	if (!str_prefix(argument, "edit")) {
-	    string_append(ch, &ch->description);
+	if (ch->description == NULL || ch->description[0] == '\0') {
+	    send_to_char("No lines left to remove.\n\r", ch);
 	    return;
 	}
 
-	if (argument[0] == '-') {
-	    int len, buf_len;
-	    bool found = false;
-
-	    if (ch->description == NULL || ch->description[0] == '\0') {
-		send_to_char("No lines left to remove.\n\r", ch);
-		return;
-	    }
-
-	    strcpy(buf, ch->description);
-	    buf_len = (int)strlen(buf);
-	    for (len = buf_len; len > 0; len--) {
-		if (buf[len] == '\r') {
-		    if (!found) {            /* back it up */
-			if (len > 0)
-			    len--;
-			found = true;
-		    } else {
-			/* found the second one */
-			buf[len + 1] = '\0';
-			free_string(ch->description);
-			ch->description = str_dup(buf);
-			send_to_char("Your description is```8:``\n\r", ch);
-			send_to_char(ch->description ? ch->description : "(None).\n\r", ch);
-			return;
-		    }
+	strcpy(buf, ch->description);
+	buf_len = (int)strlen(buf);
+	for (len = buf_len; len > 0; len--) {
+	    if (buf[len] == '\r') {
+		if (!found) {            /* back it up */
+		    if (len > 0)
+			len--;
+		    found = true;
+		} else {
+		    /* found the second one */
+		    buf[len + 1] = '\0';
+		    free_string(ch->description);
+		    ch->description = str_dup(buf);
+		    send_to_char("Your description is```8:``\n\r", ch);
+		    send_to_char(ch->description ? ch->description : "(None).\n\r", ch);
+		    return;
 		}
 	    }
-	    buf[0] = '\0';
-	    free_string(ch->description);
-	    ch->description = str_dup(buf);
-	    send_to_char("Description cleared.\n\r", ch);
-	    return;
+	}
+	buf[0] = '\0';
+	free_string(ch->description);
+	ch->description = str_dup(buf);
+	send_to_char("Description cleared.\n\r", ch);
+	return;
+    }
+
+    if (argument[0] == '+') {
+	static char sanitized[MSL];
+	char *s;
+
+	(void)strncpy(sanitized, argument, MSL);
+	smash_tilde(sanitized);
+
+	if (ch->description != NULL) {
+	    strncpy(buf, ch->description, strlen(ch->description));
 	}
 
-	if (argument[0] == '+') {
-	    if (ch->description != NULL)
-		strcat(buf, ch->description);
-	    argument++;
-	    while (is_space(*argument))
-		argument++;
+	s = sanitized + 1;
+	while (is_space(*s)) {
+	    s++;
 	}
 
-	if (strlen(buf) + strlen(argument) >= 1024) {
+	if (strlen(buf) + strlen(s) >= 1024) {
 	    send_to_char("Description too long.\n\r", ch);
 	    return;
 	}
 
-	strcat(buf, argument);
+	strcat(buf, s);
 	strcat(buf, "\n\r");
 	free_string(ch->description);
 	ch->description = str_dup(buf);
@@ -1604,12 +1597,11 @@ void do_description(CHAR_DATA *ch, char *argument)
 
     send_to_char("Your description is```8:``\n\r", ch);
     send_to_char(ch->description ? ch->description : "(None).\n\r", ch);
-    return;
 }
 
 
 
-void do_report(CHAR_DATA *ch, char *argument)
+void do_report(CHAR_DATA *ch, const char *argument)
 {
     char buf[MIL];
 
@@ -1637,12 +1629,12 @@ void do_report(CHAR_DATA *ch, char *argument)
 /*
  * 'Wimpy' originally by Dionysos.
  */
-void do_wimpy(CHAR_DATA *ch, char *argument)
+void do_wimpy(CHAR_DATA *ch, const char *argument)
 {
     char arg[MIL];
     int wimpy;
 
-    one_argument(argument, arg);
+    (void)one_argument(argument, arg);
 
     if (arg[0] == '\0')
 	wimpy = ch->max_hit / 5;
@@ -1666,7 +1658,7 @@ void do_wimpy(CHAR_DATA *ch, char *argument)
 
 
 
-void do_password(CHAR_DATA *ch, char *argument)
+void do_password(CHAR_DATA *ch, const char *argument)
 {
     char arg1[MIL];
     char arg2[MIL];
@@ -1739,7 +1731,7 @@ void do_password(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_finger(CHAR_DATA *ch, char *argument)
+void do_finger(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     FILE *fp;
@@ -1751,7 +1743,7 @@ void do_finger(CHAR_DATA *ch, char *argument)
     bool fOld;
     bool vOnline = true;
 
-    one_argument(argument, arg);
+    (void)one_argument(argument, arg);
 
     if (arg[0] == '\0') {
 	send_to_char("Syntax: finger <name>\n\r\n\r", ch);
@@ -1846,51 +1838,7 @@ void do_finger(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_finger2(CHAR_DATA *ch, char *argument)
-{
-    CHAR_DATA *victim;
-    char buf[MSL];
-    char argh[MIL];
-
-    argument = one_argument(argument, argh);
-    victim = get_char_world(ch, argh);
-
-    if (argh[0] == '\0') {
-	do_ewho(ch, "");
-	return;
-    }
-
-    if (victim == NULL) {
-	send_to_char("They aren't here.\n\r", ch);
-	return;
-    }
-
-    if (IS_NPC(victim)) {
-	sprintf(buf,
-		"`@%s tells you '`tPull that again and I'm gonna kick your ass ..`@'`7\n\r",
-		capitalize(victim->short_descr));
-	send_to_char(buf, ch);
-	return;
-    }
-
-    sprintf(buf, "Pkills: `!%ld``\n\rPdeaths: `O%ld``\n\rLevel: `#%d``\n\r",
-	    victim->pcdata->pkills,
-	    victim->pcdata->pdeaths,
-	    victim->level);
-    send_to_char(buf, ch);
-
-    if (victim->description[0] != '\0') {
-	sprintf(buf, "%s's description:\n\r--------------------------------------------------------------------------------\n\r", victim->name);
-	send_to_char(buf, ch);
-	send_to_char(victim->description, ch);
-    } else {
-	sprintf(buf, "There is nothing special about %s.\n\r", victim->name);
-	send_to_char(buf, ch);
-    }
-    return;
-}
-
-void do_laston(CHAR_DATA *ch, char *argument)
+void do_laston(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter filter = { .must_playing = true, .skip_character = ch };
     DESCRIPTOR_DATA *d;
@@ -1901,7 +1849,7 @@ void do_laston(CHAR_DATA *ch, char *argument)
     char buf[MSL];
     bool fOld;
 
-    one_argument(argument, arg);
+    (void)one_argument(argument, arg);
 
     if (arg[0] == '\0') {
 	send_to_char("Syntax: laston <name>\n\r\n\r", ch);
@@ -2006,7 +1954,7 @@ void print_weather(CHAR_DATA *ch)
     printf_to_char(ch, "The sky is %s and %s\n\r", sky_look[globalGameState.weather->sky], globalGameState.weather->change >= 0 ? "rainy." : "snowing.");
 }
 
-void do_weather(CHAR_DATA *ch, char *argument)
+void do_weather(CHAR_DATA *ch, const char *argument)
 {
     if (!IS_OUTSIDE(ch)) {
 	send_to_char("You can't see the weather indoors.\n\r", ch);
@@ -2016,7 +1964,7 @@ void do_weather(CHAR_DATA *ch, char *argument)
     print_weather(ch);
 }
 
-void do_die(CHAR_DATA *ch, char *argument)
+void do_die(CHAR_DATA *ch, const char *argument)
 {
     do_help(ch, "BLOW");
     return;
@@ -2077,6 +2025,20 @@ void show_damage_display(CHAR_DATA *ch, CHAR_DATA *victim)
     }
 }
 
+
+static void print_history_help(CHAR_DATA *ch)
+{
+    send_to_char("Syntax: history [cmd]\n\r\n\r", ch);
+    send_to_char("Available commands:\n\r", ch);
+    printf_to_char(ch, "%-10.10s", "+");
+    printf_to_char(ch, "%-10.10s", "-");
+    /*printf_to_char(ch, "%-10.10s", "edit");*/
+    printf_to_char(ch, "%-10.10s", "clear");
+    /*send_to_char("\n\r", ch);*/
+    printf_to_char(ch, "%-10.10s", "show");
+    send_to_char("\n\r\n\r", ch);
+}
+
 /*
  * Allows PC to make and store a history.
  * by TAKA
@@ -2084,7 +2046,7 @@ void show_damage_display(CHAR_DATA *ch, CHAR_DATA *victim)
  *   Modified (rewritten) by Monrick: January 6, 2008
  *    for Bad Trip
  */
-void do_history(CHAR_DATA *ch, char *argument)
+void do_history(CHAR_DATA *ch, const char *argument)
 {
     char cmd[MSL];
     int len;
@@ -2095,20 +2057,10 @@ void do_history(CHAR_DATA *ch, char *argument)
 	return;
 
     if (argument[0] == '\0') {
-print_hist_help:
-	send_to_char("Syntax: history [cmd]\n\r\n\r", ch);
-	send_to_char("Available commands:\n\r", ch);
-	printf_to_char(ch, "%-10.10s", "+");
-	printf_to_char(ch, "%-10.10s", "-");
-	/*printf_to_char(ch, "%-10.10s", "edit");*/
-	printf_to_char(ch, "%-10.10s", "clear");
-	/*send_to_char("\n\r", ch);*/
-	printf_to_char(ch, "%-10.10s", "show");
-	send_to_char("\n\r\n\r", ch);
+	print_history_help(ch);
 	return;
     }
 
-    smash_tilde(argument);
     argument = one_argument(argument, cmd);
 
     if (cmd[0] == '\0') {
@@ -2116,21 +2068,26 @@ print_hist_help:
 	page_to_char(ch->pcdata->history ? ch->pcdata->history : "(None).\n\r", ch);
 	return;
     } else {
+	static char sanitized[MSL];
+
+	snprintf(sanitized, MSL, "%s", argument);
+	smash_tilde(sanitized);
+
 	if (cmd[0] == '+') {
 	    char buf[MSL];
 
 	    if (ch->pcdata->history == NULL || ch->pcdata->history[0] == '\0') {
-		if (strlen(argument) >= MAX_HIST_LENGTH) {
+		if (strlen(sanitized) >= MAX_HIST_LENGTH) {
 		    send_to_char("History too long.\n\r", ch);
 		    return;
 		}
-	    } else if (strlen(ch->pcdata->history) + strlen(argument) >= MAX_HIST_LENGTH) {
+	    } else if (strlen(ch->pcdata->history) + strlen(sanitized) >= MAX_HIST_LENGTH) {
 		send_to_char("History too long.\n\r", ch);
 		return;
 	    }
 
 	    strcpy(buf, ch->pcdata->history);
-	    strcat(buf, argument);
+	    strcat(buf, sanitized);
 	    strcat(buf, "\n\r");
 
 	    free_string(ch->pcdata->history);
@@ -2174,25 +2131,8 @@ print_hist_help:
 	    send_to_char("Ok.\n\r", ch);
 	    return;
 	} else if (!strcmp(cmd, "edit")) {
-	    /* MUST KILL GOTO */
-	    goto print_hist_help;
-
-	    /*
-	     *                      strcpy(buf, ch->pcdata->history);
-	     *
-	     *                      string_append(ch, &buf);
-	     *                      while (strlen(buf) >= MAX_HIST_LENGTH)
-	     *                      {
-	     *                              send_to_char("History too long.  Please make it shorter.\n\r", ch);
-	     *                              string_append( ch, &buf);
-	     *                      }
-	     *
-	     *                      free_string(ch->pcdata->history);
-	     *                      ch->pcdata->history = str_dup(buf);
-	     *
-	     *                      send_to_char("Ok.\n\r.", ch);
-	     *                      return;
-	     */
+	    print_history_help(ch);
+	    return;
 	} else if (!strcmp(cmd, "clear")) {
 	    if (ch->pcdata->history != NULL && ch->pcdata->history[0] != '\0') {
 		free_string(ch->pcdata->history);
@@ -2201,7 +2141,8 @@ print_hist_help:
 	    send_to_char("History cleared.\n\r", ch);
 	    return;
 	} else if (strcmp(cmd, "show")) {
-	    goto print_hist_help;
+	    print_history_help(ch);
+	    return;
 	}
     }
 
@@ -2211,10 +2152,9 @@ print_hist_help:
     } else {
 	send_to_char("You have no history.  Perhaps you should write one...\n\r", ch);
     }
-    return;
 }
 
-void do_viewhist(CHAR_DATA *ch, char *argument)
+void do_viewhist(CHAR_DATA *ch, const char *argument)
 {
     char arg1[MIL];
     CHAR_DATA *victim;
@@ -2240,13 +2180,5 @@ void do_viewhist(CHAR_DATA *ch, char *argument)
     } else {
 	printf_to_char(ch, "%s doesn't have a history.\n\r", victim->name);
     }
-    return;
-}
-
-void do_radio(CHAR_DATA *ch, char *argument)
-{
-    send_to_char("You can connect to BTRR at btrr.strangled.net:8000/listen.pls\n\r", ch);
-    send_to_char("Note: This is not a mud. You will need to use a media player\n\r", ch);
-    send_to_char("to connect. Please see help radio_connect for more info.\n\r", ch);
     return;
 }

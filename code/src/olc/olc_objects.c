@@ -177,8 +177,7 @@ static void show_obj_values(CHAR_DATA *ch, OBJECTPROTOTYPE *obj)
  *
  *	set the value properties of an item based on it's type
  *****************************************************************************/
-static bool set_obj_values(CHAR_DATA *ch, OBJECTPROTOTYPE *pObj,
-	int value_num, char *argument)
+static bool set_obj_values(CHAR_DATA *ch, OBJECTPROTOTYPE *pObj, int value_num, char *argument)
 {
     SKILL *skill;
     int value;
@@ -556,7 +555,7 @@ static bool set_value(CHAR_DATA *ch, OBJECTPROTOTYPE *pObj, char *argument, int 
 /*****************************************************************************
  *	do_oedit
  *****************************************************************************/
-void do_oedit(CHAR_DATA *ch, char *argument)
+void do_oedit(CHAR_DATA *ch, const char *argument)
 {
     OBJECTPROTOTYPE *pObj;
     AREA_DATA *pArea;

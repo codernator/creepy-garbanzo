@@ -320,7 +320,7 @@ void remove_all_affects(CHAR_DATA *victim)
 *
 *	cast a spell
 ***************************************************************************/
-void do_cast(CHAR_DATA *ch, char *argument)
+void do_cast(CHAR_DATA *ch, const char *argument)
 {
 	CHAR_DATA *victim;
 	GAMEOBJECT *obj;
@@ -778,7 +778,7 @@ void obj_cast_spell(int		sn,
 /***************************************************************************
 *	do_quaff
 ***************************************************************************/
-void do_quaff(CHAR_DATA *ch, char *argument)
+void do_quaff(CHAR_DATA *ch, const char *argument)
 {
 	GAMEOBJECT *obj;
 	char arg[MIL];
@@ -820,7 +820,7 @@ void do_quaff(CHAR_DATA *ch, char *argument)
 /***************************************************************************
 *	do_recite
 ***************************************************************************/
-void do_recite(CHAR_DATA *ch, char *argument)
+void do_recite(CHAR_DATA *ch, const char *argument)
 {
 	CHAR_DATA *victim;
 	GAMEOBJECT *scroll;
@@ -885,7 +885,7 @@ void do_recite(CHAR_DATA *ch, char *argument)
 /***************************************************************************
 *	do_brandish
 ***************************************************************************/
-void do_brandish(CHAR_DATA *ch, char *argument)
+void do_brandish(CHAR_DATA *ch, const char *argument)
 {
 	CHAR_DATA *vch;
 	CHAR_DATA *vch_next;
@@ -970,7 +970,7 @@ void do_brandish(CHAR_DATA *ch, char *argument)
 /***************************************************************************
 *	do_zap
 ***************************************************************************/
-void do_zap(CHAR_DATA *ch, char *argument)
+void do_zap(CHAR_DATA *ch, const char *argument)
 {
 	CHAR_DATA *victim;
 	GAMEOBJECT *wand;
@@ -1064,7 +1064,7 @@ void cast_spell(CHAR_DATA *ch, SKILL *skill, int level, void *vo, int target, ch
 /***************************************************************************
 *	do_deft
 ***************************************************************************/
-void do_deft(CHAR_DATA *ch, char *argument)
+void do_deft(CHAR_DATA *ch, const char *argument)
 {
 	AFFECT_DATA af;
 	SKILL *skill;
@@ -1109,7 +1109,7 @@ void do_deft(CHAR_DATA *ch, char *argument)
 /***************************************************************************
 *	do_dash
 ***************************************************************************/
-void do_dash(CHAR_DATA *ch, char *argument)
+void do_dash(CHAR_DATA *ch, const char *argument)
 {
 	AFFECT_DATA af;
 	SKILL *skill;

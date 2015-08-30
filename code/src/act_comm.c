@@ -5,7 +5,7 @@
 
 
 
-void command_channel(CHAR_DATA *ch, char *argument) {
+void command_channel(CHAR_DATA *ch, const char *argument) {
     static char arg1[MIL];
     static char arg2[MIL];
     const CHANNEL_DEFINITION const *channel;
@@ -26,7 +26,7 @@ void command_channel(CHAR_DATA *ch, char *argument) {
             /** EX3: channel -say foobar */
             
             char operation = argument[0];
-            char *chanName;
+            const char *chanName;
             CHAR_DATA *victim;
 
             if (argument[1] != '\0') {
@@ -122,13 +122,13 @@ void command_channel(CHAR_DATA *ch, char *argument) {
 }
 
 
-void do_afk(CHAR_DATA *ch, char *argument)
+void do_afk(CHAR_DATA *ch, const char *argument)
 {
     DENY_NPC(ch);
     toggle_afk(ch, argument);
 }
 
-void do_replay(CHAR_DATA *ch, /*@unused@*/ char *argument)
+void do_replay(CHAR_DATA *ch, /*@unused@*/ const char *argument)
 {
     DENY_NPC(ch);
     replay(ch);

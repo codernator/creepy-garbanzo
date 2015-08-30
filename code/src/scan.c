@@ -9,7 +9,7 @@ ROOM_INDEX_DATA *get_scan_room(ROOM_INDEX_DATA * room, int direction, int distan
 *	local declarations
 ***************************************************************************/
 /* local functions */
-static void scan_list(ROOM_INDEX_DATA * scan_room, CHAR_DATA * ch, int depth, int door, char *argument);
+static void scan_list(ROOM_INDEX_DATA * scan_room, CHAR_DATA * ch, int depth, int door, const char *argument);
 
 /*
  * Right Here
@@ -40,7 +40,7 @@ static char *const direction_name[] =
 *
 *	scan the area
 ***************************************************************************/
-void do_scan(CHAR_DATA *ch, char *argument)
+void do_scan(CHAR_DATA *ch, const char *argument)
 {
 	ROOM_INDEX_DATA *room;
 	int max_dist;
@@ -99,7 +99,7 @@ void do_scan(CHAR_DATA *ch, char *argument)
 *	generate a list of all the people in a give room
 *	or just the people who match <argument>
 ***************************************************************************/
-static void scan_list(ROOM_INDEX_DATA *scan_room, CHAR_DATA *ch, int depth, int direction, char *argument)
+static void scan_list(ROOM_INDEX_DATA *scan_room, CHAR_DATA *ch, int depth, int direction, const char *argument)
 {
 	CHAR_DATA *rch;
 	bool found;
@@ -175,7 +175,7 @@ ROOM_INDEX_DATA *get_scan_room(ROOM_INDEX_DATA *room,
 *	get a character that is within scan-able range
 *	this function will be used by a couple of skills
 ***************************************************************************/
-CHAR_DATA *get_char_scan(CHAR_DATA *ch, char *argument)
+CHAR_DATA *get_char_scan(CHAR_DATA *ch, const char *argument)
 {
 	ROOM_INDEX_DATA *room;
 	CHAR_DATA *rch;

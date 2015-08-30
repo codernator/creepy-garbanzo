@@ -68,7 +68,7 @@ CHAR_DATA *get_random_pc(CHAR_DATA *ch, AREA_DATA *area)
 /***************************************************************************
 *	do_at
 ***************************************************************************/
-void do_at(CHAR_DATA *ch, char *argument)
+void do_at(CHAR_DATA *ch, const char *argument)
 {
 	ROOM_INDEX_DATA *location = NULL;
 	ROOM_INDEX_DATA *original;

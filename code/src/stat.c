@@ -18,7 +18,7 @@ static void show_mob_stats(CHAR_DATA *ch, char *argument);
 /**
  * entry function into various game entity statistics.
  */
-void do_stat(CHAR_DATA *ch, char *argument)
+void do_stat(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
     ROOM_INDEX_DATA *location;

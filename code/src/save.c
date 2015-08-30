@@ -1790,7 +1790,7 @@ static void fread_obj(CHAR_DATA *ch, FILE *fp)
 /***************************************************************************
  *	do_rload
  ***************************************************************************/
-void do_rload(CHAR_DATA *ch, char *argument)
+void do_rload(CHAR_DATA *ch, const char *argument)
 {
     ROOM_INDEX_DATA *location;
 
@@ -1815,7 +1815,7 @@ void do_rload(CHAR_DATA *ch, char *argument)
     send_to_char("Ok.\n\r", ch);
 }
 
-void do_rsave(CHAR_DATA *ch, char *argument)
+void do_rsave(CHAR_DATA *ch, const char *argument)
 {
     char strsave[MAX_INPUT_LENGTH];
     ROOM_INDEX_DATA *location;

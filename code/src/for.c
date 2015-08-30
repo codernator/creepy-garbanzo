@@ -85,7 +85,7 @@ static bool valid_cmd(CHAR_DATA *vch, char *cmd)
 *
 *	entry point for the "for" command
 ***************************************************************************/
-void do_for(CHAR_DATA *ch, char *argument)
+void do_for(CHAR_DATA *ch, const char *argument)
 {
 	char name[MIL];
 	int iter;

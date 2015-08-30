@@ -2,6 +2,7 @@
  *	includes
  ***************************************************************************/
 #include "merc.h"
+#include "object.h"
 #include "recycle.h"
 
 
@@ -11,7 +12,7 @@ extern DECLARE_DO_FUN(do_help);
 
 #define _MAX_FOUND              200
 
-void do_teleport(CHAR_DATA *ch, char *argument)
+void do_teleport(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *teleporter;
     GAMEOBJECT *obj, *opending;

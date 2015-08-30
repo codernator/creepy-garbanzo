@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "merc.h"
+#include "object.h"
 #include "magic.h"
 #include "interp.h"
 #include "tables.h"
@@ -148,7 +149,7 @@ static struct unique_attrib_table unique_table_prefix[] =
  *	create a number of unique arguments and randomly put them
  *	out in the world
  ***************************************************************************/
-void do_cuo(CHAR_DATA *ch, char *argument)
+void do_cuo(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
     CHAR_DATA *mob;
@@ -230,7 +231,7 @@ void do_cuo(CHAR_DATA *ch, char *argument)
  *
  *	get a count of unique items in the world still carried by a mob
  ***************************************************************************/
-void do_tally(CHAR_DATA *ch, char *argument)
+void do_tally(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj, *opending;
     int unique_tally = 0;
@@ -263,7 +264,7 @@ void do_tally(CHAR_DATA *ch, char *argument)
  *
  *	remove all of the uniques from the world
  ***************************************************************************/
-void do_untally(CHAR_DATA *ch, char *argument)
+void do_untally(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj, *opending;
     int tally = 0;

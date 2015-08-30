@@ -41,7 +41,7 @@ extern void string_append(CHAR_DATA * ch, char **string);
  *
  *	entry level function for mob editing
  *****************************************************************************/
-void do_medit(CHAR_DATA *ch, char *argument)
+void do_medit(CHAR_DATA *ch, const char *argument)
 {
     MOB_INDEX_DATA *mob_idx;
     AREA_DATA *area;

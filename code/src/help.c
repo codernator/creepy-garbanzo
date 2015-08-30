@@ -4,7 +4,7 @@
 
 
 
-void do_help(CHAR_DATA *ch, char *argument)
+void do_help(CHAR_DATA *ch, const char *argument)
 {
     HELP_DATA *help;
     char arg[MIL];

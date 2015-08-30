@@ -1,4 +1,5 @@
 #include "merc.h"
+#include "object.h"
 #include "magic.h"
 #include "channels.h"
 #include <stdio.h>
@@ -300,7 +301,7 @@ void gain_exp(CHAR_DATA *ch, int gain)
  *                                                                          *
  *   gain 1 extended level - immcommand                                     *
  ***************************************************************************/
-void do_extend(CHAR_DATA *ch, char *argument)
+void do_extend(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     char arg1[MIL];

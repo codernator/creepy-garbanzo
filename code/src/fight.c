@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "merc.h"
+#include "object.h"
 #include "character.h"
 #include "tables.h"
 #include "lookup.h"

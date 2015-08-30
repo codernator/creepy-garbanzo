@@ -60,7 +60,7 @@ char *check_nickname(CHAR_DATA *ch, char *nickname)
 	return NULL;
 }
 
-void do_nickname(CHAR_DATA *ch, char *argument)
+void do_nickname(CHAR_DATA *ch, const char *argument)
 {
 	char arg1[MAX_INPUT_LENGTH];
 	char arg2[MAX_INPUT_LENGTH];

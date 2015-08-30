@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "merc.h"
+#include "object.h"
 #include "tables.h"
 #include "lookup.h"
 #include "mob_cmds.h"

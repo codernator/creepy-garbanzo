@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "merc.h"
+#include "object.h"
 #include "magic.h"
 #include "recycle.h"
 #include "interp.h"
@@ -147,7 +148,7 @@ static void spell_imprint(SKILL *skill, int level, CHAR_DATA *ch, void *vo)
 /***************************************************************************
  *	do_brew
  ***************************************************************************/
-void do_brew(CHAR_DATA *ch, char *argument)
+void do_brew(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
     SKILL *skill;
@@ -275,7 +276,7 @@ void do_brew(CHAR_DATA *ch, char *argument)
 /***************************************************************************
  *	do_scribe
  ***************************************************************************/
-void do_scribe(CHAR_DATA *ch, char *argument)
+void do_scribe(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
     SKILL *skill;

@@ -102,7 +102,7 @@ char *who_string(CHAR_DATA *ch)
 /***************************************************************************
 *	do_whois
 ***************************************************************************/
-void do_whois(CHAR_DATA *ch, char *argument)
+void do_whois(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	DESCRIPTOR_DATA *d;
@@ -154,7 +154,7 @@ void do_whois(CHAR_DATA *ch, char *argument)
 /***************************************************************************
 *	do_who
 ***************************************************************************/
-void do_who(CHAR_DATA *ch, char *argument)
+void do_who(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	DESCRIPTOR_DATA *d;
@@ -314,7 +314,7 @@ void do_who(CHAR_DATA *ch, char *argument)
 *
 *	extended who
 ***************************************************************************/
-void do_ewho(CHAR_DATA *ch, char *argument)
+void do_ewho(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	DESCRIPTOR_DATA *d;
@@ -437,7 +437,7 @@ void do_ewho(CHAR_DATA *ch, char *argument)
 *
 *	check to see what characters are in the area
 ***************************************************************************/
-void do_where(CHAR_DATA *ch, char *argument)
+void do_where(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	DESCRIPTOR_DATA *d;

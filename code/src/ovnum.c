@@ -88,7 +88,7 @@ static CHECK_EXISTS_FN *get_check_exists_function(char type)
 	return fn;
 }
 
-static void find_empty_vnums(char type, CHAR_DATA *ch, char *arg, BUFFER *out_buffer)
+static void find_empty_vnums(char type, const CHAR_DATA *ch, const char *arg, BUFFER *out_buffer)
 {
 	AREA_DATA *ad;
 	long vnum, low_empty_range = 0, high_empty_range = 0;
@@ -143,14 +143,14 @@ static void find_empty_vnums(char type, CHAR_DATA *ch, char *arg, BUFFER *out_bu
 }
 
 
-void ovnum_find_empty(CHAR_DATA *ch, char *arg, BUFFER *out_buffer)
+void ovnum_find_empty(const CHAR_DATA *ch, const char *arg, BUFFER *out_buffer)
 {
 	add_buf(out_buffer, "`#QUERY``: ovnum find empty vnums in area.\n\r\n\r");
 
 	find_empty_vnums('o', ch, arg, out_buffer);
 }
 
-void mvnum_find_empty(CHAR_DATA *ch, char *arg, BUFFER *out_buffer)
+void mvnum_find_empty(const CHAR_DATA *ch, const char *arg, BUFFER *out_buffer)
 {
 	add_buf(out_buffer, "`#QUERY``: mvnum find empty vnums in area.\n\r\n\r");
 

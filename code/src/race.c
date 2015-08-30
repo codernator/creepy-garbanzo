@@ -9,7 +9,7 @@
 #include <stdio.h>
 
 
-void do_raceinfo(CHAR_DATA *ch, char *argument)
+void do_raceinfo(CHAR_DATA *ch, const char *argument)
 {
 	BUFFER *buf;
 	int race_idx;

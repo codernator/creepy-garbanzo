@@ -30,8 +30,8 @@ struct channel_definition {
 };
 
 void channels_toggle(/*@partial@*/CHAR_DATA *ch, /*@notnull@*/const CHANNEL_DEFINITION const *channel);
-void channels_show(/*@partial@*/CHAR_DATA *ch);
-void channels_permission(/*@partial@*/CHAR_DATA *grantor, /*@partial@*/CHAR_DATA *grantee, bool granted, /*@notnull@*/const CHANNEL_DEFINITION const *channel);
-const CHANNEL_DEFINITION const *channels_parse(char *argument);
+void channels_show(/*@partial@*/const CHAR_DATA *ch);
+void channels_permission(/*@partial@*/const CHAR_DATA *grantor, /*@partial@*/CHAR_DATA *grantee, bool granted, /*@notnull@*/const CHANNEL_DEFINITION const *channel);
+const CHANNEL_DEFINITION const *channels_parse(const char *argument);
 const CHANNEL_DEFINITION const *channels_find(CHANNEL_FLAG_TYPE channel_flag);
-void broadcast_channel(/*@partial@*/CHAR_DATA *sender, const CHANNEL_DEFINITION const *channel, /*@partial@*//*@null@*/CHAR_DATA *target, char *argument);
+void broadcast_channel(/*@partial@*/CHAR_DATA *sender, const CHANNEL_DEFINITION const *channel, /*@partial@*//*@null@*/CHAR_DATA *target, const char *argument);

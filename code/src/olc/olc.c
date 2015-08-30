@@ -701,7 +701,7 @@ static const struct editor_cmd_type editor_table[] =
 /*****************************************************************************
  *	do_olc
  *****************************************************************************/
-void do_olc(CHAR_DATA *ch, char *argument)
+void do_olc(CHAR_DATA *ch, const char *argument)
 {
     char command[MIL];
     int cmd;
@@ -734,7 +734,7 @@ void do_olc(CHAR_DATA *ch, char *argument)
 /*****************************************************************************
  *	do_aedit
  *****************************************************************************/
-void do_aedit(CHAR_DATA *ch, char *argument)
+void do_aedit(CHAR_DATA *ch, const char *argument)
 {
     AREA_DATA *pArea;
     int value;
@@ -1002,7 +1002,7 @@ void add_reset(ROOM_INDEX_DATA *room, RESET_DATA *pReset, long index)
 /*****************************************************************************
  *	do_resets
  *****************************************************************************/
-void do_resets(CHAR_DATA *ch, char *argument)
+void do_resets(CHAR_DATA *ch, const char *argument)
 {
     RESET_DATA *pReset = NULL;
     char arg1[MIL];
@@ -1178,7 +1178,7 @@ void do_resets(CHAR_DATA *ch, char *argument)
  * Purpose:	Normal command to list areas and display area information.
  * Called by:	interpreter(interp.c)
  ****************************************************************************/
-void do_alist(CHAR_DATA *ch, char *argument)
+void do_alist(CHAR_DATA *ch, const char *argument)
 {
     AREA_DATA *pArea;
     BUFFER *buf;

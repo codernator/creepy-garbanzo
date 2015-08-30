@@ -115,7 +115,7 @@ void mpedit(CHAR_DATA *ch, char *argument)
 *
 *	entry point for editing mob programs
 ***************************************************************************/
-void do_mpedit(CHAR_DATA *ch, char *argument)
+void do_mpedit(CHAR_DATA *ch, const char *argument)
 {
 	MPROG_CODE *mpcode;
 	char command[MIL];

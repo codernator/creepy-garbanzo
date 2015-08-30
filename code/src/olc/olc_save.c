@@ -809,7 +809,7 @@ static void save_area(AREA_DATA *area)
  *
  *	initiate an OLC save function
  ***************************************************************************/
-void do_asave(CHAR_DATA *ch, char *argument)
+void do_asave(CHAR_DATA *ch, const char *argument)
 {
     AREA_DATA *area;
     char arg[MIL];

@@ -49,7 +49,7 @@ item_affect_stats[] =
 *
 *	put an enchantment an item
 ***************************************************************************/
-void do_enchant(CHAR_DATA *ch, char *argument)
+void do_enchant(CHAR_DATA *ch, const char *argument)
 {
 	GAMEOBJECT *obj;
 	AFFECT_DATA af;
@@ -174,7 +174,7 @@ void do_enchant(CHAR_DATA *ch, char *argument)
 *
 *	remove an enchantment from an item
 ***************************************************************************/
-void do_disenchant(CHAR_DATA *ch, char *argument)
+void do_disenchant(CHAR_DATA *ch, const char *argument)
 {
 	GAMEOBJECT *obj;
 	AFFECT_DATA *paf;
@@ -334,7 +334,7 @@ bool is_negative_affect(AFFECT_DATA *paf)
 *
 *	repair negative affects on an item
 ***************************************************************************/
-void do_repair(CHAR_DATA *ch, char *argument)
+void do_repair(CHAR_DATA *ch, const char *argument)
 {
 	CHAR_DATA *mob;
 	GAMEOBJECT *obj;

@@ -943,7 +943,7 @@ void send_to_char_ascii(char *txt, CHAR_DATA *ch)
 /*
  * Send a page to one char.
  */
-void page_to_char(char *txt, CHAR_DATA *ch)
+void page_to_char(const char *txt, const CHAR_DATA *ch)
 {
     if (txt == NULL || ch->desc == NULL)
 	return;

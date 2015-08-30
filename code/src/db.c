@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "libfile.h"
 #include "merc.h"
+#include "object.h"
 #include "db.h"
 #include "recycle.h"
 #include "interp.h"
@@ -2219,48 +2220,6 @@ GAMEOBJECT *create_object(OBJECTPROTOTYPE *objprototype, int level)
     return obj;
 }
 
-/* duplicate an object exactly -- except contents */
-void clone_object(GAMEOBJECT *parent, GAMEOBJECT *clone)
-{
-    int i;
-    AFFECT_DATA *paf;
-    EXTRA_DESCR_DATA *ed, *ed_new;
-
-    if (parent == NULL || clone == NULL)
-	return;
-
-    /* start fixing the object */
-    object_name_set(clone, str_dup(object_name_get(parent)));
-    clone->short_descr = str_dup(parent->short_descr);
-    clone->description = str_dup(parent->description);
-    clone->item_type = parent->item_type;
-    clone->extra_flags = parent->extra_flags;
-    clone->wear_flags = parent->wear_flags;
-    clone->weight = parent->weight;
-    clone->cost = parent->cost;
-    clone->level = parent->level;
-    clone->condition = parent->condition;
-    clone->material = str_dup(parent->material);
-    clone->timer = parent->timer;
-
-    for (i = 0; i < 5; i++)
-	clone->value[i] = parent->value[i];
-
-    /* affects */
-    clone->enchanted = parent->enchanted;
-
-    for (paf = parent->affected; paf != NULL; paf = paf->next)
-	affect_to_obj(clone, paf);
-
-    /* extended desc */
-    for (ed = parent->extra_descr; ed != NULL; ed = ed->next) {
-	ed_new = new_extra_descr();
-	ed_new->keyword = str_dup(ed->keyword);
-	ed_new->description = str_dup(ed->description);
-	ed_new->next = clone->extra_descr;
-	clone->extra_descr = ed_new;
-    }
-}
 
 
 
@@ -2710,7 +2669,7 @@ void free_string(char *pstr)
 
 
 
-void do_areas(CHAR_DATA *ch, char *argument)
+void do_areas(CHAR_DATA *ch, const char *argument)
 {
     char buf[MAX_STRING_LENGTH];
     AREA_DATA *area1;
@@ -2743,7 +2702,7 @@ void do_areas(CHAR_DATA *ch, char *argument)
 
 
 
-void do_memory(CHAR_DATA *ch, char *argument)
+void do_memory(CHAR_DATA *ch, const char *argument)
 {
     printf_to_char(ch, "Affects %5d\n\r", top_affect);
     printf_to_char(ch, "Areas   %5d\n\r", top_area);
@@ -2761,7 +2720,7 @@ void do_memory(CHAR_DATA *ch, char *argument)
     printf_to_char(ch, "Perms   %5d blocks  of %7d bytes.\n\r", nAllocPerm, sAllocPerm);
 }
 
-void do_dump(CHAR_DATA *ch, char *argument)
+void do_dump(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *fch;
     MOB_INDEX_DATA *mob_idx;
@@ -2891,25 +2850,6 @@ int interpolate(int level, int value_00, int value_32)
     return value_00 + level * (value_32 - value_00) / 32;
 }
 
-
-/*
- * Append a string to a file.
- */
-void append_file(CHAR_DATA *ch, char *file, char *str)
-{
-    FILE *fp;
-
-    if (IS_NPC(ch) || str[0] == '\0')
-	return;
-
-    if ((fp = fopen(file, "a")) == NULL) {
-	perror(file);
-	send_to_char("Could not open the file!\n\r", ch);
-    } else {
-	fprintf(fp, "[%5ld] %s: %s\n", ch->in_room ? ch->in_room->vnum : 0, ch->name, str);
-	fclose(fp);
-    }
-}
 
 /*
  * Reports a bug.

@@ -105,7 +105,7 @@ void skedit(CHAR_DATA *ch, char *argument)
 *
 *	entry point for the skill editor
 ***************************************************************************/
-void do_skedit(CHAR_DATA *ch, char *argument)
+void do_skedit(CHAR_DATA *ch, const char *argument)
 {
 	SKILL *skill;
 	char arg[MSL];

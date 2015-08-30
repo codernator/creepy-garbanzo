@@ -83,7 +83,7 @@ void gredit(CHAR_DATA *ch, char *argument)
 *
 *	entry point for the skill editor
 ***************************************************************************/
-void do_gredit(CHAR_DATA *ch, char *argument)
+void do_gredit(CHAR_DATA *ch, const char *argument)
 {
 	GROUP *group;
 	char arg[MSL];

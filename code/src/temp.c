@@ -19,15 +19,15 @@ extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern int flag_value(const struct flag_type *flag_table, char *argument);
 
 
-void do_findflags(CHAR_DATA * ch, char *argument);
-void do_worldflag(CHAR_DATA * ch, char *argument);
-void do_spellflags(CHAR_DATA * ch, char *argument);
+void do_findflags(CHAR_DATA * ch, const char *argument);
+void do_worldflag(CHAR_DATA * ch, const char *argument);
+void do_spellflags(CHAR_DATA * ch, const char *argument);
 
 DECLARE_DO_FUN(do_findflags);
 DECLARE_DO_FUN(do_worldflag);
 DECLARE_DO_FUN(do_spellflags);
 
-void do_findflags(CHAR_DATA *ch, char *argument)
+void do_findflags(CHAR_DATA *ch, const char *argument)
 {
 	ROOM_INDEX_DATA *room;
 	BUFFER *buf;
@@ -111,7 +111,7 @@ void do_findflags(CHAR_DATA *ch, char *argument)
 	}
 }
 
-void do_worldflag(CHAR_DATA *ch, char *argument)
+void do_worldflag(CHAR_DATA *ch, const char *argument)
 {
 	ROOM_INDEX_DATA *room;
 	int nCount = 0;
@@ -176,7 +176,7 @@ void do_worldflag(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-void do_spellflags(CHAR_DATA *ch, char *argument)
+void do_spellflags(CHAR_DATA *ch, const char *argument)
 {
 	BUFFER *buf;
 	SKILL *skill_idx;

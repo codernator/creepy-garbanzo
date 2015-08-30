@@ -1,4 +1,5 @@
 #include "merc.h"
+#include "object.h"
 #include "tables.h"
 #include "lookup.h"
 #include "magic.h"
@@ -66,7 +67,7 @@ static const struct auction_types auction_type_table[] =
 /***************************************************************************
  *	do_auction
  ***************************************************************************/
-void do_auction(CHAR_DATA *ch, char *argument)
+void do_auction(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
     char arg1[MIL];
@@ -133,8 +134,7 @@ void do_auction(CHAR_DATA *ch, char *argument)
 	if (currentAuction.item != NULL && !str_cmp(arg1, "clone")) {
 	    GAMEOBJECT *obj_new = NULL;
 
-	    obj_new = create_object(currentAuction.item->objprototype, currentAuction.item->level);
-	    clone_object(currentAuction.item, obj_new);
+	    obj_new = object_clone(currentAuction.item);
 	    obj_to_char(obj_new, ch);
 	    recursive_clone(ch, currentAuction.item, obj_new);
 

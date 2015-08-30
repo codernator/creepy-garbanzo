@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "merc.h"
+#include "object.h"
 #include "magic.h"
 #include "recycle.h"
 #include "tables.h"

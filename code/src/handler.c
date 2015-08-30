@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "merc.h"
+#include "object.h"
 #include "character.h"
 #include "magic.h"
 #include "recycle.h"
@@ -21,7 +22,6 @@ extern SKILL *gsp_darkness;
 
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern void affect_modify(CHAR_DATA * ch, AFFECT_DATA * paf, bool fAdd);
-extern long parse_long(char *test);
 extern void affect_join_obj(GAMEOBJECT * obj, AFFECT_DATA * paf);
 
 
@@ -297,7 +297,7 @@ int check_immune(CHAR_DATA *ch, int dam_type)
 	return immune;
 }
 
-ROOM_INDEX_DATA *find_location(CHAR_DATA *ch, char *arg)
+ROOM_INDEX_DATA *find_location(CHAR_DATA *ch, const char *arg)
 {
     CHAR_DATA *victim;
     GAMEOBJECT *obj;
@@ -805,10 +805,11 @@ int get_wield_weight(CHAR_DATA *ch)
 /**
  * is a given name in a name list
  */
-bool is_name(char *str, char *namelist)
+bool is_name(const char *str, const char *namelist)
 {
     char name[MIL], part[MIL];
-    char *list, *string;
+    const char *list;
+    const char *string;
 
 
     string = str;
@@ -1383,7 +1384,7 @@ void extract_char(CHAR_DATA *ch, bool extract)
 }
 
 /** get a character in the room */
-CHAR_DATA *get_char_room(CHAR_DATA *ch, char *argument)
+CHAR_DATA *get_char_room(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *rch;
     char arg[MIL];
@@ -1419,7 +1420,7 @@ CHAR_DATA *get_char_room(CHAR_DATA *ch, char *argument)
  *
  * find a character somewhere in the world
  ***************************************************************************/
-CHAR_DATA *get_char_world(CHAR_DATA *ch, char *argument)
+CHAR_DATA *get_char_world(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *wch;
     char arg[MIL];
@@ -1466,7 +1467,7 @@ GAMEOBJECT *get_obj_type(OBJECTPROTOTYPE *objprototype)
  *
  * find an object in an arbitrary object list
  ***************************************************************************/
-GAMEOBJECT *get_obj_list(CHAR_DATA *ch, char *argument, GAMEOBJECT *list)
+GAMEOBJECT *get_obj_list(CHAR_DATA *ch, const char *argument, GAMEOBJECT *list)
 {
     GAMEOBJECT *obj;
     char arg[MIL];
@@ -1492,7 +1493,7 @@ GAMEOBJECT *get_obj_list(CHAR_DATA *ch, char *argument, GAMEOBJECT *list)
  *
  * find an object in the characters inventory
  ***************************************************************************/
-GAMEOBJECT *get_obj_carry(CHAR_DATA *ch, char *argument)
+GAMEOBJECT *get_obj_carry(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
     char arg[MIL];
@@ -1517,7 +1518,7 @@ GAMEOBJECT *get_obj_carry(CHAR_DATA *ch, char *argument)
  *
  * find an object worn by the character
  ***************************************************************************/
-GAMEOBJECT *get_obj_wear(CHAR_DATA *ch, char *argument)
+GAMEOBJECT *get_obj_wear(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
     char arg[MIL];
@@ -1543,7 +1544,7 @@ GAMEOBJECT *get_obj_wear(CHAR_DATA *ch, char *argument)
  *
  * find an object in the room or in inventory or worn
  ***************************************************************************/
-GAMEOBJECT *get_obj_here(CHAR_DATA *ch, char *argument)
+GAMEOBJECT *get_obj_here(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
 
@@ -1565,7 +1566,7 @@ GAMEOBJECT *get_obj_here(CHAR_DATA *ch, char *argument)
  *
  * find an object somewhere in the world
  ***************************************************************************/
-GAMEOBJECT *get_obj_world(CHAR_DATA *ch, char *argument)
+GAMEOBJECT *get_obj_world(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj, *opending;
     char arg[MIL];

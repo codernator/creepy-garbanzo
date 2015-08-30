@@ -1,4 +1,6 @@
 #include "merc.h"
+#include "object.h"
+#include "recycle.h" // for new_extra_descr in clone.
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -48,6 +50,82 @@ GAMEOBJECT *object_new(OBJECTPROTOTYPE *prototypedata)
     }
 
     return obj;
+}
+
+GAMEOBJECT *object_clone(GAMEOBJECT *parent)
+{
+    GAMEOBJECT *clone;
+
+    assert(parent != NULL);
+    clone = malloc(sizeof(GAMEOBJECT));
+    assert(clone != NULL);
+
+
+    /** Default values */
+    {
+	memset(clone, 0, sizeof(GAMEOBJECT));
+	clone->objprototype = parent->objprototype;
+    }
+
+    /** Place on list. */
+    {
+	GAMEOBJECT *headnext;
+	clone->prev = &head_node;
+	headnext = head_node.next;
+	if (headnext != NULL) {
+	    assert(headnext->prev == &head_node);
+	    headnext->prev = clone;
+	}
+
+	clone->next = headnext;
+	head_node.next = clone;
+    }
+
+    /* start fixing the object */
+    if (parent->override_name != NULL) clone->override_name = str_dup(parent->override_name);
+    if (parent->short_descr != NULL) clone->short_descr = str_dup(parent->short_descr);
+    if (parent->description != NULL) clone->description = str_dup(parent->description);
+    if (parent->material != NULL) clone->material = str_dup(parent->material);
+    clone->item_type = parent->item_type;
+    clone->extra_flags = parent->extra_flags;
+    clone->wear_flags = parent->wear_flags;
+    clone->weight = parent->weight;
+    clone->cost = parent->cost;
+    clone->level = parent->level;
+    clone->condition = parent->condition;
+    clone->timer = parent->timer;
+
+    {
+	int i;
+	for (i = 0; i < 5; i++) {
+	    clone->value[i] = parent->value[i];
+	}
+    }
+
+    /* affects */
+    {
+	AFFECT_DATA *paf;
+	clone->enchanted = parent->enchanted;
+	for (paf = parent->affected; paf != NULL; paf = paf->next) {
+	    affect_to_obj(clone, paf);
+	}
+    }
+
+    /* extended desc */
+    {
+	EXTRA_DESCR_DATA *ed, *ed_new;
+	for (ed = parent->extra_descr; ed != NULL; ed = ed->next) {
+	    ed_new = new_extra_descr();
+	    /*@-mustfreeonly@*/
+	    ed_new->keyword = str_dup(ed->keyword);
+	    ed_new->description = str_dup(ed->description);
+	    ed_new->next = clone->extra_descr;
+	    clone->extra_descr = ed_new;
+	    /*@+mustfreeonly@*/
+	}
+    }
+
+    return clone;
 }
 
 void object_free(GAMEOBJECT *obj)
@@ -131,12 +209,12 @@ GAMEOBJECT *object_iterator(GAMEOBJECT *current, const OBJECT_ITERATOR_FILTER *f
     return next;
 }
 
-char *object_ownername_get(GAMEOBJECT *object)
+inline const char *object_ownername_get(const GAMEOBJECT *object)
 {
     return object->owner_name;
 }
 
-void object_ownername_set(GAMEOBJECT *object, CHAR_DATA *owner)
+void object_ownername_set(GAMEOBJECT *object, const CHAR_DATA *owner)
 {
     if (object->owner_name != NULL)
 	free_string(object->owner_name);
@@ -147,16 +225,21 @@ void object_ownername_set(GAMEOBJECT *object, CHAR_DATA *owner)
 	object->owner_name = str_dup(owner->name);
 }
 
-inline char *object_name_get(GAMEOBJECT *object)
+inline const char *object_name_get(const GAMEOBJECT *object)
 {
     return object->override_name == NULL ? object->objprototype->name : object->override_name;
 }
 
-void object_name_set(GAMEOBJECT *object, char *name)
+void object_name_set(GAMEOBJECT *object, const char *name)
 {
     if (object->override_name != NULL)
 	free_string(object->override_name);
-    object->override_name = str_dup(name);
+
+    if (name == NULL) {
+	object->override_name = NULL;
+    } else {
+	object->override_name = str_dup(name);
+    }
 }
 
 

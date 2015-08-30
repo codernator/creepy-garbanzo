@@ -274,7 +274,7 @@ static bool change_exit(CHAR_DATA *ch, char *argument, int door)
  *
  *	entry level function into the room editor
  *****************************************************************************/
-void do_redit(CHAR_DATA *ch, char *argument)
+void do_redit(CHAR_DATA *ch, const char *argument)
 {
     ROOM_INDEX_DATA *room;
     char arg[MSL];

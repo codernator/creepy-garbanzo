@@ -1,4 +1,5 @@
 #include "merc.h"
+#include "object.h"
 #include "db.h"
 #include "recycle.h"
 #include "tables.h"
@@ -26,7 +27,6 @@ extern bool copyover();
 extern AFFECT_DATA *affect_free;
 extern bool is_auction_participant(CHAR_DATA *ch);
 extern GAMEOBJECT *get_auction_item();
-extern ROOM_INDEX_DATA *find_location(CHAR_DATA * ch, char *arg);
 extern void reset_area(AREA_DATA * pArea);
 extern bool add_alias(CHAR_DATA * ch, char *alias, char *cmd);
 extern bool set_char_hunger(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
@@ -34,12 +34,12 @@ extern bool set_char_thirst(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
 extern bool set_char_feed(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
 
 /** locals */
-static DECLARE_DO_FUN(do_grestore);
-static DECLARE_DO_FUN(do_rrestore);
+static void set_grestore(CHAR_DATA *ch, const char *argument);
+static void set_rrestore(CHAR_DATA *ch, const char *argument);
 static void fry_char(CHAR_DATA * ch, char *argument);
 
 
-void do_order(CHAR_DATA *ch, char *argument)
+void do_order(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     CHAR_DATA *och;
@@ -144,8 +144,7 @@ void do_order(CHAR_DATA *ch, char *argument)
 	    return;
 	}
 
-	if (!IS_AFFECTED(victim, AFF_CHARM) || victim->master != ch
-		|| (IS_IMMORTAL(victim) && victim->trust >= ch->trust)) {
+	if (!IS_AFFECTED(victim, AFF_CHARM) || victim->master != ch || (IS_IMMORTAL(victim) && victim->trust >= ch->trust)) {
 	    send_to_char("Do it yourself!\n\r", ch);
 	    return;
 	}
@@ -155,9 +154,7 @@ void do_order(CHAR_DATA *ch, char *argument)
     for (och = ch->in_room->people; och != NULL; och = och_next) {
 	och_next = och->next_in_room;
 
-	if (IS_AFFECTED(och, AFF_CHARM)
-		&& och->master == ch
-		&& (fAll || och == victim)) {
+	if (IS_AFFECTED(och, AFF_CHARM) && och->master == ch && (fAll || och == victim)) {
 	    found = true;
 
 	    if (!str_infix(arg2, "rem")) {
@@ -179,12 +176,12 @@ void do_order(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_ignor(CHAR_DATA *ch, /*@unused@*/ char *argument)
+void do_ignor(CHAR_DATA *ch, /*@unused@*/ const char *argument)
 {
     send_to_char("You must enter the full command to ignore someone.\n\r", ch);
 }
 
-void do_ignore(CHAR_DATA *ch, char *argument)
+void do_ignore(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
     CHAR_DATA *rch;
@@ -201,8 +198,6 @@ void do_ignore(CHAR_DATA *ch, char *argument)
 
     if (IS_NPC(rch))
 	return;
-
-    smash_tilde(argument);
 
     argument = one_argument(argument, arg);
 
@@ -278,7 +273,7 @@ void do_ignore(CHAR_DATA *ch, char *argument)
     send_to_char(buf, ch);
 }
 
-void do_unignore(CHAR_DATA *ch, char *argument)
+void do_unignore(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *rch;
     char arg[MIL], buf[MSL];
@@ -334,24 +329,24 @@ void do_unignore(CHAR_DATA *ch, char *argument)
 	send_to_char("You aren't ignoring anyone by that name!\n\r", ch);
 }
 
-void do_bug(CHAR_DATA *ch, char *argument)
+void do_bug(CHAR_DATA *ch, const char *argument)
 {
     append_file(ch, BUG_FILE, argument);
     send_to_char("Bug logged.\n\r", ch);
 }
 
-void do_typo(CHAR_DATA *ch, char *argument)
+void do_typo(CHAR_DATA *ch, const char *argument)
 {
     append_file(ch, TYPO_FILE, argument);
     send_to_char("Typo logged.\n\r", ch);
 }
 
-void do_delet(CHAR_DATA *ch, /*@unused@*/ char *argument)
+void do_delet(CHAR_DATA *ch, /*@unused@*/ const char *argument)
 {
     send_to_char("You must type the full command to delete yourself.\n\r", ch);
 }
 
-void do_delete(CHAR_DATA *ch, char *argument)
+void do_delete(CHAR_DATA *ch, const char *argument)
 {
     char strsave[MIL];
 
@@ -398,7 +393,7 @@ void do_delete(CHAR_DATA *ch, char *argument)
     log_string("DELETE: %s .. %s's thinking about it ..", ch->name, ch->sex == 0 ? "It" : ch->sex == 1 ? "He" : "She");
 }
 
-void do_fixscreen(CHAR_DATA *ch, char *argument)
+void do_fixscreen(CHAR_DATA *ch, const char *argument)
 {
     // fix the screen....send clear screen and set the number of lines
     int lines;
@@ -416,17 +411,17 @@ void do_fixscreen(CHAR_DATA *ch, char *argument)
     printf_to_char(ch, "\033[0;37;40m\033[%d;1f\033[2J\n\rScreen fixed.\n\r", lines);
 }
 
-void do_clearscreen(CHAR_DATA *ch, /*@unused@*/char *argument)
+void do_clearscreen(CHAR_DATA *ch, /*@unused@*/const char *argument)
 {
     send_to_char("\033[0H\033[2J\n", ch);
 }
 
-void do_qui(CHAR_DATA *ch, /*@unused@*/ char *argument)
+void do_qui(CHAR_DATA *ch, /*@unused@*/ const char *argument)
 {
     send_to_char("If you want to QUIT, you have to spell it out.\n\r", ch);
 }
 
-void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
+void do_quit(CHAR_DATA *ch, /*@unused@*/ const char *argument)
 {
     DESCRIPTOR_DATA *d;
     char strsave[2*MIL];
@@ -508,7 +503,7 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ char *argument)
     }
 }
 
-void do_save(CHAR_DATA *ch, /*@unused@*/ char *argument)
+void do_save(CHAR_DATA *ch, /*@unused@*/ const char *argument)
 {
     if (IS_NPC(ch))
 	return;
@@ -518,7 +513,7 @@ void do_save(CHAR_DATA *ch, /*@unused@*/ char *argument)
     send_to_char("```^You are saved... for now!!!``\n\r", ch);
 }
 
-void do_wiznet(CHAR_DATA *ch, char *argument)
+void do_wiznet(CHAR_DATA *ch, const char *argument)
 {
     BUFFER *buf;
     long flag;
@@ -631,7 +626,7 @@ void wiznet(char *string, /*@null@*/ CHAR_DATA *ch, /*@null@*/ GAMEOBJECT *obj, 
     }
 }
 
-void do_impnet(CHAR_DATA *ch, char *argument)
+void do_impnet(CHAR_DATA *ch, const char *argument)
 {
     BUFFER *buf;
     long flag;
@@ -740,7 +735,7 @@ void impnet(char *string, CHAR_DATA *ch, GAMEOBJECT *obj, long flag, long flag_s
     return;
 }
 
-void do_tick(CHAR_DATA *ch, char *argument)
+void do_tick(CHAR_DATA *ch, const char *argument)
 {
     DENY_NPC(ch)
 
@@ -749,7 +744,7 @@ void do_tick(CHAR_DATA *ch, char *argument)
 	wiznet("$N forces a TICK!.", ch, NULL, 0, 0, 0);
 }
 
-void do_grant(CHAR_DATA *ch, char *argument)
+void do_grant(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     SKILL *skill;
@@ -807,53 +802,49 @@ void do_grant(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_bamfin(CHAR_DATA *ch, char *argument)
+void do_bamfin(CHAR_DATA *ch, const char *argument)
 {
     char buf[MSL];
 
-    if (!IS_NPC(ch)) {
-	smash_tilde(argument);
+    DENY_NPC(ch);
 
-	if (argument[0] == '\0') {
-	    sprintf(buf, "Your poofin is %s\n\r", ch->pcdata->bamfin);
-	    send_to_char(buf, ch);
-	    return;
-	}
-
-	free_string(ch->pcdata->bamfin);
-	ch->pcdata->bamfin = str_dup(argument);
-
-	sprintf(buf, "Your poofin is now `8:``%s\n\r", ch->pcdata->bamfin);
+    if (argument[0] == '\0') {
+	sprintf(buf, "Your poofin is %s\n\r", ch->pcdata->bamfin);
 	send_to_char(buf, ch);
+	return;
     }
 
-    return;
+    strncpy(buf, argument, MSL);
+    smash_tilde(buf);
+
+    free_string(ch->pcdata->bamfin);
+    ch->pcdata->bamfin = str_dup(buf);
+
+    printf_to_char(ch, "Your poofin is now `8:``%s\n\r", ch->pcdata->bamfin);
 }
 
-void do_bamfout(CHAR_DATA *ch, char *argument)
+void do_bamfout(CHAR_DATA *ch, const char *argument)
 {
     char buf[MSL];
 
-    if (!IS_NPC(ch)) {
-	smash_tilde(argument);
+    DENY_NPC(ch);
 
-	if (argument[0] == '\0') {
-	    sprintf(buf, "Your poofout is `8:``%s\n\r", ch->pcdata->bamfout);
-	    send_to_char(buf, ch);
-	    return;
-	}
-
-	free_string(ch->pcdata->bamfout);
-	ch->pcdata->bamfout = str_dup(argument);
-
-	sprintf(buf, "Your poofout is now `8:``%s\n\r", ch->pcdata->bamfout);
+    if (argument[0] == '\0') {
+	sprintf(buf, "Your poofout is `8:``%s\n\r", ch->pcdata->bamfout);
 	send_to_char(buf, ch);
+	return;
     }
 
-    return;
+    strncpy(buf, argument, MSL);
+    smash_tilde(buf);
+
+    free_string(ch->pcdata->bamfout);
+    ch->pcdata->bamfout = str_dup(buf);
+
+    printf_to_char(ch, "Your poofout is now `8:``%s\n\r", ch->pcdata->bamfout);
 }
 
-void do_deny(CHAR_DATA *ch, char *argument)
+void do_deny(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     char arg[MIL];
@@ -897,7 +888,7 @@ void do_deny(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_disconnect(CHAR_DATA *ch, char *argument)
+void do_disconnect(CHAR_DATA *ch, const char *argument)
 {
     DESCRIPTOR_DATA *d;
     CHAR_DATA *victim;
@@ -945,16 +936,16 @@ void do_disconnect(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_chown(CHAR_DATA *ch, char *argument)
+void do_chown(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     GAMEOBJECT *obj;
     char arg1[MIL];
     char arg2[MIL];
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	argument = one_argument(argument, arg1);
+    argument = one_argument(argument, arg1);
     argument = one_argument(argument, arg2);
 
     if (arg1[0] == '\0' || arg2[0] == '\0') {
@@ -982,22 +973,20 @@ void do_chown(CHAR_DATA *ch, char *argument)
     act("$n makes a magical gesture and $p flys from $N to $n.", ch, obj, victim, TO_NOTVICT);
     act("$n makes a magical gesture and $p flys from your body to $s.", ch, obj, victim, TO_VICT);
     act("$p flys from $N to you.", ch, obj, victim, TO_CHAR);
-    return;
 }
 
-void do_echo(CHAR_DATA *ch, char *argument)
+void do_echo(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
     DESCRIPTOR_DATA *d;
     DESCRIPTOR_DATA *dpending;
-    char buf[MSL];
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	if (argument[0] == '\0') {
-	    send_to_char("Global echo what?\n\r", ch);
-	    return;
-	}
+    if (argument[0] == '\0') {
+	send_to_char("Global echo what?\n\r", ch);
+	return;
+    }
 
     dpending = descriptor_iterator_start(&playing_filter);
     while ((d = dpending) != NULL) {
@@ -1005,28 +994,25 @@ void do_echo(CHAR_DATA *ch, char *argument)
 
 	if (ch != NULL) {
 	    if (ch && get_trust(d->character) >= get_trust(ch)) {
-		sprintf(buf, "%s global> ", ch->name);
-		send_to_char(buf, d->character);
+		printf_to_char(d->character, "%s global> ", ch->name);
 	    }
 	}
-	send_to_char(argument, d->character);
-	send_to_char("\n\r", d->character);
+	printf_to_char(d->character, "%s\n\r", argument);
     }
 }
 
-void do_recho(CHAR_DATA *ch, char *argument)
+void do_recho(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
     DESCRIPTOR_DATA *d;
     DESCRIPTOR_DATA *dpending;
-    char buf[MSL];
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	if (argument[0] == '\0') {
-	    send_to_char("Local echo what?\n\r", ch);
-	    return;
-	}
+    if (argument[0] == '\0') {
+	send_to_char("Local echo what?\n\r", ch);
+	return;
+    }
 
     dpending = descriptor_iterator_start(&playing_filter);
     while ((d = dpending) != NULL) {
@@ -1034,28 +1020,25 @@ void do_recho(CHAR_DATA *ch, char *argument)
 
 	if (d->character->in_room == ch->in_room) {
 	    if (ch != NULL && get_trust(d->character) >= get_trust(ch)) {
-		sprintf(buf, "%s local> ", ch->name);
-		send_to_char(buf, d->character);
+		printf_to_char(d->character, "%s local> ", ch->name);
 	    }
-	    send_to_char(argument, d->character);
-	    send_to_char("\n\r", d->character);
+	    printf_to_char(d->character, "%s\n\r", argument);
 	}
     }
 }
 
-void do_zecho(CHAR_DATA *ch, char *argument)
+void do_zecho(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
     DESCRIPTOR_DATA *d;
     DESCRIPTOR_DATA *dpending;
-    char buf[MSL];
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	if (argument[0] == '\0') {
-	    send_to_char("Zone echo what?\n\r", ch);
-	    return;
-	}
+    if (argument[0] == '\0') {
+	send_to_char("Zone echo what?\n\r", ch);
+	return;
+    }
 
     dpending = descriptor_iterator_start(&playing_filter);
     while ((d = dpending) != NULL) {
@@ -1063,24 +1046,21 @@ void do_zecho(CHAR_DATA *ch, char *argument)
 
 	if (d->character->in_room != NULL && ch->in_room != NULL && d->character->in_room->area == ch->in_room->area) {
 	    if (ch != NULL && get_trust(d->character) >= get_trust(ch)) {
-		sprintf(buf, "%s zone> ", ch->name);
-		send_to_char(buf, d->character);
+		printf_to_char(d->character, "%s zone> ", ch->name);
 	    }
-	    send_to_char(argument, d->character);
-	    send_to_char("\n\r", d->character);
+	    printf_to_char(d->character, "%s\n\r", argument);
 	}
     }
 }
 
-void do_pecho(CHAR_DATA *ch, char *argument)
+void do_pecho(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     char arg[MIL];
-    char buf[MSL];
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	argument = one_argument(argument, arg);
+    argument = one_argument(argument, arg);
     if (argument[0] == '\0' || arg[0] == '\0') {
 	send_to_char("Personal echo what?\n\r", ch);
 	return;
@@ -1091,21 +1071,15 @@ void do_pecho(CHAR_DATA *ch, char *argument)
 	return;
     }
 
-    if (ch != NULL
-	    && get_trust(victim) >= get_trust(ch)
-	    && get_trust(ch) != MAX_LEVEL) {
-	sprintf(buf, "%s personal> ", ch->name);
-	send_to_char(buf, victim);
+    if (ch != NULL && get_trust(victim) >= get_trust(ch) && get_trust(ch) != MAX_LEVEL) {
+	printf_to_char(victim, "%s personal> ", ch->name);
     }
 
-    send_to_char(argument, victim);
-    send_to_char("\n\r", victim);
-    send_to_char("personal> ", ch);
-    send_to_char(argument, ch);
-    send_to_char("\n\r", ch);
+    printf_to_char(victim, "%s\n\r", argument);
+    printf_to_char(ch, "personal> %s\n\r", argument);
 }
 
-void do_fry(CHAR_DATA *ch, char *argument)
+void do_fry(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     char file[MIL];
@@ -1113,15 +1087,15 @@ void do_fry(CHAR_DATA *ch, char *argument)
     char vName[MIL];
     bool isImm;
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	if (CHECK_NON_OWNER(ch)) {
-	    sick_harvey_proctor(ch, hp_pissed_off, "Naughty, naughty, little boy!");
-	    send_to_char("You have been logged.\n\r", ch);
-	    return;
-	} else {
-	    sick_harvey_proctor(ch, hp_agreeable, NULL);
-	}
+    if (CHECK_NON_OWNER(ch)) {
+	sick_harvey_proctor(ch, hp_pissed_off, "Naughty, naughty, little boy!");
+	send_to_char("You have been logged.\n\r", ch);
+	return;
+    } else {
+	sick_harvey_proctor(ch, hp_agreeable, NULL);
+    }
 
     one_argument(argument, arg);
     if (arg[0] == '\0') {
@@ -1166,14 +1140,14 @@ void do_fry(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_ffry(CHAR_DATA *ch, char *argument)
+void do_ffry(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     char arg[MIL];
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	one_argument(argument, arg);
+    one_argument(argument, arg);
     if (arg[0] == '\0') {
 	send_to_char("Fake fry whom?\n\r", ch);
 	return;
@@ -1208,15 +1182,15 @@ void do_ffry(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_pardon(CHAR_DATA *ch, char *argument)
+void do_pardon(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     char arg1[MIL];
     char arg2[MIL];
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	argument = one_argument(argument, arg1);
+    argument = one_argument(argument, arg1);
     argument = one_argument(argument, arg2);
 
     if (arg1[0] == '\0' || arg2[0] == '\0') {
@@ -1257,7 +1231,7 @@ void do_pardon(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_transfer(CHAR_DATA *ch, char *argument)
+void do_transfer(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
     char arg1[MIL];
@@ -1268,12 +1242,12 @@ void do_transfer(CHAR_DATA *ch, char *argument)
     argument = one_argument(argument, arg1);
     argument = one_argument(argument, arg2);
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	if (arg1[0] == '\0') {
-	    send_to_char("Transfer whom(and where)?\n\r", ch);
-	    return;
-	}
+    if (arg1[0] == '\0') {
+	send_to_char("Transfer whom(and where)?\n\r", ch);
+	return;
+    }
 
     if (arg2[0] == '\0')
 	location = ch->in_room;
@@ -1337,18 +1311,18 @@ void do_transfer(CHAR_DATA *ch, char *argument)
     send_to_char("Ok.\n\r", ch);
 }
 
-void do_goto(CHAR_DATA *ch, char *argument)
+void do_goto(CHAR_DATA *ch, const char *argument)
 {
     ROOM_INDEX_DATA *location;
     CHAR_DATA *rch;
     int count = 0;
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	if (argument[0] == '\0') {
-	    send_to_char("Goto where?\n\r", ch);
-	    return;
-	}
+    if (argument[0] == '\0') {
+	send_to_char("Goto where?\n\r", ch);
+	return;
+    }
 
     if ((location = find_location(ch, argument)) == NULL) {
 	send_to_char("No such location.\n\r", ch);
@@ -1359,8 +1333,7 @@ void do_goto(CHAR_DATA *ch, char *argument)
     for (rch = location->people; rch != NULL; rch = rch->next_in_room)
 	count++;
 
-    if (!is_room_owner(ch, location) && room_is_private(location)
-	    && (count > 1 || get_trust(ch) < LEVEL_IMMORTAL)) {
+    if (!is_room_owner(ch, location) && room_is_private(location) && (count > 1 || get_trust(ch) < LEVEL_IMMORTAL)) {
 	send_to_char("That room is private right now.\n\r", ch);
 	return;
     }
@@ -1394,17 +1367,17 @@ void do_goto(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_violate(CHAR_DATA *ch, char *argument)
+void do_violate(CHAR_DATA *ch, const char *argument)
 {
     ROOM_INDEX_DATA *location;
     CHAR_DATA *rch;
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	if (argument[0] == '\0') {
-	    send_to_char("Goto where?\n\r", ch);
-	    return;
-	}
+    if (argument[0] == '\0') {
+	send_to_char("Goto where?\n\r", ch);
+	return;
+    }
 
     if ((location = find_location(ch, argument)) == NULL) {
 	send_to_char("No such location.\n\r", ch);
@@ -1445,25 +1418,25 @@ void do_violate(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_reboo(CHAR_DATA *ch, char *argument)
+void do_reboo(CHAR_DATA *ch, const char *argument)
 {
     send_to_char("If you want to REBOOT, spell it out.\n\r", ch);
     return;
 }
 
-void do_reboot(CHAR_DATA *ch, char *argument)
+void do_reboot(CHAR_DATA *ch, const char *argument)
 {
     DESCRIPTOR_DATA *d, *dpending;
     char buf[MSL];
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	if (ch) {
-	    sprintf(buf, "%s reaches for the little red reset button.", ch->name);
-	    do_echo(ch, buf);
-	} else {
-	    do_echo(NULL, "Reboot by Acid-Fiend-1");
-	}
+    if (ch) {
+	sprintf(buf, "%s reaches for the little red reset button.", ch->name);
+	do_echo(ch, buf);
+    } else {
+	do_echo(NULL, "Reboot by Acid-Fiend-1");
+    }
 
     do_force(ch, "all save");
     if (ch)
@@ -1477,23 +1450,23 @@ void do_reboot(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_shutdow(CHAR_DATA *ch, char *argument)
+void do_shutdow(CHAR_DATA *ch, const char *argument)
 {
     send_to_char("If you want to SHUTDOWN, spell it out.\n\r", ch);
 }
 
-void do_shutdown(CHAR_DATA *ch, char *argument)
+void do_shutdown(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
     DESCRIPTOR_DATA *d, *dpending;
     char buf[MSL];
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	if (ch->invis_level < LEVEL_HERO) {
-	    sprintf(buf, "Shutdown by %s.\n\r", ch->name);
-	    do_echo(ch, buf);
-	}
+    if (ch->invis_level < LEVEL_HERO) {
+	sprintf(buf, "Shutdown by %s.\n\r", ch->name);
+	do_echo(ch, buf);
+    }
 
     sprintf(buf, "Shutdown by %s.", ch->name);
     append_file(ch, SHUTDOWN_FILE, buf);
@@ -1509,16 +1482,16 @@ void do_shutdown(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_snoop(CHAR_DATA *ch, char *argument)
+void do_snoop(CHAR_DATA *ch, const char *argument)
 {
     DESCRIPTOR_DATA *d, *dpending;
     CHAR_DATA *victim;
     char buf[MSL];
     char arg[MIL];
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	one_argument(argument, arg);
+    one_argument(argument, arg);
 
     if (arg[0] == '\0') {
 	send_to_char("Snoop whom?\n\r", ch);
@@ -1578,14 +1551,14 @@ void do_snoop(CHAR_DATA *ch, char *argument)
 }
 
 /* SnoopList ..  November 1996  */
-void do_snlist(CHAR_DATA *ch, char *argument)
+void do_snlist(CHAR_DATA *ch, const char *argument)
 {
     DESCRIPTOR_DATA *d, *dpending;
     char buf[MSL];
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	send_to_char("Currently snooped characters\n\r", ch);
+    send_to_char("Currently snooped characters\n\r", ch);
     send_to_char("----------------------------\n\r", ch);
 
     dpending = descriptor_iterator_start(&descriptor_empty_filter);
@@ -1604,15 +1577,15 @@ void do_snlist(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_switch(CHAR_DATA *ch, char *argument)
+void do_switch(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     char arg[MIL];
     char buf[MSL];
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	one_argument(argument, arg);
+    one_argument(argument, arg);
 
     if (arg[0] == '\0') {
 	send_to_char("Switch into whom?\n\r", ch);
@@ -1673,7 +1646,7 @@ void do_switch(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_return(CHAR_DATA *ch, char *argument)
+void do_return(CHAR_DATA *ch, const char *argument)
 {
     char buf[MSL];
 
@@ -1722,8 +1695,7 @@ void recursive_clone(CHAR_DATA *ch, GAMEOBJECT *obj, GAMEOBJECT *clone)
 
     for (c_obj = obj->contains; c_obj != NULL; c_obj = c_obj->next_content) {
 	if (obj_check(ch, c_obj)) {
-	    t_obj = create_object(c_obj->objprototype, 0);
-	    clone_object(c_obj, t_obj);
+	    t_obj = object_clone(c_obj);
 	    obj_to_obj(t_obj, clone);
 	    recursive_clone(ch, c_obj, t_obj);
 	}
@@ -1731,13 +1703,13 @@ void recursive_clone(CHAR_DATA *ch, GAMEOBJECT *obj, GAMEOBJECT *clone)
 }
 
 /* command that is similar to load */
-void do_clone(CHAR_DATA *ch, char *argument)
+void do_clone(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *mob;
     GAMEOBJECT *obj;
-    char arg[MIL];
-    char buf[MIL];
-    char *rest;
+    static char arg[MIL];
+    static char buf[MIL];
+    const char *rest;
     int count;
     int iter;
 
@@ -1801,8 +1773,7 @@ void do_clone(CHAR_DATA *ch, char *argument)
 	    GAMEOBJECT *clone = NULL;
 
 	    for (iter = 0; iter < count; iter++) {
-		clone = create_object(obj->objprototype, 0);
-		clone_object(obj, clone);
+		clone = object_clone(obj);
 
 		if (obj->carried_by != NULL)
 		    obj_to_char(clone, ch);
@@ -1847,8 +1818,7 @@ void do_clone(CHAR_DATA *ch, char *argument)
 
 		    for (obj = mob->carrying; obj != NULL; obj = obj->next_content) {
 			if (obj_check(ch, obj)) {
-			    GAMEOBJECT *new_obj = create_object(obj->objprototype, 0);
-			    clone_object(obj, new_obj);
+			    GAMEOBJECT *new_obj = object_clone(obj);
 			    recursive_clone(ch, obj, new_obj);
 			    obj_to_char(new_obj, clone);
 			    new_obj->wear_loc = obj->wear_loc;
@@ -1878,13 +1848,13 @@ void do_clone(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_load(CHAR_DATA *ch, char *argument)
+void do_load(CHAR_DATA *ch, const char *argument)
 {
     char arg[MIL];
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	argument = one_argument(argument, arg);
+    argument = one_argument(argument, arg);
 
     if (arg[0] == '\0') {
 	send_to_char("Syntax:\n\r", ch);
@@ -1915,7 +1885,7 @@ void do_load(CHAR_DATA *ch, char *argument)
     do_load(ch, "");
 }
 
-void do_mload(CHAR_DATA *ch, char *argument)
+void do_mload(CHAR_DATA *ch, const char *argument)
 {
     MOB_INDEX_DATA *pMobIndex;
     CHAR_DATA *victim;
@@ -1946,7 +1916,7 @@ void do_mload(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_oload(CHAR_DATA *ch, char *argument)
+void do_oload(CHAR_DATA *ch, const char *argument)
 {
     OBJECTPROTOTYPE *pObjIndex;
     GAMEOBJECT *obj;
@@ -1999,7 +1969,7 @@ void do_oload(CHAR_DATA *ch, char *argument)
     send_to_char(buf, ch);
 }
 
-void do_purge(CHAR_DATA *ch, char *argument)
+void do_purge(CHAR_DATA *ch, const char *argument)
 {
     DESCRIPTOR_DATA *d;
     CHAR_DATA *victim;
@@ -2009,31 +1979,31 @@ void do_purge(CHAR_DATA *ch, char *argument)
 
     one_argument(argument, arg);
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	if (arg[0] == '\0') {
-	    /* 'purge' */
-	    CHAR_DATA *vnext;
-	    GAMEOBJECT *obj_next;
+    if (arg[0] == '\0') {
+	/* 'purge' */
+	CHAR_DATA *vnext;
+	GAMEOBJECT *obj_next;
 
-	    for (victim = ch->in_room->people; victim != NULL; victim = vnext) {
-		vnext = victim->next_in_room;
-		if (IS_NPC(victim)
-			&& !IS_SET(victim->act, ACT_NOPURGE)
-			&& victim != ch)
-		    extract_char(victim, true);
-	    }
-
-	    for (obj = ch->in_room->contents; obj != NULL; obj = obj_next) {
-		obj_next = obj->next_content;
-		if (!IS_OBJ_STAT(obj, ITEM_NOPURGE))
-		    extract_obj(obj);
-	    }
-
-	    act("$n purges the room!", ch, NULL, NULL, TO_ROOM);
-	    send_to_char("Ok.\n\r", ch);
-	    return;
+	for (victim = ch->in_room->people; victim != NULL; victim = vnext) {
+	    vnext = victim->next_in_room;
+	    if (IS_NPC(victim)
+		    && !IS_SET(victim->act, ACT_NOPURGE)
+		    && victim != ch)
+		extract_char(victim, true);
 	}
+
+	for (obj = ch->in_room->contents; obj != NULL; obj = obj_next) {
+	    obj_next = obj->next_content;
+	    if (!IS_OBJ_STAT(obj, ITEM_NOPURGE))
+		extract_obj(obj);
+	}
+
+	act("$n purges the room!", ch, NULL, NULL, TO_ROOM);
+	send_to_char("Ok.\n\r", ch);
+	return;
+    }
 
     if ((victim = get_char_world(ch, arg)) == NULL) {
 	send_to_char("They aren't here.\n\r", ch);
@@ -2072,7 +2042,7 @@ void do_purge(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_advance(CHAR_DATA *ch, char *argument)
+void do_advance(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     char arg1[MIL];
@@ -2081,9 +2051,9 @@ void do_advance(CHAR_DATA *ch, char *argument)
     char buf[MSL];
     int level;
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	argument = one_argument(argument, arg1);
+    argument = one_argument(argument, arg1);
     argument = one_argument(argument, arg2);
     argument = one_argument(argument, arg3);
 
@@ -2174,7 +2144,7 @@ void do_advance(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_trust(CHAR_DATA *ch, char *argument)
+void do_trust(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     char arg1[MIL];
@@ -2184,11 +2154,11 @@ void do_trust(CHAR_DATA *ch, char *argument)
     argument = one_argument(argument, arg1);
     argument = one_argument(argument, arg2);
 
-    DENY_NPC(ch)
-	if (CHECK_NON_OWNER(ch)) {
-	    sick_harvey_proctor(ch, hp_off_his_rocker, "NO! NO! NO!");
-	    return;
-	}
+    DENY_NPC(ch);
+    if (CHECK_NON_OWNER(ch)) {
+	sick_harvey_proctor(ch, hp_off_his_rocker, "NO! NO! NO!");
+	return;
+    }
 
     if (arg1[0] == '\0' || arg2[0] == '\0' || !is_number(arg2)) {
 	send_to_char("Syntax: trust <char> <level>.\n\r", ch);
@@ -2220,7 +2190,7 @@ void do_trust(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_affstrip(CHAR_DATA *ch, char *argument)
+void do_affstrip(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     char target[MIL];
@@ -2275,7 +2245,7 @@ void do_affstrip(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_log(CHAR_DATA *ch, char *argument)
+void do_log(CHAR_DATA *ch, const char *argument)
 {
     char arg[MIL];
     CHAR_DATA *victim;
@@ -2323,7 +2293,7 @@ void do_log(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_peace(CHAR_DATA *ch, char *argument)
+void do_peace(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *rch;
 
@@ -2341,7 +2311,7 @@ void do_peace(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_wizlock(CHAR_DATA *ch, char *argument)
+void do_wizlock(CHAR_DATA *ch, const char *argument)
 {
     DENY_NPC(ch)
 
@@ -2356,7 +2326,7 @@ void do_wizlock(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_newlock(CHAR_DATA *ch, char *argument)
+void do_newlock(CHAR_DATA *ch, const char *argument)
 {
     DENY_NPC(ch);
 
@@ -2371,7 +2341,7 @@ void do_newlock(CHAR_DATA *ch, char *argument)
     }
 }
 
-void do_mode(CHAR_DATA *ch, char *argument)
+void do_mode(CHAR_DATA *ch, const char *argument)
 {
     char arg[MIL];
     char arg2[MIL];
@@ -2419,14 +2389,13 @@ void do_mode(CHAR_DATA *ch, char *argument)
     do_mode(ch, "");
 }
 
-void do_slot(CHAR_DATA *ch, char *argument)
+void do_slot(CHAR_DATA *ch, const char *argument)
 {
     SKILL *skill;
     char arg[MIL];
 
     DENY_NPC(ch);
 
-    smash_tilde(argument);
     argument = one_argument(argument, arg);
 
     if (arg[0] == '\0') {
@@ -2434,8 +2403,7 @@ void do_slot(CHAR_DATA *ch, char *argument)
 	return;
     }
 
-    if ((skill = skill_lookup(arg)) == NULL
-	    || skill->spells == NULL) {
+    if ((skill = skill_lookup(arg)) == NULL || skill->spells == NULL) {
 	send_to_char("That spell does not exist!\n\r", ch);
 	return;
     }
@@ -2444,7 +2412,7 @@ void do_slot(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_sockets(CHAR_DATA *ch, char *argument)
+void do_sockets(CHAR_DATA *ch, const char *argument)
 {
     DESCRIPTOR_DATA *d, *dpending;
     BUFFER *buf;
@@ -2547,7 +2515,7 @@ void do_sockets(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_force(CHAR_DATA *ch, char *argument)
+void do_force(CHAR_DATA *ch, const char *argument)
 {
     char buf[MSL];
     char arg[MIL];
@@ -2689,7 +2657,7 @@ void do_force(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_winvis(CHAR_DATA *ch, char *argument)
+void do_winvis(CHAR_DATA *ch, const char *argument)
 {
     int level;
     char arg[MSL];
@@ -2728,7 +2696,7 @@ void do_winvis(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_incognito(CHAR_DATA *ch, char *argument)
+void do_incognito(CHAR_DATA *ch, const char *argument)
 {
     int level;
     char arg[MSL];
@@ -2767,7 +2735,7 @@ void do_incognito(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_holylight(CHAR_DATA *ch, char *argument)
+void do_holylight(CHAR_DATA *ch, const char *argument)
 {
     if (IS_NPC(ch))
 	return;
@@ -2783,13 +2751,13 @@ void do_holylight(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_prefi(CHAR_DATA *ch, char *argument)
+void do_prefi(CHAR_DATA *ch, const char *argument)
 {
     send_to_char("You cannot abbreviate the prefix command.\r\n", ch);
     return;
 }
 
-void do_prefix(CHAR_DATA *ch, char *argument)
+void do_prefix(CHAR_DATA *ch, const char *argument)
 {
     char buf[MIL];
 
@@ -2826,7 +2794,7 @@ void do_prefix(CHAR_DATA *ch, char *argument)
  *  Adapted to Diku by Erwin S. Andreasen, <erwin@pip.dknet.dk>
  *  Changed into a ROM patch after seeing the 100th request for it :)
  */
-void do_copyover(CHAR_DATA *ch, char *argument)
+void do_copyover(CHAR_DATA *ch, const char *argument)
 {
     if (!copyover()) {
 	send_to_char("Copyover FAILED! (check std err for reason.)\n\r", ch);
@@ -2835,7 +2803,7 @@ void do_copyover(CHAR_DATA *ch, char *argument)
 
 bool check_parse_name(char *name);      /* comm.c */
 
-void do_rename(CHAR_DATA *ch, char *argument)
+void do_rename(CHAR_DATA *ch, const char *argument)
 {
     char old_name[MIL], new_name[MIL], strsave[MIL];
 
@@ -2943,7 +2911,7 @@ void do_rename(CHAR_DATA *ch, char *argument)
 
 
 
-void do_pnlist(CHAR_DATA *ch, char *argument)
+void do_pnlist(CHAR_DATA *ch, const char *argument)
 {
     DESCRIPTOR_DATA *d, *dpending;
 
@@ -2980,7 +2948,7 @@ void do_pnlist(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_repop(CHAR_DATA *ch, char *argument)
+void do_repop(CHAR_DATA *ch, const char *argument)
 {
     AREA_DATA *pArea;
 
@@ -3002,7 +2970,7 @@ void do_repop(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_omnistat(CHAR_DATA *ch, char *argument)
+void do_omnistat(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
     DESCRIPTOR_DATA *d;
@@ -3104,7 +3072,7 @@ void do_omnistat(CHAR_DATA *ch, char *argument)
     free_buf(output);
 }
 
-void do_olevel(CHAR_DATA *ch, char *argument)
+void do_olevel(CHAR_DATA *ch, const char *argument)
 {
     char buf[MSL];
     char arg[MIL];
@@ -3133,9 +3101,9 @@ void do_olevel(CHAR_DATA *ch, char *argument)
 	OBJECTPROTOTYPE *current;
 	OBJECTPROTOTYPE *pending;
 
-        pending = objectprototype_iterator_start(&objectprototype_empty_filter);
-        while ((current = pending) != NULL) {
-            pending = objectprototype_iterator(current, &objectprototype_empty_filter);
+	pending = objectprototype_iterator_start(&objectprototype_empty_filter);
+	while ((current = pending) != NULL) {
+	    pending = objectprototype_iterator(current, &objectprototype_empty_filter);
 
 	    if (level == current->level) {
 		found = true;
@@ -3153,7 +3121,7 @@ void do_olevel(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_mlevel(CHAR_DATA *ch, char *argument)
+void do_mlevel(CHAR_DATA *ch, const char *argument)
 {
     char buf[MSL];
     char arg[MIL];
@@ -3198,104 +3166,85 @@ void do_mlevel(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_setrestore(CHAR_DATA *ch, char *argument)
+
+static void print_setrestore_help(CHAR_DATA *ch)
 {
-    char arg[MIL];
+    send_to_char("Srestore syntax:\n\r", ch);
+    send_to_char("  srestore room <text>  :  set restore string for rooms\n\r", ch);
+    send_to_char("                           or individual players\n\r", ch);
+    send_to_char("  srestore global <text>:  set restore string for global\n\r", ch);
+}
+
+void do_setrestore(CHAR_DATA *ch, const char *argument)
+{
+    static char arg[MIL];
+    static char buf[MIL];
+
+
+    DENY_NPC(ch);
 
     argument = one_argument(argument, arg);
 
-    smash_tilde(argument);
-
-    if (IS_NPC(ch)) {
-	send_to_char("You're not cool enough for restore strings ..\n\r", ch);
-	return;
-    }
-
     if (arg[0] == '\0') {
-	send_to_char("Srestore syntax:\n\r", ch);
-	send_to_char("  srestore room <text>  :  set restore string for rooms\n\r", ch);
-	send_to_char("                           or individual players\n\r", ch);
-	send_to_char("  srestore global <text>:  set restore string for global\n\r", ch);
+	print_setrestore_help(ch);
 	return;
     }
+
+    strncpy(buf, argument, MIL);
+    smash_tilde(buf);
 
     if (!str_prefix(arg, "global")) {
-	do_grestore(ch, argument);
+	set_grestore(ch, buf);
 	return;
     }
 
     if (!str_prefix(arg, "room")) {
-	do_rrestore(ch, argument);
+	set_rrestore(ch, buf);
 	return;
     }
-    do_setrestore(ch, "");
+
+    print_setrestore_help(ch);
 }
 
-void do_grestore(CHAR_DATA *ch, char *argument)
+void set_grestore(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MSL];
-
-    smash_tilde(argument);
-
-    if (ch) {
-	if (IS_NPC(ch)) {
-	    send_to_char("Mobs can't use this command.\n\r", ch);
-	    return;
-	}
-    }
+    DENY_NPC(ch);
 
     if (argument[0] == '\0') {
 	if (ch->pcdata->grestore_string != NULL) {
-	    sprintf(buf, "Your `Oglobal`7 restore string is currently set to:\n%s\n\r",
-		    ch->pcdata->grestore_string);
-	    send_to_char(buf, ch);
+	    printf_to_char(ch, "Your `Oglobal`7 restore string is currently set to:\n%s\n\r", ch->pcdata->grestore_string);
 	    return;
 	} else {
 	    send_to_char("You do not have a global restore string defined\n\r", ch);
+	    return;
 	}
     }
 
     free_string(ch->pcdata->grestore_string);
     ch->pcdata->grestore_string = str_dup(argument);
-    sprintf(buf, "Your `Oglobal`7 restore string is now set to:\n%s\n",
-	    ch->pcdata->grestore_string);
-    send_to_char(buf, ch);
-    return;
+    printf_to_char(ch, "Your `Oglobal`7 restore string is now set to:\n%s\n", ch->pcdata->grestore_string);
 }
 
-void do_rrestore(CHAR_DATA *ch, char *argument)
+void set_rrestore(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MSL];
-
-    smash_tilde(argument);
-
-    if (ch) {
-	if (IS_NPC(ch)) {
-	    send_to_char("Mobs can't use this command.\n\r", ch);
-	    return;
-	}
-    }
+    DENY_NPC(ch);
 
     if (argument[0] == '\0') {
 	if (ch->pcdata->rrestore_string != NULL) {
-	    sprintf(buf, "Your `Oroom`7 restore string is currently set to:\n%s\n\r",
-		    ch->pcdata->rrestore_string);
-	    send_to_char(buf, ch);
+	    printf_to_char(ch, "Your `Oroom`7 restore string is currently set to:\n%s\n\r", ch->pcdata->rrestore_string);
 	    return;
 	} else {
 	    send_to_char("You do not have a restore string for rooms defined\n\r", ch);
+	    return;
 	}
     }
 
     free_string(ch->pcdata->rrestore_string);
     ch->pcdata->rrestore_string = str_dup(argument);
-    sprintf(buf, "Your `Oroom`7 restore string is now set to:\n%s\n",
-	    ch->pcdata->rrestore_string);
-    send_to_char(buf, ch);
-    return;
+    printf_to_char(ch, "Your `Oroom`7 restore string is now set to:\n%s\n", ch->pcdata->rrestore_string);
 }
 
-void do_review(CHAR_DATA *ch, char *argument)
+void do_review(CHAR_DATA *ch, const char *argument)
 {
     char buf[MSL];
 
@@ -3360,91 +3309,7 @@ const char *name_expand(CHAR_DATA *ch)
     return outbuf;
 }
 
-void do_rdesc(CHAR_DATA *ch, char *argument)
-{
-    ROOM_INDEX_DATA *location;
-    char buf[MSL];
-
-    DENY_NPC(ch);
-
-    location = ch->in_room;
-    if (location == NULL) {
-	send_to_char("No such location.\n\r", ch);
-	return;
-    }
-
-    if (!is_room_owner(ch, location) && ch->in_room != location
-	    && room_is_private(location) && !IS_TRUSTED(ch, IMPLEMENTOR)) {
-	send_to_char("That room is private right now.\n\r", ch);
-	return;
-    }
-
-    if (argument[0] != '\0') {
-	buf[0] = '\0';
-	smash_tilde(argument);
-
-	if (argument[0] == '-') {
-	    int len, buf_len;
-	    bool found = false;
-
-	    if (location->description == NULL || location->description[0] == '\0') {
-		send_to_char("No lines left to remove.\n\r", ch);
-		return;
-	    }
-
-	    strcpy(buf, location->description);
-	    buf_len = (int)strlen(buf);
-	    for (len = buf_len; len > 0; len--) {
-		if (buf[len] == '\r') {
-		    if (!found) {            /* back it up */
-			if (len > 0)
-			    len--;
-			found = true;
-		    } else {
-			buf[len + 1] = '\0';
-			free_string(location->description);
-			location->description = str_dup(buf);
-			send_to_char("Room description is```8:``\n\r", ch);
-			send_to_char(location->description ? location->description :
-				"(None).\n\r", ch);
-			return;
-		    }
-		}
-	    }
-
-	    buf[0] = '\0';
-	    free_string(location->description);
-	    location->description = str_dup(buf);
-	    send_to_char("Room description cleared.\n\r", ch);
-	    return;
-	}
-
-	if (argument[0] == '+') {
-	    if (location->description != NULL)
-		strcat(buf, location->description);
-
-	    argument++;
-	    while (is_space(*argument))
-		argument++;
-	}
-
-	if (strlen(buf) + strlen(argument) >= 1024) {
-	    send_to_char("Room description too long.\n\r", ch);
-	    return;
-	}
-
-	strcat(buf, argument);
-	strcat(buf, "\n\r");
-	free_string(location->description);
-	location->description = str_dup(buf);
-    }
-
-    send_to_char("Room description is```8:``\n\r", ch);
-    send_to_char(location->description ? location->description : "(None).\n\r", ch);
-    return;
-}
-
-void do_addalias(CHAR_DATA *ch, char *argument)
+void do_addalias(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *rch;
     char arg[MIL];
@@ -3456,8 +3321,9 @@ void do_addalias(CHAR_DATA *ch, char *argument)
 	return;
     }
 
-    if (IS_NPC(rch))
+    if (IS_NPC(rch)) {
 	return;
+    }
 
     if (IS_SET(rch->act, PLR_LINKDEAD)) {
 	send_to_char("They are linkdead, you cannot do that.\n\r", ch);
@@ -3466,7 +3332,6 @@ void do_addalias(CHAR_DATA *ch, char *argument)
     rch = rch->desc->original ? rch->desc->original : rch;
 
     argument = one_argument(argument, arg);
-    smash_tilde(argument);
 
     if (arg[0] == '\0') {
 	if (rch->pcdata->alias[0] == NULL) {
@@ -3476,12 +3341,10 @@ void do_addalias(CHAR_DATA *ch, char *argument)
 
 	send_to_char("Their current aliases are:\n\r", ch);
 	for (pos = 0; pos < MAX_ALIAS; pos++) {
-	    if (rch->pcdata->alias[pos] == NULL
-		    || rch->pcdata->alias_sub[pos] == NULL)
+	    if (rch->pcdata->alias[pos] == NULL || rch->pcdata->alias_sub[pos] == NULL)
 		break;
 
-	    printf_to_char(ch, "    %s:  %s\n\r", rch->pcdata->alias[pos],
-		    rch->pcdata->alias_sub[pos]);
+	    printf_to_char(ch, "    %s:  %s\n\r", rch->pcdata->alias[pos], rch->pcdata->alias_sub[pos]);
 	}
 	return;
     }
@@ -3499,8 +3362,7 @@ void do_addalias(CHAR_DATA *ch, char *argument)
 
     if (argument[0] == '\0') {
 	for (pos = 0; pos < MAX_ALIAS; pos++) {
-	    if (rch->pcdata->alias[pos] == NULL
-		    || rch->pcdata->alias_sub[pos] == NULL)
+	    if (rch->pcdata->alias[pos] == NULL || rch->pcdata->alias_sub[pos] == NULL)
 		break;
 
 	    if (!str_cmp(arg, rch->pcdata->alias[pos])) {
@@ -3519,11 +3381,15 @@ void do_addalias(CHAR_DATA *ch, char *argument)
 	return;
     }
 
-    if (add_alias(rch, arg, argument)) {
-	printf_to_char(ch, "%s is now aliased to '%s'.\n\r", arg, argument);
-    } else {
-	send_to_char("Sorry, they have too many aliases.\n\r", ch);
-	return;
+    {
+	char sanitized[MIL];
+	strncpy(sanitized, argument, MIL);
+	smash_tilde(sanitized);
+	if (add_alias(rch, arg, sanitized)) {
+	    printf_to_char(ch, "%s is now aliased to '%s'.\n\r", arg, sanitized);
+	} else {
+	    send_to_char("Sorry, they have too many aliases.\n\r", ch);
+	}
     }
 }
 
@@ -3563,33 +3429,7 @@ void fry_char(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_gobstopper(CHAR_DATA *ch, char *argument)
-{
-    CHAR_DATA *vch;
-
-    DENY_NPC(ch);
-
-    if (is_help(argument)) {
-	send_to_char("Syntax: gobstopper <player name>\n\r", ch);
-	return;
-    }
-
-    if ((vch = get_char_world(ch, argument)) == NULL) {
-	send_to_char("There is no character by that name.\n\r", ch);
-	return;
-    }
-
-    if (set_char_hunger(ch, vch, "-151") && set_char_thirst(ch, vch, "-151") && set_char_feed(ch, vch, "-151")) {
-	send_to_char("You have been `OG`@o`1b`#s`Pt`@o`1p`#p`Pe`Or`@e`1d`#!`P!``.\n\r", vch);
-	printf_to_char(ch, "You have `OG`@o`1b`#s`Pt`@o`1p`#p`Pe`Or`@e`1d`` %s!!.\n\r", vch->name);
-    } else {
-	printf_to_char(ch, "You failed to `OG`@o`1b`#s`Pt`@o`1p`#p`Pe`Or`` %s.\n\r",
-		(IS_NPC(vch)) ? vch->short_descr : vch->name);
-    }
-}
-
-
-void do_mrelic(CHAR_DATA *ch, char *argument)
+void do_mrelic(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
     int i = 1500;
@@ -3621,7 +3461,7 @@ void do_mrelic(CHAR_DATA *ch, char *argument)
  *  World Peace - stops all fighting in the game
  *  Added by Monrick, 1/2008
  *************************************************/
-void do_wpeace(CHAR_DATA *ch, char *argument)
+void do_wpeace(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *fch;
 
@@ -3644,13 +3484,13 @@ void do_wpeace(CHAR_DATA *ch, char *argument)
  *  pLoad - original snippet by Gary McNickle (dharvest)
  *          modified for BadTrip by Monrick, 1/2008
  *********************************************************/
-void do_ploa(CHAR_DATA *ch, char *argument)
+void do_ploa(CHAR_DATA *ch, const char *argument)
 {
     send_to_char("If you want to load a pfile, type out the whole command.\n\r", ch);
     return;
 }
 
-void do_pload(CHAR_DATA *ch, char *argument)
+void do_pload(CHAR_DATA *ch, const char *argument)
 {
     DESCRIPTOR_DATA d;      /* need a blank descriptor for the pfile data */
     char vName[MIL];        /* victim Name */
@@ -3707,13 +3547,13 @@ void do_pload(CHAR_DATA *ch, char *argument)
  *  pUnload - original snippet by Gary McNickle (dharvest)
  *          modified for BadTrip by Monrick, 1/2008
  *********************************************************/
-void do_punloa(CHAR_DATA *ch, char *argument)
+void do_punloa(CHAR_DATA *ch, const char *argument)
 {
     send_to_char("If you want to unload a pfile, type out the whole command.\n\r", ch);
     return;
 }
 
-void do_punload(CHAR_DATA *ch, char *argument)
+void do_punload(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     char vName[MIL];
@@ -3779,7 +3619,7 @@ void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is mood, const cha
     send_to_char(buf, ch);
 }
 
-void do_busy(CHAR_DATA *ch, /*@unused@*/ char *argument)
+void do_busy(CHAR_DATA *ch, /*@unused@*/ const char *argument)
 {
     if (IS_SET(ch->comm, COMM_BUSY)) {
 	send_to_char("Busy flag removed. Type 'replay' to see tells.\n\r", ch);
@@ -3790,7 +3630,7 @@ void do_busy(CHAR_DATA *ch, /*@unused@*/ char *argument)
     }
 }
 
-void do_coding(CHAR_DATA *ch, /*@unused@*/ char *argument)
+void do_coding(CHAR_DATA *ch, /*@unused@*/ const char *argument)
 {
     if (IS_SET(ch->comm, COMM_CODING)) {
 	send_to_char("Coding flag removed. Type 'replay' to see tells.\n\r", ch);
@@ -3801,7 +3641,7 @@ void do_coding(CHAR_DATA *ch, /*@unused@*/ char *argument)
     }
 }
 
-void do_building(CHAR_DATA *ch, /*@unused@*/ char *argument)
+void do_building(CHAR_DATA *ch, /*@unused@*/ const char *argument)
 {
     if (IS_SET(ch->comm, COMM_BUILD)) {
 	send_to_char("Building flag removed. Type 'replay' to see tells.\n\r", ch);

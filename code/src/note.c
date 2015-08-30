@@ -57,10 +57,10 @@ extern void string_append(CHAR_DATA * ch, char **string);
 *	local procedures
 ***************************************************************************/
 static void load_thread(char *name, NOTE_DATA * *list, int type, time_t free_time);
-static void parse_message(CHAR_DATA * ch, char *argument, int type);
+static void parse_message(CHAR_DATA * ch, const char *argument, int type);
 static bool is_message_hidden(CHAR_DATA * ch, NOTE_DATA * pnote);
 static int count_thread(CHAR_DATA * ch, NOTE_DATA * spool);
-static void list_thread(CHAR_DATA * ch, int type, char *argument, bool search);
+static void list_thread(CHAR_DATA * ch, int type, const char *argument, bool search);
 
 /***************************************************************************
 *	lookup functions
@@ -517,7 +517,7 @@ static void update_read(CHAR_DATA *ch, NOTE_DATA *note)
 /***************************************************************************
 *	note functions
 ***************************************************************************/
-typedef void NOTE_FN(CHAR_DATA * ch, char *argument, int type);
+typedef void NOTE_FN(CHAR_DATA * ch, const char *argument, int type);
 
 static NOTE_FN message_read;
 static NOTE_FN message_list;
@@ -574,7 +574,7 @@ message_cmd_table[] =
 *
 *	command interpreter for the message system
 ***************************************************************************/
-static void parse_message(CHAR_DATA *ch, char *argument, int type)
+static void parse_message(CHAR_DATA *ch, const char *argument, int type)
 {
 	char cmd[MSL];
 	int idx;
@@ -629,7 +629,7 @@ static void parse_message(CHAR_DATA *ch, char *argument, int type)
 *
 *	read a single message
 ***************************************************************************/
-static void message_read(CHAR_DATA *ch, char *argument, int type)
+static void message_read(CHAR_DATA *ch, const char *argument, int type)
 {
 	NOTE_DATA *note;
 	int msg_num;
@@ -672,7 +672,7 @@ static void message_read(CHAR_DATA *ch, char *argument, int type)
 *	display the list of messages - optionally with an argument
 *	used to match sender
 ***************************************************************************/
-static void message_list(CHAR_DATA *ch, char *argument, int type)
+static void message_list(CHAR_DATA *ch, const char *argument, int type)
 {
 	list_thread(ch, type, argument, false);
 }
@@ -683,7 +683,7 @@ static void message_list(CHAR_DATA *ch, char *argument, int type)
 *
 *	searcht the list of messages in the string editor
 ***************************************************************************/
-static void message_search(CHAR_DATA *ch, char *argument, int type)
+static void message_search(CHAR_DATA *ch, const char *argument, int type)
 {
 	list_thread(ch, type, argument, true);
 }
@@ -696,7 +696,7 @@ static void message_search(CHAR_DATA *ch, char *argument, int type)
 *	remove a message by number - used by players - can only
 *	delete things posted by them
 ***************************************************************************/
-static void message_remove(CHAR_DATA *ch, char *argument, int type)
+static void message_remove(CHAR_DATA *ch, const char *argument, int type)
 {
 	NOTE_DATA **list;
 	NOTE_DATA *note;
@@ -733,7 +733,7 @@ static void message_remove(CHAR_DATA *ch, char *argument, int type)
 *
 *	delete a message by number
 ***************************************************************************/
-static void message_delete(CHAR_DATA *ch, char *argument, int type)
+static void message_delete(CHAR_DATA *ch, const char *argument, int type)
 {
 	NOTE_DATA **list;
 	NOTE_DATA *note;
@@ -770,7 +770,7 @@ static void message_delete(CHAR_DATA *ch, char *argument, int type)
 *
 *	edit the message in the string editor
 ***************************************************************************/
-static void message_catchup(CHAR_DATA *ch, char *argument, int type)
+static void message_catchup(CHAR_DATA *ch, const char *argument, int type)
 {
 	if (type < 0 || type >= NOTE_MAX)
 		return;
@@ -784,7 +784,7 @@ static void message_catchup(CHAR_DATA *ch, char *argument, int type)
 *
 *	edit the message in the string editor
 ***************************************************************************/
-static void message_edit(CHAR_DATA *ch, char *argument, int type)
+static void message_edit(CHAR_DATA *ch, const char *argument, int type)
 {
 	attach_message(ch, type);
 	if (ch->pnote == NULL) {
@@ -800,7 +800,7 @@ static void message_edit(CHAR_DATA *ch, char *argument, int type)
 *
 *	add a line to the current note
 ***************************************************************************/
-static void message_add(CHAR_DATA *ch, char *argument, int type)
+static void message_add(CHAR_DATA *ch, const char *argument, int type)
 {
 	BUFFER *buf;
 
@@ -836,7 +836,7 @@ static void message_add(CHAR_DATA *ch, char *argument, int type)
 *
 *	remove the last line from the note
 ***************************************************************************/
-static void message_subtract(CHAR_DATA *ch, char *argument, int type)
+static void message_subtract(CHAR_DATA *ch, const char *argument, int type)
 {
 	static char buf[MAX_MESSAGE_LENGTH];
 	int len, buf_len;
@@ -891,7 +891,7 @@ static void message_subtract(CHAR_DATA *ch, char *argument, int type)
 *
 *	set the subject property of a message
 ***************************************************************************/
-static void message_subject(CHAR_DATA *ch, char *argument, int type)
+static void message_subject(CHAR_DATA *ch, const char *argument, int type)
 {
 	attach_message(ch, type);
 	if (ch->pnote == NULL) {
@@ -911,7 +911,7 @@ static void message_subject(CHAR_DATA *ch, char *argument, int type)
 *
 *	set the "to" property of a message
 ***************************************************************************/
-static void message_to(CHAR_DATA *ch, char *argument, int type)
+static void message_to(CHAR_DATA *ch, const char *argument, int type)
 {
 	attach_message(ch, type);
 	if (ch->pnote == NULL) {
@@ -931,7 +931,7 @@ static void message_to(CHAR_DATA *ch, char *argument, int type)
 *
 *	clear the current message
 ***************************************************************************/
-static void message_clear(CHAR_DATA *ch, char *argument, int type)
+static void message_clear(CHAR_DATA *ch, const char *argument, int type)
 {
 	if (ch->pnote != NULL) {
 		free_note(ch->pnote);
@@ -946,7 +946,7 @@ static void message_clear(CHAR_DATA *ch, char *argument, int type)
 *
 *	show the current message
 ***************************************************************************/
-static void message_show(CHAR_DATA *ch, char *argument, int type)
+static void message_show(CHAR_DATA *ch, const char *argument, int type)
 {
 	if (ch->pnote == NULL) {
 		send_to_char("You have no note in progress.\n\r", ch);
@@ -966,7 +966,7 @@ static void message_show(CHAR_DATA *ch, char *argument, int type)
 *
 *	post the current message
 ***************************************************************************/
-static void message_post(CHAR_DATA *ch, char *argument, int type)
+static void message_post(CHAR_DATA *ch, const char *argument, int type)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	DESCRIPTOR_DATA *d;
@@ -1041,7 +1041,7 @@ static void message_post(CHAR_DATA *ch, char *argument, int type)
 *	remove a message by number - and put it back into the players
 *	editing pointer
 ***************************************************************************/
-static void message_recall(CHAR_DATA *ch, char *argument, int type)
+static void message_recall(CHAR_DATA *ch, const char *argument, int type)
 {
 	NOTE_DATA *note;
 	NOTE_DATA *clone_msg;
@@ -1080,7 +1080,7 @@ static void message_recall(CHAR_DATA *ch, char *argument, int type)
 *
 *	create a reply to a message number
 ***************************************************************************/
-static void message_reply(CHAR_DATA *ch, char *argument, int type)
+static void message_reply(CHAR_DATA *ch, const char *argument, int type)
 {
 	NOTE_DATA *note;
 	NOTE_DATA *clone_msg;
@@ -1146,7 +1146,7 @@ static void message_reply(CHAR_DATA *ch, char *argument, int type)
 *
 *	forward a message by number
 ***************************************************************************/
-static void message_forward(CHAR_DATA *ch, char *argument, int type)
+static void message_forward(CHAR_DATA *ch, const char *argument, int type)
 {
 	NOTE_DATA *note;
 	NOTE_DATA *clone_msg;
@@ -1209,7 +1209,7 @@ static void message_forward(CHAR_DATA *ch, char *argument, int type)
 *	show a list of messages that meet certain criteria - used by
 *	message_list and message_search
 ***************************************************************************/
-static void list_thread(CHAR_DATA *ch, int type, char *argument, bool search)
+static void list_thread(CHAR_DATA *ch, int type, const char *argument, bool search)
 {
 	NOTE_DATA **list;
 	NOTE_DATA *note;
@@ -1324,7 +1324,7 @@ static NOTE_DATA *clone_message(NOTE_DATA *src)
 *
 *	show a list of unread messages
 ***************************************************************************/
-void do_unread(CHAR_DATA *ch, char *argument)
+void do_unread(CHAR_DATA *ch, const char *argument)
 {
 	int count;
 	int idx;
@@ -1362,7 +1362,7 @@ void do_unread(CHAR_DATA *ch, char *argument)
 *
 *	catchup on all message lists
 ***************************************************************************/
-void do_catchup(CHAR_DATA *ch, char *argument)
+void do_catchup(CHAR_DATA *ch, const char *argument)
 {
 	int idx;
 
@@ -1378,7 +1378,7 @@ void do_catchup(CHAR_DATA *ch, char *argument)
 *
 *	entry point for the note thread
 ***************************************************************************/
-void do_note(CHAR_DATA *ch, char *argument)
+void do_note(CHAR_DATA *ch, const char *argument)
 {
 	parse_message(ch, argument, NOTE_NOTE);
 }
@@ -1387,7 +1387,7 @@ void do_note(CHAR_DATA *ch, char *argument)
 *	do_rpnote
 *	entry point for the role-play note thread
 ***************************************************************************/
-void do_rpnote(CHAR_DATA *ch, char *argument)
+void do_rpnote(CHAR_DATA *ch, const char *argument)
 {
 	parse_message(ch, argument, NOTE_RPNOTE);
 }
@@ -1395,7 +1395,7 @@ void do_rpnote(CHAR_DATA *ch, char *argument)
 *	do_aucnote
 *	entry point for the auction note thread
 ***************************************************************************/
-void do_aucnote(CHAR_DATA *ch, char *argument)
+void do_aucnote(CHAR_DATA *ch, const char *argument)
 {
 	parse_message(ch, argument, NOTE_AUCNOTE);
 }
@@ -1404,7 +1404,7 @@ void do_aucnote(CHAR_DATA *ch, char *argument)
 *	do_penalty
 *	entry point for the penalty thread
 ***************************************************************************/
-void do_penalty(CHAR_DATA *ch, char *argument)
+void do_penalty(CHAR_DATA *ch, const char *argument)
 {
 	parse_message(ch, argument, NOTE_PENALTY);
 }
@@ -1412,7 +1412,7 @@ void do_penalty(CHAR_DATA *ch, char *argument)
 *	do_news
 *	entry point for the news thread
 ***************************************************************************/
-void do_news(CHAR_DATA *ch, char *argument)
+void do_news(CHAR_DATA *ch, const char *argument)
 {
 	parse_message(ch, argument, NOTE_NEWS);
 }
@@ -1421,7 +1421,7 @@ void do_news(CHAR_DATA *ch, char *argument)
 *	do_changes
 *	entry point for the changes thread
 ***************************************************************************/
-void do_changes(CHAR_DATA *ch, char *argument)
+void do_changes(CHAR_DATA *ch, const char *argument)
 {
 	parse_message(ch, argument, NOTE_CHANGES);
 }
@@ -1431,7 +1431,7 @@ void do_changes(CHAR_DATA *ch, char *argument)
 *	do_contest
 *	entry point for the contest thread
 ***************************************************************************/
-void do_contest(CHAR_DATA *ch, char *argument)
+void do_contest(CHAR_DATA *ch, const char *argument)
 {
 	parse_message(ch, argument, NOTE_CONTEST);
 }
@@ -1440,7 +1440,7 @@ void do_contest(CHAR_DATA *ch, char *argument)
 *	do_ideas
 *	entry point for the contest thread
 ***************************************************************************/
-void do_idea(CHAR_DATA *ch, char *argument)
+void do_idea(CHAR_DATA *ch, const char *argument)
 {
 	parse_message(ch, argument, NOTE_IDEA);
 }
@@ -1448,7 +1448,7 @@ void do_idea(CHAR_DATA *ch, char *argument)
 *	do_building
 *	entry point for the contest thread
 ***************************************************************************/
-void do_build(CHAR_DATA *ch, char *argument)
+void do_build(CHAR_DATA *ch, const char *argument)
 {
 	parse_message(ch, argument, NOTE_BUILD);
 }

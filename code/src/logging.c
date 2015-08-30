@@ -8,6 +8,25 @@
 static void write_file(const char *fileName, char *mode, const char *fmt, ...);
 
 
+
+void append_file(CHAR_DATA *ch, const char *file, const char *str)
+{
+    FILE *fp;
+
+    DENY_NPC(ch);
+    if (str == NULL || str[0] == '\0')
+	return;
+
+    if ((fp = fopen(file, "a")) == NULL) {
+	perror(file);
+	send_to_char("Sorry, the needed file is inaccessible.", ch);
+	return;
+    }
+
+    fprintf(fp, "[%5ld] %s: %s\n", ch->in_room == NULL ? 0 : ch->in_room->vnum, ch->name, str);
+    fclose(fp);
+}
+
 void log_bug(const char *fmt, ...)
 {
     static char buf[MSL];

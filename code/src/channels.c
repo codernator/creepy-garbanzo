@@ -78,7 +78,7 @@ void channels_toggle(CHAR_DATA *sender, const CHANNEL_DEFINITION const *channel)
     printf_to_char(sender, "%s is now %s.\n\r", channel->name, now_on ? "ON" : "OFF");
 }
 
-void channels_show(CHAR_DATA *sender)
+void channels_show(const CHAR_DATA *sender)
 {
     int i;
     bool enabled;
@@ -96,7 +96,7 @@ void channels_show(CHAR_DATA *sender)
 	}
 }
 
-void channels_permission(CHAR_DATA *grantor, CHAR_DATA *grantee, bool granted, const CHANNEL_DEFINITION const *channel)
+void channels_permission(const CHAR_DATA *grantor, CHAR_DATA *grantee, bool granted, const CHANNEL_DEFINITION const *channel)
 {
     static char buf[MIL];
 
@@ -133,7 +133,7 @@ void channels_permission(CHAR_DATA *grantor, CHAR_DATA *grantee, bool granted, c
     wiznet(buf, grantor, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
 }
 
-void broadcast_channel(CHAR_DATA *sender, const CHANNEL_DEFINITION const *channel, CHAR_DATA *target, char *argument)
+void broadcast_channel(CHAR_DATA *sender, const CHANNEL_DEFINITION const *channel, CHAR_DATA *target, const char *argument)
 {
     if (sender != NULL) {
         if (CHAN_DENIED(sender, channel->flag)) {
@@ -197,7 +197,7 @@ void broadcast_channel(CHAR_DATA *sender, const CHANNEL_DEFINITION const *channe
     }
 }
 
-const CHANNEL_DEFINITION const *channels_parse(char *argument)
+const CHANNEL_DEFINITION const *channels_parse(const char *argument)
 {
     int i;
     for (i = 0; channels[i].flag != 0; i++) {

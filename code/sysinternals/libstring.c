@@ -10,7 +10,7 @@
  */
 bool is_alnum(const char test)
 {
-	return isalnum((int)test);
+    return isalnum((int)test);
 }
 
 /**
@@ -18,17 +18,17 @@ bool is_alnum(const char test)
  */
 bool is_number(const char *arg)
 {
-	if (*arg == '\0')
-		return false;
+    if (*arg == '\0')
+	return false;
 
-	if (*arg == '+' || *arg == '-')
-		arg++;
+    if (*arg == '+' || *arg == '-')
+	arg++;
 
-	for (; *arg != '\0'; arg++)
-		if (!is_digit(*arg))
-			return false;
+    for (; *arg != '\0'; arg++)
+	if (!is_digit(*arg))
+	    return false;
 
-	return true;
+    return true;
 }
 
 /**
@@ -36,7 +36,7 @@ bool is_number(const char *arg)
  */
 bool is_space(const char test)
 {
-	return isspace((int)test);
+    return isspace((int)test);
 }
 
 /**
@@ -44,7 +44,7 @@ bool is_space(const char test)
  */
 bool is_digit(const char test)
 {
-	return isdigit((int)test);
+    return isdigit((int)test);
 }
 
 /**
@@ -52,7 +52,7 @@ bool is_digit(const char test)
  */
 bool is_alpha(const char test)
 {
-	return isalpha((int)test);
+    return isalpha((int)test);
 }
 
 /**
@@ -60,7 +60,7 @@ bool is_alpha(const char test)
  */
 bool is_upper(const char test)
 {
-	return isupper((int)test);
+    return isupper((int)test);
 }
 
 /**
@@ -68,7 +68,7 @@ bool is_upper(const char test)
  */
 char to_lower(const char test)
 {
-	return tolower((int)test);
+    return tolower((int)test);
 }
 
 /**
@@ -77,11 +77,11 @@ char to_lower(const char test)
  */
 void smash_tilde(char *str)
 {
-	for (; *str != '\0'; str++)
-		if (*str == '~')
-			*str = '-';
+    for (; *str != '\0'; str++)
+	if (*str == '~')
+	    *str = '-';
 
-	return;
+    return;
 }
 
 /**
@@ -90,21 +90,21 @@ void smash_tilde(char *str)
  */
 bool str_cmp(const char *astr, const char *bstr)
 {
-	if (astr == NULL) {
-		return true;
-	}
-
-	if (bstr == NULL) {
-		return true;
-	}
-
-	for (; *astr > '0' || *bstr > '0'; astr++, bstr++) {
-		if (LOWER(*astr) != LOWER(*bstr)) {
-			return true;
-        }
+    if (astr == NULL) {
+	return true;
     }
 
-	return false;
+    if (bstr == NULL) {
+	return true;
+    }
+
+    for (; *astr > '0' || *bstr > '0'; astr++, bstr++) {
+	if (LOWER(*astr) != LOWER(*bstr)) {
+	    return true;
+	}
+    }
+
+    return false;
 }
 
 /**
@@ -113,21 +113,21 @@ bool str_cmp(const char *astr, const char *bstr)
  */
 bool str_prefix(const char *astr, const char *bstr)
 {
-	if (astr == NULL) {
-		return true;
-	}
-
-	if (bstr == NULL) {
-		return true;
-	}
-
-	for (; *astr != '\0'; astr++, bstr++) {
-		if (LOWER(*astr) != LOWER(*bstr)) {
-			return true;
-        }
+    if (astr == NULL) {
+	return true;
     }
 
-	return false;
+    if (bstr == NULL) {
+	return true;
+    }
+
+    for (; *astr != '\0'; astr++, bstr++) {
+	if (LOWER(*astr) != LOWER(*bstr)) {
+	    return true;
+	}
+    }
+
+    return false;
 }
 
 /**
@@ -136,24 +136,24 @@ bool str_prefix(const char *astr, const char *bstr)
  */
 bool str_infix(const char *astr, const char *bstr)
 {
-	int sstr1;
-	int sstr2;
-	int ichar;
-	char c0;
+    int sstr1;
+    int sstr2;
+    int ichar;
+    char c0;
 
-	if ((c0 = LOWER(astr[0])) == '\0')
-		return false;
+    if ((c0 = LOWER(astr[0])) == '\0')
+	return false;
 
-	sstr1 = (int)strlen(astr);
-	sstr2 = (int)strlen(bstr);
+    sstr1 = (int)strlen(astr);
+    sstr2 = (int)strlen(bstr);
 
-	for (ichar = 0; ichar <= sstr2 - sstr1; ichar++) {
-		if (c0 == LOWER(bstr[ichar]) && !str_prefix(astr, bstr + ichar)) {
-			return false;
-        }
+    for (ichar = 0; ichar <= sstr2 - sstr1; ichar++) {
+	if (c0 == LOWER(bstr[ichar]) && !str_prefix(astr, bstr + ichar)) {
+	    return false;
 	}
+    }
 
-	return true;
+    return true;
 }
 
 /**
@@ -162,16 +162,16 @@ bool str_infix(const char *astr, const char *bstr)
  */
 bool str_suffix(const char *astr, const char *bstr)
 {
-	size_t sstr1;
-	size_t sstr2;
+    size_t sstr1;
+    size_t sstr2;
 
-	sstr1 = strlen(astr);
-	sstr2 = strlen(bstr);
+    sstr1 = strlen(astr);
+    sstr2 = strlen(bstr);
 
-	if (sstr1 <= sstr2 && !str_cmp(astr, bstr + sstr2 - sstr1))
-		return false;
+    if (sstr1 <= sstr2 && !str_cmp(astr, bstr + sstr2 - sstr1))
+	return false;
 
-	return true;
+    return true;
 }
 
 /**
@@ -179,51 +179,51 @@ bool str_suffix(const char *astr, const char *bstr)
  */
 void capitalize_into(const char *source, /*@out@*/ char *initialized_target, size_t string_length)
 {
-	int i;
-	size_t counter;
+    int i;
+    size_t counter;
 
-	counter = 0;
-	for (i = 0; counter < string_length && source[i] != '\0'; i++) {
-		initialized_target[i] = LOWER(source[i]);
-		counter++;
-	}
+    counter = 0;
+    for (i = 0; counter < string_length && source[i] != '\0'; i++) {
+	initialized_target[i] = LOWER(source[i]);
+	counter++;
+    }
 
-	initialized_target[i] = '\0';
-	initialized_target[0] = UPPER(initialized_target[0]);
+    initialized_target[i] = '\0';
+    initialized_target[0] = UPPER(initialized_target[0]);
 }
 
 
-byte parse_byte(char *string)
+byte parse_byte(const char *string)
 {
-	int raw = atoi(string);
+    int raw = atoi(string);
 
-	return (byte)UMAX(UMIN(raw, 255), 0);
+    return (byte)UMAX(UMIN(raw, 255), 0);
 }
 
-byte parse_byte2(char *string, byte min, byte max)
+byte parse_byte2(const char *string, byte min, byte max)
 {
-	int raw = atoi(string);
+    int raw = atoi(string);
 
-	return (byte)UMAX(UMIN(raw, (int)max), (int)min);
+    return (byte)UMAX(UMIN(raw, (int)max), (int)min);
 }
 
-int parse_int(char *string)
+int parse_int(const char *string)
 {
-	return atoi(string);
+    return atoi(string);
 }
 
-long parse_long(char *string)
+long parse_long(const char *string)
 {
-	return atol(string);
+    return atol(string);
 }
 
-unsigned int parse_unsigned_int(char *string)
+unsigned int parse_unsigned_int(const char *string)
 {
-	return (unsigned int)UMAX(0, atol(string));
+    return (unsigned int)UMAX(0, atol(string));
 }
 
-unsigned long parse_unsigned_long(char *string)
+unsigned long parse_unsigned_long(const char *string)
 {
-	return UMAX(0, (unsigned long)atoll(string));
+    return UMAX(0, (unsigned long)atoll(string));
 }
 

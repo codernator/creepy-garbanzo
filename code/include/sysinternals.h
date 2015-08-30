@@ -44,10 +44,10 @@ bool is_alnum(const char test);
 bool is_number(const char *test);
 char to_lower(const char test);
 
-byte parse_byte(char *string);
-byte parse_byte2(char *string, byte min, byte max);
-int parse_int(char *string);
-long parse_long(char *string);
-unsigned int parse_unsigned_int(char *string);
-unsigned long parse_unsigned_long(char *string);
+byte parse_byte(const char *string);
+byte parse_byte2(const char *string, byte min, byte max);
+int parse_int(const char *string);
+long parse_long(const char *string);
+unsigned int parse_unsigned_int(const char *string);
+unsigned long parse_unsigned_long(const char *string);
 

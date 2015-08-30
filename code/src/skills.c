@@ -758,7 +758,7 @@ char *affect_fn_name(AFFECT_FUN *fn)
 }
 
 /** lookup a dynamic skill - try to get a skill that is as accurate as possible */
-SKILL *skill_lookup(char *name)
+SKILL *skill_lookup(const char *name)
 {
     SKILL *skill;
     SKILL *skill_tmp;
@@ -782,7 +782,7 @@ SKILL *skill_lookup(char *name)
 }
 
 /** lookup a dynamic group */
-GROUP *group_lookup(char *name)
+GROUP *group_lookup(const char *name)
 {
     GROUP *group;
     GROUP *group_tmp;
@@ -1562,7 +1562,7 @@ static void gain_skill(CHAR_DATA *ch, CHAR_DATA *trainer, SKILL *skill)
 /**
  * used to gain new skills
  */
-void do_gain(CHAR_DATA *ch, char *argument)
+void do_gain(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *trainer;
     GROUP *group;
@@ -1694,7 +1694,7 @@ static bool parse_levels(char *argument, int *min_level, int *max_level)
 /**
  * display a list of skills known
  */
-void do_skills(CHAR_DATA *ch, char *argument)
+void do_skills(CHAR_DATA *ch, const char *argument)
 {
     BUFFER *buf;
     LEARNED *learned;
@@ -1768,7 +1768,7 @@ void do_skills(CHAR_DATA *ch, char *argument)
 /**
  * display a list of spells known
  */
-void do_spells(CHAR_DATA *ch, char *argument)
+void do_spells(CHAR_DATA *ch, const char *argument)
 {
     BUFFER *buf;
     LEARNED *learned;
@@ -2158,7 +2158,7 @@ bool parse_gen_groups(CHAR_DATA *ch, char *argument)
 /**
  *    shows all groups or the skills/spells in a group
  */
-void do_groups(CHAR_DATA *ch, char *argument)
+void do_groups(CHAR_DATA *ch, const char *argument)
 {
     GROUP *group;
     SKILL_LIST *skill_idx;
@@ -2296,7 +2296,7 @@ void check_improve(CHAR_DATA *ch, SKILL *skill, bool success, int multiplier)
 /**
  *    practice a skill or view learned percents
  */
-void do_practice(CHAR_DATA *ch, char *argument)
+void do_practice(CHAR_DATA *ch, const char *argument)
 {
     char arg[MSL];
 
@@ -2450,7 +2450,7 @@ static const struct train_type {
 /**
  * use trains
  */
-void do_train(CHAR_DATA *ch, char *argument)
+void do_train(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *mob;
     char arg[MIL], buf[MSL];

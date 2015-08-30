@@ -233,8 +233,8 @@ void save_groups(void);
 void assign_skill_helps(void);
 
 
-/*@shared@*/SKILL *skill_lookup(char *name);
-GROUP *group_lookup(char *name);
+/*@shared@*/SKILL *skill_lookup(const char *name);
+GROUP *group_lookup(const char *name);
 
 SKILL *resolve_skill_sn(int sn);
 SKILL *resolve_skill_affect(AFFECT_DATA * paf);

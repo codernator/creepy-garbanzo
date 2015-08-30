@@ -116,7 +116,7 @@ void hedit(CHAR_DATA *ch, char *argument)
 *
 *	entry point for the help editor
 ***************************************************************************/
-void do_hedit(CHAR_DATA *ch, char *argument)
+void do_hedit(CHAR_DATA *ch, const char *argument)
 {
 	HELP_DATA *help;
 	char cmd[MIL];
