@@ -8,8 +8,6 @@
 
 
 
-extern char *flag_string(const struct flag_type *flag_table, long bits);
-extern int flag_value(const struct flag_type *flag_table, char *argument);
 extern char *format_string(char *oldstring /*, bool fSpace */);
 extern void string_append(CHAR_DATA * ch, char **string);
 
@@ -177,7 +175,7 @@ static void show_obj_values(CHAR_DATA *ch, OBJECTPROTOTYPE *obj)
  *
  *	set the value properties of an item based on it's type
  *****************************************************************************/
-static bool set_obj_values(CHAR_DATA *ch, OBJECTPROTOTYPE *pObj, int value_num, char *argument)
+static bool set_obj_values(CHAR_DATA *ch, OBJECTPROTOTYPE *pObj, int value_num, const char *argument)
 {
     SKILL *skill;
     int value;
@@ -537,7 +535,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJECTPROTOTYPE *pObj, int value_num, 
  *
  *	set one of the 4 value properties on the object
  *****************************************************************************/
-static bool set_value(CHAR_DATA *ch, OBJECTPROTOTYPE *pObj, char *argument, int value)
+static bool set_value(CHAR_DATA *ch, OBJECTPROTOTYPE *pObj, const char *argument, int value)
 {
     if (argument[0] == '\0') {
 	set_obj_values(ch, pObj, -1, "");
@@ -1083,7 +1081,7 @@ EDIT(oedit_long){
  *	edit the five values on an object
  *	single point of entry/failure for the oedit_valueN functions
  *****************************************************************************/
-static bool oedit_values(CHAR_DATA *ch, char *argument, int value)
+static bool oedit_values(CHAR_DATA *ch, const char *argument, int value)
 {
     OBJECTPROTOTYPE *pObj;
 

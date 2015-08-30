@@ -10,8 +10,6 @@
 #include <string.h>
 #include <stdio.h>
 
-extern char *flag_string(const struct flag_type *flag_table, long bits);
-extern int flag_value(const struct flag_type *flag_table, char *argument);
 
 
 /***************************************************************************
@@ -192,7 +190,6 @@ static void set_character(CHAR_DATA *ch, const char *argument)
 
     DENY_NPC(ch);
 
-    smash_tilde(argument);
     if (is_help(argument)) {
 	int col;
 
@@ -218,13 +215,19 @@ static void set_character(CHAR_DATA *ch, const char *argument)
 	return;
     }
 
-    argument = one_argument(argument, cmd);
-    if (cmd[0] != '\0') {
-	for (idx = 0; set_char_cmd_table[idx].keyword[0] != '\0'; idx++) {
-	    if (!str_prefix(cmd, set_char_cmd_table[idx].keyword)) {
-		if ((*set_char_cmd_table[idx].fn)(ch, vch, argument))
-		    send_to_char("`1Ok`!.``\n\r", ch);
-		return;
+    {
+	static char buf[MSL];
+	argument = one_argument(argument, cmd);
+	(void)snprintf(buf, UMIN(strlen(argument), MSL), "%s", argument);
+	smash_tilde(buf);
+
+	if (cmd[0] != '\0') {
+	    for (idx = 0; set_char_cmd_table[idx].keyword[0] != '\0'; idx++) {
+		if (!str_prefix(cmd, set_char_cmd_table[idx].keyword)) {
+		    if ((*set_char_cmd_table[idx].fn)(ch, vch, argument))
+			send_to_char("`1Ok`!.``\n\r", ch);
+		    return;
+		}
 	    }
 	}
     }
@@ -1179,7 +1182,6 @@ static void set_object(CHAR_DATA *ch, const char *argument)
 
     DENY_NPC(ch);
 
-    smash_tilde(argument);
     if (is_help(argument)) {
 	int col;
 
@@ -1204,13 +1206,19 @@ static void set_object(CHAR_DATA *ch, const char *argument)
 	return;
     }
 
-    argument = one_argument(argument, cmd);
-    if (cmd[0] != '\0') {
-	for (idx = 0; set_obj_cmd_table[idx].keyword[0] != '\0'; idx++) {
-	    if (!str_prefix(cmd, set_obj_cmd_table[idx].keyword)) {
-		if ((*set_obj_cmd_table[idx].fn)(ch, obj, argument))
-		    send_to_char("`1Ok`!.``\n\r", ch);
-		return;
+    {
+	static char buf[MSL];
+	argument = one_argument(argument, cmd);
+	(void)snprintf(buf, UMIN(strlen(argument), MSL), "%s", argument);
+	smash_tilde(buf);
+
+	if (cmd[0] != '\0') {
+	    for (idx = 0; set_obj_cmd_table[idx].keyword[0] != '\0'; idx++) {
+		if (!str_prefix(cmd, set_obj_cmd_table[idx].keyword)) {
+		    if ((*set_obj_cmd_table[idx].fn)(ch, obj, buf))
+			send_to_char("`1Ok`!.``\n\r", ch);
+		    return;
+		}
 	    }
 	}
     }
@@ -1578,7 +1586,6 @@ static void set_room(CHAR_DATA *ch, const char *argument)
 
     DENY_NPC(ch);
 
-    smash_tilde(argument);
     if (is_help(argument)) {
 	int col;
 
@@ -1598,19 +1605,23 @@ static void set_room(CHAR_DATA *ch, const char *argument)
     }
 
     one_argument(argument, arg);
-    if (is_number(arg)
-	    && (room = get_room_index(parse_int(arg))) != NULL)
+    if (is_number(arg) && (room = get_room_index(parse_int(arg))) != NULL)
 	argument = one_argument(argument, arg);
     else
 	room = ch->in_room;
 
-    argument = one_argument(argument, cmd);
-    if (cmd[0] != '\0') {
-	for (idx = 0; set_room_cmd_table[idx].keyword[0] != '\0'; idx++) {
-	    if (!str_prefix(cmd, set_room_cmd_table[idx].keyword)) {
-		if ((*set_room_cmd_table[idx].fn)(ch, room, argument))
-		    send_to_char("`1Ok`!.``\n\r", ch);
-		return;
+    {
+	static char buf[MSL];
+	argument = one_argument(argument, cmd);
+	(void)snprintf(buf, UMIN(strlen(argument), MSL), "%s", argument);
+	smash_tilde(buf);
+	if (cmd[0] != '\0') {
+	    for (idx = 0; set_room_cmd_table[idx].keyword[0] != '\0'; idx++) {
+		if (!str_prefix(cmd, set_room_cmd_table[idx].keyword)) {
+		    if ((*set_room_cmd_table[idx].fn)(ch, room, buf))
+			send_to_char("`1Ok`!.``\n\r", ch);
+		    return;
+		}
 	    }
 	}
     }

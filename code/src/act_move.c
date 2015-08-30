@@ -1,4 +1,5 @@
 #include "merc.h"
+#include "object.h"
 #include "character.h"
 #include "tables.h"
 #include "interp.h"

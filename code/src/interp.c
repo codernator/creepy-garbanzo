@@ -124,7 +124,6 @@ const struct cmd_type cmd_table[] =
     { "dice",	      do_dice,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
     { "delet",	      do_delet,	       POS_DEAD,     0,	 LOG_ALWAYS, 0 },
     { "delete",	      do_delete,       POS_STANDING, 0,	 LOG_NORMAL, 1 },
-    { "nickname",	  do_nickname,     POS_DEAD,     0,	 LOG_NORMAL, 1 },
     { "nofollow",	  do_nofollow,     POS_DEAD,     0,	 LOG_NORMAL, 1 },
     { "noloot",	      do_noloot,       POS_DEAD,     0,	 LOG_NORMAL, 1 },
     { "nosummon",	  do_nosummon,     POS_DEAD,     0,	 LOG_NORMAL, 1 },
@@ -510,26 +509,29 @@ void interpret(CHAR_DATA *ch, const char *argument)
     tail_chain();
 }
 
+static int snarf_number(const char *start, const char *end)
+{
+    static char buf[MIL];
+
+    (void)snprintf(buf, (end-start), "%s", start);
+    return parse_int(buf);
+}
+
 /*
  * Given a string like 14.foo, return 14 and 'foo'
  */
 int number_argument(const char *argument, char *arg)
 {
-    char *pdot;
-    int number;
+    const char *pdot;
 
     for (pdot = argument; *pdot != '\0'; pdot++) {
 	if (*pdot == '.') {
-	    *pdot = '\0';
-	    number = parse_int(argument);
-	    *pdot = '.';
-	    strcpy(arg, pdot + 1);
-	    return number;
+	    strncpy(arg, pdot + 1, MIL);
+	    return snarf_number(argument, pdot);
 	}
     }
 
     strcpy(arg, argument);
-
     return 1;
 }
 
@@ -538,16 +540,12 @@ int number_argument(const char *argument, char *arg)
  */
 int mult_argument(const char *argument, char *arg)
 {
-    char *pdot;
-    int number;
+    const char *pdot;
 
     for (pdot = argument; *pdot != '\0'; pdot++) {
 	if (*pdot == '*') {
-	    *pdot = '\0';
-	    number = parse_int(argument);
-	    *pdot = '*';
-	    strcpy(arg, pdot + 1);
-	    return number;
+	    strncpy(arg, pdot + 1, MIL);
+	    return snarf_number(argument, pdot);
 	}
     }
 

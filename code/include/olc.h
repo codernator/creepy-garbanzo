@@ -18,13 +18,13 @@
 /*
  * New typedefs.
  */
-typedef bool OLC_FUN(CHAR_DATA * ch, char *argument);
+typedef bool OLC_FUN(CHAR_DATA * ch, const char *argument);
 #define DECLARE_OLC_FUN(fn)     OLC_FUN fn
 
 
 
 /* Return true if area changed, false if not. */
-#define EDIT(fn)                bool fn(CHAR_DATA * ch, char *argument)
+#define EDIT(fn)                bool fn(CHAR_DATA * ch, const char *argument)
 
 /*
  * Connected states for editor.
@@ -45,20 +45,20 @@ typedef bool OLC_FUN(CHAR_DATA * ch, char *argument);
 
 
 /* eidting interpreter entry functions */
-void mpedit(CHAR_DATA * ch, char *argument);
-void hedit(CHAR_DATA * ch, char *argument);
-void skedit(CHAR_DATA * ch, char *argument);
-void gredit(CHAR_DATA * ch, char *argument);
-void scedit(CHAR_DATA * ch, char *argument);
-void muedit(CHAR_DATA * ch, char *argument);
+void mpedit(CHAR_DATA * ch, const char *argument);
+void hedit(CHAR_DATA * ch, const char *argument);
+void skedit(CHAR_DATA * ch, const char *argument);
+void gredit(CHAR_DATA * ch, const char *argument);
+void scedit(CHAR_DATA * ch, const char *argument);
+void muedit(CHAR_DATA * ch, const char *argument);
 
 
 /*
  * Structure for an OLC editor command.
  */
 struct olc_cmd_type {
-    char *const	name;
-    OLC_FUN *	olc_fn;
+    const char *const name;
+    OLC_FUN *olc_fn;
 };
 
 
@@ -67,8 +67,8 @@ struct olc_cmd_type {
  * Structure for an OLC editor startup command.
  */
 struct  editor_cmd_type {
-    char *const	name;
-    DO_FUN *	do_fn;
+    const char *const name;
+    DO_FUN *do_fn;
 };
 
 enum medit_auto_config_type { mact_easy, mact_normal, mact_hard, mact_insane };
@@ -111,8 +111,8 @@ extern const struct olc_cmd_type muedit_table[];
  * General Functions
  */
 /* general functions */
-bool show_commands(CHAR_DATA * ch, char *argument);
-bool show_help(CHAR_DATA * ch, char *argument);
+bool show_commands(CHAR_DATA * ch, const char *argument);
+bool show_help(CHAR_DATA * ch, const char *argument);
 bool edit_done(CHAR_DATA * ch);
 
 

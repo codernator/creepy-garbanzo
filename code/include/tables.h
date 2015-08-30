@@ -100,3 +100,8 @@ extern const struct flag_type damage_flags[];
 extern const struct flag_type target_flags[];
 extern const struct flag_type skill_flags[];
 extern const struct flag_type extra2_flags[];
+
+
+/* flag.c */
+char *flag_string(const struct flag_type *flag_table, long bits);
+long flag_value(const struct flag_type *flag_table, const char *argument);

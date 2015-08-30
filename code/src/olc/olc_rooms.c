@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "merc.h"
+#include "object.h"
 #include "tables.h"
 #include "olc.h"
 #include "recycle.h"
@@ -29,8 +30,6 @@
  *	external functions
  ***************************************************************************/
 extern int wear_bit(int loc);
-extern char *flag_string(const struct flag_type *flag_table, long bits);
-extern int flag_value(const struct flag_type *flag_table, char *argument);
 extern char *format_string(char *oldstring /*, bool fSpace */);
 extern void string_append(CHAR_DATA * ch, char **string);
 
@@ -40,7 +39,7 @@ extern void string_append(CHAR_DATA * ch, char **string);
  *
  *	change the values of an exit
  ***************************************************************************/
-static bool change_exit(CHAR_DATA *ch, char *argument, int door)
+static bool change_exit(CHAR_DATA *ch, const char *argument, int door)
 {
     ROOM_INDEX_DATA *room;
     char command[MIL];
@@ -795,7 +794,7 @@ EDIT(redit_show){
 	if ((pexit = room->exit[door])) {
 	    char word[MIL];
 	    char reset_state[MSL];
-	    char *state;
+	    const char *state;
 	    int iter;
 	    int length;
 

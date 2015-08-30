@@ -1,5 +1,6 @@
 #include "merc.h"
 #include "db.h"
+#include "object.h"
 #include "recycle.h"
 #include "tables.h"
 #include "lookup.h"
@@ -7,12 +8,10 @@
 #include "interp.h"
 
 
-extern ROOM_INDEX_DATA * find_location(CHAR_DATA * ch, char *arg);
 
-
-static void show_room_stats(CHAR_DATA *ch, char *argument);
-static void show_object_stats(CHAR_DATA *ch, char *argument);
-static void show_mob_stats(CHAR_DATA *ch, char *argument);
+static void show_room_stats(CHAR_DATA *ch, const char *argument);
+static void show_object_stats(CHAR_DATA *ch, const char *argument);
+static void show_mob_stats(CHAR_DATA *ch, const char *argument);
 
 
 /**
@@ -24,11 +23,11 @@ void do_stat(CHAR_DATA *ch, const char *argument)
     ROOM_INDEX_DATA *location;
     CHAR_DATA *victim;
     char arg[MIL];
-    char *string;
+    const char *string;
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	string = one_argument(argument, arg);
+    string = one_argument(argument, arg);
     if (arg[0] == '\0') {
 	send_to_char("Syntax:\n\r", ch);
 	send_to_char("  stat <name>\n\r", ch);
@@ -79,7 +78,7 @@ void do_stat(CHAR_DATA *ch, const char *argument)
 /**
  * show statistics for a room
  */
-void show_room_stats(CHAR_DATA *ch, char *argument)
+void show_room_stats(CHAR_DATA *ch, const char *argument)
 {
     ROOM_INDEX_DATA *location;
     GAMEOBJECT *obj;
@@ -186,7 +185,7 @@ void show_room_stats(CHAR_DATA *ch, char *argument)
 /**
  * show statistics for an object
  */
-void show_object_stats(CHAR_DATA *ch, char *argument)
+void show_object_stats(CHAR_DATA *ch, const char *argument)
 {
     AFFECT_DATA *paf;
     GAMEOBJECT *obj;
@@ -208,7 +207,7 @@ void show_object_stats(CHAR_DATA *ch, char *argument)
     printf_to_char(ch, "Name(s): %s\n\r", object_name_get(obj));
     printf_to_char(ch, "Vnum: %d  Format: %s  Resets: %d\n\r", obj->objprototype->vnum, item_type_name(obj), obj->objprototype->reset_num);
     {
-	char *ownername = object_ownername_get(obj);
+	const char *ownername = object_ownername_get(obj);
 	printf_to_char(ch, "Owner: %s\n\r", (ownername != NULL) ? ownername : "none");
     }
     printf_to_char(ch, "Short description: %s\n\rLong description: %s\n\r", obj->short_descr, obj->description); 
@@ -424,7 +423,7 @@ void show_object_stats(CHAR_DATA *ch, char *argument)
 /**
  * show statistics for a character
  */
-void show_mob_stats(CHAR_DATA *ch, char *argument)
+void show_mob_stats(CHAR_DATA *ch, const char *argument)
 {
     AFFECT_DATA *paf;
     CHAR_DATA *victim;

@@ -4,7 +4,68 @@
 #include "recycle.h"
 #include "libfile.h"
 
-BAN_DATA *ban_list;
+
+/** exports */
+void load_bans(void);
+bool check_ban(char *site, int type);
+
+
+/** locals */
+static BAN_DATA *ban_list;
+static void save_bans(void);
+static void ban_site(CHAR_DATA *ch, const char *argument, bool fPerm);
+
+
+
+void do_ban(CHAR_DATA *ch, const char *argument)
+{
+    ban_site(ch, argument, false);
+}
+
+void do_permban(CHAR_DATA *ch, const char *argument)
+{
+    ban_site(ch, argument, true);
+}
+
+void do_allow(CHAR_DATA *ch, const char *argument)
+{
+    char arg[MAX_INPUT_LENGTH];
+    char buf[MAX_STRING_LENGTH];
+    BAN_DATA *prev;
+    BAN_DATA *curr;
+
+    one_argument(argument, arg);
+
+    if (arg[0] == '\0') {
+	send_to_char("Remove which site from the ban list?\n\r", ch);
+	return;
+    }
+
+    prev = NULL;
+    for (curr = ban_list; curr != NULL; prev = curr, curr = curr->next) {
+	if (!str_cmp(arg, curr->name)) {
+	    if (curr->level > get_trust(ch)) {
+		send_to_char(
+			"You are not powerful enough to lift that ban.\n\r", ch);
+		return;
+	    }
+	    if (prev == NULL)
+		ban_list = ban_list->next;
+	    else
+		prev->next = curr->next;
+
+	    free_ban(curr);
+	    sprintf(buf, "Ban on %s lifted.\n\r", arg);
+	    send_to_char(buf, ch);
+	    save_bans();
+	    return;
+	}
+    }
+
+    send_to_char("Site is not banned.\n\r", ch);
+    return;
+}
+
 
 void save_bans(void)
 {
@@ -73,21 +134,16 @@ bool check_ban(char *site, int type)
 	if (!IS_SET(pban->ban_flags, type))
 	    continue;
 
-	if (IS_SET(pban->ban_flags, BAN_PREFIX)
-		&& IS_SET(pban->ban_flags, BAN_SUFFIX)
-		&& strstr(pban->name, host) != NULL)
+	if (IS_SET(pban->ban_flags, BAN_PREFIX) && IS_SET(pban->ban_flags, BAN_SUFFIX) && strstr(pban->name, host) != NULL)
 	    return true;
 
-	if (IS_SET(pban->ban_flags, BAN_PREFIX)
-		&& !str_suffix(pban->name, host))
+	if (IS_SET(pban->ban_flags, BAN_PREFIX) && !str_suffix(pban->name, host))
 	    return true;
 
-	if (IS_SET(pban->ban_flags, BAN_SUFFIX)
-		&& !str_prefix(pban->name, host))
+	if (IS_SET(pban->ban_flags, BAN_SUFFIX) && !str_prefix(pban->name, host))
 	    return true;
 
-	if (IS_SET(pban->ban_flags, BAN_NEWBIES)
-		&& !str_cmp(pban->name, host))
+	if (IS_SET(pban->ban_flags, BAN_NEWBIES) && !str_cmp(pban->name, host))
 	    return true;
     }
 
@@ -95,7 +151,7 @@ bool check_ban(char *site, int type)
 }
 
 
-void ban_site(CHAR_DATA *ch, char *argument, bool fPerm)
+void ban_site(CHAR_DATA *ch, const char *argument, bool fPerm)
 {
     char buf[MAX_STRING_LENGTH], buf2[MAX_STRING_LENGTH];
     char arg1[MAX_INPUT_LENGTH], arg2[MAX_INPUT_LENGTH];
@@ -203,51 +259,3 @@ void ban_site(CHAR_DATA *ch, char *argument, bool fPerm)
     return;
 }
 
-void do_ban(CHAR_DATA *ch, const char *argument)
-{
-    ban_site(ch, argument, false);
-}
-
-void do_permban(CHAR_DATA *ch, const char *argument)
-{
-    ban_site(ch, argument, true);
-}
-
-void do_allow(CHAR_DATA *ch, const char *argument)
-{
-    char arg[MAX_INPUT_LENGTH];
-    char buf[MAX_STRING_LENGTH];
-    BAN_DATA *prev;
-    BAN_DATA *curr;
-
-    one_argument(argument, arg);
-
-    if (arg[0] == '\0') {
-	send_to_char("Remove which site from the ban list?\n\r", ch);
-	return;
-    }
-
-    prev = NULL;
-    for (curr = ban_list; curr != NULL; prev = curr, curr = curr->next) {
-	if (!str_cmp(arg, curr->name)) {
-	    if (curr->level > get_trust(ch)) {
-		send_to_char(
-			"You are not powerful enough to lift that ban.\n\r", ch);
-		return;
-	    }
-	    if (prev == NULL)
-		ban_list = ban_list->next;
-	    else
-		prev->next = curr->next;
-
-	    free_ban(curr);
-	    sprintf(buf, "Ban on %s lifted.\n\r", arg);
-	    send_to_char(buf, ch);
-	    save_bans();
-	    return;
-	}
-    }
-
-    send_to_char("Site is not banned.\n\r", ch);
-    return;
-}

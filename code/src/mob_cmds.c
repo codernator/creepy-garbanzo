@@ -13,7 +13,9 @@
 #include "magic.h"
 
 
-void mob_interpret(CHAR_DATA * ch, char *argument);
+extern DECLARE_DO_FUN(do_look);
+extern ROOM_INDEX_DATA *find_location(CHAR_DATA *, const char *);
+void mob_interpret(CHAR_DATA * ch, const char *argument);
 
 /*
  * Command functions.
@@ -49,8 +51,6 @@ static DECLARE_DO_FUN(do_mpotransfer);
 static DECLARE_DO_FUN(do_mpremove);
 
 
-extern DECLARE_DO_FUN(do_look);
-extern ROOM_INDEX_DATA *find_location(CHAR_DATA *, char *);
 
 /*
  * Command table.
@@ -102,7 +102,7 @@ void do_mob(CHAR_DATA *ch, const char *argument)
  * Mob command interpreter. Implemented separately for security and speed
  * reasons. A trivial hack of interpret()
  */
-void mob_interpret(CHAR_DATA *ch, char *argument)
+void mob_interpret(CHAR_DATA *ch, const char *argument)
 {
     char command[MIL];
     int cmd;
@@ -113,8 +113,7 @@ void mob_interpret(CHAR_DATA *ch, char *argument)
      * Look for command in command table.
      */
     for (cmd = 0; mob_cmd_table[cmd].name[0] != '\0'; cmd++) {
-	if (command[0] == mob_cmd_table[cmd].name[0]
-		&& !str_prefix(command, mob_cmd_table[cmd].name)) {
+	if (command[0] == mob_cmd_table[cmd].name[0] && !str_prefix(command, mob_cmd_table[cmd].name)) {
 	    (*mob_cmd_table[cmd].do_fun)(ch, argument);
 	    tail_chain();
 	    return;
@@ -252,11 +251,7 @@ void do_mpgecho(CHAR_DATA *ch, const char *argument)
     dpending = descriptor_iterator_start(&playing_filter);
     while ((d = dpending) != NULL) {
 	dpending = descriptor_iterator(d, &playing_filter);
-	if (IS_IMMORTAL(d->character))
-	    send_to_char("Mob echo> ", d->character);
-
-	send_to_char(argument, d->character);
-	send_to_char("\n\r", d->character);
+	printf_to_char(d->character, "%s%s\n\r", IS_IMMORTAL(d->character) ? "Mob echo>" : "", argument);
     }
 }
 
@@ -283,11 +278,7 @@ void do_mpzecho(CHAR_DATA *ch, const char *argument)
     while ((d = dpending) != NULL) {
 	dpending = descriptor_iterator(d, &playing_filter);
 	if (d->character->in_room != NULL && d->character->in_room->area == ch->in_room->area) {
-	    if (IS_IMMORTAL(d->character))
-		send_to_char("Mob echo> ", d->character);
-
-	    send_to_char(argument, d->character);
-	    send_to_char("\n\r", d->character);
+	    printf_to_char(d->character, "%s%s\n\r", IS_IMMORTAL(d->character) ? "Mob echo>" : "", argument);
 	}
     }
 }
@@ -309,9 +300,7 @@ void do_mpasound(CHAR_DATA *ch, const char *argument)
     for (door = 0; door < 6; door++) {
 	EXIT_DATA *pexit;
 
-	if ((pexit = was_in_room->exit[door]) != NULL
-		&& pexit->u1.to_room != NULL
-		&& pexit->u1.to_room != was_in_room) {
+	if ((pexit = was_in_room->exit[door]) != NULL && pexit->u1.to_room != NULL && pexit->u1.to_room != was_in_room) {
 	    ch->in_room = pexit->u1.to_room;
 	    act_new(argument, ch, NULL, NULL, TO_ROOM, POS_RESTING, false);
 	}

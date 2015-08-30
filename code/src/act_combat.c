@@ -7,7 +7,7 @@
 extern void make_corpse(CHAR_DATA *ch);
 extern bool check_shield_block(CHAR_DATA *ch, CHAR_DATA *victim);
 extern void disarm(CHAR_DATA *ch, CHAR_DATA *victim);
-extern void spell_charm_person(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, char *argument);
+extern void spell_charm_person(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, const char *argument);
 extern void set_fighting(CHAR_DATA *ch, CHAR_DATA *victim);
 extern int battlefield_count(void);
 

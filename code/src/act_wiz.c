@@ -2801,8 +2801,6 @@ void do_copyover(CHAR_DATA *ch, const char *argument)
     }
 }
 
-bool check_parse_name(char *name);      /* comm.c */
-
 void do_rename(CHAR_DATA *ch, const char *argument)
 {
     char old_name[MIL], new_name[MIL], strsave[MIL];

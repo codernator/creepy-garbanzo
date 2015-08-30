@@ -10,11 +10,6 @@
  *  all the previous coders who released their source code.                *
  *                                                                         *
  ***************************************************************************/
-
-
-/***************************************************************************
- *	includes
- ***************************************************************************/
 #include <stdio.h>
 #include <string.h>
 #include "merc.h"
@@ -28,9 +23,6 @@
 /***************************************************************************
  * IMPORTS
  ***************************************************************************/
-extern char *flag_string(const struct flag_type *flag_table, long bits);
-extern int flag_value(const struct flag_type *flag_table, char *argument);
-extern unsigned int parse_unsigned_int(char *string);
 extern void mob_auto_hit_dice(MOB_INDEX_DATA *mix, enum medit_auto_config_type auto_config_type);
 extern void string_append(CHAR_DATA * ch, char **string);
 
@@ -48,9 +40,9 @@ void do_medit(CHAR_DATA *ch, const char *argument)
     long value;
     char arg[MSL];
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	argument = one_argument(argument, arg);
+    argument = one_argument(argument, arg);
     if (is_number(arg)) {
 	value = parse_long(arg);
 
@@ -456,6 +448,7 @@ EDIT(medit_desc){
  *****************************************************************************/
 EDIT(medit_long){
     MOB_INDEX_DATA *mob_idx;
+    static char buf[MSL];
 
     EDIT_MOB(ch, mob_idx);
     if (argument[0] == '\0') {
@@ -464,10 +457,12 @@ EDIT(medit_long){
     }
 
     free_string(mob_idx->long_descr);
-    strcat(argument, "\n\r");
 
-    mob_idx->long_descr = str_dup(argument);
-    mob_idx->long_descr[0] = UPPER(mob_idx->long_descr[0]);
+    (void)snprintf(buf, UMIN(strlen(argument), MSL), "%s\n\r", argument);
+    smash_tilde(buf);
+    buf[0] = UPPER(buf[0]);
+
+    mob_idx->long_descr = str_dup(buf);
     send_to_char("Long description set.\n\r", ch);
     return true;
 }
@@ -1023,13 +1018,15 @@ EDIT(medit_hitdice){
 	return ShowMEditHitdiceSyntax(ch);
 
     if (is_digit(argument[0])) {
-	char *num;
-	char *type;
-	char *bonus;
+	static char buf[MIL];
+	const char *num;
+	const char *type;
+	const char *bonus;
 	char *cp;
 
 	/* number of dice is the first argument */
-	num = cp = argument;
+	strncpy(buf, argument, UMIN(strlen(argument), MIL));
+	num = cp = buf;
 	while (is_digit(*cp))
 	    ++cp;
 
@@ -1052,9 +1049,7 @@ EDIT(medit_hitdice){
 	if (*cp != '\0')
 	    *cp = '\0';
 
-	if ((!is_number(num) || parse_int(num) < 1)
-		|| (!is_number(type) || parse_int(type) < 1)
-		|| (!is_number(bonus) || parse_int(bonus) < 0))
+	if ((!is_number(num) || parse_int(num) < 1) || (!is_number(type) || parse_int(type) < 1) || (!is_number(bonus) || parse_int(bonus) < 0))
 	    return ShowMEditHitdiceSyntax(ch);
 
 	mob_idx->hit[DICE_NUMBER] = parse_int(num);
@@ -1105,9 +1100,10 @@ EDIT(medit_hitdice){
  ***************************************************************************/
 EDIT(medit_manadice){
     MOB_INDEX_DATA *mob_idx;
-    char *num;
-    char *type;
-    char *bonus;
+    static char buf[MIL];
+    const char *num;
+    const char *type;
+    const char *bonus;
     char *cp;
 
     EDIT_MOB(ch, mob_idx);
@@ -1117,7 +1113,8 @@ EDIT(medit_manadice){
     }
 
     /* num is the first argument */
-    num = cp = argument;
+    strncpy(buf, argument, UMIN(strlen(argument), MIL));
+    num = cp = buf;
     while (is_digit(*cp))
 	++cp;
 
@@ -1139,9 +1136,7 @@ EDIT(medit_manadice){
     if (*cp != '\0')
 	*cp = '\0';
 
-    if (!(is_number(num)
-		&& is_number(type)
-		&& is_number(bonus))) {
+    if (!(is_number(num) && is_number(type) && is_number(bonus))) {
 	send_to_char("Syntax:  manadice <number> d <type> + <bonus>\n\r", ch);
 	return false;
     }
@@ -1169,9 +1164,10 @@ EDIT(medit_manadice){
  ***************************************************************************/
 EDIT(medit_damdice){
     MOB_INDEX_DATA *mob_idx;
-    char *num;
-    char *type;
-    char *bonus;
+    static char buf[MIL];
+    const char *num;
+    const char *type;
+    const char *bonus;
     char *cp;
 
     EDIT_MOB(ch, mob_idx);
@@ -1180,8 +1176,9 @@ EDIT(medit_damdice){
 	return false;
     }
 
+    strncpy(buf, argument, UMIN(strlen(argument), MIL));
     /* num is the first argument */
-    num = cp = argument;
+    num = cp = buf;
     while (is_digit(*cp))
 	++cp;
 
@@ -1210,9 +1207,7 @@ EDIT(medit_damdice){
 	return false;
     }
 
-    if ((!is_number(num) || parse_int(num) < 1)
-	    || (!is_number(type) || parse_int(type) < 1)
-	    || (!is_number(bonus) || parse_int(bonus) < 0)) {
+    if ((!is_number(num) || parse_int(num) < 1) || (!is_number(type) || parse_int(type) < 1) || (!is_number(bonus) || parse_int(bonus) < 0)) {
 	send_to_char("Syntax:  damdice <number> d <type> + <bonus>\n\r", ch);
 	return false;
     }

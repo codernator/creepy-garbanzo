@@ -9,8 +9,6 @@
 
 
 
-extern int flag_value(const struct flag_type *flag_table, char *argument);
-extern char *flag_string(const struct flag_type *flag_table, long bits);
 extern char *mprog_type_to_name(int type);
 
 /***************************************************************************
@@ -26,13 +24,13 @@ struct olc_help_type {
 };
 
 
-static bool show_version(CHAR_DATA * ch, char *argument);
+static bool show_version(CHAR_DATA * ch, const char *argument);
 static void show_liqlist(CHAR_DATA * ch);
 static void show_damlist(CHAR_DATA * ch);
-static void aedit(CHAR_DATA * ch, char *argument);
-static void redit(CHAR_DATA * ch, char *argument);
-static void medit(CHAR_DATA * ch, char *argument);
-static void oedit(CHAR_DATA * ch, char *argument);
+static void aedit(CHAR_DATA * ch, const char *argument);
+static void redit(CHAR_DATA * ch, const char *argument);
+static void medit(CHAR_DATA * ch, const char *argument);
+static void oedit(CHAR_DATA * ch, const char *argument);
 
 
 
@@ -387,7 +385,7 @@ static void show_olc_cmds(CHAR_DATA *ch, const struct olc_cmd_type *olc_table)
  * Purpose:	Display all olc commands.
  * Called by:	olc interpreters.
  ****************************************************************************/
-bool show_commands(CHAR_DATA *ch, char *argument)
+bool show_commands(CHAR_DATA *ch, const char *argument)
 {
     switch (ch->desc->editor) {
 	case ED_AREA:
@@ -464,18 +462,19 @@ bool edit_done(CHAR_DATA *ch)
  *
  *	area editing interpreter
  ***************************************************************************/
-void aedit(CHAR_DATA *ch, char *argument)
+void aedit(CHAR_DATA *ch, const char *argument)
 {
     AREA_DATA *pArea;
     char command[MIL];
     char arg[MIL];
+    const char *parg;
     int cmd;
     int value;
 
     EDIT_AREA(ch, pArea);
-    smash_tilde(argument);
     strcpy(arg, argument);
-    argument = one_argument(argument, command);
+    smash_tilde(arg);
+    parg = one_argument(arg, command);
 
     if (!IS_BUILDER(ch, pArea)) {
 	send_to_char("AEdit:  Insufficient security to modify area.\n\r", ch);
@@ -489,7 +488,7 @@ void aedit(CHAR_DATA *ch, char *argument)
     }
 
     if (command[0] == '\0') {
-	aedit_show(ch, argument);
+	aedit_show(ch, parg);
 	return;
     }
 
@@ -502,7 +501,7 @@ void aedit(CHAR_DATA *ch, char *argument)
     /* Search Table and Dispatch Command. */
     for (cmd = 0; aedit_table[cmd].name != NULL; cmd++) {
 	if (!str_prefix(command, aedit_table[cmd].name)) {
-	    if ((*aedit_table[cmd].olc_fn)(ch, argument)) {
+	    if ((*aedit_table[cmd].olc_fn)(ch, parg)) {
 		SET_BIT(pArea->area_flags, AREA_CHANGED);
 		return;
 	    } else {
@@ -522,20 +521,21 @@ void aedit(CHAR_DATA *ch, char *argument)
  *
  *	room editing interpreter
  *****************************************************************************/
-void redit(CHAR_DATA *ch, char *argument)
+void redit(CHAR_DATA *ch, const char *argument)
 {
     AREA_DATA *pArea;
     ROOM_INDEX_DATA *pRoom;
     char arg[MSL];
+    const char *parg;
     char command[MIL];
     int cmd;
 
     EDIT_ROOM(ch, pRoom);
     pArea = pRoom->area;
 
-    smash_tilde(argument);
     strcpy(arg, argument);
-    argument = one_argument(argument, command);
+    smash_tilde(arg);
+    parg = one_argument(arg, command);
 
     if (!IS_BUILDER(ch, pArea)) {
 	send_to_char("REdit:  Insufficient security to modify room.\n\r", ch);
@@ -549,14 +549,14 @@ void redit(CHAR_DATA *ch, char *argument)
     }
 
     if (command[0] == '\0') {
-	redit_show(ch, argument);
+	redit_show(ch, parg);
 	return;
     }
 
     /* Search Table and Dispatch Command. */
     for (cmd = 0; redit_table[cmd].name != NULL; cmd++) {
 	if (!str_prefix(command, redit_table[cmd].name)) {
-	    if ((*redit_table[cmd].olc_fn)(ch, argument)) {
+	    if ((*redit_table[cmd].olc_fn)(ch, parg)) {
 		SET_BIT(pArea->area_flags, AREA_CHANGED);
 		return;
 	    } else {
@@ -576,17 +576,18 @@ void redit(CHAR_DATA *ch, char *argument)
  *
  *	object editing interpreter
  *****************************************************************************/
-void oedit(CHAR_DATA *ch, char *argument)
+void oedit(CHAR_DATA *ch, const char *argument)
 {
     AREA_DATA *pArea;
     OBJECTPROTOTYPE *pObj;
     char arg[MSL];
+    const char *parg;
     char command[MIL];
     int cmd;
 
-    smash_tilde(argument);
     strcpy(arg, argument);
-    argument = one_argument(argument, command);
+    smash_tilde(arg);
+    parg = one_argument(arg, command);
 
     EDIT_OBJ(ch, pObj);
     pArea = pObj->area;
@@ -603,14 +604,14 @@ void oedit(CHAR_DATA *ch, char *argument)
     }
 
     if (command[0] == '\0') {
-	oedit_show(ch, argument);
+	oedit_show(ch, parg);
 	return;
     }
 
     /* Search Table and Dispatch Command. */
     for (cmd = 0; oedit_table[cmd].name != NULL; cmd++) {
 	if (!str_prefix(command, oedit_table[cmd].name)) {
-	    if ((*oedit_table[cmd].olc_fn)(ch, argument)) {
+	    if ((*oedit_table[cmd].olc_fn)(ch, parg)) {
 		SET_BIT(pArea->area_flags, AREA_CHANGED);
 		return;
 	    } else {
@@ -631,17 +632,18 @@ void oedit(CHAR_DATA *ch, char *argument)
  *
  *	mobile editing interpreter
  *****************************************************************************/
-void medit(CHAR_DATA *ch, char *argument)
+void medit(CHAR_DATA *ch, const char *argument)
 {
     AREA_DATA *pArea;
     MOB_INDEX_DATA *pMob;
     char command[MIL];
     char arg[MSL];
+    const char *parg;
     int cmd;
 
-    smash_tilde(argument);
     strcpy(arg, argument);
-    argument = one_argument(argument, command);
+    smash_tilde(arg);
+    parg = one_argument(arg, command);
 
     EDIT_MOB(ch, pMob);
     pArea = pMob->area;
@@ -658,14 +660,14 @@ void medit(CHAR_DATA *ch, char *argument)
     }
 
     if (command[0] == '\0') {
-	medit_show(ch, argument);
+	medit_show(ch, parg);
 	return;
     }
 
     /* Search Table and Dispatch Command. */
     for (cmd = 0; medit_table[cmd].name != NULL; cmd++) {
 	if (!str_prefix(command, medit_table[cmd].name)) {
-	    if ((*medit_table[cmd].olc_fn)(ch, argument)) {
+	    if ((*medit_table[cmd].olc_fn)(ch, parg)) {
 		SET_BIT(pArea->area_flags, AREA_CHANGED);
 		return;
 	    } else {
@@ -1211,7 +1213,7 @@ void do_alist(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	show_version
  ***************************************************************************/
-bool show_version(CHAR_DATA *ch, char *argument)
+bool show_version(CHAR_DATA *ch, const char *argument)
 {
     printf_to_char(ch, "%s\n\r%s\n\r%s\n\r%s\n\r", OLCVERSION, AUTHOR, DATE, CREDITS);
     return false;
@@ -1347,7 +1349,7 @@ void show_skill_cmds(CHAR_DATA *ch, int tar)
  *
  *	show helps for most of the tables used in OLC
  ***************************************************************************/
-bool show_help(CHAR_DATA *ch, char *argument)
+bool show_help(CHAR_DATA *ch, const char *argument)
 {
     bool found;
     int cnt;

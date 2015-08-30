@@ -7,7 +7,7 @@
 #include "mob_cmds.h"
 
 extern long flag_lookup(const char *word, const struct flag_type *flag_table);
-extern void mob_interpret(CHAR_DATA * ch, char *argument);
+extern void mob_interpret(CHAR_DATA * ch, const char *argument);
 
 void mp_bribe_trigger(CHAR_DATA * mob, CHAR_DATA * ch, long amount);
 bool mp_exit_trigger(CHAR_DATA * ch, int dir);
@@ -318,9 +318,7 @@ static bool get_obj_vnum_room(CHAR_DATA *ch, long vnum)
  *
  *----------------------------------------------------------------------
  */
-static bool cmd_eval(long vnum, char *line, int check,
-	CHAR_DATA *mob, CHAR_DATA *ch,
-	const void *arg1, const void *arg2, CHAR_DATA *rch)
+static bool cmd_eval(long vnum, const char *line, int check, CHAR_DATA *mob, CHAR_DATA *ch, const void *arg1, const void *arg2, CHAR_DATA *rch)
 {
     CHAR_DATA *lval_char = mob;
     CHAR_DATA *vch = (CHAR_DATA *)arg2;
@@ -328,7 +326,8 @@ static bool cmd_eval(long vnum, char *line, int check,
     GAMEOBJECT *obj2 = (GAMEOBJECT *)arg2;
     GAMEOBJECT *lval_obj = NULL;
 
-    char *original, buf[MIL], code;
+    const char *original;
+    char buf[MIL], code;
     long lval = 0, oper = 0, rval = -1;
 
     original = line;
@@ -823,7 +822,6 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
 {
     CHAR_DATA *rch = NULL;
     char *code;
-    char *line;
     char buf[MSL];
     char control[MIL];
     char data[MSL];
@@ -855,6 +853,7 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
      * Parse the MOBprog code
      */
     while (*code != '\0') {
+	const char *line;
 	bool first_arg = true;
 	char *b = buf, *c = control, *d = data;
 	/*
@@ -1001,9 +1000,7 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
  * A general purpose string trigger. Matches argument to a string trigger
  * phrase.
  */
-void mp_act_trigger(
-	char *argument, CHAR_DATA *mob, CHAR_DATA *ch,
-	const void *arg1, const void *arg2, int type)
+void mp_act_trigger(const char *argument, CHAR_DATA *mob, CHAR_DATA *ch, const void *arg1, const void *arg2, int type)
 {
     MPROG_LIST *prg;
 
@@ -1020,9 +1017,7 @@ void mp_act_trigger(
  * A general purpose percentage trigger. Checks if a random percentage
  * number is less than trigger phrase
  */
-bool mp_percent_trigger(
-	CHAR_DATA *mob, CHAR_DATA *ch,
-	const void *arg1, const void *arg2, int type)
+bool mp_percent_trigger(CHAR_DATA *mob, CHAR_DATA *ch, const void *arg1, const void *arg2, int type)
 {
     MPROG_LIST *prg;
 
@@ -1092,11 +1087,12 @@ bool mp_exit_trigger(CHAR_DATA *ch, int dir)
 
 void mp_give_trigger(CHAR_DATA *mob, CHAR_DATA *ch, GAMEOBJECT *obj)
 {
-    char buf[MIL], *p;
+    char buf[MIL];
     MPROG_LIST *prg;
 
     for (prg = mob->mob_idx->mprogs; prg; prg = prg->next)
 	if (prg->trig_type == TRIG_GIVE) {
+	    const char *p;
 	    p = prg->trig_phrase;
 	    /*
 	     * Vnum argument
@@ -1106,11 +1102,10 @@ void mp_give_trigger(CHAR_DATA *mob, CHAR_DATA *ch, GAMEOBJECT *obj)
 		    program_flow(prg->vnum, prg->code, mob, ch, (void *)obj, NULL);
 		    return;
 		}
-	    }
-	    /*
-	     * Object name argument, e.g. 'sword'
-	     */
-	    else {
+	    } else {
+		/*
+		 * Object name argument, e.g. 'sword'
+		 */
 		while (*p != '\0') {
 		    p = one_argument(p, buf);
 

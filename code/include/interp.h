@@ -69,7 +69,7 @@ typedef struct cmd_type {
 	int		show;
 }CMD;
 
-const CMD *cmd_lookup(CHAR_DATA * ch, char *argument);
+const CMD *cmd_lookup(CHAR_DATA * ch, const char *argument);
 
 extern const struct cmd_type cmd_table[];
 
@@ -215,7 +215,6 @@ DECLARE_DO_FUN(do_mrelic);
 DECLARE_DO_FUN(do_mset);
 DECLARE_DO_FUN(do_mwhere);
 DECLARE_DO_FUN(do_newlock);
-DECLARE_DO_FUN(do_nickname);
 DECLARE_DO_FUN(do_nofollow);
 DECLARE_DO_FUN(do_noloot);
 DECLARE_DO_FUN(do_noquit);

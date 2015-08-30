@@ -15,10 +15,6 @@
 
 
 
-extern char *flag_string(const struct flag_type *flag_table, long bits);
-extern int flag_value(const struct flag_type *flag_table, char *argument);
-
-
 void do_findflags(CHAR_DATA * ch, const char *argument);
 void do_worldflag(CHAR_DATA * ch, const char *argument);
 void do_spellflags(CHAR_DATA * ch, const char *argument);

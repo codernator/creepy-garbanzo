@@ -815,8 +815,7 @@ void do_asave(CHAR_DATA *ch, const char *argument)
     char arg[MIL];
     int value;
 
-    smash_tilde(argument);
-    argument = one_argument(argument, arg);
+    (void)one_argument(argument, arg);
     if (is_help(arg)) {
 	if (ch != NULL) {
 	    send_to_char("`#Syntax`3:``\n\r", ch);

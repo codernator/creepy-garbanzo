@@ -77,7 +77,6 @@ typedef struct help_data HELP_DATA;
 typedef struct kill_data KILL_DATA;
 typedef struct mem_data MEM_DATA;
 typedef struct mob_index_data MOB_INDEX_DATA;
-typedef struct nickname_data NICKNAME_DATA;
 typedef struct note_data NOTE_DATA;
 typedef struct gameobject GAMEOBJECT;
 typedef struct objectprototype OBJECTPROTOTYPE;
@@ -248,13 +247,6 @@ struct weather_data {
 #define CON_BREAK_CONNECT       15
 #define CON_GET_ANSI            16
 #define CON_COPYOVER_RECOVER    17
-
-struct nickname_data {
-    /*@null@*/NICKNAME_DATA *next;
-    char *name;
-    char *nickname;
-};
-
 
 /* Descriptor (channel) structure. */
 struct descriptor_data {
@@ -1361,7 +1353,6 @@ struct char_data {
     ROOM_INDEX_DATA *was_in_room;
     AREA_DATA *zone;
     PC_DATA *pcdata;
-    NICKNAME_DATA *nicknames;
     bool valid;
     char *name;
     long id;
@@ -2052,10 +2043,10 @@ void printf_to_char(CHAR_DATA *, char *, ...);
 
 
 /* nanny.c */
-void nanny(DESCRIPTOR_DATA * d, char *argument);
-bool check_parse_name(char *name);
-bool check_reconnect(DESCRIPTOR_DATA * d, char *name, bool fConn);
-bool check_playing(DESCRIPTOR_DATA * d, char *name);
+void nanny(DESCRIPTOR_DATA * d, const char *argument);
+bool check_parse_name(const char *name);
+bool check_reconnect(DESCRIPTOR_DATA * d, const char *name, bool fConn);
+bool check_playing(DESCRIPTOR_DATA * d, const char *name);
 void stop_idling(CHAR_DATA * ch);
 
 /* db.c */
@@ -2200,11 +2191,11 @@ char *weapon_bit_name(long weapon_flags);
 char *comm_bit_name(long comm_flags);
 char *cont_bit_name(long cont_flags);
 char *token_bit_name(long token_flags);
-char *first_arg(char *argument, char *arg_first, bool fCase);
+const char *first_arg(const char *argument, char *arg_first, bool fCase);
 char *room_flag_bit_name(ROOM_INDEX_DATA * room);
 char *uncolor_str(char *txt);
 void identify_item(CHAR_DATA * ch, GAMEOBJECT * obj);
-bool is_help(char *argument);
+bool is_help(const char *argument);
 void furniture_check(CHAR_DATA * ch);
 ROOM_INDEX_DATA *find_location(CHAR_DATA * ch, const char *arg);
 ROOM_INDEX_DATA *get_death_room(CHAR_DATA * ch);
@@ -2240,11 +2231,6 @@ bool saves_spell(int level, CHAR_DATA * victim, int dam_type);
 void obj_cast_spell(int sn, int level, CHAR_DATA * ch, CHAR_DATA * victim, GAMEOBJECT * obj);
 bool can_trans_room(CHAR_DATA * ch, CHAR_DATA * victim, int sn);
 
-/* nickname.c */
-void add_to_nicknames(CHAR_DATA * ch, char *nickname, char *name);
-void free_nicknames(CHAR_DATA * ch);
-char *check_nickname(CHAR_DATA * ch, char *nickname);
-
 /* save.c */
 void save_char_obj(CHAR_DATA * ch);
 bool load_char_obj(DESCRIPTOR_DATA * d, char *name);
@@ -2252,7 +2238,7 @@ bool load_char_obj_2(CHAR_DATA * tempch, char *name);
 
 
 /* skills.c */
-bool parse_gen_groups(CHAR_DATA * ch, char *argument);
+bool parse_gen_groups(CHAR_DATA * ch, const char *argument);
 void list_group_costs(CHAR_DATA * ch);
 void list_group_known(CHAR_DATA * ch);
 int exp_per_level(CHAR_DATA * ch, int points);
@@ -2276,9 +2262,6 @@ int race_lookup(const char *name);
 int item_lookup(const char *name);
 int liq_lookup(const char *name);
 
-/* object_service.c */
-bool is_situpon(/*@partial@*/GAMEOBJECT *obj);
-bool is_standupon(/*@partial@*/GAMEOBJECT *obj);
 
 /* logging.c */
 #define LOG_SINK_ALWAYS 1
@@ -2290,6 +2273,7 @@ void append_file(CHAR_DATA *ch, const char *file, const char *str);
 void log_to(int log, char username[], const char *fmt, ...);
 void log_bug(const char *fmt, ...);
 void log_string(const char *fmt, ...);
+/* ~logging.c */
 
 
 /* Needs a home */

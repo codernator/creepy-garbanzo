@@ -16,7 +16,7 @@ bool cmp_fn_index(long bit, const char *arg, const struct flag_type *table, BUFF
 /***************************************************************************
  *	objects
  ***************************************************************************/
-typedef bool OBJ_CMP_FN (const GAMEOBJECT *obj, const char *arg, BUFFER *buf);
+typedef bool OBJ_CMP_FN (GAMEOBJECT *obj, const char *arg, BUFFER *buf);
 
 struct cmp_vars_gameobject {
     char *		var;
@@ -24,48 +24,48 @@ struct cmp_vars_gameobject {
 };
 
 
-bool obj_cmp_vnum(const GAMEOBJECT * obj, const char *arg, BUFFER * buf);
-bool obj_cmp_name(const GAMEOBJECT * obj, const char *arg, BUFFER * buf);
-bool obj_cmp_short(const GAMEOBJECT * obj, const char *arg, BUFFER * buf);
-bool obj_cmp_long(const GAMEOBJECT * obj, const char *arg, BUFFER * buf);
-bool obj_cmp_type(const GAMEOBJECT * obj, const char *arg, BUFFER * buf);
-bool obj_cmp_extra(const GAMEOBJECT * obj, const char *arg, BUFFER * buf);
-bool obj_cmp_wear(const GAMEOBJECT * obj, const char *arg, BUFFER * buf);
-bool obj_cmp_location(const GAMEOBJECT * obj, const char *arg, BUFFER * buf);
-bool obj_cmp_weight(const GAMEOBJECT * obj, const char *arg, BUFFER * buf);
-bool obj_cmp_cost(const GAMEOBJECT * obj, const char *arg, BUFFER * buf);
-bool obj_cmp_level(const GAMEOBJECT * obj, const char *arg, BUFFER * buf);
+bool obj_cmp_vnum(GAMEOBJECT * obj, const char *arg, BUFFER * buf);
+bool obj_cmp_name(GAMEOBJECT * obj, const char *arg, BUFFER * buf);
+bool obj_cmp_short(GAMEOBJECT * obj, const char *arg, BUFFER * buf);
+bool obj_cmp_long(GAMEOBJECT * obj, const char *arg, BUFFER * buf);
+bool obj_cmp_type(GAMEOBJECT * obj, const char *arg, BUFFER * buf);
+bool obj_cmp_extra(GAMEOBJECT * obj, const char *arg, BUFFER * buf);
+bool obj_cmp_wear(GAMEOBJECT * obj, const char *arg, BUFFER * buf);
+bool obj_cmp_location(GAMEOBJECT * obj, const char *arg, BUFFER * buf);
+bool obj_cmp_weight(GAMEOBJECT * obj, const char *arg, BUFFER * buf);
+bool obj_cmp_cost(GAMEOBJECT * obj, const char *arg, BUFFER * buf);
+bool obj_cmp_level(GAMEOBJECT * obj, const char *arg, BUFFER * buf);
 
 
 /***************************************************************************
  *	characters
  ***************************************************************************/
-typedef bool CHAR_CMP_FN (const CHAR_DATA *vch, const char *arg, BUFFER *buf);
+typedef bool CHAR_CMP_FN (CHAR_DATA *vch, const char *arg, BUFFER *buf);
 
 struct cmp_vars_char_data {
     char *		var;
     CHAR_CMP_FN *	fn;
 };
 
-bool char_cmp_vnum(const CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_name(const CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_short(const CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_long(const CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_race(const CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_level(const CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_sex(const CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_hit(const CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_mana(const CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_move(const CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_max_hit(const CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_max_mana(const CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_max_move(const CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_gold(const CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_silver(const CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_offense(const CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_form(const CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_act(const CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_player(const CHAR_DATA * vch, const char *arg, BUFFER * buf);
+bool char_cmp_vnum(CHAR_DATA * vch, const char *arg, BUFFER * buf);
+bool char_cmp_name(CHAR_DATA * vch, const char *arg, BUFFER * buf);
+bool char_cmp_short(CHAR_DATA * vch, const char *arg, BUFFER * buf);
+bool char_cmp_long(CHAR_DATA * vch, const char *arg, BUFFER * buf);
+bool char_cmp_race(CHAR_DATA * vch, const char *arg, BUFFER * buf);
+bool char_cmp_level(CHAR_DATA * vch, const char *arg, BUFFER * buf);
+bool char_cmp_sex(CHAR_DATA * vch, const char *arg, BUFFER * buf);
+bool char_cmp_hit(CHAR_DATA * vch, const char *arg, BUFFER * buf);
+bool char_cmp_mana(CHAR_DATA * vch, const char *arg, BUFFER * buf);
+bool char_cmp_move(CHAR_DATA * vch, const char *arg, BUFFER * buf);
+bool char_cmp_max_hit(CHAR_DATA * vch, const char *arg, BUFFER * buf);
+bool char_cmp_max_mana(CHAR_DATA * vch, const char *arg, BUFFER * buf);
+bool char_cmp_max_move(CHAR_DATA * vch, const char *arg, BUFFER * buf);
+bool char_cmp_gold(CHAR_DATA * vch, const char *arg, BUFFER * buf);
+bool char_cmp_silver(CHAR_DATA * vch, const char *arg, BUFFER * buf);
+bool char_cmp_offense(CHAR_DATA * vch, const char *arg, BUFFER * buf);
+bool char_cmp_form(CHAR_DATA * vch, const char *arg, BUFFER * buf);
+bool char_cmp_act(CHAR_DATA * vch, const char *arg, BUFFER * buf);
+bool char_cmp_player(CHAR_DATA * vch, const char *arg, BUFFER * buf);
 
 
 
@@ -75,22 +75,22 @@ bool char_cmp_player(const CHAR_DATA * vch, const char *arg, BUFFER * buf);
 /***************************************************************************
  *	objects
  ***************************************************************************/
-typedef bool OBJ_IDX_CMP_FN (const OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf);
+typedef bool OBJ_IDX_CMP_FN (OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf);
 
 struct cmp_vars_obj_index_data {
     char *		var;
     OBJ_IDX_CMP_FN *fn;
 };
 
-bool objprototype_cmp_name(const OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
-bool objprototype_cmp_short(const OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
-bool objprototype_cmp_long(const OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
-bool objprototype_cmp_type(const OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
-bool objprototype_cmp_extra(const OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
-bool objprototype_cmp_wear(const OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
-bool objprototype_cmp_weight(const OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
-bool objprototype_cmp_cost(const OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
-bool objprototype_cmp_level(const OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
+bool objprototype_cmp_name(OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
+bool objprototype_cmp_short(OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
+bool objprototype_cmp_long(OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
+bool objprototype_cmp_type(OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
+bool objprototype_cmp_extra(OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
+bool objprototype_cmp_wear(OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
+bool objprototype_cmp_weight(OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
+bool objprototype_cmp_cost(OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
+bool objprototype_cmp_level(OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
 
 
 /***************************************************************************

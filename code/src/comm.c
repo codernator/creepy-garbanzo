@@ -82,8 +82,8 @@ extern bool is_space(const char test);
 extern bool run_olc_editor(DESCRIPTOR_DATA * d);
 extern char *olc_ed_name(CHAR_DATA * ch);
 extern char *olc_ed_vnum(CHAR_DATA * ch);
-extern void mp_act_trigger(char *argument, CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
-extern void string_add(CHAR_DATA * ch, char *argument);
+extern void mp_act_trigger(const char *argument, CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
+extern void string_add(CHAR_DATA * ch, const char *argument);
 extern char *string_replace(char *orig, char *old, char *new);
 
 bool copyover();

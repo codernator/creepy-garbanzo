@@ -28,7 +28,7 @@ extern void affect_join_obj(GAMEOBJECT * obj, AFFECT_DATA * paf);
 /**
  * see if a character string is a cry for help
  */
-inline bool is_help(char *argument)
+inline bool is_help(const char *argument)
 {
     return (argument[0] == '\0' || argument[0] == '?' || !str_prefix(argument, "help"));
 }
@@ -1388,14 +1388,8 @@ CHAR_DATA *get_char_room(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *rch;
     char arg[MIL];
-    char *temp;
     int number;
     int count;
-
-    temp = check_nickname(ch, argument);
-
-    if (temp)
-	argument = temp;
 
     number = number_argument(argument, arg);
     count = 0;
@@ -1424,22 +1418,16 @@ CHAR_DATA *get_char_world(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *wch;
     char arg[MIL];
-    char *temp;
     int number;
     int count;
 
     if ((wch = get_char_room(ch, argument)) != NULL)
 	return wch;
 
-    temp = check_nickname(ch, argument);
-    if (temp)
-	argument = temp;
-
     number = number_argument(argument, arg);
     count = 0;
     for (wch = char_list; wch != NULL; wch = wch->next) {
-	if (wch->in_room == NULL || !can_see(ch, wch)
-		|| !is_name(arg, wch->name))
+	if (wch->in_room == NULL || !can_see(ch, wch) || !is_name(arg, wch->name))
 	    continue;
 
 	if (++count == number)

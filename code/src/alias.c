@@ -86,16 +86,10 @@ void do_alias(CHAR_DATA *ch, const char *argument)
     char arg[MIL];
     int pos;
 
-    if (ch->desc == NULL)
-	rch = ch;
-    else
-	rch = ch->desc->original ? ch->desc->original : ch;
-
-    if (IS_NPC(rch))
-	return;
+    rch = CH(ch->desc);
+    DENY_NPC(rch);
 
     argument = one_argument(argument, arg);
-    smash_tilde(argument);
 
     if (arg[0] == '\0') {
 	if (rch->pcdata->alias[0] == NULL) {
@@ -105,12 +99,10 @@ void do_alias(CHAR_DATA *ch, const char *argument)
 
 	send_to_char("Your current aliases are:\n\r", ch);
 	for (pos = 0; pos < MAX_ALIAS; pos++) {
-	    if (rch->pcdata->alias[pos] == NULL
-		    || rch->pcdata->alias_sub[pos] == NULL)
+	    if (rch->pcdata->alias[pos] == NULL || rch->pcdata->alias_sub[pos] == NULL)
 		break;
 
-	    printf_to_char(ch, "    %s:  %s\n\r", rch->pcdata->alias[pos],
-		    rch->pcdata->alias_sub[pos]);
+	    printf_to_char(ch, "    %s:  %s\n\r", rch->pcdata->alias[pos], rch->pcdata->alias_sub[pos]);
 	}
 	return;
     }
@@ -121,11 +113,9 @@ void do_alias(CHAR_DATA *ch, const char *argument)
     }
 
     if (strchr(arg, ' ') || strchr(arg, '"') || strchr(arg, '\'')) {
-	send_to_char("The word to be aliased should not contain a space, "
-		"a tick or a double-quote.\n\r", ch);
+	send_to_char("The word to be aliased should not contain a space, a tick, or a double-quote.\n\r", ch);
 	return;
     }
-
 
     /* It seems the [ character crashes us .. *boggle* =)  */
     if (!str_prefix("[", arg)) {
@@ -135,13 +125,11 @@ void do_alias(CHAR_DATA *ch, const char *argument)
 
     if (argument[0] == '\0') {
 	for (pos = 0; pos < MAX_ALIAS; pos++) {
-	    if (rch->pcdata->alias[pos] == NULL
-		    || rch->pcdata->alias_sub[pos] == NULL)
+	    if (rch->pcdata->alias[pos] == NULL || rch->pcdata->alias_sub[pos] == NULL)
 		break;
 
 	    if (!str_cmp(arg, rch->pcdata->alias[pos])) {
-		printf_to_char(ch, "%s aliases to '%s'.\n\r", rch->pcdata->alias[pos],
-			rch->pcdata->alias_sub[pos]);
+		printf_to_char(ch, "%s aliases to '%s'.\n\r", rch->pcdata->alias[pos], rch->pcdata->alias_sub[pos]);
 		return;
 	    }
 	}
@@ -155,11 +143,17 @@ void do_alias(CHAR_DATA *ch, const char *argument)
 	return;
     }
 
-    if (add_alias(rch, arg, argument)) {
-	printf_to_char(ch, "%s is now aliased to '%s'.\n\r", arg, argument);
-    } else {
-	send_to_char("Sorry, you have reached the alias limit.\n\r", ch);
-	return;
+    {
+	static char sanitized[MIL];
+	strncpy(sanitized, argument, MIL);
+	smash_tilde(arg);
+	smash_tilde(sanitized);
+	if (add_alias(rch, arg, sanitized)) {
+	    printf_to_char(ch, "%s is now aliased to '%s'.\n\r", arg, sanitized);
+	} else {
+	    send_to_char("Sorry, you have reached the alias limit.\n\r", ch);
+	    return;
+	}
     }
 }
 

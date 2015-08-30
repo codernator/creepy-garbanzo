@@ -50,8 +50,8 @@ MEM_DATA *find_memory(MEM_DATA * memory, long id);
 BUFFER * new_buf(void);
 BUFFER *new_buf_size(int size);
 void free_buf(BUFFER * buffer);
-bool add_buf(BUFFER * buffer, char *string);
 void clear_buf(BUFFER * buffer);
+bool add_buf(BUFFER *buffer, const char *string);
 char *buf_string(BUFFER * buffer);
 void printf_buf(BUFFER * buffer, char *fmt, ...);
 

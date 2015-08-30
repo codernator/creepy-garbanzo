@@ -701,7 +701,7 @@ const struct affect_lookup_type affect_lookup_table[] =
  * lookup a spell function by name
  * used for reading persisted spells from disk
  */
-SPELL_FUN *spell_fn_lookup(char *name)
+SPELL_FUN *spell_fn_lookup(const char *name)
 {
     int idx;
 
@@ -731,7 +731,7 @@ char *spell_fn_name(SPELL_FUN *fn)
  * lookup a affect function by name
  * used for reading persisted affect functions from disk
  */
-AFFECT_FUN *affect_fn_lookup(char *name)
+AFFECT_FUN *affect_fn_lookup(const char *name)
 {
     int idx;
 
@@ -1663,7 +1663,7 @@ static void skill_info(CHAR_DATA *ch, SKILL *skill)
  * used by do_skills and do_spells to parse the numeric
  * values out of an argument list to get a max level and a min level
  */
-static bool parse_levels(char *argument, int *min_level, int *max_level)
+static bool parse_levels(const char *argument, int *min_level, int *max_level)
 {
     char arg[MIL];
 
@@ -2000,7 +2000,7 @@ int exp_per_level(CHAR_DATA *ch, int points)
  *    used during character creation to parse the skill/group
  *    adding/remove input
  */
-bool parse_gen_groups(CHAR_DATA *ch, char *argument)
+bool parse_gen_groups(CHAR_DATA *ch, const char *argument)
 {
     GROUP *group;
     SKILL *skill;

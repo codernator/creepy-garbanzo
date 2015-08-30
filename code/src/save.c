@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include "libfile.h"
 #include <assert.h>
+#include <string.h>
 
 extern int _filbuf(FILE *);
 extern unsigned int fread_uint(FILE *fp);
@@ -26,7 +27,7 @@ extern int message_type_lookup(char *name);
 
 extern char *fread_norm_string(FILE * fp);
 int rename(const char *oldfname, const char *newfname);
-static bool load_rdesc(ROOM_INDEX_DATA * location, char *name);
+static bool load_rdesc(ROOM_INDEX_DATA * location, const char *name);
 
 
 /***************************************************************************
@@ -130,7 +131,6 @@ void save_char_obj(CHAR_DATA *ch)
 static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 {
     AFFECT_DATA *paf;
-    NICKNAME_DATA *ntemp;
     LEARNED *learned;
     int pos;
     int idx;
@@ -284,12 +284,6 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 
 	if (ch->pcdata->bamfout[0] != '\0')
 	    fprintf(fp, "Bout %s~\n", ch->pcdata->bamfout);
-
-	ntemp = ch->nicknames;
-	while (ntemp) {
-	    fprintf(fp, "Nickname %s~ %s~\n", ntemp->nickname, ntemp->name);
-	    ntemp = ntemp->next;
-	}
 
 	if (ch->pcdata->grestore_string[0] != '\0')
 	    fprintf(fp, "Gres  %s~\n", ch->pcdata->grestore_string);
@@ -654,7 +648,6 @@ bool load_char_obj(DESCRIPTOR_DATA *d, char *name)
     ch->comm = COMM_COMBINE | COMM_PROMPT;
     ch->comm = 0;
     ch->prompt = str_dup("<%hhp %mm %vmv> ");
-    ch->nicknames = NULL;
     ch->mLag = 0;
     ch->tLag = 0;
 
@@ -841,8 +834,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 {
     char buf[MSL];
     char *word;
-    char *key;
-    char *value;
     bool fMatch;
     int count = 0;
     time_t lastlogoff = globalSystemState.current_time;
@@ -1178,13 +1169,6 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 
 	    case 'N':
 		KEY("Name", ch->name, fread_string(fp));
-		if (!str_cmp(word, "Nickname")) {
-		    key = fread_norm_string(fp);
-		    value = fread_norm_string(fp);
-		    add_to_nicknames(ch, key, value);
-		    fMatch = true;
-		    break;
-		}
 		KEY("Note", ch->pcdata->last_note, (time_t)fread_long(fp));
 		if (!str_cmp(word, "Not")) {
 		    ch->pcdata->last_note = (time_t)fread_long(fp);
@@ -1810,9 +1794,13 @@ void do_rload(CHAR_DATA *ch, const char *argument)
 	return;
     }
 
-    smash_tilde(argument);
-    load_rdesc(ch->in_room, argument);
-    send_to_char("Ok.\n\r", ch);
+    {
+	static char buf[MIL];
+	(void)snprintf(buf, UMIN(strlen(argument), MIL), "%s", argument);
+	smash_tilde(buf);
+	load_rdesc(ch->in_room, buf);
+	send_to_char("Ok.\n\r", ch);
+    }
 }
 
 void do_rsave(CHAR_DATA *ch, const char *argument)
@@ -1838,15 +1826,19 @@ void do_rsave(CHAR_DATA *ch, const char *argument)
 	return;
     }
 
-    smash_tilde(argument);
+    {
+	static char buf[MIL];
+	(void)snprintf(buf, UMIN(strlen(argument), MIL), "%s", argument);
+	smash_tilde(buf);
 
-    sprintf(strsave, "%s%s", RDESC_DIR, capitalize(argument));
-    if ((fp = fopen(TEMP_FILE, "w")) == NULL) {
-	log_bug("Rdesc_save: fopen");
-	perror(strsave);
-    } else {
-	fwrite_rdesc(location, fp);
-	fprintf(fp, "#END\n");
+	sprintf(strsave, "%s%s", RDESC_DIR, capitalize(buf));
+	if ((fp = fopen(TEMP_FILE, "w")) == NULL) {
+	    log_bug("Rdesc_save: fopen");
+	    perror(strsave);
+	} else {
+	    fwrite_rdesc(location, fp);
+	    fprintf(fp, "#END\n");
+	}
     }
 
     fclose(fp);
@@ -1874,7 +1866,7 @@ static void fwrite_rdesc(ROOM_INDEX_DATA *location, FILE *fp)
 /***************************************************************************
  *	load_rdesc
  ***************************************************************************/
-static bool load_rdesc(ROOM_INDEX_DATA *location, char *name)
+static bool load_rdesc(ROOM_INDEX_DATA *location, const char *name)
 {
     char strsave[MAX_INPUT_LENGTH];
     FILE *fp;
