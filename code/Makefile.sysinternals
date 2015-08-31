@@ -21,7 +21,7 @@ SYSINTERNALS=$(BDIR)/sysinternals.a
 all: $(SYSINTERNALS)
 
 prebuild:
-	splint -DLINUX -Iinclude -exportlocal $(SRC)
+	splint -DLINUX -Iinclude $(SRC)
 
 
 $(SYSINTERNALS): $(OBJ) $(DEPS) prebuild
@@ -29,10 +29,6 @@ $(SYSINTERNALS): $(OBJ) $(DEPS) prebuild
 
 $(ODIR)/%.o: $(DIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(C_FLAGS)
-
-
-analyze:
-	splint +skip-sys-headers -DLINUX -Iinclude $(DIR)/*.c >splint.out
 
 clean:
 	rm -f $(ODIR)/*.o $(SYSINTERNALS)

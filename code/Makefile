@@ -38,15 +38,12 @@ OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
 
 .PHONY: clean all install
 
-all: mainbuild
+all: $(EXE)
 
 prebuild:
-	splint -DLINUX -Iinclude -exportlocal src/objectprototype.c src/descriptor.c src/object.c
+	splint -DLINUX -Iinclude -exportlocal src/objectprototype.c src/descriptor.c src/object.c src/logging.c
 
-mainbuild: prebuild
-	@$(MAKE) --no-print-directory $(EXE)
-
-$(EXE): $(OBJ) $(DEPS)
+$(EXE): $(OBJ) $(DEPS) prebuild
 	$(CC) $(L_FLAGS) -o $@ $(OBJ) $(BDIR)/sysinternals.a $(LIBS) -I$(IDIR)
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
