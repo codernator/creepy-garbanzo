@@ -35,6 +35,7 @@ struct keyvaluepair_array
 
 /*@only@*/KEYVALUEPAIR_ARRAY *keyvaluepairarray_create(size_t numelements);
 void keyvaluepairarray_append(KEYVALUEPAIR_ARRAY *array, const char *key, const char *value);
+void keyvaluepairarray_appendf(KEYVALUEPAIR_ARRAY *array, size_t maxlength, const char *key, const char *valueformat, ...);
 void keyvaluepairarray_free(/*@only@*//*@null@*/KEYVALUEPAIR_ARRAY *array);
 
 

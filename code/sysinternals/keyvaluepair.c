@@ -3,6 +3,8 @@
 #include <string.h> //memset, strlen
 #include <assert.h> //assert
 #include <signal.h> //raise
+#include <stdarg.h>
+#include <stdio.h> //vsprintf
 
 #ifdef S_SPLINT_S
 #define _Exit exit
@@ -46,6 +48,18 @@ void keyvaluepairarray_append(KEYVALUEPAIR_ARRAY *array, const char *key, const 
     array->items[array->top].key = akey;
     array->items[array->top].value = avalue;
     array->top += 1;
+}
+
+void keyvaluepairarray_appendf(KEYVALUEPAIR_ARRAY *array, size_t maxlength, const char *key, const char *valueformat, ...)
+{
+    char buf[maxlength];
+    va_list args;
+
+    va_start(args, valueformat);
+    (void)vsnprintf(buf, maxlength, valueformat, args);
+    va_end(args);
+
+    keyvaluepairarray_append(array, key, buf);
 }
 
 void keyvaluepairarray_free(KEYVALUEPAIR_ARRAY *array)
