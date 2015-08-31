@@ -1,6 +1,7 @@
 IDIR=include
 ODIR=obj/sysinternals
 BDIR=bin
+DIR=sysinternals
 CC= /usr/bin/gcc
 PROF= -DLINUX
 C_FLAGS= -O2 -g2 -Wall -pedantic -std=gnu99 -I$(IDIR)
@@ -9,21 +10,29 @@ LIBS=-lm
 
 _DEPS=sysinternals.h
 DEPS=$(patsubst %,$(IDIR)/%,$(_DEPS))
-_OBJ=librandom.o libstring.o libutils.o
-OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
-DIR=sysinternals
+_FIL=librandom libstring libutils keyvaluepair
+SRC=$(patsubst %,$(DIR)/%,$(patsubst %,%.c,$(_FIL)))
+OBJ=$(patsubst %,$(ODIR)/%,$(patsubst %,%.o,$(_FIL)))
 SYSINTERNALS=$(BDIR)/sysinternals.a
 
-$(SYSINTERNALS): $(OBJ) $(DEPS)
+
+.PHONY: clean all 
+
+all: $(SYSINTERNALS)
+
+prebuild:
+	splint -DLINUX -Iinclude -exportlocal $(SRC)
+
+
+$(SYSINTERNALS): $(OBJ) $(DEPS) prebuild
 	ar rcs $(SYSINTERNALS) $@ $(OBJ)
 
 $(ODIR)/%.o: $(DIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(C_FLAGS)
 
-.PHONY: analyze
+
 analyze:
 	splint +skip-sys-headers -DLINUX -Iinclude $(DIR)/*.c >splint.out
 
-.PHONY: clean
 clean:
-	rm -f $(ODIR)/*.o $(EXE)
+	rm -f $(ODIR)/*.o $(SYSINTERNALS)

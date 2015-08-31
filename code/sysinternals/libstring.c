@@ -1,6 +1,8 @@
 #include "sysinternals.h"
 #include <string.h>
+#ifndef S_SPLINT_S
 #include <ctype.h>
+#endif
 #include <stdlib.h>
 
 
@@ -19,14 +21,14 @@ bool is_alnum(const char test)
 bool is_number(const char *arg)
 {
     if (*arg == '\0')
-	return false;
+        return false;
 
     if (*arg == '+' || *arg == '-')
-	arg++;
+        arg++;
 
     for (; *arg != '\0'; arg++)
-	if (!is_digit(*arg))
-	    return false;
+        if (!is_digit(*arg))
+            return false;
 
     return true;
 }
@@ -34,7 +36,7 @@ bool is_number(const char *arg)
 /**
  * wrapper around isspace for safe testing against character array.
  */
-bool is_space(const char test)
+inline bool is_space(const char test)
 {
     return isspace((int)test);
 }
@@ -42,7 +44,7 @@ bool is_space(const char test)
 /**
  * wrapper around isdigit for safe testing against character array.
  */
-bool is_digit(const char test)
+inline bool is_digit(const char test)
 {
     return isdigit((int)test);
 }
@@ -50,7 +52,7 @@ bool is_digit(const char test)
 /**
  * wrapper around isalpha for safe testing against character array.
  */
-bool is_alpha(const char test)
+inline bool is_alpha(const char test)
 {
     return isalpha((int)test);
 }
@@ -58,7 +60,7 @@ bool is_alpha(const char test)
 /**
  * wrapper around isupper for safe testing against character array.
  */
-bool is_upper(const char test)
+inline bool is_upper(const char test)
 {
     return isupper((int)test);
 }
@@ -66,7 +68,7 @@ bool is_upper(const char test)
 /**
  * wrapper around tolower for safe testing against character array.
  */
-char to_lower(const char test)
+inline char to_lower(const char test)
 {
     return tolower((int)test);
 }
@@ -78,8 +80,8 @@ char to_lower(const char test)
 void smash_tilde(char *str)
 {
     for (; *str != '\0'; str++)
-	if (*str == '~')
-	    *str = '-';
+        if (*str == '~')
+            *str = '-';
 
     return;
 }
@@ -91,17 +93,17 @@ void smash_tilde(char *str)
 bool str_cmp(const char *astr, const char *bstr)
 {
     if (astr == NULL) {
-	return true;
+        return true;
     }
 
     if (bstr == NULL) {
-	return true;
+        return true;
     }
 
     for (; *astr > '0' || *bstr > '0'; astr++, bstr++) {
-	if (LOWER(*astr) != LOWER(*bstr)) {
-	    return true;
-	}
+        if (LOWER(*astr) != LOWER(*bstr)) {
+            return true;
+        }
     }
 
     return false;
@@ -114,17 +116,17 @@ bool str_cmp(const char *astr, const char *bstr)
 bool str_prefix(const char *astr, const char *bstr)
 {
     if (astr == NULL) {
-	return true;
+        return true;
     }
 
     if (bstr == NULL) {
-	return true;
+        return true;
     }
 
     for (; *astr != '\0'; astr++, bstr++) {
-	if (LOWER(*astr) != LOWER(*bstr)) {
-	    return true;
-	}
+        if (LOWER(*astr) != LOWER(*bstr)) {
+            return true;
+        }
     }
 
     return false;
@@ -142,15 +144,15 @@ bool str_infix(const char *astr, const char *bstr)
     char c0;
 
     if ((c0 = LOWER(astr[0])) == '\0')
-	return false;
+        return false;
 
     sstr1 = (int)strlen(astr);
     sstr2 = (int)strlen(bstr);
 
     for (ichar = 0; ichar <= sstr2 - sstr1; ichar++) {
-	if (c0 == LOWER(bstr[ichar]) && !str_prefix(astr, bstr + ichar)) {
-	    return false;
-	}
+        if (c0 == LOWER(bstr[ichar]) && !str_prefix(astr, bstr + ichar)) {
+            return false;
+        }
     }
 
     return true;
@@ -169,7 +171,7 @@ bool str_suffix(const char *astr, const char *bstr)
     sstr2 = strlen(bstr);
 
     if (sstr1 <= sstr2 && !str_cmp(astr, bstr + sstr2 - sstr1))
-	return false;
+        return false;
 
     return true;
 }
@@ -184,8 +186,8 @@ void capitalize_into(const char *source, /*@out@*/ char *initialized_target, siz
 
     counter = 0;
     for (i = 0; counter < string_length && source[i] != '\0'; i++) {
-	initialized_target[i] = LOWER(source[i]);
-	counter++;
+        initialized_target[i] = LOWER(source[i]);
+        counter++;
     }
 
     initialized_target[i] = '\0';

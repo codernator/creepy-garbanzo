@@ -13,9 +13,30 @@ typedef int pid_t;
 long long atoll(const char *nptr);
 #endif
 
-
-
 typedef unsigned char byte;
+
+typedef struct keyvaluepair KEYVALUEPAIR;
+typedef struct keyvaluepair_array KEYVALUEPAIR_ARRAY;
+
+struct keyvaluepair
+{
+    const char *key;
+    const char *value;
+};
+
+struct keyvaluepair_array
+{
+    size_t size;
+    size_t top;
+    KEYVALUEPAIR *items;
+};
+
+
+
+/*@only@*/KEYVALUEPAIR_ARRAY *keyvaluepairarray_create(size_t numelements);
+void keyvaluepairarray_append(KEYVALUEPAIR_ARRAY *array, const char *key, const char *value);
+void keyvaluepairarray_free(/*@only@*//*@null@*/KEYVALUEPAIR_ARRAY *array);
+
 
 void init_mm(void);
 
