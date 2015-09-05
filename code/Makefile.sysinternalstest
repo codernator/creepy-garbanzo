@@ -10,24 +10,26 @@ LIBS=-lm
 
 _DEPS=sysinternals.h
 DEPS=$(patsubst %,$(IDIR)/%,$(_DEPS))
-_FIL=librandom libstring libutils keyvaluepair
+_FIL=sysinternalstest
 SRC=$(patsubst %,$(DIR)/%,$(patsubst %,%.c,$(_FIL)))
 OBJ=$(patsubst %,$(ODIR)/%,$(patsubst %,%.o,$(_FIL)))
 SYSINTERNALS=$(BDIR)/sysinternals.a
+EXE=$(BDIR)/sysinternalstest
 
 
 .PHONY: clean all
 
-all: $(SYSINTERNALS)
+all: $(EXE)
 
 prebuild:
 	splint -DLINUX -Iinclude $(SRC)
 
-$(SYSINTERNALS): $(OBJ) $(DEPS) prebuild
-	ar rcs $(SYSINTERNALS) $@ $(OBJ)
+$(EXE): $(OBJ) $(DEPS) prebuild
+	$(CC) $(L_FLAGS) -o $@ $(OBJ) $(BDIR)/sysinternals.a $(LIBS) -I$(IDIR)
 
 $(ODIR)/%.o: $(DIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(C_FLAGS)
 
 clean:
-	rm -f $(ODIR)/*.o $(SYSINTERNALS)
+	rm -f $(OBJ) $(EXE)
+

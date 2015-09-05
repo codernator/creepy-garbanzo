@@ -2310,6 +2310,8 @@ int objectprototype_list_count();
 /*@dependent@*//*@null@*/OBJECTPROTOTYPE *objectprototype_iterator_start(const OBJECTPROTOTYPE_FILTER *filter);
 /*@dependent@*//*@null@*/OBJECTPROTOTYPE *objectprototype_iterator(OBJECTPROTOTYPE *current, const OBJECTPROTOTYPE_FILTER *filter);
 /*@dependent@*//*@null@*/OBJECTPROTOTYPE *objectprototype_getbyvnum(long vnum);
+/*@only@*/KEYVALUEPAIR_ARRAY *objectprototype_serialize(const OBJECTPROTOTYPE *obj);
+/*@dependent@*/OBJECTPROTOTYPE *objectprototype_deserialize(const KEYVALUEPAIR_ARRAY *data);
 /* ~objectprototype.c */
 
 #endif  /* __MERC_H */

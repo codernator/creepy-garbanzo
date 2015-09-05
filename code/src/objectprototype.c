@@ -29,6 +29,7 @@ struct hash_entry {
 
 static OBJECTPROTOTYPE head_node;
 static bool passes(OBJECTPROTOTYPE *testee, const OBJECTPROTOTYPE_FILTER *filter);
+static void headlist_add(/*@owned@*/OBJECTPROTOTYPE *entry);
 /* an array of linked lists, with an empty head node. */
 static HASH_ENTRY lookup[OBJPROTO_MAX_KEY_HASH];
 static void lookup_add(long entrykey, /*@dependent@*/OBJECTPROTOTYPE *entry);
@@ -72,24 +73,35 @@ OBJECTPROTOTYPE *objectprototype_new(long vnum)
     }
 
     /** Place on list. */
-    {
-	OBJECTPROTOTYPE *headnext;
-
-	prototypedata->prev = &head_node;
-	headnext = head_node.next;
-	if (headnext != NULL) {
-	    assert(headnext->prev == &head_node);
-	    headnext->prev = prototypedata;
-	}
-
-	prototypedata->next = headnext;
-	head_node.next = prototypedata;
-    }
+    headlist_add(entry);
 
     /** Store in hash table. */
     lookup_add(vnum, prototypedata);
 
     return prototypedata;
+}
+
+OBJECTPROTOTYPE *objectprototype_deserialize(const KEYVALUEPAIR_ARRAY *data)
+{
+    OBJECTPROTOTYPE *prototypedata;
+    long vnum;
+
+    prototypedata = malloc(sizeof(OBJECTPROTOTYPE));
+    assert(prototypedata != NULL);
+    memset(prototypedata, 0, sizeof(OBJECTPROTOTYPE));
+
+
+    /** Place on list. */
+    headlist_add(entry);
+
+    /** Store in hash table. */
+    lookup_add(vnum, prototypedata);
+
+    return prototypedata;
+}
+
+KEYVALUEPAIR_ARRAY *objectprototype_serialize(const OBJECTPROTOTYPE *obj)
+{
 }
 
 void objectprototype_free(OBJECTPROTOTYPE *prototypedata)
@@ -183,6 +195,21 @@ bool passes(OBJECTPROTOTYPE *testee, const OBJECTPROTOTYPE_FILTER *filter)
     }
 
     return true;
+}
+
+void headlist_add(/*@owned@*/OBJECTPROTOTYPE *entry)
+{
+    OBJECTPROTOTYPE *headnext;
+
+    prototypedata->prev = &head_node;
+    headnext = head_node.next;
+    if (headnext != NULL) {
+	assert(headnext->prev == &head_node);
+	headnext->prev = prototypedata;
+    }
+
+    prototypedata->next = headnext;
+    head_node.next = prototypedata;
 }
 
 void lookup_add(long entrykey, OBJECTPROTOTYPE *entry)

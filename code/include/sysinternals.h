@@ -17,6 +17,8 @@ typedef unsigned char byte;
 
 typedef struct keyvaluepair KEYVALUEPAIR;
 typedef struct keyvaluepair_array KEYVALUEPAIR_ARRAY;
+typedef struct keyvaluepair_hashnode KEYVALUEPAIR_HASHNODE;
+typedef struct keyvaluepair_hash KEYVALUEPAIR_HASH;
 
 struct keyvaluepair
 {
@@ -31,13 +33,27 @@ struct keyvaluepair_array
     KEYVALUEPAIR *items;
 };
 
+typedef /*@observer@*/const struct keyvaluepair * KEYVALUEPAIR_P;
+struct keyvaluepair_hashnode
+{
+    size_t size;
+    size_t top;
+    KEYVALUEPAIR_P *items;
+};
+
+struct keyvaluepair_hash {
+    int hashkey;
+    /*@only@*/KEYVALUEPAIR_HASHNODE *lookup;
+};
 
 
 /*@only@*/KEYVALUEPAIR_ARRAY *keyvaluepairarray_create(size_t numelements);
 void keyvaluepairarray_append(KEYVALUEPAIR_ARRAY *array, const char *key, const char *value);
 void keyvaluepairarray_appendf(KEYVALUEPAIR_ARRAY *array, size_t maxlength, const char *key, const char *valueformat, ...);
 void keyvaluepairarray_free(/*@only@*//*@null@*/KEYVALUEPAIR_ARRAY *array);
-
+/*@only@*/KEYVALUEPAIR_HASH *keyvaluepair_hash_create(/*@observer@*/KEYVALUEPAIR_ARRAY *array, size_t numelements);
+/*@observer@*//*@null@*/const KEYVALUEPAIR *keyvaluepair_hash_get(KEYVALUEPAIR_HASH *hash, const char * const key);
+void keyvaluepair_hash_free(/*@only@*//*@null@*/KEYVALUEPAIR_HASH *hash);
 
 void init_mm(void);
 
