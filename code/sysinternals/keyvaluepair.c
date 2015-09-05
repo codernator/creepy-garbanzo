@@ -85,7 +85,7 @@ void keyvaluepairarray_free(KEYVALUEPAIR_ARRAY *array)
 
 
 #define DEFAULT_HASHKEY 53
-KEYVALUEPAIR_HASH *keyvaluepair_hash_create(KEYVALUEPAIR_ARRAY *array, size_t numelements)
+KEYVALUEPAIR_HASH *keyvaluepairhash_create(KEYVALUEPAIR_ARRAY *array, size_t numelements)
 {
     int idx;
     KEYVALUEPAIR_HASH *hash = malloc(sizeof(KEYVALUEPAIR_HASH));
@@ -94,11 +94,11 @@ KEYVALUEPAIR_HASH *keyvaluepair_hash_create(KEYVALUEPAIR_ARRAY *array, size_t nu
     hash->lookup = calloc(sizeof(KEYVALUEPAIR_HASHNODE *), (size_t)hash->hashkey);
     assert(hash->lookup != NULL);
 
-    for (idx = 0; idx < (int)hash->hashkey; idx++) {
+    for (idx = 0; idx < hash->hashkey; idx++) {
 	KEYVALUEPAIR_HASHNODE *hashnode = &hash->lookup[idx];
 	hashnode->size = numelements; //TODO - way too big!
 	hashnode->top = 0;
-	hashnode->items = (KEYVALUEPAIR **)calloc(sizeof(KEYVALUEPAIR *), hashnode->size);
+	hashnode->items = (KEYVALUEPAIR_P *)calloc(sizeof(KEYVALUEPAIR *), hashnode->size);
 	assert(hashnode->items != NULL);
     }
 
@@ -118,7 +118,7 @@ KEYVALUEPAIR_HASH *keyvaluepair_hash_create(KEYVALUEPAIR_ARRAY *array, size_t nu
     return hash;
 }
 
-const KEYVALUEPAIR *keyvaluepair_hash_get(KEYVALUEPAIR_HASH *hash, const char * const key)
+const KEYVALUEPAIR *keyvaluepairhash_get(KEYVALUEPAIR_HASH *hash, const char * const key)
 {
     long hashvalue = calculatehashvalue(key, hash->hashkey);
     size_t keylen = strlen(key);
@@ -134,7 +134,7 @@ const KEYVALUEPAIR *keyvaluepair_hash_get(KEYVALUEPAIR_HASH *hash, const char * 
     return NULL;
 }
 
-void keyvaluepair_hash_free(KEYVALUEPAIR_HASH *hash)
+void keyvaluepairhash_free(KEYVALUEPAIR_HASH *hash)
 {
     int idx;
     if (hash == NULL) return;
