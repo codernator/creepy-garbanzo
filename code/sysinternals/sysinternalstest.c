@@ -30,7 +30,7 @@ void test_keyvaluepairarray()
     printf("%s\n", "complete");
 }
 
-#define NUMELEMENTS 1000
+#define NUMELEMENTS 10000
 void test_keyvaluepairhash()
 {
     KEYVALUEPAIR_HASH *subject;
@@ -65,7 +65,7 @@ void test_keyvaluepairhash()
     }
 
     printf("%s\n", "Dump");
-    for (idx = 0; idx < subject->hashkey; idx++) {
+    for (idx = 0; idx < subject->numhashbuckets; idx++) {
 	KEYVALUEPAIR_HASHNODE *node = &subject->lookup[idx];
 	if (node->top > 0) {
 	    printf("%d, %d, %d\n\r", idx, (int)node->size, (int)node->top);

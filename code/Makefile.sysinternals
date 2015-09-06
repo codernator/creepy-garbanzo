@@ -10,7 +10,7 @@ LIBS=-lm
 
 _DEPS=sysinternals.h
 DEPS=$(patsubst %,$(IDIR)/%,$(_DEPS))
-_FIL=librandom libstring libutils keyvaluepair
+_FIL=librandom libstring libutils keyvaluepair hashing
 SRC=$(patsubst %,$(DIR)/%,$(patsubst %,%.c,$(_FIL)))
 OBJ=$(patsubst %,$(ODIR)/%,$(patsubst %,%.o,$(_FIL)))
 SYSINTERNALS=$(BDIR)/sysinternals.a

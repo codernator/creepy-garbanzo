@@ -7,12 +7,16 @@
 #define UABS(a)                  ((a) < 0 ? -(a) : (a))
 #define UMAX(a, b)               ((a) > (b) ? (a) : (b))
 #define URANGE(a, b, c)          ((b) < (a) ? (a) : ((b) > (c) ? (c) : (b)))
+#define CALC_HASH_BUCKET(key, numhashbuckets) ((HASHBUCKETTYPE)(calchashvalue((key)) % (HASHVALUETYPE)(numhashbuckets)))
+
 
 #ifdef S_SPLINT_S
 typedef int pid_t;
 long long atoll(const char *nptr);
 #endif
 
+typedef unsigned long long HASHVALUETYPE;
+typedef unsigned int HASHBUCKETTYPE;
 typedef unsigned char byte;
 
 typedef struct keyvaluepair KEYVALUEPAIR;
@@ -39,14 +43,17 @@ struct keyvaluepairhashnode
 {
     size_t size;
     size_t top;
-    KEYVALUEPAIR_P *items;
+    /*@dependent@*/KEYVALUEPAIR_P *items;
 };
 
 struct keyvaluepairhash {
-    int hashkey;
+    int numhashbuckets;
     /*@only@*/KEYVALUEPAIR_HASHNODE *lookup;
+    /*@owned@*/KEYVALUEPAIR_P *masterlist;
 };
 
+
+HASHVALUETYPE calchashvalue(const char *key);
 
 /*@only@*/KEYVALUEPAIR_ARRAY *keyvaluepairarray_create(size_t numelements);
 void keyvaluepairarray_append(KEYVALUEPAIR_ARRAY *array, const char *key, const char *value);

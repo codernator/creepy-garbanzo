@@ -11,8 +11,6 @@
 #endif
 
 
-static int calculatehashvalue(const char *key, int hashkey);
-
 
 KEYVALUEPAIR_ARRAY *keyvaluepairarray_create(size_t numelements)
 {
@@ -84,27 +82,31 @@ void keyvaluepairarray_free(KEYVALUEPAIR_ARRAY *array)
 }
 
 
-#define DEFAULT_HASHKEY 53
+#define DEFAULT_NUMHASHBUCKETS 53
 KEYVALUEPAIR_HASH *keyvaluepairhash_create(KEYVALUEPAIR_ARRAY *array, size_t numelements)
 {
     int idx;
-    KEYVALUEPAIR_HASH *hash = malloc(sizeof(KEYVALUEPAIR_HASH));
-    assert(hash != NULL);
-    hash->hashkey = DEFAULT_HASHKEY;
-    hash->lookup = calloc(sizeof(KEYVALUEPAIR_HASHNODE), (size_t)hash->hashkey);
-    assert(hash->lookup != NULL);
+    KEYVALUEPAIR_HASH *hash;
 
-    for (idx = 0; idx < hash->hashkey; idx++) {
+    hash = malloc(sizeof(KEYVALUEPAIR_HASH));
+    assert(hash != NULL);
+    hash->numhashbuckets = DEFAULT_NUMHASHBUCKETS;
+    hash->lookup = calloc(sizeof(KEYVALUEPAIR_HASHNODE), (size_t)hash->numhashbuckets);
+    assert(hash->lookup != NULL);
+    hash->masterlist = calloc(sizeof(KEYVALUEPAIR_P), numelements * hash->numhashbuckets);
+    assert(hash->masterlist != NULL);
+
+    for (idx = 0; idx < hash->numhashbuckets; idx++) {
 	KEYVALUEPAIR_HASHNODE *hashnode = &hash->lookup[idx];
 	hashnode->size = numelements; //TODO - way too big!
 	hashnode->top = 0;
-	hashnode->items = calloc(sizeof(KEYVALUEPAIR_P), hashnode->size);
+	hashnode->items = &hash->masterlist[idx * numelements];
 	assert(hashnode->items != NULL);
     }
 
     for(idx = 0; idx < (int)numelements; idx++) {
-	int hashvalue = calculatehashvalue(array->items[idx].key, hash->hashkey);
-	KEYVALUEPAIR_HASHNODE *hashnode = &hash->lookup[hashvalue];
+	HASHBUCKETTYPE hashbucket = CALC_HASH_BUCKET(array->items[idx].key, hash->numhashbuckets);
+	KEYVALUEPAIR_HASHNODE *hashnode = &hash->lookup[hashbucket];
 	if (hashnode->top == hashnode->size)
 	{
 	    if (raise(SIGABRT) != 0) {
@@ -121,9 +123,9 @@ KEYVALUEPAIR_HASH *keyvaluepairhash_create(KEYVALUEPAIR_ARRAY *array, size_t num
 
 const char *keyvaluepairhash_get(KEYVALUEPAIR_HASH *hash, const char * const key)
 {
-    int hashvalue = calculatehashvalue(key, hash->hashkey);
+    HASHBUCKETTYPE hashbucket = CALC_HASH_BUCKET(key, hash->numhashbuckets);
     size_t keylen = strlen(key);
-    KEYVALUEPAIR_HASHNODE *hashnode = &hash->lookup[hashvalue];
+    KEYVALUEPAIR_HASHNODE *hashnode = &hash->lookup[hashbucket];
     size_t idx;
 
     for (idx = 0; idx < hashnode->top; idx++) {
@@ -137,29 +139,12 @@ const char *keyvaluepairhash_get(KEYVALUEPAIR_HASH *hash, const char * const key
 
 void keyvaluepairhash_free(KEYVALUEPAIR_HASH *hash)
 {
-    int idx;
     if (hash == NULL) return;
-    for (idx = 0; idx < hash->hashkey; idx++) {
-	free(hash->lookup[idx].items);
-    }
 
-    /*@-compdestroy@*/
+    free(hash->masterlist);
     free(hash->lookup);
-    /*@+compdestroy@*/
     free(hash);
 }
 
 
-int calculatehashvalue(const char *key, int hashkey)
-{
-    const char *p = key;
-    int value = 0;
-    while (*p != '\0') {
-	// +1 per char adds length of string
-	value += ((int)*p);
-	p++;
-    }
-
-    return value % hashkey;
-}
 
