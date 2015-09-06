@@ -30,7 +30,7 @@ void test_keyvaluepairarray()
     printf("%s\n", "complete");
 }
 
-#define NUMELEMENTS 10000
+#define NUMELEMENTS 15
 void test_keyvaluepairhash()
 {
     KEYVALUEPAIR_HASH *subject;
@@ -48,7 +48,7 @@ void test_keyvaluepairhash()
     }
 
     printf("%s\n", "Create");
-    subject = keyvaluepairhash_create(testdata, NUMELEMENTS);
+    subject = keyvaluepairhash_create(testdata, NUMELEMENTS, 13);
     printf("%s\n", "Get 1");
     answer = keyvaluepairhash_get(subject, "key1");
     assert(answer != NULL);
@@ -65,11 +65,16 @@ void test_keyvaluepairhash()
     }
 
     printf("%s\n", "Dump");
-    for (idx = 0; idx < subject->numhashbuckets; idx++) {
-	KEYVALUEPAIR_HASHNODE *node = &subject->lookup[idx];
-	if (node->top > 0) {
-	    printf("%d, %d, %d\n\r", idx, (int)node->size, (int)node->top);
+    {
+	size_t max = 0;
+	for (idx = 0; idx < subject->numhashbuckets; idx++) {
+	    KEYVALUEPAIR_HASHNODE *node = &subject->lookup[idx];
+	    if (node->top > 0) {
+		if (node->top > max) max = node->top;
+		printf("%d, %d, %d\n", idx, (int)node->size, (int)node->top);
+	    }
 	}
+	printf("Max occurrences %d\n", (int)max);
     }
 
     keyvaluepairhash_free(subject);

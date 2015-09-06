@@ -7,6 +7,7 @@
 #define UABS(a)                  ((a) < 0 ? -(a) : (a))
 #define UMAX(a, b)               ((a) > (b) ? (a) : (b))
 #define URANGE(a, b, c)          ((b) < (a) ? (a) : ((b) > (c) ? (c) : (b)))
+#define UCEILING(a, b)           ((a)/(b) + (((a)%(b)) != 0 ? 1 : 0))
 #define CALC_HASH_BUCKET(key, numhashbuckets) ((HASHBUCKETTYPE)(calchashvalue((key)) % (HASHVALUETYPE)(numhashbuckets)))
 
 
@@ -27,15 +28,15 @@ typedef struct keyvaluepairhashitem KEYVALUEPAIR_HASHITEM;
 
 struct keyvaluepair
 {
-    const char *key;
-    const char *value;
+    /*@owned@*/const char *key;
+    /*@owned@*/const char *value;
 };
 
 struct keyvaluepair_array
 {
     size_t size;
     size_t top;
-    KEYVALUEPAIR *items;
+    /*@only@*/KEYVALUEPAIR *items;
 };
 
 typedef /*@observer@*/struct keyvaluepair *KEYVALUEPAIR_P;
@@ -53,18 +54,25 @@ struct keyvaluepairhash {
 };
 
 
+/** hashing.c */
 HASHVALUETYPE calchashvalue(const char *key);
+/** ~hashing.c */
 
+
+/** keyvaluepair.c */
 /*@only@*/KEYVALUEPAIR_ARRAY *keyvaluepairarray_create(size_t numelements);
 void keyvaluepairarray_append(KEYVALUEPAIR_ARRAY *array, const char *key, const char *value);
 void keyvaluepairarray_appendf(KEYVALUEPAIR_ARRAY *array, size_t maxlength, const char *key, const char *valueformat, ...);
+/*@observer@*//*@null@*/const char *keyvaluepairarray_find(KEYVALUEPAIR_ARRAY *array, const char *key);
 void keyvaluepairarray_free(/*@only@*//*@null@*/KEYVALUEPAIR_ARRAY *array);
-/*@only@*/KEYVALUEPAIR_HASH *keyvaluepairhash_create(/*@observer@*/KEYVALUEPAIR_ARRAY *array, size_t numelements);
+/*@only@*/KEYVALUEPAIR_HASH *keyvaluepairhash_create(/*@observer@*/KEYVALUEPAIR_ARRAY *array, size_t numelements, size_t numbuckets);
 /*@observer@*//*@null@*/const char *keyvaluepairhash_get(KEYVALUEPAIR_HASH *hash, const char * const key);
 void keyvaluepairhash_free(/*@only@*//*@null@*/KEYVALUEPAIR_HASH *hash);
+/** ~keyvaluepair.c */
 
+
+/** librandom.c */
 void init_mm(void);
-
 int number_fuzzy(int number);
 long number_fuzzy_long(long number);
 int number_range(int from, int to);
@@ -72,10 +80,15 @@ long number_range_long(long from, long to);
 int number_percent(void);
 int number_bits(unsigned int width);
 int dice(int number, int size);
+/** ~librandom.c */
 
 
+/** libutils.c */
 void i_bubble_sort(int *iarray, int array_size);
+/** ~libutils.c */
 
+
+/** libstrings.c */
 void smash_tilde(char *str);
 bool str_cmp(const char *astr, const char *bstr);
 bool str_prefix(const char *astr, const char *bstr);
@@ -96,4 +109,5 @@ int parse_int(const char *string);
 long parse_long(const char *string);
 unsigned int parse_unsigned_int(const char *string);
 unsigned long parse_unsigned_long(const char *string);
+/** ~libstrings.c */
 

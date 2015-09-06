@@ -64,6 +64,19 @@ void keyvaluepairarray_appendf(KEYVALUEPAIR_ARRAY *array, size_t maxlength, cons
     keyvaluepairarray_append(array, key, buf);
 }
 
+const char *keyvaluepairarray_find(KEYVALUEPAIR_ARRAY *array, const char *key)
+{
+    size_t idx;
+    size_t keylen = strlen(key);
+
+    for(idx = 0; idx < array->top; idx++) {
+	if (strncmp(key, array->items[idx].key, keylen+1) == 0)
+	    return array->items[idx].value;
+    }
+
+    return NULL;
+}
+
 void keyvaluepairarray_free(KEYVALUEPAIR_ARRAY *array)
 {
     size_t i;
@@ -83,14 +96,14 @@ void keyvaluepairarray_free(KEYVALUEPAIR_ARRAY *array)
 
 
 #define DEFAULT_NUMHASHBUCKETS 53
-KEYVALUEPAIR_HASH *keyvaluepairhash_create(KEYVALUEPAIR_ARRAY *array, size_t numelements)
+KEYVALUEPAIR_HASH *keyvaluepairhash_create(KEYVALUEPAIR_ARRAY *array, size_t numelements, size_t numbuckets)
 {
     int idx;
     KEYVALUEPAIR_HASH *hash;
 
     hash = malloc(sizeof(KEYVALUEPAIR_HASH));
     assert(hash != NULL);
-    hash->numhashbuckets = DEFAULT_NUMHASHBUCKETS;
+    hash->numhashbuckets = (numbuckets == 0 ? DEFAULT_NUMHASHBUCKETS : numbuckets);
     hash->lookup = calloc(sizeof(KEYVALUEPAIR_HASHNODE), (size_t)hash->numhashbuckets);
     assert(hash->lookup != NULL);
     hash->masterlist = calloc(sizeof(KEYVALUEPAIR_P), numelements * hash->numhashbuckets);
@@ -98,7 +111,8 @@ KEYVALUEPAIR_HASH *keyvaluepairhash_create(KEYVALUEPAIR_ARRAY *array, size_t num
 
     for (idx = 0; idx < hash->numhashbuckets; idx++) {
 	KEYVALUEPAIR_HASHNODE *hashnode = &hash->lookup[idx];
-	hashnode->size = numelements; //TODO - way too big!
+	// perfect world means numelements/numbuckets per bucket, but allow for margin of error.
+	hashnode->size = (size_t)UCEILING((unsigned int)numelements, (unsigned int)numbuckets) + UCEILING((unsigned int)numelements, 100);
 	hashnode->top = 0;
 	hashnode->items = &hash->masterlist[idx * numelements];
 	assert(hashnode->items != NULL);
