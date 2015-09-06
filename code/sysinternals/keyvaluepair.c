@@ -11,7 +11,7 @@
 #endif
 
 
-static long calculatehashvalue(const char *key, long hashkey);
+static int calculatehashvalue(const char *key, int hashkey);
 
 
 KEYVALUEPAIR_ARRAY *keyvaluepairarray_create(size_t numelements)
@@ -91,19 +91,19 @@ KEYVALUEPAIR_HASH *keyvaluepairhash_create(KEYVALUEPAIR_ARRAY *array, size_t num
     KEYVALUEPAIR_HASH *hash = malloc(sizeof(KEYVALUEPAIR_HASH));
     assert(hash != NULL);
     hash->hashkey = DEFAULT_HASHKEY;
-    hash->lookup = calloc(sizeof(KEYVALUEPAIR_HASHNODE *), (size_t)hash->hashkey);
+    hash->lookup = calloc(sizeof(KEYVALUEPAIR_HASHNODE), (size_t)hash->hashkey);
     assert(hash->lookup != NULL);
 
     for (idx = 0; idx < hash->hashkey; idx++) {
 	KEYVALUEPAIR_HASHNODE *hashnode = &hash->lookup[idx];
 	hashnode->size = numelements; //TODO - way too big!
 	hashnode->top = 0;
-	hashnode->items = (KEYVALUEPAIR_P *)calloc(sizeof(KEYVALUEPAIR *), hashnode->size);
+	hashnode->items = calloc(sizeof(KEYVALUEPAIR_P), hashnode->size);
 	assert(hashnode->items != NULL);
     }
 
     for(idx = 0; idx < (int)numelements; idx++) {
-	long hashvalue = calculatehashvalue(array->items[idx].key, hash->hashkey);
+	int hashvalue = calculatehashvalue(array->items[idx].key, hash->hashkey);
 	KEYVALUEPAIR_HASHNODE *hashnode = &hash->lookup[hashvalue];
 	if (hashnode->top == hashnode->size)
 	{
@@ -111,6 +111,7 @@ KEYVALUEPAIR_HASH *keyvaluepairhash_create(KEYVALUEPAIR_ARRAY *array, size_t num
 		_Exit(EXIT_FAILURE);
 	    }
 	}
+
 	hashnode->items[hashnode->top] = &array->items[idx];
 	hashnode->top++;
     }
@@ -118,16 +119,16 @@ KEYVALUEPAIR_HASH *keyvaluepairhash_create(KEYVALUEPAIR_ARRAY *array, size_t num
     return hash;
 }
 
-const KEYVALUEPAIR *keyvaluepairhash_get(KEYVALUEPAIR_HASH *hash, const char * const key)
+const char *keyvaluepairhash_get(KEYVALUEPAIR_HASH *hash, const char * const key)
 {
-    long hashvalue = calculatehashvalue(key, hash->hashkey);
+    int hashvalue = calculatehashvalue(key, hash->hashkey);
     size_t keylen = strlen(key);
     KEYVALUEPAIR_HASHNODE *hashnode = &hash->lookup[hashvalue];
     size_t idx;
 
     for (idx = 0; idx < hashnode->top; idx++) {
 	if (strncmp(key, hashnode->items[idx]->key, keylen+1) == 0) {
-	    return hashnode->items[idx];
+	    return hashnode->items[idx]->value;
 	}
     }
 
@@ -149,13 +150,13 @@ void keyvaluepairhash_free(KEYVALUEPAIR_HASH *hash)
 }
 
 
-long calculatehashvalue(const char *key, long hashkey)
+int calculatehashvalue(const char *key, int hashkey)
 {
     const char *p = key;
-    long value = 0;
+    int value = 0;
     while (*p != '\0') {
 	// +1 per char adds length of string
-	value += ((int)*p) + 1;
+	value += ((int)*p);
 	p++;
     }
 
