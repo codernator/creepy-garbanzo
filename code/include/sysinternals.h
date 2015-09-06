@@ -63,7 +63,7 @@ HASHVALUETYPE calchashvalue(const char *key);
 /*@only@*/KEYVALUEPAIR_ARRAY *keyvaluepairarray_create(size_t numelements);
 void keyvaluepairarray_append(KEYVALUEPAIR_ARRAY *array, const char *key, const char *value);
 void keyvaluepairarray_appendf(KEYVALUEPAIR_ARRAY *array, size_t maxlength, const char *key, const char *valueformat, ...);
-/*@observer@*//*@null@*/const char *keyvaluepairarray_find(KEYVALUEPAIR_ARRAY *array, const char *key);
+/*@observer@*//*@null@*/const char *keyvaluepairarray_find(const KEYVALUEPAIR_ARRAY *array, const char *key);
 void keyvaluepairarray_free(/*@only@*//*@null@*/KEYVALUEPAIR_ARRAY *array);
 /*@only@*/KEYVALUEPAIR_HASH *keyvaluepairhash_create(/*@observer@*/KEYVALUEPAIR_ARRAY *array, size_t numelements, size_t numbuckets);
 /*@observer@*//*@null@*/const char *keyvaluepairhash_get(KEYVALUEPAIR_HASH *hash, const char * const key);

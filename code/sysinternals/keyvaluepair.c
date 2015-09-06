@@ -64,7 +64,7 @@ void keyvaluepairarray_appendf(KEYVALUEPAIR_ARRAY *array, size_t maxlength, cons
     keyvaluepairarray_append(array, key, buf);
 }
 
-const char *keyvaluepairarray_find(KEYVALUEPAIR_ARRAY *array, const char *key)
+const char *keyvaluepairarray_find(const KEYVALUEPAIR_ARRAY *array, const char *key)
 {
     size_t idx;
     size_t keylen = strlen(key);

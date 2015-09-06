@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #ifndef OBJPROTO_MAX_KEY_HASH
 // Consult http://www.planetmath.org/goodhashtableprimes for a nice writeup on numbers to use.
@@ -34,6 +35,8 @@ static void headlist_add(/*@owned@*/OBJECTPROTOTYPE *entry);
 static HASH_ENTRY lookup[OBJPROTO_MAX_KEY_HASH];
 static void lookup_add(long entrykey, /*@dependent@*/OBJECTPROTOTYPE *entry);
 static void lookup_remove(long entrykey, /*@dependent@*/OBJECTPROTOTYPE *entry);
+static size_t count_extras(const OBJECTPROTOTYPE *obj);
+static size_t count_affects(const OBJECTPROTOTYPE *obj);
 
 /*
  * Translates object virtual number to its obj index struct.
@@ -73,7 +76,7 @@ OBJECTPROTOTYPE *objectprototype_new(long vnum)
     }
 
     /** Place on list. */
-    headlist_add(entry);
+    headlist_add(prototypedata);
 
     /** Store in hash table. */
     lookup_add(vnum, prototypedata);
@@ -85,14 +88,17 @@ OBJECTPROTOTYPE *objectprototype_deserialize(const KEYVALUEPAIR_ARRAY *data)
 {
     OBJECTPROTOTYPE *prototypedata;
     long vnum;
+    const char *vnumentry;
 
     prototypedata = malloc(sizeof(OBJECTPROTOTYPE));
     assert(prototypedata != NULL);
     memset(prototypedata, 0, sizeof(OBJECTPROTOTYPE));
 
+    vnumentry = keyvaluepairarray_find(data, "vnum");
+    vnum = (vnumentry != NULL) ? parse_long(vnumentry) : 0;
 
     /** Place on list. */
-    headlist_add(entry);
+    headlist_add(prototypedata);
 
     /** Store in hash table. */
     lookup_add(vnum, prototypedata);
@@ -100,8 +106,76 @@ OBJECTPROTOTYPE *objectprototype_deserialize(const KEYVALUEPAIR_ARRAY *data)
     return prototypedata;
 }
 
+#define SERIALIZED_NUMBER_SIZE 32
 KEYVALUEPAIR_ARRAY *objectprototype_serialize(const OBJECTPROTOTYPE *obj)
 {
+    KEYVALUEPAIR_ARRAY *answer;
+    size_t keys = 25;
+    
+    keys += count_extras(obj);
+    keys += count_affects(obj);
+    
+    answer = keyvaluepairarray_create(keys);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "vnum", "%ld", obj->vnum);
+    if (obj->area != NULL) {
+	keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "area", "%ld", obj->area->vnum);
+    }
+    keyvaluepairarray_append(answer, "name", obj->name);
+    if (obj->short_descr != NULL)
+	keyvaluepairarray_append(answer, "short", obj->short_descr);
+    if (obj->description != NULL)
+	keyvaluepairarray_append(answer, "long", obj->description);
+    if (obj->material != NULL)
+	keyvaluepairarray_append(answer, "material", obj->material);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "reset", "%ld", obj->reset_num);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "item_type", "%d", obj->item_type);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "extra", "%ld", obj->extra_flags);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "extra2", "%ld", obj->extra2_flags);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "wear", "%ld", obj->wear_flags);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "level", "%d", obj->level);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "inittimer", "%d", obj->init_timer);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "condition", "%d", obj->condition);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "count", "%d", obj->count);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "weight", "%d", obj->weight);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "plevel", "%d", obj->plevel);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "tnl", "%d", obj->xp_tolevel);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "exp", "%d", obj->exp);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "cost", "%u", obj->cost);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value1", "%u", obj->value[0]);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value2", "%u", obj->value[1]);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value3", "%u", obj->value[2]);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value4", "%u", obj->value[3]);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value5", "%u", obj->value[4]);
+
+    /** append extras */
+    {
+	static char keybuf[MIL];
+	EXTRA_DESCR_DATA *desc = obj->extra_descr;
+	while (desc != NULL) {
+	    (void)snprintf(keybuf, MIL, "extra-%s", desc->keyword);
+	    keyvaluepairarray_append(answer, keybuf, desc->description);
+	    desc = desc->next;
+	}
+    }
+
+    {
+	AFFECT_DATA *affect = obj->affected;
+	while (affect != NULL) {
+	    keyvaluepairarray_appendf(answer, 256, "affect",
+		"%d,%d,%d,%d,%d,%ld,%ld",
+		affect->where,
+		affect->type,
+		affect->level,
+		affect->duration,
+		affect->location,
+		affect->modifier,
+		affect->bitvector);
+
+	    affect = affect->next;
+	}
+    }
+
+    return answer;
 }
 
 void objectprototype_free(OBJECTPROTOTYPE *prototypedata)
@@ -201,15 +275,15 @@ void headlist_add(/*@owned@*/OBJECTPROTOTYPE *entry)
 {
     OBJECTPROTOTYPE *headnext;
 
-    prototypedata->prev = &head_node;
+    entry->prev = &head_node;
     headnext = head_node.next;
     if (headnext != NULL) {
 	assert(headnext->prev == &head_node);
-	headnext->prev = prototypedata;
+	headnext->prev = entry;
     }
 
-    prototypedata->next = headnext;
-    head_node.next = prototypedata;
+    entry->next = headnext;
+    head_node.next = entry;
 }
 
 void lookup_add(long entrykey, OBJECTPROTOTYPE *entry)
@@ -246,3 +320,26 @@ void lookup_remove(long entrykey, OBJECTPROTOTYPE *entry)
 
     prev->next = next;
 }
+
+size_t count_extras(const OBJECTPROTOTYPE *obj)
+{
+    size_t keys = 0;
+    EXTRA_DESCR_DATA *extra = obj->extra_descr;
+    while (extra != NULL) {
+	keys++;
+	extra = extra->next;
+    }
+    return keys;
+}
+
+size_t count_affects(const OBJECTPROTOTYPE *obj)
+{
+    size_t keys = 0;
+    AFFECT_DATA *affect = obj->affected;
+    while (affect != NULL) {
+	keys++;
+	affect = affect->next;
+    }
+    return keys;
+}
+
