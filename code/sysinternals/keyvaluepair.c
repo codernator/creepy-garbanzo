@@ -100,19 +100,20 @@ KEYVALUEPAIR_HASH *keyvaluepairhash_create(KEYVALUEPAIR_ARRAY *array, size_t num
 {
     int idx;
     KEYVALUEPAIR_HASH *hash;
+    size_t bucketsize = (size_t)UCEILING((unsigned int)numelements, (unsigned int)numbuckets) + UCEILING((unsigned int)numelements, 10);
 
     hash = malloc(sizeof(KEYVALUEPAIR_HASH));
     assert(hash != NULL);
     hash->numhashbuckets = (numbuckets == 0 ? DEFAULT_NUMHASHBUCKETS : numbuckets);
     hash->lookup = calloc(sizeof(KEYVALUEPAIR_HASHNODE), (size_t)hash->numhashbuckets);
     assert(hash->lookup != NULL);
-    hash->masterlist = calloc(sizeof(KEYVALUEPAIR_P), numelements * hash->numhashbuckets);
+    hash->masterlist = calloc(sizeof(KEYVALUEPAIR_P), bucketsize * hash->numhashbuckets);
     assert(hash->masterlist != NULL);
 
     for (idx = 0; idx < hash->numhashbuckets; idx++) {
 	KEYVALUEPAIR_HASHNODE *hashnode = &hash->lookup[idx];
 	// perfect world means numelements/numbuckets per bucket, but allow for margin of error.
-	hashnode->size = (size_t)UCEILING((unsigned int)numelements, (unsigned int)numbuckets) + UCEILING((unsigned int)numelements, 100);
+	hashnode->size = bucketsize;
 	hashnode->top = 0;
 	hashnode->items = &hash->masterlist[idx * numelements];
 	assert(hashnode->items != NULL);

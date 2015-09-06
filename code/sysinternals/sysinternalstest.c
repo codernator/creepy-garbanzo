@@ -30,7 +30,7 @@ void test_keyvaluepairarray()
     printf("%s\n", "complete");
 }
 
-#define NUMELEMENTS 15
+#define NUMELEMENTS 537
 void test_keyvaluepairhash()
 {
     KEYVALUEPAIR_HASH *subject;
@@ -74,7 +74,7 @@ void test_keyvaluepairhash()
 		printf("%d, %d, %d\n", idx, (int)node->size, (int)node->top);
 	    }
 	}
-	printf("Max occurrences %d\n", (int)max);
+	printf("Max occurrences %d, Max elements %d\n", (int)max, (int)subject->lookup[0].size);
     }
 
     keyvaluepairhash_free(subject);
