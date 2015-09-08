@@ -7,21 +7,22 @@ C_FLAGS= -O2 -g2 -Wall -pedantic -std=gnu99 -I$(IDIR)
 L_FLAGS=  $(PROF)
 SYSLIBS=-lm
 
-SDIR=.
 EXE=$(BDIR)/badtrip
 _OBJ=main.o
 
+_FIL=main
+SRC=$(patsubst %,%.c,$(_FIL))
 OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
 SYSINTERNALS=$(BDIR)/sysinternals.a
 MERC=$(BDIR)/merc.a
 
 
-.PHONY: clean all install prebuild
+.PHONY: clean all prebuild
 
 all: $(EXE)
 
 prebuild:
-	splint -DLINUX -I$(IDIR) -exportlocal main.c
+	splint -DLINUX -I$(IDIR) $(SRC)
 
 $(SYSINTERNALS):
 	cd ../sysinternals && $(MAKE)
@@ -32,7 +33,7 @@ $(MERC):
 $(EXE): $(OBJ) $(SYSINTERNALS) $(MERC) prebuild | $(BDIR)
 	$(CC) $(L_FLAGS) -o $@ $(OBJ) $(MERC) $(SYSINTERNALS) $(SYSLIBS) -I$(IDIR)
 
-$(ODIR)/%.o: $(SDIR)/%.c $(DEPS) | $(ODIR)
+$(ODIR)/%.o: %.c | $(ODIR)
 	$(CC) -c -o $@ $< $(C_FLAGS)
 
 $(BDIR):

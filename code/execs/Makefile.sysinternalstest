@@ -1,29 +1,33 @@
 IDIR=../include
-ODIR=../obj/sysinternals
+ODIR=../obj
 BDIR=../bin
 CC= /usr/bin/gcc
 PROF= -DLINUX
 C_FLAGS= -O2 -g2 -Wall -pedantic -std=gnu99 -I$(IDIR)
 L_FLAGS=  $(PROF)
-LIBS=-lm
+SYSLIBS=-lm
 
 _DEPS=sysinternals.h
 DEPS=$(patsubst %,$(IDIR)/%,$(_DEPS))
-_FIL=librandom libstring libutils keyvaluepair hashing
+_FIL=sysinternalstest
 SRC=$(patsubst %,%.c,$(_FIL))
 OBJ=$(patsubst %,$(ODIR)/%,$(patsubst %,%.o,$(_FIL)))
 SYSINTERNALS=$(BDIR)/sysinternals.a
+EXE=$(BDIR)/sysinternalstest
 
 
 .PHONY: clean all prebuild
 
-all: $(SYSINTERNALS)
+all: $(EXE)
 
 prebuild:
 	splint -DLINUX -I$(IDIR) $(SRC)
 
-$(SYSINTERNALS): $(OBJ) $(DEPS) prebuild | $(BDIR)
-	ar rcs $(SYSINTERNALS) $@ $(OBJ)
+$(SYSINTERNALS):
+	cd ../sysinternals && $(MAKE)
+
+$(EXE): $(OBJ) $(DEPS) $(SYSINTERNALS) prebuild | $(BDIR)
+	$(CC) $(L_FLAGS) -o $@ $(OBJ) $(BDIR)/sysinternals.a $(SYSLIBS) -I$(IDIR)
 
 $(ODIR)/%.o: %.c $(DEPS) | $(ODIR)
 	$(CC) -c -o $@ $< $(C_FLAGS)
@@ -35,4 +39,5 @@ $(ODIR):
 	mkdir $(ODIR) 2>/dev/null
 
 clean:
-	rm -f $(ODIR)/*.o $(SYSINTERNALS)
+	rm -f $(ODIR)/*.o $(EXE)
+

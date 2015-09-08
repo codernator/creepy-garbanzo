@@ -1,12 +1,15 @@
-.PHONY: clean install all
+.PHONY: clean install all sysinternals stest merc
 
 all: badtrip
 
 sysinternals:
 	cd sysinternals && $(MAKE)
 
+sysinttest:
+	cd execs && $(MAKE) -f Makefile.sysinternalstest
+
 merc:
-	cd src && $(MAKE)
+	cd merc && $(MAKE)
 
 badtrip:
 	cd execs && $(MAKE)
@@ -16,4 +19,4 @@ clean:
 	rm -fr obj
 
 install:
-	cp $(EXE) ../.
+	cp bin/badtrip ../badtrip
