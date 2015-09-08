@@ -13,6 +13,7 @@ SYSTEM_STATE globalSystemState = {
     .wizlock = false,
     .newlock = false,
     .log_all = false,
+    .last_command = "",
     .copyover_tick_counter = -1,
     .reboot_tick_counter = -1
 };
