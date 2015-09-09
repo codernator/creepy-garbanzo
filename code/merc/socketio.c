@@ -10,13 +10,17 @@
 #include "telnet.h"
 
 
+/** imports */
 extern int gettimeofday(struct timeval *tp, struct timezone *tzp);
+extern int close(int fd);
 
 
 
+/** exports */
 typedef void handle_new_connection(int control);
 
 
+void disconnect(int descriptor);
 void init_time(SYSTEM_STATE *system_state);
 bool read_from_descriptor(DESCRIPTOR_DATA *d);
 bool write_to_descriptor(int desc, char *txt, int length);
@@ -24,6 +28,14 @@ int listen_port(int port);
 void deafen_port(int listen_control);
 void init_descriptor(int control);
 
+
+/** locals */
+
+
+void disconnect(int descriptor)
+{
+    close(descriptor);
+}
 
 void init_time(SYSTEM_STATE *system_state) 
 {
@@ -92,7 +104,7 @@ void init_descriptor(int control)
      */
     if (check_ban(dnew->host, BAN_ALL)) {
 	write_to_descriptor(desc, "Your site has been banned from this mud.\n\r", 0);
-	close(desc);
+	disconnect(desc);
 	descriptor_free(dnew);
 	return;
     }
@@ -117,7 +129,7 @@ int listen_port(int port)
 
     if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&x, sizeof(x)) < 0) {
 	perror("Init_socket: SO_REUSEADDR");
-	close(fd);
+	disconnect(fd);
 	raise(SIGABRT);
     }
 
@@ -130,7 +142,7 @@ int listen_port(int port)
 
 	if (setsockopt(fd, SOL_SOCKET, SO_DONTLINGER, (char *)&ld, sizeof(ld)) < 0) {
 	    perror("Init_socket: SO_DONTLINGER");
-	    close(fd);
+	    disconnect(fd);
 	    raise(SIGABRT);
 	}
     }
@@ -142,14 +154,14 @@ int listen_port(int port)
 
     if (bind(fd, (struct sockaddr *)&sa, sizeof(sa)) < 0) {
 	perror("Init socket: bind");
-	close(fd);
+	disconnect(fd);
 	raise(SIGABRT);
     }
 
 
     if (listen(fd, 3) < 0) {
 	perror("Init socket: listen");
-	close(fd);
+	disconnect(fd);
 	raise(SIGABRT);
     }
 

@@ -28,7 +28,7 @@ $(SYSINTERNALS):
 	cd ../sysinternals && $(MAKE)
 
 $(MERC):
-	cd ../src && $(MAKE)
+	cd ../merc && $(MAKE)
 
 $(EXE): $(OBJ) $(SYSINTERNALS) $(MERC) prebuild | $(BDIR)
 	$(CC) $(L_FLAGS) -o $@ $(OBJ) $(MERC) $(SYSINTERNALS) $(SYSLIBS) -I$(IDIR)

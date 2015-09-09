@@ -56,7 +56,6 @@ GAME_STATE globalGameState = {
 
 
 /** OS-dependent declarations. */
-extern int close(int fd);
 extern int gettimeofday(struct timeval *tp, struct timezone *tzp);
 
 extern int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
@@ -328,7 +327,7 @@ void close_socket(DESCRIPTOR_DATA *dclose)
 
 
     dclose->pending_delete = true;
-    close(dclose->descriptor);
+    disconnect(dclose->descriptor);
 }
 
 /**
@@ -1399,7 +1398,7 @@ void copyover_recover()
 
 	/* Write something, and check if it goes error-free */
 	if (!write_to_descriptor(desc, "", 0)) {
-	    close(desc);  /* nope */
+	    disconnect(desc);  /* nope */
 	    continue;
 	}
 
