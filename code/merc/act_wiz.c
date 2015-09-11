@@ -483,7 +483,7 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ const char *argument)
     }
     extract_char(ch, true);
     if (d != NULL)
-	close_socket(d);
+	close_socket(d, true);
 
     /** if a character somehow gets duped and linked to multiple descriptors, close them, too. */
     {
@@ -497,7 +497,7 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ const char *argument)
 	    tch = CH(d);
 	    if (tch && tch->id == id) {
 		extract_char(tch, true);
-		close_socket(d);
+		close_socket(d, true);
 	    }
 	}
     }
@@ -931,7 +931,7 @@ void do_disconnect(CHAR_DATA *ch, const char *argument)
     if (ch == victim || ch->level <= victim->level) {
 	send_to_char("You failed.\n\r", ch);
     } else if (ch->level > victim->level) {
-	close_socket(d);
+	close_socket(d, true);
 	send_to_char("Ok.\n\r", ch);
     }
 }
@@ -1446,7 +1446,7 @@ void do_reboot(CHAR_DATA *ch, const char *argument)
     dpending = descriptor_iterator_start(&descriptor_empty_filter);
     while ((d = dpending) != NULL) {
 	dpending = descriptor_iterator(d, &descriptor_empty_filter);
-	close_socket(d);
+	close_socket(d, true);
     }
 }
 
@@ -1478,7 +1478,7 @@ void do_shutdown(CHAR_DATA *ch, const char *argument)
     dpending = descriptor_iterator_start(&playing_filter);
     while ((d = dpending) != NULL) {
 	dpending = descriptor_iterator(d, &playing_filter);
-	close_socket(d);
+	close_socket(d, true);
     }
 }
 
@@ -2026,7 +2026,7 @@ void do_purge(CHAR_DATA *ch, const char *argument)
 	d = victim->desc;
 	extract_char(victim, true);
 	if (d != NULL)
-	    close_socket(d);
+	    close_socket(d, true);
 
 	return;
     }
@@ -3416,7 +3416,7 @@ void fry_char(CHAR_DATA *ch, char *argument)
     }
 
     if (d != NULL)
-	close_socket(d);
+	close_socket(d, true);
 
     return;
 }

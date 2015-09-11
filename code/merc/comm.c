@@ -166,12 +166,10 @@ void game_loop(int port, int control)
 		if (d->character && d->character->level > 1) {
 		    save_char_obj(d->character);
 		}
-		d->outtop = 0;
-		close_socket(d);
+		close_socket(d, false);
 	    } else if ((!d->character && d->idle > 50 /* 10 seconds */) || d->idle > 28800 /* 2 hrs  */) { 
 		write_to_descriptor(d->descriptor, "Idle.\n\r", 0);
-		d->outtop = 0;
-		close_socket(d);
+		close_socket(d, false);
 		continue;
 	    }
 	}
@@ -192,8 +190,7 @@ void game_loop(int port, int control)
 		    FD_CLR(d->descriptor, &out_set);
 		    if (d->character != NULL && d->character->level > 1)
 			save_char_obj(d->character);
-		    d->outtop = 0;
-		    close_socket(d);
+		    close_socket(d, false);
 		    continue;
 		}
 	    }
@@ -244,8 +241,7 @@ void game_loop(int port, int control)
 		    if (d->character != NULL && d->character->level > 1) {
 			save_char_obj(d->character);
 		    }
-		    d->outtop = 0;
-		    close_socket(d);
+		    close_socket(d, false);
 		}
 	    }
 	}
@@ -290,12 +286,16 @@ void game_loop(int port, int control)
     }
 }
 
-void close_socket(DESCRIPTOR_DATA *dclose)
+void close_socket(DESCRIPTOR_DATA *dclose, bool withProcessOutput)
 {
     CHAR_DATA *ch;
 
-    if (dclose->outtop > 0)
-	process_output(dclose, false);
+    if (withProcessOutput ) {
+	if (dclose->outtop > 0)
+	    process_output(dclose, false);
+	else
+	    dclose->outtop = 0;
+    }
 
     if (dclose->snoop_by != NULL)
 	write_to_buffer(dclose->snoop_by, "Your victim has left the game.\n\r", 0);
@@ -313,7 +313,6 @@ void close_socket(DESCRIPTOR_DATA *dclose)
 	    free_char(dclose->original ? dclose->original : dclose->character);
 	}
     }
-
 
     dclose->pending_delete = true;
     disconnect(dclose->descriptor);
@@ -682,7 +681,7 @@ void write_to_buffer(DESCRIPTOR_DATA *d, const char *txt, int length)
 
 	if (d->outsize >= 32000) {
 	    log_bug("Buffer overflow. Closing.\n\r");
-	    close_socket(d);
+	    close_socket(d, true);
 	    return;
 	}
 	outbuf = calloc(bufsize, sizeof(char));
@@ -1312,7 +1311,7 @@ bool copyover()
 
 	if (!d->character || d->connected > CON_PLAYING) { /* drop those logging on */
 	    write_to_descriptor(d->descriptor, "\n\rSorry, we are rebooting. Come back in a few minutes.\n\r", 0);
-	    close_socket(d);  /* throw'em out */
+	    close_socket(d, false);  /* throw'em out */
 	} else {
 	    fprintf(fp, "%d %s %s\n", d->descriptor, och->name, d->host);
 
@@ -1402,7 +1401,7 @@ void copyover_recover()
 
 	if (!fOld) { /* Player file not found?! */
 	    write_to_descriptor(desc, "\n\rSomehow, your character was lost in the copyover. Sorry.\n\r", 0);
-	    close_socket(d);
+	    close_socket(d, false);
 	} else { /* ok! */
 	    /*			write_to_descriptor (desc, "\n\rCopyover recovery complete.\n\r",0);*/
 
