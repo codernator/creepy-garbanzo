@@ -2110,6 +2110,7 @@ ONE_ATTACK_RESULT one_attack(CHAR_DATA *ch, CHAR_DATA *victim, int dt, /*@null@*
 
 
 /* handler.c */
+void cancel_snoops(DESCRIPTOR_DATA *snooper);
 AFFECT_DATA *affect_find(AFFECT_DATA * paf, SKILL * skill);
 void affect_check(CHAR_DATA * ch, int where, long vector);
 int count_users(GAMEOBJECT * obj);

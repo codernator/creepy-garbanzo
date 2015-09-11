@@ -299,19 +299,7 @@ void close_socket(DESCRIPTOR_DATA *dclose)
     if (dclose->snoop_by != NULL)
 	write_to_buffer(dclose->snoop_by, "Your victim has left the game.\n\r", 0);
 
-    {
-	struct descriptor_iterator_filter playing_filter = { .all = true };
-	DESCRIPTOR_DATA *dpending;
-	DESCRIPTOR_DATA *d;
-
-	dpending = descriptor_iterator_start(&playing_filter);
-	while ((d = dpending) != NULL) {
-	    dpending = descriptor_iterator(d, &playing_filter);
-	    if (d->snoop_by == dclose) {
-		d->snoop_by = NULL;
-	    }
-	}
-    }
+    cancel_snoops(dclose);
 
     if ((ch = dclose->character) != NULL) {
 	log_string("Closing link to %s.", ch->name);

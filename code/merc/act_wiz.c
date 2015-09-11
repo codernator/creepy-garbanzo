@@ -1511,13 +1511,7 @@ void do_snoop(CHAR_DATA *ch, const char *argument)
     if (victim == ch) {
 	send_to_char("Cancelling all snoops.\n\r", ch);
 	wiznet("$N stops being such a snoop.", ch, NULL, WIZ_SNOOPS, WIZ_SECURE, get_trust(ch));
-
-	dpending = descriptor_iterator_start(&descriptor_empty_filter);
-	while ((d = dpending) != NULL) {
-	    dpending = descriptor_iterator(d, &descriptor_empty_filter);
-	    if (d->snoop_by == ch->desc)
-		d->snoop_by = NULL;
-	}
+	cancel_snoops(ch->desc);
 	return;
     }
 
@@ -3508,7 +3502,7 @@ void do_pload(CHAR_DATA *ch, const char *argument)
 	return;
     }
 
-    if (load_char_obj(&d, vName)) {         /* found */
+    if (load_char_obj(&d, vName)) {     /* found */
 	d.character->desc = NULL;       /* so we know it's not a real player */
 	d.character->next = char_list;
 	d.character->was_in_room = d.character->in_room;
@@ -3522,18 +3516,15 @@ void do_pload(CHAR_DATA *ch, const char *argument)
 	    char_to_room(d.character, ch->in_room);
 	}
 
-	act("$n pulls $N from the nether regions of space and time.\n\r$N stares straight ahead, in a daze.",
-		ch, NULL, d.character, TO_ROOM);
-	act("You pull $N from the nether regions of space and time.",
-		ch, NULL, d.character, TO_CHAR);
+	act("$n pulls $N from the nether regions of space and time.\n\r$N stares straight ahead, in a daze.", ch, NULL, d.character, TO_ROOM);
+	act("You pull $N from the nether regions of space and time.", ch, NULL, d.character, TO_CHAR);
 	sprintf(buf, "$N pLoad -> %s", capitalize(d.character->name));
 	wiznet(buf, ch, NULL, WIZ_LOAD, WIZ_SECURE, get_trust(ch));
 
 	if (d.character->pet != NULL) {
 	    char_from_room(d.character->pet);
 	    char_to_room(d.character->pet, d.character->in_room);
-	    act("$n's loyal pet, $N, appears.",
-		    d.character, NULL, d.character->pet, TO_ROOM);
+	    act("$n's loyal pet, $N, appears.", d.character, NULL, d.character->pet, TO_ROOM);
 	}
     } else { /* not found */
 	printf_to_char(ch, "Cannot find a pfile for %s.  Check spelling and try again.\n\r", capitalize(vName));
