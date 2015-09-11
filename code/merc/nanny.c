@@ -31,7 +31,7 @@ static void ansi_answered(DESCRIPTOR_DATA *d, const char *argument)
     extern char *help_greeting;
 
     if (argument[0] == '\0') {
-	close_socket(d, true);
+	close_socket(d, true, false);
 	return;
     }
 
@@ -56,7 +56,7 @@ static void name_answered(DESCRIPTOR_DATA *d, const char *argument)
     bool found;
 
     if (argument[0] == '\0') {
-	close_socket(d, true);
+	close_socket(d, true, false);
 	return;
     }
 
@@ -64,7 +64,7 @@ static void name_answered(DESCRIPTOR_DATA *d, const char *argument)
     name_buf[0] = UPPER(name_buf[0]);
     if (!check_parse_name(name_buf)) {
 	write_to_buffer(d, "Illegal name.  Disconnecting.\n\r", 0);
-	close_socket(d, true);
+	close_socket(d, true, false);
 	return;
     }
 
@@ -76,13 +76,13 @@ static void name_answered(DESCRIPTOR_DATA *d, const char *argument)
     if (IS_SET(ch->act, PLR_DENY)) {
 	log_string("Denying access to %s@%s.", name_buf, d->host);
 	write_to_buffer(d, "Boom Biddy Bye Bye.\n\r", 0);
-	close_socket(d, true);
+	close_socket(d, true, false);
 	return;
     }
 
     if (check_ban(d->host, BAN_PERMIT) && !IS_SET(ch->act, PLR_PERMIT)) {
 	write_to_buffer(d, "Your site has been banned from this mud.   Boom Biddy Bye Bye.\n\r", 0);
-	close_socket(d, true);
+	close_socket(d, true, false);
 	return;
     }
 
@@ -91,7 +91,7 @@ static void name_answered(DESCRIPTOR_DATA *d, const char *argument)
     } else {
 	if (globalSystemState.wizlock && !IS_IMMORTAL(ch)) {
 	    write_to_buffer(d, "The game is wizlocked.\n\r", 0);
-	    close_socket(d, true);
+	    close_socket(d, true, false);
 	    return;
 	}
     }
@@ -104,13 +104,13 @@ static void name_answered(DESCRIPTOR_DATA *d, const char *argument)
 	/* New player */
 	if (globalSystemState.newlock) {
 	    write_to_buffer(d, "The game is newlocked.\n\r", 0);
-	    close_socket(d, true);
+	    close_socket(d, true, false);
 	    return;
 	}
 
 	if (check_ban(d->host, BAN_NEWBIES)) {
 	    write_to_buffer(d, "New players are not allowed from your site.\n\r", 0);
-	    close_socket(d, true);
+	    close_socket(d, true, false);
 	    return;
 	}
 
@@ -129,7 +129,7 @@ static void oldpassword_answered(DESCRIPTOR_DATA *d, const char *argument)
 
     if (!password_matches(ch->pcdata->pwd, argument)) {
 	write_to_buffer(d, "Wrong password.  Boom Biddy Bye Bye.\n\r", 0);
-	close_socket(d, true);
+	close_socket(d, true, false);
 	return;
     }
 
@@ -182,7 +182,7 @@ static void breakconnect_answered(DESCRIPTOR_DATA *d, const char *argument)
 		    if (str_cmp(ch->name, d_old->original ? d_old->original->name : d_old->character->name))
 			continue;
 
-		    close_socket(d_old, true);
+		    close_socket(d_old, true, false);
 		}
 
 		if (check_reconnect(d, ch->name, true)) {
@@ -620,7 +620,7 @@ void nanny(DESCRIPTOR_DATA *d, const char *argument)
     switch (d->connected) {
 	default:
 	    log_bug("Nanny: bad d->connected %d.", d->connected);
-	    close_socket(d, false);
+	    close_socket(d, false, false);
 	    return;
 
 	case CON_GET_ANSI:
@@ -766,7 +766,7 @@ bool check_parse_name(const char *name)
 		    && d->character->name[0] 
 		    && !str_cmp(d->character->name, name)) {
 		count++;
-		close_socket(d, true);
+		close_socket(d, true, false);
 	    }
 	}
 	if (count) {

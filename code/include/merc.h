@@ -2032,7 +2032,7 @@ bool check_ban(char *site, int type);
 
 /* comm.c */
 void show_string(struct descriptor_data *d, char *input);
-void close_socket(DESCRIPTOR_DATA * dclose, bool withProcessOutput);
+void close_socket(DESCRIPTOR_DATA * dclose, bool withProcessOutput, bool withSaveChar);
 void write_to_buffer(DESCRIPTOR_DATA * d, const char *txt, int length);
 void send_to_char(char *txt, /*@partial@*/CHAR_DATA * ch);
 void send_to_char_ascii(char *txt, /*@partial@*/CHAR_DATA * ch);

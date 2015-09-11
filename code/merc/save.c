@@ -79,14 +79,25 @@ char *print_flags(long flag)
  ***************************************************************************/
 void save_char_obj(CHAR_DATA *ch)
 {
+    extern SKILL *gsp_deft;
+    extern SKILL *gsp_dash;
     char strsave[MIL];
     FILE *fp;
 
     if (IS_NPC(ch))
 	return;
 
+    if (ch->level > 1)
+	return;
+
     if (ch->desc != NULL && ch->desc->original != NULL)
 	ch = ch->desc->original;
+
+    /** these don't want to be saved. */
+    REMOVE_BIT(ch->act, PLR_LINKDEAD);
+    affect_strip(ch, gsp_deft);
+    affect_strip(ch, gsp_dash);
+
 
     /* create god log */
     if (IS_IMMORTAL(ch) || ch->level >= LEVEL_IMMORTAL) {

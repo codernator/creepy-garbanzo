@@ -19,8 +19,6 @@ void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is, const char *me
 
 
 /** imports */
-extern SKILL *gsp_deft;
-extern SKILL *gsp_dash;
 
 extern long top_mob_index;
 extern bool copyover();
@@ -423,7 +421,6 @@ void do_qui(CHAR_DATA *ch, /*@unused@*/ const char *argument)
 
 void do_quit(CHAR_DATA *ch, /*@unused@*/ const char *argument)
 {
-    DESCRIPTOR_DATA *d;
     char strsave[2*MIL];
     long id;
 
@@ -467,27 +464,22 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ const char *argument)
     /*
      * After extract_char the ch is no longer valid!
      */
-    if (IS_SET(ch->act, PLR_LINKDEAD))
-	REMOVE_BIT(ch->act, PLR_LINKDEAD);
-    affect_strip(ch, gsp_deft);
-    affect_strip(ch, gsp_dash);
 
+    if (ch->desc != NULL)
+	close_socket(ch->desc, true, false);
     save_char_obj(ch);
-    id = ch->id;
-    d = ch->desc;
-
     if ((ch->level == 1) && (!IS_SET(ch->act, PLR_DENY))) {
 	(void)snprintf(strsave, 2 * MIL, "%s%s", PLAYER_DIR, capitalize(ch->name));
 	wiznet("`!Killing`7: $N `1(`7Level 1 cleanup`1)`7", ch, NULL, 0, 0, 0);
 	unlink(strsave);
     }
+
+    id = ch->id;
     extract_char(ch, true);
-    if (d != NULL)
-	close_socket(d, true);
 
     /** if a character somehow gets duped and linked to multiple descriptors, close them, too. */
     {
-	DESCRIPTOR_DATA *dpending;
+	DESCRIPTOR_DATA *dpending, *d;
 
 	dpending = descriptor_iterator_start(&descriptor_empty_filter);
 	while ((d = dpending) != NULL) {
@@ -497,7 +489,7 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ const char *argument)
 	    tch = CH(d);
 	    if (tch && tch->id == id) {
 		extract_char(tch, true);
-		close_socket(d, true);
+		close_socket(d, true, false);
 	    }
 	}
     }
@@ -894,9 +886,9 @@ void do_disconnect(CHAR_DATA *ch, const char *argument)
     CHAR_DATA *victim;
     char arg[MIL];
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	one_argument(argument, arg);
+    one_argument(argument, arg);
     if (arg[0] == '\0') {
 	send_to_char("Disconnect whom?\n\r", ch);
 	return;
@@ -930,8 +922,8 @@ void do_disconnect(CHAR_DATA *ch, const char *argument)
 
     if (ch == victim || ch->level <= victim->level) {
 	send_to_char("You failed.\n\r", ch);
-    } else if (ch->level > victim->level) {
-	close_socket(d, true);
+    } else {
+	close_socket(d, true, true);
 	send_to_char("Ok.\n\r", ch);
     }
 }
@@ -1446,7 +1438,8 @@ void do_reboot(CHAR_DATA *ch, const char *argument)
     dpending = descriptor_iterator_start(&descriptor_empty_filter);
     while ((d = dpending) != NULL) {
 	dpending = descriptor_iterator(d, &descriptor_empty_filter);
-	close_socket(d, true);
+	// don't need to save each character, because they were all saved above.
+	close_socket(d, true, false);
     }
 }
 
@@ -1478,7 +1471,8 @@ void do_shutdown(CHAR_DATA *ch, const char *argument)
     dpending = descriptor_iterator_start(&playing_filter);
     while ((d = dpending) != NULL) {
 	dpending = descriptor_iterator(d, &playing_filter);
-	close_socket(d, true);
+	// don't need to save each character, because they were all saved above.
+	close_socket(d, true, false);
     }
 }
 
@@ -1965,7 +1959,6 @@ void do_oload(CHAR_DATA *ch, const char *argument)
 
 void do_purge(CHAR_DATA *ch, const char *argument)
 {
-    DESCRIPTOR_DATA *d;
     CHAR_DATA *victim;
     GAMEOBJECT *obj;
     char arg[MIL];
@@ -2012,7 +2005,8 @@ void do_purge(CHAR_DATA *ch, const char *argument)
 
 	if ((get_trust(ch) <= get_trust(victim)) && (victim->desc != NULL)) {
 	    send_to_char("Maybe that wasn't a good idea...\n\r", ch);
-	    sprintf(buf, "%s tried to purge you!\n\r", ch->name);                   send_to_char(buf, victim);
+	    sprintf(buf, "%s tried to purge you!\n\r", ch->name);
+	    send_to_char(buf, victim);
 	    return;
 	}
 
@@ -2020,20 +2014,16 @@ void do_purge(CHAR_DATA *ch, const char *argument)
 	act("You turn $N to ash!", victim, NULL, NULL, TO_CHAR);
 	act("$n disintegrates you!", ch, NULL, NULL, TO_VICT);
 
-	if (victim->level > 1)
-	    save_char_obj(victim);
-
-	d = victim->desc;
+	if (victim->desc != NULL)
+	    close_socket(victim->desc, true, false);
+	save_char_obj(victim);
 	extract_char(victim, true);
-	if (d != NULL)
-	    close_socket(d, true);
 
 	return;
     }
 
     act("$n purges $N.", ch, NULL, victim, TO_NOTVICT);
     extract_char(victim, true);
-    return;
 }
 
 void do_advance(CHAR_DATA *ch, const char *argument)
@@ -3392,9 +3382,9 @@ void fry_char(CHAR_DATA *ch, char *argument)
     GAMEOBJECT *obj;
     GAMEOBJECT *obj_next;
 
-    DENY_NPC(ch)
+    DENY_NPC(ch);
 
-	send_to_char("`!Get `Plost `#l```#o`#s```#e`#r``.\n\r", ch);
+    send_to_char("`!Get `Plost `#l```#o`#s```#e`#r``.\n\r", ch);
     log_string("%s has quit for the last time.", ch->name);
 
     save_char_obj(ch);
@@ -3416,7 +3406,7 @@ void fry_char(CHAR_DATA *ch, char *argument)
     }
 
     if (d != NULL)
-	close_socket(d, true);
+	close_socket(d, true, false);
 
     return;
 }
