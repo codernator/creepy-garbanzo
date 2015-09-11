@@ -1,31 +1,25 @@
 merc/comm.c:169:		close_socket(d);
     kicking out freaky folks
-    - save character if level > 1
-    - prevent processing output (d->outtop = 0)
-    - close_socket
+    - close_socket (false, true)
 
 merc/comm.c:173:		close_socket(d);
     kicking out idler
-    - prevent processing output
-    - close_socket
+    - close_socket (false, true)
 
 merc/comm.c:195:		    close_socket(d);
     disconnect due to read error
-    - save character if level > 1
-    - prevent processing output
-    - close_socket
+    - close_socket (false, true)
 
 merc/comm.c:247:		    close_socket(d);
     disconnect due to write error
-    - save character if level > 1
-    - prevent processing output
-    - close_socket
+    - close_socket (false, true)
 
-merc/comm.c:292:void close_socket(DESCRIPTOR_DATA *dclose)
+merc/comm.c:292:void close_socket(DESCRIPTOR_DATA *dclose, bool withProcessOutput, bool withSaveChar)
     the magic happens here
-    - process output (if any)
-    - notify snooper
-    - stop snooping victims (if any)
+    - process output if withProcessOutput && any
+    - save_char_obj if withSaveChar && level > 1
+    - notify snooper if any
+    - cancel_snoops
     - when d->character
 	- set linkdead if connected == CON_PLAYING
 	- free character object otherwise
@@ -34,120 +28,119 @@ merc/comm.c:292:void close_socket(DESCRIPTOR_DATA *dclose)
 
 merc/comm.c:696:	    close_socket(d);
     buffer overflow
-    - close_socket
+    - close_socket (true, true)
     
 merc/comm.c:1326:	    close_socket(d);  /* throw'em out */
     copyover - kick players logging in
-    - message (write_to_descriptor)
-    - close_socket
+    - write_to_descriptor
+    - close_socket (false, false)
 
 merc/comm.c:1407:	d->connected = CON_COPYOVER_RECOVER; /* -15, so close_socket frees the char */
 merc/comm.c:1416:	    close_socket(d);
     copyover recover - can't find related character
-    - message (write_to_descriptor)
-    - close_socket
+    - set connected to COPYOVER_RECOVER
+    - write_to_descriptor
+    - close_socket (false, false)
 
 merc/act_wiz.c:486:	close_socket(d);
     do_quit
-    - remove linkdead
-    - strip some affects
-    - save character
+    - close_socket (true, false)
+    - save_char_obj
     - when level == 1 & DENY
 	- delete save file
     - extract character (true)
-    - close_socket
 
 merc/act_wiz.c:500:		close_socket(d);
     do_quit - search & destroy duplicate characters
 	- extract character (true)
-	- close_socket
+	- close_socket (true, false)
 
 merc/act_wiz.c:934:	close_socket(d);
     do_disconnect
-	- close_socket
+	- close_socket (true, true)
 
 merc/act_wiz.c:1449:	close_socket(d);
     do_reboot
-	- close_socket
+	- close_socket (true, false)
 
 merc/act_wiz.c:1481:	close_socket(d);
     do_shutdown
 	- force save
-	- close_socket
+	- close_socket (true, false)
 
 merc/act_wiz.c:2035:	    close_socket(d);
     do_purge
-	- save if level > 1
+	- close_socket (true, false)
+	- save_char_obj
 	- extract character (true)
-	- close_socket
 
 merc/act_wiz.c:3425:	close_socket(d);
-    fry_char
+    fry_char //TODO - nix this
 	- save
 	- extract character (true)
 	- close_socket
 
 merc/nanny.c:34:	close_socket(d);
     ansi_answered
-	- close_socket if empty arg
+	- close_socket (true, false) if empty arg
 
 merc/nanny.c:59:	close_socket(d);
     name_answered
-	- close_socket if empty arg
+	- close_socket (true, false) if empty arg
 
 merc/nanny.c:67:	close_socket(d);
     name_answered
-	- close_socket if illegal name
+	- close_socket (true, false) if illegal name
 
 merc/nanny.c:79:	close_socket(d);
     name_answered
 	- when name DENY
 	    - write_to_buffer
-	    - close_socket
+	    - close_socket(true, false) 
 
 merc/nanny.c:85:	close_socket(d);
     name_answered
 	- when site DENY and !(player PERMIT)
 	    - write_to_buffer
-	    - close_socket
+	    - close_socket(true, false) 
 
 merc/nanny.c:94:	    close_socket(d);
     name_answered
 	- when wizlock and !IMM
 	    - write_to_buffer
-	    - close_socket
+	    - close_socket(true, false) 
 
 merc/nanny.c:107:	    close_socket(d);
     name_answered
 	- when newlock and player is new
 	    - write_to_buffer
-	    - close_socket
+	    - close_socket(true, false) 
 
 merc/nanny.c:113:	    close_socket(d);
     name_answered
 	- when host ban NEWBIES
 	    - write_to_buffer
-	    - close_socket
+	    - close_socket(true, false) 
 	
 merc/nanny.c:132:	close_socket(d);
     oldpassword_answered
 	- when wrong password
 	    - write_to_buffer
-	    - close_socket
+	    - close_socket(true, false) 
 
 merc/nanny.c:185:		    close_socket(d_old);
     breakconnect_answered
 	- when character is found
-	    - close_socket
+	    - close_socket(true, false) 
 
 merc/nanny.c:623:	    close_socket(d);
     nanny
 	- when invalid d->connected
-	    - close_socket
+	    - close_socket(false, false) 
 
 merc/nanny.c:769:		close_socket(d);
     check_names
 	- when newbie found with same name
-	    - close_socket
+	    - close_socket(true, false) 
 
 include/merc.h:2035:void close_socket(DESCRIPTOR_DATA * dclose);
