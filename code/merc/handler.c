@@ -40,10 +40,10 @@ void cancel_snoops(DESCRIPTOR_DATA *snooper)
     DESCRIPTOR_DATA *snoopee, *next;
 
     next = descriptor_iterator_start(&all_filter);
-    while ((snoopee = dpending) != NULL) {
-	next = descriptor_iterator(snoopeed, &all_filter);
-	if (snoopeed->snoop_by == snooper)
-	    snoopeed->snoop_by = NULL;
+    while ((snoopee = next) != NULL) {
+	next = descriptor_iterator(snoopee, &all_filter);
+	if (snoopee->snoop_by == snooper)
+	    snoopee->snoop_by = NULL;
     }
 }
 

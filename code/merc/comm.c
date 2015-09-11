@@ -69,6 +69,7 @@ extern int dup2(int oldfd, int newfd);
 extern int execl(const char *path, const char *arg, ...);
 
 /** socketio.c */
+extern void disconnect(int descriptor);
 extern bool read_from_descriptor(DESCRIPTOR_DATA *d);
 extern bool write_to_descriptor(int desc, char *txt, int length);
 extern void init_descriptor(int control);

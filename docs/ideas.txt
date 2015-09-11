@@ -73,6 +73,10 @@
 /** Thanks to Morgenes for the bug fix here! (evil/good item zap) */
 
 /*  Nickname by Spaceboy    */
+/*********************************************************
+ *  pLoad - original snippet by Gary McNickle (dharvest)
+ *          modified for BadTrip by Monrick, 1/2008
+ *********************************************************/
 
 
 

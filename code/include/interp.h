@@ -346,10 +346,6 @@ DECLARE_DO_FUN(do_imprint);
 DECLARE_DO_FUN(do_ovnum);
 DECLARE_DO_FUN(do_mvnum);
 DECLARE_DO_FUN(do_raceinfo);
-DECLARE_DO_FUN(do_ploa);
-DECLARE_DO_FUN(do_pload);
-DECLARE_DO_FUN(do_punloa);
-DECLARE_DO_FUN(do_punload);
 DECLARE_DO_FUN(do_wpeace);
 
 

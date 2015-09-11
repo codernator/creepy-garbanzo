@@ -1484,7 +1484,6 @@ void do_shutdown(CHAR_DATA *ch, const char *argument)
 
 void do_snoop(CHAR_DATA *ch, const char *argument)
 {
-    DESCRIPTOR_DATA *d, *dpending;
     CHAR_DATA *victim;
     char buf[MSL];
     char arg[MIL];
@@ -1527,6 +1526,7 @@ void do_snoop(CHAR_DATA *ch, const char *argument)
     }
 
     if (ch->desc != NULL) {
+	DESCRIPTOR_DATA *d;
 	for (d = ch->desc->snoop_by; d != NULL; d = d->snoop_by) {
 	    if (d->character == victim || d->original == victim) {
 		send_to_char("No snoop loops.\n\r", ch);
@@ -3472,114 +3472,6 @@ void do_wpeace(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-/*********************************************************
- *  pLoad - original snippet by Gary McNickle (dharvest)
- *          modified for BadTrip by Monrick, 1/2008
- *********************************************************/
-void do_ploa(CHAR_DATA *ch, const char *argument)
-{
-    send_to_char("If you want to load a pfile, type out the whole command.\n\r", ch);
-    return;
-}
-
-void do_pload(CHAR_DATA *ch, const char *argument)
-{
-    DESCRIPTOR_DATA d;      /* need a blank descriptor for the pfile data */
-    char vName[MIL];        /* victim Name */
-    char buf[MSL];
-
-    if (argument[0] == '\0') {
-	send_to_char("Whose pfile do you want to load?\n\r", ch);
-	return;
-    }
-
-    argument = one_argument(argument, vName);
-
-    /* don't make duplicates */
-    if (get_char_world(ch, vName) != NULL) {
-	printf_to_char(ch, "%s is already connected to BadTrip.\n\r",
-		capitalize(vName));
-	return;
-    }
-
-    if (load_char_obj(&d, vName)) {     /* found */
-	d.character->desc = NULL;       /* so we know it's not a real player */
-	d.character->next = char_list;
-	d.character->was_in_room = d.character->in_room;
-	char_list = d.character;
-	d.connected = CON_PLAYING;
-	SET_BIT(d.character->act, PLR_LINKDEAD);
-	reset_char(d.character);
-
-	if (d.character->in_room != NULL) {
-	    char_from_room(d.character);
-	    char_to_room(d.character, ch->in_room);
-	}
-
-	act("$n pulls $N from the nether regions of space and time.\n\r$N stares straight ahead, in a daze.", ch, NULL, d.character, TO_ROOM);
-	act("You pull $N from the nether regions of space and time.", ch, NULL, d.character, TO_CHAR);
-	sprintf(buf, "$N pLoad -> %s", capitalize(d.character->name));
-	wiznet(buf, ch, NULL, WIZ_LOAD, WIZ_SECURE, get_trust(ch));
-
-	if (d.character->pet != NULL) {
-	    char_from_room(d.character->pet);
-	    char_to_room(d.character->pet, d.character->in_room);
-	    act("$n's loyal pet, $N, appears.", d.character, NULL, d.character->pet, TO_ROOM);
-	}
-    } else { /* not found */
-	printf_to_char(ch, "Cannot find a pfile for %s.  Check spelling and try again.\n\r", capitalize(vName));
-    }
-    return;
-}
-
-/*********************************************************
- *  pUnload - original snippet by Gary McNickle (dharvest)
- *          modified for BadTrip by Monrick, 1/2008
- *********************************************************/
-void do_punloa(CHAR_DATA *ch, const char *argument)
-{
-    send_to_char("If you want to unload a pfile, type out the whole command.\n\r", ch);
-    return;
-}
-
-void do_punload(CHAR_DATA *ch, const char *argument)
-{
-    CHAR_DATA *victim;
-    char vName[MIL];
-    char buf[MSL];
-
-    argument = one_argument(argument, vName);
-
-    if ((victim = get_char_world(ch, vName)) == NULL) {
-	send_to_char("They aren't here.\n\r", ch);
-	return;
-    }
-
-    if (victim->desc != NULL) { /* they are legitimately logged on */
-	send_to_char("Can't pUnload them - there's a person attached!\n\r", ch);
-	return;
-    }
-
-    if (victim->was_in_room != NULL) {
-	char_from_room(victim);
-	char_to_room(victim, victim->was_in_room);
-	victim->was_in_room = NULL;
-	if (victim->pet != NULL) {
-	    char_from_room(victim->pet);
-	    char_to_room(victim->pet, victim->in_room);
-	}
-    }
-
-    REMOVE_BIT(victim->act, PLR_LINKDEAD);
-    save_char_obj(victim);
-    do_quit(victim, "");
-
-    act("$n has sent $N back into the nether regions of space and time.",
-	    ch, NULL, victim, TO_ROOM);
-    sprintf(buf, "$N pUnLoad -> %s", capitalize(victim->name));
-    wiznet(buf, ch, NULL, WIZ_LOAD, WIZ_SECURE, get_trust(ch));
-    return;
-}
 
 void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is mood, const char *message)
 {
