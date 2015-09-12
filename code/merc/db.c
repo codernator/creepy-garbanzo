@@ -131,12 +131,8 @@ static void maxfilelimit()
 
 
 
-/***************************************************************************
- *	init_time
- *
- *	initialize the global time structures
- ***************************************************************************/
-static void init_time()
+/** initialize the global time structures */
+static void init_game_time()
 {
     long lhour;
     long lday;
@@ -284,7 +280,7 @@ void boot_db()
     /* init random number generator */
     log_string("Initializing environment..");
     init_mm();
-    init_time();
+    init_game_time();
 
 
     /* load skills */

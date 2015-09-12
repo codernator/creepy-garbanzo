@@ -151,11 +151,12 @@ typedef void DO_FUN(/*@partial@*/CHAR_DATA * ch, const char *argument);
 #define AVATAR                  (MAX_LEVEL - 8)
 #define HERO                    LEVEL_HERO
 
+#define FRIENDLYTIME_BUFSIZE 30
 struct system_state {
     time_t current_time;            /* Time of this pulse. */
     bool tickset;                   /* Force a tick? whaat? --Eo */
     bool merc_down;                 /* Shutdown */
-    char boot_time[MIL];
+    char boot_time[FRIENDLYTIME_BUFSIZE];
 
     bool wizlock;                   /* Game is wizlocked. */
     bool newlock;                   /* Game is newlocked. */

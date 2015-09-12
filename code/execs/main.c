@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <string.h> //strncpy
+#include <sys/time.h>
 #include "socketio.h"
 
 
@@ -32,6 +34,7 @@ extern void sig_handler(int sig);
 
 /** locals */
 static void init_signals();
+static void init_time(SYSTEM_STATE *);
 
 
 int main(int argc, char **argv)
@@ -66,7 +69,7 @@ int main(int argc, char **argv)
 
     /** Run the game. */
     if (!recovering) {
-	control = listen_port(port);
+	control = listen_on_port(port);
     }
 
     log_string("BT is ready to rock on port %d.", port);
@@ -93,4 +96,16 @@ void init_signals()
     (void)signal(SIGABRT, sig_handler);
     (void)signal(SIGSEGV, sig_handler);
 }
+
+
+void init_time(SYSTEM_STATE *system_state) 
+{
+    time_t now_time;
+
+    (void)time(&now_time);
+    system_state->current_time = now_time;
+    memset(system_state->boot_time, 0, FRIENDLYTIME_BUFSIZE);
+    strncpy(system_state->boot_time, ctime(&now_time), FRIENDLYTIME_BUFSIZE-1);
+}
+
 

@@ -12,7 +12,6 @@ void poll_connections(int control,
                       handle_new_connection *new_connection_handler,
                       handle_drop_connection *drop_connection_handler);
 void disconnect(int descriptor);
-void init_time(SYSTEM_STATE *system_state);
 int read_from_descriptor(int descriptor, char *inbuf);
 bool write_to_descriptor(int descriptor, char *txt, int length);
 int listen_on_port(int port);

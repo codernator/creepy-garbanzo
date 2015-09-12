@@ -81,14 +81,6 @@ void disconnect(int descriptor)
     close(descriptor);
 }
 
-void init_time(SYSTEM_STATE *system_state) 
-{
-    struct timeval now_time;
-    gettimeofday(&now_time, NULL);
-    system_state->current_time = (time_t)now_time.tv_sec;
-    strcpy(system_state->boot_time, (char *)ctime(&system_state->current_time));
-}
-
 void deafen_port(int listen_control)
 {
     close(listen_control);
