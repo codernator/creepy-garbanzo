@@ -17,7 +17,9 @@
 #include "recycle.h"
 #include "socketio.h"
 #include <time.h>
+#if !defined(S_SPLINT_S)
 #include <ctype.h> /** isascii, isprint */
+#endif
 #include <stdarg.h>
 #include <string.h>
 #include <stdlib.h>
@@ -56,9 +58,12 @@ void auto_shutdown();
 void game_loop(int port, int control);
 
 
+/** imports */
 /** OS-dependent declarations. */
+#ifdef S_SPLINT_S
+typedef unsigned int fd_set;
+#endif
 extern int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
-
 
 
 /** Game declarations. */
@@ -478,14 +483,14 @@ void bust_a_prompt(CHAR_DATA *ch)
     if (ch->incog_level) {
 	char buf3[MSL];
 
-	sprintf(buf3, "`#(`6Incog: `^%d`#)`` ", ch->incog_level);
+	(void)snprintf(buf3, MSL - 1, "`#(`6Incog: `^%d`#)`` ", ch->incog_level);
 	send_to_char(buf3, ch);
     }
 
     if (ch->invis_level) {
 	char buf4[MSL];
 
-	sprintf(buf4, "`O(`@W`Pi`@Z`Pi`@: %d`O)``", ch->invis_level);
+	(void)snprintf(buf4, MSL - 1, "`O(`@W`Pi`@Z`Pi`@: %d`O)``", ch->invis_level);
 	send_to_char(buf4, ch);
     }
 
@@ -518,7 +523,7 @@ void write_to_buffer(DESCRIPTOR_DATA *d, const char *txt, int length)
     }
 
     /** Expand the buffer as needed. */
-    while (d->outtop + (int)strlen(txt) >= d->outsize) {
+    while (d->outtop + (int)strlen(txt) >= (int)d->outsize) {
 	char *outbuf;
 	size_t bufsize;
 
@@ -717,7 +722,7 @@ void process_color(CHAR_DATA *ch, char a)
 	    return;
     }
     if (real)
-	write_to_buffer(ch->desc, color_table[c], (int)strlen(color_table[c]));
+	write_to_buffer(ch->desc, color_table[(int)c], (int)strlen(color_table[c]));
 }
 
 /*
@@ -795,7 +800,7 @@ void show_string(struct descriptor_data *d, char *input)
     int lines = 0, toggle = 1;
     int show_lines;
 
-    one_argument(input, buf);
+    (void)one_argument(input, buf);
     if (buf[0] != '\0') {
 	if (d->showstr_head) {
 	    free_string(d->showstr_head);

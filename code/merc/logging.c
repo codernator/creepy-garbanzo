@@ -78,7 +78,7 @@ void log_to(int log, char username[], const char *fmt, ...)
             write_file(LOG_ALWAYS_FILE, "a+", "[%s] %s\n", ctime(&globalSystemState.current_time), buf);
             break;
         case LOG_SINK_PLAYER:
-            if (username[0] == '\0') {
+            if (username == NULL || username[0] == '\0') {
                 log_bug("ERROR- log_to: Log Type 'Player' requires a username!");
             } else {
                 static char log_file_name[2*MIL];
