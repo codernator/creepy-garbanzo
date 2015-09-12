@@ -8,6 +8,7 @@
 #include <netdb.h>
 #include <signal.h>
 #include "telnet.h"
+#include "socketio.h"
 
 
 /** imports */
@@ -15,22 +16,65 @@ extern int gettimeofday(struct timeval *tp, struct timezone *tzp);
 extern int close(int fd);
 
 
-
 /** exports */
-typedef void handle_new_connection(int control);
-
-
-void disconnect(int descriptor);
-void init_time(SYSTEM_STATE *system_state);
-bool read_from_descriptor(DESCRIPTOR_DATA *d);
-bool write_to_descriptor(int desc, char *txt, int length);
-int listen_port(int port);
-void deafen_port(int listen_control);
-void init_descriptor(int control);
 
 
 /** locals */
+static void init_descriptor(int control, handle_new_connection *);
 
+
+void poll_connections(int control,
+                      handle_new_connection *new_connection_handler,
+                      handle_drop_connection *drop_connection_handler)
+{
+    static struct timeval null_time;
+    fd_set in_set;
+    fd_set out_set;
+    fd_set exc_set;
+    DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
+    int maxdesc;
+
+    FD_ZERO(&in_set);
+    FD_ZERO(&out_set);
+    FD_ZERO(&exc_set);
+    FD_SET(control, &in_set);
+    maxdesc = control;
+
+    dpending = descriptor_iterator_start(&descriptor_empty_filter);
+    while ((d = dpending) != NULL) {
+	dpending = descriptor_iterator(d, &descriptor_empty_filter);
+
+	maxdesc = UMAX(maxdesc, (int)d->descriptor);
+	FD_SET(d->descriptor, &in_set);
+	FD_SET(d->descriptor, &out_set);
+	FD_SET(d->descriptor, &exc_set);
+    }
+
+    if (select(maxdesc + 1, &in_set, &out_set, &exc_set, &null_time) < 0) {
+	perror("Game_loop: select: poll");
+	raise(SIGABRT);
+    }
+
+    /** New connection? */
+    if (FD_ISSET(control, &in_set)) {
+	init_descriptor(control, new_connection_handler);
+    }
+
+    /** Kick out the freaky folks.  */
+    dpending = descriptor_iterator_start(&descriptor_empty_filter);
+    while ((d = dpending) != NULL) {
+	dpending = descriptor_iterator(d, &descriptor_empty_filter);
+
+	if (FD_ISSET(d->descriptor, &exc_set)) {
+	    FD_CLR(d->descriptor, &in_set);
+	    FD_CLR(d->descriptor, &out_set);
+	    handle_drop_connection(d);
+	} else if (FD_ISSET(d->descriptor, &in_set)) {
+	    d->pending_input = true;
+	}
+    }
+}
 
 void disconnect(int descriptor)
 {
@@ -50,18 +94,16 @@ void deafen_port(int listen_control)
     close(listen_control);
 }
 
-void init_descriptor(int control)
+void init_descriptor(int control, handle_new_connection *new_connection_handler)
 {
-    DESCRIPTOR_DATA *dnew;
     struct sockaddr_in sock;
     struct hostent *from;
-    char buf[MSL];
-    int desc;
+    int descriptor;
     socklen_t size;
 
     size = sizeof(sock);
     getsockname(control, (struct sockaddr *)&sock, &size);
-    if ((desc = accept(control, (struct sockaddr *)&sock, &size)) < 0) {
+    if ((descriptor = accept(control, (struct sockaddr *)&sock, &size)) < 0) {
 	perror("New_descriptor: accept");
 	return;
     }
@@ -70,17 +112,16 @@ void init_descriptor(int control)
 #define FNDELAY O_NDELAY
 #endif
 
-    if (fcntl(desc, F_SETFL, FNDELAY) == -1) {
+    if (fcntl(descriptor, F_SETFL, FNDELAY) == -1) {
 	perror("descriptor_new: fcntl: FNDELAY");
 	return;
     }
 
-    dnew = descriptor_new(desc);
 
     size = sizeof(sock);
-    if (getpeername(desc, (struct sockaddr *)&sock, &size) < 0) {
+    if (getpeername(descriptor, (struct sockaddr *)&sock, &size) < 0) {
 	perror("descriptor_new: getpeername");
-	dnew->host = str_dup("(unknown)");
+	new_connection_handler(descriptor, 0, "unknown"); 
     } else {
 	/*
 	 * Would be nice to use inet_ntoa here but it takes a struct arg,
@@ -89,33 +130,13 @@ void init_descriptor(int control)
 	int addr;
 
 	addr = ntohl(sock.sin_addr.s_addr);
-	log_string("Sock.sinaddr: %d.%d.%d.%d", (addr >> 24) & 0xFF, (addr >> 16) & 0xFF, (addr >> 8) & 0xFF, (addr) & 0xFF);
 	from = gethostbyaddr((char *)&sock.sin_addr, sizeof(sock.sin_addr), AF_INET);
-	dnew->host = str_dup(from ? from->h_name : buf);
+	new_connection_handler(descriptor, addr, from->h_name); 
     }
 
-    /*
-     * Swiftest: I added the following to ban sites.  I don't
-     * endorse banning of sites, but Copper has few descriptors now
-     * and some people from certain sites keep abusing access by
-     * using automated 'autodialers' and leaving connections hanging.
-     *
-     * Furey: added suffix check by request of Nickel of HiddenWorlds.
-     */
-    if (check_ban(dnew->host, BAN_ALL)) {
-	write_to_descriptor(desc, "Your site has been banned from this mud.\n\r", 0);
-	disconnect(desc);
-	descriptor_free(dnew);
-	return;
-    }
-
-    /*
-     * Init descriptor data.
-     */
-    write_to_descriptor(dnew->descriptor, "Ansi intro screen?(y/n) \n\r", 0);
 }
 
-int listen_port(int port)
+int listen_on_port(int port)
 {
     static struct sockaddr_in sa_zero;
     struct sockaddr_in sa;
@@ -168,48 +189,38 @@ int listen_port(int port)
     return fd;
 }
 
-bool read_from_descriptor(DESCRIPTOR_DATA *d)
+int read_from_descriptor(int descriptor, char *inbuf)
 {
     int iStart;
 
-    /* Hold horses if pending command already. */
-    if (d->incomm[0] != '\0')
-	return true;
-
     /* Check for overflow. */
-    iStart = (int)strlen(d->inbuf);
+    iStart = (int)strlen(inbuf);
 
-    if (iStart >= (int)(sizeof(d->inbuf) - 10)) {
-	log_string("%s input overflow!", d->host);
-	write_to_descriptor(d->descriptor, "\n\r*** PUT A LID ON IT!!! ***\n\r", 0);
-	return false;
+    if (iStart >= (int)(sizeof(inbuf) - 10)) {
+	return DESC_READ_RESULT_OVERFLOW;
     }
 
-
-    for (;; ) {
+    for (;;) {
 	int nRead;
 
-	nRead = read(d->descriptor, d->inbuf + iStart, sizeof(d->inbuf) - 10 - iStart);
+	nRead = read(descriptor, inbuf + iStart, sizeof(inbuf) - 10 - iStart);
 
 	if (nRead > 0) {
 	    iStart += nRead;
-	    if (d->inbuf[iStart - 1] == '\n' || d->inbuf[iStart - 1] == '\r')
+	    if (inbuf[iStart - 1] == '\n' || inbuf[iStart - 1] == '\r')
 		break;
 	} else if (nRead == 0) {
-	    log_string("EOF encountered on read.");
-	    return false;
-	}
-	else if (errno == EWOULDBLOCK) {
+	    return DESC_READ_RESULT_EOF;
+	} else if (errno == EWOULDBLOCK) {
 	    break;
-	}
-	else {
-	    perror("Read_from_descriptor");
-	    return false;
+	} else {
+	    perror("read_from_descriptor");
+	    return DESC_READ_RESULT_IOERROR;
 	}
     }
 
-    d->inbuf[iStart] = '\0';
-    return true;
+    inbuf[iStart] = '\0';
+    return DESC_READ_RESULT_OK;
 }
 
 /**
@@ -218,7 +229,7 @@ bool read_from_descriptor(DESCRIPTOR_DATA *d)
  * If this gives errors on very long blocks(like 'ofind all'),
  *   try lowering the max block size.
  */
-bool write_to_descriptor(int desc, char *txt, int length)
+bool write_to_descriptor(int descriptor, char *txt, int length)
 {
     int iStart;
     int nWrite;
@@ -230,7 +241,7 @@ bool write_to_descriptor(int desc, char *txt, int length)
 
     for (iStart = 0; iStart < length; iStart += nWrite) {
 	nBlock = UMIN(length - iStart, 8192);
-	if ((nWrite = (int)write(desc, txt + iStart, (size_t)nBlock)) < 0) {
+	if ((nWrite = (int)write(descriptor, txt + iStart, (size_t)nBlock)) < 0) {
 	    perror("Write_to_descriptor");
 	    return false;
 	}

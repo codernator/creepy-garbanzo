@@ -257,6 +257,7 @@ struct descriptor_data {
     /*@dependent@*//*@null@*/CHAR_DATA *character;
     /*@dependent@*//*@null@*/CHAR_DATA *original;
     bool pending_delete;
+    bool pending_input;
     /*@shared@*//*@null@*/char *host;
     SOCKET descriptor;
     int connected;
@@ -2028,7 +2029,7 @@ void substitute_alias(DESCRIPTOR_DATA * d, const char *input);
 
 
 /* ban.c */
-bool check_ban(char *site, int type);
+bool check_ban(const char *site, int type);
 
 /* comm.c */
 void show_string(struct descriptor_data *d, char *input);

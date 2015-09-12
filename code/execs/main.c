@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+#include "socketio.h"
 
 
 /** exports */
@@ -27,11 +28,6 @@ extern void copyover_recover(void);
 extern void sig_handler(int sig);
 /** ~comm.c */
 
-/** socketio.c */
-extern void init_time(SYSTEM_STATE *system_state);
-extern int listen_port(int port);
-extern void deafen_port(int listen_control);
-/** ~socketio.c */
 
 
 /** locals */

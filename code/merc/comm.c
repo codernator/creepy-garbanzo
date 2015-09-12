@@ -24,6 +24,7 @@
 #include "merc.h"
 #include "recycle.h"
 #include "interp.h"
+#include "socketio.h"
 
 /**
  * Socket and TCP/IP stuff.
@@ -68,12 +69,6 @@ extern int pipe(int filedes[2]);
 extern int dup2(int oldfd, int newfd);
 extern int execl(const char *path, const char *arg, ...);
 
-/** socketio.c */
-extern void disconnect(int descriptor);
-extern bool read_from_descriptor(DESCRIPTOR_DATA *d);
-extern bool write_to_descriptor(int desc, char *txt, int length);
-extern void init_descriptor(int control);
-/** ~socketio.c */
 
 
 /** Game declarations. */
@@ -99,13 +94,47 @@ static void auto_shutdown(void);
 volatile sig_atomic_t fatal_error_in_progress = 0;
 
 
+static void on_new_connection(int descriptor, int ipaddress, const char *hostname)
+{
+    DESCRIPTOR_DATA *dnew;
+
+    /*
+     * Swiftest: I added the following to ban sites.  I don't
+     * endorse banning of sites, but Copper has few descriptors now
+     * and some people from certain sites keep abusing access by
+     * using automated 'autodialers' and leaving connections hanging.
+     *
+     * Furey: added suffix check by request of Nickel of HiddenWorlds.
+     */
+    if (check_ban(hostname, BAN_ALL)) {
+	write_to_descriptor(descriptor, "Your site has been banned from this mud.\n\r", 0);
+	disconnect(descriptor);
+	return;
+    }
+
+    dnew = descriptor_new(descriptor);
+    dnew->host = str_dup(hostname);
+    log_string("Sock.sinaddr: %d.%d.%d.%d", 
+		(ipaddress >> 24) & 0xFF, 
+		(ipaddress >> 16) & 0xFF, 
+		(ipaddress >> 8) & 0xFF, 
+		(ipaddress) & 0xFF);
+
+    /** Init descriptor data. */
+    write_to_descriptor(dnew->descriptor, "Ansi intro screen?(y/n) \n\r", 0);
+}
+
+static void on_drop_connection(DESCRIPTOR_DATA *d)
+{
+    close_socket(d, false, true);
+}
+
 
 /** TODO - these are only outside of main scope because the copyover routine needs them. */
 static int listen_port;
 static int listen_control;
 void game_loop(int port, int control)
 {
-    static struct timeval null_time;
     struct timeval last_time;
     static const struct descriptor_iterator_filter allfilter = { .all = true };
 
@@ -117,18 +146,8 @@ void game_loop(int port, int control)
 
     /** Main loop */
     while (!globalSystemState.merc_down) {
-	fd_set in_set;
-	fd_set out_set;
-	fd_set exc_set;
 	DESCRIPTOR_DATA *d;
 	DESCRIPTOR_DATA *dpending;
-	int maxdesc;
-
-	FD_ZERO(&in_set);
-	FD_ZERO(&out_set);
-	FD_ZERO(&exc_set);
-	FD_SET(control, &in_set);
-	maxdesc = control;
 
 	dpending = descriptor_iterator_start(&allfilter);
 	while ((d = dpending) != NULL) {
@@ -137,57 +156,54 @@ void game_loop(int port, int control)
 	    if (d->pending_delete) {
 		descriptor_free(d);
 	    } else {
-		maxdesc = UMAX(maxdesc, (int)d->descriptor);
-		FD_SET(d->descriptor, &in_set);
-		FD_SET(d->descriptor, &out_set);
-		FD_SET(d->descriptor, &exc_set);
+		d->pending_input = false;
 	    }
 	}
 
-	if (select(maxdesc + 1, &in_set, &out_set, &exc_set, &null_time) < 0) {
-	    perror("Game_loop: select: poll");
-	    raise(SIGABRT);
-	}
-
-	/** New connection? */
-	if (FD_ISSET(control, &in_set)) {
-	    init_descriptor(control);
-	}
-
-	/** Kick out the freaky folks. Kyndig: Get rid of idlers as well. */
-	dpending = descriptor_iterator_start(&descriptor_empty_filter);
-	while ((d = dpending) != NULL) {
-	    dpending = descriptor_iterator(d, &descriptor_empty_filter);
-
-	    d->idle++;
-	    if (FD_ISSET(d->descriptor, &exc_set)) {
-		FD_CLR(d->descriptor, &in_set);
-		FD_CLR(d->descriptor, &out_set);
-		close_socket(d, false, true);
-	    } else if ((!d->character && d->idle > 50 /* 10 seconds */) || d->idle > 28800 /* 2 hrs  */) { 
-		write_to_descriptor(d->descriptor, "Idle.\n\r", 0);
-		close_socket(d, false, true);
-		continue;
-	    }
-	}
+	poll_connections(listen_control, on_new_connection, on_drop_connection);
 
 	/** Process input. */
 	dpending = descriptor_iterator_start(&descriptor_empty_filter);
 	while ((d = dpending) != NULL) {
 	    dpending = descriptor_iterator(d, &descriptor_empty_filter);
 	    d->fcommand = false;
+	    d->idle++;
 
-	    if (FD_ISSET(d->descriptor, &in_set)) {
+	    if (d->pending_input) {
+		d->pending_input = false;
+
+		/* Hold horses if pending command already. */
+		if (d->incomm[0] != '\0') {
+		    int outcome = read_from_descriptor(d->descriptor, d->inbuf);
+		    if (outcome != DESC_READ_RESULT_OK) {
+			switch (outcome) {
+			case DESC_READ_RESULT_OVERFLOW:
+			    log_string("%s input overflow!", d->host);
+			    break;
+			case DESC_READ_RESULT_EOF:
+			    log_string("%s EOF encountered on read.", d->host);
+			    break;
+			case DESC_READ_RESULT_IOERROR:
+			    log_string("%s read error.", d->host);
+			    break;
+			}
+
+			close_socket(d, false, true);
+			continue;
+		    }
+		}
+
 		if (d->character != NULL) {
 		    d->character->timer = 0;
 		    d->idle = 0; /* Kyndig: reset their idle timer */
 		}
+	    }
 
-		if (!read_from_descriptor(d)) {
-		    FD_CLR(d->descriptor, &out_set);
-		    close_socket(d, false, true);
-		    continue;
-		}
+	    /** Kyndig: Get rid of idlers as well. */
+	    if ((!d->character && d->idle > 50 /* 10 seconds */) || d->idle > 28800 /* 2 hrs  */) { 
+		write_to_descriptor(d->descriptor, "Idle.\n\r", 0);
+		close_socket(d, false, true);
+		continue;
 	    }
 
 	    if (d->character != NULL && d->character->wait > 0) {
@@ -231,7 +247,7 @@ void game_loop(int port, int control)
 	while ((d = dpending) != NULL) {
 	    dpending = descriptor_iterator(d, &descriptor_empty_filter);
 
-	    if ((d->fcommand || d->outtop > 0) && FD_ISSET(d->descriptor, &out_set)) {
+	    if ((d->fcommand || d->outtop > 0)) {
 		if (!process_output(d, true)) {
 		    close_socket(d, false, true);
 		}

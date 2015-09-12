@@ -7,7 +7,7 @@
 
 /** exports */
 void load_bans(void);
-bool check_ban(char *site, int type);
+bool check_ban(const char *site, int type);
 
 
 /** locals */
@@ -122,7 +122,7 @@ void load_bans(void)
     }
 }
 
-bool check_ban(char *site, int type)
+bool check_ban(const char *site, int type)
 {
     BAN_DATA *pban;
     char host[MAX_STRING_LENGTH];
