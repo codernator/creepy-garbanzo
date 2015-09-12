@@ -8,9 +8,7 @@
 typedef void handle_new_connection(int control, int ipaddress, const char *hostname);
 typedef void handle_drop_connection(DESCRIPTOR_DATA *d);
 
-void poll_connections(int control,
-                      handle_new_connection *new_connection_handler,
-                      handle_drop_connection *drop_connection_handler);
+void init_descriptor(int control, handle_new_connection *);
 void disconnect(int descriptor);
 int read_from_descriptor(int descriptor, char *inbuf);
 bool write_to_descriptor(int descriptor, char *txt, int length);

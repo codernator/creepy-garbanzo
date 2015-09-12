@@ -81,13 +81,14 @@ static void check_afk(CHAR_DATA * ch);
 static void bust_a_prompt(CHAR_DATA * ch);
 
 static void on_new_connection(int descriptor, int ipaddress, const char *hostname);
-static void on_drop_connection(DESCRIPTOR_DATA *d);
-static void reset_descriptors();
-static void process_input();
-static void process_all_output();
+static int reset_descriptors(fd_set *in_set, fd_set *out_set, fd_set *exc_set);
+static void poll_connections(fd_set *in_set, fd_set *out_set, fd_set *exc_set);
+static void process_all_output(fd_set *out_set);
 
 static const double loop_time_slice = ((double)CLOCKS_PER_SEC/PULSE_PER_SECOND);
 static const struct descriptor_iterator_filter allfilter = { .all = true };
+static void synchronize(clock_t last_clock);
+
 void game_loop(int port, int control)
 {
 
@@ -96,36 +97,54 @@ void game_loop(int port, int control)
 
     /** Main loop */
     while (!globalSystemState.merc_down) {
+	static struct timeval null_time;
 	clock_t last_clock;
+	fd_set in_set;
+	fd_set out_set;
+	fd_set exc_set;
+	int maxdesc;
 
 	last_clock = clock();
 	(void)time(&globalSystemState.current_time);
 
-	reset_descriptors();
-	poll_connections(listen_control, on_new_connection, on_drop_connection);
-	process_input();
+	FD_ZERO(&in_set);
+	FD_ZERO(&out_set);
+	FD_ZERO(&exc_set);
+	FD_SET(control, &in_set);
+
+	maxdesc = UMAX(control, reset_descriptors(&in_set, &out_set, &exc_set));
+
+	if (select(maxdesc + 1, &in_set, &out_set, &exc_set, &null_time) < 0) {
+	    perror("Game_loop: select: poll");
+	    raise(SIGABRT);
+	}
+
+	/** New connection? */
+	if (FD_ISSET(control, &in_set)) {
+	    init_descriptor(control, on_new_connection);
+	}
+
+	poll_connections(&in_set, &out_set, &exc_set);
 	update_handler();
-	process_all_output();
+	process_all_output(&out_set);
+	synchronize(last_clock);
+    }
+}
 
+void synchronize(clock_t last_clock)
+{
+    clock_t current_clock;
+    struct timeval stall_time;
+    long usecDelta;
 
-	/** Synchronize to a clock. */
-	{
-	    clock_t current_clock;
-	    long usecDelta;
+    current_clock = clock();
+    usecDelta = (long)(1000000 * (loop_time_slice - (double)(current_clock - last_clock)) / CLOCKS_PER_SEC);
 
-	    current_clock = clock();
-	    usecDelta = (long)(1000000 * (loop_time_slice - (double)(current_clock - last_clock)) / CLOCKS_PER_SEC);
-
-
-	    if (usecDelta > 0) {
-		struct timeval stall_time;
-
-		stall_time.tv_usec = usecDelta;
-		if (select(0, NULL, NULL, NULL, &stall_time) < 0) {
-		    perror("Game_loop: select: stall");
-		    raise(SIGABRT);
-		}
-	    }
+    if (usecDelta > 0) {
+	stall_time.tv_usec = usecDelta;
+	if (select(0, NULL, NULL, NULL, &stall_time) < 0) {
+	    perror("Game_loop: select: stall");
+	    raise(SIGABRT);
 	}
     }
 }
@@ -942,10 +961,12 @@ void check_afk(CHAR_DATA *ch)
 }
 
 
-void reset_descriptors()
+int reset_descriptors(fd_set *in_set, fd_set *out_set, fd_set *exc_set)
 {
     DESCRIPTOR_DATA *d;
     DESCRIPTOR_DATA *dpending;
+    int maxdesc = 0;
+
     dpending = descriptor_iterator_start(&allfilter);
     while ((d = dpending) != NULL) {
 	dpending = descriptor_iterator(d, &allfilter);
@@ -953,12 +974,21 @@ void reset_descriptors()
 	if (d->pending_delete) {
 	    descriptor_free(d);
 	} else {
-	    d->pending_input = false;
+	    int descriptor = d->descriptor;
+	    d->fcommand = false;
+	    d->idle++;
+
+	    maxdesc = UMAX(maxdesc, descriptor);
+	    FD_SET(descriptor, in_set);
+	    FD_SET(descriptor, out_set);
+	    FD_SET(descriptor, exc_set);
 	}
     }
+
+    return maxdesc;
 }
 
-void process_input()
+void poll_connections(fd_set *in_set, fd_set *out_set, fd_set *exc_set)
 {
     DESCRIPTOR_DATA *d;
     DESCRIPTOR_DATA *dpending;
@@ -967,12 +997,20 @@ void process_input()
     while ((d = dpending) != NULL) {
 	dpending = descriptor_iterator(d, &descriptor_empty_filter);
 
-	d->fcommand = false;
-	d->idle++;
-
-	if (d->pending_input) {
-	    d->pending_input = false;
-
+	/** 
+	 * The exc_set condition specifies some sort of exceptional condition (not erroneous),
+	 * such as an urgent message. This code is not prepared to handle such situations, so
+	 * a disconnect is really the only course of action. (aka Kick out the freaky folks.)
+	 */
+	if (FD_ISSET(d->descriptor, exc_set)) {
+	    FD_CLR(d->descriptor, in_set);
+	    FD_CLR(d->descriptor, out_set);
+	    log_string("Freaky host %s!", d->host);
+	    close_socket(d, false, true);
+	    continue;
+	} 
+	
+	if (FD_ISSET(d->descriptor, in_set)) {
 	    /* Hold horses if pending command already. */
 	    if (d->incomm[0] != '\0') {
 		int outcome = read_from_descriptor(d->descriptor, d->inbuf);
@@ -994,11 +1032,12 @@ void process_input()
 		}
 	    }
 
+	    d->idle = 0; /* Kyndig: reset their idle timer */
 	    if (d->character != NULL) {
 		d->character->timer = 0;
-		d->idle = 0; /* Kyndig: reset their idle timer */
 	    }
 	}
+
 
 	/** Kyndig: Get rid of idlers as well. */
 	if ((!d->character && d->idle > 50 /* 10 seconds */) || d->idle > 28800 /* 2 hrs  */) { 
@@ -1041,7 +1080,7 @@ void process_input()
     }
 }
 
-void process_all_output() 
+void process_all_output(fd_set *out_set) 
 {
     DESCRIPTOR_DATA *d;
     DESCRIPTOR_DATA *dpending;
@@ -1050,7 +1089,7 @@ void process_all_output()
     while ((d = dpending) != NULL) {
 	dpending = descriptor_iterator(d, &descriptor_empty_filter);
 
-	if ((d->fcommand || d->outtop > 0)) {
+	if (FD_ISSET(d->descriptor, out_set) && (d->fcommand || d->outtop > 0)) {
 	    if (!process_output(d, true)) {
 		close_socket(d, false, true);
 	    }
@@ -1088,7 +1127,3 @@ void on_new_connection(int descriptor, int ipaddress, const char *hostname)
     write_to_descriptor(dnew->descriptor, "Ansi intro screen?(y/n) \n\r", 0);
 }
 
-void on_drop_connection(DESCRIPTOR_DATA *d)
-{
-    close_socket(d, false, true);
-}

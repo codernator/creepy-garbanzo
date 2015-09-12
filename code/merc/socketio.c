@@ -20,61 +20,7 @@ extern int close(int fd);
 
 
 /** locals */
-static void init_descriptor(int control, handle_new_connection *);
 
-
-void poll_connections(int control,
-                      handle_new_connection *new_connection_handler,
-                      handle_drop_connection *drop_connection_handler)
-{
-    static struct timeval null_time;
-    fd_set in_set;
-    fd_set out_set;
-    fd_set exc_set;
-    DESCRIPTOR_DATA *d;
-    DESCRIPTOR_DATA *dpending;
-    int maxdesc;
-
-    FD_ZERO(&in_set);
-    FD_ZERO(&out_set);
-    FD_ZERO(&exc_set);
-    FD_SET(control, &in_set);
-    maxdesc = control;
-
-    dpending = descriptor_iterator_start(&descriptor_empty_filter);
-    while ((d = dpending) != NULL) {
-	dpending = descriptor_iterator(d, &descriptor_empty_filter);
-
-	maxdesc = UMAX(maxdesc, (int)d->descriptor);
-	FD_SET(d->descriptor, &in_set);
-	FD_SET(d->descriptor, &out_set);
-	FD_SET(d->descriptor, &exc_set);
-    }
-
-    if (select(maxdesc + 1, &in_set, &out_set, &exc_set, &null_time) < 0) {
-	perror("Game_loop: select: poll");
-	raise(SIGABRT);
-    }
-
-    /** New connection? */
-    if (FD_ISSET(control, &in_set)) {
-	init_descriptor(control, new_connection_handler);
-    }
-
-    /** Kick out the freaky folks.  */
-    dpending = descriptor_iterator_start(&descriptor_empty_filter);
-    while ((d = dpending) != NULL) {
-	dpending = descriptor_iterator(d, &descriptor_empty_filter);
-
-	if (FD_ISSET(d->descriptor, &exc_set)) {
-	    FD_CLR(d->descriptor, &in_set);
-	    FD_CLR(d->descriptor, &out_set);
-	    handle_drop_connection(d);
-	} else if (FD_ISSET(d->descriptor, &in_set)) {
-	    d->pending_input = true;
-	}
-    }
-}
 
 void disconnect(int descriptor)
 {
