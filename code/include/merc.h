@@ -2273,7 +2273,7 @@ int liq_lookup(const char *name);
 #define LOG_SINK_LASTCMD 4
 
 void append_file(CHAR_DATA *ch, const char *file, const char *str);
-void log_to(int log, char username[], const char *fmt, ...);
+void log_to(int log, /*@null@*/char username[], const char *fmt, ...);
 void log_bug(const char *fmt, ...);
 void log_string(const char *fmt, ...);
 /* ~logging.c */

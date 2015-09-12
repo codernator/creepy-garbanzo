@@ -12,9 +12,9 @@ _INCLUDES=merc.h sysinternals.h
 DEPS=$(patsubst %,$(IDIR)/%,$(_INCLUDES)) $(SYSINTERNALS)
 MERC=$(BDIR)/merc.a
 _OBJ=act_comm.o act_combat.o act_enter.o act_info.o act_move.o act_obj.o act_wiz.o \
-     affects.o alias.o at.o auction.o \
+     act.o affects.o alias.o at.o auction.o \
      ban.o bank.o bit.o \
-     channels.o character.o character_service.o combat_roll.o comm.o const.o \
+     channels.o character.o character_service.o combat_roll.o comm.o const.o copyover.o \
      db.o descriptor.o \
      effects.o enchant.o \
      fight.o find.o flags.o follower_service.o for.o \

@@ -12,30 +12,27 @@
  * The OS-dependent functions are Read_from_descriptor and Write_to_descriptor.
  * -- Furey  26 Jan 1993
  */
-#include <sys/time.h>
-#include <sys/select.h>
-#include <ctype.h>
-#include <errno.h>
-#include <unistd.h>
+
+#include "merc.h"
+#include "recycle.h"
+#include "socketio.h"
+#include <time.h>
+#include <ctype.h> /** isascii, isprint */
 #include <stdarg.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "merc.h"
-#include "recycle.h"
-#include "interp.h"
-#include "socketio.h"
 
-/**
- * Socket and TCP/IP stuff.
- */
-#include <signal.h>
 #if !defined(STDOUT_FILENO)
 #define STDOUT_FILENO 1
 #endif
 
 
 /** exports */
+/** TODO - these are only outside of main scope because the copyover routine needs them. */
+int listen_port;
+int listen_control;
+
 static WEATHER_DATA weather = { 
     .mmhg = 0,
     .change = 0,
@@ -55,19 +52,12 @@ GAME_STATE globalGameState = {
     .gametime = &gametime
 };
 
+void auto_shutdown();
+void game_loop(int port, int control);
+
 
 /** OS-dependent declarations. */
-extern int gettimeofday(struct timeval *tp, struct timezone *tzp);
-
 extern int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
-extern int socket(int domain, int type, int protocol);
-
-extern pid_t waitpid(pid_t pid, int *status, int options);
-extern pid_t fork(void);
-extern int kill(pid_t pid, int sig);
-extern int pipe(int filedes[2]);
-extern int dup2(int oldfd, int newfd);
-extern int execl(const char *path, const char *arg, ...);
 
 
 
@@ -77,220 +67,61 @@ extern bool is_space(const char test);
 extern bool run_olc_editor(DESCRIPTOR_DATA * d);
 extern char *olc_ed_name(CHAR_DATA * ch);
 extern char *olc_ed_vnum(CHAR_DATA * ch);
-extern void mp_act_trigger(const char *argument, CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
 extern void string_add(CHAR_DATA * ch, const char *argument);
 extern char *string_replace(char *orig, char *old, char *new);
-
-bool copyover();
-void sig_handler(int sig);
-void game_loop(int port, int control);
-void copyover_recover(void);
 
 static bool process_output(DESCRIPTOR_DATA * d, bool fPrompt);
 static void read_from_buffer(DESCRIPTOR_DATA * d);
 static void check_afk(CHAR_DATA * ch);
 static void bust_a_prompt(CHAR_DATA * ch);
-static void auto_shutdown(void);
-volatile sig_atomic_t fatal_error_in_progress = 0;
 
+static void on_new_connection(int descriptor, int ipaddress, const char *hostname);
+static void on_drop_connection(DESCRIPTOR_DATA *d);
+static void reset_descriptors();
+static void process_input();
+static void process_all_output();
 
-static void on_new_connection(int descriptor, int ipaddress, const char *hostname)
-{
-    DESCRIPTOR_DATA *dnew;
-
-    /*
-     * Swiftest: I added the following to ban sites.  I don't
-     * endorse banning of sites, but Copper has few descriptors now
-     * and some people from certain sites keep abusing access by
-     * using automated 'autodialers' and leaving connections hanging.
-     *
-     * Furey: added suffix check by request of Nickel of HiddenWorlds.
-     */
-    if (check_ban(hostname, BAN_ALL)) {
-	write_to_descriptor(descriptor, "Your site has been banned from this mud.\n\r", 0);
-	disconnect(descriptor);
-	return;
-    }
-
-    dnew = descriptor_new(descriptor);
-    dnew->host = str_dup(hostname);
-    log_string("Sock.sinaddr: %d.%d.%d.%d", 
-		(ipaddress >> 24) & 0xFF, 
-		(ipaddress >> 16) & 0xFF, 
-		(ipaddress >> 8) & 0xFF, 
-		(ipaddress) & 0xFF);
-
-    /** Init descriptor data. */
-    write_to_descriptor(dnew->descriptor, "Ansi intro screen?(y/n) \n\r", 0);
-}
-
-static void on_drop_connection(DESCRIPTOR_DATA *d)
-{
-    close_socket(d, false, true);
-}
-
-
-/** TODO - these are only outside of main scope because the copyover routine needs them. */
-static int listen_port;
-static int listen_control;
+static const double loop_time_slice = ((double)CLOCKS_PER_SEC/PULSE_PER_SECOND);
+static const struct descriptor_iterator_filter allfilter = { .all = true };
 void game_loop(int port, int control)
 {
-    struct timeval last_time;
-    static const struct descriptor_iterator_filter allfilter = { .all = true };
 
     listen_port = port;
     listen_control = control;
 
-    gettimeofday(&last_time, NULL);
-    globalSystemState.current_time = (time_t)last_time.tv_sec;
-
     /** Main loop */
     while (!globalSystemState.merc_down) {
-	DESCRIPTOR_DATA *d;
-	DESCRIPTOR_DATA *dpending;
+	clock_t last_clock;
 
-	dpending = descriptor_iterator_start(&allfilter);
-	while ((d = dpending) != NULL) {
-	    dpending = descriptor_iterator(d, &allfilter);
+	last_clock = clock();
+	(void)time(&globalSystemState.current_time);
 
-	    if (d->pending_delete) {
-		descriptor_free(d);
-	    } else {
-		d->pending_input = false;
-	    }
-	}
-
+	reset_descriptors();
 	poll_connections(listen_control, on_new_connection, on_drop_connection);
-
-	/** Process input. */
-	dpending = descriptor_iterator_start(&descriptor_empty_filter);
-	while ((d = dpending) != NULL) {
-	    dpending = descriptor_iterator(d, &descriptor_empty_filter);
-	    d->fcommand = false;
-	    d->idle++;
-
-	    if (d->pending_input) {
-		d->pending_input = false;
-
-		/* Hold horses if pending command already. */
-		if (d->incomm[0] != '\0') {
-		    int outcome = read_from_descriptor(d->descriptor, d->inbuf);
-		    if (outcome != DESC_READ_RESULT_OK) {
-			switch (outcome) {
-			case DESC_READ_RESULT_OVERFLOW:
-			    log_string("%s input overflow!", d->host);
-			    break;
-			case DESC_READ_RESULT_EOF:
-			    log_string("%s EOF encountered on read.", d->host);
-			    break;
-			case DESC_READ_RESULT_IOERROR:
-			    log_string("%s read error.", d->host);
-			    break;
-			}
-
-			close_socket(d, false, true);
-			continue;
-		    }
-		}
-
-		if (d->character != NULL) {
-		    d->character->timer = 0;
-		    d->idle = 0; /* Kyndig: reset their idle timer */
-		}
-	    }
-
-	    /** Kyndig: Get rid of idlers as well. */
-	    if ((!d->character && d->idle > 50 /* 10 seconds */) || d->idle > 28800 /* 2 hrs  */) { 
-		write_to_descriptor(d->descriptor, "Idle.\n\r", 0);
-		close_socket(d, false, true);
-		continue;
-	    }
-
-	    if (d->character != NULL && d->character->wait > 0) {
-		--d->character->wait;
-		continue;
-	    }
-
-	    read_from_buffer(d);
-	    if (d->incomm[0] != '\0') {
-		d->fcommand = true;
-		stop_idling(d->character);
-		check_afk(d->character);
-
-		if (d->showstr_point) {
-		    show_string(d, d->incomm);
-		} else {
-		    if (d->ed_string) {
-			string_add(d->character, d->incomm);
-		    } else {
-			switch (d->connected) {
-			    case CON_PLAYING:
-				if (!run_olc_editor(d))
-				    substitute_alias(d, d->incomm);
-				break;
-			    default:
-				nanny(d, d->incomm);
-				break;
-			}
-		    }
-		}
-
-		d->incomm[0] = '\0';
-	    }
-	}
-
-	/** Autonomous game motion. */
+	process_input();
 	update_handler();
+	process_all_output();
 
-	/** Output. */
-	dpending = descriptor_iterator_start(&descriptor_empty_filter);
-	while ((d = dpending) != NULL) {
-	    dpending = descriptor_iterator(d, &descriptor_empty_filter);
 
-	    if ((d->fcommand || d->outtop > 0)) {
-		if (!process_output(d, true)) {
-		    close_socket(d, false, true);
-		}
-	    }
-	}
-
-	/*
-	 * Synchronize to a clock.
-	 * Sleep(last_time + 1/PULSE_PER_SECOND - now).
-	 * Careful here of signed versus unsigned arithmetic.
-	 */
+	/** Synchronize to a clock. */
 	{
-	    struct timeval now_time;
-	    long secDelta;
+	    clock_t current_clock;
 	    long usecDelta;
 
-	    gettimeofday(&now_time, NULL);
-	    usecDelta = ((int)last_time.tv_usec) - ((int)now_time.tv_usec) + 1000000 / PULSE_PER_SECOND;
-	    secDelta = ((int)last_time.tv_sec) - ((int)now_time.tv_sec);
-	    while (usecDelta < 0) {
-		usecDelta += 1000000;
-		secDelta -= 1;
-	    }
+	    current_clock = clock();
+	    usecDelta = (long)(1000000 * (loop_time_slice - (double)(current_clock - last_clock)) / CLOCKS_PER_SEC);
 
-	    while (usecDelta >= 1000000) {
-		usecDelta -= 1000000;
-		secDelta += 1;
-	    }
 
-	    if (secDelta > 0 || (secDelta == 0 && usecDelta > 0)) {
+	    if (usecDelta > 0) {
 		struct timeval stall_time;
 
 		stall_time.tv_usec = usecDelta;
-		stall_time.tv_sec = secDelta;
 		if (select(0, NULL, NULL, NULL, &stall_time) < 0) {
 		    perror("Game_loop: select: stall");
 		    raise(SIGABRT);
 		}
 	    }
 	}
-
-	gettimeofday(&last_time, NULL);
-	globalSystemState.current_time = (time_t)last_time.tv_sec;
     }
 }
 
@@ -1011,168 +842,6 @@ void fix_sex(CHAR_DATA *ch)
 	ch->sex = IS_NPC(ch) ? 0 : ch->pcdata->true_sex;
 }
 
-void act(const char *format, CHAR_DATA *ch, const void *arg1, const void *arg2, int type)
-{
-    /* to be compatible with older code */
-    act_new(format, ch, arg1, arg2, type, POS_RESTING, true);
-}
-
-void act_new(const char *format, CHAR_DATA *ch, const void *arg1, const void *arg2, int type, int min_pos, bool mob_trigger)
-{
-    static char *const he_she[] = { "it", "he", "she" };
-    static char *const him_her[] = { "it", "him", "her" };
-    static char *const his_her[] = { "its", "his", "her" };
-
-    CHAR_DATA *to;
-    CHAR_DATA *vch = (CHAR_DATA *)arg2;
-    GAMEOBJECT *obj1 = (GAMEOBJECT *)arg1;
-    GAMEOBJECT *obj2 = (GAMEOBJECT *)arg2;
-    char buf[MSL];
-    char fname[MIL];
-    const char *str;
-    char *i = NULL;
-    char *point;
-
-    /*
-     * Discard null and zero-length messages.
-     */
-    if (format == NULL || format[0] == '\0')
-	return;
-
-
-    /* discard null rooms and chars */
-    if (ch == NULL || ch->in_room == NULL)
-	return;
-
-    to = ch->in_room->people;
-    if (type == TO_VICT) {
-	if (vch == NULL) {
-	    log_bug("Act: null vch with TO_VICT.");
-	    return;
-	}
-
-	if (vch->in_room == NULL)
-	    return;
-
-	to = vch->in_room->people;
-    }
-
-    for (; to != NULL; to = to->next_in_room) {
-	if (to->position < min_pos)
-	    continue;
-
-	if (to->desc == NULL
-		&& (!IS_NPC(to) || !HAS_TRIGGER(to, TRIG_ACT)))
-	    continue;
-
-	if ((type == TO_CHAR) && to != ch)
-	    continue;
-
-	if (type == TO_VICT && (to != vch || to == ch))
-	    continue;
-
-	if (type == TO_ROOM && to == ch)
-	    continue;
-
-	if (type == TO_NOTVICT && (to == ch || to == vch))
-	    continue;
-
-	point = buf;
-	str = format;
-	while (*str != '\0') {
-	    if (*str != '$') {
-		*point++ = *str++;
-		continue;
-	    }
-	    ++str;
-
-	    if (arg2 == NULL && *str >= 'A' && *str <= 'Z') {
-		log_bug("Act: missing arg2 for code %d.", (int)*str);
-		i = " <@@@> ";
-	    } else {
-		switch (*str) {
-		    default:
-			log_bug("Act: bad code %d.", (int)*str);
-			i = " <@@@> ";
-			break;
-			/* Thx alex for 't' idea */
-		    case 't':
-			if (arg1) i = (char *)arg1;
-			else log_bug("Act: bad code $t for 'arg1'");
-			break;
-		    case 'T':
-			if (arg2) i = (char *)arg2;
-			else log_bug("Act: bad code $T for 'arg2'");
-			break;
-		    case 'n':
-			if (ch && to) i = PERS(ch, to);
-			else log_bug("Act: bad code $n for 'ch' or 'to'");
-			break;
-		    case 'N':
-			if (vch && to) i = PERS(vch, to);
-			else log_bug("Act: bad code $N for 'vch' or 'to'");
-			break;
-		    case 'e':
-			if (ch) i = he_she[URANGE(0, ch->sex, 2)];
-			else log_bug("Act: bad code $e for 'ch'");
-			break;
-		    case 'E':
-			if (vch) i = he_she[URANGE(0, vch->sex, 2)];
-			else log_bug("Act: bad code $E for 'vch'");
-			break;
-		    case 'm':
-			if (ch) i = him_her[URANGE(0, ch->sex, 2)];
-			else log_bug("Act: bad code $m for 'ch'");
-			break;
-		    case 'M':
-			if (vch) i = him_her[URANGE(0, vch->sex, 2)];
-			else log_bug("Act: bad code $M for 'vch'");
-			break;
-		    case 's':
-			if (ch) i = his_her[URANGE(0, ch->sex, 2)];
-			else log_bug("Act: bad code $s for 'ch'");
-			break;
-		    case 'S':
-			if (vch) i = his_her[URANGE(0, vch->sex, 2)];
-			else log_bug("Act: bad code $S for 'vch'");
-			break;
-		    case 'p':
-			i = can_see_obj(to, obj1) ? obj1->short_descr : "something";
-			break;
-		    case 'P':
-			i = can_see_obj(to, obj2) ? obj2->short_descr : "something";
-			break;
-
-		    case 'd':
-			if (arg2 == NULL || ((char *)arg2)[0] == '\0') {
-			    i = "door";
-			} else {
-			    one_argument((char *)arg2, fname);
-			    i = fname;
-			}
-			break;
-		}
-	    }
-
-	    ++str;
-	    while ((*point = *i) != '\0')
-		++point, ++i;
-	}
-
-	*point++ = '\n';
-	*point++ = '\r';
-	*point = '\0';
-	buf[0] = UPPER(buf[0]);
-
-	if (to->desc) {
-	    send_to_char(buf, to);
-	} else {
-	    if (mob_trigger)
-		mp_act_trigger(buf, to, ch, arg1, arg2, TRIG_ACT);
-	}
-    }
-    return;
-}
 
 /* source: EOD, by John Booth <???> */
 /***************************************************************************
@@ -1231,35 +900,6 @@ void set_wait(CHAR_DATA *ch, int len)
     ch->wait = UMAX(ch->wait, len);
 }
 
-/**
- * 2015-08-10
- * see: http://www.gnu.org/software/libc/manual/html_node/Termination-in-Handler.html#Termination-in-Handler 
- */
-void sig_handler(int sig)
-{ 
-    /* Since this handler is established for more than one kind of signal, it might still 
-     * get invoked recursively by delivery of some other kind of signal.  Use a static 
-     * variable to keep track of that. 
-     */
-    if (fatal_error_in_progress) {
-	raise(sig);
-    }
-
-    fatal_error_in_progress = 1;
-    psignal(sig, "Auto shutdown invoked.");
-    log_bug("Critical signal received %d", sig);
-    log_to(LOG_SINK_LASTCMD, NULL, "%s", globalSystemState.last_command);
-    auto_shutdown();
-
-    /* Now reraise the signal. We reactivate the signal’s default handling, which is to 
-     * terminate the process. We could just call exit or abort,  but reraising the signal 
-     * sets the return status from the process correctly, and, more importantly, gives us
-     * a core dump.
-     */
-    signal(sig, SIG_DFL);
-    raise(sig);
-}
-
 void auto_shutdown()
 {
     FILE *cmdLog;
@@ -1296,155 +936,154 @@ void check_afk(CHAR_DATA *ch)
 	REMOVE_BIT(ch->comm, COMM_AFK);
 }
 
-bool copyover()
-{
-    FILE *fp, *cmdLog;
-    DESCRIPTOR_DATA *d, *dpending;
-    char buf [100], buf2[100];
 
-    fp = fopen(COPYOVER_FILE, "w");
-
-    if (!fp) {
-	perror("do_copyover:fopen");
-	return false;
-    }
-
-    /* Consider changing all saved areas here, if you use OLC */
-
-    /* do_asave (NULL, ""); - autosave changed areas */
-
-
-    sprintf(buf, "\n\r Preparing for a copyover....\n\r");
-
-    /* For each playing descriptor, save its state */
-    dpending = descriptor_iterator_start(&descriptor_empty_filter);
-    while ((d = dpending) != NULL) {
-	CHAR_DATA *och = CH(d);
-
-	dpending = descriptor_iterator(d, &descriptor_empty_filter);
-
-	if (!d->character || d->connected > CON_PLAYING) { /* drop those logging on */
-	    write_to_descriptor(d->descriptor, "\n\rSorry, we are rebooting. Come back in a few minutes.\n\r", 0);
-	    close_socket(d, false, false);  /* throw'em out */
-	} else {
-	    fprintf(fp, "%d %s %s\n", d->descriptor, och->name, d->host);
-
-	    if (och->level == 1) {
-		write_to_descriptor(d->descriptor, "Since you are level one, and level one characters do not save, you gain a free level!\n\r", 0);
-		advance_level(och, 1);
-	    }
-	    do_stand(och, "");
-	    save_char_obj(och);
-	}
-    }
-
-    fprintf(fp, "-1\n");
-    fclose(fp);
-
-    /* Dalamar - Save our last commands file.. */
-    if ((cmdLog = fopen(LAST_COMMANDS, "r")) == NULL) {
-	log_string("Crash function: can't open last commands log..");
-    } else {
-	time_t rawtime;
-	struct tm *timeinfo;
-	char buf[128];
-	char cmd[256];
-
-	time(&rawtime);
-	timeinfo = localtime(&rawtime);
-	strftime(buf, 128, "./log/command/lastCMDs-%m%d-%H%M.txt", timeinfo);
-	sprintf(cmd, "mv ./log/command/lastCMDs.txt %s", buf);
-	if (system(cmd) == -1) {
-	    log_string("System command failed: ");
-	    log_string(cmd);
-	}
-    }
-
-    /** exec - descriptors are inherited */
-    sprintf(buf, "%d", listen_port);
-    sprintf(buf2, "%d", listen_control);
-    execl(EXE_FILE, "Badtrip", buf, "copyover", buf2, (char *)NULL);
-
-    /** Failed - sucessful exec will not return */
-    perror("do_copyover: execl");
-    return false;
-}
-
-/* Recover from a copyover - load players */
-void copyover_recover()
+void reset_descriptors()
 {
     DESCRIPTOR_DATA *d;
-    FILE *fp;
-    char name [100];
-    char host[MSL];
-    int desc;
-    bool fOld;
+    DESCRIPTOR_DATA *dpending;
+    dpending = descriptor_iterator_start(&allfilter);
+    while ((d = dpending) != NULL) {
+	dpending = descriptor_iterator(d, &allfilter);
 
-    /*	logf ("Copyover recovery initiated");*/
-
-    fp = fopen(COPYOVER_FILE, "r");
-
-    if (!fp) { /* there are some descriptors open which will hang forever then ? */
-	perror("copyover_recover:fopen");
-	raise(SIGABRT);
-	return;
+	if (d->pending_delete) {
+	    descriptor_free(d);
+	} else {
+	    d->pending_input = false;
+	}
     }
+}
 
-    unlink(COPYOVER_FILE);  /* In case something crashes - doesn't prevent reading	*/
+void process_input()
+{
+    DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 
-    for (;; ) {
-	int scancount;
-	scancount = fscanf(fp, "%d %s %s\n", &desc, name, host);
-	if (scancount == EOF || desc == -1)
-	    break;
+    dpending = descriptor_iterator_start(&descriptor_empty_filter);
+    while ((d = dpending) != NULL) {
+	dpending = descriptor_iterator(d, &descriptor_empty_filter);
 
-	/* Write something, and check if it goes error-free */
-	if (!write_to_descriptor(desc, "", 0)) {
-	    disconnect(desc);  /* nope */
+	d->fcommand = false;
+	d->idle++;
+
+	if (d->pending_input) {
+	    d->pending_input = false;
+
+	    /* Hold horses if pending command already. */
+	    if (d->incomm[0] != '\0') {
+		int outcome = read_from_descriptor(d->descriptor, d->inbuf);
+		if (outcome != DESC_READ_RESULT_OK) {
+		    switch (outcome) {
+			case DESC_READ_RESULT_OVERFLOW:
+			    log_string("%s input overflow!", d->host);
+			    break;
+			case DESC_READ_RESULT_EOF:
+			    log_string("%s EOF encountered on read.", d->host);
+			    break;
+			case DESC_READ_RESULT_IOERROR:
+			    log_string("%s read error.", d->host);
+			    break;
+		    }
+
+		    close_socket(d, false, true);
+		    continue;
+		}
+	    }
+
+	    if (d->character != NULL) {
+		d->character->timer = 0;
+		d->idle = 0; /* Kyndig: reset their idle timer */
+	    }
+	}
+
+	/** Kyndig: Get rid of idlers as well. */
+	if ((!d->character && d->idle > 50 /* 10 seconds */) || d->idle > 28800 /* 2 hrs  */) { 
+	    write_to_descriptor(d->descriptor, "Idle.\n\r", 0);
+	    close_socket(d, false, true);
 	    continue;
 	}
 
-	d = descriptor_new(desc);
-	d->host = str_dup(host);
-	d->connected = CON_COPYOVER_RECOVER; /* -15, so close_socket frees the char */
+	if (d->character != NULL && d->character->wait > 0) {
+	    --d->character->wait;
+	    continue;
+	}
 
+	read_from_buffer(d);
+	if (d->incomm[0] != '\0') {
+	    d->fcommand = true;
+	    stop_idling(d->character);
+	    check_afk(d->character);
 
-	/* Now, find the pfile */
+	    if (d->showstr_point) {
+		show_string(d, d->incomm);
+	    } else {
+		if (d->ed_string) {
+		    string_add(d->character, d->incomm);
+		} else {
+		    switch (d->connected) {
+			case CON_PLAYING:
+			    if (!run_olc_editor(d))
+				substitute_alias(d, d->incomm);
+			    break;
+			default:
+			    nanny(d, d->incomm);
+			    break;
+		    }
+		}
+	    }
 
-	fOld = load_char_obj(d, name);
+	    d->incomm[0] = '\0';
+	}
+    }
+}
 
-	if (!fOld) { /* Player file not found?! */
-	    write_to_descriptor(desc, "\n\rSomehow, your character was lost in the copyover. Sorry.\n\r", 0);
-	    close_socket(d, false, false);
-	} else { /* ok! */
-	    /*			write_to_descriptor (desc, "\n\rCopyover recovery complete.\n\r",0);*/
+void process_all_output() 
+{
+    DESCRIPTOR_DATA *d;
+    DESCRIPTOR_DATA *dpending;
 
-	    /* Just In Case */
-	    if (!d->character->in_room)
-		d->character->in_room = get_room_index(ROOM_VNUM_TEMPLE);
+    dpending = descriptor_iterator_start(&descriptor_empty_filter);
+    while ((d = dpending) != NULL) {
+	dpending = descriptor_iterator(d, &descriptor_empty_filter);
 
-	    /* Insert in the char_list */
-	    d->character->next = char_list;
-	    char_list = d->character;
-
-	    send_to_char("\n\r`6o`&-`O-====`8---------------------------------------------------------`O===`&--`6o``\n\r", d->character);
-	    send_to_char("`2       ___    ___        __________________        ___    ___``\n\r", d->character);
-	    send_to_char("`2  ____/ _ \\__/ _ \\_____ (------------------) _____/ _ \\__/ _ \\____``\n\r", d->character);
-	    send_to_char("`2 (  _| / \\/  \\/ \\ |_   ) \\    `&Copyover`2    / (   _| / \\/  \\/ \\ |_  )``\n\r", d->character);
-	    send_to_char("`2  \\(  \\|  )  (  |/  ) (___)  __________  (___) (  \\|  )  (  |/  )/``\n\r", d->character);
-	    send_to_char("`2   '   '  \\`!''`2/  '  (_________)        (_________)  '  \\`!''`2/  '   '``\n\r", d->character);
-	    send_to_char("`2           ||                                          ||``\n\r", d->character);
-	    send_to_char("`6o`&-`O-====`8---------------------------------------------------------`O===`&--`6o``\n\r", d->character);
-	    char_to_room(d->character, d->character->in_room);
-	    do_look(d->character, "auto");
-	    act("$n materializes!", d->character, NULL, NULL, TO_ROOM);
-	    d->connected = CON_PLAYING;
-
-	    if (d->character->pet != NULL) {
-		char_to_room(d->character->pet, d->character->in_room);
-		act("$n materializes!.", d->character->pet, NULL, NULL, TO_ROOM);
+	if ((d->fcommand || d->outtop > 0)) {
+	    if (!process_output(d, true)) {
+		close_socket(d, false, true);
 	    }
 	}
     }
-    fclose(fp);
+}
+
+void on_new_connection(int descriptor, int ipaddress, const char *hostname)
+{
+    DESCRIPTOR_DATA *dnew;
+
+    /*
+     * Swiftest: I added the following to ban sites.  I don't
+     * endorse banning of sites, but Copper has few descriptors now
+     * and some people from certain sites keep abusing access by
+     * using automated 'autodialers' and leaving connections hanging.
+     *
+     * Furey: added suffix check by request of Nickel of HiddenWorlds.
+     */
+    if (check_ban(hostname, BAN_ALL)) {
+	write_to_descriptor(descriptor, "Your site has been banned from this mud.\n\r", 0);
+	disconnect(descriptor);
+	return;
+    }
+
+    dnew = descriptor_new(descriptor);
+    dnew->host = str_dup(hostname);
+    log_string("Sock.sinaddr: %d.%d.%d.%d", 
+	    (ipaddress >> 24) & 0xFF, 
+	    (ipaddress >> 16) & 0xFF, 
+	    (ipaddress >> 8) & 0xFF, 
+	    (ipaddress) & 0xFF);
+
+    /** Init descriptor data. */
+    write_to_descriptor(dnew->descriptor, "Ansi intro screen?(y/n) \n\r", 0);
+}
+
+void on_drop_connection(DESCRIPTOR_DATA *d)
+{
+    close_socket(d, false, true);
 }

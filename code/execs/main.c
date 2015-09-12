@@ -23,18 +23,23 @@ SYSTEM_STATE globalSystemState = {
 
 
 /** imports */
+extern void psignal(int signum, const char *message);
 
 /** comm.c */
+extern void auto_shutdown();
 extern void game_loop(int port, int control);
-extern void copyover_recover(void);
-extern void sig_handler(int sig);
 /** ~comm.c */
 
+/** copyover.c */
+extern void copyover_recover(void);
+/** ~copyover.c */
 
 
 /** locals */
 static void init_signals();
 static void init_time(SYSTEM_STATE *);
+static void sig_handler(int sig);
+static volatile sig_atomic_t fatal_error_in_progress = 0;
 
 
 int main(int argc, char **argv)
@@ -108,4 +113,34 @@ void init_time(SYSTEM_STATE *system_state)
     strncpy(system_state->boot_time, ctime(&now_time), FRIENDLYTIME_BUFSIZE-1);
 }
 
+
+
+/**
+ * 2015-08-10
+ * see: http://www.gnu.org/software/libc/manual/html_node/Termination-in-Handler.html#Termination-in-Handler 
+ */
+void sig_handler(int sig)
+{ 
+    /* Since this handler is established for more than one kind of signal, it might still 
+     * get invoked recursively by delivery of some other kind of signal.  Use a static 
+     * variable to keep track of that. 
+     */
+    if (fatal_error_in_progress != 0) {
+	(void)raise(sig);
+    }
+
+    fatal_error_in_progress = 1;
+    psignal(sig, "Auto shutdown invoked.");
+    log_bug("Critical signal received %d", sig);
+    log_to(LOG_SINK_LASTCMD, NULL, "%s", globalSystemState.last_command);
+    auto_shutdown();
+
+    /* Now reraise the signal. We reactivate the signal’s default handling, which is to 
+     * terminate the process. We could just call exit or abort,  but reraising the signal 
+     * sets the return status from the process correctly, and, more importantly, gives us
+     * a core dump.
+     */
+    (void)signal(sig, SIG_DFL);
+    (void)raise(sig);
+}
 
