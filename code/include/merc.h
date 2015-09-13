@@ -1077,7 +1077,6 @@ struct kill_data {
 #define ROOM_GODS_ONLY          (P)
 #define ROOM_HEROES_ONLY        (Q)
 #define ROOM_NEWBIES_ONLY       (R)
-#define ROOM_LAW                (S)
 #define ROOM_NOWHERE            (T)
 #define ROOM_BANK               (U)
 

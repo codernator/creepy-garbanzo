@@ -727,10 +727,6 @@ void load_rooms(FILE *fp)
 	/* Area number */ fread_number(fp);
 	room_idx->room_flags = fread_flag(fp);
 
-	/* horrible hack */
-	if (3000 <= vnum && vnum < 3400)
-	    SET_BIT(room_idx->room_flags, ROOM_LAW);
-
 	room_idx->sector_type = fread_number(fp);
 	room_idx->light = 0;
 	for (door = 0; door <= 5; door++)

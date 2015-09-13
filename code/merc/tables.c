@@ -396,7 +396,6 @@ const struct flag_type room_flags[] = {
     { "bank",         ROOM_BANK,            true },
     { "dark",         ROOM_DARK,            true },
     { "indoors",      ROOM_INDOORS,         true },
-    { "law",          ROOM_LAW,             true },
     { "no_pushdrag",  ROOM_NO_PUSH_NO_DRAG, true },
     { "nogate",       ROOM_NOGATE,          true },
     { "noportal",     ROOM_NOPORTAL,        true },

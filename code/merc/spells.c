@@ -421,11 +421,6 @@ void spell_charm_person(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
 	return;
     }
 
-    if (IS_SET(victim->in_room->room_flags, ROOM_LAW)) {
-	send_to_char("The mayor does not allow charming in the city limits. `1TSK!``\n\r", ch);
-	return;
-    }
-
     if (victim->master)
 	stop_follower(victim);
 

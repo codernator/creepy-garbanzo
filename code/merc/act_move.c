@@ -559,13 +559,6 @@ void push_char(CHAR_DATA *ch, CHAR_DATA *vch, int door, bool follow)
 	    do_stand(fch, "");
 
 	if (fch->master == vch && fch->position == POS_STANDING) {
-	    if (IS_SET(vch->in_room->room_flags, ROOM_LAW)
-		    && (IS_NPC(fch) && IS_SET(fch->act, ACT_AGGRESSIVE))) {
-		act("You can't bring $N into the city.", vch, NULL, fch, TO_CHAR);
-		act("You aren't allowed in the city.", fch, NULL, NULL, TO_CHAR);
-		return;
-	    }
-
 	    act("You follow $N.", fch, NULL, vch, TO_CHAR);
 	    move_char(fch, door, true);
 	}
@@ -672,13 +665,6 @@ void drag_char(CHAR_DATA *ch, CHAR_DATA *victim, int door, bool follow)
 	    do_stand(fch, "");
 
 	if (fch->master == ch && fch->position == POS_STANDING) {
-	    if (IS_SET(ch->in_room->room_flags, ROOM_LAW)
-		    && (IS_NPC(fch) && IS_SET(fch->act, ACT_AGGRESSIVE))) {
-		act("You can't bring $N into the city.", ch, NULL, fch, TO_CHAR);
-		act("You aren't allowed in the city.", fch, NULL, NULL, TO_CHAR);
-		return;
-	    }
-
 	    act("You follow $N.", fch, NULL, ch, TO_CHAR);
 	    move_char(fch, door, true);
 	}
