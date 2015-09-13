@@ -586,7 +586,7 @@ void load_resets(FILE *fp)
     ROOM_INDEX_DATA *room_idx;
     long rVnum = -1;
 
-    if (area_last != NULL) {
+    if (area_last == NULL) {
 	bug("Load_resets: no #AREA seen yet.");
 	ABORT;
     }
@@ -895,7 +895,7 @@ void load_mobiles(FILE *fp)
 {
     MOB_INDEX_DATA *mob_idx;
 
-    if (!area_last) {
+    if (area_last == NULL) {
 	bug("Load_mobiles: no #AREA seen yet.");
 	ABORT;
     }
