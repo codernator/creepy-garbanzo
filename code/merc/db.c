@@ -2867,7 +2867,7 @@ void bug(const char *fmt, ...)
 	    while ((char)getc(fp_area) != '\n');
 	fseek(fp_area, iChar, 0);
 
-	log_bug("[*****] BUG IN FILE: %s LINE: %d\n", area_file, iLine, buf);
+	log_bug("[*****] BUG IN FILE: %s LINE: %d\n%s", area_file, iLine, buf);
     }
 }
 

@@ -4,8 +4,10 @@
 #include <string.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <time.h>
 
 static void write_file(const char *fileName, char *mode, const char *fmt, ...);
+static /*@shared@*/const char *get_log_time();
 
 
 
@@ -40,7 +42,7 @@ void log_bug(const char *fmt, ...)
     (void)vsnprintf(buf, MSL, fmt, args);
     va_end(args);
 
-    fprintf(stderr, "%s :: %s\n", ctime(&globalSystemState.current_time), buf);
+    fprintf(stderr, "%s :: %s\n", get_log_time(), buf);
 }
 
 /*
@@ -55,7 +57,7 @@ void log_string(const char *fmt, ...)
     (void)vsnprintf(buf, MSL, fmt, args);
     va_end(args);
 
-    fprintf(stderr, "%s :: %s\n", ctime(&globalSystemState.current_time), buf);
+    fprintf(stderr, "%s :: %s\n", get_log_time(), buf);
 }
 
 
@@ -71,11 +73,11 @@ void log_to(int log, char username[], const char *fmt, ...)
     switch (log)
     {
         case LOG_SINK_LASTCMD:
-            write_file(LAST_COMMANDS, "a+", "[%s] %s\n", ctime(&globalSystemState.current_time), buf);
+            write_file(LAST_COMMANDS, "a+", "[%s] %s\n", get_log_time(), buf);
             break;
         case LOG_SINK_ALWAYS:
         case LOG_SINK_ALL:
-            write_file(LOG_ALWAYS_FILE, "a+", "[%s] %s\n", ctime(&globalSystemState.current_time), buf);
+            write_file(LOG_ALWAYS_FILE, "a+", "[%s] %s\n", get_log_time(), buf);
             break;
         case LOG_SINK_PLAYER:
             if (username == NULL || username[0] == '\0') {
@@ -83,7 +85,7 @@ void log_to(int log, char username[], const char *fmt, ...)
             } else {
                 static char log_file_name[2*MIL];
                 (void)snprintf(log_file_name, 2*MIL, LOG_PLAYER_FILE, username);
-                write_file(log_file_name, "a+", "[%s] %s\n", ctime(&globalSystemState.current_time), buf);
+                write_file(log_file_name, "a+", "[%s] %s\n", get_log_time(), buf);
             }
             break;
         default:
@@ -113,5 +115,16 @@ static void write_file(const char *fileName, char *mode, const char *fmt, ...)
         perror(fileName);
         ABORT;
     }
+}
+
+const char *get_log_time()
+{
+    static char buf[30];
+    struct tm *broken;
+
+    broken = localtime(&globalSystemState.current_time);
+    (void)strftime(buf, 30, "%F %T", broken);
+
+    return buf;
 }
 
