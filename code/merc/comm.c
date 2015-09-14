@@ -134,13 +134,14 @@ void game_loop(int port, int control)
 void synchronize(clock_t last_clock)
 {
     clock_t current_clock;
-    struct timeval stall_time;
+    static struct timeval stall_time;
     long usecDelta;
 
     current_clock = clock();
     usecDelta = (long)(1000000 * (loop_time_slice - (double)(current_clock - last_clock)) / CLOCKS_PER_SEC);
 
     if (usecDelta > 0) {
+	stall_time.tv_sec = 0;
 	stall_time.tv_usec = usecDelta;
 	if (select(0, NULL, NULL, NULL, &stall_time) < 0) {
 	    perror("Game_loop: select: stall");
