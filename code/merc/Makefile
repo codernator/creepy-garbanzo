@@ -20,7 +20,7 @@ _OBJ=act_comm.o act_combat.o act_enter.o act_info.o act_move.o act_obj.o act_wiz
      fight.o find.o flags.o follower_service.o for.o \
      handler.o healer.o help.o \
      imprint.o interp.o \
-     libfile.o logging.o lookup.o \
+     libfile.o lookup.o \
      magic.o mem.o mob_cmds.o mob_prog.o mobs.o \
      nanny.o note.o \
      object.o objectprototype.o ovnum.o \
@@ -43,7 +43,7 @@ SYSINTERNALS=$(BDIR)/sysinternals.a
 all: $(MERC)
 
 prebuild:
-	splint -DLINUX -I$(IDIR) -exportlocal objectprototype.c descriptor.c object.c logging.c 
+	splint -DLINUX -I$(IDIR) -exportlocal objectprototype.c descriptor.c object.c
 
 $(SYSINTERNALS):
 	cd ../sysinternals && $(MAKE)

@@ -1963,19 +1963,12 @@ extern ROOM_INDEX_DATA *room_index_hash [MAX_KEY_HASH];
 #define MEMLOG_FILE      "./log/"
 #define EXE_FILE         "./badtrip"
 
-#define BUG_FILE         "./log/bug.txt"  /* For 'bug' and bug() */
-#define TYPO_FILE        "./log/typo.txt" /* For 'typo' */
-#define LAST_COMMANDS    "./log/command/lastCMDs.txt"
-#define LOG_ALWAYS_FILE  "./log/command/logAlways.txt"
-#define LOG_ALL_CMDS_FILE "./log/command/logALLCommands.txt"
-#define LOG_PLAYER_FILE  "./log/player/%s.txt"
 #define AREA_FOLDER      "./db/area/"
 #define AREA_LIST        "./db/area.lst"          /* List of areas */
 #define BAN_FILE         "./db/ban.txt"
 #define HEADLINE_FILE    "./db/headline.txt"
 #define HELP_FILE        "./db/area/help.are"
 #define NOTE_FILE        "./db/notes.not"         /* note thread */
-#define SHUTDOWN_FILE    "./shutdown.txt"         /* For 'shutdown' */
 #define COPYOVER_FILE    "./copyover.txt"
 
 #define END_MARKER       "END"
@@ -2264,18 +2257,6 @@ int race_lookup(const char *name);
 int item_lookup(const char *name);
 int liq_lookup(const char *name);
 
-
-/* logging.c */
-#define LOG_SINK_ALWAYS 1
-#define LOG_SINK_ALL 2
-#define LOG_SINK_PLAYER 3
-#define LOG_SINK_LASTCMD 4
-
-void append_file(CHAR_DATA *ch, const char *file, const char *str);
-void log_to(int log, /*@null@*/char username[], const char *fmt, ...);
-void log_bug(const char *fmt, ...);
-void log_string(const char *fmt, ...);
-/* ~logging.c */
 
 
 /* Needs a home */

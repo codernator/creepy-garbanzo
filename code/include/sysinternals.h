@@ -111,3 +111,16 @@ unsigned int parse_unsigned_int(const char *string);
 unsigned long parse_unsigned_long(const char *string);
 /** ~libstrings.c */
 
+/** logging.c */
+#define LOG_SINK_ALWAYS 1
+#define LOG_SINK_ALL 2
+#define LOG_SINK_LASTCMD 4
+#define LOG_SINK_BUG 8
+#define LOG_SINK_TYPO 16
+#define LOG_SINK_SHUTDOWN 32
+
+void log_to(int log, const char *fmt, ...);
+void log_to_player(const char username[], const char *fmt, ...);
+void log_bug(const char *fmt, ...);
+void log_string(const char *fmt, ...);
+/** ~logging.c */

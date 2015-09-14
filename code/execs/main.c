@@ -132,7 +132,7 @@ void sig_handler(int sig)
     fatal_error_in_progress = 1;
     psignal(sig, "Auto shutdown invoked.");
     log_bug("Critical signal received %d", sig);
-    log_to(LOG_SINK_LASTCMD, NULL, "%s", globalSystemState.last_command);
+    log_to(LOG_SINK_LASTCMD, "%s", globalSystemState.last_command);
     auto_shutdown();
 
     /* Now reraise the signal. We reactivate the signal’s default handling, which is to 

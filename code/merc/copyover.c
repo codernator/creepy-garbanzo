@@ -22,7 +22,7 @@ void copyover_recover(void);
 
 bool copyover()
 {
-    FILE *fp, *cmdLog;
+    FILE *fp;
     DESCRIPTOR_DATA *d, *dpending;
     char buf [100], buf2[100];
 
@@ -64,25 +64,6 @@ bool copyover()
 
     fprintf(fp, "-1\n");
     fclose(fp);
-
-    /* Dalamar - Save our last commands file.. */
-    if ((cmdLog = fopen(LAST_COMMANDS, "r")) == NULL) {
-	log_string("Crash function: can't open last commands log..");
-    } else {
-	time_t rawtime;
-	struct tm *timeinfo;
-	char buf[128];
-	char cmd[256];
-
-	time(&rawtime);
-	timeinfo = localtime(&rawtime);
-	strftime(buf, 128, "./log/command/lastCMDs-%m%d-%H%M.txt", timeinfo);
-	sprintf(cmd, "mv ./log/command/lastCMDs.txt %s", buf);
-	if (system(cmd) == -1) {
-	    log_string("System command failed: ");
-	    log_string(cmd);
-	}
-    }
 
     /** exec - descriptors are inherited */
     sprintf(buf, "%d", listen_port);

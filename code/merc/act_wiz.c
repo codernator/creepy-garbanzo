@@ -329,13 +329,21 @@ void do_unignore(CHAR_DATA *ch, const char *argument)
 
 void do_bug(CHAR_DATA *ch, const char *argument)
 {
-    append_file(ch, BUG_FILE, argument);
+    log_to(LOG_SINK_BUG,
+	    "[%5ld] %s > %s\n",
+	    ch->in_room == NULL ? 0 : ch->in_room->vnum,
+	    ch->name,
+	    argument);
     send_to_char("Bug logged.\n\r", ch);
 }
 
 void do_typo(CHAR_DATA *ch, const char *argument)
 {
-    append_file(ch, TYPO_FILE, argument);
+    log_to(LOG_SINK_TYPO,
+	    "[%5ld] %s > %s\n",
+	    ch->in_room == NULL ? 0 : ch->in_room->vnum,
+	    ch->name,
+	    argument);
     send_to_char("Typo logged.\n\r", ch);
 }
 
@@ -1462,7 +1470,10 @@ void do_shutdown(CHAR_DATA *ch, const char *argument)
     }
 
     sprintf(buf, "Shutdown by %s.", ch->name);
-    append_file(ch, SHUTDOWN_FILE, buf);
+    log_to(LOG_SINK_SHUTDOWN,
+	    "[%5ld] %s > Shutdown initiated.\n",
+	    ch->in_room == NULL ? 0 : ch->in_room->vnum,
+	    ch->name);
 
     do_force(ch, "all save");
     do_save(ch, "");

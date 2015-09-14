@@ -417,18 +417,18 @@ void interpret(CHAR_DATA *ch, const char *argument)
     }
 
     /* Log and snoop. */
-    log_to(LOG_SINK_LASTCMD, ch->name, "[%s] -- '%s'", ch->name, logline);
+    log_to(LOG_SINK_LASTCMD, "[%s] -- '%s'", ch->name, logline);
 
     if (cmd_table[cmd].log == LOG_NEVER)
 	strcpy(logline, "");
 
     if (cmd_table[cmd].log == LOG_ALWAYS) {
 	if (!IS_NPC(ch)) {
-	    log_to(LOG_SINK_ALWAYS, ch->name, "[%s] -- '%s'", ch->name, logline);
+	    log_to(LOG_SINK_ALWAYS, "[%s] -- '%s'", ch->name, logline);
 	    sprintf(wiznet_message, "`4Log `O%s`4: `O%s``", ch->name, logline);
 	    wiznet(wiznet_message, ch, NULL, WIZ_SECURE, 0, get_trust(ch));
 	} else {
-	    log_to(LOG_SINK_ALWAYS, ch->name, "[%s] -- '%s'", ch->name, logline);
+	    log_to(LOG_SINK_ALWAYS, "[%s] -- '%s'", ch->name, logline);
 	    log_string("Log %s(mob): %s", ch->name, logline);
 	    sprintf(wiznet_message, "`4Log `O%s(mob)`4: `O%s``", ch->name, logline);
 	    wiznet(wiznet_message, ch, NULL, WIZ_SECURE, 0, get_trust(ch));
@@ -436,13 +436,13 @@ void interpret(CHAR_DATA *ch, const char *argument)
     }
 
     if (!IS_NPC(ch) && IS_SET(ch->act, PLR_LOG)) {
-	log_to(LOG_SINK_PLAYER, ch->name, "[%s] -- '%s'", ch->name, logline);
+	log_to_player(ch->name, "[%s] -- '%s'", ch->name, logline);
 	sprintf(wiznet_message, "`4Log `O%s(plr)`4: `O%s``", ch->name, logline);
 	wiznet(wiznet_message, ch, NULL, WIZ_PLOG, 0, get_trust(ch));
     }
 
     if (globalSystemState.log_all) {
-	log_to(LOG_SINK_ALL, "NULL", "[%s] -- '%s'", ch->name, logline);
+	log_to(LOG_SINK_ALL, "[%s] -- '%s'", ch->name, logline);
 	sprintf(wiznet_message, "`4Log `O%s(all)`4: `O%s``", ch->name, logline);
 	wiznet(wiznet_message, ch, NULL, WIZ_ALOG, 0, get_trust(ch));
     }
