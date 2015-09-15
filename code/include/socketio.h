@@ -10,7 +10,7 @@ typedef void handle_drop_connection(DESCRIPTOR_DATA *d);
 
 void init_descriptor(int control, handle_new_connection *);
 void disconnect(int descriptor);
-int read_from_descriptor(int descriptor, char *inbuf);
+int read_from_descriptor(int descriptor, int max, char inbuf[]);
 bool write_to_descriptor(int descriptor, char *txt, int length);
 int listen_on_port(int port);
 void deafen_port(int listen_control);

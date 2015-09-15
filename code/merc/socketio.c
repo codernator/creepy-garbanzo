@@ -127,21 +127,21 @@ int listen_on_port(int port)
     return fd;
 }
 
-int read_from_descriptor(int descriptor, char *inbuf)
+int read_from_descriptor(int descriptor, int max, char inbuf[])
 {
     int iStart;
 
     /* Check for overflow. */
     iStart = (int)strlen(inbuf);
 
-    if (iStart >= (int)(sizeof(inbuf) - 10)) {
+    if (iStart >= max - 10) {
 	return DESC_READ_RESULT_OVERFLOW;
     }
 
     for (;;) {
 	int nRead;
 
-	nRead = read(descriptor, inbuf + iStart, sizeof(inbuf) - 10 - iStart);
+	nRead = read(descriptor, inbuf + iStart, max - 10 - iStart);
 
 	if (nRead > 0) {
 	    iStart += nRead;

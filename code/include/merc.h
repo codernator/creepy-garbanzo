@@ -133,7 +133,7 @@ typedef void DO_FUN(/*@partial@*/CHAR_DATA * ch, const char *argument);
 #define LEVEL_IMMORTAL          (MAX_LEVEL - 8)
 #define LEVEL_NEWBIE            11
 
-#define PULSE_PER_SECOND        1
+#define PULSE_PER_SECOND        6
 #define PULSE_VIOLENCE          (3 * PULSE_PER_SECOND)
 #define PULSE_MOBILE            (4 * PULSE_PER_SECOND)
 #define PULSE_TICK              (40 * PULSE_PER_SECOND)
@@ -257,10 +257,15 @@ struct descriptor_data {
     /*@dependent@*//*@null@*/DESCRIPTOR_DATA *snoop_by;
     /*@dependent@*//*@null@*/CHAR_DATA *character;
     /*@dependent@*//*@null@*/CHAR_DATA *original;
+
     bool pending_delete;
-    bool pending_input;
+    bool ready_input;
+    bool ready_output;
+    bool ready_exceptional;
     /*@shared@*//*@null@*/char *host;
     SOCKET descriptor;
+
+
     int connected;
     bool fcommand;
     char inbuf[4 * MIL];
