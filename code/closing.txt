@@ -32,14 +32,14 @@ merc/comm.c:696:	    close_socket(d);
     
 merc/comm.c:1326:	    close_socket(d);  /* throw'em out */
     copyover - kick players logging in
-    - write_to_descriptor
+    - remote_write
     - close_socket (false, false)
 
 merc/comm.c:1407:	d->connected = CON_COPYOVER_RECOVER; /* -15, so close_socket frees the char */
 merc/comm.c:1416:	    close_socket(d);
     copyover recover - can't find related character
     - set connected to COPYOVER_RECOVER
-    - write_to_descriptor
+    - remote_write
     - close_socket (false, false)
 
 merc/act_wiz.c:486:	close_socket(d);

@@ -1,5 +1,5 @@
 #include "merc.h"
-#include "socketio.h"
+#include "remote.h"
 #include <stdio.h>
 
 
@@ -48,13 +48,13 @@ bool copyover()
 	dpending = descriptor_iterator(d, &descriptor_empty_filter);
 
 	if (!d->character || d->connected > CON_PLAYING) { /* drop those logging on */
-	    write_to_descriptor(d->descriptor, "\n\rSorry, we are rebooting. Come back in a few minutes.\n\r", 0);
+	    remote_write(d->descriptor, "\n\rSorry, we are rebooting. Come back in a few minutes.\n\r", 0);
 	    close_socket(d, false, false);  /* throw'em out */
 	} else {
 	    fprintf(fp, "%d %s %s\n", d->descriptor, och->name, d->host);
 
 	    if (och->level == 1) {
-		write_to_descriptor(d->descriptor, "Since you are level one, and level one characters do not save, you gain a free level!\n\r", 0);
+		remote_write(d->descriptor, "Since you are level one, and level one characters do not save, you gain a free level!\n\r", 0);
 		advance_level(och, 1);
 	    }
 	    do_stand(och, "");
@@ -104,8 +104,8 @@ void copyover_recover()
 	    break;
 
 	/* Write something, and check if it goes error-free */
-	if (!write_to_descriptor(desc, "", 0)) {
-	    disconnect(desc);  /* nope */
+	if (!remote_write(desc, "", 0)) {
+	    remote_disconnect(desc);  /* nope */
 	    continue;
 	}
 
@@ -119,10 +119,10 @@ void copyover_recover()
 	fOld = load_char_obj(d, name);
 
 	if (!fOld) { /* Player file not found?! */
-	    write_to_descriptor(desc, "\n\rSomehow, your character was lost in the copyover. Sorry.\n\r", 0);
+	    remote_write(desc, "\n\rSomehow, your character was lost in the copyover. Sorry.\n\r", 0);
 	    close_socket(d, false, false);
 	} else { /* ok! */
-	    /*			write_to_descriptor (desc, "\n\rCopyover recovery complete.\n\r",0);*/
+	    /*			remote_write (desc, "\n\rCopyover recovery complete.\n\r",0);*/
 
 	    /* Just In Case */
 	    if (!d->character->in_room)

@@ -15,7 +15,7 @@
 
 #include "merc.h"
 #include "recycle.h"
-#include "socketio.h"
+#include "remote.h"
 #include <time.h>
 #if !defined(S_SPLINT_S)
 #include <ctype.h> /** isascii, isprint */
@@ -81,7 +81,6 @@ static void check_afk(CHAR_DATA * ch);
 static void bust_a_prompt(CHAR_DATA * ch);
 
 static void on_new_connection(int descriptor, int ipaddress, const char *hostname);
-static void poll_remote(int control);
 static void process_all_input();
 static void process_all_output();
 
@@ -102,66 +101,11 @@ void game_loop(int port, int control)
 	last_clock = clock();
 	(void)time(&globalSystemState.current_time);
 
-	poll_remote(control);
+	remote_poll(control, on_new_connection);
 	process_all_input();
 	update_handler();
 	process_all_output();
 	synchronize(last_clock);
-    }
-}
-
-void poll_remote(int control)
-{
-    static struct timeval null_time = { .tv_sec = 0, .tv_usec = 0 };
-    DESCRIPTOR_DATA *d;
-    DESCRIPTOR_DATA *dpending;
-    fd_set in_set;
-    fd_set out_set;
-    fd_set exc_set;
-    int maxdesc;
-
-    FD_ZERO(&in_set);
-    FD_ZERO(&out_set);
-    FD_ZERO(&exc_set);
-    FD_SET(control, &in_set);
-    maxdesc = control;
-
-    dpending = descriptor_iterator_start(&allfilter);
-    while ((d = dpending) != NULL) {
-	dpending = descriptor_iterator(d, &allfilter);
-
-	if (d->pending_delete) {
-	    descriptor_free(d);
-	} else {
-	    int descriptor = d->descriptor;
-	    d->fcommand = false;
-	    d->idle++;
-
-	    maxdesc = UMAX(maxdesc, descriptor);
-	    FD_SET(descriptor, &in_set);
-	    FD_SET(descriptor, &out_set);
-	    FD_SET(descriptor, &exc_set);
-	}
-    }
-
-    if (select(maxdesc + 1, &in_set, &out_set, &exc_set, &null_time) < 0) {
-	perror("Game_loop: select: poll");
-	raise(SIGABRT);
-    }
-
-    /** New connection? */
-    if (FD_ISSET(control, &in_set)) {
-	init_descriptor(control, on_new_connection);
-    }
-
-    dpending = descriptor_iterator_start(&allfilter);
-    while ((d = dpending) != NULL) {
-	int descriptor = d->descriptor;
-	dpending = descriptor_iterator(d, &allfilter);
-
-	d->ready_input = FD_ISSET(descriptor, &in_set);
-	d->ready_output = FD_ISSET(descriptor, &out_set);
-	d->ready_exceptional = FD_ISSET(descriptor, &exc_set);
     }
 }
 
@@ -219,7 +163,7 @@ void close_socket(DESCRIPTOR_DATA *dclose, bool withProcessOutput, bool withSave
     }
 
     dclose->pending_delete = true;
-    disconnect(dclose->descriptor);
+    remote_disconnect(dclose->descriptor);
 }
 
 /**
@@ -241,7 +185,7 @@ void read_from_buffer(DESCRIPTOR_DATA *d)
     /** Canonical input processing. */
     for (i = 0, k = 0; d->inbuf[i] != '\n' && d->inbuf[i] != '\r'; i++) {
 	if (k >= MIL - 2) {
-	    write_to_descriptor(d->descriptor, "Line too long.\n\r", 0);
+	    remote_write(d->descriptor, "Line too long.\n\r", 0);
 
 	    /* skip the rest of the line */
 	    for (; d->inbuf[i] != '\0'; i++)
@@ -349,7 +293,7 @@ bool process_output(DESCRIPTOR_DATA *d, bool fPrompt)
     }
 
     /** OS-dependent output. */
-    if (!write_to_descriptor(d->descriptor, d->outbuf, d->outtop)) {
+    if (!remote_write(d->descriptor, d->outbuf, d->outtop)) {
 	d->outtop = 0;
 	return false;
     } else {
@@ -992,7 +936,7 @@ void process_all_input()
 	if (d->ready_input) {
 	    /* Hold horses if pending command already. */
 	    if (d->incomm[0] == '\0') {
-		int outcome = read_from_descriptor(d->descriptor, 4*MIL, d->inbuf);
+		int outcome = remote_read(d->descriptor, 4*MIL, d->inbuf);
 		if (outcome != DESC_READ_RESULT_OK) {
 		    switch (outcome) {
 			case DESC_READ_RESULT_OVERFLOW:
@@ -1020,7 +964,7 @@ void process_all_input()
 
 	/** Kyndig: Get rid of idlers as well. */
 	if ((!d->character && d->idle > 50 /* 10 seconds */) || d->idle > 28800 /* 2 hrs  */) { 
-	    write_to_descriptor(d->descriptor, "Idle.\n\r", 0);
+	    remote_write(d->descriptor, "Idle.\n\r", 0);
 	    close_socket(d, false, true);
 	    continue;
 	}
@@ -1089,8 +1033,8 @@ void on_new_connection(int descriptor, int ipaddress, const char *hostname)
      * Furey: added suffix check by request of Nickel of HiddenWorlds.
      */
     if (check_ban(hostname, BAN_ALL)) {
-	write_to_descriptor(descriptor, "Your site has been banned from this mud.\n\r", 0);
-	disconnect(descriptor);
+	remote_write(descriptor, "Your site has been banned from this mud.\n\r", 0);
+	remote_disconnect(descriptor);
 	return;
     }
 
@@ -1103,6 +1047,6 @@ void on_new_connection(int descriptor, int ipaddress, const char *hostname)
 	    (ipaddress) & 0xFF);
 
     /** Init descriptor data. */
-    write_to_descriptor(dnew->descriptor, "Ansi intro screen?(y/n) \n\r", 0);
+    remote_write(dnew->descriptor, "Ansi intro screen?(y/n) \n\r", 0);
 }
 

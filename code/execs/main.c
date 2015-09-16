@@ -4,7 +4,7 @@
 #include <signal.h>
 #include <string.h> //strncpy
 #include <sys/time.h>
-#include "socketio.h"
+#include "remote.h"
 
 
 /** exports */
@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 
     /** Run the game. */
     if (!recovering) {
-	control = listen_on_port(port);
+	control = remote_listen(port);
     }
 
     log_string("BT is ready to rock on port %d.", port);
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
     }
 
     game_loop(port, control);
-    deafen_port(control);
+    remote_deafen(control);
 
     log_string("Normal termination of game.");
     return 0;

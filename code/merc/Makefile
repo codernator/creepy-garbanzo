@@ -25,8 +25,8 @@ _OBJ=act_comm.o act_combat.o act_enter.o act_info.o act_move.o act_obj.o act_wiz
      nanny.o note.o \
      object.o objectprototype.o ovnum.o \
      password.o \
-     race.o recycle.o repair.o \
-     save.o scan.o set.o skills.o socketio.o spells.o stat.o \
+     race.o recycle.o remote.o repair.o \
+     save.o scan.o set.o skills.o spells.o stat.o \
      tables.o teleport.o \
      unique.o update.o variant.o who.o \
      olc/olc.o olc/olc_areas.o olc/olc_groups.o olc/olc_helps.o olc/olc_mobs.o \
