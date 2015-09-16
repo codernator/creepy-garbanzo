@@ -51,20 +51,34 @@ static void ansi_answered(DESCRIPTOR_DATA *d, const char *argument)
 static void name_answered(DESCRIPTOR_DATA *d, const char *argument)
 {
     CHAR_DATA *ch;
-    static char name_buf[MIL];
+    static char name_buf[MAX_NAME_LENGTH+1];
     static char buf[MIL];
     bool found;
+    size_t arglen;
 
     if (argument[0] == '\0') {
 	close_socket(d, true, false);
 	return;
     }
 
-    (void)snprintf(name_buf, UMIN(strlen(argument), MIL), "%s", argument);
+    arglen = strlen(argument);
+    if (arglen > MAX_NAME_LENGTH) {
+	(void)snprintf(buf, MIL-1, "Your name of length %d characters is longer than the max of %d.\n\rPlease choose a different name: ", (int)arglen, MAX_NAME_LENGTH);
+	write_to_buffer(d, buf, strlen(buf));
+	return;
+    }
+
+    if (arglen < MIN_NAME_LENGTH) {
+	(void)snprintf(buf, MIL-1, "Your name of length %d characters is shorter than the min of %d.\n\rPlease choose a different name: ", (int)arglen, MAX_NAME_LENGTH);
+	write_to_buffer(d, buf, strlen(buf));
+	return;
+    }
+    
+
+    (void)snprintf(name_buf, MAX_NAME_LENGTH+1, "%s", argument);
     name_buf[0] = UPPER(name_buf[0]);
     if (!check_parse_name(name_buf)) {
-	write_to_buffer(d, "Illegal name.  Disconnecting.\n\r", 0);
-	close_socket(d, true, false);
+	write_to_buffer(d, "Illegal name. Please choose another: ", 0);
 	return;
     }
 
@@ -730,13 +744,6 @@ bool check_parse_name(const char *name)
 		return false;
 	    }
 
-
-    /*
-     * Length restrictions.
-     */
-    if (strlen(name) < 2 || strlen(name) > MAX_NAME_LENGTH) {
-	return false;
-    }
 
     /*
      * Alphanumerics only.

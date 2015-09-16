@@ -108,7 +108,8 @@ typedef void DO_FUN(/*@partial@*/CHAR_DATA * ch, const char *argument);
 #define LOG_BUF_LENGTH          2*MAX_INPUT_LENGTH
 #define PAGELEN                 22
 #define MAX_TITLE_LENGTH        90
-#define MAX_NAME_LENGTH         12
+#define MAX_NAME_LENGTH         24
+#define MIN_NAME_LENGTH         6
 
 #define MSL             MAX_STRING_LENGTH
 #define MIL             MAX_INPUT_LENGTH
