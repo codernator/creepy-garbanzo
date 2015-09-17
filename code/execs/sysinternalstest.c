@@ -23,9 +23,10 @@ void test_database_write()
 {
     KEYVALUEPAIR_ARRAY *subject;
 
-    subject = keyvaluepairarray_create(2);
+    subject = keyvaluepairarray_create(3);
     keyvaluepairarray_append(subject, "verb", "hello");
-    keyvaluepairarray_appendf(subject, 10, "noun", "%s", "world\nhow goes?\n");
+    keyvaluepairarray_appendf(subject, 20, "noun", "%s\n%s?\n", "world", "how goes");
+    keyvaluepairarray_appendf(subject, 10, "number", "%d", 123);
 
     database_write(stdout, subject);
     keyvaluepairarray_free(subject);
