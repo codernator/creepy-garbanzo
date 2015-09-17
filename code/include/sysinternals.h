@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdbool.h>
 #include <stddef.h>
 
@@ -124,3 +125,9 @@ void log_to_player(const char username[], const char *fmt, ...);
 void log_bug(const char *fmt, ...);
 void log_string(const char *fmt, ...);
 /** ~logging.c */
+
+/** database.c */
+void database_write(FILE *fp, /*@observer@*/struct keyvaluepair_array *data);
+/*@only@*/struct keyvaluepair_array *database_read(FILE *fp);
+/** ~database.c */
+

@@ -9,7 +9,7 @@ LIBS=-lm
 
 _DEPS=sysinternals.h
 DEPS=$(patsubst %,$(IDIR)/%,$(_DEPS))
-_FIL=librandom libstring libutils keyvaluepair hashing logging
+_FIL=librandom libstring libutils keyvaluepair hashing logging database
 SRC=$(patsubst %,%.c,$(_FIL))
 OBJ=$(patsubst %,$(ODIR)/%,$(patsubst %,%.o,$(_FIL)))
 SYSINTERNALS=$(BDIR)/sysinternals.a

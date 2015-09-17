@@ -7,16 +7,30 @@
 
 static void test_keyvaluepairarray();
 static void test_keyvaluepairhash();
+static void test_database_write();
 
 
 int main(/*@unused@*/int argc, /*@unused@*/char **argv)
 {
     test_keyvaluepairarray();
     test_keyvaluepairhash();
+    test_database_write();
     return EXIT_SUCCESS;
 }
 
 
+void test_database_write()
+{
+    KEYVALUEPAIR_ARRAY *subject;
+
+    subject = keyvaluepairarray_create(2);
+    keyvaluepairarray_append(subject, "verb", "hello");
+    keyvaluepairarray_appendf(subject, 10, "noun", "%s", "world\nhow goes?\n");
+
+    database_write(stdout, subject);
+    keyvaluepairarray_free(subject);
+    printf("%s\n", "complete");
+}
 
 void test_keyvaluepairarray()
 {
