@@ -2,6 +2,11 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#ifdef S_SPLINT_S
+#define _Exit exit
+#endif
+
+
 #define LOWER(c)                 ((c) >= 'A' && (c) <= 'Z' ? (c) + 'a' - 'A' : (c))
 #define UPPER(c)                 ((c) >= 'a' && (c) <= 'z' ? (c) + 'A' - 'a' : (c))
 #define UMIN(a, b)               ((a) < (b) ? (a) : (b))

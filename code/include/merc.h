@@ -1,15 +1,10 @@
 #include <time.h>
-#include <stdbool.h>
 #include "sysinternals.h"
 #include <signal.h>
 
 #if !defined(__MERC_H)
 #define __MERC_H
 
-
-#ifdef S_SPLINT_S
-#define _Exit exit
-#endif
 
 
 #define ABORT \
