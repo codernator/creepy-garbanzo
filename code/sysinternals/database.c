@@ -25,12 +25,46 @@ static void read_data(FILE *fp, struct keyvaluepair_array *data, char terminator
 static /*@only@*/char *read_key(FILE *fp, size_t length);
 
 
+/** 
+ * write a collection of key-value (string,string) pairs to a file in the format:
+ * - the key is written to its own line unmodified with no indent.
+ * - the value is written on lines following the key with a single-tab block indent.
+ *
+ * Exampli Gratis:
+ * - given { .key = "message", .value = "Hello, World!\nWhat's up?\n(... besides the sky.)" }
+ * - output
+ * message\n
+ * \tHello, World!\n
+ * \tWhat's up?\n
+ * \t(... besides the sky.)\n
+ *
+ * Notes:
+ * - Items with no key will not be written.
+ * - Items with no value _will be_ written.
+ * - Any white-space at the start of a key will be skipped, because keys must be identified by a
+ *   non-whitespace character.
+ * - White-space in values will be preserved.
+ *
+ * See:
+ * - write_value(FILE *, const char *): void
+ */
 void database_write(FILE *fp, const struct keyvaluepair_array *data)
 {
     size_t i;
 
     for (i = 0; i < data->top; i++) {
-        fprintf(fp, "%s\n", data->items[i].key);
+        const char *key = data->items[i].key;
+
+        // no key = no write.
+        if (key == NULL || *key == '\0') continue;
+
+        // can't abide preceding spaces.
+        while (isspace(*key) && *key != '\0') { key++; }
+
+        // blank key = no write.
+        if (*key == '\0') continue;
+
+        fprintf(fp, "%s\n", key);
         write_value(fp, data->items[i].value);
     }
 }
