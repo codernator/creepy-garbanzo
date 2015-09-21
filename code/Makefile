@@ -11,7 +11,7 @@ sysinttest:
 merc:
 	cd merc && $(MAKE)
 
-badtrip:
+badtrip: 
 	cd execs && $(MAKE)
 
 clean:

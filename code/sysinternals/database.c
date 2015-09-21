@@ -10,6 +10,8 @@
 #define isspace(ch) ((ch) == 20)
 #endif
 
+#define VALUE_TERMINATOR '~'
+
 #define ABORT \
 { \
     if (raise(SIGABRT) != 0) { \
@@ -18,7 +20,6 @@
 }
 
 
-static void write_value(FILE *fp, const char *value);
 static size_t count_keys(FILE *fp, const char terminator);
 static size_t count_key_length(FILE *fp);
 static void read_data(FILE *fp, struct keyvaluepair_array *data, char terminator);
@@ -44,28 +45,68 @@ static /*@only@*/char *read_key(FILE *fp, size_t length);
  * - Any white-space at the start of a key will be skipped, because keys must be identified by a
  *   non-whitespace character.
  * - White-space in values will be preserved.
- *
- * See:
- * - write_value(FILE *, const char *): void
  */
 void database_write(FILE *fp, const struct keyvaluepair_array *data)
 {
     size_t i;
 
+    /** for each key-value pair... */
     for (i = 0; i < data->top; i++) {
-        const char *key = data->items[i].key;
+        /**
+         * Write the key part of a key-value pair to a file, beginning on a new linei,
+         * and terminated by a new line. Preceding spaces in a key will simply be skipped.
+         */
+        {
+            const char *key = data->items[i].key;
 
-        // no key = no write.
-        if (key == NULL || *key == '\0') continue;
+            // no key = no write.
+            if (key == NULL || *key == '\0') continue;
 
-        // can't abide preceding spaces.
-        while (isspace(*key) && *key != '\0') { key++; }
+            // can't abide preceding spaces in key.
+            while (isspace(*key) && *key != '\0') { key++; }
 
-        // blank key = no write.
-        if (*key == '\0') continue;
+            // blank key = no write.
+            if (*key == '\0') continue;
 
-        fprintf(fp, "%s\n", key);
-        write_value(fp, data->items[i].value);
+            fprintf(fp, "%s\n", key);
+        }
+
+        /**
+         * Write a string value to a file, block-indented by a tab.
+         * Strip \n\r  \n\r  \r  \n from each line and write \n instead.
+         * Preserve line-breaks and line lengths. (Empty lines will be written).
+         * Follow the string with a new line \n, the terminator character, and
+         * another new line \n.
+         */
+        {
+            const char *value = data->items[i].value;
+            const char *p;
+            char c;
+
+            p = value;
+
+            (void)fputc('\t', fp);
+            c = *p;
+            while (c != '\0') {
+                if (c == '\n' || c == '\r') {
+                    char t;
+                    (void)fputc('\n', fp);
+                    (void)fputc('\t', fp);
+                    // skip past second part of \n\r or \r\n but not \r\r or \n\n.
+                    t = *(p + 1);
+                    if ((t == '\n' || t == '\r') && t != c) {
+                        c = *(++p);
+                    }
+                } else {
+                    (void)fputc(c, fp);
+                }
+
+                c = *(++p);
+            }
+            (void)fputc('\n', fp);
+            (void)fputc(VALUE_TERMINATOR, fp);
+            (void)fputc('\n', fp);
+        }
     }
 }
 
@@ -81,41 +122,6 @@ struct keyvaluepair_array *database_read(FILE *fp, const char terminator)
     return data;
 }
 
-
-
-/**
- * Write a string to a file, block-indented by a tab.
- * Strip \n\r  \n\r  \r  \n from each line and write \n instead.
- * Preserve line-breaks and line lengths. (Empty lines will be written).
- * Follow the string with a new line \n.
- */
-static void write_value(FILE *fp, const char *value)
-{
-    const char *p;
-    char c;
-
-    p = value;
-
-    (void)fputc('\t', fp);
-    c = *p;
-    while (c != '\0') {
-        if (c == '\n' || c == '\r') {
-            char t;
-            (void)fputc('\n', fp);
-            (void)fputc('\t', fp);
-            // skip past second part of \n\r or \r\n but not \r\r or \n\n.
-            t = *(p + 1);
-            if ((t == '\n' || t == '\r') && t != c) {
-                c = *(++p);
-            }
-        } else {
-            (void)fputc(c, fp);
-        }
-
-        c = *(++p);
-    }
-    (void)fputc('\n', fp);
-}
 
 size_t count_keys(FILE *fp, const char terminator)
 {
