@@ -12,7 +12,11 @@
 
 
 /** imports */
+#ifdef __CYGWIN__
+extern int gettimeofday(struct timeval *tp, void *tzp);
+#else
 extern int gettimeofday(struct timeval *tp, struct timezone *tzp);
+#endif
 extern int close(int fd);
 
 

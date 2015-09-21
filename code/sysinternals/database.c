@@ -60,13 +60,13 @@ void database_write(FILE *fp, const struct keyvaluepair_array *data)
             const char *key = data->items[i].key;
 
             // no key = no write.
-            if (key == NULL || *key == '\0') continue;
+            if (key == NULL || key[0] == '\0') continue;
 
             // can't abide preceding spaces in key.
-            while (isspace(*key) && *key != '\0') { key++; }
+            while (isspace(key[0]) && key[0] != '\0') { key++; }
 
             // blank key = no write.
-            if (*key == '\0') continue;
+            if (key[0] == '\0') continue;
 
             fprintf(fp, "%s\n", key);
         }

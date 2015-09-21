@@ -18,6 +18,7 @@
 #include "remote.h"
 #include <time.h>
 #if !defined(S_SPLINT_S)
+#include <sys/time.h>  //timeval
 #include <ctype.h> /** isascii, isprint */
 #endif
 #include <stdarg.h>
