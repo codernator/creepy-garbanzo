@@ -19,7 +19,7 @@
 #include <time.h>
 #if !defined(S_SPLINT_S)
 #include <sys/time.h>  //timeval
-#include <ctype.h> /** isascii, isprint */
+#include <ctype.h> /** isascii, isprint, isspace */
 #endif
 #include <stdarg.h>
 #include <string.h>
@@ -69,7 +69,6 @@ extern int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds
 
 /** Game declarations. */
 extern char *color_table[];
-extern bool is_space(const char test);
 extern bool run_olc_editor(DESCRIPTOR_DATA * d);
 extern char *olc_ed_name(CHAR_DATA * ch);
 extern char *olc_ed_vnum(CHAR_DATA * ch);
@@ -824,7 +823,7 @@ void show_string(struct descriptor_data *d, char *input)
 		send_to_char(buffer, d->character);
 	    else
 		write_to_buffer(d, buffer, (int)strlen(buffer));
-	    for (chk = d->showstr_point; is_space(*chk); chk++) ;
+	    for (chk = d->showstr_point; isspace((int)*chk); chk++) ;
 	    {
 		if (!*chk) {
 		    if (d->showstr_head) {

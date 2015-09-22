@@ -3,6 +3,9 @@
 #include <signal.h>
 #include "merc.h"
 #include "libfile.h"
+#ifndef S_SPLINT_S
+#include <ctype.h>
+#endif
 
 
 /***************************************************************************
@@ -35,7 +38,7 @@ char fread_letter(FILE *fp)
 
 	do
 		c = (char)getc(fp);
-	while (is_space(c));
+	while (isspace((int)c));
 
 	return c;
 }
@@ -52,7 +55,7 @@ long fread_long(FILE *fp)
 
 	do
 		c = (char)getc(fp);
-	while (is_space(c));
+	while (isspace((int)c));
 
 	if (c == '+') {
 		c = (char)getc(fp);
@@ -61,12 +64,12 @@ long fread_long(FILE *fp)
 		c = (char)getc(fp);
 	}
 
-	if (!is_digit(c)) {
+	if (!isdigit((int)c)) {
 		log_bug("Fread_long: bad format.", 0);
 		raise(SIGABRT);
 	}
 
-	while (is_digit(c)) {
+	while (isdigit((int)c)) {
 		number = number * 10 + (long)c - (long)'0';
 		c = (char)getc(fp);
 	}
@@ -94,7 +97,7 @@ unsigned int fread_uint(FILE *fp)
 
 	do
 		c = (char)getc(fp);
-	while (is_space(c));
+	while (isspace((int)c));
 
 	if (c == '+') {
 		c = (char)getc(fp);
@@ -103,12 +106,12 @@ unsigned int fread_uint(FILE *fp)
 		c = (char)getc(fp);
 	}
 
-	if (!is_digit(c)) {
+	if (!isdigit((int)c)) {
 		log_bug("Fread_uint: bad format.", 0);
 		raise(SIGABRT);
 	}
 
-	while (is_digit(c)) {
+	while (isdigit((int)c)) {
 		number = number * 10 + (unsigned int)c - (unsigned int)'0';
 		c = (char)getc(fp);
 	}
@@ -137,7 +140,7 @@ int fread_number(FILE *fp)
 
 	do
 		c = (char)getc(fp);
-	while (is_space(c));
+	while (isspace((int)c));
 
 	number = 0;
 
@@ -149,12 +152,12 @@ int fread_number(FILE *fp)
 		c = (char)getc(fp);
 	}
 
-	if (!is_digit(c)) {
+	if (!isdigit((int)c)) {
 		log_bug("Fread_number: bad format.", 0);
         raise(SIGABRT);
 	}
 
-	while (is_digit(c)) {
+	while (isdigit((int)c)) {
 		number = number * 10 + (int)c - (int)'0';
 		c = (char)getc(fp);
 	}
@@ -179,7 +182,7 @@ long fread_flag(FILE *fp)
 
 	do
 		c = (char)getc(fp);
-	while (is_space(c));
+	while (isspace((int)c));
 
 	if (c == '-') {
 		negative = true;
@@ -188,14 +191,14 @@ long fread_flag(FILE *fp)
 
 	number = 0;
 
-	if (!is_digit(c)) {
+	if (!isdigit((int)c)) {
 		while (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z')) {
 			number += flag_convert(c);
 			c = (char)getc(fp);
 		}
 	}
 
-	while (is_digit(c)) {
+	while (isdigit((int)c)) {
 		number = number * 10 + (int)c - (int)'0';
 		c = (char)getc(fp);
 	}
@@ -245,7 +248,7 @@ char *fread_word(FILE *fp)
 
 	do
 		cEnd = (char)getc(fp);
-	while (is_space(cEnd));
+	while (isspace((int)cEnd));
 
 	if (cEnd == '\'' || cEnd == '"') {
 		pword = word;
@@ -257,7 +260,7 @@ char *fread_word(FILE *fp)
 
 	for (; pword < word + MAX_INPUT_LENGTH; pword++) {
 		*pword = (char)getc(fp);
-		if (cEnd == ' ' ? is_space(*pword) : *pword == cEnd) {
+		if (cEnd == ' ' ? isspace((int)*pword) : *pword == cEnd) {
 			if (cEnd == ' ')
 				ungetc(*pword, fp);
 			*pword = '\0';

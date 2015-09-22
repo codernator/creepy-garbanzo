@@ -35,6 +35,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#ifndef S_SPLINT_S
+#include <ctype.h>
+#endif
 
 #include "merc.h"
 #include "interp.h"
@@ -283,7 +286,7 @@ static void load_thread(char *name, NOTE_DATA **list, int type, time_t free_time
 		fclose(fp);
 		return;
 	    }
-	} while (is_space(letter));
+	} while (isspace((int)letter));
 
 	ungetc(letter, fp);
 

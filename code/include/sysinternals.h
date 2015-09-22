@@ -95,19 +95,21 @@ void i_bubble_sort(int *iarray, int array_size);
 
 
 /** libstrings.c */
+
+/**
+ * copy an existing character buffer of size old_size into a new character buffer
+ * of size new_size.
+ * assert(new_size > old_size)
+ */
+/*@only@*/char *grow_buffer(/*@observer@*/const char *existing, size_t old_size, size_t new_size);
+
 void smash_tilde(char *str);
 bool str_cmp(const char *astr, const char *bstr);
 bool str_prefix(const char *astr, const char *bstr);
 bool str_infix(const char *astr, const char *bstr);
 bool str_suffix(const char *astr, const char *bstr);
 void capitalize_into(const char *source, /*@out@*/ char *initialized_target, size_t string_length);
-bool is_space(const char test);
-bool is_digit(const char test);
-bool is_alpha(const char test);
-bool is_upper(const char test);
-bool is_alnum(const char test);
 bool is_number(const char *test);
-char to_lower(const char test);
 
 byte parse_byte(const char *string);
 byte parse_byte2(const char *string, byte min, byte max);

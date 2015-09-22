@@ -7,6 +7,9 @@
 #include "ansi.h"
 #include "interp.h"
 
+#ifndef S_SPLINT_S
+#include <ctype.h>
+#endif
 
 #include <stdio.h>
 #include <string.h>
@@ -1580,7 +1583,7 @@ void do_description(CHAR_DATA *ch, const char *argument)
 	}
 
 	s = sanitized + 1;
-	while (is_space(*s)) {
+	while (isspace((int)*s)) {
 	    s++;
 	}
 
@@ -1674,7 +1677,7 @@ void do_password(CHAR_DATA *ch, const char *argument)
      * So we just steal all its code.  Bleagh.
      */
     pArg = arg1;
-    while (is_space(*argument))
+    while (isspace((int)*argument))
 	argument++;
 
     cEnd = ' ';
@@ -1691,7 +1694,7 @@ void do_password(CHAR_DATA *ch, const char *argument)
     *pArg = '\0';
 
     pArg = arg2;
-    while (is_space(*argument))
+    while (isspace((int)*argument))
 	argument++;
 
     cEnd = ' ';

@@ -4,6 +4,9 @@
 #include "interp.h"
 #include "magic.h"
 #include "recycle.h"
+#ifndef S_SPLINT_S
+#include <ctype.h>
+#endif
 
 
 extern SKILL *gsp_hide;
@@ -365,11 +368,11 @@ void interpret(CHAR_DATA *ch, const char *argument)
     int trust;
     bool found;
 
-    while (is_space(*argument))
-	argument++;
+    while (isspace((int)*argument))
+        argument++;
 
     if (argument[0] == '\0')
-	return;
+        return;
 
     /*
      * Grab the command word.
@@ -380,14 +383,14 @@ void interpret(CHAR_DATA *ch, const char *argument)
     strcpy(buf, argument);
     sprintf(globalSystemState.last_command, "The last command was by %s in room[%ld] : %s.", ch->name, ch->in_room->vnum, buf);
 
-    if (!is_alpha(argument[0]) && !is_digit(argument[0])) {
-	command[0] = argument[0];
-	command[1] = '\0';
-	argument++;
-	while (is_space(*argument))
-	    argument++;
+    if (!isalpha((int)argument[0]) && !isdigit((int)argument[0])) {
+        command[0] = argument[0];
+        command[1] = '\0';
+        argument++;
+        while (isspace((int)*argument))
+            argument++;
     } else {
-	argument = one_argument(argument, command);
+        argument = one_argument(argument, command);
     }
 
     /*  Look for command in command table  */
@@ -395,104 +398,104 @@ void interpret(CHAR_DATA *ch, const char *argument)
     found = false;
     trust = get_trust(ch);
     for (cmd = 0; cmd_table[cmd].name[0] != '\0'; cmd++) {
-	if (command[0] == cmd_table[cmd].name[0]
-		&& !str_prefix(command, cmd_table[cmd].name)
-		&& cmd_table[cmd].level <= trust) {
-	    found = true;
-	    break;
-	}
+        if (command[0] == cmd_table[cmd].name[0]
+            && !str_prefix(command, cmd_table[cmd].name)
+            && cmd_table[cmd].level <= trust) {
+            found = true;
+            break;
+        }
     }
 
     if (IS_SET(ch->affected_by, AFF_HIDE)) {
-	if (ch->class == class_lookup("thief")) {
-	    if (cmd_table[cmd].position <= POS_RESTING || cmd < 6) {
-		if (number_percent() > (get_learned_percent(ch, gsp_hide) - 10))
-		    REMOVE_BIT(ch->affected_by, AFF_HIDE);
-	    } else {
-		REMOVE_BIT(ch->affected_by, AFF_HIDE);
-	    }
-	} else {
-	    REMOVE_BIT(ch->affected_by, AFF_HIDE);
-	}
+        if (ch->class == class_lookup("thief")) {
+            if (cmd_table[cmd].position <= POS_RESTING || cmd < 6) {
+                if (number_percent() > (get_learned_percent(ch, gsp_hide) - 10))
+                    REMOVE_BIT(ch->affected_by, AFF_HIDE);
+            } else {
+                REMOVE_BIT(ch->affected_by, AFF_HIDE);
+            }
+        } else {
+            REMOVE_BIT(ch->affected_by, AFF_HIDE);
+        }
     }
 
     /* Log and snoop. */
     log_to(LOG_SINK_LASTCMD, "[%s] -- '%s'", ch->name, logline);
 
     if (cmd_table[cmd].log == LOG_NEVER)
-	strcpy(logline, "");
+        strcpy(logline, "");
 
     if (cmd_table[cmd].log == LOG_ALWAYS) {
-	if (!IS_NPC(ch)) {
-	    log_to(LOG_SINK_ALWAYS, "[%s] -- '%s'", ch->name, logline);
-	    sprintf(wiznet_message, "`4Log `O%s`4: `O%s``", ch->name, logline);
-	    wiznet(wiznet_message, ch, NULL, WIZ_SECURE, 0, get_trust(ch));
-	} else {
-	    log_to(LOG_SINK_ALWAYS, "[%s] -- '%s'", ch->name, logline);
-	    log_string("Log %s(mob): %s", ch->name, logline);
-	    sprintf(wiznet_message, "`4Log `O%s(mob)`4: `O%s``", ch->name, logline);
-	    wiznet(wiznet_message, ch, NULL, WIZ_SECURE, 0, get_trust(ch));
-	}
+        if (!IS_NPC(ch)) {
+            log_to(LOG_SINK_ALWAYS, "[%s] -- '%s'", ch->name, logline);
+            sprintf(wiznet_message, "`4Log `O%s`4: `O%s``", ch->name, logline);
+            wiznet(wiznet_message, ch, NULL, WIZ_SECURE, 0, get_trust(ch));
+        } else {
+            log_to(LOG_SINK_ALWAYS, "[%s] -- '%s'", ch->name, logline);
+            log_string("Log %s(mob): %s", ch->name, logline);
+            sprintf(wiznet_message, "`4Log `O%s(mob)`4: `O%s``", ch->name, logline);
+            wiznet(wiznet_message, ch, NULL, WIZ_SECURE, 0, get_trust(ch));
+        }
     }
 
     if (!IS_NPC(ch) && IS_SET(ch->act, PLR_LOG)) {
-	log_to_player(ch->name, "[%s] -- '%s'", ch->name, logline);
-	sprintf(wiznet_message, "`4Log `O%s(plr)`4: `O%s``", ch->name, logline);
-	wiznet(wiznet_message, ch, NULL, WIZ_PLOG, 0, get_trust(ch));
+        log_to_player(ch->name, "[%s] -- '%s'", ch->name, logline);
+        sprintf(wiznet_message, "`4Log `O%s(plr)`4: `O%s``", ch->name, logline);
+        wiznet(wiznet_message, ch, NULL, WIZ_PLOG, 0, get_trust(ch));
     }
 
     if (globalSystemState.log_all) {
-	log_to(LOG_SINK_ALL, "[%s] -- '%s'", ch->name, logline);
-	sprintf(wiznet_message, "`4Log `O%s(all)`4: `O%s``", ch->name, logline);
-	wiznet(wiznet_message, ch, NULL, WIZ_ALOG, 0, get_trust(ch));
+        log_to(LOG_SINK_ALL, "[%s] -- '%s'", ch->name, logline);
+        sprintf(wiznet_message, "`4Log `O%s(all)`4: `O%s``", ch->name, logline);
+        wiznet(wiznet_message, ch, NULL, WIZ_ALOG, 0, get_trust(ch));
     }
 
     if (ch->desc != NULL && ch->desc->snoop_by != NULL) {
-	write_to_buffer(ch->desc->snoop_by, "% ", 2);
-	write_to_buffer(ch->desc->snoop_by, logline, 0);
-	write_to_buffer(ch->desc->snoop_by, "\n\r", 2);
+        write_to_buffer(ch->desc->snoop_by, "% ", 2);
+        write_to_buffer(ch->desc->snoop_by, logline, 0);
+        write_to_buffer(ch->desc->snoop_by, "\n\r", 2);
     }
 
     if (!found) {
-	send_to_char("```COMMAND NOT FOUND``\n\r", ch);
-	return;
+        send_to_char("```COMMAND NOT FOUND``\n\r", ch);
+        return;
     }
 
     /* Character not in position for command? */
 
     if (ch->position < cmd_table[cmd].position) {
-	switch (ch->position) {
-	    case POS_DEAD:
-		send_to_char("Lie still; you are DEAD.\n\r", ch);
-		break;
+        switch (ch->position) {
+          case POS_DEAD:
+              send_to_char("Lie still; you are DEAD.\n\r", ch);
+              break;
 
-	    case POS_MORTAL:
+          case POS_MORTAL:
 
-	    case POS_INCAP:
-		send_to_char("You are hurt far too bad for that.\n\r", ch);
-		break;
+          case POS_INCAP:
+              send_to_char("You are hurt far too bad for that.\n\r", ch);
+              break;
 
-	    case POS_STUNNED:
-		send_to_char("You are too stunned to do that.\n\r", ch);
-		break;
+          case POS_STUNNED:
+              send_to_char("You are too stunned to do that.\n\r", ch);
+              break;
 
-	    case POS_SLEEPING:
-		send_to_char("In your dreams, or what?\n\r", ch);
-		break;
+          case POS_SLEEPING:
+              send_to_char("In your dreams, or what?\n\r", ch);
+              break;
 
-	    case POS_RESTING:
-		send_to_char("Nah... You feel too relaxed...\n\r", ch);
-		break;
+          case POS_RESTING:
+              send_to_char("Nah... You feel too relaxed...\n\r", ch);
+              break;
 
-	    case POS_SITTING:
-		send_to_char("Better stand up first.\n\r", ch);
-		break;
+          case POS_SITTING:
+              send_to_char("Better stand up first.\n\r", ch);
+              break;
 
-	    case POS_FIGHTING:
-		send_to_char("No way!  You are still fighting!\n\r", ch);
-		break;
-	}
-	return;
+          case POS_FIGHTING:
+              send_to_char("No way!  You are still fighting!\n\r", ch);
+              break;
+        }
+        return;
     }
 
     /* Dispatch the command.*/
@@ -518,10 +521,10 @@ int number_argument(const char *argument, char *arg)
     const char *pdot;
 
     for (pdot = argument; *pdot != '\0'; pdot++) {
-	if (*pdot == '.') {
-	    strncpy(arg, pdot + 1, MIL);
-	    return snarf_number(argument, pdot);
-	}
+        if (*pdot == '.') {
+            strncpy(arg, pdot + 1, MIL);
+            return snarf_number(argument, pdot);
+        }
     }
 
     strcpy(arg, argument);
@@ -536,10 +539,10 @@ int mult_argument(const char *argument, char *arg)
     const char *pdot;
 
     for (pdot = argument; *pdot != '\0'; pdot++) {
-	if (*pdot == '*') {
-	    strncpy(arg, pdot + 1, MIL);
-	    return snarf_number(argument, pdot);
-	}
+        if (*pdot == '*') {
+            strncpy(arg, pdot + 1, MIL);
+            return snarf_number(argument, pdot);
+        }
     }
 
     strcpy(arg, argument);
@@ -560,21 +563,21 @@ char *one_line(char *base, char *buf)
 
     tmp = base;
     while (*tmp == ' ')
-	tmp++;
+        tmp++;
 
     while (*tmp != '\0') {
-	if (*tmp == '\n'
-		|| *tmp == '\r')
-	    break;
+        if (*tmp == '\n'
+            || *tmp == '\r')
+            break;
 
-	*buf++ = *tmp++;
+        *buf++ = *tmp++;
     }
 
     *buf = '\0';
 
     for (idx = 0; idx < 2; idx++)
-	if (*tmp == '\n' || *tmp == '\r')
-	    tmp++;
+        if (*tmp == '\n' || *tmp == '\r')
+            tmp++;
 
     return tmp;
 }
@@ -587,27 +590,27 @@ const char *one_argument(const char *argument, char *arg_first)
 {
     char cEnd;
 
-    while (is_space(*argument))
-	argument++;
+    while (isspace((int)*argument))
+        argument++;
 
     cEnd = ' ';
     if (*argument == '\'' || *argument == '"') {
-	cEnd = *argument++;
+        cEnd = *argument++;
     }
 
     while (*argument != '\0') {
-	if (*argument == cEnd) {
-	    argument++;
-	    break;
-	}
-	*arg_first = LOWER(*argument);
-	arg_first++;
-	argument++;
+        if (*argument == cEnd) {
+            argument++;
+            break;
+        }
+        *arg_first = LOWER(*argument);
+        arg_first++;
+        argument++;
     }
     *arg_first = '\0';
 
-    while (is_space(*argument))
-	argument++;
+    while (isspace((int)*argument))
+        argument++;
 
     return argument;
 }
@@ -623,18 +626,18 @@ void do_commands(CHAR_DATA *ch, const char *argument)
 
     col = 0;
     for (cmd = 0; cmd_table[cmd].name[0] != '\0'; cmd++) {
-	if (cmd_table[cmd].level < LEVEL_HERO
-		&& cmd_table[cmd].level <= get_trust(ch)
-		&& cmd_table[cmd].show) {
-	    sprintf(buf, "%-12s", cmd_table[cmd].name);
-	    send_to_char(buf, ch);
-	    if (++col % 6 == 0)
-		send_to_char("\n\r", ch);
-	}
+        if (cmd_table[cmd].level < LEVEL_HERO
+            && cmd_table[cmd].level <= get_trust(ch)
+            && cmd_table[cmd].show) {
+            sprintf(buf, "%-12s", cmd_table[cmd].name);
+            send_to_char(buf, ch);
+            if (++col % 6 == 0)
+                send_to_char("\n\r", ch);
+        }
     }
 
     if (col % 6 != 0)
-	send_to_char("\n\r", ch);
+        send_to_char("\n\r", ch);
 
     return;
 }
@@ -652,23 +655,23 @@ void do_wizcommands(CHAR_DATA *ch, const char *argument)
     buf = new_buf();
 
     for (level = LEVEL_HERO; level <= (int)UMIN(MAX_LEVEL, get_trust(ch)); level++) {
-	printf_buf(buf, repeater("-", 80));
-	printf_buf(buf, "\n\r");
-	printf_buf(buf, "`O%41d``:\n\r", level);
-	printf_buf(buf, repeater("-", 80));
-	printf_buf(buf, "\n\r");
-	col = 0;
-	for (cmd = 0; cmd_table[cmd].name[0] != '\0'; cmd++) {
-	    if (cmd_table[cmd].level == level
-		    && cmd_table[cmd].show) {
-		printf_buf(buf, "%-20s", capitalize(cmd_table[cmd].name));
-		if (++col % 4 == 0)
-		    printf_buf(buf, "\n\r");
-	    }
-	}
-	if (col % 4 != 0 || col == 0)
-	    printf_buf(buf, "\n\r");
-	printf_buf(buf, "\n\r");
+        printf_buf(buf, repeater("-", 80));
+        printf_buf(buf, "\n\r");
+        printf_buf(buf, "`O%41d``:\n\r", level);
+        printf_buf(buf, repeater("-", 80));
+        printf_buf(buf, "\n\r");
+        col = 0;
+        for (cmd = 0; cmd_table[cmd].name[0] != '\0'; cmd++) {
+            if (cmd_table[cmd].level == level
+                && cmd_table[cmd].show) {
+                printf_buf(buf, "%-20s", capitalize(cmd_table[cmd].name));
+                if (++col % 4 == 0)
+                    printf_buf(buf, "\n\r");
+            }
+        }
+        if (col % 4 != 0 || col == 0)
+            printf_buf(buf, "\n\r");
+        printf_buf(buf, "\n\r");
     }
 
     page_to_char(buf_string(buf), ch);
@@ -685,20 +688,20 @@ void do_wizhelp(CHAR_DATA *ch, const char *argument)
 
     col = 0;
     for (cmd = 0; cmd_table[cmd].name[0] != '\0'; cmd++) {
-	if (cmd_table[cmd].level >= LEVEL_HERO
-		&& cmd_table[cmd].level <= get_trust(ch)
-		&& cmd_table[cmd].show) {
-	    sprintf(buf, "`&%-3d`7: `O%-15s`7",
-		    cmd_table[cmd].level,
-		    capitalize(cmd_table[cmd].name));
-	    send_to_char(buf, ch);
-	    if (++col % 4 == 0)
-		send_to_char("\n\r", ch);
-	}
+        if (cmd_table[cmd].level >= LEVEL_HERO
+            && cmd_table[cmd].level <= get_trust(ch)
+            && cmd_table[cmd].show) {
+            sprintf(buf, "`&%-3d`7: `O%-15s`7",
+                    cmd_table[cmd].level,
+                    capitalize(cmd_table[cmd].name));
+            send_to_char(buf, ch);
+            if (++col % 4 == 0)
+                send_to_char("\n\r", ch);
+        }
     }
 
     if (col % 6 != 0)
-	send_to_char("\n\r", ch);
+        send_to_char("\n\r", ch);
 
     return;
 }
@@ -711,11 +714,11 @@ const CMD *cmd_lookup(CHAR_DATA *ch, const char *argument)
     int iter;
 
     strcpy(cmd_buf, argument);
-    if (!is_alpha(argument[0]) && !is_digit(argument[0])) {
-	cmd_buf[0] = argument[0];
-	cmd_buf[1] = '\0';
+    if (!isalpha((int)argument[0]) && !isdigit((int)argument[0])) {
+        cmd_buf[0] = argument[0];
+        cmd_buf[1] = '\0';
     } else {
-	one_argument(argument, cmd_buf);
+        one_argument(argument, cmd_buf);
     }
 
     /*
@@ -723,10 +726,10 @@ const CMD *cmd_lookup(CHAR_DATA *ch, const char *argument)
      */
     trust = get_trust(ch);
     for (iter = 0; cmd_table[iter].name[0] != '\0'; iter++) {
-	if (cmd_buf[0] == cmd_table[iter].name[0]
-		&& !str_prefix(cmd_buf, cmd_table[iter].name)
-		&& cmd_table[iter].level <= trust)
-	    return &cmd_table[iter];
+        if (cmd_buf[0] == cmd_table[iter].name[0]
+            && !str_prefix(cmd_buf, cmd_table[iter].name)
+            && cmd_table[iter].level <= trust)
+            return &cmd_table[iter];
     }
 
     return NULL;

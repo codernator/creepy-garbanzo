@@ -7,7 +7,7 @@
 #ifndef S_SPLINT_S
 #include <ctype.h>
 #else
-#define isspace(ch) ((ch) == 20)
+extern bool isspace(const char ch);
 #endif
 
 #define VALUE_TERMINATOR '~'

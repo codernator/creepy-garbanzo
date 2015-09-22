@@ -14,6 +14,9 @@
 #include "skills.h"
 #include "channels.h"
 #include <stdarg.h>
+#ifndef S_SPLINT_S
+#include <ctype.h>
+#endif
 
 
 
@@ -54,7 +57,6 @@ extern int _filbuf(FILE *);
 extern void init_mm(void);
 extern unsigned int fread_uint(FILE *fp);
 extern long fread_long(FILE *fp);
-extern bool is_space(const char test);
 extern GAMEOBJECT *obj_free;
 extern CHAR_DATA *char_free;
 extern PC_DATA *pcdata_free;
@@ -2351,7 +2353,7 @@ char *fread_string(FILE *fp)
      */
     do
 	c = (char)getc(fp);
-    while (is_space(c));
+    while (isspace((int)c));
 
     if ((*plast++ = c) == '~')
 	return &str_empty[0];
@@ -2454,7 +2456,7 @@ char *fread_string_eol(FILE *fp)
      */
     do
 	c = (char)getc(fp);
-    while (is_space(c));
+    while (isspace((int)c));
 
     if ((*plast++ = c) == '\n')
 	return &str_empty[0];
@@ -2902,7 +2904,7 @@ char *fread_norm_string(FILE *fp)
 
     do
 	c = (char)getc(fp);
-    while (is_space(c));
+    while (isspace((int)c));
 
     if (c == '~')
 	return NULL;

@@ -4,15 +4,20 @@
 #include <ctype.h>
 #endif
 #include <stdlib.h>
+#include <assert.h>
 
 
 
-/**
- * wrapper around isalnum for safe testing against character array.
- */
-bool is_alnum(const char test)
+char *grow_buffer(const char *existing, size_t old_size, size_t new_size)
 {
-    return isalnum((int)test);
+    char *new_buffer;
+
+    assert(new_size > old_size);
+    new_buffer = (char *)calloc(sizeof(char), new_size);
+    assert(new_buffer != NULL);
+    memcpy(new_buffer, existing, old_size);
+
+    return new_buffer;
 }
 
 /**
@@ -27,51 +32,12 @@ bool is_number(const char *arg)
         arg++;
 
     for (; *arg != '\0'; arg++)
-        if (!is_digit(*arg))
+        if (!isdigit((int)*arg))
             return false;
 
     return true;
 }
 
-/**
- * wrapper around isspace for safe testing against character array.
- */
-inline bool is_space(const char test)
-{
-    return isspace((int)test);
-}
-
-/**
- * wrapper around isdigit for safe testing against character array.
- */
-inline bool is_digit(const char test)
-{
-    return isdigit((int)test);
-}
-
-/**
- * wrapper around isalpha for safe testing against character array.
- */
-inline bool is_alpha(const char test)
-{
-    return isalpha((int)test);
-}
-
-/**
- * wrapper around isupper for safe testing against character array.
- */
-inline bool is_upper(const char test)
-{
-    return isupper((int)test);
-}
-
-/**
- * wrapper around tolower for safe testing against character array.
- */
-inline char to_lower(const char test)
-{
-    return tolower((int)test);
-}
 
 /**
  *	replace all ~'s with -'s - used to verify that

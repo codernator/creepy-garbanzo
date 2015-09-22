@@ -5,6 +5,9 @@
 #include "tables.h"
 #include "lookup.h"
 #include "mob_cmds.h"
+#ifndef S_SPLINT_S
+#include <ctype.h>
+#endif
 
 extern long flag_lookup(const char *word, const struct flag_type *flag_table);
 extern void mob_interpret(CHAR_DATA * ch, const char *argument);
@@ -860,11 +863,11 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
 	 * Get a command line. We sneakily get both the control word
 	 * (if/and/or) and the rest of the line in one pass.
 	 */
-	while (is_space(*code) && *code) code++;
+	while (isspace((int)*code) && *code) code++;
 	while (*code != '\0') {
 	    if (*code == '\n' || *code == '\r') {
 		break;
-	    } else if (is_space(*code)) {
+	    } else if (isspace((int)*code)) {
 		if (first_arg)
 		    first_arg = false;
 		else

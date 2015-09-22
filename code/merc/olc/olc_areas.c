@@ -11,14 +11,17 @@
  *                                                                         *
  ***************************************************************************/
 
-
-#include <stdio.h>
-#include <string.h>
 #include "merc.h"
 #include "tables.h"
 #include "olc.h"
 #include "recycle.h"
 #include "lookup.h"
+
+#include <stdio.h>
+#include <string.h>
+#ifndef S_SPLINT_S
+#include <ctype.h>
+#endif
 
 
 extern char *string_replace(char *orig, char *old, char *new);
@@ -236,7 +239,7 @@ EDIT(aedit_file){
 
     /* allow only letters and numbers */
     for (iter = 0; iter < length; iter++) {
-	if (!is_alnum(file[iter])) {
+	if (!isalnum((int)(file[iter]))) {
 	    send_to_char("Only letters and numbers are valid.\n\r", ch);
 	    return false;
 	}
