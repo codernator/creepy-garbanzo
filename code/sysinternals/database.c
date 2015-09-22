@@ -10,7 +10,9 @@
 extern bool isspace(const char ch);
 #endif
 
-#define VALUE_TERMINATOR '~'
+#ifndef DATABASE_RECORD_TERMINATOR
+#define DATABASE_RECORD_TERMINATOR '#'
+#endif
 
 #define ABORT \
 { \
@@ -20,9 +22,9 @@ extern bool isspace(const char ch);
 }
 
 
-static size_t count_keys(FILE *fp, const char terminator);
+static size_t count_keys(FILE *fp);
 static size_t count_key_length(FILE *fp);
-static void read_data(FILE *fp, struct keyvaluepair_array *data, char terminator);
+static void read_data(FILE *fp, struct keyvaluepair_array *data);
 static /*@only@*/char *read_key(FILE *fp, size_t length);
 
 
@@ -31,13 +33,17 @@ static /*@only@*/char *read_key(FILE *fp, size_t length);
  * - the key is written to its own line unmodified with no indent.
  * - the value is written on lines following the key with a single-tab block indent.
  *
+ * following the final key/value pair, write the record terminator.
+ *
  * Exampli Gratis:
  * - given { .key = "message", .value = "Hello, World!\nWhat's up?\n(... besides the sky.)" }
+ * - given DATABASE_RECORD_TERMINATOR #
  * - output
  * message\n
  * \tHello, World!\n
  * \tWhat's up?\n
  * \t(... besides the sky.)\n
+ * #
  *
  * Notes:
  * - Items with no key will not be written.
@@ -104,26 +110,26 @@ void database_write(FILE *fp, const struct keyvaluepair_array *data)
                 c = *(++p);
             }
             (void)fputc('\n', fp);
-            (void)fputc(VALUE_TERMINATOR, fp);
-            (void)fputc('\n', fp);
         }
     }
+
+    (void)fputc(DATABASE_RECORD_TERMINATOR, fp);
 }
 
-struct keyvaluepair_array *database_read(FILE *fp, const char terminator)
+struct keyvaluepair_array *database_read(FILE *fp)
 {
     size_t numkeys;
     struct keyvaluepair_array *data;
 
-    numkeys = count_keys(fp, terminator);
+    numkeys = count_keys(fp);
     data = keyvaluepairarray_create(numkeys);
-    read_data(fp, data, terminator);
+    read_data(fp, data);
 
     return data;
 }
 
 
-size_t count_keys(FILE *fp, const char terminator)
+size_t count_keys(FILE *fp)
 {
     size_t count = 0;
     char c;
@@ -135,8 +141,8 @@ size_t count_keys(FILE *fp, const char terminator)
     }
 
     c = (char)fgetc(fp);
-    while (c != '\0' && c != terminator) {
-        if (!(c == '\t' || c == '\n' || c == '\r'))
+    while (c != '\0' && c != '\n') {
+        if (!(c == '\t' || c == '\n'))
             count++;
         c = (char)fgetc(fp);
     }
@@ -174,12 +180,12 @@ size_t count_key_length(FILE *fp)
     return count;
 }
 
-void read_data(FILE *fp, struct keyvaluepair_array *data, char terminator)
+void read_data(FILE *fp, struct keyvaluepair_array *data)
 {
     char c;
 
     c = (char)fgetc(fp);
-    while (c != '\0' && c != terminator) {
+    while (c != '\0' && c != '\n') {
         if (!isspace(c)) {
             size_t key_length;
             char *key;
@@ -200,7 +206,7 @@ char *read_key(FILE *fp, size_t length)
     char *key;
     char *p;
     char c;
-    
+
     key = calloc(sizeof(char), length+1);
     assert(key != NULL);
     p = key;

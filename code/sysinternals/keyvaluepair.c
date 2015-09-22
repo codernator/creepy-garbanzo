@@ -24,6 +24,19 @@ KEYVALUEPAIR_ARRAY *keyvaluepairarray_create(size_t numelements)
     return head;
 }
 
+void keyvaluepairarray_grow(KEYVALUEPAIR_ARRAY *array, size_t newSize)
+{
+    KEYVALUEPAIR *newitems;
+
+    assert(newSize > array->size);
+    newitems = calloc(sizeof(KEYVALUEPAIR), newSize);
+    assert(newitems != NULL);
+    memcpy(newitems, array->items, sizeof(KEYVALUEPAIR)*array->size);
+    array->size = newSize;
+    free(array->items);
+    array->items = newitems;
+}
+
 void keyvaluepairarray_append(KEYVALUEPAIR_ARRAY *array, const char *key, const char *value)
 {
     size_t keylength = strlen(key);

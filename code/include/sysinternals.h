@@ -69,6 +69,7 @@ HASHVALUETYPE calchashvalue(const char *key);
 /*@only@*/KEYVALUEPAIR_ARRAY *keyvaluepairarray_create(size_t numelements);
 void keyvaluepairarray_append(KEYVALUEPAIR_ARRAY *array, const char *key, const char *value);
 void keyvaluepairarray_appendf(KEYVALUEPAIR_ARRAY *array, size_t maxlength, const char *key, const char *valueformat, ...);
+void keyvaluepairarray_grow(KEYVALUEPAIR_ARRAY *array, size_t newSize);
 /*@observer@*//*@null@*/const char *keyvaluepairarray_find(const KEYVALUEPAIR_ARRAY *array, const char *key);
 void keyvaluepairarray_free(/*@only@*//*@null@*/KEYVALUEPAIR_ARRAY *array);
 /*@only@*/KEYVALUEPAIR_HASH *keyvaluepairhash_create(/*@observer@*/KEYVALUEPAIR_ARRAY *array, size_t numelements, size_t numbuckets);
@@ -135,6 +136,6 @@ void log_string(const char *fmt, ...);
 
 /** database.c */
 void database_write(FILE *fp, /*@observer@*/const struct keyvaluepair_array *data);
-/*@only@*/struct keyvaluepair_array *database_read(FILE *fp, const char terminator);
+/*@only@*/struct keyvaluepair_array *database_read(FILE *fp);
 /** ~database.c */
 
