@@ -4,6 +4,8 @@
 
 #ifdef S_SPLINT_S
 #define _Exit exit
+typedef int pid_t;
+long long atoll(const char *nptr);
 #endif
 
 
@@ -16,11 +18,6 @@
 #define UCEILING(a, b)           ((a)/(b) + (((a)%(b)) != 0 ? 1 : 0))
 #define CALC_HASH_BUCKET(key, numhashbuckets) ((HASHBUCKETTYPE)(calchashvalue((key)) % (HASHVALUETYPE)(numhashbuckets)))
 
-
-#ifdef S_SPLINT_S
-typedef int pid_t;
-long long atoll(const char *nptr);
-#endif
 
 typedef unsigned long long HASHVALUETYPE;
 typedef unsigned int HASHBUCKETTYPE;

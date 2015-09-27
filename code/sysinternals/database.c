@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <assert.h>
+#include <string.h>
 
 #ifndef S_SPLINT_S
 #include <ctype.h>
@@ -14,6 +15,18 @@ extern bool isspace(const char ch);
 #define DATABASE_RECORD_TERMINATOR '#'
 #endif
 
+#ifndef DATABASE_INIT_KEYCOUNT
+#define DATABASE_INIT_KEYCOUNT 32
+#endif
+
+#ifndef DATABASE_INIT_KEYLEN
+#define DATABASE_INIT_KEYLEN 32
+#endif
+
+#ifndef DATABASE_INIT_VALUELEN
+#define DATABASE_INIT_VALUELEN 1024
+#endif
+
 #define ABORT \
 { \
     if (raise(SIGABRT) != 0) { \
@@ -22,10 +35,6 @@ extern bool isspace(const char ch);
 }
 
 
-static size_t count_keys(FILE *fp);
-static size_t count_key_length(FILE *fp);
-static void read_data(FILE *fp, struct keyvaluepair_array *data);
-static /*@only@*/char *read_key(FILE *fp, size_t length);
 
 
 /** 
@@ -118,88 +127,125 @@ void database_write(FILE *fp, const struct keyvaluepair_array *data)
 
 struct keyvaluepair_array *database_read(FILE *fp)
 {
-    size_t numkeys;
+    const int EOL = (int)'\n';
+    const int TAB = (int)'\t';
+    const int TERM = (int)DATABASE_RECORD_TERMINATOR;
+    size_t numkeys = DATABASE_INIT_KEYCOUNT;
+    size_t keylen = DATABASE_INIT_KEYLEN;
+    size_t valuelen = DATABASE_INIT_VALUELEN;
     struct keyvaluepair_array *data;
+    char *keybuf;
+    char *valuebuf;
 
-    numkeys = count_keys(fp);
+    keybuf = (char *)calloc(sizeof(char), keylen);
+    assert(keybuf != NULL);
+    valuebuf = (char *)calloc(sizeof(char), valuelen);
+    assert(valuebuf != NULL);
+
     data = keyvaluepairarray_create(numkeys);
-    read_data(fp, data);
 
+    /** TODO - this is unbrushed hair. */
+    while (true) {
+        memset(keybuf, 0, sizeof(char) * keylen);
+        memset(valuebuf, 0, sizeof(char) * keylen);
+
+        /** input a key. */
+        {
+            int c;
+            size_t i;
+
+            i = 0;
+            c = fgetc(fp);
+            while (c != EOF && c != EOL) {
+                keybuf[i++] = (char)c;
+                if (i == keylen) {
+                    size_t newkeylen = keylen << 2;
+                    char *newkeybuf;
+                    /* time to grow the buffer */
+                    newkeybuf = grow_buffer(keybuf, keylen, newkeylen);
+                    free(keybuf);
+                    keybuf = newkeybuf;
+                    keylen = newkeylen;
+                }
+                c = fgetc(fp);
+            }
+            keybuf[i] = '\0';
+
+            /* The record terminator alone is not a valid key, but a valid
+             * key could start with the record terminator.
+             */
+            if (i == 1 && keybuf[0] == (char)TERM) {
+                break;
+            }
+
+            /** seems like a premature file closure. */
+            if (c == EOF) {
+                fprintf(stderr, "Premature end of file reading key %s.", keybuf);
+                ABORT;
+                break;
+            }
+
+            /** this was a blank line. moving along. */
+            if (keybuf[0] == '\0') {
+                continue;
+            }
+        }
+
+        /** input a value */
+        {
+            int c;
+            int pc;
+            size_t i;
+
+            i = 0;
+            pc = EOL;
+            c = fgetc(fp);
+            while (c != EOF) {
+                if (pc == EOL) {
+                    if (c != TAB) {
+                        /* Anything following end of line that isnt' a tab is the end of
+                         * this value. It could be end-of-record or the start of a new key,
+                         * so, put it back!
+                         */
+                        int ung = ungetc(c, fp);
+                        assert(ung == c);
+                        /* The previous EOL was appended but is not part of the value. */
+                        valuebuf[i-1] = '\0';
+                        break;
+                    }
+                    /* this is the block indent for the value. */
+                    pc = c;
+                    c = fgetc(fp);
+                    continue;
+                }
+                valuebuf[i++] = (char)c;
+                if (i == valuelen) {
+                    size_t newvaluelen = valuelen << 2;
+                    char *newvaluebuf = grow_buffer(valuebuf, valuelen, newvaluelen);
+                    /* time to grow the buffer */
+                    free(valuebuf);
+                    valuebuf = newvaluebuf;
+                    valuelen = newvaluelen;
+                }
+                pc = c;
+                c = fgetc(fp);
+            }
+            valuebuf[i] = '\0';
+
+            keyvaluepairarray_append(data, keybuf, valuebuf);
+
+            if (c == EOF) {
+                break;
+            }
+        }
+    }
+
+    free(keybuf);
+    free(valuebuf);
     return data;
 }
 
 
-size_t count_keys(FILE *fp)
-{
-    size_t count = 0;
-    char c;
-    fpos_t current_pos;
-
-    if (fgetpos(fp, &current_pos) != 0) {
-        perror("count_keys");
-        ABORT;
-    }
-
-    c = (char)fgetc(fp);
-    while (c != '\0' && c != '\n') {
-        if (!(c == '\t' || c == '\n'))
-            count++;
-        c = (char)fgetc(fp);
-    }
-
-    if (fsetpos(fp, &current_pos) != 0) {
-        perror("count_keys");
-        ABORT;
-    }
-
-    return count;
-}
-
-size_t count_key_length(FILE *fp)
-{
-    fpos_t current_pos;
-    size_t count = 0;
-    char c;
-
-    if (fgetpos(fp, &current_pos) != 0) {
-        perror("count_keys");
-        ABORT;
-    }
-
-    c = (char)fgetc(fp);
-    while (c != '\0' && c != '\n' && c != '\r') {
-        count++;
-        c = (char)fgetc(fp);
-    }
-
-    if (fsetpos(fp, &current_pos) != 0) {
-        perror("count_keys");
-        ABORT;
-    }
-
-    return count;
-}
-
-void read_data(FILE *fp, struct keyvaluepair_array *data)
-{
-    char c;
-
-    c = (char)fgetc(fp);
-    while (c != '\0' && c != '\n') {
-        if (!isspace(c)) {
-            size_t key_length;
-            char *key;
-
-            (void)ungetc(c, fp);
-            key_length = count_key_length(fp);
-            key = read_key(fp, key_length);
-
-            keyvaluepairarray_append(data, key, "");
-            free(key);
-        }
-        c = (char)fgetc(fp);
-    }
-}
 
 char *read_key(FILE *fp, size_t length)
 {
