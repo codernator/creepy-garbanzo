@@ -64,6 +64,69 @@ void test_database_read()
     database_write(stdout, subject);
     printf("%s.\n", "Clean up");
     keyvaluepairarray_free(subject);
+
+
+    printf("%s.\n", "Try extra large key and value.");
+    {
+        const char *key;
+        const char *val;
+        char *keybuf;
+        char *valbuf;
+        /* Create KVP */
+        keybuf = calloc(sizeof(char), 200);
+        assert(keybuf != NULL);
+        valbuf = calloc(sizeof(char), 3000);
+        assert(valbuf != NULL);
+        subject = keyvaluepairarray_create(3);
+        memset(keybuf, (int)'k', 200*sizeof(char));
+        keybuf[199] = '\0';
+        memset(valbuf, (int)'v', 3000*sizeof(char));
+        valbuf[2999] = '\0';
+        keyvaluepairarray_append(subject, keybuf, valbuf);
+        free(keybuf);
+        free(valbuf);
+        /* Write to test file. */
+        db = fopen(TEST_DB_FILE, "w");
+        assert(db != NULL);
+        database_write(db, subject);
+        (void)fclose(db);
+        keyvaluepairarray_free(subject);
+        /* Read from test file. */
+        db = fopen(TEST_DB_FILE, "r");
+        assert(db != NULL);
+        subject = database_read(db);
+        (void)fclose(db);
+        key= subject->items[0].key;
+        val= subject->items[0].value;
+        printf("%d (%c %c), %d (%c %c)", (int)strlen(key), key[0], key[198], (int)strlen(val), val[0], val[2998]);
+        keyvaluepairarray_free(subject);
+    }
+
+    printf("%s.\n", "Try multi-record");
+    {
+        db = fopen(TEST_DB_FILE, "w");
+        assert(db != NULL);
+        subject = keyvaluepairarray_create(3);
+        keyvaluepairarray_appendf(subject, 50, "key", "%s", "value1");
+        database_write(db, subject);
+        keyvaluepairarray_free(subject);
+        subject = keyvaluepairarray_create(3);
+        keyvaluepairarray_appendf(subject, 50, "key", "%s", "value2");
+        database_write(db, subject);
+        keyvaluepairarray_free(subject);
+        (void)fclose(db);
+
+        db = fopen(TEST_DB_FILE, "r");
+        assert(db != NULL);
+        subject = database_read(db);
+        database_write(stdout, subject);
+        keyvaluepairarray_free(subject);
+        subject = database_read(db);
+        database_write(stdout, subject);
+        keyvaluepairarray_free(subject);
+        (void)fclose(db);
+    }
+    
     printf("%s.\n", "Fin");
 }
 

@@ -123,6 +123,7 @@ void database_write(FILE *fp, const struct keyvaluepair_array *data)
     }
 
     (void)fputc(DATABASE_RECORD_TERMINATOR, fp);
+    (void)fputc('\n', fp);
 }
 
 struct keyvaluepair_array *database_read(FILE *fp)
