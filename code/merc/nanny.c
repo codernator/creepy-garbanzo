@@ -392,11 +392,13 @@ static void newsex_answered(DESCRIPTOR_DATA *d, const char *argument)
           write_to_buffer(d, "\n\rThat's not a sex.\n\rWhat IS your sex? ", 0);
           return;
     }
+    do_help(ch, "motd");
+    d->connected = CON_READ_MOTD;
 
-    write_to_buffer(d, "\n\r", 0);
-    do_help(ch, "class");
-    write_to_buffer(d, "Select a class: ", 0);
-    d->connected = CON_GET_NEW_CLASS;
+    //write_to_buffer(d, "\n\r", 0);
+    //do_help(ch, "class");
+    //write_to_buffer(d, "Select a class: ", 0);
+    //d->connected = CON_GET_NEW_CLASS;
 }
 
 static void newclass_answered(DESCRIPTOR_DATA *d, const char *argument)
@@ -570,9 +572,7 @@ static void readmotd_answered(DESCRIPTOR_DATA *d, const char *argument)
 
         set_title(ch, "is `&new`` to this realm.");
 
-        obj_to_char(create_object(objectprototype_getbyvnum(OBJ_VNUM_MAP), 0), ch);
-
-        char_to_room(ch, get_room_index(ROOM_VNUM_SCHOOL));
+        char_to_room(ch, get_room_index(ROOM_VNUM_LIMBO));
         rnd = number_range(0, 9);
 
         switch (rnd) {
@@ -601,9 +601,9 @@ static void readmotd_answered(DESCRIPTOR_DATA *d, const char *argument)
     } else if (ch->in_room != NULL) {
         char_to_room(ch, ch->in_room);
     } else if (IS_IMMORTAL(ch)) {
-        char_to_room(ch, get_room_index(ROOM_VNUM_CHAT));
+        char_to_room(ch, get_room_index(ROOM_VNUM_LIMBO));
     } else {
-        char_to_room(ch, get_room_index(ROOM_VNUM_TEMPLE));
+        char_to_room(ch, get_room_index(ROOM_VNUM_LIMBO));
     }
 
     if (ch->pcdata->killer_time != 0)

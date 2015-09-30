@@ -1,6 +1,6 @@
 .PHONY: clean install all sysinternals stest merc
 
-all: badtrip
+all: sysinternals merc  badtrip
 
 sysinternals:
 	cd sysinternals && $(MAKE)

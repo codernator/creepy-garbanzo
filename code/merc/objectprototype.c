@@ -48,12 +48,12 @@ OBJECTPROTOTYPE *objectprototype_getbyvnum(long vnum)
     long hashkey = HASH_KEY(vnum);
 
     for (hashentry = lookup[hashkey].next; 
-	 hashentry != NULL && hashentry->entry->vnum != vnum;
-	 hashentry = hashentry->next);
+         hashentry != NULL && hashentry->entry->vnum != vnum;
+         hashentry = hashentry->next);
 
     return hashentry == NULL 
-	? NULL 
-	: hashentry->entry;
+        ? NULL 
+        : hashentry->entry;
 }
 
 OBJECTPROTOTYPE *objectprototype_new(long vnum)
@@ -65,14 +65,14 @@ OBJECTPROTOTYPE *objectprototype_new(long vnum)
 
     /** Default values */
     {
-	memset(prototypedata, 0, sizeof(OBJECTPROTOTYPE));
-	prototypedata->vnum = vnum;
-	prototypedata->name = str_dup("no name");
-	prototypedata->short_descr = str_dup("(no short description)");
-	prototypedata->description = str_dup("(no description)");
-	prototypedata->item_type = ITEM_TRASH;
-	prototypedata->material = str_dup("unknown");             /* ROM */
-	prototypedata->condition = 100;                           /* ROM */
+        memset(prototypedata, 0, sizeof(OBJECTPROTOTYPE));
+        prototypedata->vnum = vnum;
+        prototypedata->name = str_dup("no name");
+        prototypedata->short_descr = str_dup("(no short description)");
+        prototypedata->description = str_dup("(no description)");
+        prototypedata->item_type = ITEM_TRASH;
+        prototypedata->material = str_dup("unknown");             /* ROM */
+        prototypedata->condition = 100;                           /* ROM */
     }
 
     /** Place on list. */
@@ -111,22 +111,22 @@ KEYVALUEPAIR_ARRAY *objectprototype_serialize(const OBJECTPROTOTYPE *obj)
 {
     KEYVALUEPAIR_ARRAY *answer;
     size_t keys = 25;
-    
+
     keys += count_extras(obj);
     keys += count_affects(obj);
-    
+
     answer = keyvaluepairarray_create(keys);
     keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "vnum", "%ld", obj->vnum);
     if (obj->area != NULL) {
-	keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "area", "%ld", obj->area->vnum);
+        keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "area", "%ld", obj->area->vnum);
     }
     keyvaluepairarray_append(answer, "name", obj->name);
     if (obj->short_descr != NULL)
-	keyvaluepairarray_append(answer, "short", obj->short_descr);
+        keyvaluepairarray_append(answer, "short", obj->short_descr);
     if (obj->description != NULL)
-	keyvaluepairarray_append(answer, "long", obj->description);
+        keyvaluepairarray_append(answer, "long", obj->description);
     if (obj->material != NULL)
-	keyvaluepairarray_append(answer, "material", obj->material);
+        keyvaluepairarray_append(answer, "material", obj->material);
     keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "reset", "%ld", obj->reset_num);
     keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "item_type", "%d", obj->item_type);
     keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "extra", "%ld", obj->extra_flags);
@@ -149,30 +149,30 @@ KEYVALUEPAIR_ARRAY *objectprototype_serialize(const OBJECTPROTOTYPE *obj)
 
     /** append extras */
     {
-	static char keybuf[MIL];
-	EXTRA_DESCR_DATA *desc = obj->extra_descr;
-	while (desc != NULL) {
-	    (void)snprintf(keybuf, MIL, "extra-%s", desc->keyword);
-	    keyvaluepairarray_append(answer, keybuf, desc->description);
-	    desc = desc->next;
-	}
+        static char keybuf[MIL];
+        EXTRA_DESCR_DATA *desc = obj->extra_descr;
+        while (desc != NULL) {
+            (void)snprintf(keybuf, MIL, "extra-%s", desc->keyword);
+            keyvaluepairarray_append(answer, keybuf, desc->description);
+            desc = desc->next;
+        }
     }
 
     {
-	AFFECT_DATA *affect = obj->affected;
-	while (affect != NULL) {
-	    keyvaluepairarray_appendf(answer, 256, "affect",
-		"%d,%d,%d,%d,%d,%ld,%ld",
-		affect->where,
-		affect->type,
-		affect->level,
-		affect->duration,
-		affect->location,
-		affect->modifier,
-		affect->bitvector);
+        AFFECT_DATA *affect = obj->affected;
+        while (affect != NULL) {
+            keyvaluepairarray_appendf(answer, 256, "affect",
+                                      "%d,%d,%d,%d,%d,%ld,%ld",
+                                      affect->where,
+                                      affect->type,
+                                      affect->level,
+                                      affect->duration,
+                                      affect->location,
+                                      affect->modifier,
+                                      affect->bitvector);
 
-	    affect = affect->next;
-	}
+            affect = affect->next;
+        }
     }
 
     return answer;
@@ -188,43 +188,43 @@ void objectprototype_free(OBJECTPROTOTYPE *prototypedata)
 
     /** Extract from list. */
     {
-	OBJECTPROTOTYPE *prev = prototypedata->prev;
-	OBJECTPROTOTYPE *next = prototypedata->next;
+        OBJECTPROTOTYPE *prev = prototypedata->prev;
+        OBJECTPROTOTYPE *next = prototypedata->next;
 
-	assert(prev != NULL); /** because only the head node has no previous. */
-	prev->next = next;
-	if (next != NULL) {
-	    next->prev = prev;
-	}
+        assert(prev != NULL); /** because only the head node has no previous. */
+        prev->next = next;
+        if (next != NULL) {
+            next->prev = prev;
+        }
     }
 
     /** Clean up affects */
     if (prototypedata->affected != NULL) {
-	//TODO - affects management.
-	/*@dependent@*/AFFECT_DATA *paf;
-	/*@dependent@*/AFFECT_DATA *paf_next;
-	for (paf = prototypedata->affected; paf != NULL; paf = paf_next) {
-	    paf_next = paf->next;
-	    free_affect(paf);
-	}
+        //TODO - affects management.
+        /*@dependent@*/AFFECT_DATA *paf;
+        /*@dependent@*/AFFECT_DATA *paf_next;
+        for (paf = prototypedata->affected; paf != NULL; paf = paf_next) {
+            paf_next = paf->next;
+            free_affect(paf);
+        }
     }
 
     /** Clean up extra descriptions */
     if (prototypedata->extra_descr != NULL) {
-	//TODO - extras managment.
-	/*@dependent@*/EXTRA_DESCR_DATA *ed;
-	/*@dependent@*/EXTRA_DESCR_DATA *ed_next;
-	for (ed = prototypedata->extra_descr; ed != NULL; ed = ed_next) {
-	    ed_next = ed->next;
-	    free_extra_descr(ed);
-	}
+        //TODO - extras managment.
+        /*@dependent@*/EXTRA_DESCR_DATA *ed;
+        /*@dependent@*/EXTRA_DESCR_DATA *ed_next;
+        for (ed = prototypedata->extra_descr; ed != NULL; ed = ed_next) {
+            ed_next = ed->next;
+            free_extra_descr(ed);
+        }
     }
 
     /** Clean up strings */
     {
-	if (prototypedata->name != NULL) free_string(prototypedata->name);
-	if (prototypedata->description != NULL) free_string(prototypedata->description);
-	if (prototypedata->short_descr != NULL) free_string(prototypedata->short_descr);
+        if (prototypedata->name != NULL) free_string(prototypedata->name);
+        if (prototypedata->description != NULL) free_string(prototypedata->description);
+        if (prototypedata->short_descr != NULL) free_string(prototypedata->short_descr);
     }
 
     free(prototypedata);
@@ -235,7 +235,7 @@ int objectprototype_list_count()
     OBJECTPROTOTYPE *o;
     int counter = 0;
     for (o = head_node.next; o != NULL; o = o->next)
-	counter++;
+        counter++;
     return counter;
 }
 
@@ -249,12 +249,12 @@ OBJECTPROTOTYPE *objectprototype_iterator(OBJECTPROTOTYPE *current, const OBJECT
     OBJECTPROTOTYPE *next;
 
     if (current == NULL) {
-	return NULL;
+        return NULL;
     }
 
     next = current->next;
     while (next != NULL && !passes(next, filter)) {
-	next = next->next;
+        next = next->next;
     }
 
     return next;
@@ -264,8 +264,8 @@ OBJECTPROTOTYPE *objectprototype_iterator(OBJECTPROTOTYPE *current, const OBJECT
 bool passes(OBJECTPROTOTYPE *testee, const OBJECTPROTOTYPE_FILTER *filter)
 {
     if (filter->name != NULL && filter->name[0] != '\0' && testee->name != NULL && str_cmp(filter->name, testee->name)) {
-	/** name filter specified but does not match current object. */
-	return false;
+        /** name filter specified but does not match current object. */
+        return false;
     }
 
     return true;
@@ -278,8 +278,8 @@ void headlist_add(/*@owned@*/OBJECTPROTOTYPE *entry)
     entry->prev = &head_node;
     headnext = head_node.next;
     if (headnext != NULL) {
-	assert(headnext->prev == &head_node);
-	headnext->prev = entry;
+        assert(headnext->prev == &head_node);
+        headnext->prev = entry;
     }
 
     entry->next = headnext;
@@ -310,8 +310,8 @@ void lookup_remove(long entrykey, OBJECTPROTOTYPE *entry)
     prev = &lookup[hashkey];
     head = prev->next;
     while (head != NULL && head->entry->vnum == entry->vnum) {
-	prev = head;
-	head = head->next;
+        prev = head;
+        head = head->next;
     }
 
     assert(head != NULL);
@@ -326,8 +326,8 @@ size_t count_extras(const OBJECTPROTOTYPE *obj)
     size_t keys = 0;
     EXTRA_DESCR_DATA *extra = obj->extra_descr;
     while (extra != NULL) {
-	keys++;
-	extra = extra->next;
+        keys++;
+        extra = extra->next;
     }
     return keys;
 }
@@ -337,8 +337,8 @@ size_t count_affects(const OBJECTPROTOTYPE *obj)
     size_t keys = 0;
     AFFECT_DATA *affect = obj->affected;
     while (affect != NULL) {
-	keys++;
-	affect = affect->next;
+        keys++;
+        affect = affect->next;
     }
     return keys;
 }
