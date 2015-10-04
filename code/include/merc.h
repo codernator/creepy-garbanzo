@@ -1358,7 +1358,6 @@ struct char_data {
     bool valid;
     char *name;
     long id;
-    int version;
     char *short_descr;
     char *long_descr;
     char *description;

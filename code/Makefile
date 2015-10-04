@@ -14,6 +14,9 @@ merc:
 badtrip: 
 	cd execs && $(MAKE)
 
+imm:
+	cd execs && $(MAKE) -f Makefile.imm
+
 clean:
 	rm -fr bin
 	rm -fr obj

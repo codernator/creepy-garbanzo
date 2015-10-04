@@ -1,0 +1,41 @@
+IDIR=../include
+ODIR=../obj
+BDIR=../bin
+CC= /usr/bin/gcc
+PROF= -DLINUX
+C_FLAGS= -O2 -g2 -Wall -pedantic -std=gnu99 -I$(IDIR)
+L_FLAGS=  $(PROF)
+SYSLIBS=-lm
+
+_DEPS=sysinternals.h merc.h
+DEPS=$(patsubst %,$(IDIR)/%,$(_DEPS))
+_FIL=imm
+SRC=$(patsubst %,%.c,$(_FIL))
+OBJ=$(patsubst %,$(ODIR)/%,$(patsubst %,%.o,$(_FIL)))
+SYSINTERNALS=$(BDIR)/sysinternals.a
+EXE=$(BDIR)/imm
+
+
+.PHONY: clean all prebuild
+
+all: $(EXE)
+
+$(SYSINTERNALS):
+	cd ../sysinternals && $(MAKE)
+
+$(EXE): $(OBJ) $(DEPS) $(SYSINTERNALS) | $(BDIR)
+	$(CC) $(L_FLAGS) -o $@ $(OBJ) $(BDIR)/merc.a $(BDIR)/sysinternals.a $(SYSLIBS) -I$(IDIR)
+
+$(ODIR)/%.o: %.c $(DEPS) | $(ODIR)
+	$(CC) -c -o $@ $< $(C_FLAGS)
+
+$(BDIR):
+	mkdir $(BDIR) 2>/dev/null
+
+$(ODIR):
+	mkdir $(ODIR) 2>/dev/null
+
+clean:
+	rm -f $(ODIR)/*.o $(EXE)
+
+

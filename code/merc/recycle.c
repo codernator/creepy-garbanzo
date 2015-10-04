@@ -23,10 +23,10 @@ NOTE_DATA *new_note()
     NOTE_DATA *note;
 
     if (note_free == NULL) {
-	note = alloc_perm((unsigned int)sizeof(*note));
+        note = alloc_perm((unsigned int)sizeof(*note));
     } else {
-	note = note_free;
-	note_free = note_free->next;
+        note = note_free;
+        note_free = note_free->next;
     }
 
     VALIDATE(note);
@@ -36,7 +36,7 @@ NOTE_DATA *new_note()
 void free_note(NOTE_DATA *note)
 {
     if (!IS_VALID(note))
-	return;
+        return;
 
     free_string(note->text);
     free_string(note->subject);
@@ -66,10 +66,10 @@ BAN_DATA *new_ban(void)
     BAN_DATA *ban;
 
     if (ban_free == NULL) {
-	ban = alloc_perm((unsigned int)sizeof(*ban));
+        ban = alloc_perm((unsigned int)sizeof(*ban));
     } else {
-	ban = ban_free;
-	ban_free = ban_free->next;
+        ban = ban_free;
+        ban_free = ban_free->next;
     }
     *ban = ban_zero;
     VALIDATE(ban);
@@ -85,7 +85,7 @@ BAN_DATA *new_ban(void)
 void free_ban(BAN_DATA *ban)
 {
     if (!IS_VALID(ban))
-	return;
+        return;
 
     free_string(ban->name);
     INVALIDATE(ban);
@@ -109,10 +109,10 @@ EXTRA_DESCR_DATA *new_extra_descr(void)
     EXTRA_DESCR_DATA *ed;
 
     if (extra_descr_free == NULL) {
-	ed = alloc_perm((unsigned int)sizeof(*ed));
+        ed = alloc_perm((unsigned int)sizeof(*ed));
     } else {
-	ed = extra_descr_free;
-	extra_descr_free = extra_descr_free->next;
+        ed = extra_descr_free;
+        extra_descr_free = extra_descr_free->next;
     }
 
     ed->keyword = &str_empty[0];
@@ -131,7 +131,7 @@ EXTRA_DESCR_DATA *new_extra_descr(void)
 void free_extra_descr(EXTRA_DESCR_DATA *ed)
 {
     if (!IS_VALID(ed))
-	return;
+        return;
 
     free_string(ed->keyword);
     free_string(ed->description);
@@ -158,10 +158,10 @@ AFFECT_DATA *new_affect(void)
     AFFECT_DATA *af;
 
     if (affect_free == NULL) {
-	af = alloc_perm((unsigned int)sizeof(*af));
+        af = alloc_perm((unsigned int)sizeof(*af));
     } else {
-	af = affect_free;
-	affect_free = affect_free->next;
+        af = affect_free;
+        affect_free = affect_free->next;
     }
 
     *af = af_zero;
@@ -179,7 +179,7 @@ AFFECT_DATA *new_affect(void)
 void free_affect(AFFECT_DATA *af)
 {
     if (!IS_VALID(af))
-	return;
+        return;
 
     INVALIDATE(af);
     af->next = affect_free;
@@ -204,10 +204,10 @@ CHAR_DATA *new_char(void)
     int iter;
 
     if (char_free == NULL) {
-	ch = alloc_perm((unsigned int)sizeof(*ch));
+        ch = alloc_perm((unsigned int)sizeof(*ch));
     } else {
-	ch = char_free;
-	char_free = char_free->next;
+        ch = char_free;
+        char_free = char_free->next;
     }
 
     *ch = ch_zero;
@@ -220,7 +220,7 @@ CHAR_DATA *new_char(void)
     ch->logon = globalSystemState.current_time;
     ch->lines = PAGELEN;
     for (iter = 0; iter < 4; iter++)
-	ch->armor[iter] = 100;
+        ch->armor[iter] = 100;
 
     ch->position = POS_STANDING;
     ch->hit = 20;
@@ -232,8 +232,8 @@ CHAR_DATA *new_char(void)
     ch->use_ansi_color = false;
 
     for (iter = 0; iter < MAX_STATS; iter++) {
-	ch->perm_stat[iter] = 13;
-	ch->mod_stat[iter] = 0;
+        ch->perm_stat[iter] = 13;
+        ch->mod_stat[iter] = 0;
     }
 
     return ch;
@@ -253,20 +253,20 @@ void free_char(CHAR_DATA *ch)
     AFFECT_DATA *paf_next;
 
     if (!IS_VALID(ch))
-	return;
+        return;
 
     if (IS_NPC(ch))
-	mobile_count--;
+        mobile_count--;
 
     for (obj = ch->carrying; obj != NULL; obj = obj_next) {
-	obj_next = obj->next_content;
-	extract_obj(obj);
+        obj_next = obj->next_content;
+        extract_obj(obj);
     }
     ch->carrying = NULL;
 
     for (paf = ch->affected; paf != NULL; paf = paf_next) {
-	paf_next = paf->next;
-	affect_remove(ch, paf);
+        paf_next = paf->next;
+        affect_remove(ch, paf);
     }
     ch->affected = NULL;
 
@@ -276,7 +276,7 @@ void free_char(CHAR_DATA *ch)
     free_string(ch->description);
     free_string(ch->prompt);
     if (ch->pcdata != NULL)
-	free_pcdata(ch->pcdata);
+        free_pcdata(ch->pcdata);
     ch->next = char_free;
     char_free = ch;
 
@@ -304,16 +304,16 @@ PC_DATA *new_pcdata(void)
 
 
     if (pcdata_free == NULL) {
-	pcdata = alloc_perm((unsigned int)sizeof(*pcdata));
+        pcdata = alloc_perm((unsigned int)sizeof(*pcdata));
     } else {
-	pcdata = pcdata_free;
-	pcdata_free = pcdata_free->next;
+        pcdata = pcdata_free;
+        pcdata_free = pcdata_free->next;
     }
 
     *pcdata = pcdata_zero;
     for (alias = 0; alias < MAX_ALIAS; alias++) {
-	pcdata->alias[alias] = NULL;
-	pcdata->alias_sub[alias] = NULL;
+        pcdata->alias[alias] = NULL;
+        pcdata->alias_sub[alias] = NULL;
     }
 
     pcdata->skills = NULL;
@@ -336,7 +336,7 @@ void free_pcdata(PC_DATA *pcdata)
     int alias;
 
     if (!IS_VALID(pcdata))
-	return;
+        return;
 
     free_string(pcdata->pwd);
     free_string(pcdata->bamfin);
@@ -356,13 +356,13 @@ void free_pcdata(PC_DATA *pcdata)
     free_string(pcdata->restring_long);
 
     for (alias = 0; alias < MAX_ALIAS; alias++) {
-	free_string(pcdata->alias[alias]);
-	free_string(pcdata->alias_sub[alias]);
+        free_string(pcdata->alias[alias]);
+        free_string(pcdata->alias_sub[alias]);
     }
 
     for (learned = pcdata->skills; learned != NULL; learned = learned_next) {
-	learned_next = learned->next;
-	free_learned(learned);
+        learned_next = learned->next;
+        free_learned(learned);
     }
     pcdata->skills = NULL;
 
@@ -427,10 +427,10 @@ MEM_DATA *new_mem_data(void)
     MEM_DATA *memory;
 
     if (mem_data_free == NULL) {
-	memory = alloc_mem((unsigned int)sizeof(*memory));
+        memory = alloc_mem((unsigned int)sizeof(*memory));
     } else {
-	memory = mem_data_free;
-	mem_data_free = mem_data_free->next;
+        memory = mem_data_free;
+        mem_data_free = mem_data_free->next;
     }
 
     memory->next = NULL;
@@ -450,7 +450,7 @@ MEM_DATA *new_mem_data(void)
 void free_mem_data(MEM_DATA *memory)
 {
     if (!IS_VALID(memory))
-	return;
+        return;
 
     memory->next = mem_data_free;
     mem_data_free = memory;
@@ -480,8 +480,8 @@ static long get_size(long val)
     int i;
 
     for (i = 0; i < MAX_BUF_LIST; i++)
-	if (buf_size[i] >= val)
-	    return buf_size[i];
+        if (buf_size[i] >= val)
+            return buf_size[i];
 
     return -1;
 }
@@ -496,10 +496,10 @@ BUFFER *new_buf()
     BUFFER *buffer;
 
     if (buf_free == NULL) {
-	buffer = alloc_perm((unsigned int)sizeof(*buffer));
+        buffer = alloc_perm((unsigned int)sizeof(*buffer));
     } else {
-	buffer = buf_free;
-	buf_free = buf_free->next;
+        buffer = buf_free;
+        buf_free = buf_free->next;
     }
 
     buffer->next = NULL;
@@ -524,10 +524,10 @@ BUFFER *new_buf_size(int size)
     BUFFER *buffer;
 
     if (buf_free == NULL) {
-	buffer = alloc_perm((unsigned int)sizeof(*buffer));
+        buffer = alloc_perm((unsigned int)sizeof(*buffer));
     } else {
-	buffer = buf_free;
-	buf_free = buf_free->next;
+        buffer = buf_free;
+        buf_free = buf_free->next;
     }
 
     buffer->next = NULL;
@@ -535,8 +535,8 @@ BUFFER *new_buf_size(int size)
     buffer->size = get_size(size);
 
     if (buffer->size == -1) {
-	log_bug("new_buf: buffer size %d too large.", size);
-	raise(SIGABRT);
+        log_bug("new_buf: buffer size %d too large.", size);
+        raise(SIGABRT);
     }
 
     buffer->string = alloc_mem((unsigned int)buffer->size);
@@ -555,7 +555,7 @@ BUFFER *new_buf_size(int size)
 void free_buf(BUFFER *buffer)
 {
     if (!IS_VALID(buffer))
-	return;
+        return;
 
     free_mem(buffer->string, (unsigned int)buffer->size);
     buffer->string = NULL;
@@ -576,24 +576,24 @@ bool add_buf(BUFFER *buffer, const char *string)
     oldstr = buffer->string;
     oldsize = buffer->size;
     if (buffer->state == BUFFER_OVERFLOW)
-	return false;
+        return false;
 
     len = (long)strlen(buffer->string) + (long)strlen(string) + 1;
     while (len >= buffer->size) {
-	buffer->size = get_size(buffer->size + 1);
-	if (buffer->size == -1) { /* overflow */
-	    buffer->size = oldsize;
-	    buffer->state = BUFFER_OVERFLOW;
-	    log_bug("buffer overflow past size %d", buffer->size);
-	    return false;
-	}
+        buffer->size = get_size(buffer->size + 1);
+        if (buffer->size == -1) { /* overflow */
+            buffer->size = oldsize;
+            buffer->state = BUFFER_OVERFLOW;
+            log_bug("buffer overflow past size %d", buffer->size);
+            return false;
+        }
     }
 
     if (buffer->size != oldsize) {
-	buffer->string = alloc_mem((unsigned int)buffer->size);
+        buffer->string = alloc_mem((unsigned int)buffer->size);
 
-	strcpy(buffer->string, oldstr);
-	free_mem(oldstr, (unsigned int)oldsize);
+        strcpy(buffer->string, oldstr);
+        free_mem(oldstr, (unsigned int)oldsize);
     }
 
     strcat(buffer->string, string);
@@ -659,10 +659,10 @@ MPROG_LIST *new_mprog(void)
     MPROG_LIST *mp;
 
     if (mprog_free == NULL) {
-	mp = alloc_perm((unsigned int)sizeof(*mp));
+        mp = alloc_perm((unsigned int)sizeof(*mp));
     } else {
-	mp = mprog_free;
-	mprog_free = mprog_free->next;
+        mp = mprog_free;
+        mprog_free = mprog_free->next;
     }
 
     *mp = mp_zero;
@@ -685,7 +685,7 @@ MPROG_LIST *new_mprog(void)
 void free_mprog(MPROG_LIST *mp)
 {
     if (!IS_VALID(mp))
-	return;
+        return;
 
     INVALIDATE(mp);
     mp->next = mprog_free;
@@ -710,10 +710,10 @@ HELP_AREA *new_had(void)
     static HELP_AREA zHad;
 
     if (had_free) {
-	had = had_free;
-	had_free = had_free->next;
+        had = had_free;
+        had_free = had_free->next;
     } else {
-	had = alloc_perm((unsigned int)sizeof(*had));
+        had = alloc_perm((unsigned int)sizeof(*had));
     }
 
     *had = zHad;
@@ -731,10 +731,10 @@ HELP_DATA *new_help(void)
     HELP_DATA *help;
 
     if (help_free) {
-	help = help_free;
-	help_free = help_free->next;
+        help = help_free;
+        help_free = help_free->next;
     } else {
-	help = alloc_perm((unsigned int)sizeof(*help));
+        help = alloc_perm((unsigned int)sizeof(*help));
     }
 
     return help;
