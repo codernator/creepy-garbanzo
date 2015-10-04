@@ -92,13 +92,13 @@ static void name_answered(DESCRIPTOR_DATA *d, const char *argument)
 
     if (IS_SET(ch->act, PLR_DENY)) {
         log_string("Denying access to %s@%s.", name_buf, d->host);
-        write_to_buffer(d, "Boom Biddy Bye Bye.\n\r", 0);
+        write_to_buffer(d, "Forbidden.\n\r", 0);
         close_socket(d, true, false);
         return;
     }
 
     if (check_ban(d->host, BAN_PERMIT) && !IS_SET(ch->act, PLR_PERMIT)) {
-        write_to_buffer(d, "Your site has been banned from this mud.   Boom Biddy Bye Bye.\n\r", 0);
+        write_to_buffer(d, "Your site has been banned from this mud.\n\r", 0);
         close_socket(d, true, false);
         return;
     }
@@ -145,7 +145,7 @@ static void oldpassword_answered(DESCRIPTOR_DATA *d, const char *argument)
     write_to_buffer(d, "\n\r", 2);
 
     if (!password_matches(ch->pcdata->pwd, argument)) {
-        write_to_buffer(d, "Wrong password.  Boom Biddy Bye Bye.\n\r", 0);
+        write_to_buffer(d, "Wrong password.\n\r", 0);
         close_socket(d, true, false);
         return;
     }
