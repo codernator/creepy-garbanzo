@@ -5,7 +5,7 @@
 #include "interp.h"
 #include "recycle.h"
 #include "tables.h"
-
+#include "help.h"
 
 /***************************************************************************
 * Repair code - 08-09-2002

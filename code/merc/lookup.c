@@ -95,27 +95,3 @@ int liq_lookup(const char *name)
     return -1;
 }
 
-HELP_DATA *help_lookup(const char *keyword)
-{
-    HELP_DATA *help;
-
-    for (help = help_first; help != NULL; help = help->next) {
-	if (!str_infix(keyword, help->keyword)
-		|| (keyword[0] == help->keyword[0] && !str_cmp(keyword, help->keyword)))
-	    return help;
-    }
-
-    return NULL;
-}
-
-HELP_AREA *had_lookup(const char *arg)
-{
-    extern HELP_AREA *had_list;
-    HELP_AREA *temp;
-
-    for (temp = had_list; temp; temp = temp->next)
-	if (!str_cmp(arg, temp->filename))
-	    return temp;
-
-    return NULL;
-}

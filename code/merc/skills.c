@@ -9,6 +9,7 @@
 #include "lookup.h"
 #include "interp.h"
 #include "channels.h"
+#include "help.h"
 
 
 /**
@@ -938,16 +939,16 @@ void add_learned(CHAR_DATA *ch, LEARNED *learned)
         return;
 
     switch (learned->type) {
-    case LEARNED_TYPE_SKILL:
-        add_learned_skill(ch, learned);
-        break;
-    case LEARNED_TYPE_GROUP:
-        add_learned_group(ch, learned);
-        break;
-    default:
-        log_bug("Invalid learned type: %s",
-               (learned->skill != NULL) ? learned->skill->name :
-               (learned->group != NULL) ? learned->group->name : "unknown");
+      case LEARNED_TYPE_SKILL:
+          add_learned_skill(ch, learned);
+          break;
+      case LEARNED_TYPE_GROUP:
+          add_learned_group(ch, learned);
+          break;
+      default:
+          log_bug("Invalid learned type: %s",
+                  (learned->skill != NULL) ? learned->skill->name :
+                  (learned->group != NULL) ? learned->group->name : "unknown");
     }
 }
 
@@ -1372,7 +1373,7 @@ static void gain_list(CHAR_DATA *ch, CHAR_DATA *trainer)
 
     col = 0;
     printf_to_char(ch, "%-18s %-5s %-18s %-5s %-18s %-5s\n\r",
-               "group", "cost", "group", "cost", "group", "cost");
+                   "group", "cost", "group", "cost", "group", "cost");
 
     for (group = group_list; group != NULL; group = group->next) {
         level = get_group_level(group, ch->class);
@@ -1381,8 +1382,8 @@ static void gain_list(CHAR_DATA *ch, CHAR_DATA *trainer)
             && level->difficulty > 0
             && (learned = get_learned_group(ch, group)) == NULL) {
             printf_to_char(ch, "%-18s %-5d ",
-                       group->name,
-                       level->difficulty);
+                           group->name,
+                           level->difficulty);
 
             if (++col % 3 == 0)
                 send_to_char("\n\r", ch);
@@ -1396,7 +1397,7 @@ static void gain_list(CHAR_DATA *ch, CHAR_DATA *trainer)
     col = 0;
 
     printf_to_char(ch, "%-18s %-5s %-18s %-5s %-18s %-5s\n\r",
-               "skill", "cost", "skill", "cost", "skill", "cost");
+                   "skill", "cost", "skill", "cost", "skill", "cost");
 
     for (skill = skill_list; skill != NULL; skill = skill->next) {
         level = get_skill_level(ch, skill);
@@ -1406,7 +1407,7 @@ static void gain_list(CHAR_DATA *ch, CHAR_DATA *trainer)
             && ((learned = get_learned_skill(ch, skill)) == NULL)
             && skill->spells == NULL) {
             printf_to_char(ch, "%-18s %-5d ",
-                       skill->name, level->difficulty);
+                           skill->name, level->difficulty);
 
             if (++col % 3 == 0)
                 send_to_char("\n\r", ch);
@@ -1653,9 +1654,15 @@ static void skill_info(CHAR_DATA *ch, SKILL *skill)
     }
 
     /* we need to put help info in here */
-    if (skill->help != NULL) {
-        send_to_char("\n\r`8=`7=`&=`7==================================================================`&=`7=`8=``\n\r\n\r", ch);
-        page_to_char(skill->help->text, ch);
+    if (skill->help_keyword != NULL) {
+        HELP_DATA *help;
+
+        help = help_lookup(skill->help_keyword);
+        if (help != NULL) { send_to_char("\n\r`8=`7=`&=`7==================================================================`&=`7=`8=``\n\r\n\r", ch);
+            page_to_char(help->text, ch);
+        } else {
+            log_bug("No help on skill keyword %s", skill->help_keyword);
+        }
     }
 }
 
@@ -1752,7 +1759,7 @@ void do_skills(CHAR_DATA *ch, const char *argument)
                     printf_buf(buf, "%-18s  `1n/a``      ", learned->skill->name);
                 else
                     printf_buf(buf, "%-18s `O%3d%%``      ", learned->skill->name,
-                           learned->percent);
+                               learned->percent);
 
                 last_level = level->level;
             }
@@ -1827,7 +1834,7 @@ void do_spells(CHAR_DATA *ch, const char *argument)
                     printf_buf(buf, "%-18s  `!n/a``     ", learned->skill->name);
                 } else {
                     printf_buf(buf, "%-18s `2%4d `@mana `O%3d%%``  ", learned->skill->name,
-                           learned->skill->min_mana, learned->percent);
+                               learned->skill->min_mana, learned->percent);
                 }
 
                 last_level = level->level;
@@ -1863,8 +1870,8 @@ void list_group_costs(CHAR_DATA *ch)
             && level->difficulty > 0
             && (learned = get_learned_group(ch, group)) == NULL) {
             printf_to_char(ch, "%-18s %-5d ",
-                       group->name,
-                       level->difficulty);
+                           group->name,
+                           level->difficulty);
 
             if (++col % 3 == 0)
                 send_to_char("\n\r", ch);
@@ -1887,7 +1894,7 @@ void list_group_costs(CHAR_DATA *ch)
             && ((learned = get_learned_skill(ch, skill)) == NULL)
             && skill->spells == NULL) {
             printf_to_char(ch, "%-18s %-5d ",
-                       skill->name, level->difficulty);
+                           skill->name, level->difficulty);
 
             if (++col % 3 == 0)
                 send_to_char("\n\r", ch);
@@ -1921,9 +1928,9 @@ static void list_group_chosen(CHAR_DATA *ch)
             level = get_group_level(learned->group, ch->class);
             if (level != NULL && level->difficulty > 0) {
                 printf_to_char(ch, "%c %-18s %-5d ",
-                           (learned->removable) ? ' ' : '*',
-                           learned->group->name,
-                           level->difficulty);
+                               (learned->removable) ? ' ' : '*',
+                               learned->group->name,
+                               level->difficulty);
 
                 if (++col % 3 == 0)
                     send_to_char("\n\r", ch);
@@ -1942,9 +1949,9 @@ static void list_group_chosen(CHAR_DATA *ch)
             level = get_skill_level(ch, learned->skill);
             if (level != NULL && level->difficulty > 0) {
                 printf_to_char(ch, "%c %-18s %-5d ",
-                           (learned->removable) ? ' ' : '*',
-                           learned->skill->name,
-                           level->difficulty);
+                               (learned->removable) ? ' ' : '*',
+                               learned->skill->name,
+                               level->difficulty);
 
                 if (++col % 3 == 0)
                     send_to_char("\n\r", ch);
@@ -2223,12 +2230,6 @@ void do_groups(CHAR_DATA *ch, const char *argument)
 
     if (col % 3 != 0)
         send_to_char("\n\r", ch);
-
-    /* we need to put help info in here */
-    if (group->help != NULL) {
-        send_to_char("\n\r`8=`7=`&=`7==================================================================`&=`7=`8=``\n\r\n\r", ch);
-        page_to_char(group->help->text, ch);
-    }
 }
 
 /**
@@ -2258,8 +2259,8 @@ void check_improve(CHAR_DATA *ch, SKILL *skill, bool success, int multiplier)
         || learned->percent >= 90)
         return;         /* skill is not known */
 
-/* check to see if the character has a chance to learn */
-/* Decreased chances on 8/17 by Monrick */
+    /* check to see if the character has a chance to learn */
+    /* Decreased chances on 8/17 by Monrick */
 
     /* chance = 10 * URANGE(3, get_curr_stat(ch, STAT_INT), 85);*/
     chance = URANGE(3, get_curr_stat(ch, STAT_INT), 85);
@@ -2270,7 +2271,7 @@ void check_improve(CHAR_DATA *ch, SKILL *skill, bool success, int multiplier)
     if (number_range(1, 1000) > chance)
         return;
 
-/* now that the character has a CHANCE to learn, see if they really have */
+    /* now that the character has a CHANCE to learn, see if they really have */
     if (success) {
         chance = URANGE(5, 100 - learned->percent, 95);
         if (number_percent() < chance) {
@@ -2361,8 +2362,8 @@ void do_practice(CHAR_DATA *ch, const char *argument)
 
             found = true;
             printf_buf(buf, "%-18s `O%3d%%``  ",
-                   learned->skill->name,
-                   learned->percent);
+                       learned->skill->name,
+                       learned->percent);
             if (++col % 3 == 0)
                 add_buf(buf, "\n\r");
         }
@@ -2483,7 +2484,7 @@ void do_train(CHAR_DATA *ch, const char *argument)
     /* in case i ever want to change it */
     count = mult_argument(argument, arg);
     cost = 1 * count;
-/* added by Cyrkle */
+    /* added by Cyrkle */
     if (count == 0) {
         send_to_char("You have to spend at least 1 training session.\n\r", ch);
         return;
@@ -2494,7 +2495,7 @@ void do_train(CHAR_DATA *ch, const char *argument)
         wiznet(buf, ch, NULL, WIZ_SECURE, 0, 0);
         return;
     }
-/* ---------------- */
+    /* ---------------- */
 
     if (!str_cmp("hp", arg)) {
         if (ch->pcdata->train < cost) {

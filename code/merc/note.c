@@ -44,6 +44,7 @@
 #include "recycle.h"
 #include "tables.h"
 #include "libfile.h"
+#include "help.h"
 
 /***************************************************************************
  *	globals

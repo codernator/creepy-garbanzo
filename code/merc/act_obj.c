@@ -6,6 +6,7 @@
 #include "tables.h"
 #include "lookup.h"
 #include "channels.h"
+#include "help.h"
 #include <stdio.h>
 #include <string.h>
 

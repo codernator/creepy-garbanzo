@@ -1,20 +1,31 @@
-.PHONY: clean install all sysinternals stest merc
+.PHONY: clean install all sysinternals stest merc sysinttest imm 
 
-all: sysinternals merc  badtrip
+BIN=bin
+OBJ=obj
 
-sysinternals:
+
+all: sysinternals merc badtrip
+
+$(BIN): 
+	mkdir $(BIN) 2>/dev/null
+
+$(OBJ):
+	mkdir $(OBJ) 2>/dev/null
+
+
+sysinternals: $(BIN) $(OBJ)
 	cd sysinternals && $(MAKE)
 
-sysinttest:
+sysinttest: $(BIN) $(OBJ)
 	cd execs && $(MAKE) -f Makefile.sysinternalstest
 
-merc:
+merc: $(BIN) $(OBJ)
 	cd merc && $(MAKE)
 
-badtrip: 
+badtrip: $(BIN) $(OBJ)
 	cd execs && $(MAKE)
 
-imm:
+imm: $(BIN) $(OBJ)
 	cd execs && $(MAKE) -f Makefile.imm
 
 clean:

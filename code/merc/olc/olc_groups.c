@@ -9,7 +9,7 @@
 #include "recycle.h"
 #include "skills.h"
 #include "libfile.h"
-
+#include "help.h"
 
 
 
@@ -164,7 +164,6 @@ EDIT(gredit_show){
     /* general information */
     printf_to_char(ch, "\n\r`&Name``:        [%s]\n\r", group->name);
     printf_to_char(ch, "`&Number``:      [%d]\n\r", group->gn);
-    printf_to_char(ch, "`&Help``:        [%s]\n\r", (group->help != NULL) ? group->help->keyword : "none");
 
     /* spell/affects */
     if (group->skills != NULL && group->skills->skill != NULL) {
@@ -259,7 +258,6 @@ EDIT(gredit_help){
     if (group->help_keyword != NULL)
         free_string(group->help_keyword);
     group->help_keyword = str_dup(help->keyword);
-    group->help = help;
 
     send_to_char("Ok.\n\r", ch);
     return true;
@@ -554,7 +552,6 @@ void load_groups()
                     group->help_keyword = NULL;
                 }
 
-                group->help = help_lookup(group->help_keyword);
                 found = true;
             }
         }
@@ -598,8 +595,7 @@ void save_groups()
             if (skills->skill != NULL)
                 fprintf(fp, "Sk %s~\n", skills->skill->name);
 
-        if (group->help != NULL)
-            fprintf(fp, "Help %s~\n", group->help->keyword);
+        fprintf(fp, "Help %s~\n", group->help_keyword);
 
         fprintf(fp, "\n");
     }

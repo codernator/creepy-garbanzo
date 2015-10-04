@@ -5,7 +5,7 @@
 #include "olc.h"
 #include "recycle.h"
 #include "interp.h"
-
+#include "help.h"
 
 
 

@@ -3,7 +3,7 @@
 #include "interp.h"
 #include "lookup.h"
 #include "olc.h"
-
+#include "help.h"
 
 extern char *flag_string(const struct flag_type *flag_table, long bits);
 

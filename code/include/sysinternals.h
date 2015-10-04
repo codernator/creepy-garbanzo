@@ -110,6 +110,8 @@ void i_bubble_sort(int *iarray, int array_size);
  */
 /*@only@*/char *grow_buffer(/*@observer@*/const char *existing, size_t old_size, size_t new_size);
 
+void string_lower(const char *source, /*@out@*/char *target, size_t maxLength);
+/*@only@*/char *string_copy(const char *source);
 void smash_tilde(char *str);
 bool str_cmp(const char *astr, const char *bstr);
 bool str_prefix(const char *astr, const char *bstr);

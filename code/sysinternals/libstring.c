@@ -7,6 +7,27 @@
 #include <assert.h>
 
 
+void string_lower(const char *source, char *target, size_t max_length)
+{
+    size_t bound = 0;
+
+    while (bound < max_length - 1 && source[bound] != '\0') {
+        target[bound] = LOWER(source[bound]);
+        bound++;
+    }
+    target[bound] = '\0';
+}
+
+char *string_copy(const char *source)
+{
+    size_t slen = strlen(source);
+    char *target = calloc(sizeof(char), slen+1);
+    assert(target != NULL);
+
+    memcpy(target, source, slen);
+    target[slen] = '\0';
+    return target;
+}
 
 char *grow_buffer(const char *existing, size_t old_size, size_t new_size)
 {

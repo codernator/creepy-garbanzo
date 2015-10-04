@@ -4,24 +4,188 @@
 #include "merc.h"
 #include "tables.h"
 #include "olc.h"
+#include "help.h"
 
 
 #define DIF(a, b)(~((~a) | (b)))
 
-/*
- *  Verbose writes reset data in plain english into the comments
- *  section of the resets.  It makes areas considerably larger but
- *  may aid in debugging.
- */
 
+static char *fix_string(const char *str);
+static char *fwrite_flag(long flags, char buf[]);
+static void save_area_list();
 static void save_area(AREA_DATA * area);
+static void save_mobprogs(FILE *fp, AREA_DATA *area);
+static void save_mobile(FILE *fp, MOB_INDEX_DATA *mob_idx);
+static void save_mobiles(FILE *fp, AREA_DATA *area);
+static void save_object(FILE *fp, OBJECTPROTOTYPE *pObjIndex);
+static void save_objects(FILE *fp, AREA_DATA *area);
+static void save_rooms(FILE *fp, AREA_DATA *area);
+static void save_door_resets(FILE *fp, AREA_DATA *area);
+static void save_resets(FILE *fp, AREA_DATA *area);
+static void save_shops(FILE *fp, AREA_DATA *area);
+static void save_helps(const char const *filename);
+static void save_area(AREA_DATA *area);
+static void show_save_help(CHAR_DATA *ch);
 
-/***************************************************************************
- *	fix_string
- *
- *	returns a string without \r and ~
- ***************************************************************************/
-static char *fix_string(const char *str)
+
+void do_asave(CHAR_DATA *ch, const char *argument)
+{
+    AREA_DATA *area;
+    char arg[MIL];
+    int value;
+
+    DENY_NPC(ch);
+
+    (void)one_argument(argument, arg);
+    if (is_help(arg)) {
+        show_save_help(ch);
+        return;
+    }
+
+    /*
+     * see if we have a numeric arugment - if we do, then
+     * save the area it corresponds to
+     */
+    if (is_number(arg)) {
+        value = parse_int(arg);
+
+        if ((area = get_area_data(value)) == NULL) {
+            send_to_char("That area does not exist.\n\r", ch);
+            return;
+        }
+
+        /* save the area */
+        if (!IS_BUILDER(ch, area))
+        {
+            send_to_char("You are not a builder for this area.\n\r", ch);
+        }
+
+        save_area_list();
+        save_area(area);
+        return;
+    }
+
+    /* save everything */
+    if (!str_cmp(arg, "world")) {
+        save_area_list();
+        save_helps(HELP_FILE);
+
+        for (area = area_first; area; area = area->next) {
+            if (!IS_BUILDER(ch, area))
+                continue;
+
+            save_area(area);
+            REMOVE_BIT(area->area_flags, AREA_CHANGED);
+        }
+        send_to_char("You saved the world.\n\r", ch);
+        return;
+    }
+
+    if (!str_cmp(arg, "helps")) {
+        save_helps(HELP_FILE);
+        send_to_char("All helps have been saved.\n\r", ch);
+        return;
+    }
+
+    /* Save changed areas, only authorized areas. */
+    /* ------------------------------------------ */
+    if (!str_cmp(arg, "changed")) {
+        bool saved;
+
+        save_area_list();
+        save_helps(HELP_FILE);
+
+        send_to_char("Saved areas:\n\r", ch);
+        log_string("Saved areas:");
+
+        saved = false;
+        for (area = area_first; area; area = area->next) {
+            /* Builder must be assigned this area. */
+            if (!IS_BUILDER(ch, area))
+            {
+                continue;
+            }
+
+            /* Save changed areas. */
+            if (IS_SET(area->area_flags, AREA_CHANGED)) {
+                save_area(area);
+                saved = true;
+                printf_to_char(ch, "%24s - '%s'\n\r", area->name, area->file_name);
+                log_string("%24s - '%s'", area->name, area->file_name);
+
+                REMOVE_BIT(area->area_flags, AREA_CHANGED);
+            }
+        }
+
+        if (!saved) {
+            send_to_char("None.", ch);
+            log_string("None.");
+        }
+        return;
+    }
+
+    /* save the area list */
+    if (!str_prefix(arg, "list")) {
+        save_area_list();
+        return;
+    }
+
+    /* save the area that is currently being edited */
+    if (!str_prefix(arg, "area")) {
+        if (ch->desc->editor == ED_NONE) {
+            send_to_char("You are not editing an area, therefore an area vnum is required.\n\r", ch);
+            return;
+        }
+
+        switch (ch->desc->editor) {
+          case ED_AREA:
+              area = (AREA_DATA *)ch->desc->ed_data;
+              break;
+          case ED_ROOM:
+              area = ch->in_room->area;
+              break;
+          case ED_OBJECT:
+              area = ((OBJECTPROTOTYPE *)ch->desc->ed_data)->area;
+              break;
+          case ED_MOBILE:
+              area = ((MOB_INDEX_DATA *)ch->desc->ed_data)->area;
+              break;
+          case ED_HELP:
+              send_to_char("Saving helps.", ch);
+              save_helps(HELP_FILE);
+              return;
+          default:
+              area = ch->in_room->area;
+              break;
+        }
+
+        if (area == NULL || !IS_BUILDER(ch, area)) {
+            send_to_char("You are not a builder for this area.\n\r", ch);
+            return;
+        }
+
+        save_area_list();
+        save_area(area);
+        REMOVE_BIT(area->area_flags, AREA_CHANGED);
+        send_to_char("Area saved.\n\r", ch);
+        return;
+    }
+
+    if (!str_prefix(arg, "skills")) {
+        save_skills();
+        save_groups();
+        send_to_char("Skills saved.\n\r", ch);
+        return;
+    }
+
+    /* display help */
+    show_save_help(ch);
+    return;
+}
+
+
+
+char *fix_string(const char *str)
 {
     static char strfix[MSL * 2];
     int idx;
@@ -42,49 +206,7 @@ static char *fix_string(const char *str)
     return strfix;
 }
 
-
-
-/***************************************************************************
- *	save_area_list
- *
- *	save the list of areas to the startup list
- ***************************************************************************/
-static void save_area_list()
-{
-    extern HELP_AREA *had_list;
-    FILE *fp;
-    AREA_DATA *area;
-    HELP_AREA *ha;
-
-    if ((fp = fopen(AREA_LIST, "w")) == NULL) {
-        log_bug("Save_area_list: fopen");
-        perror("area.lst");
-    } else {
-        /*
-         * Add any help files that need to be loaded at
-         * startup to this section.
-         */
-        for (ha = had_list; ha; ha = ha->next)
-            if (ha->area == NULL)
-                fprintf(fp, "%s\n", ha->filename);
-
-        for (area = area_first; area; area = area->next)
-            fprintf(fp, "%s\n", area->file_name);
-
-        fprintf(fp, "$\n");
-        fclose(fp);
-    }
-
-    return;
-}
-
-
-/***************************************************************************
- *	fwrite_flag
- *
- *	writes flags in the format fread_flag reads
- ***************************************************************************/
-static char *fwrite_flag(long flags, char buf[])
+char *fwrite_flag(long flags, char buf[])
 {
     unsigned int offset;
     char *cp;
@@ -110,13 +232,24 @@ static char *fwrite_flag(long flags, char buf[])
     return buf;
 }
 
+void save_area_list()
+{
+    FILE *fp;
+    AREA_DATA *area;
 
-/***************************************************************************
- *	save_mobprogs
- *
- *	save mob programs for an area
- ***************************************************************************/
-static void save_mobprogs(FILE *fp, AREA_DATA *area)
+    if ((fp = fopen(AREA_LIST, "w")) == NULL) {
+        log_bug("Save_area_list: fopen");
+        perror("area.lst");
+    } else {
+        for (area = area_first; area; area = area->next)
+            fprintf(fp, "%s\n", area->file_name);
+
+        fprintf(fp, "$\n");
+        fclose(fp);
+    }
+}
+
+void save_mobprogs(FILE *fp, AREA_DATA *area)
 {
     MPROG_CODE *mprog;
     long iter;
@@ -136,13 +269,7 @@ static void save_mobprogs(FILE *fp, AREA_DATA *area)
     return;
 }
 
-
-/***************************************************************************
- *	save_mobile
- *
- *	save a single mobile
- ***************************************************************************/
-static void save_mobile(FILE *fp, MOB_INDEX_DATA *mob_idx)
+void save_mobile(FILE *fp, MOB_INDEX_DATA *mob_idx)
 {
     MPROG_LIST *mprog;
     int race = mob_idx->race;
@@ -223,14 +350,7 @@ static void save_mobile(FILE *fp, MOB_INDEX_DATA *mob_idx)
     return;
 }
 
-
-
-/***************************************************************************
- *	save_mobiles
- *
- *	save all of the mobiles in an area
- ***************************************************************************/
-static void save_mobiles(FILE *fp, AREA_DATA *area)
+void save_mobiles(FILE *fp, AREA_DATA *area)
 {
     MOB_INDEX_DATA *pMob;
     long iter;
@@ -247,7 +367,7 @@ static void save_mobiles(FILE *fp, AREA_DATA *area)
 
 
 
-//static void save_object(FILE *fp, OBJECTPROTOTYPE *pObjIndex)
+//void save_object(FILE *fp, OBJECTPROTOTYPE *pObjIndex)
 //{
 //    struct keyvaluepair_array *serialized;
 //
@@ -256,13 +376,7 @@ static void save_mobiles(FILE *fp, AREA_DATA *area)
 //    free(serialized);
 //}
 
-
-/***************************************************************************
- *	save_object
- *
- *	save a single object
- ***************************************************************************/
-static void save_object(FILE *fp, OBJECTPROTOTYPE *pObjIndex)
+void save_object(FILE *fp, OBJECTPROTOTYPE *pObjIndex)
 {
     AFFECT_DATA *pAf;
     EXTRA_DESCR_DATA *extra;
@@ -398,15 +512,7 @@ static void save_object(FILE *fp, OBJECTPROTOTYPE *pObjIndex)
     return;
 }
 
-
-
-
-/***************************************************************************
- *	save_objects
- *
- *	save all of the objects in an area
- ***************************************************************************/
-static void save_objects(FILE *fp, AREA_DATA *area)
+void save_objects(FILE *fp, AREA_DATA *area)
 {
     OBJECTPROTOTYPE *pObj;
     long iter;
@@ -421,16 +527,7 @@ static void save_objects(FILE *fp, AREA_DATA *area)
     return;
 }
 
-
-
-
-
-/***************************************************************************
- *	save_rooms
- *
- *	save all of the room data in an area
- ***************************************************************************/
-static void save_rooms(FILE *fp, AREA_DATA *area)
+void save_rooms(FILE *fp, AREA_DATA *area)
 {
     ROOM_INDEX_DATA *room;
     EXTRA_DESCR_DATA *extra;
@@ -532,13 +629,7 @@ static void save_rooms(FILE *fp, AREA_DATA *area)
     return;
 }
 
-
-/***************************************************************************
- *	save_door_resets
- *
- *	save the reset state of a door
- ***************************************************************************/
-static void save_door_resets(FILE *fp, AREA_DATA *area)
+void save_door_resets(FILE *fp, AREA_DATA *area)
 {
     ROOM_INDEX_DATA *room;
     EXIT_DATA *exit;
@@ -565,15 +656,7 @@ static void save_door_resets(FILE *fp, AREA_DATA *area)
     return;
 }
 
-
-
-
-/***************************************************************************
- *	save_resets
- *
- *	save all of the resets for an area
- ***************************************************************************/
-static void save_resets(FILE *fp, AREA_DATA *area)
+void save_resets(FILE *fp, AREA_DATA *area)
 {
     RESET_DATA *pReset;
     MOB_INDEX_DATA *pLastMob = NULL;
@@ -649,14 +732,7 @@ static void save_resets(FILE *fp, AREA_DATA *area)
     return;
 }
 
-
-
-/***************************************************************************
- *	save_shops
- *
- *	save the shop data for an area
- ***************************************************************************/
-static void save_shops(FILE *fp, AREA_DATA *area)
+void save_shops(FILE *fp, AREA_DATA *area)
 {
     SHOP_DATA *shopIndex;
     MOB_INDEX_DATA *mob_idx;
@@ -687,84 +763,31 @@ static void save_shops(FILE *fp, AREA_DATA *area)
     return;
 }
 
-
-
-/***************************************************************************
- *	save_helps
- *
- *	save all of the helps for a help area
- ***************************************************************************/
-static void save_helps(FILE *fp, HELP_AREA *ha)
+void save_helps(const char const *filename)
 {
-    HELP_DATA *help = ha->first;
-
-    fprintf(fp, "#HELPS\n");
-
-    for (; help; help = help->next_area) {
-        fprintf(fp, "%d %s~\n", help->level, help->keyword);
-        fprintf(fp, "%s~\n\n", fix_string(help->text));
-    }
-
-    fprintf(fp, "-1 $~\n\n");
-
-    ha->changed = false;
-
-    return;
-}
-
-
-
-/***************************************************************************
- *	save_changed_helps
- *
- *	save all of the helps for a help area
- ***************************************************************************/
-static void save_changed_helps()
-{
-    extern HELP_AREA *had_list;
-    HELP_AREA *ha;
-    AREA_DATA *area;
     FILE *fp;
+    struct helpdata_iterator *iterator;
 
-    for (ha = had_list; ha; ha = ha->next) {
-        if (ha->changed == true) {
-            for (area = area_first; area != NULL; area = area->next) {
-                if (area->helps != NULL && area->helps == ha) {
-                    save_area(area);
-                    ha->changed = false;
-                    break;
-                }
-            }
-
-            if (area == NULL) {
-                char haf[MIL];
-                snprintf(haf, MIL, "%s%s", AREA_FOLDER, ha->filename);
-                fp = fopen(haf, "w");
-
-                if (!fp) {
-                    perror(haf);
-                    return;
-                }
-
-                save_helps(fp, ha);
-
-                fprintf(fp, "#$\n");
-                fclose(fp);
-
-                ha->changed = false;
-            }
-        }
+    fp = fopen(filename, "w");
+    if (fp == NULL) {
+        log_bug("Unable to open help file %s", filename);
+        perror(filename);
+        return;
+    }
+    
+    iterator = helpdata_iteratorstart();
+    while (iterator != NULL) {
+        HELP_DATA *current = iterator->current;
+        KEYVALUEPAIR_ARRAY *data = helpdata_serialize(current);
+        database_write(fp, data);
+        free(data);
+        iterator = helpdata_iteratornext(iterator);
     }
 
-    return;
+    fclose(fp);
 }
 
-/***************************************************************************
- *	save_area
- *
- *	save a single area
- ***************************************************************************/
-static void save_area(AREA_DATA *area)
+void save_area(AREA_DATA *area)
 {
     FILE *fp;
     char haf[MIL];
@@ -796,193 +819,21 @@ static void save_area(AREA_DATA *area)
     save_resets(fp, area);
     save_shops(fp, area);
 
-    if (area->helps && area->helps->first)
-        save_helps(fp, area->helps);
-
     fprintf(fp, "#$\n");
 
     fclose(fp);
 }
 
-
-/***************************************************************************
- *	do_asave
- *
- *	initiate an OLC save function
- ***************************************************************************/
-void do_asave(CHAR_DATA *ch, const char *argument)
+void show_save_help(CHAR_DATA *ch)
 {
-    AREA_DATA *area;
-    char arg[MIL];
-    int value;
-
-    (void)one_argument(argument, arg);
-    if (is_help(arg)) {
-        if (ch != NULL) {
-            send_to_char("`#Syntax`3:``\n\r", ch);
-            send_to_char("  `!asave `1<`!vnum`1>``   - saves a particular area\n\r", ch);
-            send_to_char("  `!asave list``     - saves the area.lst file\n\r", ch);
-            send_to_char("  `!asave area``     - saves the area being edited\n\r", ch);
-            send_to_char("  `!asave changed``  - saves all changed zones\n\r", ch);
-            send_to_char("  `!asave helps``    - saves all helps *not* linked to areas\n\r", ch);
-            send_to_char("  `!asave skills``   - saves the skill list\n\r", ch);
-            send_to_char("  `!asave world``    - saves EVERYTHING\n\r", ch);
-            send_to_char("\n\r", ch);
-        }
-
-        return;
-    }
-
-    /*
-     * see if we have a numeric arugment - if we do, then
-     * save the area it corresponds to
-     */
-    if (is_number(arg)) {
-        value = parse_int(arg);
-
-        if ((area = get_area_data(value)) == NULL) {
-            if (ch != NULL)
-                send_to_char("That area does not exist.\n\r", ch);
-            return;
-        }
-
-        /* save the area */
-        if (area != NULL) {
-            if (ch && !IS_BUILDER(ch, area))
-                send_to_char("You are not a builder for this area.\n\r", ch);
-
-            save_area_list();
-            save_area(area);
-        }
-        return;
-    }
-
-    /* save everything */
-    if (!str_prefix(arg, "world")) {
-        save_area_list();
-        save_changed_helps();
-
-        for (area = area_first; area; area = area->next) {
-            if (ch != NULL && !IS_BUILDER(ch, area))
-                continue;
-
-            save_area(area);
-            REMOVE_BIT(area->area_flags, AREA_CHANGED);
-        }
-        if (ch != NULL)
-            send_to_char("You saved the world.\n\r", ch);
-        return;
-    }
-
-    if (!str_prefix(arg, "helps")) {
-        save_changed_helps();
-        if (ch != NULL)
-            send_to_char("All changed helps have been saved.\n\r", ch);
-
-        return;
-    }
-
-    /* Save changed areas, only authorized areas. */
-    /* ------------------------------------------ */
-    if (!str_prefix(arg, "changed")) {
-        bool saved;
-
-        save_area_list();
-
-        if (ch != NULL)
-            send_to_char("Saved areas:\n\r", ch);
-        else
-            log_string("Saved areas:");
-
-        saved = false;
-        for (area = area_first; area; area = area->next) {
-            /* Builder must be assigned this area. */
-            if (ch != NULL && !IS_BUILDER(ch, area))
-                continue;
-
-            /* Save changed areas. */
-            if (IS_SET(area->area_flags, AREA_CHANGED)) {
-                save_area(area);
-                saved = true;
-                if (ch != NULL) {
-                    printf_to_char(ch, "%24s - '%s'\n\r", area->name, area->file_name);
-                } else {
-                    log_string("%24s - '%s'", area->name, area->file_name);
-                }
-
-                REMOVE_BIT(area->area_flags, AREA_CHANGED);
-            }
-        }
-
-        save_changed_helps();
-
-        if (!saved) {
-            if (ch != NULL)
-                send_to_char("None.", ch);
-            else
-                log_string("None.");
-        }
-        return;
-    }
-
-    /* save the area list */
-    if (!str_prefix(arg, "list")) {
-        save_area_list();
-        return;
-    }
-
-    /* save the area that is currently being edited */
-    if (!str_prefix(arg, "area")) {
-        if (ch == NULL || ch->desc == NULL)
-            return;
-
-        if (ch->desc->editor == ED_NONE) {
-            send_to_char("You are not editing an area, therefore an area vnum is required.\n\r", ch);
-            return;
-        }
-
-        switch (ch->desc->editor) {
-          case ED_AREA:
-              area = (AREA_DATA *)ch->desc->ed_data;
-              break;
-          case ED_ROOM:
-              area = ch->in_room->area;
-              break;
-          case ED_OBJECT:
-              area = ((OBJECTPROTOTYPE *)ch->desc->ed_data)->area;
-              break;
-          case ED_MOBILE:
-              area = ((MOB_INDEX_DATA *)ch->desc->ed_data)->area;
-              break;
-          case ED_HELP:
-              send_to_char("Saving helps.", ch);
-              save_changed_helps();
-              return;
-          default:
-              area = ch->in_room->area;
-              break;
-        }
-
-        if (area == NULL || !IS_BUILDER(ch, area)) {
-            send_to_char("You are not a builder for this area.\n\r", ch);
-            return;
-        }
-
-        save_area_list();
-        save_area(area);
-        REMOVE_BIT(area->area_flags, AREA_CHANGED);
-        send_to_char("Area saved.\n\r", ch);
-        return;
-    }
-
-    if (!str_prefix(arg, "skills")) {
-        save_skills();
-        save_groups();
-        send_to_char("Skills saved.\n\r", ch);
-        return;
-    }
-
-    /* display help */
-    do_asave(ch, "");
-    return;
+    send_to_char("`#Syntax`3:``\n\r", ch);
+    send_to_char("  `!asave `1<`!vnum`1>``   - saves a particular area\n\r", ch);
+    send_to_char("  `!asave list``     - saves the area.lst file\n\r", ch);
+    send_to_char("  `!asave area``     - saves the area being edited\n\r", ch);
+    send_to_char("  `!asave changed``  - saves all changed zones\n\r", ch);
+    send_to_char("  `!asave helps``    - saves all helps\n\r", ch);
+    send_to_char("  `!asave skills``   - saves the skill list\n\r", ch);
+    send_to_char("  `!asave world``    - saves EVERYTHING\n\r", ch);
+    send_to_char("\n\r", ch);
 }
+

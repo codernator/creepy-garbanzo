@@ -7,6 +7,7 @@
 #include "lookup.h"
 #include "db.h"
 #include "find.h"
+#include "help.h"
 #ifndef S_SPLINT_S
 #include <ctype.h>
 #endif

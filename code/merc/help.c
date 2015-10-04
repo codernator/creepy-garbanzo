@@ -1,6 +1,9 @@
-#include <stdio.h>
 #include "merc.h"
-#include "recycle.h"
+#include "help.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+#include <string.h>
 
 
 typedef void HELP_HANDLER(/*@partial@*/CHAR_DATA *, int trust, /*@observer@*/const char *argument);
@@ -9,36 +12,158 @@ struct help_table_entry {
     HELP_HANDLER *handler;
 };
 
+
+static HELP_DATA head_node;
+static int help_count = 0;
+
 static /*@observer@*/const struct help_table_entry *findcustom(/*@observer@*/const char *topic);
 static void handle_help_keyfind(CHAR_DATA *ch, int trust, /*@observer@*/const char *argument);
 static void handle_help_fullsearch(CHAR_DATA *ch, int trust, /*@observer@*/const char *argument);
 static void handle_help_other(CHAR_DATA *ch, int trust, /*@observer@*/const char *argument);
+static void headlist_add(/*@owned@*/HELP_DATA *entry);
 
-const struct help_table_entry help_table[] = {
+
+static const struct help_table_entry help_table[] = {
     { .key = "find", .handler = handle_help_keyfind },
     { .key = "search", .handler = handle_help_fullsearch },
     { .key = NULL, .handler = NULL }
 };
 
 
-void do_help(CHAR_DATA *ch, const char *argument)
+inline int count_helps()
 {
-    char topic[MIL];
+    return help_count;
+}
 
-    if (IS_NPC(ch))
-        return;
+HELP_DATA *helpdata_new()
+{
+    HELP_DATA *helpdata;
+    helpdata = malloc(sizeof(HELP_DATA));
+    assert(helpdata != NULL);
+    
+    memset(helpdata, 0, sizeof(HELP_DATA));
 
-    argument = one_argument(argument, topic);
-    show_help(ch->desc, topic, argument);
+    headlist_add(helpdata);
+    return helpdata;
+}
+
+KEYVALUEPAIR_ARRAY *helpdata_serialize(const HELP_DATA *helpdata)
+{
+    KEYVALUEPAIR_ARRAY *answer;
+
+    answer = keyvaluepairarray_create(5);
+
+    keyvaluepairarray_append(answer, "key", helpdata->keyword);
+    keyvaluepairarray_append(answer, "text", helpdata->text);
+    keyvaluepairarray_appendf(answer, 32, "level", "%d", helpdata->level);
+
+    return answer;
+}
+
+HELP_DATA *helpdata_deserialize(const KEYVALUEPAIR_ARRAY *data)
+{
+    HELP_DATA *helpdata;
+    const char *value;
+
+    helpdata = malloc(sizeof(HELP_DATA));
+    assert(helpdata != NULL);
+    
+    value = keyvaluepairarray_find(data, "key");
+    assert(value != NULL);
+    helpdata->keyword = string_copy(value);
+
+    value = keyvaluepairarray_find(data, "text");
+    assert(value != NULL);
+    helpdata->text = string_copy(value);
+
+    value = keyvaluepairarray_find(data, "level");
+    helpdata->level = (value != NULL) ? parse_int(value) : 0;
+
+    headlist_add(helpdata);
+    return helpdata;
+}
+
+void helpdata_free(HELP_DATA *helpdata)
+{
+    HELP_DATA *prev = helpdata->prev;
+    HELP_DATA *next = helpdata->next;
+
+    assert(helpdata != NULL);
+    assert(helpdata != &head_node);
+    assert(prev != NULL); /** because only the head node has no previous. */
+
+    prev->next = next;
+    if (next != NULL)
+        next->prev = prev;
+
+    if (helpdata->keyword != NULL)
+        free(helpdata->keyword);
+    if (helpdata->text != NULL)
+        free(helpdata->text);
+    free(helpdata);
 }
 
 
-/**
- * see if a character string is a cry for help
- */
 inline bool is_help(const char *argument)
 {
-    return (argument[0] == '\0' || argument[0] == '?' || !str_prefix(argument, "help"));
+    char first;
+
+    first = argument[0];
+    switch (first) {
+    case '\0': // TODO an empty argument is a cry for help only in some cases, no?
+    case '?': // ?jump is a cry for help on the term 'jump'
+        return true;
+
+    default:
+        {
+            /* We only care if the argument starts with the literal string "help ".
+             * The check must be case-insensitive.
+             * Lowering at most the first 5 characters (and terminating on the 6th) gives
+             * all the data we need.
+             */
+            char lowered[6];
+            string_lower(argument, lowered, 6);
+            return strncmp(lowered, "help", 5) == 0;
+        }
+    }
+}
+
+HELP_DATA *help_lookup(const char *keyword)
+{
+    HELP_DATA *help;
+
+    for (help = head_node.next; help != NULL; help = help->next) {
+        if (!str_infix(keyword, help->keyword)
+            || (keyword[0] == help->keyword[0] && !str_cmp(keyword, help->keyword)))
+            return help;
+    }
+
+    return NULL;
+}
+
+struct helpdata_iterator *helpdata_iteratorstart()
+{
+    HELP_DATA *current = head_node.next;
+    struct helpdata_iterator *iterator;
+    if (current == NULL)
+        return NULL;
+
+    iterator = malloc(sizeof (struct helpdata_iterator));
+    assert(iterator != NULL);
+    iterator->current = current;
+    return iterator;
+}
+
+struct helpdata_iterator *helpdata_iteratornext(struct helpdata_iterator *iterator)
+{
+    HELP_DATA *current = iterator->current->next;
+    if (current == NULL) {
+        free(iterator);
+        return NULL;
+    }
+
+    iterator->current = current;
+    return iterator;
 }
 
 void show_help(DESCRIPTOR_DATA *descriptor, const char *topic, const char *argument)
@@ -77,7 +202,7 @@ void handle_help_keyfind(CHAR_DATA *ch, int trust, const char *argument)
     buf = new_buf();
 
     printf_buf(buf, "Helps matching the query: %s\n\r", argument);
-    for (help = help_first; help != NULL; help = help->next) {
+    for (help = head_node.next; help != NULL; help = help->next) {
         if (help->level <= trust) {
             if (!str_infix(argument, help->keyword)) {
                 index++;
@@ -103,7 +228,7 @@ void handle_help_fullsearch(CHAR_DATA *ch, int trust, const char *argument)
     buf = new_buf();
 
     printf_buf(buf, "Helps matching the query: %s\n\r", argument);
-    for (help = help_first; help != NULL; help = help->next) {
+    for (help = head_node.next; help != NULL; help = help->next) {
         if (help->level <= trust) {
             txt = uncolor_str(help->text);
             if (!str_infix(argument, txt)) {
@@ -125,7 +250,7 @@ void handle_help_other(CHAR_DATA *ch, int trust, const char *topic)
 {
     HELP_DATA *help;
 
-    for (help = help_first; help != NULL; help = help->next) {
+    for (help = head_node.next; help != NULL; help = help->next) {
         if (help->level <= trust) {
             if (is_name(topic, help->keyword)) {
                 if (help->text[0] == '!') {
@@ -142,5 +267,20 @@ void handle_help_other(CHAR_DATA *ch, int trust, const char *topic)
     }
 
     printf_to_char(ch, "No help on '%s'.\n\r", topic);
+}
+
+void headlist_add(HELP_DATA *entry)
+{
+    HELP_DATA *headnext;
+
+    entry->prev = &head_node;
+    headnext = head_node.next;
+    if (headnext != NULL) {
+        assert(headnext->prev == &head_node);
+        headnext->prev = entry;
+    }
+
+    entry->next = headnext;
+    head_node.next = entry;
 }
 

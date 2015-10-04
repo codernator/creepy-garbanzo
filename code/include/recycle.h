@@ -47,17 +47,6 @@ MEM_DATA *find_memory(MEM_DATA * memory, long id);
 
 /* buffer procedures */
 
-BUFFER * new_buf(void);
-BUFFER *new_buf_size(int size);
-void free_buf(/*@owned@*/BUFFER * buffer);
-void clear_buf(BUFFER * buffer);
-bool add_buf(BUFFER *buffer, const char *string);
-/*@observer@*/char *buf_string(/*@observer@*/BUFFER * buffer);
-void printf_buf(BUFFER * buffer, char *fmt, ...);
-
-HELP_AREA *new_had(void);
-HELP_DATA *new_help(void);
-void free_help(HELP_DATA * help);
 
 
 /***************************************************************************

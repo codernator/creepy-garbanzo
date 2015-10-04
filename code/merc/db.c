@@ -13,6 +13,7 @@
 #include "olc.h"
 #include "skills.h"
 #include "channels.h"
+#include "help.h"
 #include <stdarg.h>
 #ifndef S_SPLINT_S
 #include <ctype.h>
@@ -24,13 +25,11 @@
 char str_empty[1];
 CHAR_DATA *char_list;
 NOTE_DATA *note_list;
-HELP_DATA *help_first;
-HELP_AREA *had_list;
 MPROG_CODE *mprog_list;
 SHOP_DATA *shop_first;
 SHOP_DATA *shop_last;
 NOTE_DATA *note_free;
-char *help_greeting;
+/*@observer@*/const char *help_greeting;
 MOB_INDEX_DATA *mob_index_hash[MAX_KEY_HASH];
 ROOM_INDEX_DATA *room_index_hash[MAX_KEY_HASH];
 AREA_DATA *area_first;
@@ -39,7 +38,6 @@ int top_affect;
 int top_area;
 int top_ed;
 long top_exit;
-int top_help;
 long top_mob_index;
 int top_reset;
 long top_room;
@@ -65,10 +63,7 @@ extern AFFECT_DATA *affect_free;
 
 /** locals */
 static char *string_hash[MAX_KEY_HASH];
-static char *ahelp_greeting;
-static char *ahelp_greeting2;
 static AREA_DATA *current_area;
-static HELP_DATA *help_last;
 static char *string_space;
 static char *top_string;
 static void bug(const char *fmt, ...);
@@ -102,7 +97,7 @@ static char area_file_path[MIL];
  *	local functions used in boot process
  ***************************************************************************/
 static void load_area(FILE * fp, const char *filename);
-static void load_helps(FILE * fp, char *fname);
+static void load_helps(const char const *filepath);
 static void load_mobiles(FILE * fp);
 static void load_objects(FILE * fp);
 static void load_resets(FILE * fp);
@@ -228,8 +223,6 @@ static void init_areas()
                 break;
             } else if (!str_cmp(word, "AREADATA")) {
                 load_area(fp_area, area_file_name);
-            } else if (!str_cmp(word, "HELPS")) {
-                load_helps(fp_area, area_file_path);
             } else if (!str_cmp(word, "MOBILES")) {
                 load_mobiles(fp_area);
             } else if (!str_cmp(word, "MOBPROGS")) {
@@ -295,6 +288,10 @@ void boot_db()
     log_string("Loading Areas..");
     init_areas();
 
+
+    log_string("Loading helps.");
+    load_helps(HELP_FILE);
+
     /*
      * Fix up exits.
      * Declare db booting over.
@@ -316,9 +313,6 @@ void boot_db()
     log_string("Loading Bans..");
     load_bans();
     log_string("Loading Songs..");
-
-    log_string("Assigning Skill Helpts..");
-    assign_skill_helps();
 
     log_string("BootDB: Done..");
 
@@ -461,92 +455,36 @@ void assign_area_vnum(long vnum)
 /*
  * Snarf a help section.
  */
-void load_helps(FILE *fp, char *fname)
+void load_helps(const char const *filepath)
 {
-    HELP_DATA *pHelp;
-    int level;
-    char *keyword;
-    char *text;
+    FILE *fp;
+    KEYVALUEPAIR_ARRAY *data;
 
-    for (;; ) {
-        HELP_AREA *had;
-
-        level = fread_number(fp);
-        keyword = fread_string(fp);
-
-        if (keyword[0] == '$')
-            break;
-
-        if ((pHelp = help_lookup(keyword)) != NULL
-            && !str_cmp(pHelp->keyword, keyword)) {
-            text = fread_string(fp);
-            free_string(keyword);
-            free_string(text);
-            continue;
-        }
-
-        if (!had_list) {
-            had = new_had();
-            had->filename = str_dup(fname);
-            had->area = current_area;
-
-            if (current_area)
-                current_area->helps = had;
-
-            had_list = had;
-        } else {
-            if (str_cmp(fname, had_list->filename)) {
-                had = new_had();
-                had->filename = str_dup(fname);
-                had->area = current_area;
-
-                if (current_area)
-                    current_area->helps = had;
-
-                had->next = had_list;
-                had_list = had;
-            } else {
-                had = had_list;
-            }
-        }
-
-        pHelp = new_help();
-        pHelp->level = (int)level;
-        pHelp->keyword = keyword;
-
-        pHelp->text = fread_string(fp);
-
-        if (!str_cmp(pHelp->keyword, "greeting"))
-            help_greeting = pHelp->text;
-
-        if (!str_cmp(pHelp->keyword, "agreeting"))
-            ahelp_greeting = pHelp->text;
-
-        if (!str_cmp(pHelp->keyword, "agreeting2"))
-            ahelp_greeting2 = pHelp->text;
-
-        if (help_first == NULL)
-            help_first = pHelp;
-
-        if (help_last != NULL)
-            help_last->next = pHelp;
-
-        help_last = pHelp;
-        pHelp->next = NULL;
-
-        if (!had->first)
-            had->first = pHelp;
-
-        if (!had->last)
-            had->last = pHelp;
-
-        had->last->next_area = pHelp;
-        had->last = pHelp;
-        pHelp->next_area = NULL;
-        top_help++;
+    fp = fopen(filepath, "w");
+    if (fp == NULL) {
+        log_bug("Unable to open help file %s.", filepath);
+        ABORT;
+        return;
     }
 
-    return;
+
+    while (true) {
+        HELP_DATA *snarfed;
+        data = database_read(fp);
+        if (data == NULL)
+            break;
+
+        snarfed = helpdata_deserialize(data);
+
+        if (!str_cmp(snarfed->keyword, "greeting")) {
+            help_greeting = snarfed->text;
+        }
+
+        if (feof(fp))
+            break;
+    }
+
+    fclose(fp);
 }
 
 
@@ -2675,7 +2613,7 @@ void do_memory(CHAR_DATA *ch, const char *argument)
     printf_to_char(ch, "Areas   %5d\n\r", top_area);
     printf_to_char(ch, "ExDes   %5d\n\r", top_ed);
     printf_to_char(ch, "Exits   %5d\n\r", top_exit);
-    printf_to_char(ch, "Helps   %5d\n\r", top_help);
+    printf_to_char(ch, "Helps   %5d\n\r", count_helps());
     printf_to_char(ch, "Mobs    %5d\n\r", top_mob_index);
     printf_to_char(ch, "(in use)%5d\n\r", mobile_count);
     printf_to_char(ch, "Objs    %5d\n\r", objectprototype_list_count());

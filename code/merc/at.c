@@ -5,7 +5,7 @@
 #include "lookup.h"
 #include "magic.h"
 #include "interp.h"
-
+#include "help.h"
 
 /** imports */
 extern bool expand_cmd(CHAR_DATA * vch, const char *arg, char *buf, char find);

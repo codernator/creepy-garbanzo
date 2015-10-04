@@ -68,7 +68,6 @@ typedef struct char_data CHAR_DATA;
 typedef struct descriptor_data DESCRIPTOR_DATA;
 typedef struct exit_data EXIT_DATA;
 typedef struct extra_descr_data EXTRA_DESCR_DATA;
-typedef struct help_data HELP_DATA;
 typedef struct kill_data KILL_DATA;
 typedef struct mem_data MEM_DATA;
 typedef struct mob_index_data MOB_INDEX_DATA;
@@ -84,7 +83,6 @@ typedef struct weather_data WEATHER_DATA;
 
 typedef struct mprog_list MPROG_LIST;
 typedef struct mprog_code MPROG_CODE;
-typedef struct help_area_data HELP_AREA;
 typedef struct system_state SYSTEM_STATE;
 typedef struct game_state GAME_STATE;
 
@@ -287,23 +285,7 @@ struct descriptor_data {
 #define TO_CHAR         3
 #define TO_ALL          4
 
-/* Help table types. */
-struct help_data {
-    HELP_DATA * next;
-    HELP_DATA * next_area;
-    int level;
-    char * keyword;
-    char * text;
-};
 
-struct help_area_data {
-    HELP_AREA * next;
-    HELP_DATA * first;
-    HELP_DATA * last;
-    AREA_DATA * area;
-    char * filename;
-    bool changed;
-};
 
 
 /*
@@ -1628,7 +1610,6 @@ struct area_data {
     AREA_DATA * next;
     RESET_DATA * reset_first;
     RESET_DATA * reset_last;
-    HELP_AREA * helps;
     char *  file_name;
     char *  name;
     char *  credits;
@@ -1925,14 +1906,12 @@ extern const int rev_dir[];                 /* int - ROM OLC */
 extern AREA_DATA *area_first;
 extern AREA_DATA *area_last;
 extern SHOP_DATA *shop_last;
-extern HELP_DATA *help_first;
 extern SHOP_DATA *shop_first;
 extern CHAR_DATA *char_list;
 extern MPROG_CODE *mprog_list;
 extern int top_affect;
 extern int top_area;
 extern int top_ed;
-extern int top_help;
 extern int top_reset;
 extern int top_shop;
 extern long top_vnum_mob;
@@ -1960,11 +1939,11 @@ extern ROOM_INDEX_DATA *room_index_hash [MAX_KEY_HASH];
 #define MEMLOG_FILE      "./log/"
 #define EXE_FILE         "./badtrip"
 
+#define HELP_FILE        "./db/helps.txt"
 #define AREA_FOLDER      "./db/area/"
 #define AREA_LIST        "./db/area.lst"          /* List of areas */
 #define BAN_FILE         "./db/ban.txt"
 #define HEADLINE_FILE    "./db/headline.txt"
-#define HELP_FILE        "./db/area/help.are"
 #define NOTE_FILE        "./db/notes.not"         /* note thread */
 #define COPYOVER_FILE    "./db/log/copyover.txt"
 
@@ -2293,8 +2272,14 @@ int objectprototype_list_count();
 /*@dependent@*/OBJECTPROTOTYPE *objectprototype_deserialize(const KEYVALUEPAIR_ARRAY *data);
 /* ~objectprototype.c */
 
-/* help.c */
-void show_help(/*@observer@*/DESCRIPTOR_DATA *descriptor, /*@observer@*/const char *topic, /*@observer@*/const char *argument);
-bool is_help(/*@observer@*/const char *argument);
+/* recycle.h */
+BUFFER * new_buf(void);
+BUFFER *new_buf_size(int size);
+void free_buf(/*@owned@*/BUFFER * buffer);
+void clear_buf(BUFFER * buffer);
+bool add_buf(BUFFER *buffer, const char *string);
+/*@observer@*/char *buf_string(/*@observer@*/BUFFER * buffer);
+void printf_buf(BUFFER * buffer, char *fmt, ...);
+/* ~recycle.h */
 
 #endif  /* __MERC_H */

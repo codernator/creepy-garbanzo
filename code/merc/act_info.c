@@ -13,6 +13,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "help.h"
 #include "libfile.h"
 
 
@@ -23,7 +24,6 @@ extern int password_acceptance(const char *plain);
 extern const char *password_accept_message(int code);
 
 
-HELP_DATA *find_help(CHAR_DATA * ch, char *name);
 void print_weather(CHAR_DATA * ch);
 
 
@@ -37,6 +37,18 @@ extern void show_char_to_char_2(CHAR_DATA * victim, CHAR_DATA * ch);
 #define MAX_NEST        100
 static GAMEOBJECT *rgObjNest[MAX_NEST];
 extern void fread_char(CHAR_DATA * ch, FILE * fp);
+
+
+void do_help(CHAR_DATA *ch, const char *argument)
+{
+    char topic[MIL];
+
+    if (IS_NPC(ch))
+        return;
+
+    argument = one_argument(argument, topic);
+    show_help(ch->desc, topic, argument);
+}
 
 
 /* changes your scroll */
@@ -1971,22 +1983,6 @@ void do_die(CHAR_DATA *ch, const char *argument)
 {
     show_help(ch->desc, "BLOW", NULL);
     return;
-}
-
-HELP_DATA *find_help(CHAR_DATA *ch, char *name)
-{
-    HELP_DATA *pHelp;
-
-
-    for (pHelp = help_first; pHelp != NULL; pHelp = pHelp->next) {
-        if (pHelp->level > get_trust(ch))
-            continue;
-
-        if (is_name(name, pHelp->keyword))
-            return pHelp;
-    }
-
-    return NULL;
 }
 
 

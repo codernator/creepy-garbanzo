@@ -9,7 +9,7 @@
 #include "recycle.h"
 #include "tables.h"
 #include "lookup.h"
-
+#include "help.h"
 
 /** exports */
 bool expand_cmd(CHAR_DATA * vch, const char *arg, char *buf, char find);

@@ -16,8 +16,6 @@
 
 /** exports */
 EXTRA_DESCR_DATA *extra_descr_free;
-HELP_DATA *help_free;
-HELP_DATA *help_last;
 void free_extra_descr(EXTRA_DESCR_DATA * extra);
 void free_affect(AFFECT_DATA * af);
 void free_mprog(MPROG_LIST * mp);

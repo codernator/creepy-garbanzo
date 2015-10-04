@@ -25,6 +25,7 @@
 #include "tables.h"
 #include "olc.h"
 #include "recycle.h"
+#include "help.h"
 
 
 

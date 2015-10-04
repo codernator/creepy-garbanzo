@@ -69,30 +69,29 @@ struct level_info {
 *	this data to be easily expanded upon or edited
 ***************************************************************************/
 struct dynamic_skill {
-	SKILL *		next;
-	int		sn;
-	char *		name;
-	int		target;
-	int		min_pos;
-	int		min_mana;
-	int		wait;
-	char *		dam_noun;
-	char *		msg;
-	char *		msg_obj;
-	char *		msg_others;
-	long		flags;
-	int		difficulty;
-	bool		valid;
-	SPELL_LIST *	spells;
-	AFFECT_LIST *	affects;
-	LEVEL_INFO *	levels;
-	HELP_DATA *	help;
-	ARGUMENT *	args;
-	char *		help_keyword;
+	SKILL *next;
+	int sn;
+	char *name;
+	int target;
+	int min_pos;
+	int min_mana;
+	int wait;
+	char *dam_noun;
+	char *msg;
+	char *msg_obj;
+	char *msg_others;
+	long flags;
+	int	difficulty;
+	bool valid;
+	SPELL_LIST *spells;
+	AFFECT_LIST *affects;
+	LEVEL_INFO *levels;
+	ARGUMENT *args;
+	char *help_keyword;
 	/* mob specific information */
-	long		act_flag;
-	long		off_flag;
-	int		percent;
+	long act_flag;
+	long off_flag;
+	int	 percent;
 };
 
 /***************************************************************************
@@ -101,10 +100,10 @@ struct dynamic_skill {
 *	a list of linked skills
 ***************************************************************************/
 struct dynamic_skill_list {
-	SKILL_LIST *	next;
-	SKILL_LIST *	prev;
-	SKILL *		skill;
-	bool		valid;
+	SKILL_LIST *next;
+	SKILL_LIST *prev;
+	SKILL *	skill;
+	bool valid;
 };
 
 /***************************************************************************
@@ -113,14 +112,13 @@ struct dynamic_skill_list {
 *	a list of spell groups
 ***************************************************************************/
 struct dynamic_group {
-	GROUP *		next;
-	int		gn;
-	char *		name;
-	SKILL_LIST *	skills;
-	LEVEL_INFO *	levels;
-	bool		valid;
-	HELP_DATA *	help;
-	char *		help_keyword;
+	GROUP *next;
+	int	 gn;
+	char *name;
+	SKILL_LIST *skills;
+	LEVEL_INFO *levels;
+	bool valid;
+	char *help_keyword;
 };
 
 

@@ -24,6 +24,7 @@
 #include "recycle.h"
 #include "lookup.h"
 #include "interp.h"
+#include "help.h"
 
 
 /***************************************************************************
