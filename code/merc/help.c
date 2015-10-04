@@ -3,88 +3,144 @@
 #include "recycle.h"
 
 
+typedef void HELP_HANDLER(/*@partial@*/CHAR_DATA *, int trust, /*@observer@*/const char *argument);
+struct help_table_entry {
+    const char const *key;
+    HELP_HANDLER *handler;
+};
+
+static /*@observer@*/const struct help_table_entry *findcustom(/*@observer@*/const char *topic);
+static void handle_help_keyfind(CHAR_DATA *ch, int trust, /*@observer@*/const char *argument);
+static void handle_help_fullsearch(CHAR_DATA *ch, int trust, /*@observer@*/const char *argument);
+static void handle_help_other(CHAR_DATA *ch, int trust, /*@observer@*/const char *argument);
+
+const struct help_table_entry help_table[] = {
+    { .key = "find", .handler = handle_help_keyfind },
+    { .key = "search", .handler = handle_help_fullsearch },
+    { .key = NULL, .handler = NULL }
+};
+
 
 void do_help(CHAR_DATA *ch, const char *argument)
 {
+    char topic[MIL];
+
+    if (IS_NPC(ch))
+        return;
+
+    argument = one_argument(argument, topic);
+    show_help(ch->desc, topic, argument);
+}
+
+
+/**
+ * see if a character string is a cry for help
+ */
+inline bool is_help(const char *argument)
+{
+    return (argument[0] == '\0' || argument[0] == '?' || !str_prefix(argument, "help"));
+}
+
+void show_help(DESCRIPTOR_DATA *descriptor, const char *topic, const char *argument)
+{
+    /*@observer@*/const struct help_table_entry *custom;
+    int trust;
+    CHAR_DATA *actual;
+
+    actual = CH(descriptor);
+    trust = get_trust(actual);
+    custom = findcustom(topic);
+    if (custom->key == NULL) {
+        handle_help_other(actual, trust, topic);
+    } else {
+        (*custom->handler)(actual, trust, argument);
+    }
+}
+
+const struct help_table_entry *findcustom(const char *topic) 
+{
+    const struct help_table_entry *custom;
+    int i = 0;
+    custom = &help_table[i];
+    while (custom->key != NULL && str_cmp(custom->key, topic)) {
+        custom = &help_table[++i];
+    }
+    return custom;
+}
+
+void handle_help_keyfind(CHAR_DATA *ch, int trust, const char *argument)
+{
     HELP_DATA *help;
-    char arg[MIL];
+    BUFFER *buf;
+    int index = 0;
+
+    buf = new_buf();
+
+    printf_buf(buf, "Helps matching the query: %s\n\r", argument);
+    for (help = help_first; help != NULL; help = help->next) {
+        if (help->level <= trust) {
+            if (!str_infix(argument, help->keyword)) {
+                index++;
+                printf_buf(buf, "[%.3d]  %s\n\r", index, help->keyword);
+            }
+        }
+    }
+
+    if (index == 0)
+        (void)add_buf(buf, "  ...no helps matching the selected criteria.\n\r\n\r");
+
+    page_to_char(buf_string(buf), ch);
+    free_buf(buf);
+}
+
+void handle_help_fullsearch(CHAR_DATA *ch, int trust, const char *argument)
+{
+    HELP_DATA *help;
+    BUFFER *buf;
     char *txt;
     int index = 0;
 
-    if (IS_NPC(ch))
-	return;
+    buf = new_buf();
 
-    one_argument(argument, arg);
-    if (!str_prefix(arg, "find")
-	    || !str_prefix(arg, "search")) {
-	BUFFER *buf;
-	bool search;
-
-	search = (str_prefix(arg, "search") == 0);
-	argument = one_argument(argument, arg);
-	buf = new_buf();
-
-	printf_buf(buf, "Helps matching the query: %s\n\r", argument);
-	for (help = help_first; help != NULL; help = help->next) {
-	    if (help->level <= get_trust(ch)) {
-		txt = uncolor_str(help->text);
-		if (!str_infix(argument, help->keyword)
-			|| (search && !str_infix(argument, txt))) {
-		    index++;
-		    printf_buf(buf, "[%.3d]  %s\n\r", index, help->keyword);
-		}
-		free_string(txt);
-	    }
-	}
-
-	if (index == 0)
-	    add_buf(buf, "     no helps matching the selected criteria.\n\r\n\r");
-
-	page_to_char(buf_string(buf), ch);
-	free_buf(buf);
-    } else if (!str_prefix(arg, "class")) {
-	BUFFER *buf;
-	char tmpbuf[MSL];
-	int class_idx;
-
-	buf = new_buf();
-
-	add_buf(buf, " Class          Description\n\r");
-	add_buf(buf, "------------------------------------------------------------------------\n\r");
-	for (class_idx = 0; class_idx < MAX_CLASS; class_idx++) {
-	    if (class_table[class_idx].canCreate) {
-		sprintf(tmpbuf, " %-9s", class_table[class_idx].name);
-		add_buf(buf, tmpbuf);
-		sprintf(tmpbuf, "%s\n\r", class_table[class_idx].shortDesc);
-		add_buf(buf, tmpbuf);
-	    }
-	}
-	add_buf(buf, "------------------------------------------------------------------------\n\r");
-	add_buf(buf, " (Type '`^HELP <CLASS>``' for help on a specific class)\n\r");
-	page_to_char(buf_string(buf), ch);
-	free_buf(buf);
-    } else {
-	for (help = help_first; help != NULL; help = help->next) {
-	    if (help->level <= get_trust(ch)) {
-		if (is_name(argument, help->keyword)) {
-		    if (help->text[0] == '!') {
-			send_to_char(help->text + 1, ch);
-		    } else {
-			//if (help->level >= 0 && str_cmp(help->keyword, "imotd")) {
-			//	page_to_char(help->keyword, ch);
-			//	page_to_char("\n\r", ch);
-			//}
-
-			if (help->text[0] == '.')
-			    page_to_char(help->text + 1, ch);
-			else
-			    page_to_char(help->text, ch);
-		    }
-		    return;
-		}
-	    }
-	}
-
-	send_to_char("No help on that word.\n\r", ch);
+    printf_buf(buf, "Helps matching the query: %s\n\r", argument);
+    for (help = help_first; help != NULL; help = help->next) {
+        if (help->level <= trust) {
+            txt = uncolor_str(help->text);
+            if (!str_infix(argument, txt)) {
+                index++;
+                printf_buf(buf, "[%.3d]  %s\n\r", index, help->keyword);
+            }
+            free_string(txt);
+        }
     }
+
+    if (index == 0)
+        (void)add_buf(buf, "  ...no helps matching the selected criteria.\n\r\n\r");
+
+    page_to_char(buf_string(buf), ch);
+    free_buf(buf);
 }
+
+void handle_help_other(CHAR_DATA *ch, int trust, const char *topic)
+{
+    HELP_DATA *help;
+
+    for (help = help_first; help != NULL; help = help->next) {
+        if (help->level <= trust) {
+            if (is_name(topic, help->keyword)) {
+                if (help->text[0] == '!') {
+                    send_to_char(help->text + 1, ch);
+                } else {
+                    if (help->text[0] == '.')
+                        page_to_char(help->text + 1, ch);
+                    else
+                        page_to_char(help->text, ch);
+                }
+                return;
+            }
+        }
+    }
+
+    printf_to_char(ch, "No help on '%s'.\n\r", topic);
+}
+

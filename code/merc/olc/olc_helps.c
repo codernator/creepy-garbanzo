@@ -28,7 +28,7 @@ const struct olc_cmd_type hedit_table[] =
     { "list",     hedit_list    },
     { "show",     hedit_show    },
     { "area",     hedit_area    },
-    { "?",	      show_help	    },
+    { "?",	      show_olc_help	},
 
     { NULL,	      0		    }
 };

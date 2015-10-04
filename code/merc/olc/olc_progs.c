@@ -47,7 +47,7 @@ const struct olc_cmd_type mpedit_table[] =
     { "code",     mpedit_code    },
     { "show",     mpedit_show    },
     { "list",     mpedit_list    },
-    { "?",	      show_help	     },
+    { "?",	      show_olc_help	     },
     { NULL,	      0		     }
 };
 
@@ -73,37 +73,37 @@ void mpedit(CHAR_DATA *ch, const char *argument)
 
     EDIT_MPCODE(ch, mpcode);
     if (mpcode) {
-	ad = get_vnum_area(mpcode->vnum);
-	if (ad == NULL) {
-	    edit_done(ch);
-	    return;
-	}
+        ad = get_vnum_area(mpcode->vnum);
+        if (ad == NULL) {
+            edit_done(ch);
+            return;
+        }
 
-	if (!IS_BUILDER(ch, ad)) {
-	    send_to_char("MPEdit: Insufficient security to modify code.\n\r", ch);
-	    edit_done(ch);
-	    return;
-	}
+        if (!IS_BUILDER(ch, ad)) {
+            send_to_char("MPEdit: Insufficient security to modify code.\n\r", ch);
+            edit_done(ch);
+            return;
+        }
     }
 
     if (command[0] == '\0') {
-	mpedit_show(ch, parg);
-	return;
+        mpedit_show(ch, parg);
+        return;
     }
 
     if (!str_cmp(command, "done")) {
-	edit_done(ch);
-	return;
+        edit_done(ch);
+        return;
     }
 
     for (cmd = 0; mpedit_table[cmd].name != NULL; cmd++) {
-	if (!str_prefix(command, mpedit_table[cmd].name)) {
-	    if ((*mpedit_table[cmd].olc_fn)(ch, parg) && mpcode) {
-		if ((ad = get_vnum_area(mpcode->vnum)) != NULL)
-		    SET_BIT(ad->area_flags, AREA_CHANGED);
-	    }
-	    return;
-	}
+        if (!str_prefix(command, mpedit_table[cmd].name)) {
+            if ((*mpedit_table[cmd].olc_fn)(ch, parg) && mpcode) {
+                if ((ad = get_vnum_area(mpcode->vnum)) != NULL)
+                    SET_BIT(ad->area_flags, AREA_CHANGED);
+            }
+            return;
+        }
     }
 
     interpret(ch, arg);
@@ -125,51 +125,51 @@ void do_mpedit(CHAR_DATA *ch, const char *argument)
 
     argument = one_argument(argument, command);
     if (is_number(command)) {
-	int vnum = parse_int(command);
-	AREA_DATA *ad;
+        int vnum = parse_int(command);
+        AREA_DATA *ad;
 
-	if ((mpcode = get_mprog_index(vnum)) == NULL) {
-	    send_to_char("MPEdit : That vnum does not exist.\n\r", ch);
-	    return;
-	}
+        if ((mpcode = get_mprog_index(vnum)) == NULL) {
+            send_to_char("MPEdit : That vnum does not exist.\n\r", ch);
+            return;
+        }
 
-	ad = get_vnum_area(vnum);
-	if (ad == NULL) {
-	    send_to_char("MPEdit : That vnum is not assigned to an area.\n\r", ch);
-	    return;
-	}
+        ad = get_vnum_area(vnum);
+        if (ad == NULL) {
+            send_to_char("MPEdit : That vnum is not assigned to an area.\n\r", ch);
+            return;
+        }
 
-	if (!IS_BUILDER(ch, ad)) {
-	    send_to_char("MPEdit : Insufficient security to edit that area.\n\r", ch);
-	    return;
-	}
+        if (!IS_BUILDER(ch, ad)) {
+            send_to_char("MPEdit : Insufficient security to edit that area.\n\r", ch);
+            return;
+        }
 
-	ch->desc->ed_data = (void *)mpcode;
-	ch->desc->editor = ED_MPCODE;
-	return;
+        ch->desc->ed_data = (void *)mpcode;
+        ch->desc->editor = ED_MPCODE;
+        return;
     }
 
     if (!str_cmp(command, "create")) {
-	if (argument[0] == '\0') {
-	    send_to_char("Syntax:  mpedit create [vnum]\n\r", ch);
-	    return;
-	}
+        if (argument[0] == '\0') {
+            send_to_char("Syntax:  mpedit create [vnum]\n\r", ch);
+            return;
+        }
 
-	mpedit_create(ch, argument);
-	return;
+        mpedit_create(ch, argument);
+        return;
     }
 
     if (!str_cmp(command, "clone")) {
-	if (argument[0] == '\0') {
-	    send_to_char("Syntax:  mpedit clone [new vnum] [existing vnum]\n\r", ch);
-	    return;
-	}
+        if (argument[0] == '\0') {
+            send_to_char("Syntax:  mpedit clone [new vnum] [existing vnum]\n\r", ch);
+            return;
+        }
 
-	if (mpedit_create(ch, argument)) {
-	    argument = one_argument(argument, arg);
-	    medit_clone(ch, argument);
-	}
-	return;
+        if (mpedit_create(ch, argument)) {
+            argument = one_argument(argument, arg);
+            medit_clone(ch, argument);
+        }
+        return;
     }
 
     send_to_char("Syntax:  mpedit [vnum]\n\r", ch);
@@ -191,24 +191,24 @@ MPEDIT(mpedit_create){
     int value = parse_int(argument);
 
     if (IS_NULLSTR(argument) || value < 1) {
-	send_to_char("Syntax:  mpedit create [vnum]\n\r", ch);
-	return false;
+        send_to_char("Syntax:  mpedit create [vnum]\n\r", ch);
+        return false;
     }
 
     ad = get_vnum_area(value);
     if (ad == NULL) {
-	send_to_char("MPEdit : That vnum is not assigned to an area.\n\r", ch);
-	return false;
+        send_to_char("MPEdit : That vnum is not assigned to an area.\n\r", ch);
+        return false;
     }
 
     if (!IS_BUILDER(ch, ad)) {
-	send_to_char("MPEdit : Insufficient security to create MobProgs.\n\r", ch);
-	return false;
+        send_to_char("MPEdit : Insufficient security to create MobProgs.\n\r", ch);
+        return false;
     }
 
     if (get_mprog_index(value)) {
-	send_to_char("MPEdit: Code vnum already exists.\n\r", ch);
-	return false;
+        send_to_char("MPEdit: Code vnum already exists.\n\r", ch);
+        return false;
     }
 
     mpcode = new_mpcode();
@@ -237,14 +237,14 @@ MPEDIT(mpedit_clone){
     EDIT_MPCODE(ch, mpcode);
     value = parse_int(argument);
     if (argument[0] == '\0'
-	    || value == 0) {
-	send_to_char("Syntax:  clone [existing vnum]\n\r", ch);
-	return false;
+        || value == 0) {
+        send_to_char("Syntax:  clone [existing vnum]\n\r", ch);
+        return false;
     }
 
     if ((pClone = get_mprog_index(value)) == NULL) {
-	send_to_char("MEdit:  MobProgram to clone does not exist.\n\r", ch);
-	return false;
+        send_to_char("MEdit:  MobProgram to clone does not exist.\n\r", ch);
+        return false;
     }
 
     free_string(mpcode->code);
@@ -263,11 +263,11 @@ MPEDIT(mpedit_show){
 
     EDIT_MPCODE(ch, mpcode);
     printf_to_char(ch, "`&Vnum``:       [%d]\n\r"
-	    "`&Comment``:    [%s]\n\r"
-	    "`&Code``:\n\r%s\n\r",
-	    mpcode->vnum,
-	    (mpcode->comment[0] != '\0') ? mpcode->comment : "(none)",
-	    mpcode->code);
+                   "`&Comment``:    [%s]\n\r"
+                   "`&Code``:\n\r%s\n\r",
+                   mpcode->vnum,
+                   (mpcode->comment[0] != '\0') ? mpcode->comment : "(none)",
+                   mpcode->code);
     return false;
 }
 
@@ -282,8 +282,8 @@ MPEDIT(mpedit_code){
 
     EDIT_MPCODE(ch, mpcode);
     if (argument[0] == '\0') {
-	string_append(ch, &mpcode->code);
-	return true;
+        string_append(ch, &mpcode->code);
+        return true;
     }
 
     send_to_char("Syntax: code\n\r", ch);
@@ -302,8 +302,8 @@ MPEDIT(mpedit_comment){
     EDIT_MPCODE(ch, mpcode);
 
     if (is_help(argument)) {
-	send_to_char("Syntax: code\n\r", ch);
-	return false;
+        send_to_char("Syntax: code\n\r", ch);
+        return false;
     }
 
     free_string(mpcode->comment);
@@ -324,40 +324,40 @@ MPEDIT(mpedit_list){
     bool show_all = !str_cmp(argument, "all");
 
     for (mprg = mprog_list; mprg != NULL; mprg = mprg->next) {
-	if (show_all
-		|| IN_RANGE(ch->in_room->area->min_vnum, mprg->vnum, ch->in_room->area->max_vnum)) {
-	    if (count == 1) {
-		send_to_char("`7  #   Area                  Vnum       Comment\n\r", ch);
-		send_to_char("`1======================================================``\n\r", ch);
-	    }
+        if (show_all
+            || IN_RANGE(ch->in_room->area->min_vnum, mprg->vnum, ch->in_room->area->max_vnum)) {
+            if (count == 1) {
+                send_to_char("`7  #   Area                  Vnum       Comment\n\r", ch);
+                send_to_char("`1======================================================``\n\r", ch);
+            }
 
-	    ad = get_vnum_area(mprg->vnum);
-	    if (ad != NULL) {
-		char *unclr;
+            ad = get_vnum_area(mprg->vnum);
+            if (ad != NULL) {
+                char *unclr;
 
-		unclr = uncolor_str(ad->name);
-		printf_to_char(ch, "[`&%3d``] %-16.16s     %5d        %s\n\r",
-			count,
-			unclr,
-			mprg->vnum,
-			(mprg->comment[0] != '\0') ? mprg->comment : "none");
-		free_string(unclr);
-	    } else {
-		printf_to_char(ch, "[`&%3d``] %-16.16s     %5d        %s\n\r",
-			count,
-			"unknown",
-			mprg->vnum,
-			(mprg->comment[0] != '\0') ? mprg->comment : "none");
-	    }
-	    count++;
-	}
+                unclr = uncolor_str(ad->name);
+                printf_to_char(ch, "[`&%3d``] %-16.16s     %5d        %s\n\r",
+                               count,
+                               unclr,
+                               mprg->vnum,
+                               (mprg->comment[0] != '\0') ? mprg->comment : "none");
+                free_string(unclr);
+            } else {
+                printf_to_char(ch, "[`&%3d``] %-16.16s     %5d        %s\n\r",
+                               count,
+                               "unknown",
+                               mprg->vnum,
+                               (mprg->comment[0] != '\0') ? mprg->comment : "none");
+            }
+            count++;
+        }
     }
 
     if (count == 1) {
-	if (show_all)
-	    send_to_char("No existing mob programs.\n\r", ch);
-	else
-	    send_to_char("There are no mob programs in this area.\n\r", ch);
+        if (show_all)
+            send_to_char("No existing mob programs.\n\r", ch);
+        else
+            send_to_char("There are no mob programs in this area.\n\r", ch);
     }
 
     return false;

@@ -49,10 +49,10 @@ MEM_DATA *find_memory(MEM_DATA * memory, long id);
 
 BUFFER * new_buf(void);
 BUFFER *new_buf_size(int size);
-void free_buf(BUFFER * buffer);
+void free_buf(/*@owned@*/BUFFER * buffer);
 void clear_buf(BUFFER * buffer);
 bool add_buf(BUFFER *buffer, const char *string);
-char *buf_string(BUFFER * buffer);
+/*@observer@*/char *buf_string(/*@observer@*/BUFFER * buffer);
 void printf_buf(BUFFER * buffer, char *fmt, ...);
 
 HELP_AREA *new_had(void);

@@ -111,7 +111,7 @@ void do_owhere(CHAR_DATA *ch, const char *argument)
     one_argument(argument, arg);
 
     if (argument[0] == '?' || !str_prefix(argument, "help")) {
-        do_help(ch, "owhere");
+        show_help(ch->desc, "owhere", NULL);
         return;
     }
 
@@ -398,7 +398,7 @@ void do_mwhere(CHAR_DATA *ch, const char *argument)
 
 
     if (argument[0] == '?' || !str_prefix(argument, "help")) {
-        do_help(ch, "mwhere");
+        show_help(ch->desc, "mwhere", NULL);
         return;
     }
 
@@ -822,7 +822,7 @@ static const char *prep_find_entity_vnum(CHAR_DATA *ch, const char *argument, ch
 
     argument = one_argument(argument, arg);
     if (arg[0] == '?' || !str_prefix(arg, "help")) {
-        do_help(ch, (char *)entity);
+        show_help(ch->desc, (char *)entity, NULL);
         return NULL;
     }
 

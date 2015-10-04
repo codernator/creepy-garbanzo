@@ -43,7 +43,7 @@ SYSINTERNALS=$(BDIR)/sysinternals.a
 all: $(MERC)
 
 prebuild:
-	splint -DLINUX -I$(IDIR) -exportlocal objectprototype.c descriptor.c object.c
+	splint -DLINUX -I$(IDIR) -exportlocal objectprototype.c descriptor.c object.c help.c
 
 $(SYSINTERNALS):
 	cd ../sysinternals && $(MAKE)

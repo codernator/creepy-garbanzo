@@ -170,10 +170,10 @@ static void oldpassword_answered(DESCRIPTOR_DATA *d, const char *argument)
 
     if (IS_IMMORTAL(ch)) {
         ch->invis_level = get_trust(ch);
-        do_help(ch, "imotd");
+        show_help(d, "imotd", NULL);
         d->connected = CON_READ_IMOTD;
     } else {
-        do_help(ch, "motd");
+        show_help(d, "motd", NULL);
         d->connected = CON_READ_MOTD;
     }
 }
@@ -317,9 +317,9 @@ static void newrace_answered(DESCRIPTOR_DATA *d, const char *argument)
     if (!strcmp(arg, "help")) {
         argument = one_argument(argument, arg);
         if (argument[0] == '\0')
-            do_help(ch, "race");
+            show_help(d, "race", NULL);
         else
-            do_help(ch, argument);
+            show_help(d, argument, NULL);
         write_to_buffer(d, "What is your race(help for more information)? ", 0);
         return;
     }
@@ -392,11 +392,11 @@ static void newsex_answered(DESCRIPTOR_DATA *d, const char *argument)
           write_to_buffer(d, "\n\rThat's not a sex.\n\rWhat IS your sex? ", 0);
           return;
     }
-    do_help(ch, "motd");
+    show_help(d, "motd", NULL);
     d->connected = CON_READ_MOTD;
 
     //write_to_buffer(d, "\n\r", 0);
-    //do_help(ch, "class");
+    //show_help(d, "class", NULL);
     //write_to_buffer(d, "Select a class: ", 0);
     //d->connected = CON_GET_NEW_CLASS;
 }
@@ -413,9 +413,9 @@ static void newclass_answered(DESCRIPTOR_DATA *d, const char *argument)
     if (!strcmp(arg, "help")) {
         argument = one_argument(argument, arg);
         if (argument[0] == '\0')
-            do_help(ch, "class");
+            show_help(d, "class", NULL);
         else
-            do_help(ch, argument);
+            show_help(d, argument, NULL);
         write_to_buffer(d, "What is your class? ", 0);
         return;
     }
@@ -449,7 +449,7 @@ static void newclass_answered(DESCRIPTOR_DATA *d, const char *argument)
     list_group_costs(ch);
     write_to_buffer(d, "You already have the following skills:\n\r", 0);
 
-    do_help(ch, "menu choice");
+    show_help(d, "menu choice", NULL);
     d->connected = CON_GEN_GROUPS;
 }
 
@@ -483,7 +483,7 @@ static void pickweapon_answered(DESCRIPTOR_DATA *d, const char *argument)
     if ((learned = create_learned_skill(weapon_table[weapon_idx].name, 40)) != NULL)
         add_learned_skill(ch, learned);
     write_to_buffer(d, "\n\r", 2);
-    do_help(ch, "motd");
+    show_help(d, "motd", NULL);
     d->connected = CON_READ_MOTD;
 }
 
@@ -529,15 +529,13 @@ static void gengroups_answered(DESCRIPTOR_DATA *d, const char *argument)
     if (!parse_gen_groups(ch, argument))
         send_to_char("Choices are: list,learned,premise,add,drop,inform,help, and done.\n\r", ch);
 
-    do_help(ch, "menu choice");
+    show_help(d, "menu choice", NULL);
 }
 
 static void readimotd_answered(DESCRIPTOR_DATA *d, /*@unused@*/const char *argument)
 {
-    CHAR_DATA *ch = d->character;
-
     write_to_buffer(d, "\n\r", 2);
-    do_help(ch, "motd");
+    show_help(d, "motd", NULL);
     d->connected = CON_READ_MOTD;
 }
 
@@ -596,7 +594,7 @@ static void readmotd_answered(DESCRIPTOR_DATA *d, const char *argument)
         }
 
         send_to_char("\n\r", ch);
-        do_help(ch, "NEWBIE INFO");
+        show_help(d, "NEWBIE INFO", NULL);
         send_to_char("\n\r", ch);
     } else if (ch->in_room != NULL) {
         char_to_room(ch, ch->in_room);

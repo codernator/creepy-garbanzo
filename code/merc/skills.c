@@ -2014,11 +2014,11 @@ bool parse_gen_groups(CHAR_DATA *ch, const char *argument)
     argument = one_argument(argument, arg);
     if (is_help(arg)) {
         if (argument[0] == '\0') {
-            do_help(ch, "group help");
+            show_help(ch->desc, "group help", NULL);
             return true;
         }
 
-        do_help(ch, argument);
+        show_help(ch->desc, argument, NULL);
         return true;
     }
 
@@ -2133,7 +2133,7 @@ bool parse_gen_groups(CHAR_DATA *ch, const char *argument)
     }
 
     if (!str_prefix(arg, "premise")) {
-        do_help(ch, "premise");
+        show_help(ch->desc, "premise", NULL);
         return true;
     }
 

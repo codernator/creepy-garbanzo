@@ -112,7 +112,7 @@ extern const struct olc_cmd_type muedit_table[];
  */
 /* general functions */
 bool show_commands(CHAR_DATA * ch, const char *argument);
-bool show_help(CHAR_DATA * ch, const char *argument);
+bool show_olc_help(CHAR_DATA * ch, const char *argument);
 bool edit_done(CHAR_DATA * ch);
 
 

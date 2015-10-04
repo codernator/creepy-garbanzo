@@ -20,8 +20,8 @@ const struct olc_cmd_type skedit_table[] =
 
     { "commands",	    show_commands	  },
     { "show",	    skedit_show		  },
-    { "?",		    show_help		  },
-    { "help",	    show_help		  },
+    { "?",		    show_olc_help		  },
+    { "help",	    show_olc_help		  },
     { "new",	    skedit_new		  },
     /*{	"delete",			skedit_delete			},*/
     { "level",	    skedit_level	  },

@@ -93,7 +93,7 @@ typedef struct game_state GAME_STATE;
 #include "skills.h"
 
 /* Function types. */
-typedef void DO_FUN(/*@partial@*/CHAR_DATA * ch, const char *argument);
+typedef void DO_FUN(/*@partial@*/CHAR_DATA * ch, /*@observer@*/const char *argument);
 
 
 /*String and memory management parameters. */
@@ -2189,9 +2189,8 @@ char *cont_bit_name(long cont_flags);
 char *token_bit_name(long token_flags);
 const char *first_arg(const char *argument, char *arg_first, bool fCase);
 char *room_flag_bit_name(ROOM_INDEX_DATA * room);
-char *uncolor_str(char *txt);
+/*@observer@*/char *uncolor_str(char *txt);
 void identify_item(CHAR_DATA * ch, GAMEOBJECT * obj);
-bool is_help(const char *argument);
 void furniture_check(CHAR_DATA * ch);
 ROOM_INDEX_DATA *find_location(CHAR_DATA * ch, const char *arg);
 ROOM_INDEX_DATA *get_death_room(CHAR_DATA * ch);
@@ -2216,7 +2215,7 @@ char *room_affect(AFFECT_DATA * paf);
 void interpret(CHAR_DATA * ch, const char *argument);
 int number_argument(const char *argument, char *arg);
 int mult_argument(const char *argument, char *arg);
-const char *one_argument(const char *argument, /*@out@*/ char *arg_first);
+/*@observer@*/const char *one_argument(const char *argument, /*@out@*/ char *arg_first);
 char *one_line(char *base, char *buf);
 
 /* magic.c */
@@ -2297,5 +2296,9 @@ int objectprototype_list_count();
 /*@only@*/KEYVALUEPAIR_ARRAY *objectprototype_serialize(const OBJECTPROTOTYPE *obj);
 /*@dependent@*/OBJECTPROTOTYPE *objectprototype_deserialize(const KEYVALUEPAIR_ARRAY *data);
 /* ~objectprototype.c */
+
+/* help.c */
+void show_help(/*@observer@*/DESCRIPTOR_DATA *descriptor, /*@observer@*/const char *topic, /*@observer@*/const char *argument);
+bool is_help(/*@observer@*/const char *argument);
 
 #endif  /* __MERC_H */

@@ -73,15 +73,15 @@ void do_set(CHAR_DATA *ch, const char *argument)
     argument = one_argument(argument, arg);
 
     if (arg[0] == '\0') {
-	do_help(ch, "SET_CMD_SYNTAX");
-	return;
+        show_help(ch->desc, "SET_CMD_SYNTAX", NULL);
+        return;
     }
 
     for (idx = 0; set_cmd_table[idx].keyword[0] != '\0'; idx++) {
-	if (!str_prefix(arg, set_cmd_table[idx].keyword)) {
-	    (*set_cmd_table[idx].fn)(ch, argument);
-	    return;
-	}
+        if (!str_prefix(arg, set_cmd_table[idx].keyword)) {
+            (*set_cmd_table[idx].fn)(ch, argument);
+            return;
+        }
     }
 
     do_set(ch, "");
@@ -191,45 +191,45 @@ static void set_character(CHAR_DATA *ch, const char *argument)
     DENY_NPC(ch);
 
     if (is_help(argument)) {
-	int col;
+        int col;
 
-	send_to_char("`#SYNTAX``: set char <name> <field> <value>\n\r\n\r", ch);
-	send_to_char("Available fields:\n\r   ", ch);
-	col = 0;
-	for (idx = 0; set_char_cmd_table[idx].keyword[0] != '\0'; idx++) {
-	    printf_to_char(ch, "%-15.15s", set_char_cmd_table[idx].keyword);
-	    if (++col % 3 == 0)
-		send_to_char("\n\r   ", ch);
-	}
+        send_to_char("`#SYNTAX``: set char <name> <field> <value>\n\r\n\r", ch);
+        send_to_char("Available fields:\n\r   ", ch);
+        col = 0;
+        for (idx = 0; set_char_cmd_table[idx].keyword[0] != '\0'; idx++) {
+            printf_to_char(ch, "%-15.15s", set_char_cmd_table[idx].keyword);
+            if (++col % 3 == 0)
+                send_to_char("\n\r   ", ch);
+        }
 
-	if (col % 4 != 0)
-	    send_to_char("\n\r", ch);
+        if (col % 4 != 0)
+            send_to_char("\n\r", ch);
 
-	return;
+        return;
     }
 
 
     argument = one_argument(argument, arg);
     if ((vch = get_char_world(ch, arg)) == NULL) {
-	send_to_char("They aren't here.\n\r", ch);
-	return;
+        send_to_char("They aren't here.\n\r", ch);
+        return;
     }
 
     {
-	static char buf[MSL];
-	argument = one_argument(argument, cmd);
-	(void)snprintf(buf, UMIN(strlen(argument), MSL), "%s", argument);
-	smash_tilde(buf);
+        static char buf[MSL];
+        argument = one_argument(argument, cmd);
+        (void)snprintf(buf, UMIN(strlen(argument), MSL), "%s", argument);
+        smash_tilde(buf);
 
-	if (cmd[0] != '\0') {
-	    for (idx = 0; set_char_cmd_table[idx].keyword[0] != '\0'; idx++) {
-		if (!str_prefix(cmd, set_char_cmd_table[idx].keyword)) {
-		    if ((*set_char_cmd_table[idx].fn)(ch, vch, argument))
-			send_to_char("`1Ok`!.``\n\r", ch);
-		    return;
-		}
-	    }
-	}
+        if (cmd[0] != '\0') {
+            for (idx = 0; set_char_cmd_table[idx].keyword[0] != '\0'; idx++) {
+                if (!str_prefix(cmd, set_char_cmd_table[idx].keyword)) {
+                    if ((*set_char_cmd_table[idx].fn)(ch, vch, argument))
+                        send_to_char("`1Ok`!.``\n\r", ch);
+                    return;
+                }
+            }
+        }
     }
 
     /* generate help message */
@@ -250,8 +250,8 @@ static void set_character(CHAR_DATA *ch, const char *argument)
 static bool set_char_str(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: str [+/-]<number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: str [+/-]<number>\n\r", ch);
+        return false;
     }
 
     set_integer_arg(&vch->perm_stat[STAT_STR], argument);
@@ -267,8 +267,8 @@ static bool set_char_str(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 static bool set_char_int(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: int [+/-]<number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: int [+/-]<number>\n\r", ch);
+        return false;
     }
 
     set_integer_arg(&vch->perm_stat[STAT_INT], argument);
@@ -284,8 +284,8 @@ static bool set_char_int(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 static bool set_char_wis(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: wis [+/-]<number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: wis [+/-]<number>\n\r", ch);
+        return false;
     }
 
     set_integer_arg(&vch->perm_stat[STAT_WIS], argument);
@@ -302,8 +302,8 @@ static bool set_char_wis(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 static bool set_char_dex(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: dex [+/-]<number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: dex [+/-]<number>\n\r", ch);
+        return false;
     }
 
     set_integer_arg(&vch->perm_stat[STAT_DEX], argument);
@@ -319,8 +319,8 @@ static bool set_char_dex(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 static bool set_char_con(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: con [+/-]<number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: con [+/-]<number>\n\r", ch);
+        return false;
     }
 
     set_integer_arg(&vch->perm_stat[STAT_CON], argument);
@@ -336,8 +336,8 @@ static bool set_char_con(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 static bool set_char_luck(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: luck [+/-]<number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: luck [+/-]<number>\n\r", ch);
+        return false;
     }
 
     set_integer_arg(&vch->perm_stat[STAT_LUCK], argument);
@@ -356,19 +356,19 @@ static bool set_char_sex(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
     int value;
 
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: sex <sex name>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: sex <sex name>\n\r", ch);
+        return false;
     }
 
     value = sex_lookup(argument);
     if (value < 0 || value > 2) {
-	send_to_char("That is not a valid sex.\n\r", ch);
-	return false;
+        send_to_char("That is not a valid sex.\n\r", ch);
+        return false;
     }
 
     vch->sex = value;
     if (!IS_NPC(vch))
-	vch->pcdata->true_sex = value;
+        vch->pcdata->true_sex = value;
     return true;
 }
 
@@ -385,67 +385,67 @@ static bool set_char_race(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
     bool gobbed = false;
 
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: race <race name>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: race <race name>\n\r", ch);
+        return false;
     }
 
     value = race_lookup(argument);
     if (value == -1) {
-	send_to_char("That is not a valid race.\n\r", ch);
-	return false;
+        send_to_char("That is not a valid race.\n\r", ch);
+        return false;
     }
 
     if (!IS_NPC(vch) && !race_table[value].pc_race) {
-	send_to_char("That is not a valid player race.\n\r", ch);
-	return false;
+        send_to_char("That is not a valid player race.\n\r", ch);
+        return false;
     }
 
     /* no sense in beating a dead horse...
      *  added by Monrick, 1/2008            */
     if (vch->race == value) {
-	printf_to_char(ch, "%s is already a %s!\n\r", capitalize(IS_NPC(vch) ? vch->short_descr : vch->name), race_table[value].name);
-	return false;
+        printf_to_char(ch, "%s is already a %s!\n\r", capitalize(IS_NPC(vch) ? vch->short_descr : vch->name), race_table[value].name);
+        return false;
     }
 
     /* check for permanent racial specials to remove
      * added by Monrick, 1/2008            */
     if (!IS_NPC(vch)) {
-	sprintf(buf, "Changing %s from ", capitalize(vch->name));
-	strcat(buf, capitalize(race_table[vch->race].name));
-	strcat(buf, " to ");
-	strcat(buf, capitalize(race_table[value].name));
-	strcat(buf, ".\n\r");
-	send_to_char(buf, ch);
+        sprintf(buf, "Changing %s from ", capitalize(vch->name));
+        strcat(buf, capitalize(race_table[vch->race].name));
+        strcat(buf, " to ");
+        strcat(buf, capitalize(race_table[value].name));
+        strcat(buf, ".\n\r");
+        send_to_char(buf, ch);
 
-	printf_to_char(ch, "  Removing %s special effects...\n\r", race_table[vch->race].name);
+        printf_to_char(ch, "  Removing %s special effects...\n\r", race_table[vch->race].name);
 
-	/* when you're not a vampire anymore, there's no need
-	 *         to feed... auto-checks for gobstopper */
+        /* when you're not a vampire anymore, there's no need
+         *         to feed... auto-checks for gobstopper */
 
-	printf_to_char(ch, "  All %s special effects removed.\n\r", race_table[vch->race].name);
-	printf_to_char(vch, "Your body morphs from a %s into a ", capitalize(race_table[vch->race].name));
-	printf_to_char(vch, "%s.\n\r", capitalize(race_table[value].name));
+        printf_to_char(ch, "  All %s special effects removed.\n\r", race_table[vch->race].name);
+        printf_to_char(vch, "Your body morphs from a %s into a ", capitalize(race_table[vch->race].name));
+        printf_to_char(vch, "%s.\n\r", capitalize(race_table[value].name));
     }
 
     vch->race = value;
 
     if (!IS_NPC(vch)) {
-	vch->exp = (exp_per_level(vch, vch->pcdata->points) * vch->level);
+        vch->exp = (exp_per_level(vch, vch->pcdata->points) * vch->level);
 
-	sprintf(buf, "$N is now a %s.",
-		capitalize(race_table[vch->race].name));
-	act(buf, ch, NULL, vch, TO_CHAR);
+        sprintf(buf, "$N is now a %s.",
+                capitalize(race_table[vch->race].name));
+        act(buf, ch, NULL, vch, TO_CHAR);
 
-	printf_to_char(ch, "  Adding %s special effects...\n\r", race_table[vch->race].name);
+        printf_to_char(ch, "  Adding %s special effects...\n\r", race_table[vch->race].name);
 
-	/* now that you're a vampire, you'll need to feed instead of
-	 * ... auto-checks for gobstopper */
+        /* now that you're a vampire, you'll need to feed instead of
+         * ... auto-checks for gobstopper */
 
-	if (gobbed)
-	    send_to_char("Your `OG`@o`1b`#s`Pt`@o`1p`#p`Pe`Or`` effect is still in place...\n\r", vch);
+        if (gobbed)
+            send_to_char("Your `OG`@o`1b`#s`Pt`@o`1p`#p`Pe`Or`` effect is still in place...\n\r", vch);
 
-	printf_to_char(ch, "  All %s special effects added.\n\r", race_table[vch->race].name);
-	do_save(vch, "");
+        printf_to_char(ch, "  All %s special effects added.\n\r", race_table[vch->race].name);
+        do_save(vch, "");
     }
 
     return true;
@@ -459,16 +459,16 @@ static bool set_char_race(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 static bool set_char_hp(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: hp [+/-]<number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: hp [+/-]<number>\n\r", ch);
+        return false;
     }
 
     set_integer_arg(&vch->max_hit, argument);
     vch->max_hit = UMAX(1, vch->max_hit);
 
     if (!IS_NPC(vch)) {
-	set_integer_arg(&vch->pcdata->perm_hit, argument);
-	vch->pcdata->perm_hit = UMAX(1, vch->pcdata->perm_hit);
+        set_integer_arg(&vch->pcdata->perm_hit, argument);
+        vch->pcdata->perm_hit = UMAX(1, vch->pcdata->perm_hit);
     }
     return true;
 }
@@ -479,16 +479,16 @@ static bool set_char_hp(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 static bool set_char_mana(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: mana [+/-]<number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: mana [+/-]<number>\n\r", ch);
+        return false;
     }
 
     set_integer_arg(&vch->max_mana, argument);
     vch->max_mana = UMAX(1, vch->max_mana);
 
     if (!IS_NPC(vch)) {
-	set_integer_arg(&vch->pcdata->perm_mana, argument);
-	vch->pcdata->perm_mana = UMAX(1, vch->pcdata->perm_mana);
+        set_integer_arg(&vch->pcdata->perm_mana, argument);
+        vch->pcdata->perm_mana = UMAX(1, vch->pcdata->perm_mana);
     }
     return true;
 }
@@ -499,16 +499,16 @@ static bool set_char_mana(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 static bool set_char_move(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: move [+/-]<number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: move [+/-]<number>\n\r", ch);
+        return false;
     }
 
     set_integer_arg(&vch->max_move, argument);
     vch->max_move = UMAX(1, vch->max_move);
 
     if (!IS_NPC(vch)) {
-	set_integer_arg(&vch->pcdata->perm_move, argument);
-	vch->pcdata->perm_move = UMAX(1, vch->pcdata->perm_move);
+        set_integer_arg(&vch->pcdata->perm_move, argument);
+        vch->pcdata->perm_move = UMAX(1, vch->pcdata->perm_move);
     }
     return true;
 }
@@ -519,8 +519,8 @@ static bool set_char_move(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 static bool set_char_gold(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: gold [+/-]<number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: gold [+/-]<number>\n\r", ch);
+        return false;
     }
 
     set_uint_arg(&vch->gold, argument);
@@ -535,8 +535,8 @@ static bool set_char_gold(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 static bool set_char_silver(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: silver [+/-]<number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: silver [+/-]<number>\n\r", ch);
+        return false;
     }
 
     set_uint_arg(&vch->silver, argument);
@@ -555,13 +555,13 @@ static bool set_char_reply(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
     CHAR_DATA *reply;
 
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: reply <character to reply to>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: reply <character to reply to>\n\r", ch);
+        return false;
     }
 
     if ((reply = get_char_world(ch, argument)) == NULL) {
-	send_to_char("That character does not exist.\n\r", ch);
-	return false;
+        send_to_char("That character does not exist.\n\r", ch);
+        return false;
     }
 
     vch->reply = reply;
@@ -582,23 +582,23 @@ static bool set_char_class(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
     int value;
 
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: class <class name>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: class <class name>\n\r", ch);
+        return false;
     }
 
     if (IS_NPC(vch)) {
-	send_to_char("Not on mobs.\n\r", ch);
-	return false;
+        send_to_char("Not on mobs.\n\r", ch);
+        return false;
     }
 
     value = class_lookup(argument);
     if (value == -1) {
-	send_to_char("That is not a valid class. Valid classes are:\n\r", ch);
-	for (value = 0; value < MAX_CLASS; value++)
+        send_to_char("That is not a valid class. Valid classes are:\n\r", ch);
+        for (value = 0; value < MAX_CLASS; value++)
 
-	    printf_to_char(ch, "  %s", class_table[value].name);
-	send_to_char("\n\r", ch);
-	return false;
+            printf_to_char(ch, "  %s", class_table[value].name);
+        send_to_char("\n\r", ch);
+        return false;
     }
 
     vch->class = value;
@@ -614,13 +614,13 @@ static bool set_char_class(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 static bool set_char_train(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: train [+/-]<number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: train [+/-]<number>\n\r", ch);
+        return false;
     }
 
     if (IS_NPC(vch)) {
-	send_to_char("Not on mobs.\n\r", ch);
-	return false;
+        send_to_char("Not on mobs.\n\r", ch);
+        return false;
     }
 
     set_integer_arg(&vch->pcdata->train, argument);
@@ -636,13 +636,13 @@ static bool set_char_train(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 static bool set_char_practice(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: practice [+/-]<number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: practice [+/-]<number>\n\r", ch);
+        return false;
     }
 
     if (IS_NPC(vch)) {
-	send_to_char("Not on mobs.\n\r", ch);
-	return false;
+        send_to_char("Not on mobs.\n\r", ch);
+        return false;
     }
 
     set_integer_arg(&vch->pcdata->practice, argument);
@@ -658,13 +658,13 @@ static bool set_char_practice(CHAR_DATA *ch, CHAR_DATA *vch, const char *argumen
 static bool set_char_bank_gold(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: bank_gold [+/-]<number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: bank_gold [+/-]<number>\n\r", ch);
+        return false;
     }
 
     if (IS_NPC(vch)) {
-	send_to_char("Not on mobs.\n\r", ch);
-	return false;
+        send_to_char("Not on mobs.\n\r", ch);
+        return false;
     }
 
     set_uint_arg(&vch->pcdata->gold_in_bank, argument);
@@ -681,13 +681,13 @@ static bool set_char_bank_gold(CHAR_DATA *ch, CHAR_DATA *vch, const char *argume
 static bool set_char_bank_silver(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: bank_silver [+/-]<number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: bank_silver [+/-]<number>\n\r", ch);
+        return false;
     }
 
     if (IS_NPC(vch)) {
-	send_to_char("Not on mobs.\n\r", ch);
-	return false;
+        send_to_char("Not on mobs.\n\r", ch);
+        return false;
     }
 
     set_uint_arg(&vch->pcdata->silver_in_bank, argument);
@@ -703,13 +703,13 @@ static bool set_char_bank_silver(CHAR_DATA *ch, CHAR_DATA *vch, const char *argu
 static bool set_char_pkills(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: pkills [+/-]<number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: pkills [+/-]<number>\n\r", ch);
+        return false;
     }
 
     if (IS_NPC(vch)) {
-	send_to_char("Not on mobs.\n\r", ch);
-	return false;
+        send_to_char("Not on mobs.\n\r", ch);
+        return false;
     }
 
     set_long_arg(&vch->pcdata->pkills, argument);
@@ -726,13 +726,13 @@ static bool set_char_pkills(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 static bool set_char_pdeaths(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: pdeaths [+/-]<number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: pdeaths [+/-]<number>\n\r", ch);
+        return false;
     }
 
     if (IS_NPC(vch)) {
-	send_to_char("Not on mobs.\n\r", ch);
-	return false;
+        send_to_char("Not on mobs.\n\r", ch);
+        return false;
     }
 
     set_long_arg(&vch->pcdata->pdeaths, argument);
@@ -749,13 +749,13 @@ static bool set_char_pdeaths(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument
 static bool set_char_mobkills(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: mobkills [+/-]<number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: mobkills [+/-]<number>\n\r", ch);
+        return false;
     }
 
     if (IS_NPC(vch)) {
-	send_to_char("Not on mobs.\n\r", ch);
-	return false;
+        send_to_char("Not on mobs.\n\r", ch);
+        return false;
     }
 
     set_long_arg(&vch->pcdata->mobkills, argument);
@@ -772,13 +772,13 @@ static bool set_char_mobkills(CHAR_DATA *ch, CHAR_DATA *vch, const char *argumen
 static bool set_char_mobdeaths(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: mobdeaths [+/-]<number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: mobdeaths [+/-]<number>\n\r", ch);
+        return false;
     }
 
     if (IS_NPC(vch)) {
-	send_to_char("Not on mobs.\n\r", ch);
-	return false;
+        send_to_char("Not on mobs.\n\r", ch);
+        return false;
     }
 
     set_long_arg(&vch->pcdata->mobdeaths, argument);
@@ -797,30 +797,30 @@ static bool set_char_full(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
     int value;
 
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: full [+/-]<number of ticks>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: full [+/-]<number of ticks>\n\r", ch);
+        return false;
     }
 
     if (IS_NPC(vch)) {
-	send_to_char("Not on mobs.\n\r", ch);
-	return false;
+        send_to_char("Not on mobs.\n\r", ch);
+        return false;
     }
 
     if (!is_number(argument)) {
-	send_to_char("The supplied value must be numeric.\n\r", ch);
-	return false;
+        send_to_char("The supplied value must be numeric.\n\r", ch);
+        return false;
     }
 
     value = parse_int(argument);
 
     if (value < -151 || value > 100) {
-	send_to_char("The value must be between -151 and 100.\n\r", ch);
-	return false;
+        send_to_char("The value must be between -151 and 100.\n\r", ch);
+        return false;
     }
 
     if (value == -151 && get_trust(ch) < 609) {
-	send_to_char("Only Implementors may set permanent values.\n\r", ch);
-	return false;
+        send_to_char("Only Implementors may set permanent values.\n\r", ch);
+        return false;
     }
     vch->pcdata->condition[COND_FULL] = value;
     return true;
@@ -837,29 +837,29 @@ bool set_char_hunger(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
     int value;
 
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: hunger [+/-]<number of ticks>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: hunger [+/-]<number of ticks>\n\r", ch);
+        return false;
     }
 
     if (IS_NPC(vch)) {
-	send_to_char("Not on mobs.\n\r", ch);
-	return false;
+        send_to_char("Not on mobs.\n\r", ch);
+        return false;
     }
 
     if (!is_number(argument)) {
-	send_to_char("The supplied value must be numeric.\n\r", ch);
-	return false;
+        send_to_char("The supplied value must be numeric.\n\r", ch);
+        return false;
     }
 
     value = parse_int(argument);
     if (value < -151 || value > 100) {
-	send_to_char("The value must be between -151 and 100.\n\r", ch);
-	return false;
+        send_to_char("The value must be between -151 and 100.\n\r", ch);
+        return false;
     }
 
     if (value == -151 && get_trust(ch) < 609) {
-	send_to_char("Only Implementors may set permanent values.\n\r", ch);
-	return false;
+        send_to_char("Only Implementors may set permanent values.\n\r", ch);
+        return false;
     }
     vch->pcdata->condition[COND_HUNGER] = value;
     return true;
@@ -876,29 +876,29 @@ bool set_char_thirst(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
     int value;
 
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: thirst [+/-]<number of ticks>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: thirst [+/-]<number of ticks>\n\r", ch);
+        return false;
     }
 
     if (IS_NPC(vch)) {
-	send_to_char("Not on mobs.\n\r", ch);
-	return false;
+        send_to_char("Not on mobs.\n\r", ch);
+        return false;
     }
 
     if (!is_number(argument)) {
-	send_to_char("The supplied value must be numeric.\n\r", ch);
-	return false;
+        send_to_char("The supplied value must be numeric.\n\r", ch);
+        return false;
     }
 
     value = parse_int(argument);
     if (value < -151 || value > 100) {
-	send_to_char("The value must be between -151 and 100.\n\r", ch);
-	return false;
+        send_to_char("The value must be between -151 and 100.\n\r", ch);
+        return false;
     }
 
     if (value == -151 && get_trust(ch) < 609) {
-	send_to_char("Only Implementors may set permanent values.\n\r", ch);
-	return false;
+        send_to_char("Only Implementors may set permanent values.\n\r", ch);
+        return false;
     }
     vch->pcdata->condition[COND_THIRST] = value;
     return true;
@@ -914,29 +914,29 @@ bool set_char_feed(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
     int value;
 
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: feed [+/-]<number of ticks>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: feed [+/-]<number of ticks>\n\r", ch);
+        return false;
     }
 
     if (IS_NPC(vch)) {
-	send_to_char("Not on mobs.\n\r", ch);
-	return false;
+        send_to_char("Not on mobs.\n\r", ch);
+        return false;
     }
 
     if (!is_number(argument)) {
-	send_to_char("The supplied value must be numeric.\n\r", ch);
-	return false;
+        send_to_char("The supplied value must be numeric.\n\r", ch);
+        return false;
     }
 
     value = parse_int(argument);
     if (value < -151 || value > 100) {
-	send_to_char("The value must be between -151 and 100.\n\r", ch);
-	return false;
+        send_to_char("The value must be between -151 and 100.\n\r", ch);
+        return false;
     }
 
     if (value == -151 && get_trust(ch) < 609) {
-	send_to_char("Only Implementors may set permanent values.\n\r", ch);
-	return false;
+        send_to_char("Only Implementors may set permanent values.\n\r", ch);
+        return false;
     }
     vch->pcdata->condition[COND_FEED] = value;
     return true;
@@ -954,20 +954,20 @@ static bool set_char_deathroom(CHAR_DATA *ch, CHAR_DATA *vch, const char *argume
     int value;
 
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: deathroom <room vnum>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: deathroom <room vnum>\n\r", ch);
+        return false;
     }
 
     if (IS_NPC(vch)) {
-	send_to_char("Not on mobs.\n\r", ch);
-	return false;
+        send_to_char("Not on mobs.\n\r", ch);
+        return false;
     }
 
     value = parse_int(argument);
     if (value != 0
-	    && (room = get_room_index(value)) == NULL) {
-	send_to_char("That room does not exist.\n\r", ch);
-	return false;
+        && (room = get_room_index(value)) == NULL) {
+        send_to_char("That room does not exist.\n\r", ch);
+        return false;
     }
 
     vch->deathroom = value;
@@ -984,19 +984,19 @@ static bool set_char_security(CHAR_DATA *ch, CHAR_DATA *vch, const char *argumen
     int value;
 
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: security <0-9>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: security <0-9>\n\r", ch);
+        return false;
     }
 
     if (IS_NPC(vch)) {
-	send_to_char("Not on mobs.\n\r", ch);
-	return false;
+        send_to_char("Not on mobs.\n\r", ch);
+        return false;
     }
 
     value = parse_int(argument);
     if (value < 0 || value > 9) {
-	send_to_char("Security must be between 0 and 9.\n\r", ch);
-	return false;
+        send_to_char("Security must be between 0 and 9.\n\r", ch);
+        return false;
     }
 
     vch->pcdata->security = value;
@@ -1021,39 +1021,39 @@ static bool set_char_extendedexp(CHAR_DATA *ch, CHAR_DATA *vch, const char *argu
     char arg2[MIL];
 
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: extendedexp <value> [+, - or blank to set a #]\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: extendedexp <value> [+, - or blank to set a #]\n\r", ch);
+        return false;
     }
 
     if (IS_NPC(vch)) {
-	send_to_char("Not on NPCs.\n\r", ch);
-	return false;
+        send_to_char("Not on NPCs.\n\r", ch);
+        return false;
     }
 
     if (get_trust(ch) < MAX_LEVEL) {
-	send_to_char("I don't care if you have \"set\" or not, only `2I`3M`2P``s may set ExtendedExp.\n\r", ch);
-	return false;
+        send_to_char("I don't care if you have \"set\" or not, only `2I`3M`2P``s may set ExtendedExp.\n\r", ch);
+        return false;
     }
 
     argument = one_argument(argument, arg1);
     argument = one_argument(argument, arg2);
 
     if (arg1[0] == '\0') {
-	send_to_char("`#SYNTAX``: extendedexp <value> [+, - or blank to set a #]\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: extendedexp <value> [+, - or blank to set a #]\n\r", ch);
+        return false;
     }
 
     if (arg2[0] == '+')
-	plusminus = 1;
+        plusminus = 1;
     else if (arg2[0] == '-')
-	plusminus = -1;
+        plusminus = -1;
 
     value = parse_int(arg1);
 
     if (plusminus != 0)
-	vch->pcdata->extendedexp += (plusminus * value);
+        vch->pcdata->extendedexp += (plusminus * value);
     else
-	vch->pcdata->extendedexp = abs(value);
+        vch->pcdata->extendedexp = abs(value);
 
     return true;
 }
@@ -1072,19 +1072,19 @@ static bool set_char_level(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
     int value;
 
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: level <level number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: level <level number>\n\r", ch);
+        return false;
     }
 
     if (!IS_NPC(vch)) {
-	send_to_char("Not on players.\n\r", ch);
-	return false;
+        send_to_char("Not on players.\n\r", ch);
+        return false;
     }
 
     value = parse_int(argument);
     if (value <= 0) {
-	send_to_char("The level must be a positive number.\n\r", ch);
-	return false;
+        send_to_char("The level must be a positive number.\n\r", ch);
+        return false;
     }
 
     vch->level = value;
@@ -1102,26 +1102,26 @@ static bool set_char_memory(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
     CHAR_DATA *mem;
 
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: memory <character to remember>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: memory <character to remember>\n\r", ch);
+        return false;
     }
 
     if (!IS_NPC(vch)) {
-	send_to_char("Not on players.\n\r", ch);
-	return false;
+        send_to_char("Not on players.\n\r", ch);
+        return false;
     }
 
     if (!str_cmp(argument, "none")) {
-	vch->mobmem = NULL;
+        vch->mobmem = NULL;
 
-	send_to_char("Your target is now happy-happy-joy-joy.\n\r", ch);
+        send_to_char("Your target is now happy-happy-joy-joy.\n\r", ch);
     } else {
-	if ((mem = get_char_world(vch, argument)) == NULL) {
-	    send_to_char("Mob couldn't locate the victim to remember.\n\r", ch);
-	    return false;
-	}
+        if ((mem = get_char_world(vch, argument)) == NULL) {
+            send_to_char("Mob couldn't locate the victim to remember.\n\r", ch);
+            return false;
+        }
 
-	vch->mobmem = mem;
+        vch->mobmem = mem;
     }
 
     return true;
@@ -1183,44 +1183,44 @@ static void set_object(CHAR_DATA *ch, const char *argument)
     DENY_NPC(ch);
 
     if (is_help(argument)) {
-	int col;
+        int col;
 
-	send_to_char("`#SYNTAX``: set object <object name> <field> <value>\n\r\n\r", ch);
-	send_to_char("Available fields:\n\r   ", ch);
-	col = 0;
-	for (idx = 0; set_obj_cmd_table[idx].keyword[0] != '\0'; idx++) {
-	    printf_to_char(ch, "%-15.15s", set_obj_cmd_table[idx].keyword);
-	    if (++col % 3 == 0)
-		send_to_char("\n\r   ", ch);
-	}
+        send_to_char("`#SYNTAX``: set object <object name> <field> <value>\n\r\n\r", ch);
+        send_to_char("Available fields:\n\r   ", ch);
+        col = 0;
+        for (idx = 0; set_obj_cmd_table[idx].keyword[0] != '\0'; idx++) {
+            printf_to_char(ch, "%-15.15s", set_obj_cmd_table[idx].keyword);
+            if (++col % 3 == 0)
+                send_to_char("\n\r   ", ch);
+        }
 
-	if (col % 3 != 0)
-	    send_to_char("\n\r", ch);
+        if (col % 3 != 0)
+            send_to_char("\n\r", ch);
 
-	return;
+        return;
     }
 
     argument = one_argument(argument, arg);
     if ((obj = get_obj_here(ch, arg)) == NULL) {
-	send_to_char("That object is not in this room or in your inventory.\n\r", ch);
-	return;
+        send_to_char("That object is not in this room or in your inventory.\n\r", ch);
+        return;
     }
 
     {
-	static char buf[MSL];
-	argument = one_argument(argument, cmd);
-	(void)snprintf(buf, UMIN(strlen(argument), MSL), "%s", argument);
-	smash_tilde(buf);
+        static char buf[MSL];
+        argument = one_argument(argument, cmd);
+        (void)snprintf(buf, UMIN(strlen(argument), MSL), "%s", argument);
+        smash_tilde(buf);
 
-	if (cmd[0] != '\0') {
-	    for (idx = 0; set_obj_cmd_table[idx].keyword[0] != '\0'; idx++) {
-		if (!str_prefix(cmd, set_obj_cmd_table[idx].keyword)) {
-		    if ((*set_obj_cmd_table[idx].fn)(ch, obj, buf))
-			send_to_char("`1Ok`!.``\n\r", ch);
-		    return;
-		}
-	    }
-	}
+        if (cmd[0] != '\0') {
+            for (idx = 0; set_obj_cmd_table[idx].keyword[0] != '\0'; idx++) {
+                if (!str_prefix(cmd, set_obj_cmd_table[idx].keyword)) {
+                    if ((*set_obj_cmd_table[idx].fn)(ch, obj, buf))
+                        send_to_char("`1Ok`!.``\n\r", ch);
+                    return;
+                }
+            }
+        }
     }
 
     /* generate help message */
@@ -1238,14 +1238,14 @@ static void set_object(CHAR_DATA *ch, const char *argument)
 static bool set_obj_v0(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: v0 <value>\n\r\n\r", ch);
-	item_type_help(ch, obj->item_type);
-	return false;
+        send_to_char("`#SYNTAX``: v0 <value>\n\r\n\r", ch);
+        item_type_help(ch, obj->item_type);
+        return false;
     }
 
     if (!set_obj_value_idx(obj, 0, argument)) {
-	item_type_help(ch, obj->item_type);
-	return false;
+        item_type_help(ch, obj->item_type);
+        return false;
     }
 
     return true;
@@ -1260,14 +1260,14 @@ static bool set_obj_v0(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 static bool set_obj_v1(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: v1 <value>\n\r\n\r", ch);
-	item_type_help(ch, obj->item_type);
-	return false;
+        send_to_char("`#SYNTAX``: v1 <value>\n\r\n\r", ch);
+        item_type_help(ch, obj->item_type);
+        return false;
     }
 
     if (!set_obj_value_idx(obj, 1, argument)) {
-	item_type_help(ch, obj->item_type);
-	return false;
+        item_type_help(ch, obj->item_type);
+        return false;
     }
     return true;
 }
@@ -1281,14 +1281,14 @@ static bool set_obj_v1(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 static bool set_obj_v2(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: v2 <value>\n\r\n\r", ch);
-	item_type_help(ch, obj->item_type);
-	return false;
+        send_to_char("`#SYNTAX``: v2 <value>\n\r\n\r", ch);
+        item_type_help(ch, obj->item_type);
+        return false;
     }
 
     if (!set_obj_value_idx(obj, 2, argument)) {
-	item_type_help(ch, obj->item_type);
-	return false;
+        item_type_help(ch, obj->item_type);
+        return false;
     }
 
     return true;
@@ -1302,14 +1302,14 @@ static bool set_obj_v2(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 static bool set_obj_v3(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: v3 <value>\n\r\n\r", ch);
-	item_type_help(ch, obj->item_type);
-	return false;
+        send_to_char("`#SYNTAX``: v3 <value>\n\r\n\r", ch);
+        item_type_help(ch, obj->item_type);
+        return false;
     }
 
     if (!set_obj_value_idx(obj, 3, argument)) {
-	item_type_help(ch, obj->item_type);
-	return false;
+        item_type_help(ch, obj->item_type);
+        return false;
     }
 
     return true;
@@ -1324,14 +1324,14 @@ static bool set_obj_v3(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 static bool set_obj_v4(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: v4 <value>\n\r\n\r", ch);
-	item_type_help(ch, obj->item_type);
-	return false;
+        send_to_char("`#SYNTAX``: v4 <value>\n\r\n\r", ch);
+        item_type_help(ch, obj->item_type);
+        return false;
     }
 
     if (!set_obj_value_idx(obj, 4, argument)) {
-	item_type_help(ch, obj->item_type);
-	return false;
+        item_type_help(ch, obj->item_type);
+        return false;
     }
 
     return true;
@@ -1345,38 +1345,38 @@ static bool set_obj_v4(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 static bool set_obj_extra(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 {
     if (is_help(argument)) {
-	int idx;
-	int col;
+        int idx;
+        int col;
 
-	send_to_char("`#SYNTAX``: extra <numeric value|flag value>\n\r", ch);
-	send_to_char("Available flag values:\n\r   ", ch);
-	col = 0;
-	for (idx = 0; extra_flags[idx].name != NULL; idx++) {
-	    printf_to_char(ch, "%-15.15s", extra_flags[idx].name);
-	    if (++col % 3 == 0)
-		send_to_char("\n\r   ", ch);
-	}
+        send_to_char("`#SYNTAX``: extra <numeric value|flag value>\n\r", ch);
+        send_to_char("Available flag values:\n\r   ", ch);
+        col = 0;
+        for (idx = 0; extra_flags[idx].name != NULL; idx++) {
+            printf_to_char(ch, "%-15.15s", extra_flags[idx].name);
+            if (++col % 3 == 0)
+                send_to_char("\n\r   ", ch);
+        }
 
-	if (col % 3 != 0)
-	    send_to_char("\n\r", ch);
+        if (col % 3 != 0)
+            send_to_char("\n\r", ch);
     }
 
     if (is_number(argument)) {
-	obj->extra_flags = parse_long(argument);
+        obj->extra_flags = parse_long(argument);
     } else {
-	long value;
+        long value;
 
-	if ((value = flag_value(extra_flags, argument)) == NO_FLAG) {
-	    send_to_char("Those flags are not settable.\n\r", ch);
-	    return false;
-	}
+        if ((value = flag_value(extra_flags, argument)) == NO_FLAG) {
+            send_to_char("Those flags are not settable.\n\r", ch);
+            return false;
+        }
 
-	if (*argument == '+')
-	    SET_BIT(obj->extra_flags, value);
-	else if (*argument == '-')
-	    REMOVE_BIT(obj->extra_flags, value);
-	else
-	    obj->extra_flags = value;
+        if (*argument == '+')
+            SET_BIT(obj->extra_flags, value);
+        else if (*argument == '-')
+            REMOVE_BIT(obj->extra_flags, value);
+        else
+            obj->extra_flags = value;
     }
     return true;
 }
@@ -1389,38 +1389,38 @@ static bool set_obj_extra(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 static bool set_obj_extra2(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 {
     if (is_help(argument)) {
-	int idx;
-	int col;
+        int idx;
+        int col;
 
-	send_to_char("`#SYNTAX``: extra2 <numeric value|flag value>\n\r", ch);
-	send_to_char("Available flag values:\n\r   ", ch);
-	col = 0;
-	for (idx = 0; extra2_flags[idx].name != NULL; idx++) {
-	    printf_to_char(ch, "%-15.15s", extra2_flags[idx].name);
-	    if (++col % 3 == 0)
-		send_to_char("\n\r   ", ch);
-	}
+        send_to_char("`#SYNTAX``: extra2 <numeric value|flag value>\n\r", ch);
+        send_to_char("Available flag values:\n\r   ", ch);
+        col = 0;
+        for (idx = 0; extra2_flags[idx].name != NULL; idx++) {
+            printf_to_char(ch, "%-15.15s", extra2_flags[idx].name);
+            if (++col % 3 == 0)
+                send_to_char("\n\r   ", ch);
+        }
 
-	if (col % 3 != 0)
-	    send_to_char("\n\r", ch);
+        if (col % 3 != 0)
+            send_to_char("\n\r", ch);
     }
 
     if (is_number(argument)) {
-	obj->extra2_flags = parse_long(argument);
+        obj->extra2_flags = parse_long(argument);
     } else {
-	long value;
+        long value;
 
-	if ((value = flag_value(extra2_flags, argument)) == NO_FLAG) {
-	    send_to_char("Those flags are not settable.\n\r", ch);
-	    return false;
-	}
+        if ((value = flag_value(extra2_flags, argument)) == NO_FLAG) {
+            send_to_char("Those flags are not settable.\n\r", ch);
+            return false;
+        }
 
-	if (*argument == '+')
-	    SET_BIT(obj->extra2_flags, value);
-	else if (*argument == '-')
-	    REMOVE_BIT(obj->extra2_flags, value);
-	else
-	    obj->extra2_flags = value;
+        if (*argument == '+')
+            SET_BIT(obj->extra2_flags, value);
+        else if (*argument == '-')
+            REMOVE_BIT(obj->extra2_flags, value);
+        else
+            obj->extra2_flags = value;
     }
     return true;
 }
@@ -1433,40 +1433,40 @@ static bool set_obj_extra2(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 static bool set_obj_wear(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 {
     if (is_help(argument)) {
-	int idx;
-	int col;
+        int idx;
+        int col;
 
-	send_to_char("`#SYNTAX``: wear <numeric value|flag value>\n\r", ch);
-	send_to_char("Available flag values:\n\r   ", ch);
-	col = 0;
-	for (idx = 0; wear_flags[idx].name != NULL; idx++) {
-	    printf_to_char(ch, "%-15.15s", wear_flags[idx].name);
-	    if (++col % 3 == 0)
-		send_to_char("\n\r   ", ch);
-	}
+        send_to_char("`#SYNTAX``: wear <numeric value|flag value>\n\r", ch);
+        send_to_char("Available flag values:\n\r   ", ch);
+        col = 0;
+        for (idx = 0; wear_flags[idx].name != NULL; idx++) {
+            printf_to_char(ch, "%-15.15s", wear_flags[idx].name);
+            if (++col % 3 == 0)
+                send_to_char("\n\r   ", ch);
+        }
 
-	if (col % 3 != 0)
-	    send_to_char("\n\r", ch);
+        if (col % 3 != 0)
+            send_to_char("\n\r", ch);
 
-	return false;
+        return false;
     }
 
     if (is_number(argument)) {
-	obj->wear_flags = parse_long(argument);
+        obj->wear_flags = parse_long(argument);
     } else {
-	long value;
+        long value;
 
-	if ((value = flag_value(wear_flags, argument)) == NO_FLAG) {
-	    send_to_char("Those flags are not settable.\n\r", ch);
-	    return false;
-	}
+        if ((value = flag_value(wear_flags, argument)) == NO_FLAG) {
+            send_to_char("Those flags are not settable.\n\r", ch);
+            return false;
+        }
 
-	if (*argument == '+')
-	    SET_BIT(obj->wear_flags, value);
-	else if (*argument == '-')
-	    REMOVE_BIT(obj->wear_flags, value);
-	else
-	    obj->wear_flags = value;
+        if (*argument == '+')
+            SET_BIT(obj->wear_flags, value);
+        else if (*argument == '-')
+            REMOVE_BIT(obj->wear_flags, value);
+        else
+            obj->wear_flags = value;
 
     }
     return true;
@@ -1480,8 +1480,8 @@ static bool set_obj_wear(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 static bool set_obj_level(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: level <level>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: level <level>\n\r", ch);
+        return false;
     }
 
     set_integer_arg(&obj->level, argument);
@@ -1498,8 +1498,8 @@ static bool set_obj_level(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 static bool set_obj_cost(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: cost <amount>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: cost <amount>\n\r", ch);
+        return false;
     }
 
     set_uint_arg(&obj->cost, argument);
@@ -1516,8 +1516,8 @@ static bool set_obj_cost(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 static bool set_obj_weight(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: weight <amount>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: weight <amount>\n\r", ch);
+        return false;
     }
 
     set_integer_arg(&obj->weight, argument);
@@ -1534,8 +1534,8 @@ static bool set_obj_weight(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 static bool set_obj_timer(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: timer <number of ticks>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: timer <number of ticks>\n\r", ch);
+        return false;
     }
 
     set_integer_arg(&obj->timer, argument);
@@ -1587,43 +1587,43 @@ static void set_room(CHAR_DATA *ch, const char *argument)
     DENY_NPC(ch);
 
     if (is_help(argument)) {
-	int col;
+        int col;
 
-	send_to_char("`#SYNTAX``: set room [vnum] <field> <value>\n\r\n\r", ch);
-	send_to_char("Available fields:\n\r   ", ch);
-	col = 0;
-	for (idx = 0; set_room_cmd_table[idx].keyword[0] != '\0'; idx++) {
-	    printf_to_char(ch, "%-15.15s", set_room_cmd_table[idx].keyword);
-	    if (++col % 3 == 0)
-		send_to_char("\n\r   ", ch);
-	}
+        send_to_char("`#SYNTAX``: set room [vnum] <field> <value>\n\r\n\r", ch);
+        send_to_char("Available fields:\n\r   ", ch);
+        col = 0;
+        for (idx = 0; set_room_cmd_table[idx].keyword[0] != '\0'; idx++) {
+            printf_to_char(ch, "%-15.15s", set_room_cmd_table[idx].keyword);
+            if (++col % 3 == 0)
+                send_to_char("\n\r   ", ch);
+        }
 
-	if (col % 4 != 0)
-	    send_to_char("\n\r", ch);
+        if (col % 4 != 0)
+            send_to_char("\n\r", ch);
 
-	return;
+        return;
     }
 
     one_argument(argument, arg);
     if (is_number(arg) && (room = get_room_index(parse_int(arg))) != NULL)
-	argument = one_argument(argument, arg);
+        argument = one_argument(argument, arg);
     else
-	room = ch->in_room;
+        room = ch->in_room;
 
     {
-	static char buf[MSL];
-	argument = one_argument(argument, cmd);
-	(void)snprintf(buf, UMIN(strlen(argument), MSL), "%s", argument);
-	smash_tilde(buf);
-	if (cmd[0] != '\0') {
-	    for (idx = 0; set_room_cmd_table[idx].keyword[0] != '\0'; idx++) {
-		if (!str_prefix(cmd, set_room_cmd_table[idx].keyword)) {
-		    if ((*set_room_cmd_table[idx].fn)(ch, room, buf))
-			send_to_char("`1Ok`!.``\n\r", ch);
-		    return;
-		}
-	    }
-	}
+        static char buf[MSL];
+        argument = one_argument(argument, cmd);
+        (void)snprintf(buf, UMIN(strlen(argument), MSL), "%s", argument);
+        smash_tilde(buf);
+        if (cmd[0] != '\0') {
+            for (idx = 0; set_room_cmd_table[idx].keyword[0] != '\0'; idx++) {
+                if (!str_prefix(cmd, set_room_cmd_table[idx].keyword)) {
+                    if ((*set_room_cmd_table[idx].fn)(ch, room, buf))
+                        send_to_char("`1Ok`!.``\n\r", ch);
+                    return;
+                }
+            }
+        }
     }
 
     /* generate help message */
@@ -1645,35 +1645,35 @@ static bool set_room_flags(CHAR_DATA *ch, ROOM_INDEX_DATA *room, const char *arg
     long value;
 
     if (is_help(argument)) {
-	int idx;
-	int col;
+        int idx;
+        int col;
 
-	send_to_char("`#SYNTAX``: flags [+|-]<flag name list>\n\r\n\r", ch);
-	send_to_char("Available values:\n\r   ", ch);
-	col = 0;
-	for (idx = 0; room_flags[idx].name != NULL; idx++) {
-	    printf_to_char(ch, "%-15.15s", room_flags[idx].name);
-	    if (++col % 3 == 0)
-		send_to_char("\n\r   ", ch);
-	}
+        send_to_char("`#SYNTAX``: flags [+|-]<flag name list>\n\r\n\r", ch);
+        send_to_char("Available values:\n\r   ", ch);
+        col = 0;
+        for (idx = 0; room_flags[idx].name != NULL; idx++) {
+            printf_to_char(ch, "%-15.15s", room_flags[idx].name);
+            if (++col % 3 == 0)
+                send_to_char("\n\r   ", ch);
+        }
 
-	if (col % 3 != 0)
-	    send_to_char("\n\r", ch);
+        if (col % 3 != 0)
+            send_to_char("\n\r", ch);
 
-	return false;
+        return false;
     }
 
     if ((value = flag_value(room_flags, argument)) == NO_FLAG) {
-	send_to_char("Those flags do not exist.\n\r", ch);
-	return false;
+        send_to_char("Those flags do not exist.\n\r", ch);
+        return false;
     } else {
-	if (*argument == '+') {
-	    SET_BIT(room->room_flags, value);
-	} else if (*argument == '-') {
-	    REMOVE_BIT(room->room_flags, value);
-	} else {
-	    room->room_flags = value;;
-	}
+        if (*argument == '+') {
+            SET_BIT(room->room_flags, value);
+        } else if (*argument == '-') {
+            REMOVE_BIT(room->room_flags, value);
+        } else {
+            room->room_flags = value;;
+        }
     }
 
     return true;
@@ -1691,27 +1691,27 @@ static bool set_room_sector(CHAR_DATA *ch, ROOM_INDEX_DATA *room, const char *ar
     int value;
 
     if (is_help(argument)) {
-	int idx;
-	int col;
+        int idx;
+        int col;
 
-	send_to_char("`#SYNTAX``: sector <sector name >\n\r\n\r", ch);
-	send_to_char("Available values:\n\r   ", ch);
-	col = 0;
-	for (idx = 0; sector_flags[idx].name != NULL; idx++) {
-	    printf_to_char(ch, "%-11.11s", sector_flags[idx].name);
-	    if (++col % 4 == 0)
-		send_to_char("\n\r   ", ch);
-	}
+        send_to_char("`#SYNTAX``: sector <sector name >\n\r\n\r", ch);
+        send_to_char("Available values:\n\r   ", ch);
+        col = 0;
+        for (idx = 0; sector_flags[idx].name != NULL; idx++) {
+            printf_to_char(ch, "%-11.11s", sector_flags[idx].name);
+            if (++col % 4 == 0)
+                send_to_char("\n\r   ", ch);
+        }
 
-	if (col % 4 != 0)
-	    send_to_char("\n\r", ch);
+        if (col % 4 != 0)
+            send_to_char("\n\r", ch);
 
-	return false;
+        return false;
     }
 
     if ((value = flag_value(sector_flags, argument)) == NO_FLAG) {
-	send_to_char("That sector type does not exist.\n\r", ch);
-	return false;
+        send_to_char("That sector type does not exist.\n\r", ch);
+        return false;
     }
 
     room->sector_type = value;
@@ -1726,8 +1726,8 @@ static bool set_room_sector(CHAR_DATA *ch, ROOM_INDEX_DATA *room, const char *ar
 static bool set_room_mana_rate(CHAR_DATA *ch, ROOM_INDEX_DATA *room, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: mana_rate <rate number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: mana_rate <rate number>\n\r", ch);
+        return false;
     }
 
     set_integer_arg(&room->mana_rate, argument);
@@ -1743,8 +1743,8 @@ static bool set_room_mana_rate(CHAR_DATA *ch, ROOM_INDEX_DATA *room, const char 
 static bool set_room_heal_rate(CHAR_DATA *ch, ROOM_INDEX_DATA *room, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: heal_rate <rate number>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: heal_rate <rate number>\n\r", ch);
+        return false;
     }
 
     set_integer_arg(&room->heal_rate, argument);
@@ -1761,8 +1761,8 @@ static bool set_room_heal_rate(CHAR_DATA *ch, ROOM_INDEX_DATA *room, const char 
 static bool set_room_light(CHAR_DATA *ch, ROOM_INDEX_DATA *room, const char *argument)
 {
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``: light <light duration>\n\r", ch);
-	return false;
+        send_to_char("`#SYNTAX``: light <light duration>\n\r", ch);
+        return false;
     }
 
     set_integer_arg(&room->light, argument);
@@ -1790,62 +1790,62 @@ static void set_skill(CHAR_DATA *ch, const char *argument)
     DENY_NPC(ch);
 
     if (is_help(argument)) {
-	send_to_char("`#SYNTAX``:\n\r", ch);
-	send_to_char("  set skill <character name> <spell or skill name> <value>\n\r", ch);
-	send_to_char("  set skill <character name> all <value>\n\r", ch);
-	return;
+        send_to_char("`#SYNTAX``:\n\r", ch);
+        send_to_char("  set skill <character name> <spell or skill name> <value>\n\r", ch);
+        send_to_char("  set skill <character name> all <value>\n\r", ch);
+        return;
     }
 
     argument = one_argument(argument, arg);
 
     if ((vch = get_char_world(ch, arg)) == NULL) {
-	send_to_char("They aren't here.\n\r", ch);
-	return;
+        send_to_char("They aren't here.\n\r", ch);
+        return;
     }
 
     if (IS_NPC(vch)) {
-	send_to_char("Not on NPC's.\n\r", ch);
-	return;
+        send_to_char("Not on NPC's.\n\r", ch);
+        return;
     }
 
 
     argument = one_argument(argument, arg);
     if (!is_number(argument)) {
-	send_to_char("Value must be numeric.\n\r", ch);
-	return;
+        send_to_char("Value must be numeric.\n\r", ch);
+        return;
     }
 
     percent = parse_int(argument);
     if (percent < 0 || percent > 100) {
-	send_to_char("Value range is 0 to 100.\n\r", ch);
-	return;
+        send_to_char("Value range is 0 to 100.\n\r", ch);
+        return;
     }
 
     if (!str_cmp(arg, "all")) {
-	for (skill = skill_list; skill != NULL; skill = skill->next) {
-	    learned = new_learned();
-	    learned->skill = skill;
-	    learned->percent = percent;
-	    learned->type = LEARNED_TYPE_SKILL;
+        for (skill = skill_list; skill != NULL; skill = skill->next) {
+            learned = new_learned();
+            learned->skill = skill;
+            learned->percent = percent;
+            learned->type = LEARNED_TYPE_SKILL;
 
-	    add_learned_skill(vch, learned);
-	}
+            add_learned_skill(vch, learned);
+        }
     } else {
-	if ((skill = skill_lookup(arg)) == NULL) {
-	    send_to_char("No such skill or spell.\n\r", ch);
-	    return;
-	}
+        if ((skill = skill_lookup(arg)) == NULL) {
+            send_to_char("No such skill or spell.\n\r", ch);
+            return;
+        }
 
-	if ((learned = get_learned_skill(vch, skill)) != NULL) {
-	    learned->percent = percent;
-	} else {
-	    learned = new_learned();
-	    learned->skill = skill;
-	    learned->percent = percent;
-	    learned->type = LEARNED_TYPE_SKILL;
+        if ((learned = get_learned_skill(vch, skill)) != NULL) {
+            learned->percent = percent;
+        } else {
+            learned = new_learned();
+            learned->skill = skill;
+            learned->percent = percent;
+            learned->type = LEARNED_TYPE_SKILL;
 
-	    add_learned_skill(vch, learned);
-	}
+            add_learned_skill(vch, learned);
+        }
     }
 }
 
@@ -1863,38 +1863,38 @@ static void set_reboot(CHAR_DATA *ch, const char *argument)
     int num_ticks;
 
     if (get_trust(ch) < MAX_LEVEL) {
-	send_to_char("Not at your level.\n\r", ch);
-	return;
+        send_to_char("Not at your level.\n\r", ch);
+        return;
     }
 
     one_argument(argument, arg);
     if (is_number(arg)) {
-	num_ticks = parse_int(arg);
+        num_ticks = parse_int(arg);
 
-	if (num_ticks > 0) {
-	    if ((ch->invis_level == ch->level) || (ch->incog_level == ch->level))
-		sprintf(buf, " `!R`1eboot sequence initiated by `8someone``.");
-	    else
-		sprintf(buf, " `!R`1eboot sequence initiated by `&%s``.", ch->name);
+        if (num_ticks > 0) {
+            if ((ch->invis_level == ch->level) || (ch->incog_level == ch->level))
+                sprintf(buf, " `!R`1eboot sequence initiated by `8someone``.");
+            else
+                sprintf(buf, " `!R`1eboot sequence initiated by `&%s``.", ch->name);
 
-	    do_echo(NULL, buf);
+            do_echo(NULL, buf);
 
-	    sprintf(buf, " Reboot in %d ticks.", num_ticks);
-	    do_echo(NULL, buf);
+            sprintf(buf, " Reboot in %d ticks.", num_ticks);
+            do_echo(NULL, buf);
 
-	    globalSystemState.reboot_tick_counter = num_ticks;
-	} else {
-	    if ((ch->invis_level == ch->level) || (ch->incog_level == ch->level))
-		sprintf(buf, " Reboot sequence terminated by someone.");
-	    else
-		sprintf(buf, " Reboot sequence terminated by %s.", ch->name);
+            globalSystemState.reboot_tick_counter = num_ticks;
+        } else {
+            if ((ch->invis_level == ch->level) || (ch->incog_level == ch->level))
+                sprintf(buf, " Reboot sequence terminated by someone.");
+            else
+                sprintf(buf, " Reboot sequence terminated by %s.", ch->name);
 
-	    do_echo(NULL, buf);
+            do_echo(NULL, buf);
 
-	    globalSystemState.reboot_tick_counter = -1;
-	}
+            globalSystemState.reboot_tick_counter = -1;
+        }
     } else {
-	send_to_char("Value must be numeric.\n\r", ch);
+        send_to_char("Value must be numeric.\n\r", ch);
     }
 }
 
@@ -1912,38 +1912,38 @@ static void set_copyover(CHAR_DATA *ch, const char *argument)
     int num_ticks;
 
     if (get_trust(ch) < MAX_LEVEL) {
-	send_to_char("Not at your level.\n\r", ch);
-	return;
+        send_to_char("Not at your level.\n\r", ch);
+        return;
     }
 
     one_argument(argument, arg);
     if (is_number(arg)) {
-	num_ticks = parse_int(arg);
+        num_ticks = parse_int(arg);
 
-	if (num_ticks > 0) {
-	    if ((ch->invis_level == ch->level) || (ch->incog_level == ch->level))
-		sprintf(buf, " `!C`1opyover sequence initiated by `8someone``.");
-	    else
-		sprintf(buf, " `!C`1opyover sequence initiated by `&%s``.", ch->name);
+        if (num_ticks > 0) {
+            if ((ch->invis_level == ch->level) || (ch->incog_level == ch->level))
+                sprintf(buf, " `!C`1opyover sequence initiated by `8someone``.");
+            else
+                sprintf(buf, " `!C`1opyover sequence initiated by `&%s``.", ch->name);
 
-	    do_echo(NULL, buf);
+            do_echo(NULL, buf);
 
-	    sprintf(buf, " Copyover in %d ticks.", num_ticks);
-	    do_echo(NULL, buf);
+            sprintf(buf, " Copyover in %d ticks.", num_ticks);
+            do_echo(NULL, buf);
 
-	    globalSystemState.copyover_tick_counter = num_ticks;
-	} else {
-	    if ((ch->invis_level == ch->level) || (ch->incog_level == ch->level))
-		sprintf(buf, " Copyover sequence terminated by someone.");
-	    else
-		sprintf(buf, " Copyover sequence terminated by %s.", ch->name);
+            globalSystemState.copyover_tick_counter = num_ticks;
+        } else {
+            if ((ch->invis_level == ch->level) || (ch->incog_level == ch->level))
+                sprintf(buf, " Copyover sequence terminated by someone.");
+            else
+                sprintf(buf, " Copyover sequence terminated by %s.", ch->name);
 
-	    do_echo(NULL, buf);
+            do_echo(NULL, buf);
 
-	    globalSystemState.copyover_tick_counter = -1;
-	}
+            globalSystemState.copyover_tick_counter = -1;
+        }
     } else {
-	send_to_char("Value must be numeric.\n\r", ch);
+        send_to_char("Value must be numeric.\n\r", ch);
     }
 }
 
@@ -1961,19 +1961,19 @@ static void set_copyover(CHAR_DATA *ch, const char *argument)
 static bool set_integer_arg(int *value, const char *argument)
 {
     switch (argument[0]) {
-	case '+':
-	    argument++;
-	    *value += parse_int(argument);
-	    return true;
-	case '-':
-	    argument++;
-	    *value -= parse_int(argument);
-	    return true;
-	default:
-	    if (is_number(argument)) {
-		*value = parse_int(argument);
-		return true;
-	    }
+      case '+':
+          argument++;
+          *value += parse_int(argument);
+          return true;
+      case '-':
+          argument++;
+          *value -= parse_int(argument);
+          return true;
+      default:
+          if (is_number(argument)) {
+              *value = parse_int(argument);
+              return true;
+          }
     }
 
     return false;
@@ -1982,19 +1982,19 @@ static bool set_integer_arg(int *value, const char *argument)
 static bool set_uint_arg(unsigned int *value, const char *argument)
 {
     switch (argument[0]) {
-	case '+':
-	    argument++;
-	    *value += parse_long(argument);
-	    return true;
-	case '-':
-	    argument++;
-	    *value -= parse_long(argument);
-	    return true;
-	default:
-	    if (is_number(argument)) {
-		*value = parse_unsigned_int(argument);
-		return true;
-	    }
+      case '+':
+          argument++;
+          *value += parse_long(argument);
+          return true;
+      case '-':
+          argument++;
+          *value -= parse_long(argument);
+          return true;
+      default:
+          if (is_number(argument)) {
+              *value = parse_unsigned_int(argument);
+              return true;
+          }
     }
 
     return false;
@@ -2010,23 +2010,23 @@ static bool set_uint_arg(unsigned int *value, const char *argument)
 static bool set_long_arg(long *value, const char *argument)
 {
     switch (argument[0]) {
-	case '+':
-	    argument++;
-	    *value += parse_long(argument);
-	    return true;
+      case '+':
+          argument++;
+          *value += parse_long(argument);
+          return true;
 
-	case '-':
-	    argument++;
-	    *value -= parse_long(argument);
-	    return true;
+      case '-':
+          argument++;
+          *value -= parse_long(argument);
+          return true;
 
-	default:
-	    if (is_number(argument)) {
-		*value = parse_long(argument);
-		return true;
-	    } else {
-		return false;
-	    }
+      default:
+          if (is_number(argument)) {
+              *value = parse_long(argument);
+              return true;
+          } else {
+              return false;
+          }
     }
 }
 
@@ -2042,140 +2042,140 @@ static bool set_obj_value_idx(GAMEOBJECT *obj, int idx, const char *argument)
     int value;
 
     if (is_number(argument)) {
-	obj->value[idx] = parse_int(argument);
-	return true;
+        obj->value[idx] = parse_int(argument);
+        return true;
     } else {
-	switch (obj->item_type) {
-	    default:
-		break;
-	    case ITEM_WAND:
-	    case ITEM_STAFF:
-		switch (idx) {
-		    default:
-			break;
-		    case 3:
-			if ((skill = skill_lookup(argument)) != NULL) {
-			    obj->value[3] = skill->sn;
-			    return true;
-			}
-		}
-		break;
+        switch (obj->item_type) {
+          default:
+              break;
+          case ITEM_WAND:
+          case ITEM_STAFF:
+              switch (idx) {
+                default:
+                    break;
+                case 3:
+                    if ((skill = skill_lookup(argument)) != NULL) {
+                        obj->value[3] = skill->sn;
+                        return true;
+                    }
+              }
+              break;
 
-	    case ITEM_SCROLL:
-	    case ITEM_POTION:
-	    case ITEM_PILL:
-		switch (idx) {
-		    default:
-			break;
-		    case 1:
-			if ((skill = skill_lookup(argument)) != NULL) {
-			    obj->value[1] = skill->sn;
-			    return true;
-			}
-			break;
-		    case 2:
-			if ((skill = skill_lookup(argument)) != NULL) {
-			    obj->value[2] = skill->sn;
-			    return true;
-			}
-			break;
-		    case 3:
-			if ((skill = skill_lookup(argument)) != NULL) {
-			    obj->value[3] = skill->sn;
-			    return true;
-			}
-			break;
-		    case 4:
-			if ((skill = skill_lookup(argument)) != NULL) {
-			    obj->value[4] = skill->sn;
-			    return true;
-			}
-			break;
-		}
-		break;
-	    case ITEM_WEAPON:
-		switch (idx) {
-		    default:
-			break;
-		    case 0:
-			ALT_FLAGVALUE_SET(obj->value[0], weapon_class, argument);
-			return true;
-		    case 3:
-			obj->value[3] = attack_lookup(argument);
-			return true;
-		    case 4:
-			ALT_FLAGVALUE_TOGGLE(obj->value[4], weapon_flag_type, argument);
-			return true;
-		}
-		break;
+          case ITEM_SCROLL:
+          case ITEM_POTION:
+          case ITEM_PILL:
+              switch (idx) {
+                default:
+                    break;
+                case 1:
+                    if ((skill = skill_lookup(argument)) != NULL) {
+                        obj->value[1] = skill->sn;
+                        return true;
+                    }
+                    break;
+                case 2:
+                    if ((skill = skill_lookup(argument)) != NULL) {
+                        obj->value[2] = skill->sn;
+                        return true;
+                    }
+                    break;
+                case 3:
+                    if ((skill = skill_lookup(argument)) != NULL) {
+                        obj->value[3] = skill->sn;
+                        return true;
+                    }
+                    break;
+                case 4:
+                    if ((skill = skill_lookup(argument)) != NULL) {
+                        obj->value[4] = skill->sn;
+                        return true;
+                    }
+                    break;
+              }
+              break;
+          case ITEM_WEAPON:
+              switch (idx) {
+                default:
+                    break;
+                case 0:
+                    ALT_FLAGVALUE_SET(obj->value[0], weapon_class, argument);
+                    return true;
+                case 3:
+                    obj->value[3] = attack_lookup(argument);
+                    return true;
+                case 4:
+                    ALT_FLAGVALUE_TOGGLE(obj->value[4], weapon_flag_type, argument);
+                    return true;
+              }
+              break;
 
-	    case ITEM_PORTAL:
-		switch (idx) {
-		    default:
-			break;
-		    case 1:
-			ALT_FLAGVALUE_SET(obj->value[1], exit_flags, argument);
-			return true;
-		    case 2:
-			ALT_FLAGVALUE_SET(obj->value[2], portal_flags, argument);
-			return true;
-		}
-		break;
-	    case ITEM_FURNITURE:
-		switch (idx) {
-		    default:
-			break;
-		    case 2:
-			ALT_FLAGVALUE_TOGGLE(obj->value[2], furniture_flags, argument);
-			return true;
-		}
-		break;
-	    case ITEM_CONTAINER:
-		switch (idx) {
-		    default:
-			break;
-		    case 1:
-			if ((value = flag_value(container_flags, argument)) != NO_FLAG) {
-			    TOGGLE_BIT(obj->value[1], value);
-			    return true;
-			}
-			break;
-		}
-		break;
+          case ITEM_PORTAL:
+              switch (idx) {
+                default:
+                    break;
+                case 1:
+                    ALT_FLAGVALUE_SET(obj->value[1], exit_flags, argument);
+                    return true;
+                case 2:
+                    ALT_FLAGVALUE_SET(obj->value[2], portal_flags, argument);
+                    return true;
+              }
+              break;
+          case ITEM_FURNITURE:
+              switch (idx) {
+                default:
+                    break;
+                case 2:
+                    ALT_FLAGVALUE_TOGGLE(obj->value[2], furniture_flags, argument);
+                    return true;
+              }
+              break;
+          case ITEM_CONTAINER:
+              switch (idx) {
+                default:
+                    break;
+                case 1:
+                    if ((value = flag_value(container_flags, argument)) != NO_FLAG) {
+                        TOGGLE_BIT(obj->value[1], value);
+                        return true;
+                    }
+                    break;
+              }
+              break;
 
-	    case ITEM_DRINK_CON:
-	    case ITEM_FOUNTAIN:
-		switch (idx) {
-		    default:
-			break;
-		    case 2:
-			if ((value = liq_lookup(argument)) >= 0) {
-			    obj->value[2] = value;
-			    return true;
-			}
-			break;
-		}
-		break;
+          case ITEM_DRINK_CON:
+          case ITEM_FOUNTAIN:
+              switch (idx) {
+                default:
+                    break;
+                case 2:
+                    if ((value = liq_lookup(argument)) >= 0) {
+                        obj->value[2] = value;
+                        return true;
+                    }
+                    break;
+              }
+              break;
 
-	    case ITEM_SOCKETS:
-		switch (idx) {
-		    default:
-			break;
-		    case 0:
-			if ((value = flag_value(socket_flags, argument)) != NO_FLAG) {
-			    obj->value[0] = value;
-			    return true;
-			}
-			break;
-		    case 1:
-			if ((value = flag_value(socket_values, argument)) != NO_FLAG) {
-			    obj->value[1] = value;
-			    return true;
-			}
-			break;
-		}
-		break;
-	}
+          case ITEM_SOCKETS:
+              switch (idx) {
+                default:
+                    break;
+                case 0:
+                    if ((value = flag_value(socket_flags, argument)) != NO_FLAG) {
+                        obj->value[0] = value;
+                        return true;
+                    }
+                    break;
+                case 1:
+                    if ((value = flag_value(socket_values, argument)) != NO_FLAG) {
+                        obj->value[1] = value;
+                        return true;
+                    }
+                    break;
+              }
+              break;
+        }
     }
 
     return false;
@@ -2193,11 +2193,11 @@ static void item_type_help(CHAR_DATA *ch, int item_type)
     int idx;
 
     for (idx = 0; item_table[idx].type != 0; idx++) {
-	if (item_table[idx].type == item_type) {
-	    if (item_table[idx].help_keyword[0] != '\0') {
-		do_help(ch, item_table[idx].help_keyword);
-		return;
-	    }
-	}
+        if (item_table[idx].type == item_type) {
+            if (item_table[idx].help_keyword[0] != '\0') {
+                show_help(ch->desc, item_table[idx].help_keyword, NULL);
+                return;
+            }
+        }
     }
 }

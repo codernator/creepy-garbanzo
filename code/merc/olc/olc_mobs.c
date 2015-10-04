@@ -1436,7 +1436,7 @@ EDIT(medit_addmprog){
 
     if ((value = flag_value(mprog_flags, trigger)) == NO_FLAG) {
         send_to_char("Valid flags are:\n\r", ch);
-        show_help(ch, "mprog");
+        show_olc_help(ch, "mprog");
         return false;
     }
 

@@ -54,12 +54,12 @@ bool valid_cmd(CHAR_DATA *vch, const char *cmd)
     int iter;
 
     if ((cmd_base = cmd_lookup(vch, cmd)) != NULL) {
-	for (iter = 0; invalid_cmds[iter] != NULL; iter++) {
-	    if (!str_cmp(invalid_cmds[iter], cmd_base->name)) {
-		success = false;
-		break;
-	    }
-	}
+        for (iter = 0; invalid_cmds[iter] != NULL; iter++) {
+            if (!str_cmp(invalid_cmds[iter], cmd_base->name)) {
+                success = false;
+                break;
+            }
+        }
     }
 
     return success;
@@ -75,37 +75,37 @@ void do_for(CHAR_DATA *ch, const char *argument)
     DENY_NPC(ch);
 
     if (!name[0] || !argument[0]) {
-	do_help(ch, "immortal_for");
-	return;
+        show_help(ch->desc, "immortal_for", NULL);
+        return;
     }
 
     if (!valid_cmd(ch, argument)) {
-	send_to_char("The command you have entered is not safe for the `2FOR`` command.\n\r", ch);
-	return;
+        send_to_char("The command you have entered is not safe for the `2FOR`` command.\n\r", ch);
+        return;
     }
 
     for (iter = 0; fcmd_table[iter].cmd != NULL; iter++) {
-	if (!str_prefix(name, fcmd_table[iter].cmd)) {
-	    (*fcmd_table[iter].fn)(ch, name, argument);
+        if (!str_prefix(name, fcmd_table[iter].cmd)) {
+            (*fcmd_table[iter].fn)(ch, name, argument);
 
-	    if (ch->level < MAX_LEVEL)
-		WAIT_STATE(ch, FOR_WAIT);
-	    return;
-	}
+            if (ch->level < MAX_LEVEL)
+                WAIT_STATE(ch, FOR_WAIT);
+            return;
+        }
     }
 
 
     if (is_number(name)) {
-	for_count(ch, name, argument);
+        for_count(ch, name, argument);
     } else if (strlen(name) > 1) {
-	for_name(ch, name, argument);
+        for_name(ch, name, argument);
     } else {
-	do_help(ch, "for");
-	return;
+        show_help(ch->desc, "for", NULL);
+        return;
     }
 
     if (ch->level < MAX_LEVEL) {
-	WAIT_STATE(ch, FOR_WAIT);
+        WAIT_STATE(ch, FOR_WAIT);
     }
 }
 
@@ -144,29 +144,29 @@ static void for_gods(CHAR_DATA *ch, char *name, const char *argument)
     area = NULL;
     one_argument(argument, check);
     if (!str_prefix(check, "area")) {
-	argument = one_argument(argument, check);
-	area = ch->in_room->area;
+        argument = one_argument(argument, check);
+        area = ch->in_room->area;
     }
 
     dpending = descriptor_iterator_start(&playing_filter);
     while ((d = dpending) != NULL) {
-	dpending = descriptor_iterator(d, &playing_filter);
+        dpending = descriptor_iterator(d, &playing_filter);
 
-	if (IS_IMMORTAL(d->character)
-		&& d->character->in_room != NULL
-		&& !room_is_private(d->character->in_room)
-		&& (area == NULL || d->character->in_room->area == area)) {
-	    if (++count > MAX_TARGETS) {
-		send_to_char("Maximum number of targets exceeded.\n\r", ch);
-		break;
-	    }
+        if (IS_IMMORTAL(d->character)
+            && d->character->in_room != NULL
+            && !room_is_private(d->character->in_room)
+            && (area == NULL || d->character->in_room->area == area)) {
+            if (++count > MAX_TARGETS) {
+                send_to_char("Maximum number of targets exceeded.\n\r", ch);
+                break;
+            }
 
-	    char_from_room(ch);
-	    char_to_room(ch, d->character->in_room);
+            char_from_room(ch);
+            char_to_room(ch, d->character->in_room);
 
-	    if (expand_cmd(d->character, argument, cmd, '#'))
-		interpret(ch, cmd);
-	}
+            if (expand_cmd(d->character, argument, cmd, '#'))
+                interpret(ch, cmd);
+        }
     }
 
     char_from_room(ch);
@@ -192,29 +192,29 @@ static void for_morts(CHAR_DATA *ch, char *name, const char *argument)
     area = NULL;
     one_argument(argument, check);
     if (!str_prefix(check, "area")) {
-	argument = one_argument(argument, check);
-	area = ch->in_room->area;
+        argument = one_argument(argument, check);
+        area = ch->in_room->area;
     }
 
     dpending = descriptor_iterator_start(&playing_filter);
     while ((d = dpending) != NULL) {
-	dpending = descriptor_iterator(d, &playing_filter);
+        dpending = descriptor_iterator(d, &playing_filter);
 
-	if (!IS_IMMORTAL(d->character)
-		&& d->character->in_room != NULL
-		&& !room_is_private(d->character->in_room)
-		&& (area == NULL || d->character->in_room->area == area)) {
-	    if (++count > MAX_TARGETS) {
-		send_to_char("Maximum number of targets exceeded.\n\r", ch);
-		break;
-	    }
+        if (!IS_IMMORTAL(d->character)
+            && d->character->in_room != NULL
+            && !room_is_private(d->character->in_room)
+            && (area == NULL || d->character->in_room->area == area)) {
+            if (++count > MAX_TARGETS) {
+                send_to_char("Maximum number of targets exceeded.\n\r", ch);
+                break;
+            }
 
-	    char_from_room(ch);
-	    char_to_room(ch, d->character->in_room);
+            char_from_room(ch);
+            char_to_room(ch, d->character->in_room);
 
-	    if (expand_cmd(d->character, argument, cmd, '#'))
-		interpret(ch, cmd);
-	}
+            if (expand_cmd(d->character, argument, cmd, '#'))
+                interpret(ch, cmd);
+        }
     }
 
     char_from_room(ch);
@@ -235,17 +235,17 @@ static void for_room(CHAR_DATA *ch, char *name, const char *argument)
     int count = 0;
 
     for (vch = ch->in_room->people; vch != NULL; vch = vch_next) {
-	vch_next = vch->next_in_room;;
+        vch_next = vch->next_in_room;;
 
-	if (vch != ch) {
-	    if (++count > MAX_TARGETS) {
-		send_to_char("Maximum number of targets exceeded.\n\r", ch);
-		break;
-	    }
+        if (vch != ch) {
+            if (++count > MAX_TARGETS) {
+                send_to_char("Maximum number of targets exceeded.\n\r", ch);
+                break;
+            }
 
-	    if (expand_cmd(vch, argument, cmd, '#'))
-		interpret(ch, cmd);
-	}
+            if (expand_cmd(vch, argument, cmd, '#'))
+                interpret(ch, cmd);
+        }
     }
 }
 
@@ -269,28 +269,28 @@ static void for_name(CHAR_DATA *ch, char *name, const char *argument)
     area = NULL;
     one_argument(argument, check);
     if (!str_prefix(check, "area")) {
-	argument = one_argument(argument, check);
-	area = ch->in_room->area;
+        argument = one_argument(argument, check);
+        area = ch->in_room->area;
     }
 
     for (vch = char_list; vch != NULL; vch = vch_next) {
-	vch_next = vch->next;
+        vch_next = vch->next;
 
-	if (is_name(name, vch->name)
-		&& vch != ch
-		&& !room_is_private(vch->in_room)
-		&& (area == NULL || vch->in_room->area == area)) {
-	    if (++count > MAX_TARGETS) {
-		send_to_char("Maximum number of targets exceeded.\n\r", ch);
-		break;
-	    }
+        if (is_name(name, vch->name)
+            && vch != ch
+            && !room_is_private(vch->in_room)
+            && (area == NULL || vch->in_room->area == area)) {
+            if (++count > MAX_TARGETS) {
+                send_to_char("Maximum number of targets exceeded.\n\r", ch);
+                break;
+            }
 
-	    char_from_room(ch);
-	    char_to_room(ch, vch->in_room);
+            char_from_room(ch);
+            char_to_room(ch, vch->in_room);
 
-	    if (expand_cmd(vch, argument, cmd, '#'))
-		interpret(ch, cmd);
-	}
+            if (expand_cmd(vch, argument, cmd, '#'))
+                interpret(ch, cmd);
+        }
     }
 
     char_from_room(ch);
@@ -312,21 +312,21 @@ static void for_count(CHAR_DATA *ch, char *name, const char *argument)
     int iter;
 
     if (is_number(name)) {
-	number = parse_int(name);
-	if (number > 201) {
-	    send_to_char("There is a maximum of 200 targets when using the for command.\n\r", ch);
-	    return;
-	}
-	if (number > 0) {
-	    for (iter = 0; iter < number; iter++) {
-		if (++count > MAX_TARGETS) {
-		    send_to_char("Maximum number of targets exceeded.\n\r", ch);
-		    break;
-		}
+        number = parse_int(name);
+        if (number > 201) {
+            send_to_char("There is a maximum of 200 targets when using the for command.\n\r", ch);
+            return;
+        }
+        if (number > 0) {
+            for (iter = 0; iter < number; iter++) {
+                if (++count > MAX_TARGETS) {
+                    send_to_char("Maximum number of targets exceeded.\n\r", ch);
+                    break;
+                }
 
-		interpret(ch, argument);
-	    }
-	}
+                interpret(ch, argument);
+            }
+        }
     }
 }
 
@@ -345,17 +345,17 @@ bool expand_cmd(CHAR_DATA *vch, const char *arg, char *buf, char find)
 
     *dest = '\0';
     while (*orig != '\0') {
-	if (++len >= MSL)
-	    break;
+        if (++len >= MSL)
+            break;
 
-	if (*orig == find) {
-	    const char *tmp = name;
-	    while (*tmp != '\0')
-		*dest++ = *tmp++;
-	    orig++;
-	} else {
-	    *dest++ = *orig++;
-	}
+        if (*orig == find) {
+            const char *tmp = name;
+            while (*tmp != '\0')
+                *dest++ = *tmp++;
+            orig++;
+        } else {
+            *dest++ = *orig++;
+        }
     }
 
     *dest = '\0';
@@ -376,20 +376,20 @@ static const char *get_name(CHAR_DATA *vch)
 
 
     if (!IS_NPC(vch))
-	return vch->name;
+        return vch->name;
 
     one_argument(vch->name, name);
     if (!name[0]) {
-	strcpy(outbuf, "");
-	return outbuf;
+        strcpy(outbuf, "");
+        return outbuf;
     } else {
-	int count = 1;
+        int count = 1;
 
-	for (rch = vch->in_room->people; rch && (rch != vch); rch = rch->next_in_room)
-	    if (is_name(name, rch->name))
-		count++;
+        for (rch = vch->in_room->people; rch && (rch != vch); rch = rch->next_in_room)
+            if (is_name(name, rch->name))
+                count++;
 
-	sprintf(outbuf, "%d.%s", count, name);
+        sprintf(outbuf, "%d.%s", count, name);
     }
 
     return outbuf;

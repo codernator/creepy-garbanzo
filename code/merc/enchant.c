@@ -351,7 +351,7 @@ void do_repair(CHAR_DATA *ch, const char *argument)
 
 	/* check for a command first */
 	if (cmd[0] == '\0' || cmd[0] == '?' || !str_cmp(cmd, "help")) {
-		do_help(ch, "blacksmith_repair");
+		show_help(ch->desc, "blacksmith_repair", NULL);
 		return;
 	}
 
