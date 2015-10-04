@@ -8,6 +8,15 @@ typedef int pid_t;
 long long atoll(const char *nptr);
 #endif
 
+// TODO - sysinternals should not have such specific data.
+#define LOG_BUG_FILE "./db/log/bug.txt"  /* For 'bug' and bug() */
+#define LOG_TYPO_FILE "./db/log/typo.txt" /* For 'typo' */
+#define LOG_LAST_COMMANDS_FILE "./db/log/lastCMDs.txt"
+#define LOG_ALWAYS_FILE "./db/log/logAlways.txt"
+#define LOG_ALL_CMDS_FILE "./db/log/logALLCommands.txt"
+#define LOG_PLAYER_FILE "./db/log/player/%s.txt"
+#define LOG_SHUTDOWN_FILE    "./db/log/shutdown.txt"         /* For 'shutdown' */
+
 
 #define LOWER(c)                 ((c) >= 'A' && (c) <= 'Z' ? (c) + 'a' - 'A' : (c))
 #define UPPER(c)                 ((c) >= 'a' && (c) <= 'z' ? (c) + 'A' - 'a' : (c))

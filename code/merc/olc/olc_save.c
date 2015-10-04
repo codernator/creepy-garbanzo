@@ -247,14 +247,14 @@ static void save_mobiles(FILE *fp, AREA_DATA *area)
 
 
 
-static void save_object(FILE *fp, OBJECTPROTOTYPE *pObjIndex)
-{
-    struct keyvaluepair_array *serialized;
-
-    serialized = objectprototype_serialize(pObjIndex);
-    database_write(fp, serialized);
-    free(serialized);
-}
+//static void save_object(FILE *fp, OBJECTPROTOTYPE *pObjIndex)
+//{
+//    struct keyvaluepair_array *serialized;
+//
+//    serialized = objectprototype_serialize(pObjIndex);
+//    database_write(fp, serialized);
+//    free(serialized);
+//}
 
 
 /***************************************************************************
@@ -262,7 +262,7 @@ static void save_object(FILE *fp, OBJECTPROTOTYPE *pObjIndex)
  *
  *	save a single object
  ***************************************************************************/
-static void save_object_old(FILE *fp, OBJECTPROTOTYPE *pObjIndex)
+static void save_object(FILE *fp, OBJECTPROTOTYPE *pObjIndex)
 {
     AFFECT_DATA *pAf;
     EXTRA_DESCR_DATA *extra;
@@ -362,16 +362,8 @@ static void save_object_old(FILE *fp, OBJECTPROTOTYPE *pObjIndex)
     fprintf(fp, "%d ", pObjIndex->weight);
     fprintf(fp, "%u ", pObjIndex->cost);
     fprintf(fp, "%d ", pObjIndex->init_timer);
+    fprintf(fp, "%d ", pObjIndex->condition);
 
-    if (pObjIndex->condition > 90) letter = 'P';
-    else if (pObjIndex->condition > 75) letter = 'G';
-    else if (pObjIndex->condition > 50) letter = 'A';
-    else if (pObjIndex->condition > 25) letter = 'W';
-    else if (pObjIndex->condition > 10) letter = 'D';
-    else if (pObjIndex->condition > 0) letter = 'B';
-    else                                                                    letter = 'R';
-
-    fprintf(fp, "%c\n", letter);
     for (pAf = pObjIndex->affected; pAf; pAf = pAf->next) {
         if (pAf->where == TO_OBJECT || pAf->bitvector == 0) {
             fprintf(fp, "A\n%d %ld\n", pAf->location, pAf->modifier);

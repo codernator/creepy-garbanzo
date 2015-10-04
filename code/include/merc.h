@@ -1523,7 +1523,6 @@ struct extra_descr_data {
     /*@shared@*//*@null@*/char *short_descr;
     /*@shared@*//*@null@*/char *description;
     /*@shared@*//*@null@*/char *material;
-    long reset_num;
     int item_type;
     long extra_flags;
     long extra2_flags;
@@ -1533,9 +1532,7 @@ struct extra_descr_data {
     int condition;
     int count;
     int weight;
-    int plevel;
     int xp_tolevel;
-    int exp;
     unsigned int cost;
     long value[5];
 };
@@ -1969,7 +1966,7 @@ extern ROOM_INDEX_DATA *room_index_hash [MAX_KEY_HASH];
 #define HEADLINE_FILE    "./db/headline.txt"
 #define HELP_FILE        "./db/area/help.are"
 #define NOTE_FILE        "./db/notes.not"         /* note thread */
-#define COPYOVER_FILE    "./copyover.txt"
+#define COPYOVER_FILE    "./db/log/copyover.txt"
 
 #define END_MARKER       "END"
 

@@ -117,9 +117,7 @@ KEYVALUEPAIR_ARRAY *objectprototype_serialize(const OBJECTPROTOTYPE *obj)
 
     answer = keyvaluepairarray_create(keys);
     keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "vnum", "%ld", obj->vnum);
-    if (obj->area != NULL) {
-        keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "area", "%ld", obj->area->vnum);
-    }
+
     keyvaluepairarray_append(answer, "name", obj->name);
     if (obj->short_descr != NULL)
         keyvaluepairarray_append(answer, "short", obj->short_descr);
@@ -127,37 +125,33 @@ KEYVALUEPAIR_ARRAY *objectprototype_serialize(const OBJECTPROTOTYPE *obj)
         keyvaluepairarray_append(answer, "long", obj->description);
     if (obj->material != NULL)
         keyvaluepairarray_append(answer, "material", obj->material);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "reset", "%ld", obj->reset_num);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "extra2", "%ld", obj->extra2_flags);
     keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "item_type", "%d", obj->item_type);
     keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "extra", "%ld", obj->extra_flags);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "extra2", "%ld", obj->extra2_flags);
     keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "wear", "%ld", obj->wear_flags);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "level", "%d", obj->level);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "inittimer", "%d", obj->init_timer);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "condition", "%d", obj->condition);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "count", "%d", obj->count);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "weight", "%d", obj->weight);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "plevel", "%d", obj->plevel);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "tnl", "%d", obj->xp_tolevel);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "exp", "%d", obj->exp);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "cost", "%u", obj->cost);
+
+    //TODO - look at olc_save.save_object for more logic
     keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value1", "%u", obj->value[0]);
     keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value2", "%u", obj->value[1]);
     keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value3", "%u", obj->value[2]);
     keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value4", "%u", obj->value[3]);
     keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value5", "%u", obj->value[4]);
+    // ~TODO
 
-    /** append extras */
-    {
-        static char keybuf[MIL];
-        EXTRA_DESCR_DATA *desc = obj->extra_descr;
-        while (desc != NULL) {
-            (void)snprintf(keybuf, MIL, "extra-%s", desc->keyword);
-            keyvaluepairarray_append(answer, keybuf, desc->description);
-            desc = desc->next;
-        }
-    }
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "level", "%d", obj->level);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "weight", "%d", obj->weight);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "cost", "%u", obj->cost);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "inittimer", "%d", obj->init_timer);
 
+    //TODO - look at olc_save.save_object for more logic
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "condition", "%d", obj->condition);
+    //~TODO
+    
+    // count is a runtime value only used to track number of GAMEOBJECT *instances from this prototype.
+    //keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "count", "%d", obj->count);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "tnl", "%d", obj->xp_tolevel);
+
+    /** append affects */
     {
         AFFECT_DATA *affect = obj->affected;
         while (affect != NULL) {
@@ -174,6 +168,18 @@ KEYVALUEPAIR_ARRAY *objectprototype_serialize(const OBJECTPROTOTYPE *obj)
             affect = affect->next;
         }
     }
+
+    /** append extras */
+    {
+        static char keybuf[MIL];
+        EXTRA_DESCR_DATA *desc = obj->extra_descr;
+        while (desc != NULL) {
+            (void)snprintf(keybuf, MIL, "extra-%s", desc->keyword);
+            keyvaluepairarray_append(answer, keybuf, desc->description);
+            desc = desc->next;
+        }
+    }
+
 
     return answer;
 }

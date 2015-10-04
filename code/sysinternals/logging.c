@@ -7,13 +7,6 @@
 #include <time.h>
 
 
-#define LOG_BUG_FILE "./log/bug.txt"  /* For 'bug' and bug() */
-#define LOG_TYPO_FILE "./log/typo.txt" /* For 'typo' */
-#define LOG_LAST_COMMANDS_FILE "./log/command/lastCMDs.txt"
-#define LOG_ALWAYS_FILE "./log/command/logAlways.txt"
-#define LOG_ALL_CMDS_FILE "./log/command/logALLCommands.txt"
-#define LOG_PLAYER_FILE "./log/player/%s.txt"
-#define LOG_SHUTDOWN_FILE    "./shutdown.txt"         /* For 'shutdown' */
 
 #define MAX_FILENAME_LENGTH 1024
 

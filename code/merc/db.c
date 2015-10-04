@@ -95,13 +95,13 @@ static int sAllocPerm;
 
 bool db_loading;
 static FILE *fp_area;
-static char area_file[MIL];
+static char area_file_path[MIL];
 
 
 /***************************************************************************
  *	local functions used in boot process
  ***************************************************************************/
-static void load_area(FILE * fp);
+static void load_area(FILE * fp, const char *filename);
 static void load_helps(FILE * fp, char *fname);
 static void load_mobiles(FILE * fp);
 static void load_objects(FILE * fp);
@@ -182,7 +182,8 @@ static void init_game_time()
 static void init_areas()
 {
     FILE *fpList;
-    char *buf;
+    char *word;
+    char area_file_name[MIL];
 
     log_string("Opening area file.");
     fpList = fopen(AREA_LIST, "r");
@@ -194,29 +195,29 @@ static void init_areas()
 
 
     for (;;) {
-        buf = fread_word(fpList);
-        if (buf[0] == '$') {
+        word = fread_word(fpList);
+        if (word[0] == '$') {
             /** End of Area List. */
             break;
         }
-        snprintf(area_file, MIL, "%s%s", AREA_FOLDER, buf);
+        (void)snprintf(area_file_path, MIL, "%s%s", AREA_FOLDER, word);
+        (void)snprintf(area_file_name, MIL, "%s", word);
 
-        fp_area = fopen(area_file, "r");
+        fp_area = fopen(area_file_path, "r");
         if (fp_area == NULL) {
-            perror(area_file);
-            log_bug("Unable to open area file (%s)", area_file);
+            perror(area_file_path);
+            log_bug("Unable to open area file (%s)", area_file_path);
             ABORT;
         }
 
         current_area = NULL;
 
         for (;; ) {
-            char *word;
             char token;
 
             token = fread_letter(fp_area);
             if (token != '#') {
-                bug("Boot_db: Found %c instead of expected header token # in area_file %s.", token, area_file);
+                bug("Boot_db: Found %c instead of expected header token # in area_file_path %s.", token, area_file_path);
                 ABORT;
             }
 
@@ -226,9 +227,9 @@ static void init_areas()
                 /** End of Area File definition. */
                 break;
             } else if (!str_cmp(word, "AREADATA")) {
-                load_area(fp_area);
+                load_area(fp_area, area_file_name);
             } else if (!str_cmp(word, "HELPS")) {
-                load_helps(fp_area, area_file);
+                load_helps(fp_area, area_file_path);
             } else if (!str_cmp(word, "MOBILES")) {
                 load_mobiles(fp_area);
             } else if (!str_cmp(word, "MOBPROGS")) {
@@ -368,7 +369,7 @@ void boot_db()
  * Repop  A teacher pops in the room and says, 'Repop coming!'~
  * End
  */
-void load_area(FILE *fp)
+void load_area(FILE *fp, const char *filename)
 {
     AREA_DATA *area;
     char *word;
@@ -376,7 +377,7 @@ void load_area(FILE *fp)
     area = new_area();
     area->age = 15;
     area->nplayer = 0;
-    area->file_name = str_dup(area_file);
+    area->file_name = str_dup(filename);
     area->vnum = top_area;
     area->name = str_dup("New Area");
     area->builders = str_dup("");
@@ -1095,7 +1096,6 @@ void load_objects(FILE *fp)
 
         objprototype = objectprototype_new(vnum);
         objprototype->area = area_last;
-        objprototype->reset_num = 0;
 
 
         objprototype->name = fread_string(fp);
@@ -1176,33 +1176,7 @@ void load_objects(FILE *fp)
         objprototype->init_timer = fread_number(fp);
 
         /* condition */
-        letter = fread_letter(fp);
-        switch (letter) {
-          case ('P'):
-              objprototype->condition = 100;
-              break;
-          case ('G'):
-              objprototype->condition = 90;
-              break;
-          case ('A'):
-              objprototype->condition = 75;
-              break;
-          case ('W'):
-              objprototype->condition = 50;
-              break;
-          case ('D'):
-              objprototype->condition = 25;
-              break;
-          case ('B'):
-              objprototype->condition = 10;
-              break;
-          case ('R'):
-              objprototype->condition = 0;
-              break;
-          default:
-              objprototype->condition = 100;
-              break;
-        }
+        objprototype->condition = (int)fread_number(fp);
 
         for (;; ) {
             char letter;
@@ -2827,7 +2801,7 @@ void do_dump(CHAR_DATA *ch, const char *argument)
         while ((current = pending) != NULL) {
             pending = objectprototype_iterator(current, &objectprototype_empty_filter);
 
-            fprintf(fp, "#%-10ld %3d active %3ld reset      %s\n", current->vnum, current->count, current->reset_num, current->short_descr);
+            fprintf(fp, "#%-10ld %3d active   %s\n", current->vnum, current->count, current->short_descr);
         }
         fclose(fp);
     }
@@ -2868,7 +2842,7 @@ void bug(const char *fmt, ...)
             while ((char)getc(fp_area) != '\n');
         fseek(fp_area, iChar, 0);
 
-        log_bug("[*****] BUG IN FILE: %s LINE: %d\n%s", area_file, iLine, buf);
+        log_bug("[*****] BUG IN FILE: %s LINE: %d\n%s", area_file_path, iLine, buf);
     }
 }
 
