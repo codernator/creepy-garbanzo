@@ -68,7 +68,7 @@ HELP_DATA *helpdata_deserialize(const KEYVALUEPAIR_ARRAY *data)
     helpdata = malloc(sizeof(HELP_DATA));
     assert(helpdata != NULL);
     
-    value = keyvaluepairarray_find(data, "key");
+    value = keyvaluepairarray_find(data, "keyword");
     assert(value != NULL);
     helpdata->keyword = string_copy(value);
 

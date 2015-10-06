@@ -78,6 +78,7 @@ void keyvaluepairarray_appendf(KEYVALUEPAIR_ARRAY *array, size_t maxlength, cons
 void keyvaluepairarray_grow(KEYVALUEPAIR_ARRAY *array, size_t newSize);
 /*@observer@*//*@null@*/const char *keyvaluepairarray_find(const KEYVALUEPAIR_ARRAY *array, const char *key);
 void keyvaluepairarray_free(/*@only@*//*@null@*/KEYVALUEPAIR_ARRAY *array);
+bool keyvaluepairarray_any(/*@observer@*/const KEYVALUEPAIR_ARRAY *array);
 /*@only@*/KEYVALUEPAIR_HASH *keyvaluepairhash_create(/*@observer@*/KEYVALUEPAIR_ARRAY *array, size_t numelements, size_t numbuckets);
 /*@observer@*//*@null@*/const char *keyvaluepairhash_get(KEYVALUEPAIR_HASH *hash, const char * const key);
 void keyvaluepairhash_free(/*@only@*//*@null@*/KEYVALUEPAIR_HASH *hash);
@@ -144,6 +145,6 @@ void log_string(const char *fmt, ...);
 
 /** database.c */
 void database_write(FILE *fp, /*@observer@*/const struct keyvaluepair_array *data);
-/*@only@*/struct keyvaluepair_array *database_read(FILE *fp);
+/*@only@*//*@notnull@*/struct keyvaluepair_array *database_read(FILE *fp);
 /** ~database.c */
 

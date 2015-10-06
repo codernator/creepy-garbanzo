@@ -90,6 +90,11 @@ const char *keyvaluepairarray_find(const KEYVALUEPAIR_ARRAY *array, const char *
     return NULL;
 }
 
+inline bool keyvaluepairarray_any(/*@observer@*/const KEYVALUEPAIR_ARRAY *array)
+{
+    return array->top > 0;
+}
+
 void keyvaluepairarray_free(KEYVALUEPAIR_ARRAY *array)
 {
     size_t i;

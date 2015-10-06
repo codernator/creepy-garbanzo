@@ -312,7 +312,6 @@ void boot_db()
     load_threads();
     log_string("Loading Bans..");
     load_bans();
-    log_string("Loading Songs..");
 
     log_string("BootDB: Done..");
 
@@ -460,7 +459,7 @@ void load_helps(const char const *filepath)
     FILE *fp;
     KEYVALUEPAIR_ARRAY *data;
 
-    fp = fopen(filepath, "w");
+    fp = fopen(filepath, "rb");
     if (fp == NULL) {
         log_bug("Unable to open help file %s.", filepath);
         ABORT;
@@ -471,17 +470,17 @@ void load_helps(const char const *filepath)
     while (true) {
         HELP_DATA *snarfed;
         data = database_read(fp);
-        if (data == NULL)
+        if (!keyvaluepairarray_any(data)) {
+            keyvaluepairarray_free(data);
             break;
+        }
 
         snarfed = helpdata_deserialize(data);
+        keyvaluepairarray_free(data);
 
         if (!str_cmp(snarfed->keyword, "greeting")) {
             help_greeting = snarfed->text;
         }
-
-        if (feof(fp))
-            break;
     }
 
     fclose(fp);

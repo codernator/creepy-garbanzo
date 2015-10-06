@@ -1,0 +1,21 @@
+keyword
+	motd
+text
+	Welcome.
+	
+	Press <Enter> to continue.
+#
+keyword
+	imotd
+text
+	Welcome, immortal.
+	
+	Press <Enter> to continue.
+#
+keyword
+	noobwelcome
+text
+	Greet all new-comers and offer assistance.
+#
+
+

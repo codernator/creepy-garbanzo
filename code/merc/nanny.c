@@ -2,6 +2,7 @@
 #include "recycle.h"
 #include "interp.h"
 #include "telnet.h"
+#include "help.h"
 
 #include <stdio.h>
 #include <string.h>

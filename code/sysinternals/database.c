@@ -156,7 +156,7 @@ struct keyvaluepair_array *database_read(FILE *fp)
             size_t i;
 
             i = 0;
-            c = fgetc(fp);
+            c = getc(fp);
             while (c != EOF && c != EOL) {
                 keybuf[i++] = (char)c;
                 if (i == keylen) {
@@ -168,27 +168,31 @@ struct keyvaluepair_array *database_read(FILE *fp)
                     keybuf = newkeybuf;
                     keylen = newkeylen;
                 }
-                c = fgetc(fp);
+                c = getc(fp);
             }
             keybuf[i] = '\0';
+
+            /** this was a blank line. moving along. */
+            if (keybuf[0] == '\0') {
+                if (c == EOF) { // it was blank because we are done!
+                    break;
+                } else {
+                    continue;
+                }
+            }
 
             /* The record terminator alone is not a valid key, but a valid
              * key could start with the record terminator.
              */
-            if (i == 1 && keybuf[0] == (char)TERM) {
+            if (keybuf[0] == (char)TERM && keybuf[1] == '\0') {
                 break;
             }
 
-            /** seems like a premature file closure. */
+            /** valid key, but EOF anyway? seems like a premature file closure. */
             if (c == EOF) {
                 fprintf(stderr, "Premature end of file reading key %s.", keybuf);
                 ABORT;
                 break;
-            }
-
-            /** this was a blank line. moving along. */
-            if (keybuf[0] == '\0') {
-                continue;
             }
         }
 
@@ -200,11 +204,11 @@ struct keyvaluepair_array *database_read(FILE *fp)
 
             i = 0;
             pc = EOL;
-            c = fgetc(fp);
+            c = getc(fp);
             while (c != EOF) {
                 if (pc == EOL) {
                     if (c != TAB) {
-                        /* Anything following end of line that isnt' a tab is the end of
+                        /* Anything following end of line that isn't a tab is the end of
                          * this value. It could be end-of-record or the start of a new key,
                          * so, put it back!
                          */
@@ -216,7 +220,7 @@ struct keyvaluepair_array *database_read(FILE *fp)
                     }
                     /* this is the block indent for the value. */
                     pc = c;
-                    c = fgetc(fp);
+                    c = getc(fp);
                     continue;
                 }
                 valuebuf[i++] = (char)c;
@@ -229,15 +233,11 @@ struct keyvaluepair_array *database_read(FILE *fp)
                     valuelen = newvaluelen;
                 }
                 pc = c;
-                c = fgetc(fp);
+                c = getc(fp);
             }
             valuebuf[i] = '\0';
 
             keyvaluepairarray_append(data, keybuf, valuebuf);
-
-            if (c == EOF) {
-                break;
-            }
         }
     }
 
@@ -257,17 +257,17 @@ char *read_key(FILE *fp, size_t length)
     key = calloc(sizeof(char), length+1);
     assert(key != NULL);
     p = key;
-    c = (char)fgetc(fp);
+    c = (char)getc(fp);
     while (c != '\n' && c != '\r' && c != '\0') {
         *p = c;
         p++;
-        c = (char)fgetc(fp);
+        c = (char)getc(fp);
     }
     *p = '\0';
 
     // If there is a \n\r or a \r\n, slide past the second half of it.
     if (c == '\n' || c == '\r') {
-        char t = (char)fgetc(fp);
+        char t = (char)getc(fp);
         if (((t != '\r') && (t != '\n')) || (t == c)) {
             (void)ungetc(t, fp);
         }

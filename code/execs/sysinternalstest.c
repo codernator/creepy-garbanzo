@@ -36,6 +36,8 @@ void test_database_write()
 }
 
 #define TEST_DB_FILE "database_read_test.db"
+#define TEST_HELP_FILE "../db/helps.txt"
+
 void test_database_read()
 {
     KEYVALUEPAIR_ARRAY *subject;
@@ -47,7 +49,7 @@ void test_database_read()
     keyvaluepairarray_appendf(subject, 20, "noun", "%s\n%s?\n", "world", "how goes");
     keyvaluepairarray_appendf(subject, 10, "number", "%d", 123);
 
-    db = fopen(TEST_DB_FILE, "w");
+    db = fopen(TEST_DB_FILE, "wb");
     assert(db != NULL);
     database_write(db, subject);
     (void)fclose(db);
@@ -56,7 +58,7 @@ void test_database_read()
 
 
     printf("%s.\n", "Reading data");
-    db = fopen(TEST_DB_FILE, "r");
+    db = fopen(TEST_DB_FILE, "rb");
     assert(db != NULL);
     subject = database_read(db);
     (void)fclose(db);
@@ -86,13 +88,13 @@ void test_database_read()
         free(keybuf);
         free(valbuf);
         /* Write to test file. */
-        db = fopen(TEST_DB_FILE, "w");
+        db = fopen(TEST_DB_FILE, "wb");
         assert(db != NULL);
         database_write(db, subject);
         (void)fclose(db);
         keyvaluepairarray_free(subject);
         /* Read from test file. */
-        db = fopen(TEST_DB_FILE, "r");
+        db = fopen(TEST_DB_FILE, "rb");
         assert(db != NULL);
         subject = database_read(db);
         (void)fclose(db);
@@ -104,19 +106,21 @@ void test_database_read()
 
     printf("%s.\n", "Try multi-record");
     {
-        db = fopen(TEST_DB_FILE, "w");
+        db = fopen(TEST_DB_FILE, "wb");
         assert(db != NULL);
         subject = keyvaluepairarray_create(3);
-        keyvaluepairarray_appendf(subject, 50, "key", "%s", "value1");
+        keyvaluepairarray_appendf(subject, 50, "key1", "%s", "value1-1\nvalue1-1a");
+        keyvaluepairarray_appendf(subject, 50, "key2", "%s", "value1-2");
         database_write(db, subject);
         keyvaluepairarray_free(subject);
         subject = keyvaluepairarray_create(3);
-        keyvaluepairarray_appendf(subject, 50, "key", "%s", "value2");
+        keyvaluepairarray_appendf(subject, 50, "key1", "%s", "value2-1\n\nvalue2-1a\nvalue2-1b");
+        keyvaluepairarray_appendf(subject, 50, "key2", "%s", "value2-2");
         database_write(db, subject);
         keyvaluepairarray_free(subject);
         (void)fclose(db);
 
-        db = fopen(TEST_DB_FILE, "r");
+        db = fopen(TEST_DB_FILE, "rb");
         assert(db != NULL);
         subject = database_read(db);
         database_write(stdout, subject);
@@ -127,6 +131,22 @@ void test_database_read()
         (void)fclose(db);
     }
     
+    printf("%s.\n", "Try help");
+    {
+        db = fopen(TEST_HELP_FILE, "rb");
+        assert(db != NULL);
+        while (true) {
+            subject = database_read(db);
+            if (!keyvaluepairarray_any(subject)) {
+                keyvaluepairarray_free(subject);
+                printf("%s.\n", "No more data.");
+                break;
+            }
+            database_write(stdout, subject);
+            keyvaluepairarray_free(subject);
+        }
+        (void)fclose(db);
+    }
     printf("%s.\n", "Fin");
 }
 
