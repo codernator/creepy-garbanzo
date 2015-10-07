@@ -11,6 +11,8 @@ static void test_database_write();
 static void test_database_read();
 
 
+static void dump_kvp(const KEYVALUEPAIR_ARRAY *subject);
+
 int main(/*@unused@*/int argc, /*@unused@*/char **argv)
 {
     test_keyvaluepairarray();
@@ -30,7 +32,7 @@ void test_database_write()
     keyvaluepairarray_appendf(subject, 20, "noun", "%s\n%s?\n", "world", "how goes");
     keyvaluepairarray_appendf(subject, 10, "number", "%d", 123);
 
-    database_write(stdout, subject);
+    dump_kvp(subject);
     keyvaluepairarray_free(subject);
     printf("%s\n", "complete");
 }
@@ -41,7 +43,7 @@ void test_database_write()
 void test_database_read()
 {
     KEYVALUEPAIR_ARRAY *subject;
-    FILE *db;
+    struct database_controller *db;
 
     printf("%s.\n", "Creating test data");
     subject = keyvaluepairarray_create(3);
@@ -49,21 +51,21 @@ void test_database_read()
     keyvaluepairarray_appendf(subject, 20, "noun", "%s\n%s?\n", "world", "how goes");
     keyvaluepairarray_appendf(subject, 10, "number", "%d", 123);
 
-    db = fopen(TEST_DB_FILE, "wb");
+    db = database_open(TEST_DB_FILE);
     assert(db != NULL);
     database_write(db, subject);
-    (void)fclose(db);
+    database_close(db);
     keyvaluepairarray_free(subject);
     printf("%s.\n", "Test data created");
 
 
     printf("%s.\n", "Reading data");
-    db = fopen(TEST_DB_FILE, "rb");
+    db = database_open(TEST_DB_FILE);
     assert(db != NULL);
     subject = database_read(db);
-    (void)fclose(db);
+    database_close(db);
     printf("%s.\n", "Printing data");
-    database_write(stdout, subject);
+    dump_kvp(subject);
     printf("%s.\n", "Clean up");
     keyvaluepairarray_free(subject);
 
@@ -88,16 +90,16 @@ void test_database_read()
         free(keybuf);
         free(valbuf);
         /* Write to test file. */
-        db = fopen(TEST_DB_FILE, "wb");
+        db = database_open(TEST_DB_FILE);
         assert(db != NULL);
         database_write(db, subject);
-        (void)fclose(db);
+        database_close(db);
         keyvaluepairarray_free(subject);
         /* Read from test file. */
-        db = fopen(TEST_DB_FILE, "rb");
+        db = database_open(TEST_DB_FILE);
         assert(db != NULL);
         subject = database_read(db);
-        (void)fclose(db);
+        database_close(db);
         key= subject->items[0].key;
         val= subject->items[0].value;
         printf("%d (%c %c), %d (%c %c)", (int)strlen(key), key[0], key[198], (int)strlen(val), val[0], val[2998]);
@@ -106,7 +108,7 @@ void test_database_read()
 
     printf("%s.\n", "Try multi-record");
     {
-        db = fopen(TEST_DB_FILE, "wb");
+        db = database_open(TEST_DB_FILE);
         assert(db != NULL);
         subject = keyvaluepairarray_create(3);
         keyvaluepairarray_appendf(subject, 50, "key1", "%s", "value1-1\nvalue1-1a");
@@ -118,22 +120,22 @@ void test_database_read()
         keyvaluepairarray_appendf(subject, 50, "key2", "%s", "value2-2");
         database_write(db, subject);
         keyvaluepairarray_free(subject);
-        (void)fclose(db);
+        database_close(db);
 
-        db = fopen(TEST_DB_FILE, "rb");
+        db = database_open(TEST_DB_FILE);
         assert(db != NULL);
         subject = database_read(db);
-        database_write(stdout, subject);
+        dump_kvp(subject);
         keyvaluepairarray_free(subject);
         subject = database_read(db);
-        database_write(stdout, subject);
+        dump_kvp(subject);
         keyvaluepairarray_free(subject);
-        (void)fclose(db);
+        database_close(db);
     }
     
     printf("%s.\n", "Try help");
     {
-        db = fopen(TEST_HELP_FILE, "rb");
+        db = database_open(TEST_HELP_FILE);
         assert(db != NULL);
         while (true) {
             subject = database_read(db);
@@ -142,10 +144,10 @@ void test_database_read()
                 printf("%s.\n", "No more data.");
                 break;
             }
-            database_write(stdout, subject);
+            dump_kvp(subject);
             keyvaluepairarray_free(subject);
         }
-        (void)fclose(db);
+        database_close(db);
     }
     printf("%s.\n", "Fin");
 }
@@ -213,3 +215,13 @@ void test_keyvaluepairhash()
     keyvaluepairarray_free(testdata);
     printf("%s\n", "complete");
 }
+
+static void dump_kvp(const KEYVALUEPAIR_ARRAY *data)
+{
+    size_t i;
+    for (i = 0; i < data->top; i++) {
+        printf("%s\n", data->items[i].key);
+        printf("%s\n", data->items[i].value);
+    }
+}
+

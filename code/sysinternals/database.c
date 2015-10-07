@@ -35,6 +35,30 @@ extern bool isspace(const char ch);
 }
 
 
+struct database_controller *database_open(const char const *filepath)
+{
+    struct database_controller *answer;
+
+    answer = malloc(sizeof(struct database_controller));
+    assert(answer != NULL);
+
+    answer->_cfptr = fopen(filepath, "a+b");
+    if (answer->_cfptr == NULL) {
+        free(answer);
+        return NULL;
+    }
+
+    return answer;
+}
+
+void database_close(struct database_controller *db)
+{
+    if (fclose(db->_cfptr) == EOF) {
+        ABORT;
+    }
+    db->_cfptr = NULL;
+    free(db);
+}
 
 
 /** 
@@ -61,9 +85,10 @@ extern bool isspace(const char ch);
  *   non-whitespace character.
  * - White-space in values will be preserved.
  */
-void database_write(FILE *fp, const struct keyvaluepair_array *data)
+void database_write(const struct database_controller *db, const struct keyvaluepair_array *data)
 {
     size_t i;
+    FILE *fp = db->_cfptr;
 
     /** for each key-value pair... */
     for (i = 0; i < data->top; i++) {
@@ -126,7 +151,7 @@ void database_write(FILE *fp, const struct keyvaluepair_array *data)
     (void)fputc('\n', fp);
 }
 
-struct keyvaluepair_array *database_read(FILE *fp)
+struct keyvaluepair_array *database_read(const struct database_controller *db)
 {
     const int EOL = (int)'\n';
     const int TAB = (int)'\t';
@@ -137,6 +162,7 @@ struct keyvaluepair_array *database_read(FILE *fp)
     struct keyvaluepair_array *data;
     char *keybuf;
     char *valuebuf;
+    FILE *fp = db->_cfptr;
 
     keybuf = (char *)calloc(sizeof(char), keylen);
     assert(keybuf != NULL);

@@ -451,25 +451,22 @@ void assign_area_vnum(long vnum)
     return;
 }
 
-/*
- * Snarf a help section.
- */
 void load_helps(const char const *filepath)
 {
-    FILE *fp;
     KEYVALUEPAIR_ARRAY *data;
+    struct database_controller *db;
 
-    fp = fopen(filepath, "rb");
-    if (fp == NULL) {
-        log_bug("Unable to open help file %s.", filepath);
+    db = database_open(filepath);
+
+    if (db == NULL) {
+        log_bug("Unable to open database at %s.", filepath);
         ABORT;
         return;
     }
 
-
     while (true) {
         HELP_DATA *snarfed;
-        data = database_read(fp);
+        data = database_read(db);
         if (!keyvaluepairarray_any(data)) {
             keyvaluepairarray_free(data);
             break;
@@ -483,7 +480,7 @@ void load_helps(const char const *filepath)
         }
     }
 
-    fclose(fp);
+    database_close(db);
 }
 
 

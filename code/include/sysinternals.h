@@ -144,7 +144,13 @@ void log_string(const char *fmt, ...);
 /** ~logging.c */
 
 /** database.c */
-void database_write(FILE *fp, /*@observer@*/const struct keyvaluepair_array *data);
-/*@only@*//*@notnull@*/struct keyvaluepair_array *database_read(FILE *fp);
+struct database_controller {
+    /*@shared@*/FILE *_cfptr;
+};
+
+void database_write(/*@observer@*/const struct database_controller *db, /*@observer@*/const struct keyvaluepair_array *data);
+/*@only@*//*@notnull@*/struct keyvaluepair_array *database_read(/*@observer@*/const struct database_controller *db);
+/*@only@*//*@null@*/struct database_controller *database_open(const char *const file_path);
+void database_close(/*@only@*/struct database_controller *db);
 /** ~database.c */
 
