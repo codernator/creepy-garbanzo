@@ -53,9 +53,17 @@ KEYVALUEPAIR_ARRAY *helpdata_serialize(const HELP_DATA *helpdata)
 
     answer = keyvaluepairarray_create(5);
 
-    keyvaluepairarray_append(answer, "key", helpdata->keyword);
+    keyvaluepairarray_append(answer, "keyword", helpdata->keyword);
     keyvaluepairarray_append(answer, "text", helpdata->text);
-    keyvaluepairarray_appendf(answer, 32, "level", "%d", helpdata->level);
+    if (helpdata->trust != 0) {
+        keyvaluepairarray_appendf(answer, 32, "trust", "%d", helpdata->trust);
+    }
+    if (helpdata->level != 0) {
+        keyvaluepairarray_appendf(answer, 32, "level", "%d", helpdata->level);
+    }
+    if (helpdata->category != NULL) {
+        keyvaluepairarray_append(answer, "cateogry", helpdata->category);
+    }
 
     return answer;
 }
@@ -76,8 +84,15 @@ HELP_DATA *helpdata_deserialize(const KEYVALUEPAIR_ARRAY *data)
     assert(value != NULL);
     helpdata->text = string_copy(value);
 
+    /** optional fields */
+    value = keyvaluepairarray_find(data, "trust");
+    helpdata->trust = (value != NULL) ? parse_int(value) : 0;
+
     value = keyvaluepairarray_find(data, "level");
     helpdata->level = (value != NULL) ? parse_int(value) : 0;
+
+    value = keyvaluepairarray_find(data, "category");
+    helpdata->category = (value != NULL) ? string_copy(value) : NULL;
 
     headlist_add(helpdata);
     return helpdata;
@@ -100,6 +115,10 @@ void helpdata_free(HELP_DATA *helpdata)
         free(helpdata->keyword);
     if (helpdata->text != NULL)
         free(helpdata->text);
+
+    if (helpdata->category != NULL)
+        free(helpdata->category);
+
     free(helpdata);
 }
 

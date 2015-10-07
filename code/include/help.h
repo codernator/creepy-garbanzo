@@ -6,8 +6,10 @@ struct help_data {
     /*@dependent@*//*@null@*//*@partial@*/HELP_DATA *prev;
 
     int level;
+    int trust;
     /*@owned@*/char *keyword;
     /*@owned@*/char *text;
+    /*@owned@*/char *category;
 };
 
 struct helpdata_iterator {
