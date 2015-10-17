@@ -379,7 +379,7 @@ EDIT(redit_create){
         return false;
     }
 
-    area = get_vnum_area(value);
+    area = area_getbycontainingvnum(value);
     if (!area) {
         send_to_char("REdit:  That vnum is not assigned an area.\n\r", ch);
         return false;

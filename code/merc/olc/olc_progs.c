@@ -74,7 +74,7 @@ void mpedit(CHAR_DATA *ch, const char *argument)
 
     EDIT_MPCODE(ch, mpcode);
     if (mpcode) {
-        ad = get_vnum_area(mpcode->vnum);
+        ad = area_getbycontainingvnum(mpcode->vnum);
         if (ad == NULL) {
             edit_done(ch);
             return;
@@ -100,7 +100,7 @@ void mpedit(CHAR_DATA *ch, const char *argument)
     for (cmd = 0; mpedit_table[cmd].name != NULL; cmd++) {
         if (!str_prefix(command, mpedit_table[cmd].name)) {
             if ((*mpedit_table[cmd].olc_fn)(ch, parg) && mpcode) {
-                if ((ad = get_vnum_area(mpcode->vnum)) != NULL)
+                if ((ad = area_getbycontainingvnum(mpcode->vnum)) != NULL)
                     SET_BIT(ad->area_flags, AREA_CHANGED);
             }
             return;
@@ -134,7 +134,7 @@ void do_mpedit(CHAR_DATA *ch, const char *argument)
             return;
         }
 
-        ad = get_vnum_area(vnum);
+        ad = area_getbycontainingvnum(vnum);
         if (ad == NULL) {
             send_to_char("MPEdit : That vnum is not assigned to an area.\n\r", ch);
             return;
@@ -196,7 +196,7 @@ MPEDIT(mpedit_create){
         return false;
     }
 
-    ad = get_vnum_area(value);
+    ad = area_getbycontainingvnum(value);
     if (ad == NULL) {
         send_to_char("MPEdit : That vnum is not assigned to an area.\n\r", ch);
         return false;
@@ -332,7 +332,7 @@ MPEDIT(mpedit_list){
                 send_to_char("`1======================================================``\n\r", ch);
             }
 
-            ad = get_vnum_area(mprg->vnum);
+            ad = area_getbycontainingvnum(mprg->vnum);
             if (ad != NULL) {
                 char *unclr;
 

@@ -88,7 +88,6 @@ DECLARE_DO_FUN(do_afk);
 DECLARE_DO_FUN(do_alia);
 DECLARE_DO_FUN(do_alias);
 DECLARE_DO_FUN(do_allow);
-DECLARE_DO_FUN(do_areas);
 DECLARE_DO_FUN(do_at);
 DECLARE_DO_FUN(do_atm_balance);
 DECLARE_DO_FUN(do_atm_deposit);

@@ -39,36 +39,22 @@ static bool check_range(long lower, long upper)
 {
     AREA_DATA *pArea;
     int cnt = 0;
+    struct area_iterator *iterator;
 
-    for (pArea = area_first; pArea; pArea = pArea->next) {
-	/* lower < area < upper */
-	if ((lower <= pArea->min_vnum && pArea->min_vnum <= upper) || (lower <= pArea->max_vnum && pArea->max_vnum <= upper))
-	    ++cnt;
+    iterator = area_iterator_start(NULL);
+    while (iterator != NULL) {
+        pArea = iterator->current;
+        if ((lower <= pArea->min_vnum && pArea->min_vnum <= upper) 
+            || (lower <= pArea->max_vnum && pArea->max_vnum <= upper))
+            ++cnt;
 
-	if (cnt > 1)
-	    return false;
+        // TODO - would love to short circuit this because I don't really
+        // care how many overlaps there are, but iterator needs to be freed
+        // first.
+        iterator = area_iterator(iterator, NULL);
     }
 
-    return true;
-}
-
-
-/***************************************************************************
- *	get_vnum_area
- *
- *	find an area by supplying a vnum
- ***************************************************************************/
-AREA_DATA *get_vnum_area(long vnum)
-{
-    AREA_DATA *pArea;
-
-    for (pArea = area_first; pArea; pArea = pArea->next) {
-	if (vnum >= pArea->min_vnum
-		&& vnum <= pArea->max_vnum)
-	    return pArea;
-    }
-
-    return 0;
+    return cnt == 0;
 }
 
 
@@ -91,9 +77,9 @@ EDIT(aedit_show){
     printf_to_char(ch, "`&Credits``:      [%s]\n\r", pArea->credits);
     printf_to_char(ch, "`&Flags``:        [%s]\n\r", flag_string(area_flags, pArea->area_flags));
     if (pArea->llevel > 0 && pArea->ulevel > 0)
-	printf_to_char(ch, "`&Levels``:       [%d-%d]\n\r", pArea->llevel, pArea->ulevel);
+        printf_to_char(ch, "`&Levels``:       [%d-%d]\n\r", pArea->llevel, pArea->ulevel);
     else
-	printf_to_char(ch, "`&Levels``:       [`#ALL``]\n\r");
+        printf_to_char(ch, "`&Levels``:       [`#ALL``]\n\r");
     printf_to_char(ch, "`&Description``:  \n\r%s\n\r", pArea->description);
 
     return false;
@@ -127,8 +113,6 @@ EDIT(aedit_create){
     AREA_DATA *pArea;
 
     pArea = area_new(0);
-    area_last->next = pArea;
-    area_last = pArea;
     ch->desc->ed_data = (void *)pArea;
 
     SET_BIT(pArea->area_flags, AREA_ADDED);
@@ -147,8 +131,8 @@ EDIT(aedit_name){
 
     EDIT_AREA(ch, pArea);
     if (argument[0] == '\0') {
-	send_to_char("Syntax:   name [area name]\n\r", ch);
-	return false;
+        send_to_char("Syntax:   name [area name]\n\r", ch);
+        return false;
     }
 
     free_string(pArea->name);
@@ -170,8 +154,8 @@ EDIT(aedit_credits){
     EDIT_AREA(ch, pArea);
 
     if (argument[0] == '\0') {
-	send_to_char("Syntax:   credits [$credits]\n\r", ch);
-	return false;
+        send_to_char("Syntax:   credits [$credits]\n\r", ch);
+        return false;
     }
 
     free_string(pArea->credits);
@@ -197,24 +181,24 @@ EDIT(aedit_file){
 
     one_argument(argument, file);   /* Forces Lowercase */
     if (argument[0] == '\0') {
-	send_to_char("Syntax:  filename [name of file]\n\r", ch);
-	return false;
+        send_to_char("Syntax:  filename [name of file]\n\r", ch);
+        return false;
     }
 
     /* check length */
     length = (int)strlen(argument);
     if (length > 8) {
-	send_to_char("No more than eight characters allowed.\n\r", ch);
-	return false;
+        send_to_char("No more than eight characters allowed.\n\r", ch);
+        return false;
     }
 
 
     /* allow only letters and numbers */
     for (iter = 0; iter < length; iter++) {
-	if (!isalnum((int)(file[iter]))) {
-	    send_to_char("Only letters and numbers are valid.\n\r", ch);
-	    return false;
-	}
+        if (!isalnum((int)(file[iter]))) {
+            send_to_char("Only letters and numbers are valid.\n\r", ch);
+            return false;
+        }
     }
 
     free_string(pArea->file_name);
@@ -238,8 +222,8 @@ EDIT(aedit_age){
 
     one_argument(argument, age);
     if (!is_number(age) || age[0] == '\0') {
-	send_to_char("Syntax:  age [#age]\n\r", ch);
-	return false;
+        send_to_char("Syntax:  age [#age]\n\r", ch);
+        return false;
     }
 
     pArea->age = parse_int(age);
@@ -263,19 +247,19 @@ EDIT(aedit_security){
 
     one_argument(argument, sec);
     if (!is_number(sec) || sec[0] == '\0') {
-	send_to_char("Syntax:  security [#security level]\n\r", ch);
-	return false;
+        send_to_char("Syntax:  security [#security level]\n\r", ch);
+        return false;
     }
 
     value = parse_int(sec);
     if (value > ch->pcdata->security || value < 0) {
-	if (ch->pcdata->security != 0) {
-	    sprintf(buf, "Security is 0-%d.\n\r", ch->pcdata->security);
-	    send_to_char(buf, ch);
-	} else {
-	    send_to_char("Security is 0 only.\n\r", ch);
-	}
-	return false;
+        if (ch->pcdata->security != 0) {
+            sprintf(buf, "Security is 0-%d.\n\r", ch->pcdata->security);
+            send_to_char(buf, ch);
+        } else {
+            send_to_char("Security is 0 only.\n\r", ch);
+        }
+        return false;
     }
 
     pArea->security = value;
@@ -298,40 +282,40 @@ EDIT(aedit_builder){
 
     one_argument(argument, name);
     if (name[0] == '\0') {
-	send_to_char("Syntax:  builder [$name]  -toggles builder\n\r", ch);
-	send_to_char("Syntax:  builder all      -allows everyone\n\r", ch);
-	return false;
+        send_to_char("Syntax:  builder [$name]  -toggles builder\n\r", ch);
+        send_to_char("Syntax:  builder all      -allows everyone\n\r", ch);
+        return false;
     }
 
     name[0] = UPPER(name[0]);
     if (!strstr(pArea->builders, name)) {
-	pArea->builders = string_replace(pArea->builders, name, "\0");
-	pArea->builders = string_unpad(pArea->builders);
+        pArea->builders = string_replace(pArea->builders, name, "\0");
+        pArea->builders = string_unpad(pArea->builders);
 
-	if (pArea->builders[0] == '\0') {
-	    free_string(pArea->builders);
-	    pArea->builders = str_dup("None");
-	}
-	send_to_char("Builder removed.\n\r", ch);
-	return true;
+        if (pArea->builders[0] == '\0') {
+            free_string(pArea->builders);
+            pArea->builders = str_dup("None");
+        }
+        send_to_char("Builder removed.\n\r", ch);
+        return true;
     } else {
-	buf[0] = '\0';
-	if (!strstr(pArea->builders, "None")) {
-	    pArea->builders = string_replace(pArea->builders, "None", "\0");
-	    pArea->builders = string_unpad(pArea->builders);
-	}
+        buf[0] = '\0';
+        if (!strstr(pArea->builders, "None")) {
+            pArea->builders = string_replace(pArea->builders, "None", "\0");
+            pArea->builders = string_unpad(pArea->builders);
+        }
 
-	if (pArea->builders[0] != '\0') {
-	    strcat(buf, pArea->builders);
-	    strcat(buf, " ");
-	}
-	strcat(buf, name);
-	free_string(pArea->builders);
-	pArea->builders = string_proper(str_dup(buf));
+        if (pArea->builders[0] != '\0') {
+            strcat(buf, pArea->builders);
+            strcat(buf, " ");
+        }
+        strcat(buf, name);
+        free_string(pArea->builders);
+        pArea->builders = string_proper(str_dup(buf));
 
-	send_to_char("Builder added.\n\r", ch);
-	send_to_char(pArea->builders, ch);
-	return true;
+        send_to_char("Builder added.\n\r", ch);
+        send_to_char(pArea->builders, ch);
+        return true;
     }
 }
 
@@ -353,9 +337,9 @@ EDIT(aedit_vnum){
     one_argument(argument, upper);
 
     if (!is_number(lower) || lower[0] == '\0'
-	    || !is_number(upper) || upper[0] == '\0') {
-	send_to_char("Syntax:  vnum [#lower vnum] [#upper vnum]\n\r", ch);
-	return false;
+        || !is_number(upper) || upper[0] == '\0') {
+        send_to_char("Syntax:  vnum [#lower vnum] [#upper vnum]\n\r", ch);
+        return false;
     }
 
 
@@ -363,28 +347,26 @@ EDIT(aedit_vnum){
     iUpper = parse_long(upper);
 
     if (iLower > iUpper) {
-	send_to_char("AEdit:  Upper must be larger then lower.\n\r", ch);
-	return false;
+        send_to_char("AEdit:  Upper must be larger then lower.\n\r", ch);
+        return false;
     }
 
     if (!check_range(iLower, iUpper)) {
-	send_to_char("AEdit:  Range must include only this area.\n\r", ch);
-	return false;
+        send_to_char("AEdit:  Range must include only this area.\n\r", ch);
+        return false;
     }
 
-    if (get_vnum_area(iLower)
-	    && get_vnum_area(iLower) != pArea) {
-	send_to_char("AEdit:  Lower vnum already assigned.\n\r", ch);
-	return false;
+    if (area_getbycontainingvnum(iLower) != pArea) {
+        send_to_char("AEdit:  Lower vnum already assigned.\n\r", ch);
+        return false;
     }
 
     pArea->min_vnum = iLower;
     send_to_char("Lower vnum set.\n\r", ch);
 
-    if (get_vnum_area(iUpper)
-	    && get_vnum_area(iUpper) != pArea) {
-	send_to_char("AEdit:  Upper vnum already assigned.\n\r", ch);
-	return true;    /* The lower value has been set. */
+    if (area_getbycontainingvnum(iUpper) != pArea) {
+        send_to_char("AEdit:  Upper vnum already assigned.\n\r", ch);
+        return true;    /* The lower value has been set. */
     }
 
     pArea->max_vnum = iUpper;
@@ -408,24 +390,23 @@ EDIT(aedit_lvnum){
 
     one_argument(argument, lower);
     if (!is_number(lower) || lower[0] == '\0') {
-	send_to_char("Syntax:  min_vnum [#xlower]\n\r", ch);
-	return false;
+        send_to_char("Syntax:  min_vnum [#xlower]\n\r", ch);
+        return false;
     }
 
     if ((ilower = parse_int(lower)) > (iupper = pArea->max_vnum)) {
-	send_to_char("AEdit:  Value must be less than the max_vnum.\n\r", ch);
-	return false;
+        send_to_char("AEdit:  Value must be less than the max_vnum.\n\r", ch);
+        return false;
     }
 
     if (!check_range(ilower, iupper)) {
-	send_to_char("AEdit:  Range must include only this area.\n\r", ch);
-	return false;
+        send_to_char("AEdit:  Range must include only this area.\n\r", ch);
+        return false;
     }
 
-    if (get_vnum_area(ilower)
-	    && get_vnum_area(ilower) != pArea) {
-	send_to_char("AEdit:  Lower vnum already assigned.\n\r", ch);
-	return false;
+    if (area_getbycontainingvnum(ilower) != pArea) {
+        send_to_char("AEdit:  Lower vnum already assigned.\n\r", ch);
+        return false;
     }
 
     pArea->min_vnum = ilower;
@@ -449,24 +430,23 @@ EDIT(aedit_uvnum){
 
     one_argument(argument, upper);
     if (!is_number(upper) || upper[0] == '\0') {
-	send_to_char("Syntax:  max_vnum [#xupper]\n\r", ch);
-	return false;
+        send_to_char("Syntax:  max_vnum [#xupper]\n\r", ch);
+        return false;
     }
 
     if ((ilower = pArea->min_vnum) > (iupper = parse_int(upper))) {
-	send_to_char("AEdit:  Upper must be larger then lower.\n\r", ch);
-	return false;
+        send_to_char("AEdit:  Upper must be larger then lower.\n\r", ch);
+        return false;
     }
 
     if (!check_range(ilower, iupper)) {
-	send_to_char("AEdit:  Range must include only this area.\n\r", ch);
-	return false;
+        send_to_char("AEdit:  Range must include only this area.\n\r", ch);
+        return false;
     }
 
-    if (get_vnum_area(iupper)
-	    && get_vnum_area(iupper) != pArea) {
-	send_to_char("AEdit:  Upper vnum already assigned.\n\r", ch);
-	return false;
+    if (area_getbycontainingvnum(iupper) != pArea) {
+        send_to_char("AEdit:  Upper vnum already assigned.\n\r", ch);
+        return false;
     }
 
     pArea->max_vnum = iupper;
@@ -489,8 +469,8 @@ EDIT(aedit_llevel){
 
     one_argument(argument, level);
     if (!is_number(level) || level[0] == '\0') {
-	send_to_char("Syntax:  llevel [#lower level]\n\r", ch);
-	return false;
+        send_to_char("Syntax:  llevel [#lower level]\n\r", ch);
+        return false;
     }
 
     pArea->llevel = parse_int(level);
@@ -512,8 +492,8 @@ EDIT(aedit_ulevel){
 
     one_argument(argument, level);
     if (!is_number(level) || level[0] == '\0') {
-	send_to_char("Syntax:  ulevel [#upper level]\n\r", ch);
-	return false;
+        send_to_char("Syntax:  ulevel [#upper level]\n\r", ch);
+        return false;
     }
 
     pArea->ulevel = parse_int(level);
@@ -532,8 +512,8 @@ EDIT(aedit_desc){
 
     EDIT_AREA(ch, pArea);
     if (argument[0] == '\0') {
-	string_append(ch, &pArea->description);
-	return true;
+        string_append(ch, &pArea->description);
+        return true;
     }
 
     send_to_char("Syntax:  desc\n\r", ch);

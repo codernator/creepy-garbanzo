@@ -30,7 +30,6 @@ static void show_save_help(CHAR_DATA *ch);
 
 void do_asave(CHAR_DATA *ch, const char *argument)
 {
-    AREA_DATA *area;
     char arg[MIL];
     int value;
 
@@ -47,9 +46,10 @@ void do_asave(CHAR_DATA *ch, const char *argument)
      * save the area it corresponds to
      */
     if (is_number(arg)) {
+        AREA_DATA *area;
         value = parse_int(arg);
 
-        if ((area = get_area_data(value)) == NULL) {
+        if ((area = area_getbyvnum(value)) == NULL) {
             send_to_char("That area does not exist.\n\r", ch);
             return;
         }
@@ -67,16 +67,23 @@ void do_asave(CHAR_DATA *ch, const char *argument)
 
     /* save everything */
     if (!str_cmp(arg, "world")) {
+        struct area_iterator *iterator;
+        AREA_DATA *area;
+
         save_area_list();
         save_helps(HELP_FILE);
 
-        for (area = area_first; area; area = area->next) {
+        iterator = area_iterator_start(NULL);
+        while (iterator != NULL) {
+            area = iterator->current;
             if (!IS_BUILDER(ch, area))
                 continue;
 
             save_area(area);
             REMOVE_BIT(area->area_flags, AREA_CHANGED);
+            iterator = area_iterator(iterator, NULL);
         }
+
         send_to_char("You saved the world.\n\r", ch);
         return;
     }
@@ -91,6 +98,8 @@ void do_asave(CHAR_DATA *ch, const char *argument)
     /* ------------------------------------------ */
     if (!str_cmp(arg, "changed")) {
         bool saved;
+        struct area_iterator *iterator;
+        AREA_DATA *area;
 
         save_area_list();
         save_helps(HELP_FILE);
@@ -99,7 +108,11 @@ void do_asave(CHAR_DATA *ch, const char *argument)
         log_string("Saved areas:");
 
         saved = false;
-        for (area = area_first; area; area = area->next) {
+
+        iterator = area_iterator_start(NULL);
+        while (iterator != NULL) {
+            area = iterator->current;
+
             /* Builder must be assigned this area. */
             if (!IS_BUILDER(ch, area))
             {
@@ -115,6 +128,7 @@ void do_asave(CHAR_DATA *ch, const char *argument)
 
                 REMOVE_BIT(area->area_flags, AREA_CHANGED);
             }
+            iterator = area_iterator(iterator, NULL);
         }
 
         if (!saved) {
@@ -132,6 +146,7 @@ void do_asave(CHAR_DATA *ch, const char *argument)
 
     /* save the area that is currently being edited */
     if (!str_prefix(arg, "area")) {
+        AREA_DATA *area;
         if (ch->desc->editor == ED_NONE) {
             send_to_char("You are not editing an area, therefore an area vnum is required.\n\r", ch);
             return;
@@ -180,7 +195,6 @@ void do_asave(CHAR_DATA *ch, const char *argument)
 
     /* display help */
     show_save_help(ch);
-    return;
 }
 
 
@@ -235,18 +249,23 @@ char *fwrite_flag(long flags, char buf[])
 void save_area_list()
 {
     FILE *fp;
-    AREA_DATA *area;
 
     if ((fp = fopen(AREA_LIST, "w")) == NULL) {
         log_bug("Save_area_list: fopen");
         perror("area.lst");
-    } else {
-        for (area = area_first; area; area = area->next)
-            fprintf(fp, "%s\n", area->file_name);
-
-        fprintf(fp, "$\n");
-        fclose(fp);
+        return;
     }
+
+    struct area_iterator *iterator;
+
+    iterator = area_iterator_start(NULL);
+    while (iterator != NULL) {
+        fprintf(fp, "%s\n", iterator->current->file_name);
+        iterator = area_iterator(iterator, NULL);
+    }
+
+    fprintf(fp, "$\n");
+    fclose(fp);
 }
 
 void save_mobprogs(FILE *fp, AREA_DATA *area)

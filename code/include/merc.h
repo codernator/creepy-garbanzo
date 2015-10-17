@@ -1897,14 +1897,11 @@ extern GAME_STATE globalGameState;
 /* Global Constants */
 extern char *const dir_name[];
 extern const int rev_dir[];                 /* int - ROM OLC */
-extern AREA_DATA *area_first;
-extern AREA_DATA *area_last;
 extern SHOP_DATA *shop_last;
 extern SHOP_DATA *shop_first;
 extern CHAR_DATA *char_list;
 extern MPROG_CODE *mprog_list;
 extern int top_affect;
-extern int top_area;
 extern int top_ed;
 extern int top_reset;
 extern int top_shop;
@@ -2277,12 +2274,19 @@ void printf_buf(BUFFER * buffer, char *fmt, ...);
 /* ~recycle.c */
 
 /* area.c */
-typedef struct area_filter AREA_FILTER;
-struct area_filter {
+/*@abstract@*/struct area_filter {
+    bool all;
     unsigned long vnum;
 };
 
+struct area_iterator {
+    /*@observer@*/AREA_DATA *current;
+};
+
+/*@only@*//*@null@*/struct area_iterator *area_iterator_start(/*@null@*/const struct area_filter *);
+/*@only@*//*@null@*/struct area_iterator *area_iterator(/*@only@*/struct area_iterator *, /*@null@*/const struct area_filter *);
 /*@observer@*//*@null@*/AREA_DATA *area_getbyvnum(unsigned long vnum);
+/*@observer@*//*@null@*/AREA_DATA *area_getbycontainingvnum(unsigned long vnum);
 /*@dependent@*//*@null@*/AREA_DATA *area_new(unsigned long vnum);
 /*@only@*/KEYVALUEPAIR_ARRAY *area_serialize(const AREA_DATA *areadata);
 /*@dependent@*/AREA_DATA *area_deserialize(const KEYVALUEPAIR_ARRAY *data, const char *filename);

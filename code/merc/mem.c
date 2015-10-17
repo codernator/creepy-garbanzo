@@ -24,7 +24,6 @@ void free_mprog(MPROG_LIST * mp);
 /** imports */
 extern char str_empty[1];
 extern int top_reset;
-extern int top_area;
 extern long top_exit;
 extern int top_ed;
 extern long top_room;

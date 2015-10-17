@@ -6,7 +6,6 @@ extern MOB_INDEX_DATA *mob_index_hash[MAX_KEY_HASH];
 extern long top_mob_index;
 extern int top_affect;
 extern int top_ed;
-extern AREA_DATA *area_first;
 
 
 /* macro for flag swapping */

@@ -26,29 +26,29 @@ DESCRIPTOR_DATA *descriptor_new(SOCKET descriptor)
 
     /** Default values */
     {
-	memset(d, 0, sizeof(DESCRIPTOR_DATA));
-	d->descriptor = descriptor;
-	d->connected = CON_GET_ANSI;
-	d->outsize = 2000;
-	/*@-mustfreeonly@*/ /** obviously */
-	d->outbuf = calloc(d->outsize, sizeof(char));
-	/*@+mustfreeonly@*/
+        memset(d, 0, sizeof(DESCRIPTOR_DATA));
+        d->descriptor = descriptor;
+        d->connected = CON_GET_ANSI;
+        d->outsize = 2000;
+        /*@-mustfreeonly@*/ /** obviously */
+        d->outbuf = calloc(d->outsize, sizeof(char));
+        /*@+mustfreeonly@*/
     }
 
 
     /** Place on list. */
     {
-	DESCRIPTOR_DATA *headnext;
+        DESCRIPTOR_DATA *headnext;
 
-	d->prev = &head_node;
-	headnext = head_node.next;
-	if (headnext != NULL) {
-	    assert(headnext->prev == &head_node);
-	    headnext->prev = d;
-	}
+        d->prev = &head_node;
+        headnext = head_node.next;
+        if (headnext != NULL) {
+            assert(headnext->prev == &head_node);
+            headnext->prev = d;
+        }
 
-	d->next = headnext;
-	head_node.next = d;
+        d->next = headnext;
+        head_node.next = d;
     }
 
     return d;
@@ -62,20 +62,20 @@ void descriptor_free(DESCRIPTOR_DATA *d)
 
     /** Extract from list. */
     {
-	DESCRIPTOR_DATA *prev = d->prev;
-	DESCRIPTOR_DATA *next = d->next;
+        DESCRIPTOR_DATA *prev = d->prev;
+        DESCRIPTOR_DATA *next = d->next;
 
-	assert(prev != NULL); /** because only the head node has no previous. */
-	prev->next = next;
-	if (next != NULL) {
-	    next->prev = prev;
-	}
+        assert(prev != NULL); /** because only the head node has no previous. */
+        prev->next = next;
+        if (next != NULL) {
+            next->prev = prev;
+        }
     }
 
     /** Clean up strings. */
     {
-	if (d->host != NULL) free_string(d->host);
-	if (d->outbuf != NULL) free(d->outbuf);
+        if (d->host != NULL) free_string(d->host);
+        if (d->outbuf != NULL) free(d->outbuf);
     }
 
     free(d);
@@ -91,12 +91,12 @@ DESCRIPTOR_DATA *descriptor_iterator(DESCRIPTOR_DATA *current, const DESCRIPTOR_
     DESCRIPTOR_DATA *next;
 
     if (current == NULL) {
-	return NULL;
+        return NULL;
     }
 
     next = current->next;
     while (next != NULL && !passes(next, filter)) {
-	next = next->next;
+        next = next->next;
     }
 
     return next;
@@ -107,7 +107,7 @@ int descriptor_list_count()
     DESCRIPTOR_DATA *d;
     int counter = 0;
     for (d = head_node.next; d != NULL; d = d->next)
-	counter++;
+        counter++;
     return counter;
 }
 
@@ -116,20 +116,20 @@ int descriptor_list_count()
 bool passes(DESCRIPTOR_DATA *testee, const DESCRIPTOR_ITERATOR_FILTER *filter)
 {
     if (filter->all) 
-	return true;
+        return true;
 
     /** any item flagged for deletion is invalid for any filter option other than "all" */
     if (testee->pending_delete)
-	return false;
+        return false;
 
     if (filter->descriptor > 0 && testee->descriptor != filter->descriptor)
-	return false;
+        return false;
 
     if (filter->must_playing && (testee->character == NULL || testee->connected != CON_PLAYING))
-	return false;
+        return false;
 
     if (filter->skip_character != NULL && filter->skip_character == testee->character)
-	return false;
+        return false;
 
     return true;
 }

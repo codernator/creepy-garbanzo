@@ -70,7 +70,6 @@ const struct cmd_type cmd_table[] =
 
     /*  Informational commands.  */
     { "affects",	  do_affects,      POS_DEAD,     0,	 LOG_NORMAL, 1 },
-    { "areas",	      do_areas,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
     { "bug",	      do_bug,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
     { "changes",	  do_changes,      POS_DEAD,     0,	 LOG_NORMAL, 1 },
     { "commands",	  do_commands,     POS_DEAD,     0,	 LOG_NORMAL, 1 },

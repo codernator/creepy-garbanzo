@@ -32,10 +32,7 @@ NOTE_DATA *note_free;
 /*@observer@*/const char *help_greeting;
 MOB_INDEX_DATA *mob_index_hash[MAX_KEY_HASH];
 ROOM_INDEX_DATA *room_index_hash[MAX_KEY_HASH];
-AREA_DATA *area_first;
-AREA_DATA *area_last;
 int top_affect;
-int top_area;
 int top_ed;
 long top_exit;
 long top_mob_index;
@@ -90,7 +87,7 @@ static int sAllocPerm;
 
 bool db_loading;
 static char area_file_path[MIL];
-
+static AREA_DATA *g_area_loading;
 
 /***************************************************************************
  *	local functions used in boot process
@@ -222,7 +219,7 @@ static void init_areas()
                 /** End of Area File definition. */
                 break;
             } else if (!str_cmp(word, "AREADATA")) {
-                area_last = load_area(db, area_file_name);
+                g_area_loading = load_area(db, area_file_name);
             } else if (!str_cmp(word, "MOBILES")) {
                 load_mobiles(db->_cfptr);
             } else if (!str_cmp(word, "MOBPROGS")) {
@@ -362,14 +359,14 @@ AREA_DATA *load_area(const struct database_controller *db, const char *filename)
  */
 void assign_area_vnum(long vnum)
 {
-    if (area_last->min_vnum == 0 || area_last->max_vnum == 0)
-        area_last->min_vnum = area_last->max_vnum = vnum;
+    if (g_area_loading->min_vnum == 0 || g_area_loading->max_vnum == 0)
+        g_area_loading->min_vnum = g_area_loading->max_vnum = vnum;
 
-    if (vnum != URANGE(area_last->min_vnum, vnum, area_last->max_vnum)) {
-        if (vnum < area_last->min_vnum)
-            area_last->min_vnum = vnum;
+    if (vnum != URANGE(g_area_loading->min_vnum, vnum, g_area_loading->max_vnum)) {
+        if (vnum < g_area_loading->min_vnum)
+            g_area_loading->min_vnum = vnum;
         else
-            area_last->max_vnum = vnum;
+            g_area_loading->max_vnum = vnum;
     }
 
     return;
@@ -447,7 +444,7 @@ void load_resets(FILE *fp)
     ROOM_INDEX_DATA *room_idx;
     long rVnum = -1;
 
-    if (area_last == NULL) {
+    if (g_area_loading == NULL) {
         log_bug("Load_resets: no #AREA seen yet.");
         ABORT;
     }
@@ -548,7 +545,7 @@ void load_rooms(FILE *fp)
 {
     ROOM_INDEX_DATA *room_idx;
 
-    if (area_last == NULL) {
+    if (g_area_loading == NULL) {
         bug(fp, "Load_rooms: no #AREA seen yet.");
         ABORT;
     }
@@ -581,7 +578,7 @@ void load_rooms(FILE *fp)
         room_idx->people = NULL;
         room_idx->contents = NULL;
         room_idx->extra_descr = NULL;
-        room_idx->area = area_last;
+        room_idx->area = g_area_loading;
         room_idx->vnum = vnum;
         room_idx->name = fread_string(fp);
         room_idx->description = fread_string(fp);
@@ -756,7 +753,7 @@ void load_mobiles(FILE *fp)
 {
     MOB_INDEX_DATA *mob_idx;
 
-    if (area_last == NULL) {
+    if (g_area_loading == NULL) {
         bug(fp, "Load_mobiles: no #AREA seen yet.");
         ABORT;
     }
@@ -785,7 +782,7 @@ void load_mobiles(FILE *fp)
 
         mob_idx = alloc_perm((unsigned int)sizeof(*mob_idx));
         mob_idx->vnum = vnum;
-        mob_idx->area = area_last;
+        mob_idx->area = g_area_loading;
 
         mob_idx->player_name = fread_string(fp);
         mob_idx->short_descr = fread_string(fp);
@@ -928,7 +925,7 @@ void load_objects(FILE *fp)
     OBJECTPROTOTYPE *objprototype;
     SKILL *skill;
 
-    if (area_last == NULL) {
+    if (g_area_loading == NULL) {
         log_bug("%s", "Loading objects with no area.");
         ABORT;
     }
@@ -953,7 +950,7 @@ void load_objects(FILE *fp)
         }
 
         objprototype = objectprototype_new(vnum);
-        objprototype->area = area_last;
+        objprototype->area = g_area_loading;
 
 
         objprototype->name = fread_string(fp);
@@ -1245,7 +1242,7 @@ void load_mobprogs(FILE *fp)
 {
     MPROG_CODE *pMprog;
 
-    if (area_last == NULL) {
+    if (g_area_loading == NULL) {
         bug(fp, "Load_mobprogs: no #AREA seen yet.");
         ABORT;
     }
@@ -1294,7 +1291,7 @@ void load_mobprogs_new(FILE *fp)
 {
     MPROG_CODE *mprog;
 
-    if (area_last == NULL) {
+    if (g_area_loading == NULL) {
         bug(fp, "load_mobprogs: no #AREA seen yet.");
         ABORT;
     }
@@ -1385,10 +1382,13 @@ void fix_mobprogs(void)
 
 void reset_areas()
 {
-    AREA_DATA *area;
+    struct area_iterator *iterator;
 
-    for (area = area_first; area != NULL; area = area->next)
-        reset_area(area);
+    iterator = area_iterator_start(NULL);
+    while (iterator != NULL) {
+        reset_area(iterator->current);
+        iterator = area_iterator(iterator, NULL);
+    }
 }
 
 /*
@@ -1398,33 +1398,36 @@ void area_update(void)
 {
     AREA_DATA *area;
     char buf[MSL];
+    struct area_iterator *iterator;
 
-    for (area = area_first; area != NULL; area = area->next) {
-        if (++area->age < 3)
-            continue;
+    iterator = area_iterator_start(NULL);
+    while (iterator != NULL) {
+        area = iterator->current;
 
-        /*
-         * Check age and reset.
-         * Note: Mud School resets every 3 minutes(not 15).
-         */
-        if ((!area->empty && (area->nplayer == 0 || area->age >= 15))
-            || area->age >= 31) {
-            ROOM_INDEX_DATA *room_idx;
+        if (++area->age > 3) {
+            /*
+             * Check age and reset.
+             * Note: Mud School resets every 3 minutes(not 15).
+             */
+            if ((!area->empty && (area->nplayer == 0 || area->age >= 15))
+                || area->age >= 31) {
+                ROOM_INDEX_DATA *room_idx;
 
-            reset_area(area);
-            sprintf(buf, "%s has just been reset.", area->name);
-            impnet(buf, NULL, NULL, (long)IMN_RESETS, 0, 0);
+                reset_area(area);
+                sprintf(buf, "%s has just been reset.", area->name);
+                impnet(buf, NULL, NULL, (long)IMN_RESETS, 0, 0);
 
-            area->age = (int)number_range(0, 3);
-            room_idx = get_room_index(ROOM_VNUM_SCHOOL);
-            if (room_idx != NULL && area == room_idx->area)
-                area->age = 15 - 2;
-            else if (area->nplayer == 0)
-                area->empty = true;
+                area->age = (int)number_range(0, 3);
+                room_idx = get_room_index(ROOM_VNUM_SCHOOL);
+                if (room_idx != NULL && area == room_idx->area)
+                    area->age = 15 - 2;
+                else if (area->nplayer == 0)
+                    area->empty = true;
+            }
         }
-    }
 
-    return;
+        iterator = area_iterator(iterator, NULL);
+    }
 }
 
 
@@ -2494,43 +2497,10 @@ void free_string(char *pstr)
 
 
 
-void do_areas(CHAR_DATA *ch, const char *argument)
-{
-    char buf[MAX_STRING_LENGTH];
-    AREA_DATA *area1;
-    AREA_DATA *area2;
-    int iArea;
-    int iAreaHalf;
-
-    if (argument[0] != '\0') {
-        send_to_char("No argument is used with this command.\n\r", ch);
-        return;
-    }
-
-    iAreaHalf = (top_area + 1) / 2;
-    area1 = area_first;
-    area2 = area_first;
-    for (iArea = 0; iArea < iAreaHalf; iArea++)
-        area2 = area2->next;
-
-    for (iArea = 0; iArea < iAreaHalf; iArea++) {
-        sprintf(buf, "%-39s%-39s\n\r",
-                area1->credits, (area2 != NULL) ? area2->credits : "");
-        send_to_char(buf, ch);
-        area1 = area1->next;
-        if (area2 != NULL)
-            area2 = area2->next;
-    }
-
-    return;
-}
-
-
 
 void do_memory(CHAR_DATA *ch, const char *argument)
 {
     printf_to_char(ch, "Affects %5d\n\r", top_affect);
-    printf_to_char(ch, "Areas   %5d\n\r", top_area);
     printf_to_char(ch, "ExDes   %5d\n\r", top_ed);
     printf_to_char(ch, "Exits   %5d\n\r", top_exit);
     printf_to_char(ch, "Helps   %5d\n\r", count_helps());

@@ -4,23 +4,55 @@
 #include <string.h>
 #include <stdio.h>
 
-const AREA_FILTER area_empty_filter;
+const struct area_filter area_empty_filter;
 
 static AREA_DATA head_node;
-static bool passes(AREA_DATA *testee, const AREA_FILTER *filter);
+static bool passes(AREA_DATA *testee, /*@null@*//*@partial@*/const struct area_filter *filter);
 static void headlist_add(/*@owned@*/AREA_DATA *entry);
 
+struct area_iterator *area_iterator_start(const struct area_filter *filter)
+{
+    struct area_iterator *iterator;
+    AREA_DATA *current = head_node.next;
+
+    while (current != NULL && !passes(current, filter)) {
+        current = current->next;
+    }
+
+    if (current == NULL) {
+        return NULL;
+    }
+
+    iterator = malloc(sizeof(struct area_iterator));
+    assert(iterator != NULL);
+    iterator->current = current;
+
+    return iterator;
+}
+
+struct area_iterator *area_iterator(struct area_iterator *iterator, const struct area_filter *filter)
+{
+    AREA_DATA *current = iterator->current->next;
+    while (current != NULL && !passes(current, filter)) {
+        current = current->next;
+    }
+
+    if (current == NULL) {
+        free(iterator);
+        return NULL;
+    }
+
+    iterator->current = current;
+    return iterator;
+}
 
 AREA_DATA *area_getbyvnum(unsigned long vnum)
 {
     AREA_DATA *subject;
-    AREA_FILTER vnum_filter;
-
-    vnum_filter.vnum = vnum;
 
     subject = head_node.next;
     while (subject != NULL) {
-        if (passes(subject, &vnum_filter)) {
+        if (subject->vnum == vnum) {
             return subject;
         }
         subject = subject->next;
@@ -28,7 +60,19 @@ AREA_DATA *area_getbyvnum(unsigned long vnum)
     return NULL;
 }
 
+AREA_DATA *area_getbycontainingvnum(unsigned long vnum)
+{
+    AREA_DATA *subject;
 
+    subject = head_node.next;
+    while (subject != NULL) {
+        if (subject->min_vnum <= vnum && subject->max_vnum >= vnum) {
+            return subject;
+        }
+        subject = subject->next;
+    }
+    return NULL;
+}
 
 AREA_DATA *area_new(unsigned long vnum)
 {
@@ -177,8 +221,11 @@ void headlist_add(AREA_DATA *entry)
     head_node.next = entry;
 }
 
-bool passes(AREA_DATA *testee, const AREA_FILTER *filter)
+bool passes(AREA_DATA *testee, const struct area_filter *filter)
 {
+    if (filter == NULL || filter->all) {
+        return true;
+    }
     return testee->vnum == filter->vnum;
 }
 

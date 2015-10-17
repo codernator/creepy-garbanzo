@@ -70,7 +70,7 @@ void do_medit(CHAR_DATA *ch, const char *argument)
                 return;
             }
 
-            area = get_vnum_area(value);
+            area = area_getbycontainingvnum(value);
             if (!area) {
                 send_to_char("MEdit: That vnum is not assigned an area.\n\r", ch);
                 return;
@@ -96,7 +96,7 @@ void do_medit(CHAR_DATA *ch, const char *argument)
                 return;
             }
 
-            area = get_vnum_area(value);
+            area = area_getbycontainingvnum(value);
             if (!area) {
                 send_to_char("MEdit: That vnum is not assigned an area.\n\r", ch);
                 return;
@@ -282,7 +282,7 @@ EDIT(medit_create){
         return false;
     }
 
-    area = get_vnum_area(value);
+    area = area_getbycontainingvnum(value);
     if (!area) {
         send_to_char("MEdit:  That vnum is not assigned an area.\n\r", ch);
         return false;

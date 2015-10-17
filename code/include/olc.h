@@ -75,8 +75,6 @@ enum medit_auto_config_type { mact_easy, mact_normal, mact_hard, mact_insane };
 
 
 /* utility functions */
-AREA_DATA *get_vnum_area(long vnum);
-AREA_DATA *get_area_data(long vnum);
 void add_reset(ROOM_INDEX_DATA * room, RESET_DATA * pReset, long index);
 char *mprog_type_to_name(int type);
 

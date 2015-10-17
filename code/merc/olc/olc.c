@@ -14,8 +14,6 @@ extern char *mprog_type_to_name(int type);
 /***************************************************************************
  *	local defines
  ***************************************************************************/
-AREA_DATA *get_area_data(long vnum);
-
 struct olc_help_type {
     char *		applies_to;
     char *		command;
@@ -417,27 +415,6 @@ bool show_commands(CHAR_DATA *ch, const char *argument)
 }
 
 
-
-
-
-/*****************************************************************************
- * Name:		get_area_data
- * Purpose:	Returns pointer to area with given vnum.
- * Called by:	do_aedit(olc.c).
- ****************************************************************************/
-AREA_DATA *get_area_data(long vnum)
-{
-    AREA_DATA *pArea;
-
-    for (pArea = area_first; pArea; pArea = pArea->next)
-        if (pArea->vnum == vnum)
-            return pArea;
-
-    return NULL;
-}
-
-
-
 /***************************************************************************
  * Name:		edit_done
  * Purpose:	Resets builder information on completion.
@@ -450,8 +427,6 @@ bool edit_done(CHAR_DATA *ch)
 
     return false;
 }
-
-
 
 /***************************************************************************
  *                              Interpreters.                               *
@@ -749,7 +724,7 @@ void do_aedit(CHAR_DATA *ch, const char *argument)
 
     if (is_number(arg)) {
         value = parse_int(arg);
-        if (!(pArea = get_area_data(value))) {
+        if (!(pArea = area_getbyvnum(value))) {
             send_to_char("That area vnum does not exist.\n\r", ch);
             return;
         }
@@ -1170,7 +1145,6 @@ void do_resets(CHAR_DATA *ch, const char *argument)
             }
         }
     }
-    return;
 }
 
 
@@ -1182,16 +1156,19 @@ void do_resets(CHAR_DATA *ch, const char *argument)
 void do_alist(CHAR_DATA *ch, const char *argument)
 {
     AREA_DATA *pArea;
+    struct area_iterator *iterator;
     BUFFER *buf;
 
-    if (IS_NPC(ch))
-        return;
+    DENY_NPC(ch);
 
     buf = new_buf();
     printf_buf(buf, "[%3s] [%-27s](%-5s-%5s) [%-10s] %3s [%-10s]\n\r",
                "Num", "Area Name", "lvnum", "uvnum", "Filename", "Sec", "Builders");
 
-    for (pArea = area_first; pArea; pArea = pArea->next) {
+
+    iterator = area_iterator_start(NULL);
+    while (iterator != NULL) {
+        pArea = iterator->current;
         printf_buf(buf, "[%3d] %-29.29s(%-5d-%5d) %-12.12s [%d] [%-10.10s]\n\r",
                    pArea->vnum,
                    pArea->name,
@@ -1200,11 +1177,11 @@ void do_alist(CHAR_DATA *ch, const char *argument)
                    pArea->file_name,
                    pArea->security,
                    pArea->builders);
+        iterator = area_iterator(iterator, NULL);
     }
 
     page_to_char(buf_string(buf), ch);
     free_buf(buf);
-    return;
 }
 
 

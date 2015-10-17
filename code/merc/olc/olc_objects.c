@@ -588,7 +588,7 @@ void do_oedit(CHAR_DATA *ch, const char *argument)
                 return;
             }
 
-            pArea = get_vnum_area(value);
+            pArea = area_getbycontainingvnum(value);
             if (!pArea) {
                 send_to_char("OEdit:  That vnum is not assigned an area.\n\r", ch);
                 return;
@@ -614,7 +614,7 @@ void do_oedit(CHAR_DATA *ch, const char *argument)
                 return;
             }
 
-            pArea = get_vnum_area(value);
+            pArea = area_getbycontainingvnum(value);
             if (!pArea) {
                 send_to_char("OEdit:  That vnum is not assigned an area.\n\r", ch);
                 return;
@@ -744,7 +744,7 @@ EDIT(oedit_create){
         return false;
     }
 
-    pArea = get_vnum_area(value);
+    pArea = area_getbycontainingvnum(value);
     if (!pArea) {
         send_to_char("OEdit:  That vnum is not assigned an area.\n\r", ch);
         return false;
