@@ -9,7 +9,7 @@ static void test_keyvaluepairarray();
 static void test_keyvaluepairhash();
 static void test_database_write();
 static void test_database_read();
-
+static void test_flags();
 
 static void dump_kvp(const KEYVALUEPAIR_ARRAY *subject);
 
@@ -19,6 +19,7 @@ int main(/*@unused@*/int argc, /*@unused@*/char **argv)
     test_keyvaluepairhash();
     test_database_write();
     test_database_read();
+    test_flags();
     return EXIT_SUCCESS;
 }
 
@@ -132,7 +133,7 @@ void test_database_read()
         keyvaluepairarray_free(subject);
         database_close(db);
     }
-    
+
     printf("%s.\n", "Try help");
     {
         db = database_open(TEST_HELP_FILE);
@@ -177,8 +178,8 @@ void test_keyvaluepairhash()
 
     testdata = keyvaluepairarray_create(NUMELEMENTS);
     for (idx = 0; idx < NUMELEMENTS; idx++) {
-	(void)snprintf(keybuf, 20, "key%d", idx+1);
-	keyvaluepairarray_appendf(testdata, 20, keybuf, "value %d", idx+1);
+        (void)snprintf(keybuf, 20, "key%d", idx+1);
+        keyvaluepairarray_appendf(testdata, 20, keybuf, "value %d", idx+1);
     }
 
     printf("%s\n", "Create");
@@ -193,22 +194,22 @@ void test_keyvaluepairhash()
     answer = keyvaluepairhash_get(subject, keybuf);
     assert(answer != NULL);
     {
-	char valuebuf[20];
-	(void)snprintf(valuebuf, 20, "value %d", NUMELEMENTS);
-	assert(strncmp(answer, valuebuf, 20) == 0);
+        char valuebuf[20];
+        (void)snprintf(valuebuf, 20, "value %d", NUMELEMENTS);
+        assert(strncmp(answer, valuebuf, 20) == 0);
     }
 
     printf("%s\n", "Dump");
     {
-	size_t max = 0;
-	for (idx = 0; idx < subject->numhashbuckets; idx++) {
-	    KEYVALUEPAIR_HASHNODE *node = &subject->lookup[idx];
-	    if (node->top > 0) {
-		if (node->top > max) max = node->top;
-		printf("%d, %d, %d\n", idx, (int)node->size, (int)node->top);
-	    }
-	}
-	printf("Max occurrences %d, Max elements %d\n", (int)max, (int)subject->lookup[0].size);
+        size_t max = 0;
+        for (idx = 0; idx < subject->numhashbuckets; idx++) {
+            KEYVALUEPAIR_HASHNODE *node = &subject->lookup[idx];
+            if (node->top > 0) {
+                if (node->top > max) max = node->top;
+                printf("%d, %d, %d\n", idx, (int)node->size, (int)node->top);
+            }
+        }
+        printf("Max occurrences %d, Max elements %d\n", (int)max, (int)subject->lookup[0].size);
     }
 
     keyvaluepairhash_free(subject);
@@ -216,7 +217,7 @@ void test_keyvaluepairhash()
     printf("%s\n", "complete");
 }
 
-static void dump_kvp(const KEYVALUEPAIR_ARRAY *data)
+void dump_kvp(const KEYVALUEPAIR_ARRAY *data)
 {
     size_t i;
     for (i = 0; i < data->top; i++) {
@@ -225,3 +226,20 @@ static void dump_kvp(const KEYVALUEPAIR_ARRAY *data)
     }
 }
 
+void test_flags()
+{
+    unsigned long flag = 0xFFFFFFFF;
+    char *flags;
+
+    flags = flag_to_string(flag);
+    printf("Flags: %s\n", flags);
+    free(flags);
+
+
+    flag = 0xFFFFFFFF;
+    flags = flag_to_string(flag);
+    printf("Flags: %lu %s\n", flag, flags);
+    flag = flag_from_string(flags);
+    printf("Flags: %lu %s\n", flag, flags);
+    free(flags);
+}

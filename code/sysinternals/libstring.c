@@ -216,3 +216,52 @@ unsigned long parse_unsigned_long(const char *string)
     return UMAX(0, (unsigned long)atoll(string));
 }
 
+#define ZminusA  ((unsigned long)('Z' - 'A'))
+/*@only@*/char *flag_to_string(unsigned long flag)
+{
+    unsigned long offset;
+    char *cp;
+    char *buf;
+    
+    buf = calloc(sizeof(char), 33);
+    assert(buf != NULL);
+    memset(buf, 0, sizeof(char) * 33);
+    if (flag == 0) {
+        return buf;
+    }
+
+    for (offset = 0, cp = buf; offset < 32; offset++) {
+        if ((flag & (1ul << offset)) > 0) {
+            if (offset <= ZminusA) {
+                *(cp++) = 'A' + (char)(offset);
+            } else {
+                *(cp++) = 'a' + (char)(offset - ZminusA - 1);
+            }
+        }
+    }
+
+    *cp = '\0';
+
+    return buf;
+}
+
+unsigned long flag_from_string(const char *flagstring)
+{
+    char p;
+    int i = 0;
+    unsigned long flag = 0;
+    unsigned long offset;
+
+    for (;;) {
+        p = flagstring[i++];
+        if (p == '\0') break;
+        if (p >= 'a') {
+            offset = (unsigned long)(p - 'a') + ZminusA + 1;
+        } else {
+            offset = (unsigned long)(p - 'A');
+        }
+        flag |= (1ul << offset);
+    }
+
+    return flag;
+}

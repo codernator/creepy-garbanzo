@@ -127,6 +127,9 @@ int parse_int(const char *string);
 long parse_long(const char *string);
 unsigned int parse_unsigned_int(const char *string);
 unsigned long parse_unsigned_long(const char *string);
+
+/*@only@*/char *flag_to_string(unsigned long flag);
+unsigned long flag_from_string(const char *flagstring);
 /** ~libstrings.c */
 
 /** logging.c */

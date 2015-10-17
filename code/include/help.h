@@ -7,9 +7,9 @@ struct help_data {
 
     int level;
     int trust;
-    /*@owned@*/char *keyword;
-    /*@owned@*/char *text;
-    /*@owned@*/char *category;
+    /*@only@*/char *keyword;
+    /*@only@*/char *text;
+    /*@only@*/char *category;
 };
 
 struct helpdata_iterator {

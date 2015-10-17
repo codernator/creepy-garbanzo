@@ -308,9 +308,6 @@ void free_mob_index(MOB_INDEX_DATA * pMob);
 /* extra descriptions */
 extern EXTRA_DESCR_DATA *new_extra_descr(void);
 extern void free_extra_descr(EXTRA_DESCR_DATA * pExtra);
-/* area data */
-AREA_DATA *new_area(void);
-void free_area(AREA_DATA * pArea);
 /* reset data */
 RESET_DATA *new_reset_data(void);
 void free_reset_data(RESET_DATA * pReset);

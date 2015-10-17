@@ -12,7 +12,7 @@ _INCLUDES=merc.h sysinternals.h
 DEPS=$(patsubst %,$(IDIR)/%,$(_INCLUDES)) $(SYSINTERNALS)
 MERC=$(BDIR)/merc.a
 _OBJ=act_comm.o act_combat.o act_enter.o act_info.o act_move.o act_obj.o act_wiz.o \
-     act.o affects.o alias.o at.o auction.o \
+     act.o affects.o alias.o area.o at.o auction.o \
      ban.o bank.o bit.o \
      channels.o character.o character_service.o combat_roll.o comm.o const.o copyover.o \
      db.o descriptor.o \
@@ -43,7 +43,7 @@ SYSINTERNALS=$(BDIR)/sysinternals.a
 all: $(MERC)
 
 prebuild:
-	splint -DLINUX -I$(IDIR) -exportlocal objectprototype.c descriptor.c object.c help.c
+	splint -DLINUX -I$(IDIR) -exportlocal objectprototype.c descriptor.c object.c help.c area.c
 
 $(SYSINTERNALS):
 	cd ../sysinternals && $(MAKE)

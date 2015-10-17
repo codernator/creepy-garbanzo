@@ -90,7 +90,6 @@ EDIT(aedit_show){
     printf_to_char(ch, "`&Builders``:     [%s]\n\r", pArea->builders);
     printf_to_char(ch, "`&Credits``:      [%s]\n\r", pArea->credits);
     printf_to_char(ch, "`&Flags``:        [%s]\n\r", flag_string(area_flags, pArea->area_flags));
-    printf_to_char(ch, "`&Complete``:     [%s]\n\r", (pArea->complete) ? "true" : "false");
     if (pArea->llevel > 0 && pArea->ulevel > 0)
 	printf_to_char(ch, "`&Levels``:       [%d-%d]\n\r", pArea->llevel, pArea->ulevel);
     else
@@ -127,7 +126,7 @@ EDIT(aedit_reset){
 EDIT(aedit_create){
     AREA_DATA *pArea;
 
-    pArea = new_area();
+    pArea = area_new(0);
     area_last->next = pArea;
     area_last = pArea;
     ch->desc->ed_data = (void *)pArea;
@@ -179,33 +178,6 @@ EDIT(aedit_credits){
     pArea->credits = str_dup(argument);
 
     send_to_char("Credits set.\n\r", ch);
-    return true;
-}
-
-
-/***************************************************************************
- *	aedit_complete
- *
- *	toggle the complete flag for an area - can only be set
- *	by an implementor
- ***************************************************************************/
-EDIT(aedit_complete){
-    AREA_DATA *pArea;
-
-    if (get_trust(ch) < MAX_LEVEL) {
-	send_to_char("Only an implementor can set the complete flag.\n\r", ch);
-	return false;
-    }
-
-    EDIT_AREA(ch, pArea);
-    if (pArea->complete) {
-	pArea->complete = false;
-	send_to_char("Area set to incomplete.\n\r", ch);
-    } else {
-	pArea->complete = true;
-	send_to_char("Area set to complete.\n\r", ch);
-    }
-
     return true;
 }
 

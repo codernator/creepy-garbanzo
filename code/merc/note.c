@@ -50,7 +50,6 @@
  *	globals
  ***************************************************************************/
 extern int _filbuf(FILE *);
-extern FILE *fp_area;
 extern char area_file[MIL];
 extern void string_append(CHAR_DATA * ch, char **string);
 

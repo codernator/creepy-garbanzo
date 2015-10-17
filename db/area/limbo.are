@@ -1,14 +1,19 @@
 #AREADATA
-Name Limbo~
-Builders None~
-VNUMs 1 38
-Credits `#[`&  NONE   `#]``  Diku    Limbo~
-Security 9
-Complete 1
-Llevel 0
-Ulevel 0
-Description ~
-End
+vnum
+    1
+name
+	Limbo
+builders
+	Codernator
+minvnum
+	1 
+maxvnum
+	38
+credits 
+	`#[`&  NONE   `#]``  Diku    Limbo
+security
+	9
+#
 
 #MOBILES
 #0

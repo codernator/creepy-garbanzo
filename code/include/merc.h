@@ -1603,37 +1603,31 @@ struct reset_data {
 };
 
 
-/***************************************************************************
- * area_data* definition of an area
- ***************************************************************************/
 struct area_data {
-    AREA_DATA * next;
-    RESET_DATA * reset_first;
-    RESET_DATA * reset_last;
-    char *  file_name;
-    char *  name;
-    char *  credits;
-    int  age;
-    int  nplayer;
-    int  llevel;
-    int  ulevel;
-    long  min_vnum;
-    long  max_vnum;
-    long  vnum;
-    bool  empty;
-    char *  builders;               /* Listing of */
-    int  area_flags;
-    int  security;               /* Value 1-9  */
-    bool  complete;
-    char *  description;
+    /*@owned@*//*@null@*//*@partial@*/AREA_DATA *next;
+    /*@dependent@*//*@null@*//*@partial@*/AREA_DATA *prev;
+
+    unsigned long vnum;
+    /*@only@*/char *file_name;
+    /*@only@*/char *name;
+    /*@only@*/char *description;
+    /*@only@*/char *credits;
+    /*@only@*/char *builders;
+    unsigned long area_flags;
+    unsigned long min_vnum;
+    unsigned long max_vnum;
+    unsigned int llevel;
+    unsigned int ulevel;
+    unsigned int security;
+
+    /*@owned@*//*@null@*//*@partial@*/RESET_DATA *reset_first;
+    /*@owned@*//*@null@*//*@partial@*/RESET_DATA *reset_last;
+    int age;
+    int nplayer;
+    bool empty;
 };
 
 
-/***************************************************************************
- * room_index_data
- *
- * definition of a room
- ***************************************************************************/
 struct room_index_data {
     ROOM_INDEX_DATA * next;
     CHAR_DATA *  people;
@@ -2272,7 +2266,7 @@ int objectprototype_list_count();
 /*@dependent@*/OBJECTPROTOTYPE *objectprototype_deserialize(const KEYVALUEPAIR_ARRAY *data);
 /* ~objectprototype.c */
 
-/* recycle.h */
+/* recycle.c */
 BUFFER * new_buf(void);
 BUFFER *new_buf_size(int size);
 void free_buf(/*@owned@*/BUFFER * buffer);
@@ -2280,6 +2274,19 @@ void clear_buf(BUFFER * buffer);
 bool add_buf(BUFFER *buffer, const char *string);
 /*@observer@*/char *buf_string(/*@observer@*/BUFFER * buffer);
 void printf_buf(BUFFER * buffer, char *fmt, ...);
-/* ~recycle.h */
+/* ~recycle.c */
+
+/* area.c */
+typedef struct area_filter AREA_FILTER;
+struct area_filter {
+    unsigned long vnum;
+};
+
+/*@observer@*//*@null@*/AREA_DATA *area_getbyvnum(unsigned long vnum);
+/*@dependent@*//*@null@*/AREA_DATA *area_new(unsigned long vnum);
+/*@only@*/KEYVALUEPAIR_ARRAY *area_serialize(const AREA_DATA *areadata);
+/*@dependent@*/AREA_DATA *area_deserialize(const KEYVALUEPAIR_ARRAY *data, const char *filename);
+void area_free(/*@owned@*/AREA_DATA *areadata);
+/* ~area.c */
 
 #endif  /* __MERC_H */

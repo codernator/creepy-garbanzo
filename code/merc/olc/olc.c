@@ -54,7 +54,6 @@ static const struct olc_cmd_type aedit_table[] =
     { "lvnum",	 aedit_lvnum	},
     { "uvnum",	 aedit_uvnum	},
     { "credits",	 aedit_credits	},
-    { "complete",	 aedit_complete },
     { "llevel",	 aedit_llevel	},
     { "ulevel",	 aedit_ulevel	},
     { "description", aedit_desc	},

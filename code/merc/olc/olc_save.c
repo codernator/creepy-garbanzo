@@ -765,11 +765,11 @@ void save_shops(FILE *fp, AREA_DATA *area)
 
 void save_helps(const char const *filename)
 {
-    FILE *fp;
+    struct database_controller *db;
     struct helpdata_iterator *iterator;
 
-    fp = fopen(filename, "w");
-    if (fp == NULL) {
+    db = database_open(filename);
+    if (db == NULL) {
         log_bug("Unable to open help file %s", filename);
         perror(filename);
         return;
@@ -779,49 +779,45 @@ void save_helps(const char const *filename)
     while (iterator != NULL) {
         HELP_DATA *current = iterator->current;
         KEYVALUEPAIR_ARRAY *data = helpdata_serialize(current);
-        database_write(fp, data);
+        database_write(db, data);
         free(data);
         iterator = helpdata_iteratornext(iterator);
     }
 
-    fclose(fp);
+    database_close(db);
 }
 
 void save_area(AREA_DATA *area)
 {
     FILE *fp;
+    KEYVALUEPAIR_ARRAY *serialized;
     char haf[MIL];
+    struct database_controller *db;
 
     snprintf(haf, MIL, "%s%s", AREA_FOLDER, area->file_name);
+    db = database_open(haf);
 
-    if (!(fp = fopen(haf, "w"))) {
+    if (db == NULL) {
         log_bug("Open_area: fopen");
         perror(haf);
         return;
     }
 
-    fprintf(fp, "#AREADATA\n");
-    fprintf(fp, "Name %s~\n", area->name);
-    fprintf(fp, "Builders %s~\n", fix_string(area->builders));
-    fprintf(fp, "VNUMs %ld %ld\n", area->min_vnum, area->max_vnum);
-    fprintf(fp, "Credits %s~\n", area->credits);
-    fprintf(fp, "Security %d\n", area->security);
-    fprintf(fp, "Complete %d\n", (int)area->complete);
-    fprintf(fp, "Llevel %d\n", area->llevel);
-    fprintf(fp, "Ulevel %d\n", area->ulevel);
-    fprintf(fp, "Description %s~\n", area->description);
-    fprintf(fp, "End\n\n\n\n");
+    fprintf(db->_cfptr, "#AREADATA\n");
+    serialized = area_serialize(area);
+    database_write(db, serialized);
+    keyvaluepairarray_free(serialized);
 
-    save_mobiles(fp, area);
-    save_objects(fp, area);
-    save_rooms(fp, area);
-    save_mobprogs(fp, area);
-    save_resets(fp, area);
-    save_shops(fp, area);
+    save_mobiles(db->_cfptr, area);
+    save_objects(db->_cfptr, area);
+    save_rooms(db->_cfptr, area);
+    save_mobprogs(db->_cfptr, area);
+    save_resets(db->_cfptr, area);
+    save_shops(db->_cfptr, area);
 
     fprintf(fp, "#$\n");
 
-    fclose(fp);
+    database_close(db);
 }
 
 void show_save_help(CHAR_DATA *ch)

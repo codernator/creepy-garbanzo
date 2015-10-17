@@ -33,7 +33,6 @@ extern int top_mprog_index;
 
 
 /** locals */
-static AREA_DATA *area_free;
 static EXIT_DATA *exit_free;
 static ROOM_INDEX_DATA *room_index_free;
 static SHOP_DATA *shop_free;
@@ -47,11 +46,11 @@ RESET_DATA *new_reset_data(void)
     RESET_DATA *reset;
 
     if (!reset_free) {
-	reset = alloc_perm((unsigned int)sizeof(*reset));
-	top_reset++;
+        reset = alloc_perm((unsigned int)sizeof(*reset));
+        top_reset++;
     } else {
-	reset = reset_free;
-	reset_free = reset_free->next;
+        reset = reset_free;
+        reset_free = reset_free->next;
     }
 
     reset->next = NULL;
@@ -75,52 +74,6 @@ void free_reset_data(RESET_DATA *reset)
 
 
 
-AREA_DATA *new_area(void)
-{
-    AREA_DATA *pArea;
-    char buf[MIL];
-
-    if (!area_free) {
-	pArea = alloc_perm((unsigned int)sizeof(*pArea));
-	top_area++;
-    } else {
-	pArea = area_free;
-	area_free = area_free->next;
-    }
-
-    pArea->next = NULL;
-    pArea->name = str_dup("New area");
-    pArea->area_flags = AREA_ADDED;
-    pArea->security = 1;
-    pArea->builders = str_dup("None");
-    pArea->min_vnum = 0;
-    pArea->max_vnum = 0;
-    pArea->age = 0;
-    pArea->nplayer = 0;
-    pArea->empty = true;
-
-    pArea->vnum = top_area - 1;
-
-    sprintf(buf, "area%ld.are", pArea->vnum);
-    pArea->file_name = str_dup(buf);
-
-    return pArea;
-}
-
-
-
-void free_area(AREA_DATA *pArea)
-{
-    free_string(pArea->name);
-    free_string(pArea->file_name);
-    free_string(pArea->builders);
-    free_string(pArea->credits);
-
-    pArea->next = area_free->next;
-    area_free = pArea;
-    return;
-}
-
 
 
 EXIT_DATA *new_exit(void)
@@ -128,11 +81,11 @@ EXIT_DATA *new_exit(void)
     EXIT_DATA *exit;
 
     if (!exit_free) {
-	exit = alloc_perm((unsigned int)sizeof(*exit));
-	top_exit++;
+        exit = alloc_perm((unsigned int)sizeof(*exit));
+        top_exit++;
     } else {
-	exit = exit_free;
-	exit_free = exit_free->next;
+        exit = exit_free;
+        exit_free = exit_free->next;
     }
 
     exit->u1.to_room = NULL;                  /* ROM OLC */
@@ -166,11 +119,11 @@ ROOM_INDEX_DATA *new_room_index(void)
     int door;
 
     if (!room_index_free) {
-	room = alloc_perm((unsigned int)sizeof(*room));
-	top_room++;
+        room = alloc_perm((unsigned int)sizeof(*room));
+        top_room++;
     } else {
-	room = room_index_free;
-	room_index_free = room_index_free->next;
+        room = room_index_free;
+        room_index_free = room_index_free->next;
     }
 
     room->next = NULL;
@@ -181,7 +134,7 @@ ROOM_INDEX_DATA *new_room_index(void)
     room->affected = NULL;
 
     for (door = 0; door < MAX_DIR; door++)
-	room->exit[door] = NULL;
+        room->exit[door] = NULL;
 
     room->name = &str_empty[0];
     room->description = &str_empty[0];
@@ -209,14 +162,14 @@ void free_room_index(ROOM_INDEX_DATA *room)
     free_string(room->owner);
 
     for (door = 0; door < MAX_DIR; door++)
-	if (room->exit[door])
-	    free_exit(room->exit[door]);
+        if (room->exit[door])
+            free_exit(room->exit[door]);
 
     for (extra = room->extra_descr; extra; extra = extra->next)
-	free_extra_descr(extra);
+        free_extra_descr(extra);
 
     for (reset = room->reset_first; reset; reset = reset->next)
-	free_reset_data(reset);
+        free_reset_data(reset);
 
     room->next = room_index_free;
     room_index_free = room;
@@ -232,18 +185,18 @@ SHOP_DATA *new_shop(void)
     int buy;
 
     if (!shop_free) {
-	shop = alloc_perm((unsigned int)sizeof(*shop));
-	top_shop++;
+        shop = alloc_perm((unsigned int)sizeof(*shop));
+        top_shop++;
     } else {
-	shop = shop_free;
-	shop_free = shop_free->next;
+        shop = shop_free;
+        shop_free = shop_free->next;
     }
 
     shop->next = NULL;
     shop->keeper = 0;
 
     for (buy = 0; buy < MAX_TRADE; buy++)
-	shop->buy_type[buy] = 0;
+        shop->buy_type[buy] = 0;
 
     shop->profit_buy = 100;
     shop->profit_sell = 100;
@@ -269,11 +222,11 @@ MOB_INDEX_DATA *new_mob_index(void)
     MOB_INDEX_DATA *mob;
 
     if (!mob_index_free) {
-	mob = alloc_perm((unsigned int)sizeof(*mob));
-	top_mob_index++;
+        mob = alloc_perm((unsigned int)sizeof(*mob));
+        top_mob_index++;
     } else {
-	mob = mob_index_free;
-	mob_index_free = mob_index_free->next;
+        mob = mob_index_free;
+        mob_index_free = mob_index_free->next;
     }
 
     mob->next = NULL;
@@ -346,11 +299,11 @@ MPROG_CODE *new_mpcode(void)
     MPROG_CODE *mpcode;
 
     if (!mpcode_free) {
-	mpcode = alloc_perm((unsigned int)sizeof(*mpcode));
-	top_mprog_index++;
+        mpcode = alloc_perm((unsigned int)sizeof(*mpcode));
+        top_mprog_index++;
     } else {
-	mpcode = mpcode_free;
-	mpcode_free = mpcode_free->next;
+        mpcode = mpcode_free;
+        mpcode_free = mpcode_free->next;
     }
 
     mpcode->vnum = 0;
