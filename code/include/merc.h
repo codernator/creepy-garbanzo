@@ -256,7 +256,7 @@ struct descriptor_data {
     bool ready_input;
     bool ready_output;
     bool ready_exceptional;
-    /*@shared@*//*@null@*/char *host;
+    /*@only@*//*@null@*/char *host;
     SOCKET descriptor;
 
 
@@ -2238,11 +2238,12 @@ struct descriptor_iterator_filter {
 };
 extern const DESCRIPTOR_ITERATOR_FILTER descriptor_empty_filter;
 
-/*@dependent@*/DESCRIPTOR_DATA * descriptor_new(SOCKET descriptor);
-void descriptor_free(/*@owned@*/DESCRIPTOR_DATA * d);
+/*@dependent@*/struct descriptor_data * descriptor_new(SOCKET descriptor);
+void descriptor_free(/*@owned@*/struct descriptor_data * d);
 int descriptor_list_count();
-/*@dependent@*//*@null@*/DESCRIPTOR_DATA *descriptor_iterator_start(const DESCRIPTOR_ITERATOR_FILTER *filter);
-/*@dependent@*//*@null@*/DESCRIPTOR_DATA *descriptor_iterator(DESCRIPTOR_DATA *current, const DESCRIPTOR_ITERATOR_FILTER *filter);
+/*@dependent@*//*@null@*/struct descriptor_data *descriptor_iterator_start(const DESCRIPTOR_ITERATOR_FILTER *filter);
+/*@dependent@*//*@null@*/struct descriptor_data *descriptor_iterator(struct descriptor_data *current, const DESCRIPTOR_ITERATOR_FILTER *filter);
+void descriptor_host_set(struct descriptor_data *d, const char *value);
 /* ~descriptor.c */
 
 
