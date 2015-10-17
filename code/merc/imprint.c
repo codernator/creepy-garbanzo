@@ -28,9 +28,9 @@ static void spell_imprint(SKILL *skill, int level, CHAR_DATA *ch, void *vo)
     LEVEL_INFO *level_info;
     LEARNED *learned;
     SKILL *skill_retro;
-    char buf[MSL];
-    char short_descr[MSL];
-    char name[MSL];
+    char buf[MAX_STRING_LENGTH];
+    char short_descr[MAX_STRING_LENGTH];
+    char name[MAX_STRING_LENGTH];
     int sp_slot;
     int iter;
     int mana;
@@ -154,7 +154,7 @@ void do_brew(CHAR_DATA *ch, const char *argument)
     SKILL *skill;
     LEARNED *learned_brew;
     LEARNED *learned_spell;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int slots;
     int modifier;
     int chance;
@@ -282,7 +282,7 @@ void do_scribe(CHAR_DATA *ch, const char *argument)
     SKILL *skill;
     LEARNED *learned_scribe;
     LEARNED *learned_spell;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int slots;
     int modifier;
     int chance;

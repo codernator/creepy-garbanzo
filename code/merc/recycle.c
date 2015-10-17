@@ -609,7 +609,7 @@ bool add_buf(BUFFER *buffer, const char *string)
  ***************************************************************************/
 void printf_buf(BUFFER *buffer, char *fmt, ...)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     va_list args;
 
     va_start(args, fmt);

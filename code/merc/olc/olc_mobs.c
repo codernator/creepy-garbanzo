@@ -41,7 +41,7 @@ void do_medit(CHAR_DATA *ch, const char *argument)
     MOB_INDEX_DATA *mob_idx;
     AREA_DATA *area;
     long value;
-    char arg[MSL];
+    char arg[MAX_STRING_LENGTH];
 
     DENY_NPC(ch);
 
@@ -451,7 +451,7 @@ EDIT(medit_desc){
  *****************************************************************************/
 EDIT(medit_long){
     MOB_INDEX_DATA *mob_idx;
-    static char buf[MSL];
+    static char buf[MAX_STRING_LENGTH];
 
     EDIT_MOB(ch, mob_idx);
     if (argument[0] == '\0') {
@@ -461,7 +461,7 @@ EDIT(medit_long){
 
     free_string(mob_idx->long_descr);
 
-    (void)snprintf(buf, UMIN(strlen(argument), MSL), "%s\n\r", argument);
+    (void)snprintf(buf, UMIN(strlen(argument), MAX_STRING_LENGTH), "%s\n\r", argument);
     smash_tilde(buf);
     buf[0] = UPPER(buf[0]);
 
@@ -523,8 +523,8 @@ EDIT(medit_name){
  *****************************************************************************/
 EDIT(medit_shop){
     MOB_INDEX_DATA *mob_idx;
-    char command[MIL];
-    char arg[MIL];
+    char command[MAX_INPUT_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
 
     EDIT_MOB(ch, mob_idx);
     argument = one_argument(argument, command);
@@ -753,7 +753,7 @@ EDIT(medit_affect){
  ***************************************************************************/
 EDIT(medit_ac){
     MOB_INDEX_DATA *mob_idx;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     long pierce;
     long bash;
     long slash;
@@ -1021,14 +1021,14 @@ EDIT(medit_hitdice){
         return ShowMEditHitdiceSyntax(ch);
 
     if (isdigit((int)argument[0])) {
-        static char buf[MIL];
+        static char buf[MAX_INPUT_LENGTH];
         const char *num;
         const char *type;
         const char *bonus;
         char *cp;
 
         /* number of dice is the first argument */
-        strncpy(buf, argument, UMIN(strlen(argument), MIL));
+        strncpy(buf, argument, UMIN(strlen(argument), MAX_INPUT_LENGTH));
         num = cp = buf;
         while (isdigit((int)*cp))
             ++cp;
@@ -1062,7 +1062,7 @@ EDIT(medit_hitdice){
         send_to_char("Hitdice set.\n\r", ch);
         return true;
     } else {
-        char arg[MIL];
+        char arg[MAX_INPUT_LENGTH];
         enum medit_auto_config_type auto_config_type = mact_easy;
 
         argument = one_argument(argument, arg);
@@ -1103,7 +1103,7 @@ EDIT(medit_hitdice){
  ***************************************************************************/
 EDIT(medit_manadice){
     MOB_INDEX_DATA *mob_idx;
-    static char buf[MIL];
+    static char buf[MAX_INPUT_LENGTH];
     const char *num;
     const char *type;
     const char *bonus;
@@ -1116,7 +1116,7 @@ EDIT(medit_manadice){
     }
 
     /* num is the first argument */
-    strncpy(buf, argument, UMIN(strlen(argument), MIL));
+    strncpy(buf, argument, UMIN(strlen(argument), MAX_INPUT_LENGTH));
     num = cp = buf;
     while (isdigit((int)*cp))
         ++cp;
@@ -1167,7 +1167,7 @@ EDIT(medit_manadice){
  ***************************************************************************/
 EDIT(medit_damdice){
     MOB_INDEX_DATA *mob_idx;
-    static char buf[MIL];
+    static char buf[MAX_INPUT_LENGTH];
     const char *num;
     const char *type;
     const char *bonus;
@@ -1179,7 +1179,7 @@ EDIT(medit_damdice){
         return false;
     }
 
-    strncpy(buf, argument, UMIN(strlen(argument), MIL));
+    strncpy(buf, argument, UMIN(strlen(argument), MAX_INPUT_LENGTH));
     /* num is the first argument */
     num = cp = buf;
     while (isdigit((int)*cp))
@@ -1273,7 +1273,7 @@ EDIT(medit_race){
  ***************************************************************************/
 EDIT(medit_position){
     MOB_INDEX_DATA *mob_idx;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int value;
 
     EDIT_MOB(ch, mob_idx);
@@ -1361,8 +1361,8 @@ EDIT(medit_group){
     MOB_INDEX_DATA *mob_idx;
     MOB_INDEX_DATA *pMTemp;
     BUFFER *buffer;
-    char arg[MSL];
-    char buf[MSL];
+    char arg[MAX_STRING_LENGTH];
+    char buf[MAX_STRING_LENGTH];
     int temp;
     bool found = false;
 
@@ -1419,9 +1419,9 @@ EDIT(medit_addmprog){
     MOB_INDEX_DATA *mob_idx;
     MPROG_LIST *list;
     MPROG_CODE *code;
-    char trigger[MSL];
-    char phrase[MSL];
-    char num[MSL];
+    char trigger[MAX_STRING_LENGTH];
+    char phrase[MAX_STRING_LENGTH];
+    char num[MAX_STRING_LENGTH];
     int value;
 
     EDIT_MOB(ch, mob_idx);
@@ -1469,7 +1469,7 @@ EDIT(medit_delmprog){
     MOB_INDEX_DATA *mob_idx;
     MPROG_LIST *list;
     MPROG_LIST *list_next;
-    char mprog[MSL];
+    char mprog[MAX_STRING_LENGTH];
     int value;
     int cnt = 0;
 

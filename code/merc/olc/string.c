@@ -70,7 +70,7 @@ void string_append(CHAR_DATA *ch, char **string)
  ***************************************************************************/
 char *string_replace(char *orig, char *find, char *replace)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     int len;
 
     smash_tilde(replace);
@@ -101,7 +101,7 @@ char *string_replace(char *orig, char *find, char *replace)
  ***************************************************************************/
 void string_add(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     bool done = false;
 
     /* this is entirely on drugs - the original string editor
@@ -111,7 +111,7 @@ void string_add(CHAR_DATA *ch, const char *argument)
      * to exit the editor */
 
     if (*argument == '.') {
-        char cmd[MIL];
+        char cmd[MAX_INPUT_LENGTH];
 
         argument = one_argument(argument, cmd);
         if (!str_cmp(cmd, ".c")) {
@@ -127,8 +127,8 @@ void string_add(CHAR_DATA *ch, const char *argument)
         }
 
         if (!str_cmp(cmd, ".r")) {
-            char orig[MSL];
-            char repl[MSL];
+            char orig[MAX_STRING_LENGTH];
+            char repl[MAX_STRING_LENGTH];
 
             argument = first_arg(argument, orig, false);
             argument = first_arg(argument, repl, false);
@@ -150,7 +150,7 @@ void string_add(CHAR_DATA *ch, const char *argument)
         }
 
         if (!str_cmp(cmd, ".ld")) {
-            char line[MSL];
+            char line[MAX_STRING_LENGTH];
 
             argument = one_argument(argument, line);
             if (!is_number(line)) {
@@ -164,7 +164,7 @@ void string_add(CHAR_DATA *ch, const char *argument)
         }
 
         if (!str_cmp(cmd, ".li")) {
-            char line[MSL];
+            char line[MAX_STRING_LENGTH];
 
             argument = one_argument(argument, line);
             if (!is_number(line)) {
@@ -177,7 +177,7 @@ void string_add(CHAR_DATA *ch, const char *argument)
         }
 
         if (!str_cmp(cmd, ".lr")) {
-            char line[MSL];
+            char line[MAX_STRING_LENGTH];
 
             argument = one_argument(argument, line);
             if (!is_number(line)) {
@@ -238,7 +238,7 @@ void string_add(CHAR_DATA *ch, const char *argument)
 
 
     strcpy(buf, *ch->desc->ed_string);
-    if (strlen(buf) + strlen(argument) >= (MSL - 4)) {
+    if (strlen(buf) + strlen(argument) >= (MAX_STRING_LENGTH - 4)) {
         send_to_char("String too long, last line skipped.\n\r", ch);
         ch->desc->ed_string = NULL;
         return;
@@ -270,7 +270,7 @@ char *format_string(char *orig)
     char *ptr;
     char *tmp;
     int tmp_ln;
-    char word[MSL];
+    char word[MAX_STRING_LENGTH];
     int line_len;
     int word_len;
     int word_idx;
@@ -296,7 +296,7 @@ char *format_string(char *orig)
                       if (*ptr != ' ') {
                           word[word_idx++] = *ptr;
                           word_len++;
-                          if (word_len >= MSL)
+                          if (word_len >= MAX_STRING_LENGTH)
                               break;
                       }
                       ptr++;
@@ -426,7 +426,7 @@ const char *first_arg(const char *argument, char *arg_first, bool fCase)
 char *string_unpad(char *argument)
 {
     char *iter;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
 
     iter = argument;
 
@@ -485,7 +485,7 @@ char *string_proper(char *argument)
 static char *string_line_delete(char *string, int line)
 {
     char *strtmp = string;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     int cnt = 1;
     int tmp = 0;
 
@@ -520,7 +520,7 @@ static char *string_line_delete(char *string, int line)
 char *string_line_insert(char *string, const char *newstr, int line)
 {
     const char *strtmp = string;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     int cnt = 1;
     int tmp = 0;
     bool done = false;
@@ -584,10 +584,10 @@ static const char *getlinefrombuf(const char *str, char *buf)
 char *number_lines(const char *string)
 {
     BUFFER *buf;
-    static char out[MSL];
+    static char out[MAX_STRING_LENGTH];
     int cnt = 1;
-    char tmp[MSL];
-    char line[MSL];
+    char tmp[MAX_STRING_LENGTH];
+    char line[MAX_STRING_LENGTH];
 
     buf = new_buf();
     out[0] = '\0';
@@ -597,14 +597,14 @@ char *number_lines(const char *string)
         add_buf(buf, tmp);
     }
 
-    strncpy(out, buf_string(buf), MSL);
+    strncpy(out, buf_string(buf), MAX_STRING_LENGTH);
     free_buf(buf);
     return out;
 }
 
 char *repeater(const char *s, int i)
 {
-    char buf[MSL] = "";
+    char buf[MAX_STRING_LENGTH] = "";
     int iter;
 
     for (iter = 1; iter <= i; iter++)

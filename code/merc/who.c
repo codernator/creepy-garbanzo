@@ -108,7 +108,7 @@ void do_whois(CHAR_DATA *ch, const char *argument)
 	DESCRIPTOR_DATA *d;
     DESCRIPTOR_DATA *dpending;
 	BUFFER *output;
-	char arg[MIL];
+	char arg[MAX_INPUT_LENGTH];
 	bool found = false;
 
 	one_argument(argument, arg);
@@ -160,7 +160,7 @@ void do_who(CHAR_DATA *ch, const char *argument)
 	DESCRIPTOR_DATA *d;
     DESCRIPTOR_DATA *dpending;
 	BUFFER *output;
-	char buf[2 * MSL];
+	char buf[2 * MAX_STRING_LENGTH];
 	int iClass;
 	int iRace;
 	int iLevelLower;
@@ -186,7 +186,7 @@ void do_who(CHAR_DATA *ch, const char *argument)
 	/* parse the arguments */
 	nNumber = 0;
 	for (;; ) {
-		char arg[MSL];
+		char arg[MAX_STRING_LENGTH];
 
 		argument = one_argument(argument, arg);
 		if (arg[0] == '\0')
@@ -320,7 +320,7 @@ void do_ewho(CHAR_DATA *ch, const char *argument)
 	DESCRIPTOR_DATA *d;
     DESCRIPTOR_DATA *dpending;
 	BUFFER *output;
-	char buf[MSL];
+	char buf[MAX_STRING_LENGTH];
 	int iClass;
 	int iRace;
 	int iLevelLower;
@@ -344,7 +344,7 @@ void do_ewho(CHAR_DATA *ch, const char *argument)
 	/* parse the arguments */
 	nNumber = 0;
 	for (;; ) {
-		char arg[MSL];
+		char arg[MAX_STRING_LENGTH];
 
 		argument = one_argument(argument, arg);
 		if (arg[0] == '\0')
@@ -443,7 +443,7 @@ void do_where(CHAR_DATA *ch, const char *argument)
 	DESCRIPTOR_DATA *d;
     DESCRIPTOR_DATA *dpending;
 	CHAR_DATA *victim;
-	char arg[MIL];
+	char arg[MAX_INPUT_LENGTH];
 	bool found;
 
 	one_argument(argument, arg);

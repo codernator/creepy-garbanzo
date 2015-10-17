@@ -66,7 +66,7 @@ set_cmd_table[] =
  ***************************************************************************/
 void do_set(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int idx;
 
     DENY_NPC(ch);
@@ -185,8 +185,8 @@ set_char_cmd_table[] =
 static void set_character(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *vch;
-    char arg[MIL];
-    char cmd[MIL];
+    char arg[MAX_INPUT_LENGTH];
+    char cmd[MAX_INPUT_LENGTH];
     int idx;
 
     DENY_NPC(ch);
@@ -217,9 +217,9 @@ static void set_character(CHAR_DATA *ch, const char *argument)
     }
 
     {
-        static char buf[MSL];
+        static char buf[MAX_STRING_LENGTH];
         argument = one_argument(argument, cmd);
-        (void)snprintf(buf, UMIN(strlen(argument), MSL), "%s", argument);
+        (void)snprintf(buf, UMIN(strlen(argument), MAX_STRING_LENGTH), "%s", argument);
         smash_tilde(buf);
 
         if (cmd[0] != '\0') {
@@ -382,7 +382,7 @@ static bool set_char_sex(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 static bool set_char_race(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
     int value;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     bool gobbed = false;
 
     if (is_help(argument)) {
@@ -1018,8 +1018,8 @@ static bool set_char_extendedexp(CHAR_DATA *ch, CHAR_DATA *vch, const char *argu
 {
     int plusminus = 0;
     int value;
-    char arg1[MIL];
-    char arg2[MIL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
 
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: extendedexp <value> [+, - or blank to set a #]\n\r", ch);
@@ -1177,8 +1177,8 @@ set_obj_cmd_table[] =
 static void set_object(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
-    char arg[MIL];
-    char cmd[MIL];
+    char arg[MAX_INPUT_LENGTH];
+    char cmd[MAX_INPUT_LENGTH];
     int idx;
 
     DENY_NPC(ch);
@@ -1208,9 +1208,9 @@ static void set_object(CHAR_DATA *ch, const char *argument)
     }
 
     {
-        static char buf[MSL];
+        static char buf[MAX_STRING_LENGTH];
         argument = one_argument(argument, cmd);
-        (void)snprintf(buf, UMIN(strlen(argument), MSL), "%s", argument);
+        (void)snprintf(buf, UMIN(strlen(argument), MAX_STRING_LENGTH), "%s", argument);
         smash_tilde(buf);
 
         if (cmd[0] != '\0') {
@@ -1581,8 +1581,8 @@ set_room_cmd_table[] =
 static void set_room(CHAR_DATA *ch, const char *argument)
 {
     ROOM_INDEX_DATA *room;
-    char arg[MIL];
-    char cmd[MIL];
+    char arg[MAX_INPUT_LENGTH];
+    char cmd[MAX_INPUT_LENGTH];
     int idx;
 
     DENY_NPC(ch);
@@ -1612,9 +1612,9 @@ static void set_room(CHAR_DATA *ch, const char *argument)
         room = ch->in_room;
 
     {
-        static char buf[MSL];
+        static char buf[MAX_STRING_LENGTH];
         argument = one_argument(argument, cmd);
-        (void)snprintf(buf, UMIN(strlen(argument), MSL), "%s", argument);
+        (void)snprintf(buf, UMIN(strlen(argument), MAX_STRING_LENGTH), "%s", argument);
         smash_tilde(buf);
         if (cmd[0] != '\0') {
             for (idx = 0; set_room_cmd_table[idx].keyword[0] != '\0'; idx++) {
@@ -1785,7 +1785,7 @@ static void set_skill(CHAR_DATA *ch, const char *argument)
     CHAR_DATA *vch;
     SKILL *skill;
     LEARNED *learned;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int percent;
 
     DENY_NPC(ch);
@@ -1859,8 +1859,8 @@ static void set_skill(CHAR_DATA *ch, const char *argument)
  ***************************************************************************/
 static void set_reboot(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
-    char buf[MIL];
+    char arg[MAX_INPUT_LENGTH];
+    char buf[MAX_INPUT_LENGTH];
     int num_ticks;
 
     if (get_trust(ch) < MAX_LEVEL) {
@@ -1908,8 +1908,8 @@ static void set_reboot(CHAR_DATA *ch, const char *argument)
  ***************************************************************************/
 static void set_copyover(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
-    char buf[MIL];
+    char arg[MAX_INPUT_LENGTH];
+    char buf[MAX_INPUT_LENGTH];
     int num_ticks;
 
     if (get_trust(ch) < MAX_LEVEL) {

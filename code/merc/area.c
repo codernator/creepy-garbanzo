@@ -94,8 +94,8 @@ AREA_DATA *area_new(unsigned long vnum)
         areadata->empty = true;
         
         {
-            char filename[MIL];
-            (void)snprintf(filename, MIL, "area%lu.are", areadata->vnum);
+            char filename[MAX_INPUT_LENGTH];
+            (void)snprintf(filename, MAX_INPUT_LENGTH, "area%lu.are", areadata->vnum);
             areadata->file_name = string_copy(filename);
         }
         /*@+mustfreeonly@*/

@@ -173,7 +173,7 @@ EDIT(aedit_credits){
  ***************************************************************************/
 EDIT(aedit_file){
     AREA_DATA *pArea;
-    char file[MSL];
+    char file[MAX_STRING_LENGTH];
     int iter;
     int length;
 
@@ -216,7 +216,7 @@ EDIT(aedit_file){
  ***************************************************************************/
 EDIT(aedit_age){
     AREA_DATA *pArea;
-    char age[MSL];
+    char age[MAX_STRING_LENGTH];
 
     EDIT_AREA(ch, pArea);
 
@@ -239,8 +239,8 @@ EDIT(aedit_age){
  ***************************************************************************/
 EDIT(aedit_security){
     AREA_DATA *pArea;
-    char sec[MSL];
-    char buf[MSL];
+    char sec[MAX_STRING_LENGTH];
+    char buf[MAX_STRING_LENGTH];
     int value;
 
     EDIT_AREA(ch, pArea);
@@ -275,8 +275,8 @@ EDIT(aedit_security){
  ***************************************************************************/
 EDIT(aedit_builder){
     AREA_DATA *pArea;
-    char name[MSL];
-    char buf[MSL];
+    char name[MAX_STRING_LENGTH];
+    char buf[MAX_STRING_LENGTH];
 
     EDIT_AREA(ch, pArea);
 
@@ -326,8 +326,8 @@ EDIT(aedit_builder){
  ***************************************************************************/
 EDIT(aedit_vnum){
     AREA_DATA *pArea;
-    char lower[MSL];
-    char upper[MSL];
+    char lower[MAX_STRING_LENGTH];
+    char upper[MAX_STRING_LENGTH];
     long iLower;
     long iUpper;
 
@@ -382,7 +382,7 @@ EDIT(aedit_vnum){
  ***************************************************************************/
 EDIT(aedit_lvnum){
     AREA_DATA *pArea;
-    char lower[MSL];
+    char lower[MAX_STRING_LENGTH];
     long ilower;
     long iupper;
 
@@ -422,7 +422,7 @@ EDIT(aedit_lvnum){
  ***************************************************************************/
 EDIT(aedit_uvnum){
     AREA_DATA *pArea;
-    char upper[MSL];
+    char upper[MAX_STRING_LENGTH];
     long ilower;
     long iupper;
 
@@ -463,7 +463,7 @@ EDIT(aedit_uvnum){
  ***************************************************************************/
 EDIT(aedit_llevel){
     AREA_DATA *pArea;
-    char level[MSL];
+    char level[MAX_STRING_LENGTH];
 
     EDIT_AREA(ch, pArea);
 
@@ -486,7 +486,7 @@ EDIT(aedit_llevel){
  ***************************************************************************/
 EDIT(aedit_ulevel){
     AREA_DATA *pArea;
-    char level[MSL];
+    char level[MAX_STRING_LENGTH];
 
     EDIT_AREA(ch, pArea);
 

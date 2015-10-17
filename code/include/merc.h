@@ -104,9 +104,6 @@ typedef void DO_FUN(/*@partial@*/CHAR_DATA * ch, /*@observer@*/const char *argum
 #define MAX_NAME_LENGTH         24
 #define MIN_NAME_LENGTH         6
 
-#define MSL             MAX_STRING_LENGTH
-#define MIL             MAX_INPUT_LENGTH
-
 
 /*
  * Game parameters.
@@ -155,7 +152,7 @@ struct system_state {
     bool wizlock;                   /* Game is wizlocked. */
     bool newlock;                   /* Game is newlocked. */
     bool log_all;
-    char last_command[MSL];	    /* In case of failure, log this. */
+    char last_command[MAX_STRING_LENGTH];	    /* In case of failure, log this. */
 
     int copyover_tick_counter;      /* schedule copyover */
     int reboot_tick_counter;        /* schedule reboot */
@@ -262,9 +259,9 @@ struct descriptor_data {
 
     int connected;
     bool fcommand;
-    char inbuf[4 * MIL];
-    char incomm[MIL];
-    char inlast[MIL];
+    char inbuf[4 * MAX_INPUT_LENGTH];
+    char incomm[MAX_INPUT_LENGTH];
+    char inlast[MAX_INPUT_LENGTH];
     int repeat;
     /*@owned@*//*@null@*/char *outbuf;
     size_t outsize;

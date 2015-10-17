@@ -97,9 +97,9 @@ static SKILL *spell_lookup(CHAR_DATA *ch, char *name)
 static void say_spell(CHAR_DATA *ch, SKILL *skill)
 {
     CHAR_DATA *rch;
-    char buf[MSL];
-    char buf_nonclass[MSL];
-    char buf_inclass[MSL];
+    char buf[MAX_STRING_LENGTH];
+    char buf_nonclass[MAX_STRING_LENGTH];
+    char buf_inclass[MAX_STRING_LENGTH];
     char *pName;
     int iSyl;
     int length;
@@ -327,8 +327,8 @@ void do_cast(CHAR_DATA *ch, const char *argument)
     LEARNED *learned;
     LEVEL_INFO *level_info;
     SKILL *skill;
-    char spell[MIL];
-    char arg[MIL];
+    char spell[MAX_INPUT_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
     void *vo;
     int mana;
     int target;
@@ -775,7 +775,7 @@ void obj_cast_spell(int	sn, int	level, CHAR_DATA * ch, CHAR_DATA * victim, GAMEO
 void do_quaff(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     one_argument(argument, arg);
     if (arg[0] == '\0') {
@@ -820,8 +820,8 @@ void do_recite(CHAR_DATA *ch, const char *argument)
     GAMEOBJECT *scroll;
     GAMEOBJECT *obj;
     SKILL *skill;
-    char arg1[MIL];
-    char arg2[MIL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
 
     if ((skill = skill_lookup("scrolls")) == NULL) {
 	send_to_char("Huh?\n\r", ch);
@@ -970,7 +970,7 @@ void do_zap(CHAR_DATA *ch, const char *argument)
     GAMEOBJECT *wand;
     GAMEOBJECT *obj;
     SKILL *skill;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
 
     if ((skill = skill_lookup("wands")) == NULL) {

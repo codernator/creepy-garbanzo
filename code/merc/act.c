@@ -20,8 +20,8 @@ void act_new(const char *format, CHAR_DATA *ch, const void *arg1, const void *ar
     CHAR_DATA *vch = (CHAR_DATA *)arg2;
     GAMEOBJECT *obj1 = (GAMEOBJECT *)arg1;
     GAMEOBJECT *obj2 = (GAMEOBJECT *)arg2;
-    char buf[MSL];
-    char fname[MIL];
+    char buf[MAX_STRING_LENGTH];
+    char fname[MAX_INPUT_LENGTH];
     const char *str;
     char *i = NULL;
     char *point;

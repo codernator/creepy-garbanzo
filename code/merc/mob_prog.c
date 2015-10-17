@@ -330,7 +330,7 @@ static bool cmd_eval(long vnum, const char *line, int check, CHAR_DATA *mob, CHA
     GAMEOBJECT *lval_obj = NULL;
 
     const char *original;
-    char buf[MIL], code;
+    char buf[MAX_INPUT_LENGTH], code;
     long lval = 0, oper = 0, rval = -1;
 
     original = line;
@@ -609,7 +609,7 @@ static void expand_arg(char *buf,
     const char *something = "something";
     const char *someones = "someone's";
 
-    char fname[MIL];
+    char fname[MAX_INPUT_LENGTH];
     CHAR_DATA *vch = (CHAR_DATA *)arg2;
     GAMEOBJECT *obj1 = (GAMEOBJECT *)arg1;
     GAMEOBJECT *obj2 = (GAMEOBJECT *)arg2;
@@ -825,9 +825,9 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
 {
     CHAR_DATA *rch = NULL;
     char *code;
-    char buf[MSL];
-    char control[MIL];
-    char data[MSL];
+    char buf[MAX_STRING_LENGTH];
+    char control[MAX_INPUT_LENGTH];
+    char data[MAX_STRING_LENGTH];
     int level;
     bool eval;
     int check;
@@ -1090,7 +1090,7 @@ bool mp_exit_trigger(CHAR_DATA *ch, int dir)
 
 void mp_give_trigger(CHAR_DATA *mob, CHAR_DATA *ch, GAMEOBJECT *obj)
 {
-    char buf[MIL];
+    char buf[MAX_INPUT_LENGTH];
     MPROG_LIST *prg;
 
     for (prg = mob->mob_idx->mprogs; prg; prg = prg->next)

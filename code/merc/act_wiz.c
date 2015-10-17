@@ -42,9 +42,9 @@ void do_order(CHAR_DATA *ch, const char *argument)
     CHAR_DATA *victim;
     CHAR_DATA *och;
     CHAR_DATA *och_next;
-    char buf[MSL];
-    char arg[MIL];
-    char arg2[MIL];
+    char buf[MAX_STRING_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
     bool found;
     bool fAll;
 
@@ -160,7 +160,7 @@ void do_order(CHAR_DATA *ch, const char *argument)
                 return;
             }
 
-            (void)snprintf(buf, 2 * MIL, "$n orders you to '%s'.", argument);
+            (void)snprintf(buf, 2 * MAX_INPUT_LENGTH, "$n orders you to '%s'.", argument);
             act(buf, ch, NULL, och, TO_VICT);
             interpret(och, argument);
         }
@@ -183,7 +183,7 @@ void do_ignore(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
     CHAR_DATA *rch;
-    char arg[MIL], buf[MSL];
+    char arg[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
     DESCRIPTOR_DATA *d;
     DESCRIPTOR_DATA *dpending;
     int pos;
@@ -210,7 +210,7 @@ void do_ignore(CHAR_DATA *ch, const char *argument)
             if (rch->pcdata->ignore[pos] == NULL)
                 break;
 
-            (void)snprintf(buf, 2 * MIL, "    %s\n\r", rch->pcdata->ignore[pos]);
+            (void)snprintf(buf, 2 * MAX_INPUT_LENGTH, "    %s\n\r", rch->pcdata->ignore[pos]);
             send_to_char(buf, ch);
         }
         return;
@@ -267,14 +267,14 @@ void do_ignore(CHAR_DATA *ch, const char *argument)
     }
 
     rch->pcdata->ignore[pos] = str_dup(arg);
-    (void)snprintf(buf, 2 * MIL, "You are now deaf to %s.\n\r", arg);
+    (void)snprintf(buf, 2 * MAX_INPUT_LENGTH, "You are now deaf to %s.\n\r", arg);
     send_to_char(buf, ch);
 }
 
 void do_unignore(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *rch;
-    char arg[MIL], buf[MSL];
+    char arg[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
     int pos;
     bool found = false;
 
@@ -299,7 +299,7 @@ void do_unignore(CHAR_DATA *ch, const char *argument)
             if (rch->pcdata->ignore[pos] == NULL)
                 break;
 
-            (void)snprintf(buf, 2 * MIL, "    %s\n\r", rch->pcdata->ignore[pos]);
+            (void)snprintf(buf, 2 * MAX_INPUT_LENGTH, "    %s\n\r", rch->pcdata->ignore[pos]);
             send_to_char(buf, ch);
         }
         return;
@@ -354,7 +354,7 @@ void do_delet(CHAR_DATA *ch, /*@unused@*/ const char *argument)
 
 void do_delete(CHAR_DATA *ch, const char *argument)
 {
-    char strsave[MIL];
+    char strsave[MAX_INPUT_LENGTH];
 
     DENY_NPC(ch);
 
@@ -371,7 +371,7 @@ void do_delete(CHAR_DATA *ch, const char *argument)
             filename[0] = '\0';
 
             capitalize_into(ch->name, (char *)filename, MAX_NAME_LENGTH);
-            (void)snprintf(strsave, MIL, "%s%s", PLAYER_DIR, filename);
+            (void)snprintf(strsave, MAX_INPUT_LENGTH, "%s%s", PLAYER_DIR, filename);
 
             wiznet("$N turns $Mself into line noise.", ch, NULL, 0, 0, 0);
             log_string("DELETE: %s is TOAST! wOOp!", ch->name);
@@ -429,7 +429,7 @@ void do_qui(CHAR_DATA *ch, /*@unused@*/ const char *argument)
 
 void do_quit(CHAR_DATA *ch, /*@unused@*/ const char *argument)
 {
-    char strsave[2*MIL];
+    char strsave[2*MAX_INPUT_LENGTH];
     long id;
 
     if (IS_NPC(ch))
@@ -477,7 +477,7 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ const char *argument)
         close_socket(ch->desc, true, false);
     save_char_obj(ch);
     if ((ch->level == 1) && (!IS_SET(ch->act, PLR_DENY))) {
-        (void)snprintf(strsave, 2 * MIL, "%s%s", PLAYER_DIR, capitalize(ch->name));
+        (void)snprintf(strsave, 2 * MAX_INPUT_LENGTH, "%s%s", PLAYER_DIR, capitalize(ch->name));
         wiznet("`!Killing`7: $N `1(`7Level 1 cleanup`1)`7", ch, NULL, 0, 0, 0);
         unlink(strsave);
     }
@@ -750,7 +750,7 @@ void do_grant(CHAR_DATA *ch, const char *argument)
     SKILL *skill;
     LEARNED *learned;
     LEARNED *learned_found;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     DENY_NPC(ch)
 
@@ -804,7 +804,7 @@ void do_grant(CHAR_DATA *ch, const char *argument)
 
 void do_bamfin(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
 
     DENY_NPC(ch);
 
@@ -814,7 +814,7 @@ void do_bamfin(CHAR_DATA *ch, const char *argument)
         return;
     }
 
-    strncpy(buf, argument, MSL);
+    strncpy(buf, argument, MAX_STRING_LENGTH);
     smash_tilde(buf);
 
     free_string(ch->pcdata->bamfin);
@@ -825,7 +825,7 @@ void do_bamfin(CHAR_DATA *ch, const char *argument)
 
 void do_bamfout(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
 
     DENY_NPC(ch);
 
@@ -835,7 +835,7 @@ void do_bamfout(CHAR_DATA *ch, const char *argument)
         return;
     }
 
-    strncpy(buf, argument, MSL);
+    strncpy(buf, argument, MAX_STRING_LENGTH);
     smash_tilde(buf);
 
     free_string(ch->pcdata->bamfout);
@@ -847,8 +847,8 @@ void do_bamfout(CHAR_DATA *ch, const char *argument)
 void do_deny(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    char arg[MIL];
-    char buf[MSL];
+    char arg[MAX_INPUT_LENGTH];
+    char buf[MAX_STRING_LENGTH];
 
     one_argument(argument, arg);
 
@@ -892,7 +892,7 @@ void do_disconnect(CHAR_DATA *ch, const char *argument)
 {
     DESCRIPTOR_DATA *d;
     CHAR_DATA *victim;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     DENY_NPC(ch);
 
@@ -940,8 +940,8 @@ void do_chown(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     GAMEOBJECT *obj;
-    char arg1[MIL];
-    char arg2[MIL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
 
     DENY_NPC(ch);
 
@@ -1056,7 +1056,7 @@ void do_zecho(CHAR_DATA *ch, const char *argument)
 void do_pecho(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     DENY_NPC(ch);
 
@@ -1082,9 +1082,9 @@ void do_pecho(CHAR_DATA *ch, const char *argument)
 void do_fry(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    char file[MIL];
-    char arg[MIL];
-    char vName[MIL];
+    char file[MAX_INPUT_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
+    char vName[MAX_INPUT_LENGTH];
     bool isImm;
 
     DENY_NPC(ch);
@@ -1120,14 +1120,14 @@ void do_fry(CHAR_DATA *ch, const char *argument)
 
     /* don't forget to delete the god-file, too */
     /* added by Monrick, 1/2008                 */
-    snprintf(vName, MIL, "%s", capitalize(victim->name));
+    snprintf(vName, MAX_INPUT_LENGTH, "%s", capitalize(victim->name));
     isImm = IS_IMMORTAL(victim);
 
     act("You summon a huge bolt of `&lightning`` which utterly destroys $N ", ch, NULL, victim, TO_CHAR);
     act("A huge bolt of `&lightning`` strikes $N, utterly `!destroying`` $M", ch, NULL, victim, TO_NOTVICT);
     act("You look up, just in time to see the `!flaming`` `&lightning`` bolt strike your head.\n\r C-ya!\n\r", ch, NULL, victim, TO_VICT);
 
-    snprintf(file, MIL, "%s%s", PLAYER_DIR, vName);
+    snprintf(file, MAX_INPUT_LENGTH, "%s%s", PLAYER_DIR, vName);
     fry_char(victim, "");
     unlink(file);
 
@@ -1143,7 +1143,7 @@ void do_fry(CHAR_DATA *ch, const char *argument)
 void do_ffry(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     DENY_NPC(ch);
 
@@ -1185,8 +1185,8 @@ void do_ffry(CHAR_DATA *ch, const char *argument)
 void do_pardon(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    char arg1[MIL];
-    char arg2[MIL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
 
     DENY_NPC(ch);
 
@@ -1234,8 +1234,8 @@ void do_pardon(CHAR_DATA *ch, const char *argument)
 void do_transfer(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
-    char arg1[MIL];
-    char arg2[MIL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
     ROOM_INDEX_DATA *location;
     CHAR_DATA *victim;
 
@@ -1261,7 +1261,7 @@ void do_transfer(CHAR_DATA *ch, const char *argument)
             dpending = descriptor_iterator(d, &playing_filter);
 
             if (d->character->in_room != NULL && get_trust(d->character) < get_trust(ch) && can_see(ch, d->character)) {
-                char buf[MSL];
+                char buf[MAX_STRING_LENGTH];
                 sprintf(buf, "%s %s", d->character->name, arg2);
                 do_transfer(ch, buf);
             }
@@ -1427,7 +1427,7 @@ void do_reboo(CHAR_DATA *ch, const char *argument)
 void do_reboot(CHAR_DATA *ch, const char *argument)
 {
     DESCRIPTOR_DATA *d, *dpending;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
 
     DENY_NPC(ch);
 
@@ -1460,7 +1460,7 @@ void do_shutdown(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
     DESCRIPTOR_DATA *d, *dpending;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
 
     DENY_NPC(ch);
 
@@ -1490,8 +1490,8 @@ void do_shutdown(CHAR_DATA *ch, const char *argument)
 void do_snoop(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    char buf[MSL];
-    char arg[MIL];
+    char buf[MAX_STRING_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
 
     DENY_NPC(ch);
 
@@ -1553,7 +1553,7 @@ void do_snoop(CHAR_DATA *ch, const char *argument)
 void do_snlist(CHAR_DATA *ch, const char *argument)
 {
     DESCRIPTOR_DATA *d, *dpending;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
 
     DENY_NPC(ch);
 
@@ -1579,8 +1579,8 @@ void do_snlist(CHAR_DATA *ch, const char *argument)
 void do_switch(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    char arg[MIL];
-    char buf[MSL];
+    char arg[MAX_INPUT_LENGTH];
+    char buf[MAX_STRING_LENGTH];
 
     DENY_NPC(ch);
 
@@ -1647,7 +1647,7 @@ void do_switch(CHAR_DATA *ch, const char *argument)
 
 void do_return(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
 
     if (ch->desc == NULL)
         return;
@@ -1706,8 +1706,8 @@ void do_clone(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *mob;
     GAMEOBJECT *obj;
-    static char arg[MIL];
-    static char buf[MIL];
+    static char arg[MAX_INPUT_LENGTH];
+    static char buf[MAX_INPUT_LENGTH];
     const char *rest;
     int count;
     int iter;
@@ -1809,7 +1809,7 @@ void do_clone(CHAR_DATA *ch, const char *argument)
                 return;
             } else {
                 CHAR_DATA *clone = NULL;
-                char buf[MSL];
+                char buf[MAX_STRING_LENGTH];
 
                 for (iter = 0; iter < count; iter++) {
                     clone = create_mobile(mob->mob_idx);
@@ -1849,7 +1849,7 @@ void do_clone(CHAR_DATA *ch, const char *argument)
 
 void do_load(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     DENY_NPC(ch);
 
@@ -1874,7 +1874,7 @@ void do_load(CHAR_DATA *ch, const char *argument)
     }
 
     if (!str_cmp(arg, "char")) {
-        char newarg[MIL];
+        char newarg[MAX_INPUT_LENGTH];
         sprintf(newarg, "%s %s", "pload", argument);
         interpret(ch, newarg);
         return;
@@ -1888,8 +1888,8 @@ void do_mload(CHAR_DATA *ch, const char *argument)
 {
     MOB_INDEX_DATA *pMobIndex;
     CHAR_DATA *victim;
-    char arg[MIL];
-    char buf[MSL];
+    char arg[MAX_INPUT_LENGTH];
+    char buf[MAX_STRING_LENGTH];
 
     one_argument(argument, arg);
 
@@ -1907,10 +1907,10 @@ void do_mload(CHAR_DATA *ch, const char *argument)
     char_to_room(victim, ch->in_room);
 
     act("$n has created $N!", ch, NULL, victim, TO_ROOM);
-    snprintf(buf, MSL, "$N loads %s.", victim->short_descr);
+    snprintf(buf, MAX_STRING_LENGTH, "$N loads %s.", victim->short_descr);
     wiznet(buf, ch, NULL, WIZ_LOAD, WIZ_SECURE, get_trust(ch));
 
-    snprintf(buf, MSL, "mload: Loaded mob: %s\n\r", victim->short_descr);
+    snprintf(buf, MAX_STRING_LENGTH, "mload: Loaded mob: %s\n\r", victim->short_descr);
     send_to_char(buf, ch);
     return;
 }
@@ -1919,9 +1919,9 @@ void do_oload(CHAR_DATA *ch, const char *argument)
 {
     OBJECTPROTOTYPE *pObjIndex;
     GAMEOBJECT *obj;
-    char arg1[MIL];
-    char arg2[MIL];
-    char buf[MSL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
+    char buf[MAX_STRING_LENGTH];
     int level;
 
     argument = one_argument(argument, arg1);
@@ -1964,7 +1964,7 @@ void do_oload(CHAR_DATA *ch, const char *argument)
     act("$n has created $p!", ch, obj, NULL, TO_ROOM);
     wiznet("$N loads $p.", ch, obj, WIZ_LOAD, WIZ_SECURE, get_trust(ch));
 
-    snprintf(buf, MSL, "oload: Loaded object: %s\n\r", obj->short_descr);
+    snprintf(buf, MAX_STRING_LENGTH, "oload: Loaded object: %s\n\r", obj->short_descr);
     send_to_char(buf, ch);
 }
 
@@ -1972,7 +1972,7 @@ void do_purge(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     char buf[100];
 
     one_argument(argument, arg);
@@ -2040,10 +2040,10 @@ void do_purge(CHAR_DATA *ch, const char *argument)
 void do_advance(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    char arg1[MIL];
-    char arg2[MIL];
-    char arg3[MIL];
-    char buf[MSL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
+    char arg3[MAX_INPUT_LENGTH];
+    char buf[MAX_STRING_LENGTH];
     int level;
 
     DENY_NPC(ch);
@@ -2142,8 +2142,8 @@ void do_advance(CHAR_DATA *ch, const char *argument)
 void do_trust(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    char arg1[MIL];
-    char arg2[MIL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
     int level;
 
     argument = one_argument(argument, arg1);
@@ -2188,8 +2188,8 @@ void do_trust(CHAR_DATA *ch, const char *argument)
 void do_affstrip(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    char target[MIL];
-    char affect[MSL];
+    char target[MAX_INPUT_LENGTH];
+    char affect[MAX_STRING_LENGTH];
 
     argument = one_argument(argument, target);
 
@@ -2242,7 +2242,7 @@ void do_affstrip(CHAR_DATA *ch, const char *argument)
 
 void do_log(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     CHAR_DATA *victim;
 
     one_argument(argument, arg);
@@ -2338,8 +2338,8 @@ void do_newlock(CHAR_DATA *ch, const char *argument)
 
 void do_mode(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
-    char arg2[MIL];
+    char arg[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
 
     argument = one_argument(argument, arg);
     argument = one_argument(argument, arg2);
@@ -2387,7 +2387,7 @@ void do_mode(CHAR_DATA *ch, const char *argument)
 void do_slot(CHAR_DATA *ch, const char *argument)
 {
     SKILL *skill;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     DENY_NPC(ch);
 
@@ -2412,8 +2412,8 @@ void do_sockets(CHAR_DATA *ch, const char *argument)
     DESCRIPTOR_DATA *d, *dpending;
     BUFFER *buf;
     char *state;
-    char arg[MIL];
-    char sock[MSL];
+    char arg[MAX_INPUT_LENGTH];
+    char sock[MAX_STRING_LENGTH];
     int count;
 
     DENY_NPC(ch);
@@ -2512,9 +2512,9 @@ void do_sockets(CHAR_DATA *ch, const char *argument)
 
 void do_force(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MSL];
-    char arg[MIL];
-    char arg2[MIL];
+    char buf[MAX_STRING_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
 
     argument = one_argument(argument, arg);
 
@@ -2655,7 +2655,7 @@ void do_force(CHAR_DATA *ch, const char *argument)
 void do_winvis(CHAR_DATA *ch, const char *argument)
 {
     int level;
-    char arg[MSL];
+    char arg[MAX_STRING_LENGTH];
 
     /* RT code for taking a level argument */
     (void)one_argument(argument, arg);
@@ -2694,7 +2694,7 @@ void do_winvis(CHAR_DATA *ch, const char *argument)
 void do_incognito(CHAR_DATA *ch, const char *argument)
 {
     int level;
-    char arg[MSL];
+    char arg[MAX_STRING_LENGTH];
 
     DENY_NPC(ch)
 
@@ -2754,7 +2754,7 @@ void do_prefi(CHAR_DATA *ch, const char *argument)
 
 void do_prefix(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MIL];
+    char buf[MAX_INPUT_LENGTH];
 
     if (ch) {
         if (IS_NPC(ch)) {
@@ -2798,7 +2798,7 @@ void do_copyover(CHAR_DATA *ch, const char *argument)
 
 void do_rename(CHAR_DATA *ch, const char *argument)
 {
-    char old_name[MIL], new_name[MIL], strsave[MIL];
+    char old_name[MAX_INPUT_LENGTH], new_name[MAX_INPUT_LENGTH], strsave[MAX_INPUT_LENGTH];
 
     CHAR_DATA *victim;
     FILE *file;
@@ -2969,7 +2969,7 @@ void do_omnistat(CHAR_DATA *ch, const char *argument)
     DESCRIPTOR_DATA *d;
     DESCRIPTOR_DATA *dpending;
     BUFFER *output;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     int immmatch;
     int mortmatch;
     int hptemp;
@@ -3067,8 +3067,8 @@ void do_omnistat(CHAR_DATA *ch, const char *argument)
 
 void do_olevel(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MSL];
-    char arg[MIL];
+    char buf[MAX_STRING_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
     BUFFER *buffer;
     long level;
     bool found;
@@ -3116,8 +3116,8 @@ void do_olevel(CHAR_DATA *ch, const char *argument)
 
 void do_mlevel(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MSL];
-    char arg[MIL];
+    char buf[MAX_STRING_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
     BUFFER *buffer;
     MOB_INDEX_DATA *pMobIndex;
     long vnum, level;
@@ -3170,8 +3170,8 @@ static void print_setrestore_help(CHAR_DATA *ch)
 
 void do_setrestore(CHAR_DATA *ch, const char *argument)
 {
-    static char arg[MIL];
-    static char buf[MIL];
+    static char arg[MAX_INPUT_LENGTH];
+    static char buf[MAX_INPUT_LENGTH];
 
 
     DENY_NPC(ch);
@@ -3183,7 +3183,7 @@ void do_setrestore(CHAR_DATA *ch, const char *argument)
         return;
     }
 
-    strncpy(buf, argument, MIL);
+    strncpy(buf, argument, MAX_INPUT_LENGTH);
     smash_tilde(buf);
 
     if (!str_prefix(arg, "global")) {
@@ -3239,7 +3239,7 @@ void set_rrestore(CHAR_DATA *ch, const char *argument)
 
 void do_review(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
 
     if (IS_NPC(ch)) {
         send_to_char("You have no identity ..\n\r", ch);
@@ -3281,9 +3281,9 @@ const char *name_expand(CHAR_DATA *ch)
 {
     int count = 1;
     CHAR_DATA *rch;
-    char name[MIL];
+    char name[MAX_INPUT_LENGTH];
 
-    static char outbuf[MIL];
+    static char outbuf[MAX_INPUT_LENGTH];
 
     if (!IS_NPC(ch))
         return ch->name;
@@ -3305,7 +3305,7 @@ const char *name_expand(CHAR_DATA *ch)
 void do_addalias(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *rch;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int pos;
 
     argument = one_argument(argument, arg);
@@ -3375,8 +3375,8 @@ void do_addalias(CHAR_DATA *ch, const char *argument)
     }
 
     {
-        char sanitized[MIL];
-        strncpy(sanitized, argument, MIL);
+        char sanitized[MAX_INPUT_LENGTH];
+        strncpy(sanitized, argument, MAX_INPUT_LENGTH);
         smash_tilde(sanitized);
         if (add_alias(rch, arg, sanitized)) {
             printf_to_char(ch, "%s is now aliased to '%s'.\n\r", arg, sanitized);
@@ -3476,25 +3476,25 @@ void do_wpeace(CHAR_DATA *ch, const char *argument)
 
 void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is mood, const char *message)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     const char *censor_name = "Harvey Proctor";
 
     switch (mood) {
       case hp_pissed_off:
-          snprintf(buf, MSL, "%s leaps out and canes your ass into submission shouting, '%s'\n\r", censor_name, message);
+          snprintf(buf, MAX_STRING_LENGTH, "%s leaps out and canes your ass into submission shouting, '%s'\n\r", censor_name, message);
           break;
 
       case hp_irritated:
-          snprintf(buf, MSL, "%s reaches out and slaps your legs saying, '%s'\n\r", censor_name, message);
+          snprintf(buf, MAX_STRING_LENGTH, "%s reaches out and slaps your legs saying, '%s'\n\r", censor_name, message);
           break;
 
       case hp_agreeable:
-          snprintf(buf, MSL, "%s will allow this, but is ever watchful.\n\r", censor_name);
+          snprintf(buf, MAX_STRING_LENGTH, "%s will allow this, but is ever watchful.\n\r", censor_name);
           break;
 
       case hp_off_his_rocker:
       default:
-          snprintf(buf, MSL, "%s dick-slaps your face cackling, '%s'\n\r", censor_name, message);
+          snprintf(buf, MAX_STRING_LENGTH, "%s dick-slaps your face cackling, '%s'\n\r", censor_name, message);
           break;
     }
 

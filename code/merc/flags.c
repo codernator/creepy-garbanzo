@@ -117,7 +117,7 @@ static const struct flag_cmd_map obj_set_flags[] =
  ***************************************************************************/
 void do_flag(CHAR_DATA *ch, const char *argument)
 {
-    char type[MIL];
+    char type[MAX_INPUT_LENGTH];
 
     DENY_NPC(ch);
 
@@ -163,7 +163,7 @@ void do_flag(CHAR_DATA *ch, const char *argument)
 void flag_set_char(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *vch;
-    char name[MIL];
+    char name[MAX_INPUT_LENGTH];
 
     argument = one_argument(argument, name);
     if ((vch = get_char_world(ch, name)) == NULL) {
@@ -188,7 +188,7 @@ void flag_set_char(CHAR_DATA *ch, const char *argument)
 void flag_set_obj(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
-    char name[MIL];
+    char name[MAX_INPUT_LENGTH];
 
     argument = one_argument(argument, name);
     if ((obj = get_obj_here(ch, name)) == NULL) {
@@ -210,7 +210,7 @@ void flag_set_obj(CHAR_DATA *ch, const char *argument)
 void flag_set_room(CHAR_DATA *ch, const char *argument)
 {
     ROOM_INDEX_DATA *room;
-    char index[MIL];
+    char index[MAX_INPUT_LENGTH];
     long vnum;
 
     one_argument(argument, index);
@@ -852,7 +852,7 @@ void flag_obj_wpn_damage(CHAR_DATA *ch, void *target, const char *argument)
  ***************************************************************************/
 void flag_set(CHAR_DATA *ch, void *target, char *title, const struct flag_cmd_map *table, const char *argument)
 {
-    char flag[MIL];
+    char flag[MAX_INPUT_LENGTH];
     int idx;
 
     argument = one_argument(argument, flag);

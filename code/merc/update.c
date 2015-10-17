@@ -257,7 +257,7 @@ void advance_level(CHAR_DATA *ch, int level)
  ***************************************************************************/
 void gain_exp(CHAR_DATA *ch, int gain)
 {
-    static char buf[MIL];
+    static char buf[MAX_INPUT_LENGTH];
 
     if (IS_NPC(ch) || ch->level >= (301 - 1)) {
 	if (!IS_NPC(ch) && ch->level == 301 - 1)
@@ -275,7 +275,7 @@ void gain_exp(CHAR_DATA *ch, int gain)
     /* while the level < LEVEL_HERO and exp > exp_per_level - gain levels */
     while (ch->level < 300 && !IS_IMMORTAL(ch) && ch->exp >= exp_per_level(ch, ch->pcdata->points) * (ch->level + 1)) {
 	send_to_char("You raise a level!!\n\r `1*`8-`7-`&-`8#`7#`&#`6<`@-`4G`$r`4a`$t`4s`@-`6>`&#`7#`8#`&-`7-`8-`1*``\n\r", ch);
-	(void)snprintf(buf, MIL, "$N has attained level %d!", ch->level + 1);
+	(void)snprintf(buf, MAX_INPUT_LENGTH, "$N has attained level %d!", ch->level + 1);
 	wiznet(buf, ch, NULL, WIZ_LEVELS, 0, 0);
 
 	advance_level(ch, 1);
@@ -283,12 +283,12 @@ void gain_exp(CHAR_DATA *ch, int gain)
 
 	/* do the info */
 	if (ch->level == 300) {
-	    (void)snprintf(buf, MIL, "%s has made it to 300!``\n\r", ch->name);
+	    (void)snprintf(buf, MAX_INPUT_LENGTH, "%s has made it to 300!``\n\r", ch->name);
 	    broadcast_channel(NULL, channels_find(CHANNEL_INFO), NULL, buf);
 	    restore_char(ch);
 	    send_to_char("`^You have been restored by the Immortal of Bad Trip for making it to level 300!``\n\r", ch);
 	} else {
-	    (void)snprintf(buf, MIL, "%s has gained a level!``\n\r", ch->name);
+	    (void)snprintf(buf, MAX_INPUT_LENGTH, "%s has gained a level!``\n\r", ch->name);
 	    broadcast_channel(NULL, channels_find(CHANNEL_INFO), NULL, buf);
 	}
     }
@@ -304,7 +304,7 @@ void gain_exp(CHAR_DATA *ch, int gain)
 void do_extend(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    char arg1[MIL];
+    char arg1[MAX_INPUT_LENGTH];
 
     argument = one_argument(argument, arg1);
 
@@ -824,7 +824,7 @@ static void weather_update(void)
 {
     struct descriptor_iterator_filter filter = { .must_playing = true };
     DESCRIPTOR_DATA *d;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     int diff;
 
     buf[0] = '\0';

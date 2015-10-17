@@ -757,7 +757,7 @@ void show_char_to_char(CHAR_DATA *list, CHAR_DATA *ch)
 
 void show_char_to_char_0(CHAR_DATA *victim, CHAR_DATA *ch)
 {
-    char buf[MSL], message[MSL];
+    char buf[MAX_STRING_LENGTH], message[MAX_STRING_LENGTH];
 
     buf[0] = '\0';
 
@@ -1077,7 +1077,7 @@ void show_list_to_char(GAMEOBJECT *list, CHAR_DATA *ch, bool fShort, bool fShowN
 
 char *format_obj_to_char(GAMEOBJECT *obj, CHAR_DATA *ch, bool fShort)
 {
-    static char buf[MSL * 2];
+    static char buf[MAX_STRING_LENGTH * 2];
 
     buf[0] = '\0';
 

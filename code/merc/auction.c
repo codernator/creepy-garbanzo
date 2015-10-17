@@ -72,9 +72,9 @@ static const struct auction_types auction_type_table[] =
 void do_auction(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
-    char arg1[MIL];
-    char arg2[MIL];
-    char buf[MSL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
+    char buf[MAX_STRING_LENGTH];
     int auction_idx;
     unsigned int auction_reserve;
 
@@ -316,7 +316,7 @@ void do_auction(CHAR_DATA *ch, const char *argument)
  ***************************************************************************/
 void auction_update(void)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     int auction_idx;
 
     if (currentAuction.item != NULL) {
@@ -383,7 +383,7 @@ inline GAMEOBJECT *get_auction_item()
  ***************************************************************************/
 unsigned int advatoi(const char *s)
 {
-    char string[MIL];               /* a buffer to hold a copy of the argument */
+    char string[MAX_INPUT_LENGTH];               /* a buffer to hold a copy of the argument */
     char *stringptr = string;       /* a pointer to the buffer so we can move around */
     char tempstring[2];             /* a small temp buffer to pass to atoi */
     unsigned int number = 0;        /* number to be returned */
@@ -435,7 +435,7 @@ unsigned int advatoi(const char *s)
 unsigned int parsebet(const unsigned int currentbet, const char *argument)
 {
     unsigned int newbet = 0;                                                                                /* a variable to temporarily hold the new bet */
-    char string[MIL];                                                                                       /* a buffer to modify the bet string */
+    char string[MAX_INPUT_LENGTH];                                                                                       /* a buffer to modify the bet string */
     char *stringptr = string;                                                                               /* a pointer we can move around */
 
     strcpy(string, argument);                                                                               /* make a work copy of argument */

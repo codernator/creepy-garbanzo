@@ -41,7 +41,7 @@ extern void fread_char(CHAR_DATA * ch, FILE * fp);
 
 void do_help(CHAR_DATA *ch, const char *argument)
 {
-    char topic[MIL];
+    char topic[MAX_INPUT_LENGTH];
 
     if (IS_NPC(ch))
         return;
@@ -54,7 +54,7 @@ void do_help(CHAR_DATA *ch, const char *argument)
 /* changes your scroll */
 void do_scroll(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     char buf[100];
     int lines;
 
@@ -359,7 +359,7 @@ void do_color(CHAR_DATA *ch, const char *argument)
     unsigned int i = 0;
     byte a = (byte)0;
     byte b = (byte)0;
-    char cbuf[MIL];
+    char cbuf[MAX_INPUT_LENGTH];
 
     DENY_NPC(ch);
 
@@ -505,7 +505,7 @@ void do_show(CHAR_DATA *ch, /*@unused@*/const char *argument)
 
 void do_prompt(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
 
     if (argument[0] == '\0') {
         if (IS_SET(ch->comm, COMM_PROMPT)) {
@@ -602,7 +602,7 @@ void do_lore(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
     SKILL *skill;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int percent;
 
     if ((skill = skill_lookup("lore")) == NULL) {
@@ -638,9 +638,9 @@ void do_lore(CHAR_DATA *ch, const char *argument)
 
 void do_glance(CHAR_DATA *ch, const char *argument)
 {
-    char arg1[MIL];
-    char arg2[MIL];
-    char arg3[MIL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
+    char arg3[MAX_INPUT_LENGTH];
     CHAR_DATA *victim;
 
     if (ch->desc == NULL)
@@ -692,9 +692,9 @@ void do_look(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     GAMEOBJECT *obj;
-    char arg1[MIL];
-    char arg2[MIL];
-    char arg3[MIL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
+    char arg3[MAX_INPUT_LENGTH];
     int door;
     int number;
 
@@ -758,8 +758,8 @@ void do_look(CHAR_DATA *ch, const char *argument)
 
 void do_examine(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MSL];
-    char arg[MIL];
+    char buf[MAX_STRING_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
     GAMEOBJECT *obj;
 
     (void)one_argument(argument, arg);
@@ -816,7 +816,7 @@ void do_exits(CHAR_DATA *ch, const char *argument)
 {
     extern char *const dir_name[];
     EXIT_DATA *pexit;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     bool found;
     bool fAuto;
     int door;
@@ -921,9 +921,9 @@ void do_worth(CHAR_DATA *ch, const char *argument)
 
 void do_score(CHAR_DATA *ch, const char *argument)
 {
-    char hours[MSL];
-    char mins[MSL];
-    char secs[MSL];
+    char hours[MAX_STRING_LENGTH];
+    char mins[MAX_STRING_LENGTH];
+    char secs[MAX_STRING_LENGTH];
     int i;
 
     printf_to_char(ch, "You are %s%s, level %d, ", ch->name, IS_NPC(ch) ? "" : ch->pcdata->title, ch->level);
@@ -1142,7 +1142,7 @@ void do_affects(CHAR_DATA *ch, const char *argument)
     AFFECT_DATA *paf;
     AFFECT_DATA *paf_last = NULL;
     SKILL *skill;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
 
     if (ch->affected != NULL) {
         send_to_char("You are affected by the following spells```8:``\n\r", ch);
@@ -1261,8 +1261,8 @@ void do_equipment(CHAR_DATA *ch, /*@unused@*/const char *argument)
 
 void do_compare(CHAR_DATA *ch, const char *argument)
 {
-    char arg1[MIL];
-    char arg2[MIL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
     GAMEOBJECT *obj1;
     GAMEOBJECT *obj2;
     long value1;
@@ -1383,7 +1383,7 @@ void do_here(CHAR_DATA *ch, const char *argument)
 
 void do_consider(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     CHAR_DATA *victim;
     char *msg;
     int diff;
@@ -1430,7 +1430,7 @@ void do_consider(CHAR_DATA *ch, const char *argument)
 
 void set_title(CHAR_DATA *ch, char *title)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
 
     if (IS_NPC(ch)) {
         log_bug("Set_title: NPC.");
@@ -1456,7 +1456,7 @@ void set_title(CHAR_DATA *ch, char *title)
  ***************************************************************************/
 void do_title(CHAR_DATA *ch, const char *argument)
 {
-    static char buf[MSL];
+    static char buf[MAX_STRING_LENGTH];
 
     DENY_NPC(ch);
 
@@ -1478,7 +1478,7 @@ void do_title(CHAR_DATA *ch, const char *argument)
  ***************************************************************************/
 void do_deathcry(CHAR_DATA *ch, const char *argument)
 {
-    static char buf[MSL];
+    static char buf[MAX_STRING_LENGTH];
     int rand;
 
     DENY_NPC(ch);
@@ -1526,7 +1526,7 @@ void do_deathcry(CHAR_DATA *ch, const char *argument)
         return;
     }
 
-    (void)snprintf(buf, MIL, "%s", argument);
+    (void)snprintf(buf, MAX_INPUT_LENGTH, "%s", argument);
     smash_tilde(buf);
     ch->pcdata->deathcry = str_dup(buf);
     printf_to_char(ch, "Your `1death `!cry`` is`8:`` %s\n\r", ch->pcdata->deathcry);
@@ -1539,7 +1539,7 @@ void do_deathcry(CHAR_DATA *ch, const char *argument)
 void do_description(CHAR_DATA *ch, const char *argument)
 {
 
-    static char buf[MSL];
+    static char buf[MAX_STRING_LENGTH];
 
     DENY_NPC(ch);
 
@@ -1584,10 +1584,10 @@ void do_description(CHAR_DATA *ch, const char *argument)
     }
 
     if (argument[0] == '+') {
-        static char sanitized[MSL];
+        static char sanitized[MAX_STRING_LENGTH];
         char *s;
 
-        (void)strncpy(sanitized, argument, MSL);
+        (void)strncpy(sanitized, argument, MAX_STRING_LENGTH);
         smash_tilde(sanitized);
 
         if (ch->description != NULL) {
@@ -1618,7 +1618,7 @@ void do_description(CHAR_DATA *ch, const char *argument)
 
 void do_report(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MIL];
+    char buf[MAX_INPUT_LENGTH];
 
     sprintf(buf,
             "You say 'I have %d/%d hp %d/%d mana %d/%d mv %d xp.'\n\r",
@@ -1646,7 +1646,7 @@ void do_report(CHAR_DATA *ch, const char *argument)
  */
 void do_wimpy(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int wimpy;
 
     (void)one_argument(argument, arg);
@@ -1675,8 +1675,8 @@ void do_wimpy(CHAR_DATA *ch, const char *argument)
 
 void do_password(CHAR_DATA *ch, const char *argument)
 {
-    char arg1[MIL];
-    char arg2[MIL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
     char *pArg;
     char cEnd;
     int passaccept;
@@ -1750,11 +1750,11 @@ void do_finger(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     FILE *fp;
-    char arg[MIL];
-    char buf[MSL];
-    char hours[MSL];
-    char mins[MSL];
-    char secs[MSL];
+    char arg[MAX_INPUT_LENGTH];
+    char buf[MAX_STRING_LENGTH];
+    char hours[MAX_STRING_LENGTH];
+    char mins[MAX_STRING_LENGTH];
+    char secs[MAX_STRING_LENGTH];
     bool fOld;
     bool vOnline = true;
 
@@ -1860,8 +1860,8 @@ void do_laston(CHAR_DATA *ch, const char *argument)
     DESCRIPTOR_DATA *dpending;
     CHAR_DATA *victim = ch;
     FILE *fp;
-    char arg[MIL];
-    char buf[MSL];
+    char arg[MAX_INPUT_LENGTH];
+    char buf[MAX_STRING_LENGTH];
     bool fOld;
 
     (void)one_argument(argument, arg);
@@ -1990,7 +1990,7 @@ void do_die(CHAR_DATA *ch, const char *argument)
 /* add this function - add definition in merc.h*/
 void show_damage_display(CHAR_DATA *ch, CHAR_DATA *victim)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     int percent;
 
     /* if the victims race is human and it is a PC, it shows nothing*/
@@ -2047,7 +2047,7 @@ static void print_history_help(CHAR_DATA *ch)
  */
 void do_history(CHAR_DATA *ch, const char *argument)
 {
-    char cmd[MSL];
+    char cmd[MAX_STRING_LENGTH];
     int len;
     bool found = false;
     size_t MAX_HIST_LENGTH = 4096;
@@ -2067,13 +2067,13 @@ void do_history(CHAR_DATA *ch, const char *argument)
         page_to_char(ch->pcdata->history ? ch->pcdata->history : "(None).\n\r", ch);
         return;
     } else {
-        static char sanitized[MSL];
+        static char sanitized[MAX_STRING_LENGTH];
 
-        snprintf(sanitized, MSL, "%s", argument);
+        snprintf(sanitized, MAX_STRING_LENGTH, "%s", argument);
         smash_tilde(sanitized);
 
         if (cmd[0] == '+') {
-            char buf[MSL];
+            char buf[MAX_STRING_LENGTH];
 
             if (ch->pcdata->history == NULL || ch->pcdata->history[0] == '\0') {
                 if (strlen(sanitized) >= MAX_HIST_LENGTH) {
@@ -2095,7 +2095,7 @@ void do_history(CHAR_DATA *ch, const char *argument)
             send_to_char("Ok.\n\r", ch);
             return;
         } else if (cmd[0] == '-') {
-            char buf[MSL];
+            char buf[MAX_STRING_LENGTH];
             int buf_len;
 
             if (ch->pcdata->history == NULL || ch->pcdata->history[0] == '\0') {
@@ -2155,7 +2155,7 @@ void do_history(CHAR_DATA *ch, const char *argument)
 
 void do_viewhist(CHAR_DATA *ch, const char *argument)
 {
-    char arg1[MIL];
+    char arg1[MAX_INPUT_LENGTH];
     CHAR_DATA *victim;
 
     argument = one_argument(argument, arg1);

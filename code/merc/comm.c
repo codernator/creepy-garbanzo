@@ -184,7 +184,7 @@ void read_from_buffer(struct descriptor_data *d)
 
     /** Canonical input processing. */
     for (i = 0, k = 0; d->inbuf[i] != '\n' && d->inbuf[i] != '\r'; i++) {
-        if (k >= MIL - 2) {
+        if (k >= MAX_INPUT_LENGTH - 2) {
             remote_write(d->descriptor, "Line too long.\n\r", 0);
 
             /* skip the rest of the line */
@@ -311,10 +311,10 @@ void bust_a_prompt(CHAR_DATA *ch)
     EXIT_DATA *pexit;
     const char *str;
     const char *i;
-    char buf[MSL];
-    char buf2[MSL];
+    char buf[MAX_STRING_LENGTH];
+    char buf2[MAX_STRING_LENGTH];
     char *point;
-    char doors[MIL];
+    char doors[MAX_INPUT_LENGTH];
     bool found;
     const char *dir_name[] = { "N", "E", "S", "W", "U", "D" };
     bool dClosed;
@@ -479,16 +479,16 @@ void bust_a_prompt(CHAR_DATA *ch)
 
 
     if (ch->incog_level) {
-        char buf3[MSL];
+        char buf3[MAX_STRING_LENGTH];
 
-        (void)snprintf(buf3, MSL - 1, "`#(`6Incog: `^%d`#)`` ", ch->incog_level);
+        (void)snprintf(buf3, MAX_STRING_LENGTH - 1, "`#(`6Incog: `^%d`#)`` ", ch->incog_level);
         send_to_char(buf3, ch);
     }
 
     if (ch->invis_level) {
-        char buf4[MSL];
+        char buf4[MAX_STRING_LENGTH];
 
-        (void)snprintf(buf4, MSL - 1, "`O(`@W`Pi`@Z`Pi`@: %d`O)``", ch->invis_level);
+        (void)snprintf(buf4, MAX_STRING_LENGTH - 1, "`O(`@W`Pi`@Z`Pi`@: %d`O)``", ch->invis_level);
         send_to_char(buf4, ch);
     }
 
@@ -792,8 +792,8 @@ void page_to_char(const char *txt, const CHAR_DATA *ch)
 /* string pager */
 void show_string(struct descriptor_data *d, char *input)
 {
-    char buffer[4 * MSL];
-    char buf[MIL];
+    char buffer[4 * MAX_STRING_LENGTH];
+    char buf[MAX_INPUT_LENGTH];
     register char *scan, *chk;
     int lines = 0, toggle = 1;
     int show_lines;
@@ -845,7 +845,7 @@ void show_string(struct descriptor_data *d, char *input)
  ***************************************************************************/
 void printf_to_char(CHAR_DATA *ch, char *fmt, ...)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
 
     va_list args;
 
@@ -936,7 +936,7 @@ void process_all_input()
         if (d->ready_input) {
             /* Hold horses if pending command already. */
             if (d->incomm[0] == '\0') {
-                int outcome = remote_read(d->descriptor, 4*MIL, d->inbuf);
+                int outcome = remote_read(d->descriptor, 4*MAX_INPUT_LENGTH, d->inbuf);
                 if (outcome != DESC_READ_RESULT_OK) {
                     switch (outcome) {
                       case DESC_READ_RESULT_OVERFLOW:

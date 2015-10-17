@@ -53,9 +53,9 @@ void do_enchant(CHAR_DATA *ch, const char *argument)
 {
 	GAMEOBJECT *obj;
 	AFFECT_DATA af;
-	char item[MIL];
-	char affect[MIL];
-	char mod[MIL];
+	char item[MAX_INPUT_LENGTH];
+	char affect[MAX_INPUT_LENGTH];
+	char mod[MAX_INPUT_LENGTH];
 	int idx;
 	int modifier = 0;
 	char *affect_name = NULL;
@@ -179,8 +179,8 @@ void do_disenchant(CHAR_DATA *ch, const char *argument)
 	GAMEOBJECT *obj;
 	AFFECT_DATA *paf;
 	AFFECT_DATA *paf_next;
-	char item[MIL];
-	char affect[MIL];
+	char item[MAX_INPUT_LENGTH];
+	char affect[MAX_INPUT_LENGTH];
 	int number;
 	int count;
 	int apply_to;
@@ -340,8 +340,8 @@ void do_repair(CHAR_DATA *ch, const char *argument)
 	GAMEOBJECT *obj;
 	AFFECT_DATA *paf;
 	SKILL *skill_haggle;
-	char cmd[MSL];
-	char stat[MSL];
+	char cmd[MAX_STRING_LENGTH];
+	char stat[MAX_STRING_LENGTH];
 	int idx;
 	unsigned int cost;
 	int roll;
@@ -378,7 +378,7 @@ void do_repair(CHAR_DATA *ch, const char *argument)
 	}
 
 	if (!str_prefix(cmd, "estimate")) {
-		char item[MSL];
+		char item[MAX_STRING_LENGTH];
 		argument = one_argument(argument, item);
 
 		if (item[0] == '\0' || ((obj = get_obj_carry(ch, item)) == NULL)) {

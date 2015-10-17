@@ -86,7 +86,7 @@ static void find_empty_vnums(char type, CHAR_DATA *ch, const char *arg, BUFFER *
 {
     AREA_DATA *ad;
     long vnum, low_empty_range = 0, high_empty_range = 0;
-    char buf[MIL];
+    char buf[MAX_INPUT_LENGTH];
     CHECK_EXISTS_FN *check_exists_fn;
 
     ad = grok_area(ch, arg, out_buffer);
@@ -97,7 +97,7 @@ static void find_empty_vnums(char type, CHAR_DATA *ch, const char *arg, BUFFER *
     if (check_exists_fn == NULL)
         return;
 
-    snprintf(buf, MIL, "  AREA: %s\n\r\n\r", ad->name);
+    snprintf(buf, MAX_INPUT_LENGTH, "  AREA: %s\n\r\n\r", ad->name);
     add_buf(out_buffer, buf);
 
     for (vnum = ad->min_vnum; vnum <= ad->max_vnum; vnum++) {
@@ -112,9 +112,9 @@ static void find_empty_vnums(char type, CHAR_DATA *ch, const char *arg, BUFFER *
                 } else {
                     /* finish old range.  start new range.   */
                     if (high_empty_range == low_empty_range)
-                        snprintf(buf, MIL, "    %ld\n\r", low_empty_range);
+                        snprintf(buf, MAX_INPUT_LENGTH, "    %ld\n\r", low_empty_range);
                     else
-                        snprintf(buf, MIL, "    %ld - %ld\n\r", low_empty_range, high_empty_range);
+                        snprintf(buf, MAX_INPUT_LENGTH, "    %ld - %ld\n\r", low_empty_range, high_empty_range);
 
                     add_buf(out_buffer, buf);
                     low_empty_range = vnum;
@@ -126,9 +126,9 @@ static void find_empty_vnums(char type, CHAR_DATA *ch, const char *arg, BUFFER *
     if (low_empty_range > 0) {
         /* Last range could not have been written to output, so write now. */
         if (high_empty_range == low_empty_range)
-            snprintf(buf, MIL, "    %ld\n\r\n\r", low_empty_range);
+            snprintf(buf, MAX_INPUT_LENGTH, "    %ld\n\r\n\r", low_empty_range);
         else
-            snprintf(buf, MIL, "    %ld - %ld\n\r\n\r", low_empty_range, high_empty_range);
+            snprintf(buf, MAX_INPUT_LENGTH, "    %ld - %ld\n\r\n\r", low_empty_range, high_empty_range);
 
         add_buf(out_buffer, buf);
     } else {

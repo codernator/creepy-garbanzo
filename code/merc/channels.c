@@ -101,7 +101,7 @@ void channels_show(CHAR_DATA *sender)
 
 void channels_permission(CHAR_DATA *grantor, CHAR_DATA *grantee, bool granted, const CHANNEL_DEFINITION const *channel)
 {
-    static char buf[MIL];
+    static char buf[MAX_INPUT_LENGTH];
 
     DENY_NPC(grantor);
 
@@ -132,7 +132,7 @@ void channels_permission(CHAR_DATA *grantor, CHAR_DATA *grantee, bool granted, c
 
     printf_to_char(grantee, "You have been %s access to channel %s.\n\r", granted ? "granted": "denied", channel->name);
     printf_to_char(grantor, "Channel access %s to %s.", granted ? "granted": "denied", capitalize(grantee->name));
-    (void)snprintf(buf, MIL, "$N %s %s to %s.", granted ? "grants" : "denies", channel->name, grantee->name);
+    (void)snprintf(buf, MAX_INPUT_LENGTH, "$N %s %s to %s.", granted ? "grants" : "denies", channel->name, grantee->name);
     wiznet(buf, grantor, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
 }
 
@@ -204,7 +204,7 @@ const CHANNEL_DEFINITION const *channels_parse(const char *argument)
 {
     int i;
     for (i = 0; channels[i].flag != 0; i++) {
-	if (!strncmp(argument, channels[i].name, MIL)) {
+	if (!strncmp(argument, channels[i].name, MAX_INPUT_LENGTH)) {
 	    return &channels[i];
 	}
     }
@@ -250,13 +250,13 @@ void broadcast_shout(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender,
 
 void broadcast_global(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, const char *argument)
 {
-    static char buf[2*MIL];
+    static char buf[2*MAX_INPUT_LENGTH];
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = sender };
     DESCRIPTOR_DATA *dpending;
     DESCRIPTOR_DATA *d;
     CHAR_DATA *actual;
 
-    (void)snprintf(buf, 2 * MIL, "``$n %s: %s``", channel->print_name, argument);
+    (void)snprintf(buf, 2 * MAX_INPUT_LENGTH, "``$n %s: %s``", channel->print_name, argument);
     if (sender != NULL) {
 	act_new("$n `2I`8M`2P`8:`` $t``", sender, argument, NULL, TO_CHAR, POS_DEAD, channel->mob_trigger);
     }
@@ -265,7 +265,7 @@ void broadcast_global(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender
 	dpending = descriptor_iterator(d, &playing_filter);
 	actual = CH(d);
 
-	(void)snprintf(buf, 2 * MIL, "``$t %s: %s``", channel->print_name, argument);
+	(void)snprintf(buf, 2 * MAX_INPUT_LENGTH, "``$t %s: %s``", channel->print_name, argument);
 	if (CHAN_ENABLED(actual, channel->flag) && !CHAN_DENIED(actual, channel->flag)) {
 	    act_new(buf, sender, argument, d->character, TO_VICT, channel->receiver_position, false);
 	}
@@ -275,7 +275,7 @@ void broadcast_global(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender
 void broadcast_say(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, const char *argument)
 {
 #define VERBSIZE 20
-    static char buf[2*MIL];
+    static char buf[2*MAX_INPUT_LENGTH];
     static char verb[VERBSIZE];
     int len = strlen(argument);
     int puncpos = len - 1;
@@ -314,10 +314,10 @@ void broadcast_say(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, c
 	default: snprintf(verb, VERBSIZE, "%s", "say"); break;
     }
 
-    (void)snprintf(buf, 2 * MIL, "`7You %s '`s$T`7'``", verb);
+    (void)snprintf(buf, 2 * MAX_INPUT_LENGTH, "`7You %s '`s$T`7'``", verb);
     act_new(buf, sender, NULL, argument, TO_CHAR, POS_RESTING, channel->mob_trigger);
 
-    (void)snprintf(buf, 2 * MIL, "`7$n %ss '`s$T`7'``", verb);
+    (void)snprintf(buf, 2 * MAX_INPUT_LENGTH, "`7$n %ss '`s$T`7'``", verb);
     act_new(buf, sender, NULL, argument, TO_ROOM, channel->receiver_position, false);
 }
 
@@ -332,8 +332,8 @@ void broadcast_pmote(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender,
     CHAR_DATA *vch;
     char *letter;
     char *name;
-    char last[MIL];
-    char temp[MSL];
+    char last[MAX_INPUT_LENGTH];
+    char temp[MAX_STRING_LENGTH];
     int matches = 0;
 
     act_new("$n $t", sender, argument, NULL, TO_CHAR, POS_DEAD, channel->mob_trigger);
@@ -395,8 +395,8 @@ void broadcast_smote(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender,
     CHAR_DATA *vch;
     char *letter;
     char *name;
-    char last[MIL];
-    char temp[MSL];
+    char last[MAX_INPUT_LENGTH];
+    char temp[MAX_STRING_LENGTH];
     int matches = 0;
 
     if (strstr(argument, sender->name) == NULL) {
@@ -555,7 +555,7 @@ bool is_ignoring(CHAR_DATA *sender, CHAR_DATA *receiver)
 
 bool send_tell(CHAR_DATA *sender, CHAR_DATA *whom, const char* argument)
 {
-    static char buf[MSL];
+    static char buf[MAX_STRING_LENGTH];
 
     if (!IS_IMMORTAL(whom) && !IS_AWAKE(sender)) {
 	send_to_char("In your dreams, or what?\n\r", sender);
@@ -569,7 +569,7 @@ bool send_tell(CHAR_DATA *sender, CHAR_DATA *whom, const char* argument)
 	}
 
 	act("$E is ```!A```@F```OK``, but your tell will go through when $E returns.", sender, NULL, whom, TO_CHAR);
-	(void)snprintf(buf, 2 * MIL, "```@%s tells you '`t%s```@'``\n\r", PERS(sender, whom), argument);
+	(void)snprintf(buf, 2 * MAX_INPUT_LENGTH, "```@%s tells you '`t%s```@'``\n\r", PERS(sender, whom), argument);
 	buf[0] = UPPER(buf[0]);
 	add_buf(whom->pcdata->buffer, buf);
 	return true;
@@ -577,7 +577,7 @@ bool send_tell(CHAR_DATA *sender, CHAR_DATA *whom, const char* argument)
 
     if (whom->desc == NULL && !IS_NPC(whom)) {
 	act("$N seems to have misplaced $S link...try again later.", sender, NULL, whom, TO_CHAR);
-	(void)snprintf(buf, 2 * MIL, "```@%s tells you '`t%s```@'``\n\r", PERS(sender, whom), argument);
+	(void)snprintf(buf, 2 * MAX_INPUT_LENGTH, "```@%s tells you '`t%s```@'``\n\r", PERS(sender, whom), argument);
 	buf[0] = UPPER(buf[0]);
 	add_buf(whom->pcdata->buffer, buf);
 	return true;
@@ -591,8 +591,8 @@ bool send_tell(CHAR_DATA *sender, CHAR_DATA *whom, const char* argument)
 
 char *emote_parse(const char *argument)
 {
-    static char target[MSL];
-    char buf[MSL];
+    static char target[MAX_STRING_LENGTH];
+    char buf[MAX_STRING_LENGTH];
     int i = 0, arg_len = 0;
     int flag = false;
 
@@ -602,24 +602,24 @@ char *emote_parse(const char *argument)
     for (i = 0; i < arg_len; i++) {
 	if (argument[i] == '"' && flag == false) {
 	    flag = true;
-	    (void)snprintf(buf, MSL, "%c", argument[i]);
+	    (void)snprintf(buf, MAX_STRING_LENGTH, "%c", argument[i]);
 	    strcat(target, buf);
 	    strcat(target, "`P");
 	    continue;
 	} else if (argument[i] == '"' && flag == true) {
 	    flag = false;
 	    strcat(target, "``");
-	    (void)snprintf(buf, MSL, "%c", argument[i]);
+	    (void)snprintf(buf, MAX_STRING_LENGTH, "%c", argument[i]);
 	    strcat(target, buf);
 	    continue;
 	} else {
-	    (void)snprintf(buf, MSL, "%c", argument[i]);
+	    (void)snprintf(buf, MAX_STRING_LENGTH, "%c", argument[i]);
 	    strcat(target, buf);
 	}
     }
     if (flag) {
 	strcat(target, "``");
-	(void)snprintf(buf, MSL, "%c", '"');
+	(void)snprintf(buf, MAX_STRING_LENGTH, "%c", '"');
 	strcat(target, buf);
     }
     return target;

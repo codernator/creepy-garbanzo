@@ -6,8 +6,8 @@
 
 
 void command_channel(CHAR_DATA *ch, const char *argument) {
-    static char arg1[MIL];
-    static char arg2[MIL];
+    static char arg1[MAX_INPUT_LENGTH];
+    static char arg2[MAX_INPUT_LENGTH];
     const CHANNEL_DEFINITION const *channel;
 
     if (argument[0] == '\0') {

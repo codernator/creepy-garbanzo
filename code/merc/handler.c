@@ -812,7 +812,7 @@ int get_wield_weight(CHAR_DATA *ch)
  */
 bool is_name(const char *str, const char *namelist)
 {
-    char name[MIL], part[MIL];
+    char name[MAX_INPUT_LENGTH], part[MAX_INPUT_LENGTH];
     const char *list;
     const char *string;
 
@@ -1392,7 +1392,7 @@ void extract_char(CHAR_DATA *ch, bool extract)
 CHAR_DATA *get_char_room(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *rch;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int number;
     int count;
 
@@ -1422,7 +1422,7 @@ CHAR_DATA *get_char_room(CHAR_DATA *ch, const char *argument)
 CHAR_DATA *get_char_world(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *wch;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int number;
     int count;
 
@@ -1463,7 +1463,7 @@ GAMEOBJECT *get_obj_type(OBJECTPROTOTYPE *objprototype)
 GAMEOBJECT *get_obj_list(CHAR_DATA *ch, const char *argument, GAMEOBJECT *list)
 {
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int number;
     int count;
 
@@ -1489,7 +1489,7 @@ GAMEOBJECT *get_obj_list(CHAR_DATA *ch, const char *argument, GAMEOBJECT *list)
 GAMEOBJECT *get_obj_carry(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int number;
     int count;
 
@@ -1514,7 +1514,7 @@ GAMEOBJECT *get_obj_carry(CHAR_DATA *ch, const char *argument)
 GAMEOBJECT *get_obj_wear(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int number;
     int count;
 
@@ -1562,7 +1562,7 @@ GAMEOBJECT *get_obj_here(CHAR_DATA *ch, const char *argument)
 GAMEOBJECT *get_obj_world(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj, *opending;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int number;
     int count = 0;
 
@@ -1624,7 +1624,7 @@ void deduct_cost(CHAR_DATA *ch, unsigned int cost)
  ***************************************************************************/
 GAMEOBJECT *create_money(unsigned int gold, unsigned int silver)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     GAMEOBJECT *obj;
 
     if ((gold == 0 && silver == 0)) {

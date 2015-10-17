@@ -50,7 +50,7 @@
  *	globals
  ***************************************************************************/
 extern int _filbuf(FILE *);
-extern char area_file[MIL];
+extern char area_file[MAX_INPUT_LENGTH];
 extern void string_append(CHAR_DATA * ch, char **string);
 
 #define MAX_MESSAGE_LENGTH              4096
@@ -579,7 +579,7 @@ message_cmd_table[] =
  ***************************************************************************/
 static void parse_message(CHAR_DATA *ch, const char *argument, int type)
 {
-    char cmd[MSL];
+    char cmd[MAX_STRING_LENGTH];
     int idx;
 
     DENY_NPC(ch);

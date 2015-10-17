@@ -22,7 +22,7 @@ void do_stat(CHAR_DATA *ch, const char *argument)
     GAMEOBJECT *obj;
     ROOM_INDEX_DATA *location;
     CHAR_DATA *victim;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     const char *string;
 
     DENY_NPC(ch);
@@ -85,8 +85,8 @@ void show_room_stats(CHAR_DATA *ch, const char *argument)
     CHAR_DATA *rch;
     AFFECT_DATA *paf;
     SKILL *skill;
-    char buf[MSL];
-    char arg[MIL];
+    char buf[MAX_STRING_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
     int door;
 
     one_argument(argument, arg);
@@ -190,7 +190,7 @@ void show_object_stats(CHAR_DATA *ch, const char *argument)
     AFFECT_DATA *paf;
     GAMEOBJECT *obj;
     SKILL *skill;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int idx;
 
     one_argument(argument, arg);
@@ -428,7 +428,7 @@ void show_mob_stats(CHAR_DATA *ch, const char *argument)
     AFFECT_DATA *paf;
     CHAR_DATA *victim;
     SKILL *skill;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     one_argument(argument, arg);
     if (arg[0] == '\0') {

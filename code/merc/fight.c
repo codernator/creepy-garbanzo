@@ -559,9 +559,9 @@ ONE_ATTACK_RESULT one_attack(CHAR_DATA *ch, CHAR_DATA *victim, int dt, GAMEOBJEC
 
 
 	{
-	    char buf[MSL];
+	    char buf[MAX_STRING_LENGTH];
 
-	    snprintf(buf, MSL, "%5d %5d %5d %5d %5d %5d %5d %5d %8f\n\r",
+	    snprintf(buf, MAX_STRING_LENGTH, "%5d %5d %5d %5d %5d %5d %5d %5d %8f\n\r",
 		    attack_roll.weapon_skill,
 		    attack_roll.combatant_level,
 		    attack_roll.combat_rating,
@@ -574,7 +574,7 @@ ONE_ATTACK_RESULT one_attack(CHAR_DATA *ch, CHAR_DATA *victim, int dt, GAMEOBJEC
 	    printf("%s", buf);
 
 
-	    snprintf(buf, MSL, "%5d %5d %5d %5d %5d %5d %5d %5d %8ld\n\r",
+	    snprintf(buf, MAX_STRING_LENGTH, "%5d %5d %5d %5d %5d %5d %5d %5d %8ld\n\r",
 		    defense_roll.weapon_skill,
 		    defense_roll.combatant_level,
 		    defense_roll.combat_rating,
@@ -1094,7 +1094,7 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
 	}
 
 	{
-	    static char wiznet_message[MIL];
+	    static char wiznet_message[MAX_INPUT_LENGTH];
 	    sprintf(wiznet_message, "%s got toasted by %s at %s [room %ld]",
 		    (IS_NPC(victim) ? victim->short_descr : victim->name),
 		    (IS_NPC(ch) ? ch->short_descr : ch->name),
@@ -1366,7 +1366,7 @@ bool is_safe_spell(CHAR_DATA *ch, CHAR_DATA *victim, bool area)
  */
 void check_killer(CHAR_DATA *ch, CHAR_DATA *victim)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
 
     /*fuck
      * Follow charm thread to responsible character.
@@ -1625,7 +1625,7 @@ void stop_fighting(CHAR_DATA *ch, bool fBoth)
  */
 void make_corpse(CHAR_DATA *ch)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     GAMEOBJECT *corpse;
     GAMEOBJECT *obj;
     GAMEOBJECT *obj_next;
@@ -1778,7 +1778,7 @@ void death_cry(CHAR_DATA *ch, CHAR_DATA *killer)
 	act(msg, ch, NULL, NULL, TO_ROOM);
 
     if (vnum != 0) {
-	char buf[MSL];
+	char buf[MAX_STRING_LENGTH];
 	GAMEOBJECT *obj;
 	char *name;
 
@@ -1854,7 +1854,7 @@ void raw_kill(CHAR_DATA *victim, CHAR_DATA *killer)
 
 void group_gain(CHAR_DATA *ch, CHAR_DATA *victim)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     CHAR_DATA *gch;
     int xp;
     int members;
@@ -2326,7 +2326,7 @@ void use_magical_item(CHAR_DATA *ch)
     GAMEOBJECT *obj;
     GAMEOBJECT *cobj = NULL;
     int number = 0;
-    char buf[MIL];
+    char buf[MAX_INPUT_LENGTH];
 
     for (obj = ch->carrying; obj; obj = obj->next_content) {
 	if ((obj->item_type == ITEM_SCROLL

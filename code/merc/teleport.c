@@ -17,7 +17,7 @@ void do_teleport(CHAR_DATA *ch, const char *argument)
     GAMEOBJECT *obj, *opending;
     GAMEOBJECT *in_obj;
     ROOM_INDEX_DATA *location;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     BUFFER *buf;
     int count;
     int temp;

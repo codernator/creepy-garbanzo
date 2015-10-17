@@ -60,9 +60,9 @@ const struct olc_cmd_type skedit_table[] =
  ***************************************************************************/
 void skedit(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     const char *parg;
-    char command[MIL];
+    char command[MAX_INPUT_LENGTH];
     int cmd;
 
     strcpy(arg, argument);
@@ -105,7 +105,7 @@ void skedit(CHAR_DATA *ch, const char *argument)
 void do_skedit(CHAR_DATA *ch, const char *argument)
 {
     SKILL *skill;
-    char arg[MSL];
+    char arg[MAX_STRING_LENGTH];
 
     if (IS_NPC(ch))
         return;
@@ -244,7 +244,7 @@ EDIT(skedit_list){
  ***************************************************************************/
 EDIT(skedit_show){
     SKILL *skill;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
 
     EDIT_SKILL(ch, skill);
 
@@ -358,7 +358,7 @@ EDIT(skedit_level){
     SKILL *skill;
     LEVEL_INFO *level_info;
     LEVEL_INFO *level_idx;
-    char arg[MSL];
+    char arg[MAX_STRING_LENGTH];
     int cls;
     int level;
     int difficulty;
@@ -663,7 +663,7 @@ EDIT(skedit_spell){
     SKILL *skill;
     SPELL_FUN *spell;
     SPELL_LIST *spells;
-    char cmd[MIL];
+    char cmd[MAX_INPUT_LENGTH];
 
     EDIT_SKILL(ch, skill);
 
@@ -763,7 +763,7 @@ EDIT(skedit_affect){
     SKILL *skill;
     AFFECT_FUN *affect;
     AFFECT_LIST *affects;
-    char cmd[MIL];
+    char cmd[MAX_INPUT_LENGTH];
 
     EDIT_SKILL(ch, skill);
 
@@ -864,7 +864,7 @@ EDIT(skedit_affect){
 EDIT(skedit_argument){
     SKILL *skill;
     ARGUMENT *arg;
-    char cmd[MIL];
+    char cmd[MAX_INPUT_LENGTH];
 
     EDIT_SKILL(ch, skill);
 
@@ -876,7 +876,7 @@ EDIT(skedit_argument){
 
     argument = one_argument(argument, cmd);
     if (!str_prefix(cmd, "add")) {
-        char key[MIL];
+        char key[MAX_INPUT_LENGTH];
 
         argument = one_argument(argument, key);
         if (argument[0] == '\0') {

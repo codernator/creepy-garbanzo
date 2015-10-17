@@ -86,7 +86,7 @@ static int sAllocPerm;
 
 
 bool db_loading;
-static char area_file_path[MIL];
+static char area_file_path[MAX_INPUT_LENGTH];
 static AREA_DATA *g_area_loading;
 
 /***************************************************************************
@@ -174,7 +174,7 @@ static void init_areas()
 {
     FILE *fpList;
     char *word;
-    char area_file_name[MIL];
+    char area_file_name[MAX_INPUT_LENGTH];
     struct database_controller *db;
 
     log_string("Opening area file.");
@@ -192,8 +192,8 @@ static void init_areas()
             /** End of Area List. */
             break;
         }
-        (void)snprintf(area_file_path, MIL, "%s%s", AREA_FOLDER, word);
-        (void)snprintf(area_file_name, MIL, "%s", word);
+        (void)snprintf(area_file_path, MAX_INPUT_LENGTH, "%s%s", AREA_FOLDER, word);
+        (void)snprintf(area_file_name, MAX_INPUT_LENGTH, "%s", word);
 
         db = database_open(area_file_path);
         if (db == NULL) {
@@ -1397,7 +1397,7 @@ void reset_areas()
 void area_update(void)
 {
     AREA_DATA *area;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     struct area_iterator *iterator;
 
     iterator = area_iterator_start(NULL);
@@ -2652,7 +2652,7 @@ int interpolate(int level, int value_00, int value_32)
 void bug(FILE *fparea, const char *fmt, ...)
 {
     va_list args;
-    static char buf[MSL];
+    static char buf[MAX_STRING_LENGTH];
 
     va_start(args, fmt);
     vsprintf(buf, fmt, args);

@@ -91,7 +91,7 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
     ROOM_INDEX_DATA *in_room;
     ROOM_INDEX_DATA *to_room;
     EXIT_DATA *pexit;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
 
     if (door < 0 || door > 5) {
 	log_bug("Do_move: bad door %d.", door);
@@ -293,7 +293,7 @@ void do_push(CHAR_DATA *ch, const const char *argument)
     ROOM_INDEX_DATA *to_room;
     CHAR_DATA *victim;
     EXIT_DATA *pexit;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int door;
     int result;
     int fail;
@@ -396,7 +396,7 @@ void do_drag(CHAR_DATA *ch, const const char *argument)
     ROOM_INDEX_DATA *in_room;
     ROOM_INDEX_DATA *to_room;
     EXIT_DATA *pexit;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int door;
     int result;
     int fail;
@@ -677,7 +677,7 @@ void do_follow(CHAR_DATA *ch, const char *argument)
 {
     /* RT changed to allow unlimited following and follow the NOFOLLOW rules */
     CHAR_DATA *victim;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     (void)one_argument(argument, arg);
 
@@ -720,8 +720,8 @@ void do_follow(CHAR_DATA *ch, const char *argument)
 
 void do_group(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MSL];
-    char arg[MIL];
+    char buf[MAX_STRING_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
     CHAR_DATA *victim;
 
     (void)one_argument(argument, arg);
@@ -731,12 +731,12 @@ void do_group(CHAR_DATA *ch, const char *argument)
 	CHAR_DATA *leader;
 
 	leader = (ch->leader != NULL) ? ch->leader : ch;
-	(void)snprintf(buf, MSL, "%s's group:\n\r", PERS(leader, ch));
+	(void)snprintf(buf, MAX_STRING_LENGTH, "%s's group:\n\r", PERS(leader, ch));
 	send_to_char(buf, ch);
 
 	for (gch = char_list; gch != NULL; gch = gch->next) {
 	    if (is_same_group(gch, ch)) {
-		(void)snprintf(buf, MSL, "%-5s `!%4d``/`1%4d`` hp `@%4d``/`2%4d`` mana `$%4d``/`4%4d`` mv `&%5d`` xp\n\r",
+		(void)snprintf(buf, MAX_STRING_LENGTH, "%-5s `!%4d``/`1%4d`` hp `@%4d``/`2%4d`` mana `$%4d``/`4%4d`` mv `&%5d`` xp\n\r",
 			capitalize(PERS(gch, ch)),
 			gch->hit, gch->max_hit,
 			gch->mana, gch->max_mana,
@@ -789,8 +789,8 @@ void do_group(CHAR_DATA *ch, const char *argument)
 
 void do_split(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MSL];
-    char arg1[MIL], arg2[MIL];
+    char buf[MAX_STRING_LENGTH];
+    char arg1[MAX_INPUT_LENGTH], arg2[MAX_INPUT_LENGTH];
     CHAR_DATA *gch;
     int members;
     unsigned int amount_gold = 0, amount_silver = 0;
@@ -847,27 +847,27 @@ void do_split(CHAR_DATA *ch, const char *argument)
     ch->gold += share_gold + extra_gold;
 
     if (share_silver > 0) {
-	(void)snprintf(buf, 2 * MIL,
+	(void)snprintf(buf, 2 * MAX_INPUT_LENGTH,
 		"You split %u silver coins. Your share is %u silver.\n\r",
 		amount_silver, share_silver + extra_silver);
 	send_to_char(buf, ch);
     }
 
     if (share_gold > 0) {
-	(void)snprintf(buf, 2 * MIL,
+	(void)snprintf(buf, 2 * MAX_INPUT_LENGTH,
 		"You split %u gold coins. Your share is %u gold.\n\r",
 		amount_gold, share_gold + extra_gold);
 	send_to_char(buf, ch);
     }
 
     if (share_gold == 0) {
-	(void)snprintf(buf, 2 * MIL, "$n splits %u silver coins. Your share is %u silver.",
+	(void)snprintf(buf, 2 * MAX_INPUT_LENGTH, "$n splits %u silver coins. Your share is %u silver.",
 		amount_silver, share_silver);
     } else if (share_silver == 0) {
-	(void)snprintf(buf, 2 * MIL, "$n splits %u gold coins. Your share is %u gold.",
+	(void)snprintf(buf, 2 * MAX_INPUT_LENGTH, "$n splits %u gold coins. Your share is %u gold.",
 		amount_gold, share_gold);
     } else {
-	(void)snprintf(buf, 2 * MIL,
+	(void)snprintf(buf, 2 * MAX_INPUT_LENGTH,
 		"$n splits %u silver and %u gold coins, giving you %u silver and %u gold.\n\r",
 		amount_silver, amount_gold, share_silver, share_gold);
     }
@@ -1016,7 +1016,7 @@ int find_exit(CHAR_DATA *ch, char *arg)
 void do_open(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int door;
 
     (void)one_argument(argument, arg);
@@ -1117,7 +1117,7 @@ void do_open(CHAR_DATA *ch, const char *argument)
 void do_close(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int door;
 
     (void)one_argument(argument, arg);
@@ -1224,7 +1224,7 @@ bool has_key(CHAR_DATA *ch, long key)
 void do_lock(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int door;
 
     (void)one_argument(argument, arg);
@@ -1345,7 +1345,7 @@ void do_lock(CHAR_DATA *ch, const char *argument)
 void do_unlock(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int door;
 
     (void)one_argument(argument, arg);
@@ -1466,7 +1466,7 @@ void do_pick(CHAR_DATA *ch, const char *argument)
     CHAR_DATA *gch;
     GAMEOBJECT *obj;
     SKILL *skill;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int door;
     int percent;
 
@@ -1953,7 +1953,7 @@ void do_sleep(CHAR_DATA *ch, const char *argument)
 void do_wake(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     (void)one_argument(argument, arg);
     if (arg[0] == '\0') {

@@ -25,7 +25,7 @@ void do_bash(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     SKILL *skill;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int chance;
     int total;
 
@@ -157,7 +157,7 @@ void do_bash(CHAR_DATA *ch, const char *argument)
 
 void do_kill(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     CHAR_DATA *victim;
 
     (void)one_argument(argument, arg);
@@ -214,8 +214,8 @@ void do_murde(CHAR_DATA *ch, /*@unused@*/const char *argument)
 void do_murder(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    char buf[MSL];
-    char arg[MIL];
+    char buf[MAX_STRING_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
 
     (void)one_argument(argument, arg);
     if (arg[0] == '\0') {
@@ -260,9 +260,9 @@ void do_murder(CHAR_DATA *ch, const char *argument)
 
     WAIT_STATE(ch, 1 * PULSE_VIOLENCE);
     if (IS_NPC(ch))
-	(void)snprintf(buf, MSL, "Help! I am being attacked by %s!", ch->short_descr);
+	(void)snprintf(buf, MAX_STRING_LENGTH, "Help! I am being attacked by %s!", ch->short_descr);
     else
-	(void)snprintf(buf, MSL, "Help! I am being attacked by %s!", ch->name);
+	(void)snprintf(buf, MAX_STRING_LENGTH, "Help! I am being attacked by %s!", ch->name);
 
     broadcast_channel(victim, channels_find(CHANNEL_SHOUT), NULL, buf);
     check_killer(ch, victim);
@@ -341,7 +341,7 @@ void do_rescue(CHAR_DATA *ch, const char *argument)
     CHAR_DATA *victim;
     CHAR_DATA *fch;
     SKILL *skill;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int heal;
 
     if ((skill = skill_lookup("rescue")) == NULL) {
@@ -520,7 +520,7 @@ void do_sla(CHAR_DATA *ch, /*@unused@*/const char *argument)
 void do_slay(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     (void)one_argument(argument, arg);
     if (arg[0] == '\0') {
@@ -555,8 +555,8 @@ void do_intimidate(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     SKILL *skill;
-    char buf[MSL];
-    char arg[MIL];
+    char buf[MAX_STRING_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
     int chance;
 
     if ((skill = skill_lookup("intimidate")) == NULL) {
@@ -611,7 +611,7 @@ void do_intimidate(CHAR_DATA *ch, const char *argument)
     } else {
 	ch->move -= 80;
 	send_to_char("You are unable to muster up enough influence.\n\r", ch);
-	(void)snprintf(buf, MSL, "%s tries to bully you and look intimidating.\n\r", ch->name);
+	(void)snprintf(buf, MAX_STRING_LENGTH, "%s tries to bully you and look intimidating.\n\r", ch->name);
 	send_to_char(buf, victim);
 	if IS_NPC(victim){
 	    if (number_percent() < 50) {

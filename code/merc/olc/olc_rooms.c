@@ -43,8 +43,8 @@ extern void string_append(CHAR_DATA * ch, char **string);
 static bool change_exit(CHAR_DATA *ch, const char *argument, int door)
 {
     ROOM_INDEX_DATA *room;
-    char command[MIL];
-    char arg[MIL];
+    char command[MAX_INPUT_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
     int value;
 
     EDIT_ROOM(ch, room);
@@ -159,7 +159,7 @@ static bool change_exit(CHAR_DATA *ch, const char *argument, int door)
     }
 
     if (!str_cmp(command, "dig")) {
-        char buf[MSL];
+        char buf[MAX_STRING_LENGTH];
 
         if (arg[0] == '\0' || !is_number(arg)) {
             send_to_char("Syntax: [direction] dig <vnum>\n\r", ch);
@@ -277,7 +277,7 @@ static bool change_exit(CHAR_DATA *ch, const char *argument, int door)
 void do_redit(CHAR_DATA *ch, const char *argument)
 {
     ROOM_INDEX_DATA *room;
-    char arg[MSL];
+    char arg[MAX_STRING_LENGTH];
 
     if (IS_NPC(ch))
         return;
@@ -467,7 +467,7 @@ EDIT(redit_rlist){
     AREA_DATA *area;
     BUFFER *buf;
     char *unclr;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     bool found;
     long vnum;
     int col = 0;
@@ -514,7 +514,7 @@ EDIT(redit_mlist){
     MOB_INDEX_DATA *mob;
     AREA_DATA *area;
     BUFFER *buf;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     char *unclr;
     bool all;
     bool found;
@@ -575,7 +575,7 @@ EDIT(redit_olist){
     OBJECTPROTOTYPE *obj;
     AREA_DATA *area;
     BUFFER *buf;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     char *unclr;
     bool all;
     bool found;
@@ -704,7 +704,7 @@ EDIT(redit_show){
     ROOM_INDEX_DATA *room;
     GAMEOBJECT *obj;
     CHAR_DATA *rch;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     int door;
     bool fcnt;
 
@@ -793,8 +793,8 @@ EDIT(redit_show){
         EXIT_DATA *pexit;
 
         if ((pexit = room->exit[door])) {
-            char word[MIL];
-            char reset_state[MSL];
+            char word[MAX_INPUT_LENGTH];
+            char reset_state[MAX_STRING_LENGTH];
             const char *state;
             int iter;
             int length;
@@ -901,8 +901,8 @@ EDIT(redit_down){
 EDIT(redit_ed){
     ROOM_INDEX_DATA *room;
     EXTRA_DESCR_DATA *ed;
-    char command[MIL];
-    char keyword[MIL];
+    char command[MAX_INPUT_LENGTH];
+    char keyword[MAX_INPUT_LENGTH];
 
     EDIT_ROOM(ch, room);
 
@@ -1170,7 +1170,7 @@ EDIT(redit_addaffect){
     ROOM_INDEX_DATA *room;
     AFFECT_DATA af;
     SKILL *skill;
-    char arg[MSL];
+    char arg[MAX_STRING_LENGTH];
 
     EDIT_ROOM(ch, room);
     argument = one_argument(argument, arg);
@@ -1208,7 +1208,7 @@ EDIT(redit_delaffect){
     ROOM_INDEX_DATA *room;
     AFFECT_DATA *paf;
     AFFECT_DATA *paf_next;
-    char arg[MSL];
+    char arg[MAX_STRING_LENGTH];
     int number;
     int count;
 
@@ -1262,8 +1262,8 @@ EDIT(redit_mreset){
     MOB_INDEX_DATA *mob;
     CHAR_DATA *newmob;
     RESET_DATA *pReset;
-    char arg[MIL];
-    char arg2[MIL];
+    char arg[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
 
     EDIT_ROOM(ch, room);
 
@@ -1323,8 +1323,8 @@ EDIT(redit_oreset){
     GAMEOBJECT *to_obj;
     CHAR_DATA *to_mob;
     RESET_DATA *pReset;
-    char arg1[MIL];
-    char arg2[MIL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
     int olevel = 0;
 
     EDIT_ROOM(ch, room);
@@ -1506,9 +1506,9 @@ EDIT(redit_flagall){
     AREA_DATA *area;                                /* area being edited */
     BUFFER *buf;                                    /* text to return to ch */
     char *unclr;                                    /* uncolored room name */
-    char rFlag[MIL];                                /* name of room flag to set */
+    char rFlag[MAX_INPUT_LENGTH];                                /* name of room flag to set */
     int iFlag;                                      /* int value of room flag */
-    char rType[MIL];                                /* type of set (on, off, toggle) */
+    char rType[MAX_INPUT_LENGTH];                                /* type of set (on, off, toggle) */
     bool found;                                     /* room exists? */
     long vnum;                                      /* vnum of room */
     int col = 0;                                    /* display columns */
@@ -1578,7 +1578,7 @@ EDIT(redit_showrooms){
     AREA_DATA *area;                                /* area being edited */
     BUFFER *buf;                                    /* text to return to ch */
     char *unclr;                                    /* uncolored room name */
-    char rFlag[MIL];                                /* name of room flag to see */
+    char rFlag[MAX_INPUT_LENGTH];                                /* name of room flag to see */
     int iFlag;                                      /* int value of room flag */
     bool found;                                     /* room exists? */
     long vnum;                                      /* vnum of room */

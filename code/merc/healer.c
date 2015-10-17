@@ -34,7 +34,7 @@ void do_heal(CHAR_DATA *ch, const char *argument)
 	CHAR_DATA *mob;
 	GAMEOBJECT *acid;
 	SKILL *skill;
-	char arg[MIL];
+	char arg[MAX_INPUT_LENGTH];
 	unsigned int cost;
 	char *words;
 	int idx;

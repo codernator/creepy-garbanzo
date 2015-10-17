@@ -558,7 +558,7 @@ void do_oedit(CHAR_DATA *ch, const char *argument)
 {
     OBJECTPROTOTYPE *pObj;
     AREA_DATA *pArea;
-    char arg[MSL];
+    char arg[MAX_STRING_LENGTH];
     int value;
 
     if (IS_NPC(ch))
@@ -845,8 +845,8 @@ EDIT(oedit_clone){
 EDIT(oedit_addaffect){
     OBJECTPROTOTYPE *pObj;
     AFFECT_DATA *pAff;
-    char loc[MSL];
-    char mod[MSL];
+    char loc[MAX_STRING_LENGTH];
+    char mod[MAX_STRING_LENGTH];
     int value;
 
     EDIT_OBJ(ch, pObj);
@@ -893,10 +893,10 @@ EDIT(oedit_addaffect){
 EDIT(oedit_addapply){
     OBJECTPROTOTYPE *pObj;
     AFFECT_DATA *pAff;
-    char loc[MSL];
-    char mod[MSL];
-    char type[MSL];
-    char bvector[MSL];
+    char loc[MAX_STRING_LENGTH];
+    char mod[MAX_STRING_LENGTH];
+    char type[MAX_STRING_LENGTH];
+    char bvector[MAX_STRING_LENGTH];
     int value;
     int bitvector;
     int typ;
@@ -965,7 +965,7 @@ EDIT(oedit_delaffect){
     OBJECTPROTOTYPE *pObj;
     AFFECT_DATA *pAff;
     AFFECT_DATA *pAff_next;
-    char affect[MSL];
+    char affect[MAX_STRING_LENGTH];
     int value;
     int cnt = 0;
 
@@ -1187,8 +1187,8 @@ EDIT(oedit_cost){
 EDIT(oedit_ed){
     OBJECTPROTOTYPE *pObj;
     EXTRA_DESCR_DATA *ed;
-    char command[MIL];
-    char keyword[MIL];
+    char command[MAX_INPUT_LENGTH];
+    char keyword[MAX_INPUT_LENGTH];
 
     EDIT_OBJ(ch, pObj);
     argument = one_argument(argument, command);

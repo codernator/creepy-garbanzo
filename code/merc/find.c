@@ -96,8 +96,8 @@ void do_owhere(CHAR_DATA *ch, const char *argument)
 {
     BUFFER *buffer;
     OBJ_CMP_FN *cmp_fn;
-    char buf[MIL];
-    char arg[MIL];
+    char buf[MAX_INPUT_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
     int iter;
 
     if (ch == NULL || IS_NPC(ch))
@@ -385,8 +385,8 @@ void do_mwhere(CHAR_DATA *ch, const char *argument)
 {
     BUFFER *buffer;
     CHAR_CMP_FN *cmp_fn;
-    char buf[MIL];
-    char arg[MIL];
+    char buf[MAX_INPUT_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
     int iter;
 
     if (ch == NULL || IS_NPC(ch))
@@ -545,7 +545,7 @@ bool char_cmp_long(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 bool char_cmp_race(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
-        char flag[MSL];
+        char flag[MAX_STRING_LENGTH];
         int col = 0;
         int iter;
 
@@ -577,7 +577,7 @@ bool char_cmp_race(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 bool char_cmp_sex(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
-        char flag[MSL];
+        char flag[MAX_STRING_LENGTH];
         int col = 0;
         int iter;
 
@@ -750,12 +750,12 @@ static void help_ovnum_properties(CHAR_DATA *ch)
 {
     BUFFER *buffer = new_buf();
     int iter;
-    char buf[MIL];
+    char buf[MAX_INPUT_LENGTH];
 
     add_buf(buffer, "`#QUERY``: ovnum: searchable property list\n\r");
 
     for (iter = 0; objprototype_flags[iter].var[0] != '\0'; iter++) {
-        snprintf(buf, MIL, "%-18.17s", objprototype_flags[iter].var);
+        snprintf(buf, MAX_INPUT_LENGTH, "%-18.17s", objprototype_flags[iter].var);
         add_buf(buffer, buf);
         if ((iter % 2) == 1)
             add_buf(buffer, "\n\r");
@@ -768,7 +768,7 @@ static void help_ovnum_properties(CHAR_DATA *ch)
 static void help_mvnum_properties(CHAR_DATA *ch)
 {
     BUFFER *buffer = new_buf();
-    char buf[MIL];
+    char buf[MAX_INPUT_LENGTH];
     int iter;
 
     add_buf(buffer, "`#QUERY``: mvnum: searchable property list\n\r");
@@ -786,7 +786,7 @@ static void help_mvnum_properties(CHAR_DATA *ch)
 static const char *get_search_vnum_range(CHAR_DATA *ch, const char *argument, char *arg, BUFFER *buffer, long *out_high_vnum, long *out_low_vnum)
 {
     AREA_DATA *ad = NULL;
-    char buf[MIL];
+    char buf[MAX_INPUT_LENGTH];
 
     if (is_number(arg) || (arg[0] == '?' && isdigit((int)arg[1])))
         ad = grok_area(ch, arg, buffer);
@@ -796,7 +796,7 @@ static const char *get_search_vnum_range(CHAR_DATA *ch, const char *argument, ch
         *out_high_vnum = 1000000000; /* TODO - duh find MAX_LONG macro (thought was in stdint.h) */
     } else {
         argument = one_argument(argument, arg);
-        (void)snprintf(buf, MIL, "In area %s (%ld) [%ld - %ld]\n\r\n\r", ad->name, ad->vnum, ad->min_vnum, ad->max_vnum);
+        (void)snprintf(buf, MAX_INPUT_LENGTH, "In area %s (%ld) [%ld - %ld]\n\r\n\r", ad->name, ad->vnum, ad->min_vnum, ad->max_vnum);
         add_buf(buffer, buf);
         *out_low_vnum = ad->min_vnum;
         *out_high_vnum = ad->max_vnum;
@@ -856,14 +856,14 @@ static const char *prep_find_entity_vnum(CHAR_DATA *ch, const char *argument, ch
 void do_ovnum(CHAR_DATA *ch, const char *argument)
 {
     const char *original_argument = argument;
-    static char arg[MIL];
+    static char arg[MAX_INPUT_LENGTH];
 
     argument = prep_find_entity_vnum(ch, argument, arg, "ovnum", help_ovnum_properties, ovnum_find_empty);
     if (argument != NULL) {
         BUFFER *buffer = new_buf();
         OBJ_IDX_CMP_FN *cmp_fn = NULL;
         long low_vnum, high_vnum;
-        char buf[MIL];
+        char buf[MAX_INPUT_LENGTH];
         long iter;
 
         sprintf(buf, "`#QUERY``: ovnum %s\n\r\n\r", original_argument);
@@ -1042,7 +1042,7 @@ bool objprototype_cmp_wear(OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf)
 /** mvnum <var> <value> */
 void do_mvnum(CHAR_DATA *ch, const char *argument)
 {
-    static char arg[MIL];
+    static char arg[MAX_INPUT_LENGTH];
     const char *original_argument = argument;
 
     argument = prep_find_entity_vnum(ch, argument, arg, "mvnum", &help_mvnum_properties, &mvnum_find_empty);
@@ -1050,7 +1050,7 @@ void do_mvnum(CHAR_DATA *ch, const char *argument)
         {
             BUFFER *buffer;
             MOB_IDX_CMP_FN *cmp_fn = NULL;
-            char buf[MIL];
+            char buf[MAX_INPUT_LENGTH];
             long low_vnum, high_vnum;
             long iter;
 
@@ -1146,7 +1146,7 @@ bool mob_idx_cmp_long(const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf)
 bool mob_idx_cmp_race(const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
-        char flag[MSL];
+        char flag[MAX_STRING_LENGTH];
         int col = 0;
         int iter;
 
@@ -1178,7 +1178,7 @@ bool mob_idx_cmp_race(const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf)
 bool mob_idx_cmp_sex(const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
-        char flag[MSL];
+        char flag[MAX_STRING_LENGTH];
         int col = 0;
         int iter;
 
@@ -1321,7 +1321,7 @@ bool cmp_fn_flag(long bit, const char * arg, const struct flag_type *	table, BUF
     int iter;
 
     if (buf != NULL) {
-        char flag[MSL];
+        char flag[MAX_STRING_LENGTH];
         int col = 0;
 
         add_buf(buf, "\n\r     ");
@@ -1358,7 +1358,7 @@ bool cmp_fn_index(long bit, const char *arg, const struct flag_type *table, BUFF
     int iter;
 
     if (buf != NULL) {
-        char flag[MSL];
+        char flag[MAX_STRING_LENGTH];
         int col = 0;
 
         add_buf(buf, "\n\r     ");

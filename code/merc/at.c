@@ -63,8 +63,8 @@ void do_at(CHAR_DATA *ch, const char *argument)
     CHAR_DATA *wch = NULL;
     CHAR_DATA *vch = NULL;
     GAMEOBJECT *on;
-    char arg[MIL];
-    char cmd[MSL];
+    char arg[MAX_INPUT_LENGTH];
+    char cmd[MAX_STRING_LENGTH];
 
     DENY_NPC(ch)
 
@@ -77,7 +77,7 @@ void do_at(CHAR_DATA *ch, const char *argument)
 
     if (!str_prefix(arg, "random")) {
         AREA_DATA *area;
-        char check[MIL];
+        char check[MAX_INPUT_LENGTH];
 
         argument = one_argument(argument, arg);
         area = NULL;

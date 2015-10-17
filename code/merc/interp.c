@@ -359,10 +359,10 @@ const struct cmd_type cmd_table[] =
  ***************************************************************************/
 void interpret(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MSL];
-    char command[MIL];
-    char logline[MIL];
-    static char wiznet_message[MIL];
+    char buf[MAX_STRING_LENGTH];
+    char command[MAX_INPUT_LENGTH];
+    char logline[MAX_INPUT_LENGTH];
+    static char wiznet_message[MAX_INPUT_LENGTH];
     int cmd;
     int trust;
     bool found;
@@ -506,7 +506,7 @@ void interpret(CHAR_DATA *ch, const char *argument)
 
 static int snarf_number(const char *start, const char *end)
 {
-    static char buf[MIL];
+    static char buf[MAX_INPUT_LENGTH];
 
     (void)snprintf(buf, (end-start), "%s", start);
     return parse_int(buf);
@@ -521,7 +521,7 @@ int number_argument(const char *argument, char *arg)
 
     for (pdot = argument; *pdot != '\0'; pdot++) {
         if (*pdot == '.') {
-            strncpy(arg, pdot + 1, MIL);
+            strncpy(arg, pdot + 1, MAX_INPUT_LENGTH);
             return snarf_number(argument, pdot);
         }
     }
@@ -539,7 +539,7 @@ int mult_argument(const char *argument, char *arg)
 
     for (pdot = argument; *pdot != '\0'; pdot++) {
         if (*pdot == '*') {
-            strncpy(arg, pdot + 1, MIL);
+            strncpy(arg, pdot + 1, MAX_INPUT_LENGTH);
             return snarf_number(argument, pdot);
         }
     }
@@ -619,7 +619,7 @@ const char *one_argument(const char *argument, char *arg_first)
  */
 void do_commands(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     int cmd;
     int col;
 
@@ -681,7 +681,7 @@ void do_wizcommands(CHAR_DATA *ch, const char *argument)
 
 void do_wizhelp(CHAR_DATA *ch, const char *argument)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     int cmd;
     int col;
 
@@ -708,7 +708,7 @@ void do_wizhelp(CHAR_DATA *ch, const char *argument)
 
 const CMD *cmd_lookup(CHAR_DATA *ch, const char *argument)
 {
-    char cmd_buf[MSL];
+    char cmd_buf[MAX_STRING_LENGTH];
     int trust;
     int iter;
 

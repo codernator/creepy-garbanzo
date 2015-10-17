@@ -171,10 +171,10 @@ KEYVALUEPAIR_ARRAY *objectprototype_serialize(const OBJECTPROTOTYPE *obj)
 
     /** append extras */
     {
-        static char keybuf[MIL];
+        static char keybuf[MAX_INPUT_LENGTH];
         EXTRA_DESCR_DATA *desc = obj->extra_descr;
         while (desc != NULL) {
-            (void)snprintf(keybuf, MIL, "extra-%s", desc->keyword);
+            (void)snprintf(keybuf, MAX_INPUT_LENGTH, "extra-%s", desc->keyword);
             keyvaluepairarray_append(answer, keybuf, desc->description);
             desc = desc->next;
         }

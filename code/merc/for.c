@@ -67,7 +67,7 @@ bool valid_cmd(CHAR_DATA *vch, const char *cmd)
 
 void do_for(CHAR_DATA *ch, const char *argument)
 {
-    char name[MIL];
+    char name[MAX_INPUT_LENGTH];
     int iter;
 
     argument = one_argument(argument, name);
@@ -135,9 +135,9 @@ static void for_gods(CHAR_DATA *ch, char *name, const char *argument)
     DESCRIPTOR_DATA *dpending;
     ROOM_INDEX_DATA *origin;
     AREA_DATA *area;
-    char cmd[MSL];
+    char cmd[MAX_STRING_LENGTH];
     int count = 0;
-    char check[MIL];
+    char check[MAX_INPUT_LENGTH];
 
 
     origin = ch->in_room;
@@ -184,9 +184,9 @@ static void for_morts(CHAR_DATA *ch, char *name, const char *argument)
     DESCRIPTOR_DATA *dpending;
     ROOM_INDEX_DATA *origin;
     AREA_DATA *area;
-    char cmd[MSL];
+    char cmd[MAX_STRING_LENGTH];
     int count = 0;
-    char check[MIL];
+    char check[MAX_INPUT_LENGTH];
 
     origin = ch->in_room;
     area = NULL;
@@ -231,7 +231,7 @@ static void for_room(CHAR_DATA *ch, char *name, const char *argument)
 {
     CHAR_DATA *vch;
     CHAR_DATA *vch_next;
-    char cmd[MSL];
+    char cmd[MAX_STRING_LENGTH];
     int count = 0;
 
     for (vch = ch->in_room->people; vch != NULL; vch = vch_next) {
@@ -261,9 +261,9 @@ static void for_name(CHAR_DATA *ch, char *name, const char *argument)
     CHAR_DATA *vch;
     CHAR_DATA *vch_next;
     AREA_DATA *area;
-    char cmd[MSL];
+    char cmd[MAX_STRING_LENGTH];
     int count = 0;
-    char check[MIL];
+    char check[MAX_INPUT_LENGTH];
 
     origin = ch->in_room;
     area = NULL;
@@ -345,7 +345,7 @@ bool expand_cmd(CHAR_DATA *vch, const char *arg, char *buf, char find)
 
     *dest = '\0';
     while (*orig != '\0') {
-        if (++len >= MSL)
+        if (++len >= MAX_STRING_LENGTH)
             break;
 
         if (*orig == find) {
@@ -359,7 +359,7 @@ bool expand_cmd(CHAR_DATA *vch, const char *arg, char *buf, char find)
     }
 
     *dest = '\0';
-    return len < MSL;
+    return len < MAX_STRING_LENGTH;
 }
 
 
@@ -371,8 +371,8 @@ bool expand_cmd(CHAR_DATA *vch, const char *arg, char *buf, char find)
 static const char *get_name(CHAR_DATA *vch)
 {
     CHAR_DATA *rch;
-    char name[MIL];
-    static char outbuf[MIL];
+    char name[MAX_INPUT_LENGTH];
+    static char outbuf[MAX_INPUT_LENGTH];
 
 
     if (!IS_NPC(vch))

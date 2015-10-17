@@ -104,7 +104,7 @@ void do_mob(CHAR_DATA *ch, const char *argument)
  */
 void mob_interpret(CHAR_DATA *ch, const char *argument)
 {
-    char command[MIL];
+    char command[MAX_INPUT_LENGTH];
     int cmd;
 
     argument = one_argument(argument, command);
@@ -220,7 +220,7 @@ void do_mpstat(CHAR_DATA *ch, const char *argument)
 void do_mpdump(CHAR_DATA *ch, const char *argument)
 {
     MPROG_CODE *mprg;
-    char buf[MIL];
+    char buf[MAX_INPUT_LENGTH];
 
     one_argument(argument, buf);
 
@@ -318,7 +318,7 @@ void do_mpasound(CHAR_DATA *ch, const char *argument)
 void do_mpechoaround(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     argument = one_argument(argument, arg);
     if (arg[0] == '\0')
@@ -338,7 +338,7 @@ void do_mpechoaround(CHAR_DATA *ch, const char *argument)
 void do_mpechoat(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     argument = one_argument(argument, arg);
     if (arg[0] == '\0' || argument[0] == '\0')
@@ -372,7 +372,7 @@ void do_mpecho(CHAR_DATA *ch, const char *argument)
 void do_mpkill(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     one_argument(argument, arg);
 
@@ -402,7 +402,7 @@ void do_mpkill(CHAR_DATA *ch, const char *argument)
 void do_mpassist(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     one_argument(argument, arg);
     if (arg[0] == '\0')
@@ -428,7 +428,7 @@ void do_mpassist(CHAR_DATA *ch, const char *argument)
  */
 void do_mpjunk(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     GAMEOBJECT *obj;
     GAMEOBJECT *obj_next;
 
@@ -471,7 +471,7 @@ void do_mpmload(CHAR_DATA *ch, const char *argument)
 {
     MOB_INDEX_DATA *pMobIndex;
     CHAR_DATA *victim;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int vnum;
 
     one_argument(argument, arg);
@@ -498,7 +498,7 @@ void do_mpoload(CHAR_DATA *ch, const char *argument)
 {
     OBJECTPROTOTYPE *objprototype;
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int level;
     long vnum;
     bool to_room;
@@ -507,7 +507,7 @@ void do_mpoload(CHAR_DATA *ch, const char *argument)
     argument = one_argument(argument, arg);
 
     if (!str_prefix(arg, "random")) {
-	char mm_buf[MIL];
+	char mm_buf[MAX_INPUT_LENGTH];
 	int min_vnum;
 	int max_vnum;
 
@@ -595,7 +595,7 @@ void do_mpoload(CHAR_DATA *ch, const char *argument)
  */
 void do_mppurge(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     CHAR_DATA *victim;
     GAMEOBJECT *obj;
 
@@ -647,7 +647,7 @@ void do_mppurge(CHAR_DATA *ch, const char *argument)
 void do_mpgoto(CHAR_DATA *ch, const char *argument)
 {
     ROOM_INDEX_DATA *location;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     one_argument(argument, arg);
     if (arg[0] == '\0') {
@@ -679,7 +679,7 @@ void do_mpgoto(CHAR_DATA *ch, const char *argument)
  */
 void do_mpat(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     ROOM_INDEX_DATA *location;
     ROOM_INDEX_DATA *original;
     CHAR_DATA *wch;
@@ -727,9 +727,9 @@ void do_mpat(CHAR_DATA *ch, const char *argument)
  */
 void do_mptransfer(CHAR_DATA *ch, const char *argument)
 {
-    char arg1[MIL];
-    char arg2[MIL];
-    char buf[MSL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
+    char buf[MAX_STRING_LENGTH];
     ROOM_INDEX_DATA *location;
     CHAR_DATA *victim;
 
@@ -791,9 +791,9 @@ void do_mptransfer(CHAR_DATA *ch, const char *argument)
  */
 void do_mpgtransfer(CHAR_DATA *ch, const char *argument)
 {
-    char arg1[MIL];
-    char arg2[MIL];
-    char buf[MSL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
+    char buf[MAX_STRING_LENGTH];
     CHAR_DATA *who, *victim, *victim_next;
 
     argument = one_argument(argument, arg1);
@@ -825,7 +825,7 @@ void do_mpgtransfer(CHAR_DATA *ch, const char *argument)
  */
 void do_mpforce(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     argument = one_argument(argument, arg);
 
@@ -868,7 +868,7 @@ void do_mpforce(CHAR_DATA *ch, const char *argument)
  */
 void do_mpgforce(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     CHAR_DATA *victim, *vch, *vch_next;
 
     argument = one_argument(argument, arg);
@@ -901,7 +901,7 @@ void do_mpgforce(CHAR_DATA *ch, const char *argument)
 void do_mpvforce(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim, *victim_next;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     long vnum;
 
     argument = one_argument(argument, arg);
@@ -942,8 +942,8 @@ void do_mpcast(CHAR_DATA *ch, const char *argument)
     GAMEOBJECT *obj;
     SKILL *skill;
     void *victim = NULL;
-    char spell[MIL];
-    char target[MIL];
+    char spell[MAX_INPUT_LENGTH];
+    char target[MAX_INPUT_LENGTH];
 
     argument = one_argument(argument, spell);
     one_argument(argument, target);
@@ -999,9 +999,9 @@ void do_mpcast(CHAR_DATA *ch, const char *argument)
 void do_mpdamage(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim = NULL, *victim_next;
-    char target[MIL],
-	 min[MIL],
-	 max[MIL];
+    char target[MAX_INPUT_LENGTH],
+	 min[MAX_INPUT_LENGTH],
+	 max[MAX_INPUT_LENGTH];
     int low, high;
     bool fAll = false, fKill = false;
 
@@ -1066,7 +1066,7 @@ void do_mpdamage(CHAR_DATA *ch, const char *argument)
  */
 void do_mpremember(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     one_argument(argument, arg);
     if (arg[0] != '\0')
@@ -1094,7 +1094,7 @@ void do_mpforget(CHAR_DATA *ch, const char *argument)
  */
 void do_mpdelay(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     one_argument(argument, arg);
     if (!is_number(arg)) {
@@ -1125,7 +1125,7 @@ void do_mpcancel(CHAR_DATA *ch, const char *argument)
  */
 void do_mpcall(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     CHAR_DATA *vch;
     GAMEOBJECT *obj1, *obj2;
     MPROG_CODE *prg;
@@ -1207,8 +1207,8 @@ void do_mpotransfer(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
     ROOM_INDEX_DATA *location;
-    char arg[MIL];
-    char buf[MIL];
+    char arg[MAX_INPUT_LENGTH];
+    char buf[MAX_INPUT_LENGTH];
 
     argument = one_argument(argument, arg);
     if (arg[0] == '\0') {
@@ -1246,7 +1246,7 @@ void do_mpremove(CHAR_DATA *ch, const char *argument)
     GAMEOBJECT *obj, *obj_next;
     long vnum = 0;
     bool fAll = false;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     argument = one_argument(argument, arg);
     if ((victim = get_char_room(ch, arg)) == NULL)

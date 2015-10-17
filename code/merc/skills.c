@@ -1568,7 +1568,7 @@ void do_gain(CHAR_DATA *ch, const char *argument)
     CHAR_DATA *trainer;
     GROUP *group;
     SKILL *skill;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     if (IS_NPC(ch))
         return;
@@ -1635,7 +1635,7 @@ void do_gain(CHAR_DATA *ch, const char *argument)
 static void skill_info(CHAR_DATA *ch, SKILL *skill)
 {
     LEVEL_INFO *level;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
 
     printf_to_char(ch, "\n\r%-17.17s %s\n\r", (skill->spells == NULL) ? "`@Skill`2:``" : "`1Spell`!:``", capitalize(skill->name));
     if (skill->spells != NULL) {
@@ -1672,7 +1672,7 @@ static void skill_info(CHAR_DATA *ch, SKILL *skill)
  */
 static bool parse_levels(const char *argument, int *min_level, int *max_level)
 {
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     argument = one_argument(argument, arg);
     if (!is_number(arg))
@@ -2013,7 +2013,7 @@ bool parse_gen_groups(CHAR_DATA *ch, const char *argument)
     SKILL *skill;
     LEARNED *learned;
     LEVEL_INFO *level;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     if (argument[0] == '\0')
         return false;
@@ -2299,7 +2299,7 @@ void check_improve(CHAR_DATA *ch, SKILL *skill, bool success, int multiplier)
  */
 void do_practice(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MSL];
+    char arg[MAX_STRING_LENGTH];
 
     if (IS_NPC(ch))
         return;
@@ -2454,7 +2454,7 @@ static const struct train_type {
 void do_train(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *mob;
-    char arg[MIL], buf[MSL];
+    char arg[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
     int idx;
     int cost;
     int count;

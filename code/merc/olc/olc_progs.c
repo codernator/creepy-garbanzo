@@ -63,12 +63,12 @@ void mpedit(CHAR_DATA *ch, const char *argument)
 {
     MPROG_CODE *mpcode;
     AREA_DATA *ad;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     const char *parg;
-    char command[MIL];
+    char command[MAX_INPUT_LENGTH];
     int cmd;
 
-    strncpy(arg, argument, UMIN(strlen(argument), MIL));
+    strncpy(arg, argument, UMIN(strlen(argument), MAX_INPUT_LENGTH));
     smash_tilde(arg);
     parg = one_argument(arg, command);
 
@@ -120,8 +120,8 @@ void mpedit(CHAR_DATA *ch, const char *argument)
 void do_mpedit(CHAR_DATA *ch, const char *argument)
 {
     MPROG_CODE *mpcode;
-    char command[MIL];
-    char arg[MIL];
+    char command[MAX_INPUT_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
 
 
     argument = one_argument(argument, command);

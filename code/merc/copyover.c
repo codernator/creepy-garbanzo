@@ -81,7 +81,7 @@ void copyover_recover()
     DESCRIPTOR_DATA *d;
     FILE *fp;
     char name [100];
-    char host[MSL];
+    char host[MAX_STRING_LENGTH];
     int desc;
     bool fOld;
 

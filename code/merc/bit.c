@@ -104,7 +104,7 @@ bool is_stat(const struct flag_type *flag_table)
  ****************************************************************************/
 long flag_value(const struct flag_type *flag_table, const char *argument)
 {
-    char word[MIL];
+    char word[MAX_INPUT_LENGTH];
     long bit;
     long marked = 0;
     bool found = false;

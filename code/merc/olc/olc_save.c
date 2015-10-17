@@ -30,7 +30,7 @@ static void show_save_help(CHAR_DATA *ch);
 
 void do_asave(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int value;
 
     DENY_NPC(ch);
@@ -201,7 +201,7 @@ void do_asave(CHAR_DATA *ch, const char *argument)
 
 char *fix_string(const char *str)
 {
-    static char strfix[MSL * 2];
+    static char strfix[MAX_STRING_LENGTH * 2];
     int idx;
     int pos;
 
@@ -292,7 +292,7 @@ void save_mobile(FILE *fp, MOB_INDEX_DATA *mob_idx)
 {
     MPROG_LIST *mprog;
     int race = mob_idx->race;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     long temp;
 
     fprintf(fp, "#%ld\n", mob_idx->vnum);
@@ -400,7 +400,7 @@ void save_object(FILE *fp, OBJECTPROTOTYPE *pObjIndex)
     AFFECT_DATA *pAf;
     EXTRA_DESCR_DATA *extra;
     char letter;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
 
     fprintf(fp, "#%ld\n", pObjIndex->vnum);
     fprintf(fp, "%s~\n", pObjIndex->name);
@@ -810,10 +810,10 @@ void save_area(AREA_DATA *area)
 {
     FILE *fp;
     KEYVALUEPAIR_ARRAY *serialized;
-    char haf[MIL];
+    char haf[MAX_INPUT_LENGTH];
     struct database_controller *db;
 
-    snprintf(haf, MIL, "%s%s", AREA_FOLDER, area->file_name);
+    snprintf(haf, MAX_INPUT_LENGTH, "%s%s", AREA_FOLDER, area->file_name);
     db = database_open(haf);
 
     if (db == NULL) {

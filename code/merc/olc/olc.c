@@ -301,7 +301,7 @@ char *olc_ed_vnum(CHAR_DATA *ch)
     HELP_DATA *pHelp;
     SKILL *pSkill;
     GROUP *pGroup;
-    static char buf[MIL];
+    static char buf[MAX_INPUT_LENGTH];
 
     buf[0] = '\0';
     switch (ch->desc->editor) {
@@ -354,7 +354,7 @@ char *olc_ed_vnum(CHAR_DATA *ch)
 static void show_olc_cmds(CHAR_DATA *ch, const struct olc_cmd_type *olc_table)
 {
     BUFFER *out;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     int cmd;
     int col;
 
@@ -439,8 +439,8 @@ bool edit_done(CHAR_DATA *ch)
 void aedit(CHAR_DATA *ch, const char *argument)
 {
     AREA_DATA *pArea;
-    char command[MIL];
-    char arg[MIL];
+    char command[MAX_INPUT_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
     const char *parg;
     int cmd;
     int value;
@@ -499,9 +499,9 @@ void redit(CHAR_DATA *ch, const char *argument)
 {
     AREA_DATA *pArea;
     ROOM_INDEX_DATA *pRoom;
-    char arg[MSL];
+    char arg[MAX_STRING_LENGTH];
     const char *parg;
-    char command[MIL];
+    char command[MAX_INPUT_LENGTH];
     int cmd;
 
     EDIT_ROOM(ch, pRoom);
@@ -554,9 +554,9 @@ void oedit(CHAR_DATA *ch, const char *argument)
 {
     AREA_DATA *pArea;
     OBJECTPROTOTYPE *pObj;
-    char arg[MSL];
+    char arg[MAX_STRING_LENGTH];
     const char *parg;
-    char command[MIL];
+    char command[MAX_INPUT_LENGTH];
     int cmd;
 
     strcpy(arg, argument);
@@ -610,8 +610,8 @@ void medit(CHAR_DATA *ch, const char *argument)
 {
     AREA_DATA *pArea;
     MOB_INDEX_DATA *pMob;
-    char command[MIL];
-    char arg[MSL];
+    char command[MAX_INPUT_LENGTH];
+    char arg[MAX_STRING_LENGTH];
     const char *parg;
     int cmd;
 
@@ -679,7 +679,7 @@ static const struct editor_cmd_type editor_table[] =
  *****************************************************************************/
 void do_olc(CHAR_DATA *ch, const char *argument)
 {
-    char command[MIL];
+    char command[MAX_INPUT_LENGTH];
     int cmd;
 
     if (IS_NPC(ch))
@@ -714,7 +714,7 @@ void do_aedit(CHAR_DATA *ch, const char *argument)
 {
     AREA_DATA *pArea;
     int value;
-    char arg[MSL];
+    char arg[MAX_STRING_LENGTH];
 
     if (IS_NPC(ch))
         return;
@@ -981,13 +981,13 @@ void add_reset(ROOM_INDEX_DATA *room, RESET_DATA *pReset, long index)
 void do_resets(CHAR_DATA *ch, const char *argument)
 {
     RESET_DATA *pReset = NULL;
-    char arg1[MIL];
-    char arg2[MIL];
-    char arg3[MIL];
-    char arg4[MIL];
-    char arg5[MIL];
-    char arg6[MIL];
-    char arg7[MIL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
+    char arg3[MAX_INPUT_LENGTH];
+    char arg4[MAX_INPUT_LENGTH];
+    char arg5[MAX_INPUT_LENGTH];
+    char arg6[MAX_INPUT_LENGTH];
+    char arg7[MAX_INPUT_LENGTH];
 
     if (!IS_BUILDER(ch, ch->in_room->area)) {
         send_to_char("Resets: Invalid security for editing this area.\n\r", ch);
@@ -1258,8 +1258,8 @@ static const struct olc_help_type help_table[] =
  ****************************************************************************/
 static void show_flag_cmds(CHAR_DATA *ch, const struct flag_type *flag_table)
 {
-    char buf[MSL];
-    char buf1[MSL];
+    char buf[MAX_STRING_LENGTH];
+    char buf1[MAX_STRING_LENGTH];
     int flag;
     int col;
 

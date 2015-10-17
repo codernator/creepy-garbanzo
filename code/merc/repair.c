@@ -20,8 +20,8 @@ void do_estimate(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *mob;
     GAMEOBJECT *obj;
-    char arg1[MIL];
-    char arg2[MIL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
     unsigned int cost;
 
 
@@ -45,7 +45,7 @@ void do_estimate(CHAR_DATA *ch, const char *argument)
     }
 
     if (!str_prefix(arg1, "repair")) {
-	char tmp[MSL];
+	char tmp[MAX_STRING_LENGTH];
 
 	sprintf(tmp, "estimate %s %s", arg2, argument);
 
@@ -110,8 +110,8 @@ void do_poison(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *mob;
     GAMEOBJECT *obj;
-    char arg1[MIL];
-    char arg2[MIL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
     unsigned int cost;
 
 
@@ -170,7 +170,7 @@ void do_engulf(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *mob;
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     unsigned int cost;
 
 
@@ -230,7 +230,7 @@ void do_sharpen(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *mob;
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     unsigned int cost;
 
     for (mob = ch->in_room->people; mob; mob = mob->next_in_room)
@@ -286,7 +286,7 @@ void do_chill(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *mob;
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     unsigned int cost;
 
     for (mob = ch->in_room->people; mob; mob = mob->next_in_room)
@@ -343,7 +343,7 @@ void do_electrify(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *mob;
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     unsigned int cost;
 
 
@@ -401,7 +401,7 @@ void do_energize(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *mob;
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     unsigned int cost;
 
 

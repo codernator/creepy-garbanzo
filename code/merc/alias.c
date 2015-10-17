@@ -12,9 +12,9 @@ bool add_alias(CHAR_DATA * ch, char *alias, char *cmd);
 void substitute_alias(DESCRIPTOR_DATA *d, const char *argument)
 {
     CHAR_DATA *ch;
-    char buf[MSL];
-    char prefix[MIL];
-    char name[MIL];
+    char buf[MAX_STRING_LENGTH];
+    char prefix[MAX_INPUT_LENGTH];
+    char name[MAX_INPUT_LENGTH];
     const char *point;
     int alias;
 
@@ -23,7 +23,7 @@ void substitute_alias(DESCRIPTOR_DATA *d, const char *argument)
     /* check for prefix */
     if (!IS_NPC(ch)) {
 	if (ch->pcdata->prefix[0] != '\0' && str_prefix("prefix", argument)) {
-	    if (strlen(ch->pcdata->prefix) + strlen(argument) > MIL) {
+	    if (strlen(ch->pcdata->prefix) + strlen(argument) > MAX_INPUT_LENGTH) {
 		send_to_char("Line to long, prefix not processed.\r\n", ch);
 	    } else {
 		sprintf(prefix, "%s %s", ch->pcdata->prefix, argument);
@@ -54,9 +54,9 @@ void substitute_alias(DESCRIPTOR_DATA *d, const char *argument)
 		}
 		break;
 	    }
-	    if (strlen(buf) > MIL) {
+	    if (strlen(buf) > MAX_INPUT_LENGTH) {
 		send_to_char("Alias substitution too long. Truncated.\r\n", ch);
-		buf[MIL - 1] = '\0';
+		buf[MAX_INPUT_LENGTH - 1] = '\0';
 	    }
 	}
     }
@@ -83,7 +83,7 @@ void do_alia(CHAR_DATA *ch, const char *argument)
 void do_alias(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *rch;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int pos;
 
     rch = CH(ch->desc);
@@ -144,8 +144,8 @@ void do_alias(CHAR_DATA *ch, const char *argument)
     }
 
     {
-	static char sanitized[MIL];
-	strncpy(sanitized, argument, MIL);
+	static char sanitized[MAX_INPUT_LENGTH];
+	strncpy(sanitized, argument, MAX_INPUT_LENGTH);
 	smash_tilde(arg);
 	smash_tilde(sanitized);
 	if (add_alias(rch, arg, sanitized)) {
@@ -166,7 +166,7 @@ void do_alias(CHAR_DATA *ch, const char *argument)
 void do_unalias(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *rch;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     if (ch->desc == NULL)
 	rch = ch;

@@ -79,7 +79,7 @@ void do_withdraw(CHAR_DATA *ch, const char *argument)
 
 void evaluate_transaction(CHAR_DATA *ch, bool withdraw, char *arg_amount, char *arg_tender)
 {
-    char buf[MIL];
+    char buf[MAX_INPUT_LENGTH];
     GAMEOBJECT *atm = NULL;
 
     if (check_for_bank(ch, &atm)) {
@@ -89,14 +89,14 @@ void evaluate_transaction(CHAR_DATA *ch, bool withdraw, char *arg_amount, char *
 	find_money(ch);
 
 	if (arg_amount[0] == '\0' || !is_number(arg_amount)) {
-	    snprintf(buf, MIL, "Try %s <amount> <gold or silver>.", withdraw ? "withdraw" : "deposit");
+	    snprintf(buf, MAX_INPUT_LENGTH, "Try %s <amount> <gold or silver>.", withdraw ? "withdraw" : "deposit");
 	    sick_harvey_proctor(ch, hp_irritated, buf);
 	    return;
 	}
 
 	parsed_arg = parse_long(arg_amount);
 	if (parsed_arg <= 0) {
-	    snprintf(buf, MIL, "If you want to %s money, use the %s command, Jackass.", withdraw ? "deposit" : "withdraw", withdraw ? "deposit" : "withdraw");
+	    snprintf(buf, MAX_INPUT_LENGTH, "If you want to %s money, use the %s command, Jackass.", withdraw ? "deposit" : "withdraw", withdraw ? "deposit" : "withdraw");
 	    sick_harvey_proctor(ch, hp_irritated, buf);
 	    return;
 	}
@@ -156,10 +156,10 @@ bool check_for_bank(CHAR_DATA *ch, /*@out@*/ GAMEOBJECT **atm)
 
 void complete_transaction(CHAR_DATA *ch, bool withdraw, unsigned int amount, unsigned int *purse, unsigned int *drawer, const char *tender, GAMEOBJECT *atm)
 {
-    char buf[MIL];
+    char buf[MAX_INPUT_LENGTH];
 
     if ((withdraw && *drawer < amount) || (!withdraw && *purse < amount)) {
-	snprintf(buf, MIL, "You don't have that much %s %s!", tender, withdraw ? "in your account" : "on you");
+	snprintf(buf, MAX_INPUT_LENGTH, "You don't have that much %s %s!", tender, withdraw ? "in your account" : "on you");
 	sick_harvey_proctor(ch, hp_irritated, buf);
     } else {
 	if (withdraw) {

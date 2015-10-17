@@ -2760,9 +2760,9 @@ void spell_stone_skin(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int targ
 
 void spell_ventriloquate(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, const char *argument)
 {
-    char buf1[MSL];
-    char buf2[MSL];
-    char speaker[MIL];
+    char buf1[MAX_STRING_LENGTH];
+    char buf2[MAX_STRING_LENGTH];
+    char speaker[MAX_INPUT_LENGTH];
 
     CHAR_DATA *vch;
 

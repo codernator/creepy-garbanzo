@@ -26,7 +26,7 @@ extern const char *password_accept_message(int code);
 
 
 /** locals */
-static char log_buf[MIL];
+static char log_buf[MAX_INPUT_LENGTH];
 
 
 static void ansi_answered(DESCRIPTOR_DATA *d, const char *argument)
@@ -56,7 +56,7 @@ static void name_answered(DESCRIPTOR_DATA *d, const char *argument)
 {
     CHAR_DATA *ch;
     static char name_buf[MAX_NAME_LENGTH+1];
-    static char buf[MIL];
+    static char buf[MAX_INPUT_LENGTH];
     bool found;
     size_t arglen;
 
@@ -67,13 +67,13 @@ static void name_answered(DESCRIPTOR_DATA *d, const char *argument)
 
     arglen = strlen(argument);
     if (arglen > MAX_NAME_LENGTH) {
-        (void)snprintf(buf, MIL-1, "Your name of length %d characters is longer than the max of %d.\n\rPlease choose a different name: ", (int)arglen, MAX_NAME_LENGTH);
+        (void)snprintf(buf, MAX_INPUT_LENGTH-1, "Your name of length %d characters is longer than the max of %d.\n\rPlease choose a different name: ", (int)arglen, MAX_NAME_LENGTH);
         write_to_buffer(d, buf, strlen(buf));
         return;
     }
 
     if (arglen < MIN_NAME_LENGTH) {
-        (void)snprintf(buf, MIL-1, "Your name of length %d characters is shorter than the min of %d.\n\rPlease choose a different name: ", (int)arglen, MAX_NAME_LENGTH);
+        (void)snprintf(buf, MAX_INPUT_LENGTH-1, "Your name of length %d characters is shorter than the min of %d.\n\rPlease choose a different name: ", (int)arglen, MAX_NAME_LENGTH);
         write_to_buffer(d, buf, strlen(buf));
         return;
     }
@@ -157,11 +157,11 @@ static void oldpassword_answered(DESCRIPTOR_DATA *d, const char *argument)
         return;
     }
 
-    (void)snprintf(log_buf, MIL, "%s@%s has connected.", ch->name, d->host);
+    (void)snprintf(log_buf, MAX_INPUT_LENGTH, "%s@%s has connected.", ch->name, d->host);
     log_string(log_buf);
 
     wiznet(log_buf, NULL, NULL, WIZ_SITES, 0, get_trust(ch));
-    (void)snprintf(log_buf, MIL, "%s has entered the world.", ch->name);
+    (void)snprintf(log_buf, MAX_INPUT_LENGTH, "%s has entered the world.", ch->name);
 
     if (IS_SET(ch->act, PLR_LINKDEAD))
         REMOVE_BIT(ch->act, PLR_LINKDEAD);
@@ -236,7 +236,7 @@ static void breakconnect_answered(DESCRIPTOR_DATA *d, const char *argument)
 static void confirmnew_answered(DESCRIPTOR_DATA *d, const char *argument)
 {
     CHAR_DATA *ch = d->character;
-    static char buf[MIL];
+    static char buf[MAX_INPUT_LENGTH];
 
     switch (*argument) {
       case 'y':
@@ -311,7 +311,7 @@ static void newrace_answered(DESCRIPTOR_DATA *d, const char *argument)
     int idx;
     int race_idx;
     LEARNED *learned;
-    static char arg[MIL];
+    static char arg[MAX_INPUT_LENGTH];
 
     one_argument(argument, arg);
 
@@ -404,7 +404,7 @@ static void newsex_answered(DESCRIPTOR_DATA *d, const char *argument)
 
 static void newclass_answered(DESCRIPTOR_DATA *d, const char *argument)
 {
-    static char arg[MIL];
+    static char arg[MAX_INPUT_LENGTH];
     CHAR_DATA *ch = d->character;
     LEARNED *learned;
     int class_idx;
@@ -435,7 +435,7 @@ static void newclass_answered(DESCRIPTOR_DATA *d, const char *argument)
 
     ch->class = class_idx;
 
-    (void)snprintf(log_buf, MIL, "%s@%s new player.", ch->name, d->host);
+    (void)snprintf(log_buf, MAX_INPUT_LENGTH, "%s@%s new player.", ch->name, d->host);
     log_string(log_buf);
     wiznet("Newbie alert!  $N sighted.", ch, NULL, WIZ_NEWBIE, 0, 0);
     wiznet(log_buf, NULL, NULL, WIZ_SITES, 0, get_trust(ch));
@@ -464,7 +464,7 @@ static void pickweapon_answered(DESCRIPTOR_DATA *d, const char *argument)
 
     weapon_idx = weapon_lookup(argument);
     if (weapon_idx == -1 || (learned = get_learned(ch, weapon_table[weapon_idx].name)) == NULL) {
-        static char buf[MSL];
+        static char buf[MAX_STRING_LENGTH];
         int idx;
 
         write_to_buffer(d, "That's not a valid selection. Choices are:\n\r", 0);
@@ -495,7 +495,7 @@ static void gengroups_answered(DESCRIPTOR_DATA *d, const char *argument)
     send_to_char("\n\r", ch);
 
     if (!str_cmp(argument, "done")) {
-        static char buf[MSL];
+        static char buf[MAX_STRING_LENGTH];
         bool found;
         int idx;
 
@@ -779,7 +779,7 @@ bool check_parse_name(const char *name)
             }
         }
         if (count) {
-            (void)snprintf(log_buf, MIL, "Double newbie alert (%s)", name);
+            (void)snprintf(log_buf, MAX_INPUT_LENGTH, "Double newbie alert (%s)", name);
             wiznet(log_buf, NULL, NULL, WIZ_LOGINS, 0, 0);
             return false;
         }
@@ -832,7 +832,7 @@ bool check_reconnect(DESCRIPTOR_DATA *d, const char *name, bool reconnect)
                     && ch->in_room->light > 0)
                     --ch->in_room->light;
 
-                (void)snprintf(log_buf, MIL, "%s@%s reconnected.", ch->name, d->host);
+                (void)snprintf(log_buf, MAX_INPUT_LENGTH, "%s@%s reconnected.", ch->name, d->host);
                 log_string(log_buf);
                 wiznet("$N groks the fullness of $S link.", ch, NULL, WIZ_LINKS, 0, 0);
 

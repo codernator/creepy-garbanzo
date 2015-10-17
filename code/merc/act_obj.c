@@ -94,8 +94,8 @@ void do_get(CHAR_DATA *ch, const char *argument)
     GAMEOBJECT *obj;
     GAMEOBJECT *obj_next;
     GAMEOBJECT *container;
-    char arg1[MIL];
-    char arg2[MIL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
     bool found;
     int item_ctr;
 
@@ -234,8 +234,8 @@ void do_put(CHAR_DATA *ch, const char *argument)
     GAMEOBJECT *container;
     GAMEOBJECT *obj;
     GAMEOBJECT *obj_next;
-    char arg1[MIL];
-    char arg2[MIL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
     int item_ctr;
 
     argument = one_argument(argument, arg1);
@@ -378,7 +378,7 @@ void do_drop(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
     GAMEOBJECT *obj_next;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     bool found;
     int item_ctr;
 
@@ -525,9 +525,9 @@ void do_give(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
     GAMEOBJECT *obj;
-    char arg1[MIL];
-    char arg2[MIL];
-    char buf[MSL];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
+    char buf[MAX_STRING_LENGTH];
 
 
     argument = one_argument(argument, arg1);
@@ -695,8 +695,8 @@ void do_fill(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
     GAMEOBJECT *fountain;
-    char arg[MIL];
-    char buf[MSL];
+    char arg[MAX_INPUT_LENGTH];
+    char buf[MAX_STRING_LENGTH];
     bool found;
 
     (void)one_argument(argument, arg);
@@ -759,8 +759,8 @@ void do_pour(CHAR_DATA *ch, const char *argument)
     GAMEOBJECT *out;
     GAMEOBJECT *in;
     CHAR_DATA *vch = NULL;
-    char arg[MSL];
-    char buf[MSL];
+    char arg[MAX_STRING_LENGTH];
+    char buf[MAX_STRING_LENGTH];
     long amount;
 
     argument = one_argument(argument, arg);
@@ -861,7 +861,7 @@ void do_pour(CHAR_DATA *ch, const char *argument)
 void do_drink(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     long amount;
     long liquid;
 
@@ -972,7 +972,7 @@ void do_drink(CHAR_DATA *ch, const char *argument)
 void do_eat(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     (void)one_argument(argument, arg);
     if (arg[0] == '\0') {
@@ -1091,7 +1091,7 @@ bool remove_obj(CHAR_DATA *ch, int iWear, bool fReplace)
  ***************************************************************************/
 void wear_obj(CHAR_DATA *ch, GAMEOBJECT *obj, bool fReplace)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
 
     if ((2 * (ch->level) + 30) < obj->level) {
         sprintf(buf, "You must be level %d or that level, +1 to use this object.\n\r", (((obj->level) - 30) / 2));
@@ -1438,7 +1438,7 @@ void wear_obj(CHAR_DATA *ch, GAMEOBJECT *obj, bool fReplace)
 void do_wear(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     (void)one_argument(argument, arg);
     if (arg[0] == '\0') {
@@ -1474,7 +1474,7 @@ void do_wear(CHAR_DATA *ch, const char *argument)
 void do_remove(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
 
     (void)one_argument(argument, arg);
     if (arg[0] == '\0') {
@@ -1514,8 +1514,8 @@ void do_sacrifice(CHAR_DATA *ch, const char *argument)
 
     GAMEOBJECT *obj;
     CHAR_DATA *gch;
-    char arg[MIL];
-    char buf[MSL];
+    char arg[MAX_INPUT_LENGTH];
+    char buf[MAX_STRING_LENGTH];
     int MAX_GOD_NAME;
     char *god;
     unsigned int silver = 0l;
@@ -1678,7 +1678,7 @@ void do_sacrifice(CHAR_DATA *ch, const char *argument)
  ***************************************************************************/
 void donate_obj(CHAR_DATA *ch, GAMEOBJECT *obj)
 {
-    char buf[MIL];
+    char buf[MAX_INPUT_LENGTH];
 
     if ((!CAN_WEAR(obj, ITEM_TAKE)
          && obj->item_type != ITEM_CORPSE_PC)
@@ -1719,7 +1719,7 @@ void donate_obj(CHAR_DATA *ch, GAMEOBJECT *obj)
 void do_donate(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     GAMEOBJECT *obj_next;
     bool found;
     int max_don;
@@ -1789,9 +1789,9 @@ void do_steal(CHAR_DATA *ch, const char *argument)
     CHAR_DATA *victim;
     GAMEOBJECT *obj;
     SKILL *skill_steal;
-    char buf[MSL];
-    char arg1[MIL];
-    char arg2[MIL];
+    char buf[MAX_STRING_LENGTH];
+    char arg1[MAX_INPUT_LENGTH];
+    char arg2[MAX_INPUT_LENGTH];
     int percent;
     int learned;
 
@@ -2027,7 +2027,7 @@ void obj_to_keeper(GAMEOBJECT *obj, CHAR_DATA *ch)
 GAMEOBJECT *get_obj_keeper(CHAR_DATA *ch, CHAR_DATA *keeper, char *argument)
 {
     GAMEOBJECT *obj;
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     int number;
     int count;
 
@@ -2108,7 +2108,7 @@ unsigned int get_cost(CHAR_DATA *keeper, GAMEOBJECT *obj, bool fBuy)
 void do_buy(CHAR_DATA *ch, const char *argument)
 {
     SKILL *skill;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     unsigned int cost;
     int roll;
 
@@ -2124,8 +2124,8 @@ void do_buy(CHAR_DATA *ch, const char *argument)
     }
 
     if (IS_SET(ch->in_room->room_flags, ROOM_PET_SHOP)) {
-        char arg[MIL];
-        char buf[MSL];
+        char arg[MAX_INPUT_LENGTH];
+        char buf[MAX_STRING_LENGTH];
         CHAR_DATA *pet;
         ROOM_INDEX_DATA *pRoomIndexNext;
         ROOM_INDEX_DATA *in_room;
@@ -2214,7 +2214,7 @@ void do_buy(CHAR_DATA *ch, const char *argument)
         CHAR_DATA *keeper;
         GAMEOBJECT *obj;
         GAMEOBJECT *t_obj;
-        char arg[MIL];
+        char arg[MAX_INPUT_LENGTH];
         int number;
         int count = 1;
 
@@ -2383,7 +2383,7 @@ void do_list(CHAR_DATA *ch, const char *argument)
         unsigned int cost;
         int count;
         bool found;
-        char arg[MIL];
+        char arg[MAX_INPUT_LENGTH];
 
         if ((keeper = find_keeper(ch)) == NULL)
             return;
@@ -2431,8 +2431,8 @@ void do_sell(CHAR_DATA *ch, const char *argument)
     CHAR_DATA *keeper;
     GAMEOBJECT *obj;
     SKILL *skill_haggle;
-    char buf[MSL];
-    char arg[MIL];
+    char buf[MAX_STRING_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
     unsigned int cost;
     int roll;
 
@@ -2519,8 +2519,8 @@ void do_value(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *keeper;
     GAMEOBJECT *obj;
-    char buf[MSL];
-    char arg[MIL];
+    char buf[MAX_STRING_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
     unsigned int cost;
 
     one_argument(argument, arg);
@@ -2567,7 +2567,7 @@ void do_value(CHAR_DATA *ch, const char *argument)
 void do_second(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
 
     if (argument[0] == '\0') {
         send_to_char("Wear which weapon in your off-hand?\n\r", ch);
@@ -2732,8 +2732,8 @@ void do_envenom(CHAR_DATA *ch, const char *argument)
 void do_dice(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
-    char buf[MSL];
-    char tmp[MSL];
+    char buf[MAX_STRING_LENGTH];
+    char tmp[MAX_STRING_LENGTH];
     int number;
     int sides;
     int result;
@@ -2798,7 +2798,7 @@ void do_objident(CHAR_DATA *ch, const char *argument)
         GAMEOBJECT *obj;
         unsigned int cost;
         bool found;
-        char arg[MIL];
+        char arg[MAX_INPUT_LENGTH];
 
         if ((keeper = find_keeper(ch)) == NULL)
             return;

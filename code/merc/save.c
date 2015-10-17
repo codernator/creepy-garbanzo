@@ -81,7 +81,7 @@ void save_char_obj(CHAR_DATA *ch)
 {
     extern SKILL *gsp_deft;
     extern SKILL *gsp_dash;
-    char strsave[MIL];
+    char strsave[MAX_INPUT_LENGTH];
     FILE *fp;
 
     if (IS_NPC(ch))
@@ -624,7 +624,7 @@ bool load_char_obj(DESCRIPTOR_DATA *d, char *name)
     CHAR_DATA *ch;
     FILE *fp;
     LEARNED *learned;
-    char strsave[MIL];
+    char strsave[MAX_INPUT_LENGTH];
     bool found;
     int stat;
 
@@ -828,7 +828,7 @@ bool load_char_obj(DESCRIPTOR_DATA *d, char *name)
  ***************************************************************************/
 void fread_char(CHAR_DATA *ch, FILE *fp)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     char *word;
     bool fMatch;
     int count = 0;
@@ -1790,8 +1790,8 @@ void do_rload(CHAR_DATA *ch, const char *argument)
     }
 
     {
-        static char buf[MIL];
-        (void)snprintf(buf, UMIN(strlen(argument), MIL), "%s", argument);
+        static char buf[MAX_INPUT_LENGTH];
+        (void)snprintf(buf, UMIN(strlen(argument), MAX_INPUT_LENGTH), "%s", argument);
         smash_tilde(buf);
         load_rdesc(ch->in_room, buf);
         send_to_char("Ok.\n\r", ch);
@@ -1822,8 +1822,8 @@ void do_rsave(CHAR_DATA *ch, const char *argument)
     }
 
     {
-        static char buf[MIL];
-        (void)snprintf(buf, UMIN(strlen(argument), MIL), "%s", argument);
+        static char buf[MAX_INPUT_LENGTH];
+        (void)snprintf(buf, UMIN(strlen(argument), MAX_INPUT_LENGTH), "%s", argument);
         smash_tilde(buf);
 
         sprintf(strsave, "%s%s", RDESC_DIR, capitalize(buf));

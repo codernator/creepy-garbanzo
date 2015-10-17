@@ -393,7 +393,7 @@ void apply_random_affect(GAMEOBJECT *obj, bool positive)
  ***************************************************************************/
 void name_obj(CHAR_DATA *mob, GAMEOBJECT *obj)
 {
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
     char *uncolor_buf;
     int prefix = number_range(1, MAX_PREFIX - 1);
     int weapon_suffix = number_range(1, MAX_WEAPON_SUFFIX - 1);

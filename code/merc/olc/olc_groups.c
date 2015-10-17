@@ -41,9 +41,9 @@ const struct olc_cmd_type gredit_table[] =
  ***************************************************************************/
 void gredit(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     const char *parg;
-    char command[MIL];
+    char command[MAX_INPUT_LENGTH];
     int cmd;
 
     strcpy(arg, argument);
@@ -85,7 +85,7 @@ void gredit(CHAR_DATA *ch, const char *argument)
 void do_gredit(CHAR_DATA *ch, const char *argument)
 {
     GROUP *group;
-    char arg[MSL];
+    char arg[MAX_STRING_LENGTH];
 
     if (IS_NPC(ch))
         return;
@@ -157,7 +157,7 @@ EDIT(gredit_delete){
  ***************************************************************************/
 EDIT(gredit_show){
     GROUP *group;
-    char buf[MSL];
+    char buf[MAX_STRING_LENGTH];
 
     EDIT_GROUP(ch, group);
 
@@ -274,7 +274,7 @@ EDIT(gredit_skills){
     GROUP *group;
     SKILL *skill;
     SKILL_LIST *list;
-    char cmd[MIL];
+    char cmd[MAX_INPUT_LENGTH];
 
     EDIT_GROUP(ch, group);
 
@@ -373,7 +373,7 @@ EDIT(gredit_cost){
     GROUP *group;
     LEVEL_INFO *level_info;
     LEVEL_INFO *level_idx;
-    char arg[MSL];
+    char arg[MAX_STRING_LENGTH];
     int cls;
     int cost;
 

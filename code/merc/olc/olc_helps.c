@@ -33,9 +33,9 @@ const struct olc_cmd_type hedit_table[] =
 
 void hedit(CHAR_DATA *ch, const char *argument)
 {
-    char arg[MIL];
+    char arg[MAX_INPUT_LENGTH];
     const char *parg;
-    char command[MIL];
+    char command[MAX_INPUT_LENGTH];
     int cmd;
 
     strcpy(arg, argument);
@@ -71,7 +71,7 @@ void hedit(CHAR_DATA *ch, const char *argument)
 void do_hedit(CHAR_DATA *ch, const char *argument)
 {
     HELP_DATA *help;
-    char cmd[MIL];
+    char cmd[MAX_INPUT_LENGTH];
 
     if (IS_NPC(ch))
         return;
@@ -141,7 +141,7 @@ EDIT(hedit_keyword){
 
 EDIT(hedit_new){
     HELP_DATA *help;
-    char name[MIL];
+    char name[MAX_INPUT_LENGTH];
 
     if (is_help(argument)) {
         send_to_char("Syntax   : new [name]\n\r", ch);
@@ -196,7 +196,7 @@ EDIT(hedit_delete){
 }
 
 EDIT(hedit_list){
-    static char buf[MIL];
+    static char buf[MAX_INPUT_LENGTH];
     BUFFER *buffer;
     int cnt = 0;
     struct helpdata_iterator *iterator;
@@ -209,7 +209,7 @@ EDIT(hedit_list){
     while (iterator != NULL) {
         help = iterator->current;
 
-        (void)snprintf(buf, MIL, "%3d. %-14.14s%s", cnt, help->keyword, cnt % 4 == 3 ? "\n\r" : " ");
+        (void)snprintf(buf, MAX_INPUT_LENGTH, "%3d. %-14.14s%s", cnt, help->keyword, cnt % 4 == 3 ? "\n\r" : " ");
         add_buf(buffer, buf);
         cnt++;
         iterator = helpdata_iteratornext(iterator);
