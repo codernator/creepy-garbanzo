@@ -37,7 +37,7 @@ extern char *string_proper(char *argument);
  ****************************************************************************/
 static bool check_range(long lower, long upper)
 {
-    AREA_DATA *pArea;
+    struct area_data *pArea;
     int cnt = 0;
     struct area_iterator *iterator;
 
@@ -62,7 +62,7 @@ static bool check_range(long lower, long upper)
  *	show the properties for an area
  ***************************************************************************/
 EDIT(aedit_show){
-    AREA_DATA *pArea;
+    struct area_data *pArea;
 
     EDIT_AREA(ch, pArea);
 
@@ -92,7 +92,7 @@ EDIT(aedit_show){
  *	reset an area
  ***************************************************************************/
 EDIT(aedit_reset){
-    AREA_DATA *pArea;
+    struct area_data *pArea;
 
     EDIT_AREA(ch, pArea);
 
@@ -110,7 +110,7 @@ EDIT(aedit_reset){
  *	create a new area
  ***************************************************************************/
 EDIT(aedit_create){
-    AREA_DATA *pArea;
+    struct area_data *pArea;
 
     pArea = area_new(0);
     ch->desc->ed_data = (void *)pArea;
@@ -127,7 +127,7 @@ EDIT(aedit_create){
  *	set the name of an area
  ***************************************************************************/
 EDIT(aedit_name){
-    AREA_DATA *pArea;
+    struct area_data *pArea;
 
     EDIT_AREA(ch, pArea);
     if (argument[0] == '\0') {
@@ -149,7 +149,7 @@ EDIT(aedit_name){
  *	edit the area credits
  ***************************************************************************/
 EDIT(aedit_credits){
-    AREA_DATA *pArea;
+    struct area_data *pArea;
 
     EDIT_AREA(ch, pArea);
 
@@ -172,7 +172,7 @@ EDIT(aedit_credits){
  *	set the filename for an area
  ***************************************************************************/
 EDIT(aedit_file){
-    AREA_DATA *pArea;
+    struct area_data *pArea;
     char file[MAX_STRING_LENGTH];
     int iter;
     int length;
@@ -215,7 +215,7 @@ EDIT(aedit_file){
  *	set the age of an area
  ***************************************************************************/
 EDIT(aedit_age){
-    AREA_DATA *pArea;
+    struct area_data *pArea;
     char age[MAX_STRING_LENGTH];
 
     EDIT_AREA(ch, pArea);
@@ -238,7 +238,7 @@ EDIT(aedit_age){
  *	set the security for an area
  ***************************************************************************/
 EDIT(aedit_security){
-    AREA_DATA *pArea;
+    struct area_data *pArea;
     char sec[MAX_STRING_LENGTH];
     char buf[MAX_STRING_LENGTH];
     int value;
@@ -274,7 +274,7 @@ EDIT(aedit_security){
  *	set the builder for an area
  ***************************************************************************/
 EDIT(aedit_builder){
-    AREA_DATA *pArea;
+    struct area_data *pArea;
     char name[MAX_STRING_LENGTH];
     char buf[MAX_STRING_LENGTH];
 
@@ -325,7 +325,7 @@ EDIT(aedit_builder){
  *	set the vnum range for an area
  ***************************************************************************/
 EDIT(aedit_vnum){
-    AREA_DATA *pArea;
+    struct area_data *pArea;
     char lower[MAX_STRING_LENGTH];
     char upper[MAX_STRING_LENGTH];
     long iLower;
@@ -381,7 +381,7 @@ EDIT(aedit_vnum){
  *	set the lower vnum for an area
  ***************************************************************************/
 EDIT(aedit_lvnum){
-    AREA_DATA *pArea;
+    struct area_data *pArea;
     char lower[MAX_STRING_LENGTH];
     long ilower;
     long iupper;
@@ -421,7 +421,7 @@ EDIT(aedit_lvnum){
  *	set the upper vnum for an area
  ***************************************************************************/
 EDIT(aedit_uvnum){
-    AREA_DATA *pArea;
+    struct area_data *pArea;
     char upper[MAX_STRING_LENGTH];
     long ilower;
     long iupper;
@@ -462,7 +462,7 @@ EDIT(aedit_uvnum){
  *	set the lower level for an area
  ***************************************************************************/
 EDIT(aedit_llevel){
-    AREA_DATA *pArea;
+    struct area_data *pArea;
     char level[MAX_STRING_LENGTH];
 
     EDIT_AREA(ch, pArea);
@@ -485,7 +485,7 @@ EDIT(aedit_llevel){
  *	set the lower level for an area
  ***************************************************************************/
 EDIT(aedit_ulevel){
-    AREA_DATA *pArea;
+    struct area_data *pArea;
     char level[MAX_STRING_LENGTH];
 
     EDIT_AREA(ch, pArea);
@@ -508,7 +508,7 @@ EDIT(aedit_ulevel){
  *	set the description for an area
  ***************************************************************************/
 EDIT(aedit_desc){
-    AREA_DATA *pArea;
+    struct area_data *pArea;
 
     EDIT_AREA(ch, pArea);
     if (argument[0] == '\0') {

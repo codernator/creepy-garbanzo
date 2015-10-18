@@ -25,7 +25,7 @@ extern bool copyover();
 extern AFFECT_DATA *affect_free;
 extern bool is_auction_participant(CHAR_DATA *ch);
 extern GAMEOBJECT *get_auction_item();
-extern void reset_area(AREA_DATA * pArea);
+extern void reset_area(struct area_data * pArea);
 extern bool add_alias(CHAR_DATA * ch, char *alias, char *cmd);
 extern bool set_char_hunger(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
 extern bool set_char_thirst(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);

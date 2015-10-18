@@ -293,7 +293,7 @@ char *olc_ed_name(CHAR_DATA *ch)
  ***************************************************************************/
 char *olc_ed_vnum(CHAR_DATA *ch)
 {
-    AREA_DATA *pArea;
+    struct area_data *pArea;
     ROOM_INDEX_DATA *pRoom;
     struct objectprototype *pObj;
     MOB_INDEX_DATA *pMob;
@@ -306,7 +306,7 @@ char *olc_ed_vnum(CHAR_DATA *ch)
     buf[0] = '\0';
     switch (ch->desc->editor) {
       case ED_AREA:
-          pArea = (AREA_DATA *)ch->desc->ed_data;
+          pArea = (struct area_data *)ch->desc->ed_data;
           sprintf(buf, "%ld", pArea ? pArea->vnum : 0);
           break;
       case ED_ROOM:
@@ -438,7 +438,7 @@ bool edit_done(CHAR_DATA *ch)
  ***************************************************************************/
 void aedit(CHAR_DATA *ch, const char *argument)
 {
-    AREA_DATA *pArea;
+    struct area_data *pArea;
     char command[MAX_INPUT_LENGTH];
     char arg[MAX_INPUT_LENGTH];
     const char *parg;
@@ -497,7 +497,7 @@ void aedit(CHAR_DATA *ch, const char *argument)
  *****************************************************************************/
 void redit(CHAR_DATA *ch, const char *argument)
 {
-    AREA_DATA *pArea;
+    struct area_data *pArea;
     ROOM_INDEX_DATA *pRoom;
     char arg[MAX_STRING_LENGTH];
     const char *parg;
@@ -552,7 +552,7 @@ void redit(CHAR_DATA *ch, const char *argument)
  *****************************************************************************/
 void oedit(CHAR_DATA *ch, const char *argument)
 {
-    AREA_DATA *pArea;
+    struct area_data *pArea;
     struct objectprototype *pObj;
     char arg[MAX_STRING_LENGTH];
     const char *parg;
@@ -608,7 +608,7 @@ void oedit(CHAR_DATA *ch, const char *argument)
  *****************************************************************************/
 void medit(CHAR_DATA *ch, const char *argument)
 {
-    AREA_DATA *pArea;
+    struct area_data *pArea;
     MOB_INDEX_DATA *pMob;
     char command[MAX_INPUT_LENGTH];
     char arg[MAX_STRING_LENGTH];
@@ -712,7 +712,7 @@ void do_olc(CHAR_DATA *ch, const char *argument)
  *****************************************************************************/
 void do_aedit(CHAR_DATA *ch, const char *argument)
 {
-    AREA_DATA *pArea;
+    struct area_data *pArea;
     int value;
     char arg[MAX_STRING_LENGTH];
 
@@ -1155,7 +1155,7 @@ void do_resets(CHAR_DATA *ch, const char *argument)
  ****************************************************************************/
 void do_alist(CHAR_DATA *ch, const char *argument)
 {
-    AREA_DATA *pArea;
+    struct area_data *pArea;
     struct area_iterator *iterator;
     BUFFER *buf;
 

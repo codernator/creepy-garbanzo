@@ -16,7 +16,7 @@
 /** imports */
 extern void ovnum_find_empty(CHAR_DATA *ch, const char *arg, BUFFER *out_buffer);
 extern void mvnum_find_empty(CHAR_DATA *ch, const char *arg, BUFFER *out_buffer);
-extern AREA_DATA *grok_area(CHAR_DATA *ch, const char *arg, BUFFER *out_buffer);
+extern struct area_data *grok_area(CHAR_DATA *ch, const char *arg, BUFFER *out_buffer);
 
 
 /** locals */
@@ -785,7 +785,7 @@ static void help_mvnum_properties(CHAR_DATA *ch)
 
 static const char *get_search_vnum_range(CHAR_DATA *ch, const char *argument, char *arg, BUFFER *buffer, long *out_high_vnum, long *out_low_vnum)
 {
-    AREA_DATA *ad = NULL;
+    struct area_data *ad = NULL;
     char buf[MAX_INPUT_LENGTH];
 
     if (is_number(arg) || (arg[0] == '?' && isdigit((int)arg[1])))

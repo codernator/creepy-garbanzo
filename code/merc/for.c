@@ -134,7 +134,7 @@ static void for_gods(CHAR_DATA *ch, char *name, const char *argument)
     DESCRIPTOR_DATA *d;
     DESCRIPTOR_DATA *dpending;
     ROOM_INDEX_DATA *origin;
-    AREA_DATA *area;
+    struct area_data *area;
     char cmd[MAX_STRING_LENGTH];
     int count = 0;
     char check[MAX_INPUT_LENGTH];
@@ -183,7 +183,7 @@ static void for_morts(CHAR_DATA *ch, char *name, const char *argument)
     DESCRIPTOR_DATA *d;
     DESCRIPTOR_DATA *dpending;
     ROOM_INDEX_DATA *origin;
-    AREA_DATA *area;
+    struct area_data *area;
     char cmd[MAX_STRING_LENGTH];
     int count = 0;
     char check[MAX_INPUT_LENGTH];
@@ -260,7 +260,7 @@ static void for_name(CHAR_DATA *ch, char *name, const char *argument)
     ROOM_INDEX_DATA *origin;
     CHAR_DATA *vch;
     CHAR_DATA *vch_next;
-    AREA_DATA *area;
+    struct area_data *area;
     char cmd[MAX_STRING_LENGTH];
     int count = 0;
     char check[MAX_INPUT_LENGTH];

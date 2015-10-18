@@ -557,7 +557,7 @@ static bool set_value(CHAR_DATA *ch, struct objectprototype *pObj, const char *a
 void do_oedit(CHAR_DATA *ch, const char *argument)
 {
     struct objectprototype *pObj;
-    AREA_DATA *pArea;
+    struct area_data *pArea;
     char arg[MAX_STRING_LENGTH];
     int value;
 
@@ -735,7 +735,7 @@ EDIT(oedit_show){
  *****************************************************************************/
 EDIT(oedit_create){
     struct objectprototype *pObj;
-    AREA_DATA *pArea;
+    struct area_data *pArea;
     long value;
 
     value = parse_int(argument);

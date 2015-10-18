@@ -62,7 +62,7 @@ const struct olc_cmd_type mpedit_table[] =
 void mpedit(CHAR_DATA *ch, const char *argument)
 {
     MPROG_CODE *mpcode;
-    AREA_DATA *ad;
+    struct area_data *ad;
     char arg[MAX_INPUT_LENGTH];
     const char *parg;
     char command[MAX_INPUT_LENGTH];
@@ -127,7 +127,7 @@ void do_mpedit(CHAR_DATA *ch, const char *argument)
     argument = one_argument(argument, command);
     if (is_number(command)) {
         int vnum = parse_int(command);
-        AREA_DATA *ad;
+        struct area_data *ad;
 
         if ((mpcode = get_mprog_index(vnum)) == NULL) {
             send_to_char("MPEdit : That vnum does not exist.\n\r", ch);
@@ -188,7 +188,7 @@ void do_mpedit(CHAR_DATA *ch, const char *argument)
  ***************************************************************************/
 MPEDIT(mpedit_create){
     MPROG_CODE *mpcode;
-    AREA_DATA *ad;
+    struct area_data *ad;
     int value = parse_int(argument);
 
     if (IS_NULLSTR(argument) || value < 1) {
@@ -320,7 +320,7 @@ MPEDIT(mpedit_comment){
  ***************************************************************************/
 MPEDIT(mpedit_list){
     MPROG_CODE *mprg;
-    AREA_DATA *ad;
+    struct area_data *ad;
     int count = 1;
     bool show_all = !str_cmp(argument, "all");
 

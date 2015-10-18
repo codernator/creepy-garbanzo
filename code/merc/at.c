@@ -12,7 +12,7 @@ extern bool expand_cmd(CHAR_DATA * vch, const char *arg, char *buf, char find);
 
 
 
-CHAR_DATA *get_random_npc(CHAR_DATA *ch, AREA_DATA *area)
+CHAR_DATA *get_random_npc(CHAR_DATA *ch, struct area_data *area)
 {
     CHAR_DATA *vch = NULL;
     CHAR_DATA *wch;
@@ -33,7 +33,7 @@ CHAR_DATA *get_random_npc(CHAR_DATA *ch, AREA_DATA *area)
     return vch;
 }
 
-CHAR_DATA *get_random_pc(CHAR_DATA *ch, AREA_DATA *area)
+CHAR_DATA *get_random_pc(CHAR_DATA *ch, struct area_data *area)
 {
     CHAR_DATA *vch = NULL;
     CHAR_DATA *wch;
@@ -76,7 +76,7 @@ void do_at(CHAR_DATA *ch, const char *argument)
     }
 
     if (!str_prefix(arg, "random")) {
-        AREA_DATA *area;
+        struct area_data *area;
         char check[MAX_INPUT_LENGTH];
 
         argument = one_argument(argument, arg);

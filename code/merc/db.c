@@ -60,7 +60,7 @@ extern AFFECT_DATA *affect_free;
 
 /** locals */
 static char *string_hash[MAX_KEY_HASH];
-static AREA_DATA *current_area;
+static struct area_data *current_area;
 static char *string_space;
 static char *top_string;
 static void bug(FILE *fparea, const char *fmt, ...);
@@ -87,12 +87,12 @@ static int sAllocPerm;
 
 bool db_loading;
 static char area_file_path[MAX_INPUT_LENGTH];
-static AREA_DATA *g_area_loading;
+static struct area_data *g_area_loading;
 
 /***************************************************************************
  *	local functions used in boot process
  ***************************************************************************/
-static /*@shared@*/AREA_DATA *load_area(/*@observer@*/const struct database_controller *db, const char *filename);
+static /*@shared@*/struct area_data *load_area(/*@observer@*/const struct database_controller *db, const char *filename);
 static void load_helps(const char const *filepath);
 static void load_mobiles(FILE * fp);
 static void load_objects(FILE * fp);
@@ -108,7 +108,7 @@ void resolve_global_skills(void);
 static void fix_exits(void);
 static void fix_mobprogs(void);
 static void reset_areas(void);
-void reset_area(AREA_DATA * area);
+void reset_area(struct area_data * area);
 
 
 /* RT max open files fix */
@@ -342,10 +342,10 @@ void boot_db()
 
 
 
-AREA_DATA *load_area(const struct database_controller *db, const char *filename)
+struct area_data *load_area(const struct database_controller *db, const char *filename)
 {
     KEYVALUEPAIR_ARRAY *data;
-    AREA_DATA *area;
+    struct area_data *area;
 
     data = database_read(db);
     area = area_deserialize(data, filename);
@@ -1396,7 +1396,7 @@ void reset_areas()
  */
 void area_update(void)
 {
-    AREA_DATA *area;
+    struct area_data *area;
     char buf[MAX_STRING_LENGTH];
     struct area_iterator *iterator;
 
@@ -1677,7 +1677,7 @@ void reset_room(ROOM_INDEX_DATA *room)
 /* OLC
  * Reset one area.
  */
-void reset_area(AREA_DATA *area)
+void reset_area(struct area_data *area)
 {
     ROOM_INDEX_DATA *room;
     long vnum;

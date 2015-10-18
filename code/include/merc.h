@@ -61,7 +61,6 @@ typedef enum e_one_attack_result {
 
 /*Structure types. */
 typedef struct affect_data AFFECT_DATA;
-typedef struct area_data AREA_DATA;
 typedef struct ban_data BAN_DATA;
 typedef struct buf_type BUFFER;
 typedef struct char_data CHAR_DATA;
@@ -1249,7 +1248,7 @@ struct mob_index_data {
     MOB_INDEX_DATA *next;
     SHOP_DATA *shop;
     MPROG_LIST *mprogs;
-    AREA_DATA *area;
+    struct area_data *area;
     long vnum;
     long group;
     bool new_format;
@@ -1331,7 +1330,7 @@ struct char_data {
     GAMEOBJECT *on;
     ROOM_INDEX_DATA *in_room;
     ROOM_INDEX_DATA *was_in_room;
-    AREA_DATA *zone;
+    struct area_data *zone;
     PC_DATA *pcdata;
     bool valid;
     char *name;
@@ -1496,7 +1495,7 @@ struct extra_descr_data {
     long vnum;
     /*@owned@*//*@null@*/EXTRA_DESCR_DATA *extra_descr;
     /*@dependent@*//*@null@*/AFFECT_DATA *affected;
-    /*@dependent@*//*@null@*/AREA_DATA *area;
+    /*@dependent@*//*@null@*/struct area_data *area;
     /*@shared@*/char *name;
     /*@shared@*//*@null@*/char *short_descr;
     /*@shared@*//*@null@*/char *description;
@@ -1600,8 +1599,8 @@ struct reset_data {
 
 
 struct area_data {
-    /*@owned@*//*@null@*//*@partial@*/AREA_DATA *next;
-    /*@dependent@*//*@null@*//*@partial@*/AREA_DATA *prev;
+    /*@owned@*//*@null@*//*@partial@*/struct area_data *next;
+    /*@dependent@*//*@null@*//*@partial@*/struct area_data *prev;
 
     unsigned long vnum;
     /*@only@*/char *file_name;
@@ -1629,7 +1628,7 @@ struct room_index_data {
     CHAR_DATA *  people;
     GAMEOBJECT *  contents;
     EXTRA_DESCR_DATA * extra_descr;
-    AREA_DATA *  area;
+    struct area_data *  area;
     EXIT_DATA *  exit[6];
     RESET_DATA *  reset_first;
     RESET_DATA *  reset_last;
@@ -1957,7 +1956,7 @@ void set_bash(CHAR_DATA * ch, int pulse);
 
 
 /* act_enter.c */
-ROOM_INDEX_DATA *get_random_room(CHAR_DATA * ch, AREA_DATA * area);
+ROOM_INDEX_DATA *get_random_room(CHAR_DATA * ch, struct area_data * area);
 
 /* act_info.c */
 void set_title(CHAR_DATA * ch, char *title);
@@ -2041,7 +2040,7 @@ void tail_chain(void);
 
 /* olc/mprogs */
 MPROG_CODE *get_mprog_index(long vnum);
-void reset_area(AREA_DATA * pArea);
+void reset_area(struct area_data * pArea);
 void reset_room(ROOM_INDEX_DATA * pRoom);
 void load_socials(void);
 
@@ -2277,17 +2276,17 @@ void printf_buf(BUFFER * buffer, char *fmt, ...);
 };
 
 struct area_iterator {
-    /*@observer@*/AREA_DATA *current;
+    /*@observer@*/struct area_data *current;
 };
 
 /*@only@*//*@null@*/struct area_iterator *area_iterator_start(/*@null@*/const struct area_filter *);
 /*@only@*//*@null@*/struct area_iterator *area_iterator(/*@only@*/struct area_iterator *, /*@null@*/const struct area_filter *);
-/*@observer@*//*@null@*/AREA_DATA *area_getbyvnum(unsigned long vnum);
-/*@observer@*//*@null@*/AREA_DATA *area_getbycontainingvnum(unsigned long vnum);
-/*@dependent@*//*@null@*/AREA_DATA *area_new(unsigned long vnum);
-/*@only@*/KEYVALUEPAIR_ARRAY *area_serialize(const AREA_DATA *areadata);
-/*@dependent@*/AREA_DATA *area_deserialize(const KEYVALUEPAIR_ARRAY *data, const char *filename);
-void area_free(/*@owned@*/AREA_DATA *areadata);
+/*@observer@*//*@null@*/struct area_data *area_getbyvnum(unsigned long vnum);
+/*@observer@*//*@null@*/struct area_data *area_getbycontainingvnum(unsigned long vnum);
+/*@dependent@*//*@null@*/struct area_data *area_new(unsigned long vnum);
+/*@only@*/KEYVALUEPAIR_ARRAY *area_serialize(const struct area_data *areadata);
+/*@dependent@*/struct area_data *area_deserialize(const KEYVALUEPAIR_ARRAY *data, const char *filename);
+void area_free(/*@owned@*/struct area_data *areadata);
 /* ~area.c */
 
 #endif  /* __MERC_H */

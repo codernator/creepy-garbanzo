@@ -290,7 +290,7 @@ DECLARE_OLC_FUN(muedit_text);
 #define EDIT_MOB(ch, mob)       (mob = (MOB_INDEX_DATA *)ch->desc->ed_data)
 #define EDIT_OBJ(ch, obj)       (obj = (struct objectprototype *)ch->desc->ed_data)
 #define EDIT_ROOM(ch, room)     (room = ch->in_room)
-#define EDIT_AREA(ch, area)     (area = (AREA_DATA *)ch->desc->ed_data)
+#define EDIT_AREA(ch, area)     (area = (struct area_data *)ch->desc->ed_data)
 #define EDIT_MPCODE(ch, code)   (code = (MPROG_CODE *)ch->desc->ed_data)
 #define EDIT_HELP(ch, help)     (help = (HELP_DATA *)ch->desc->ed_data)
 #define EDIT_SKILL(ch, skill)   (skill = (SKILL *)ch->desc->ed_data)

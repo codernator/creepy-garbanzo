@@ -7,7 +7,7 @@ extern bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1
 extern void mp_greet_trigger(CHAR_DATA * ch);
 
 /* random room generation procedure */
-ROOM_INDEX_DATA *get_random_room(CHAR_DATA *ch, AREA_DATA *area)
+ROOM_INDEX_DATA *get_random_room(CHAR_DATA *ch, struct area_data *area)
 {
 	ROOM_INDEX_DATA *room;
 

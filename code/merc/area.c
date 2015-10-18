@@ -6,14 +6,14 @@
 
 const struct area_filter area_empty_filter;
 
-static AREA_DATA head_node;
-static bool passes(AREA_DATA *testee, /*@null@*//*@partial@*/const struct area_filter *filter);
-static void headlist_add(/*@owned@*/AREA_DATA *entry);
+static struct area_data head_node;
+static bool passes(struct area_data *testee, /*@null@*//*@partial@*/const struct area_filter *filter);
+static void headlist_add(/*@owned@*/struct area_data *entry);
 
 struct area_iterator *area_iterator_start(const struct area_filter *filter)
 {
     struct area_iterator *iterator;
-    AREA_DATA *current = head_node.next;
+    struct area_data *current = head_node.next;
 
     while (current != NULL && !passes(current, filter)) {
         current = current->next;
@@ -32,7 +32,7 @@ struct area_iterator *area_iterator_start(const struct area_filter *filter)
 
 struct area_iterator *area_iterator(struct area_iterator *iterator, const struct area_filter *filter)
 {
-    AREA_DATA *current = iterator->current->next;
+    struct area_data *current = iterator->current->next;
     while (current != NULL && !passes(current, filter)) {
         current = current->next;
     }
@@ -46,9 +46,9 @@ struct area_iterator *area_iterator(struct area_iterator *iterator, const struct
     return iterator;
 }
 
-AREA_DATA *area_getbyvnum(unsigned long vnum)
+struct area_data *area_getbyvnum(unsigned long vnum)
 {
-    AREA_DATA *subject;
+    struct area_data *subject;
 
     subject = head_node.next;
     while (subject != NULL) {
@@ -60,9 +60,9 @@ AREA_DATA *area_getbyvnum(unsigned long vnum)
     return NULL;
 }
 
-AREA_DATA *area_getbycontainingvnum(unsigned long vnum)
+struct area_data *area_getbycontainingvnum(unsigned long vnum)
 {
-    AREA_DATA *subject;
+    struct area_data *subject;
 
     subject = head_node.next;
     while (subject != NULL) {
@@ -74,15 +74,15 @@ AREA_DATA *area_getbycontainingvnum(unsigned long vnum)
     return NULL;
 }
 
-AREA_DATA *area_new(unsigned long vnum)
+struct area_data *area_new(unsigned long vnum)
 {
-    AREA_DATA *areadata;
+    struct area_data *areadata;
 
-    areadata = malloc(sizeof(AREA_DATA));
+    areadata = malloc(sizeof(struct area_data));
     assert(areadata != NULL);
 
     {
-        memset(areadata, 0, sizeof(AREA_DATA));
+        memset(areadata, 0, sizeof(struct area_data));
         /*@-mustfreeonly@*/
         areadata->vnum = vnum;
         areadata->name = string_copy("New area");
@@ -106,7 +106,7 @@ AREA_DATA *area_new(unsigned long vnum)
     return areadata;
 }
 
-KEYVALUEPAIR_ARRAY *area_serialize(const AREA_DATA *areadata)
+KEYVALUEPAIR_ARRAY *area_serialize(const struct area_data *areadata)
 {
     KEYVALUEPAIR_ARRAY *answer;
 
@@ -158,14 +158,14 @@ KEYVALUEPAIR_ARRAY *area_serialize(const AREA_DATA *areadata)
     entry = keyvaluepairarray_find(data, (name)); \
     (field) = (entry != NULL) ? parse_int(entry) == 1 : false;
 
-AREA_DATA *area_deserialize(const KEYVALUEPAIR_ARRAY *data, const char *filename)
+struct area_data *area_deserialize(const KEYVALUEPAIR_ARRAY *data, const char *filename)
 {
-    AREA_DATA *areadata;
+    struct area_data *areadata;
     const char *entry;
 
-    areadata = malloc(sizeof(AREA_DATA));
+    areadata = malloc(sizeof(struct area_data));
     assert(areadata != NULL);
-    memset(areadata, 0, sizeof(AREA_DATA));
+    memset(areadata, 0, sizeof(struct area_data));
 
     /*@-mustfreeonly@*/
     ASSIGN_ULONG_KEY(areadata->vnum, "vnum");
@@ -186,10 +186,10 @@ AREA_DATA *area_deserialize(const KEYVALUEPAIR_ARRAY *data, const char *filename
     return areadata;
 }
 
-void area_free(AREA_DATA *areadata)
+void area_free(struct area_data *areadata)
 {
-    AREA_DATA *prev = areadata->prev;
-    AREA_DATA *next = areadata->next;
+    struct area_data *prev = areadata->prev;
+    struct area_data *next = areadata->next;
 
     assert(areadata != &head_node);
     assert(prev != NULL); /** because only the head node has no previous. */
@@ -206,9 +206,9 @@ void area_free(AREA_DATA *areadata)
     free(areadata);
 }
 
-void headlist_add(AREA_DATA *entry)
+void headlist_add(struct area_data *entry)
 {
-    AREA_DATA *headnext;
+    struct area_data *headnext;
 
     entry->prev = &head_node;
     headnext = head_node.next;
@@ -221,7 +221,7 @@ void headlist_add(AREA_DATA *entry)
     head_node.next = entry;
 }
 
-bool passes(AREA_DATA *testee, const struct area_filter *filter)
+bool passes(struct area_data *testee, const struct area_filter *filter)
 {
     if (filter == NULL || filter->all) {
         return true;

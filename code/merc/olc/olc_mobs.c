@@ -39,7 +39,7 @@ extern void string_append(CHAR_DATA * ch, char **string);
 void do_medit(CHAR_DATA *ch, const char *argument)
 {
     MOB_INDEX_DATA *mob_idx;
-    AREA_DATA *area;
+    struct area_data *area;
     long value;
     char arg[MAX_STRING_LENGTH];
 
@@ -272,7 +272,7 @@ EDIT(medit_show){
  *****************************************************************************/
 EDIT(medit_create){
     MOB_INDEX_DATA *mob_idx;
-    AREA_DATA *area;
+    struct area_data *area;
     long value;
     long hash_idx;
 

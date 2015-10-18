@@ -13,13 +13,13 @@
 #include "find.h"
 
 
-AREA_DATA *grok_area(CHAR_DATA *ch, const char *arg, BUFFER *out_buffer);
+struct area_data *grok_area(CHAR_DATA *ch, const char *arg, BUFFER *out_buffer);
 
 
 
-AREA_DATA *grok_area(CHAR_DATA *ch, const char *arg, BUFFER *out_buffer)
+struct area_data *grok_area(CHAR_DATA *ch, const char *arg, BUFFER *out_buffer)
 {
-    AREA_DATA *ad = NULL;
+    struct area_data *ad = NULL;
 
     if (arg[0] != '\0') {
         if (arg[0] == '?') {
@@ -84,7 +84,7 @@ static CHECK_EXISTS_FN *get_check_exists_function(char type)
 
 static void find_empty_vnums(char type, CHAR_DATA *ch, const char *arg, BUFFER *out_buffer)
 {
-    AREA_DATA *ad;
+    struct area_data *ad;
     long vnum, low_empty_range = 0, high_empty_range = 0;
     char buf[MAX_INPUT_LENGTH];
     CHECK_EXISTS_FN *check_exists_fn;

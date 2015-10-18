@@ -367,7 +367,7 @@ void do_redit(CHAR_DATA *ch, const char *argument)
  *	create a new room
  ***************************************************************************/
 EDIT(redit_create){
-    AREA_DATA *area;
+    struct area_data *area;
     ROOM_INDEX_DATA *room;
     long value;
     long hash_idx;
@@ -464,7 +464,7 @@ EDIT(redit_clone){
  ***************************************************************************/
 EDIT(redit_rlist){
     ROOM_INDEX_DATA *room;
-    AREA_DATA *area;
+    struct area_data *area;
     BUFFER *buf;
     char *unclr;
     char arg[MAX_INPUT_LENGTH];
@@ -512,7 +512,7 @@ EDIT(redit_rlist){
  ***************************************************************************/
 EDIT(redit_mlist){
     MOB_INDEX_DATA *mob;
-    AREA_DATA *area;
+    struct area_data *area;
     BUFFER *buf;
     char arg[MAX_INPUT_LENGTH];
     char *unclr;
@@ -573,7 +573,7 @@ EDIT(redit_mlist){
  ***************************************************************************/
 EDIT(redit_olist){
     struct objectprototype *obj;
-    AREA_DATA *area;
+    struct area_data *area;
     BUFFER *buf;
     char arg[MAX_INPUT_LENGTH];
     char *unclr;
@@ -1503,7 +1503,7 @@ EDIT(redit_oreset){
  ***************************************************************************/
 EDIT(redit_flagall){
     ROOM_INDEX_DATA *room;                          /* individual room to edit */
-    AREA_DATA *area;                                /* area being edited */
+    struct area_data *area;                                /* area being edited */
     BUFFER *buf;                                    /* text to return to ch */
     char *unclr;                                    /* uncolored room name */
     char rFlag[MAX_INPUT_LENGTH];                                /* name of room flag to set */
@@ -1575,7 +1575,7 @@ EDIT(redit_flagall){
  ***************************************************************************/
 EDIT(redit_showrooms){
     ROOM_INDEX_DATA *room;                          /* individual room to edit */
-    AREA_DATA *area;                                /* area being edited */
+    struct area_data *area;                                /* area being edited */
     BUFFER *buf;                                    /* text to return to ch */
     char *unclr;                                    /* uncolored room name */
     char rFlag[MAX_INPUT_LENGTH];                                /* name of room flag to see */

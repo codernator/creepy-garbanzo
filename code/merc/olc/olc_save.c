@@ -13,18 +13,18 @@
 static char *fix_string(const char *str);
 static char *fwrite_flag(long flags, char buf[]);
 static void save_area_list();
-static void save_area(AREA_DATA * area);
-static void save_mobprogs(FILE *fp, AREA_DATA *area);
+static void save_area(struct area_data * area);
+static void save_mobprogs(FILE *fp, struct area_data *area);
 static void save_mobile(FILE *fp, MOB_INDEX_DATA *mob_idx);
-static void save_mobiles(FILE *fp, AREA_DATA *area);
+static void save_mobiles(FILE *fp, struct area_data *area);
 static void save_object(FILE *fp, struct objectprototype *pObjIndex);
-static void save_objects(FILE *fp, AREA_DATA *area);
-static void save_rooms(FILE *fp, AREA_DATA *area);
-static void save_door_resets(FILE *fp, AREA_DATA *area);
-static void save_resets(FILE *fp, AREA_DATA *area);
-static void save_shops(FILE *fp, AREA_DATA *area);
+static void save_objects(FILE *fp, struct area_data *area);
+static void save_rooms(FILE *fp, struct area_data *area);
+static void save_door_resets(FILE *fp, struct area_data *area);
+static void save_resets(FILE *fp, struct area_data *area);
+static void save_shops(FILE *fp, struct area_data *area);
 static void save_helps(const char const *filename);
-static void save_area(AREA_DATA *area);
+static void save_area(struct area_data *area);
 static void show_save_help(CHAR_DATA *ch);
 
 
@@ -46,7 +46,7 @@ void do_asave(CHAR_DATA *ch, const char *argument)
      * save the area it corresponds to
      */
     if (is_number(arg)) {
-        AREA_DATA *area;
+        struct area_data *area;
         value = parse_int(arg);
 
         if ((area = area_getbyvnum(value)) == NULL) {
@@ -68,7 +68,7 @@ void do_asave(CHAR_DATA *ch, const char *argument)
     /* save everything */
     if (!str_cmp(arg, "world")) {
         struct area_iterator *iterator;
-        AREA_DATA *area;
+        struct area_data *area;
 
         save_area_list();
         save_helps(HELP_FILE);
@@ -99,7 +99,7 @@ void do_asave(CHAR_DATA *ch, const char *argument)
     if (!str_cmp(arg, "changed")) {
         bool saved;
         struct area_iterator *iterator;
-        AREA_DATA *area;
+        struct area_data *area;
 
         save_area_list();
         save_helps(HELP_FILE);
@@ -146,7 +146,7 @@ void do_asave(CHAR_DATA *ch, const char *argument)
 
     /* save the area that is currently being edited */
     if (!str_prefix(arg, "area")) {
-        AREA_DATA *area;
+        struct area_data *area;
         if (ch->desc->editor == ED_NONE) {
             send_to_char("You are not editing an area, therefore an area vnum is required.\n\r", ch);
             return;
@@ -154,7 +154,7 @@ void do_asave(CHAR_DATA *ch, const char *argument)
 
         switch (ch->desc->editor) {
           case ED_AREA:
-              area = (AREA_DATA *)ch->desc->ed_data;
+              area = (struct area_data *)ch->desc->ed_data;
               break;
           case ED_ROOM:
               area = ch->in_room->area;
@@ -268,7 +268,7 @@ void save_area_list()
     fclose(fp);
 }
 
-void save_mobprogs(FILE *fp, AREA_DATA *area)
+void save_mobprogs(FILE *fp, struct area_data *area)
 {
     MPROG_CODE *mprog;
     long iter;
@@ -369,7 +369,7 @@ void save_mobile(FILE *fp, MOB_INDEX_DATA *mob_idx)
     return;
 }
 
-void save_mobiles(FILE *fp, AREA_DATA *area)
+void save_mobiles(FILE *fp, struct area_data *area)
 {
     MOB_INDEX_DATA *pMob;
     long iter;
@@ -531,7 +531,7 @@ void save_object(FILE *fp, struct objectprototype *pObjIndex)
     return;
 }
 
-void save_objects(FILE *fp, AREA_DATA *area)
+void save_objects(FILE *fp, struct area_data *area)
 {
     struct objectprototype *pObj;
     long iter;
@@ -546,7 +546,7 @@ void save_objects(FILE *fp, AREA_DATA *area)
     return;
 }
 
-void save_rooms(FILE *fp, AREA_DATA *area)
+void save_rooms(FILE *fp, struct area_data *area)
 {
     ROOM_INDEX_DATA *room;
     EXTRA_DESCR_DATA *extra;
@@ -648,7 +648,7 @@ void save_rooms(FILE *fp, AREA_DATA *area)
     return;
 }
 
-void save_door_resets(FILE *fp, AREA_DATA *area)
+void save_door_resets(FILE *fp, struct area_data *area)
 {
     ROOM_INDEX_DATA *room;
     EXIT_DATA *exit;
@@ -675,7 +675,7 @@ void save_door_resets(FILE *fp, AREA_DATA *area)
     return;
 }
 
-void save_resets(FILE *fp, AREA_DATA *area)
+void save_resets(FILE *fp, struct area_data *area)
 {
     RESET_DATA *pReset;
     MOB_INDEX_DATA *pLastMob = NULL;
@@ -751,7 +751,7 @@ void save_resets(FILE *fp, AREA_DATA *area)
     return;
 }
 
-void save_shops(FILE *fp, AREA_DATA *area)
+void save_shops(FILE *fp, struct area_data *area)
 {
     SHOP_DATA *shopIndex;
     MOB_INDEX_DATA *mob_idx;
@@ -806,7 +806,7 @@ void save_helps(const char const *filename)
     database_close(db);
 }
 
-void save_area(AREA_DATA *area)
+void save_area(struct area_data *area)
 {
     FILE *fp;
     KEYVALUEPAIR_ARRAY *serialized;
