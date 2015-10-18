@@ -1149,7 +1149,7 @@ void unequip_char(CHAR_DATA *ch, GAMEOBJECT *obj)
 /**
  * Count occurrences of an obj in a list.
  */
-int count_obj_list(OBJECTPROTOTYPE *pObjIndex, GAMEOBJECT *list)
+int count_obj_list(struct objectprototype *pObjIndex, GAMEOBJECT *list)
 {
     GAMEOBJECT *obj;
     int nMatch;
@@ -1449,7 +1449,7 @@ CHAR_DATA *get_char_world(CHAR_DATA *ch, const char *argument)
  *
  * find an object with a given index data
  ***************************************************************************/
-GAMEOBJECT *get_obj_type(OBJECTPROTOTYPE *objprototype)
+GAMEOBJECT *get_obj_type(struct objectprototype *objprototype)
 {
     const struct object_iterator_filter filter = { .object_template = objprototype };
     return object_iterator_start(&filter);

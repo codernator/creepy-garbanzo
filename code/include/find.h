@@ -75,22 +75,22 @@ bool char_cmp_player(CHAR_DATA * vch, const char *arg, BUFFER * buf);
 /***************************************************************************
  *	objects
  ***************************************************************************/
-typedef bool OBJ_IDX_CMP_FN (OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf);
+typedef bool OBJ_IDX_CMP_FN (struct objectprototype *obj, const char *arg, BUFFER *buf);
 
 struct cmp_vars_obj_index_data {
     char *		var;
     OBJ_IDX_CMP_FN *fn;
 };
 
-bool objprototype_cmp_name(OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
-bool objprototype_cmp_short(OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
-bool objprototype_cmp_long(OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
-bool objprototype_cmp_type(OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
-bool objprototype_cmp_extra(OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
-bool objprototype_cmp_wear(OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
-bool objprototype_cmp_weight(OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
-bool objprototype_cmp_cost(OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
-bool objprototype_cmp_level(OBJECTPROTOTYPE * obj, const char *arg, BUFFER * buf);
+bool objprototype_cmp_name(struct objectprototype * obj, const char *arg, BUFFER * buf);
+bool objprototype_cmp_short(struct objectprototype * obj, const char *arg, BUFFER * buf);
+bool objprototype_cmp_long(struct objectprototype * obj, const char *arg, BUFFER * buf);
+bool objprototype_cmp_type(struct objectprototype * obj, const char *arg, BUFFER * buf);
+bool objprototype_cmp_extra(struct objectprototype * obj, const char *arg, BUFFER * buf);
+bool objprototype_cmp_wear(struct objectprototype * obj, const char *arg, BUFFER * buf);
+bool objprototype_cmp_weight(struct objectprototype * obj, const char *arg, BUFFER * buf);
+bool objprototype_cmp_cost(struct objectprototype * obj, const char *arg, BUFFER * buf);
+bool objprototype_cmp_level(struct objectprototype * obj, const char *arg, BUFFER * buf);
 
 
 /***************************************************************************

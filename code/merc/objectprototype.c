@@ -25,24 +25,24 @@ extern void free_extra_descr(EXTRA_DESCR_DATA *ed);
 typedef struct hash_entry HASH_ENTRY;
 struct hash_entry {
     /*@only@*/HASH_ENTRY *next;
-    /*@dependent@*/OBJECTPROTOTYPE *entry;
+    /*@dependent@*/struct objectprototype *entry;
 };
 
-static OBJECTPROTOTYPE head_node;
-static bool passes(OBJECTPROTOTYPE *testee, const OBJECTPROTOTYPE_FILTER *filter);
-static void headlist_add(/*@owned@*/OBJECTPROTOTYPE *entry);
+static struct objectprototype head_node;
+static bool passes(struct objectprototype *testee, const OBJECTPROTOTYPE_FILTER *filter);
+static void headlist_add(/*@owned@*/struct objectprototype *entry);
 /* an array of linked lists, with an empty head node. */
 static HASH_ENTRY lookup[OBJPROTO_MAX_KEY_HASH];
-static void lookup_add(long entrykey, /*@dependent@*/OBJECTPROTOTYPE *entry);
-static void lookup_remove(long entrykey, /*@dependent@*/OBJECTPROTOTYPE *entry);
-static size_t count_extras(const OBJECTPROTOTYPE *obj);
-static size_t count_affects(const OBJECTPROTOTYPE *obj);
+static void lookup_add(long entrykey, /*@dependent@*/struct objectprototype *entry);
+static void lookup_remove(long entrykey, /*@dependent@*/struct objectprototype *entry);
+static size_t count_extras(const struct objectprototype *obj);
+static size_t count_affects(const struct objectprototype *obj);
 
 /*
  * Translates object virtual number to its obj index struct.
  * Hash table lookup.
  */
-OBJECTPROTOTYPE *objectprototype_getbyvnum(long vnum)
+struct objectprototype *objectprototype_getbyvnum(long vnum)
 {
     HASH_ENTRY *hashentry;
     long hashkey = HASH_KEY(vnum);
@@ -56,16 +56,16 @@ OBJECTPROTOTYPE *objectprototype_getbyvnum(long vnum)
         : hashentry->entry;
 }
 
-OBJECTPROTOTYPE *objectprototype_new(long vnum)
+struct objectprototype *objectprototype_new(long vnum)
 {
-    OBJECTPROTOTYPE *prototypedata;
+    struct objectprototype *prototypedata;
 
-    prototypedata = malloc(sizeof(OBJECTPROTOTYPE));
+    prototypedata = malloc(sizeof(struct objectprototype));
     assert(prototypedata != NULL);
 
     /** Default values */
     {
-        memset(prototypedata, 0, sizeof(OBJECTPROTOTYPE));
+        memset(prototypedata, 0, sizeof(struct objectprototype));
         prototypedata->vnum = vnum;
         prototypedata->name = str_dup("no name");
         prototypedata->short_descr = str_dup("(no short description)");
@@ -84,15 +84,15 @@ OBJECTPROTOTYPE *objectprototype_new(long vnum)
     return prototypedata;
 }
 
-OBJECTPROTOTYPE *objectprototype_deserialize(const KEYVALUEPAIR_ARRAY *data)
+struct objectprototype *objectprototype_deserialize(const KEYVALUEPAIR_ARRAY *data)
 {
-    OBJECTPROTOTYPE *prototypedata;
+    struct objectprototype *prototypedata;
     long vnum;
     const char *vnumentry;
 
-    prototypedata = malloc(sizeof(OBJECTPROTOTYPE));
+    prototypedata = malloc(sizeof(struct objectprototype));
     assert(prototypedata != NULL);
-    memset(prototypedata, 0, sizeof(OBJECTPROTOTYPE));
+    memset(prototypedata, 0, sizeof(struct objectprototype));
 
     vnumentry = keyvaluepairarray_find(data, "vnum");
     vnum = (vnumentry != NULL) ? parse_long(vnumentry) : 0;
@@ -107,7 +107,7 @@ OBJECTPROTOTYPE *objectprototype_deserialize(const KEYVALUEPAIR_ARRAY *data)
 }
 
 #define SERIALIZED_NUMBER_SIZE 32
-KEYVALUEPAIR_ARRAY *objectprototype_serialize(const OBJECTPROTOTYPE *obj)
+KEYVALUEPAIR_ARRAY *objectprototype_serialize(const struct objectprototype *obj)
 {
     KEYVALUEPAIR_ARRAY *answer;
     size_t keys = 25;
@@ -184,7 +184,7 @@ KEYVALUEPAIR_ARRAY *objectprototype_serialize(const OBJECTPROTOTYPE *obj)
     return answer;
 }
 
-void objectprototype_free(OBJECTPROTOTYPE *prototypedata)
+void objectprototype_free(struct objectprototype *prototypedata)
 {
     assert(prototypedata != NULL);
     assert(prototypedata != &head_node);
@@ -194,8 +194,8 @@ void objectprototype_free(OBJECTPROTOTYPE *prototypedata)
 
     /** Extract from list. */
     {
-        OBJECTPROTOTYPE *prev = prototypedata->prev;
-        OBJECTPROTOTYPE *next = prototypedata->next;
+        struct objectprototype *prev = prototypedata->prev;
+        struct objectprototype *next = prototypedata->next;
 
         assert(prev != NULL); /** because only the head node has no previous. */
         prev->next = next;
@@ -238,21 +238,21 @@ void objectprototype_free(OBJECTPROTOTYPE *prototypedata)
 
 int objectprototype_list_count()
 {
-    OBJECTPROTOTYPE *o;
+    struct objectprototype *o;
     int counter = 0;
     for (o = head_node.next; o != NULL; o = o->next)
         counter++;
     return counter;
 }
 
-OBJECTPROTOTYPE *objectprototype_iterator_start(const OBJECTPROTOTYPE_FILTER *filter)
+struct objectprototype *objectprototype_iterator_start(const OBJECTPROTOTYPE_FILTER *filter)
 {
     return objectprototype_iterator(&head_node, filter);
 }
 
-OBJECTPROTOTYPE *objectprototype_iterator(OBJECTPROTOTYPE *current, const OBJECTPROTOTYPE_FILTER *filter)
+struct objectprototype *objectprototype_iterator(struct objectprototype *current, const OBJECTPROTOTYPE_FILTER *filter)
 {
-    OBJECTPROTOTYPE *next;
+    struct objectprototype *next;
 
     if (current == NULL) {
         return NULL;
@@ -267,7 +267,7 @@ OBJECTPROTOTYPE *objectprototype_iterator(OBJECTPROTOTYPE *current, const OBJECT
 }
 
 
-bool passes(OBJECTPROTOTYPE *testee, const OBJECTPROTOTYPE_FILTER *filter)
+bool passes(struct objectprototype *testee, const OBJECTPROTOTYPE_FILTER *filter)
 {
     if (filter->name != NULL && filter->name[0] != '\0' && testee->name != NULL && str_cmp(filter->name, testee->name)) {
         /** name filter specified but does not match current object. */
@@ -277,9 +277,9 @@ bool passes(OBJECTPROTOTYPE *testee, const OBJECTPROTOTYPE_FILTER *filter)
     return true;
 }
 
-void headlist_add(/*@owned@*/OBJECTPROTOTYPE *entry)
+void headlist_add(/*@owned@*/struct objectprototype *entry)
 {
-    OBJECTPROTOTYPE *headnext;
+    struct objectprototype *headnext;
 
     entry->prev = &head_node;
     headnext = head_node.next;
@@ -292,7 +292,7 @@ void headlist_add(/*@owned@*/OBJECTPROTOTYPE *entry)
     head_node.next = entry;
 }
 
-void lookup_add(long entrykey, OBJECTPROTOTYPE *entry)
+void lookup_add(long entrykey, struct objectprototype *entry)
 {
     HASH_ENTRY *node;
     long hashkey;
@@ -305,7 +305,7 @@ void lookup_add(long entrykey, OBJECTPROTOTYPE *entry)
     lookup[hashkey].next = node;
 }
 
-void lookup_remove(long entrykey, OBJECTPROTOTYPE *entry)
+void lookup_remove(long entrykey, struct objectprototype *entry)
 {
     HASH_ENTRY *head;
     HASH_ENTRY *prev;
@@ -327,7 +327,7 @@ void lookup_remove(long entrykey, OBJECTPROTOTYPE *entry)
     prev->next = next;
 }
 
-size_t count_extras(const OBJECTPROTOTYPE *obj)
+size_t count_extras(const struct objectprototype *obj)
 {
     size_t keys = 0;
     EXTRA_DESCR_DATA *extra = obj->extra_descr;
@@ -338,7 +338,7 @@ size_t count_extras(const OBJECTPROTOTYPE *obj)
     return keys;
 }
 
-size_t count_affects(const OBJECTPROTOTYPE *obj)
+size_t count_affects(const struct objectprototype *obj)
 {
     size_t keys = 0;
     AFFECT_DATA *affect = obj->affected;

@@ -288,7 +288,7 @@ DECLARE_OLC_FUN(muedit_text);
 
 /* Return pointers to what is being edited. */
 #define EDIT_MOB(ch, mob)       (mob = (MOB_INDEX_DATA *)ch->desc->ed_data)
-#define EDIT_OBJ(ch, obj)       (obj = (OBJECTPROTOTYPE *)ch->desc->ed_data)
+#define EDIT_OBJ(ch, obj)       (obj = (struct objectprototype *)ch->desc->ed_data)
 #define EDIT_ROOM(ch, room)     (room = ch->in_room)
 #define EDIT_AREA(ch, area)     (area = (AREA_DATA *)ch->desc->ed_data)
 #define EDIT_MPCODE(ch, code)   (code = (MPROG_CODE *)ch->desc->ed_data)

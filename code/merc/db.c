@@ -454,7 +454,7 @@ void load_resets(FILE *fp)
          *      OLC
          *              ROOM_INDEX_DATA *	room_idx;
          *              EXIT_DATA *			pexit;
-         *              OBJECTPROTOTYPE *	temp_index;
+         *              struct objectprototype *	temp_index;
          */
         char letter;
 
@@ -922,7 +922,7 @@ void load_mobiles(FILE *fp)
 /** Snarf an obj section. */
 void load_objects(FILE *fp)
 {
-    OBJECTPROTOTYPE *objprototype;
+    struct objectprototype *objprototype;
     SKILL *skill;
 
     if (g_area_loading == NULL) {
@@ -1463,8 +1463,8 @@ void reset_room(ROOM_INDEX_DATA *room)
 
     for (reset = room->reset_first; reset != NULL; reset = reset->next) {
         MOB_INDEX_DATA *mob_idx;
-        OBJECTPROTOTYPE *objprototype;
-        OBJECTPROTOTYPE *obj_to_idx;
+        struct objectprototype *objprototype;
+        struct objectprototype *obj_to_idx;
         ROOM_INDEX_DATA *room_idx;
         int count;
         int limit = 0;
@@ -1949,7 +1949,7 @@ void clone_mobile(CHAR_DATA *parent, CHAR_DATA *clone)
 /*
  * Create an instance of an object.
  */
-GAMEOBJECT *create_object(OBJECTPROTOTYPE *objprototype, int level)
+GAMEOBJECT *create_object(struct objectprototype *objprototype, int level)
 {
     AFFECT_DATA *paf;
     GAMEOBJECT *obj;
@@ -2567,7 +2567,7 @@ void do_dump(CHAR_DATA *ch, const char *argument)
 
     /* objectprototypes */
     count = objectprototype_list_count();
-    fprintf(fp, "ObjProt	%10ld(%12ld bytes)\n", count, count * (long)(sizeof(OBJECTPROTOTYPE)));
+    fprintf(fp, "ObjProt	%10ld(%12ld bytes)\n", count, count * (long)(sizeof(struct objectprototype)));
 
     /* objects */
     count = object_list_count();
@@ -2580,8 +2580,8 @@ void do_dump(CHAR_DATA *ch, const char *argument)
 
     /* affects on object prototypes */
     {
-        OBJECTPROTOTYPE *current;
-        OBJECTPROTOTYPE *pending;
+        struct objectprototype *current;
+        struct objectprototype *pending;
 
         pending = objectprototype_iterator_start(&objectprototype_empty_filter);
         while ((current = pending) != NULL) {
@@ -2618,8 +2618,8 @@ void do_dump(CHAR_DATA *ch, const char *argument)
 
     /* start object dump */
     {
-        OBJECTPROTOTYPE *current;
-        OBJECTPROTOTYPE *pending;
+        struct objectprototype *current;
+        struct objectprototype *pending;
 
         fp = fopen("obj.dmp", "w");
         fprintf(fp, "\nObject Analysis\n");

@@ -890,8 +890,8 @@ void do_ovnum(CHAR_DATA *ch, const char *argument)
             (*cmp_fn)(objectprototype_getbyvnum(OBJ_VNUM_MAP), arg, buffer);
             page_to_char(buf_string(buffer), ch);
         } else {
-            OBJECTPROTOTYPE *current;
-            OBJECTPROTOTYPE *pending;
+            struct objectprototype *current;
+            struct objectprototype *pending;
             char *clr1;
             int number = 0;
             long count = 0;
@@ -938,7 +938,7 @@ void do_ovnum(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	objprototype_cmp_name
  ***************************************************************************/
-bool objprototype_cmp_name(OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf)
+bool objprototype_cmp_name(struct objectprototype *obj, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by an object's name.\n\r");
@@ -948,7 +948,7 @@ bool objprototype_cmp_name(OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	objprototype_cmp_short
  ***************************************************************************/
-bool objprototype_cmp_short(OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf)
+bool objprototype_cmp_short(struct objectprototype *obj, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by an object's short description.\n\r");
@@ -958,7 +958,7 @@ bool objprototype_cmp_short(OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	objprototype_cmp_long
  ***************************************************************************/
-bool objprototype_cmp_long(OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf)
+bool objprototype_cmp_long(struct objectprototype *obj, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by an object's long description.\n\r");
@@ -968,7 +968,7 @@ bool objprototype_cmp_long(OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	objprototype_cmp_type
  ***************************************************************************/
-bool objprototype_cmp_type(OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf)
+bool objprototype_cmp_type(struct objectprototype *obj, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
         add_buf(buf, "search by an object's type.\n\r");
@@ -980,7 +980,7 @@ bool objprototype_cmp_type(OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	objprototype_cmp_weight
  ***************************************************************************/
-bool objprototype_cmp_weight(OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf)
+bool objprototype_cmp_weight(struct objectprototype *obj, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by an object's weight.\n\r");
@@ -990,7 +990,7 @@ bool objprototype_cmp_weight(OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	objprototype_cmp_cost
  ***************************************************************************/
-bool objprototype_cmp_cost(OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf)
+bool objprototype_cmp_cost(struct objectprototype *obj, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by an object's cost.\n\r");
@@ -1000,7 +1000,7 @@ bool objprototype_cmp_cost(OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	objprototype_cmp_level
  ***************************************************************************/
-bool objprototype_cmp_level(OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf)
+bool objprototype_cmp_level(struct objectprototype *obj, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by an object's level.\n\r");
@@ -1010,7 +1010,7 @@ bool objprototype_cmp_level(OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	objprototype_cmp_extra
  ***************************************************************************/
-bool objprototype_cmp_extra(OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf)
+bool objprototype_cmp_extra(struct objectprototype *obj, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
         add_buf(buf, "search by an object's extra flags.\n\r");
@@ -1022,7 +1022,7 @@ bool objprototype_cmp_extra(OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	objprototype_cmp_wear
  ***************************************************************************/
-bool objprototype_cmp_wear(OBJECTPROTOTYPE *obj, const char *arg, BUFFER *buf)
+bool objprototype_cmp_wear(struct objectprototype *obj, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
         add_buf(buf, "search by an object's wear flags.\n\r");

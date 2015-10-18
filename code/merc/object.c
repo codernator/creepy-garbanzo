@@ -22,7 +22,7 @@ static bool passes(GAMEOBJECT *testee, const OBJECT_ITERATOR_FILTER *filter);
 
 
 
-GAMEOBJECT *object_new(OBJECTPROTOTYPE *prototypedata)
+GAMEOBJECT *object_new(struct objectprototype *prototypedata)
 {
     GAMEOBJECT *obj;
 

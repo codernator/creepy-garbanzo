@@ -73,7 +73,6 @@ typedef struct mem_data MEM_DATA;
 typedef struct mob_index_data MOB_INDEX_DATA;
 typedef struct note_data NOTE_DATA;
 typedef struct gameobject GAMEOBJECT;
-typedef struct objectprototype OBJECTPROTOTYPE;
 typedef struct pc_data PC_DATA;
 typedef struct reset_data RESET_DATA;
 typedef struct room_index_data ROOM_INDEX_DATA;
@@ -1491,8 +1490,8 @@ struct extra_descr_data {
  * object specific structures
  ***************************************************************************/
 /*@abstract@*/struct objectprototype {
-    /*@owned@*//*@null@*//*@partial@*/OBJECTPROTOTYPE *next;
-    /*@dependent@*//*@null@*//*@partial@*/OBJECTPROTOTYPE *prev;
+    /*@owned@*//*@null@*//*@partial@*/struct objectprototype *next;
+    /*@dependent@*//*@null@*//*@partial@*/struct objectprototype *prev;
 
     long vnum;
     /*@owned@*//*@null@*/EXTRA_DESCR_DATA *extra_descr;
@@ -1531,7 +1530,7 @@ struct extra_descr_data {
     /*@dependent@*//*@null@*/CHAR_DATA *target;
     /*@owned@*//*@null@*/EXTRA_DESCR_DATA *extra_descr;
     /*@dependent@*//*@null@*/AFFECT_DATA *affected;
-    /*@dependent@*/OBJECTPROTOTYPE *objprototype;
+    /*@dependent@*/struct objectprototype *objprototype;
     /*@dependent@*//*@null@*/ROOM_INDEX_DATA *in_room;
     bool enchanted;
     /*@shared@*//*@null@*/char *owner_name;
@@ -2015,7 +2014,7 @@ void area_update(void);
 /* creation/cloning */
 CHAR_DATA *create_mobile(MOB_INDEX_DATA * mob_idx);
 void clone_mobile(CHAR_DATA * parent, CHAR_DATA * clone);
-GAMEOBJECT *create_object(OBJECTPROTOTYPE * objprototype, int level);
+GAMEOBJECT *create_object(struct objectprototype * objprototype, int level);
 void clear_char(CHAR_DATA * ch);
 
 /* find functions  */
@@ -2108,7 +2107,7 @@ long apply_ac(GAMEOBJECT * obj, int iWear, int type);
 GAMEOBJECT *get_eq_char(CHAR_DATA * ch, int iWear);
 void equip_char(CHAR_DATA * ch, GAMEOBJECT * obj, int iWear);
 void unequip_char(CHAR_DATA * ch, GAMEOBJECT * obj);
-int count_obj_list(OBJECTPROTOTYPE * obj, GAMEOBJECT * list);
+int count_obj_list(struct objectprototype * obj, GAMEOBJECT * list);
 void obj_from_room(GAMEOBJECT * obj);
 void obj_to_room(GAMEOBJECT * obj, ROOM_INDEX_DATA * pRoomIndex);
 void obj_to_obj(GAMEOBJECT * obj, GAMEOBJECT * obj_to);
@@ -2117,7 +2116,7 @@ void extract_obj(GAMEOBJECT * obj);
 void extract_char(CHAR_DATA * ch, bool fPull);
 CHAR_DATA *get_char_room(CHAR_DATA * ch, const char *argument);
 CHAR_DATA *get_char_world(CHAR_DATA * ch, const char *argument);
-GAMEOBJECT *get_obj_type(OBJECTPROTOTYPE * objprototypeData);
+GAMEOBJECT *get_obj_type(struct objectprototype * objprototypeData);
 GAMEOBJECT *get_obj_list(CHAR_DATA * ch, const char *argument, GAMEOBJECT * list);
 GAMEOBJECT *get_obj_carry(CHAR_DATA * ch, const char *argument);
 GAMEOBJECT *get_obj_wear(CHAR_DATA * ch, const char *argument);
@@ -2251,14 +2250,14 @@ struct objectprototype_filter {
 };
 extern const OBJECTPROTOTYPE_FILTER objectprototype_empty_filter;
 
-/*@dependent@*/OBJECTPROTOTYPE *objectprototype_new(long vnum);
-void objectprototype_free(/*@owned@*/OBJECTPROTOTYPE *templatedata);
+/*@dependent@*/struct objectprototype *objectprototype_new(long vnum);
+void objectprototype_free(/*@owned@*/struct objectprototype *templatedata);
 int objectprototype_list_count();
-/*@dependent@*//*@null@*/OBJECTPROTOTYPE *objectprototype_iterator_start(const OBJECTPROTOTYPE_FILTER *filter);
-/*@dependent@*//*@null@*/OBJECTPROTOTYPE *objectprototype_iterator(OBJECTPROTOTYPE *current, const OBJECTPROTOTYPE_FILTER *filter);
-/*@dependent@*//*@null@*/OBJECTPROTOTYPE *objectprototype_getbyvnum(long vnum);
-/*@only@*/KEYVALUEPAIR_ARRAY *objectprototype_serialize(const OBJECTPROTOTYPE *obj);
-/*@dependent@*/OBJECTPROTOTYPE *objectprototype_deserialize(const KEYVALUEPAIR_ARRAY *data);
+/*@dependent@*//*@null@*/struct objectprototype *objectprototype_iterator_start(const OBJECTPROTOTYPE_FILTER *filter);
+/*@dependent@*//*@null@*/struct objectprototype *objectprototype_iterator(struct objectprototype *current, const OBJECTPROTOTYPE_FILTER *filter);
+/*@dependent@*//*@null@*/struct objectprototype *objectprototype_getbyvnum(long vnum);
+/*@only@*/KEYVALUEPAIR_ARRAY *objectprototype_serialize(const struct objectprototype *obj);
+/*@dependent@*/struct objectprototype *objectprototype_deserialize(const KEYVALUEPAIR_ARRAY *data);
 /* ~objectprototype.c */
 
 /* recycle.c */

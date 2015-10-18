@@ -197,7 +197,7 @@ static bool change_exit(CHAR_DATA *ch, const char *argument, int door)
     }
 
     if (!str_cmp(command, "key")) {
-        OBJECTPROTOTYPE *key;
+        struct objectprototype *key;
 
         if (arg[0] == '\0' || !is_number(arg)) {
             send_to_char("Syntax:  [direction] key [vnum]\n\r", ch);
@@ -572,7 +572,7 @@ EDIT(redit_mlist){
  *	list all the objects in an area
  ***************************************************************************/
 EDIT(redit_olist){
-    OBJECTPROTOTYPE *obj;
+    struct objectprototype *obj;
     AREA_DATA *area;
     BUFFER *buf;
     char arg[MAX_INPUT_LENGTH];
@@ -665,7 +665,7 @@ EDIT(redit_mshow){
  *	show an object in an area
  ***************************************************************************/
 EDIT(redit_oshow){
-    OBJECTPROTOTYPE *obj;
+    struct objectprototype *obj;
     int value;
 
     if (argument[0] == '\0') {
@@ -1318,7 +1318,7 @@ EDIT(redit_mreset){
  ***************************************************************************/
 EDIT(redit_oreset){
     ROOM_INDEX_DATA *room;
-    OBJECTPROTOTYPE *obj;
+    struct objectprototype *obj;
     GAMEOBJECT *newobj;
     GAMEOBJECT *to_obj;
     CHAR_DATA *to_mob;

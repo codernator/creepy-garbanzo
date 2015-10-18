@@ -16,7 +16,7 @@ extern void string_append(CHAR_DATA * ch, char **string);
 /*****************************************************************************
  *	display the value properties of an item based on it's type
  *****************************************************************************/
-static void show_obj_values(CHAR_DATA *ch, OBJECTPROTOTYPE *obj)
+static void show_obj_values(CHAR_DATA *ch, struct objectprototype *obj)
 {
     SKILL *skill;
     int idx;
@@ -176,7 +176,7 @@ static void show_obj_values(CHAR_DATA *ch, OBJECTPROTOTYPE *obj)
  *
  *	set the value properties of an item based on it's type
  *****************************************************************************/
-static bool set_obj_values(CHAR_DATA *ch, OBJECTPROTOTYPE *pObj, int value_num, const char *argument)
+static bool set_obj_values(CHAR_DATA *ch, struct objectprototype *pObj, int value_num, const char *argument)
 {
     SKILL *skill;
     int value;
@@ -536,7 +536,7 @@ static bool set_obj_values(CHAR_DATA *ch, OBJECTPROTOTYPE *pObj, int value_num, 
  *
  *	set one of the 4 value properties on the object
  *****************************************************************************/
-static bool set_value(CHAR_DATA *ch, OBJECTPROTOTYPE *pObj, const char *argument, int value)
+static bool set_value(CHAR_DATA *ch, struct objectprototype *pObj, const char *argument, int value)
 {
     if (argument[0] == '\0') {
         set_obj_values(ch, pObj, -1, "");
@@ -556,7 +556,7 @@ static bool set_value(CHAR_DATA *ch, OBJECTPROTOTYPE *pObj, const char *argument
  *****************************************************************************/
 void do_oedit(CHAR_DATA *ch, const char *argument)
 {
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
     AREA_DATA *pArea;
     char arg[MAX_STRING_LENGTH];
     int value;
@@ -648,7 +648,7 @@ void do_oedit(CHAR_DATA *ch, const char *argument)
  *	show the properties of an object
  *****************************************************************************/
 EDIT(oedit_show){
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
     AFFECT_DATA *paf;
     int cnt;
 
@@ -734,7 +734,7 @@ EDIT(oedit_show){
  *	create a new object
  *****************************************************************************/
 EDIT(oedit_create){
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
     AREA_DATA *pArea;
     long value;
 
@@ -779,8 +779,8 @@ EDIT(oedit_create){
  *	clone one objects properties to another
  *****************************************************************************/
 EDIT(oedit_clone){
-    OBJECTPROTOTYPE *pObj;
-    OBJECTPROTOTYPE *pClone;
+    struct objectprototype *pObj;
+    struct objectprototype *pClone;
     AFFECT_DATA *pAff;
     AFFECT_DATA *pNew;
     int value;
@@ -843,7 +843,7 @@ EDIT(oedit_clone){
  *	adds an affect to the object
  *****************************************************************************/
 EDIT(oedit_addaffect){
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
     AFFECT_DATA *pAff;
     char loc[MAX_STRING_LENGTH];
     char mod[MAX_STRING_LENGTH];
@@ -891,7 +891,7 @@ EDIT(oedit_addaffect){
  *		vuln		- vulnerabilities
  *****************************************************************************/
 EDIT(oedit_addapply){
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
     AFFECT_DATA *pAff;
     char loc[MAX_STRING_LENGTH];
     char mod[MAX_STRING_LENGTH];
@@ -962,7 +962,7 @@ EDIT(oedit_addapply){
  *	deletes an affect from the object
  *****************************************************************************/
 EDIT(oedit_delaffect){
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
     AFFECT_DATA *pAff;
     AFFECT_DATA *pAff_next;
     char affect[MAX_STRING_LENGTH];
@@ -1018,7 +1018,7 @@ EDIT(oedit_delaffect){
  *	edits the name property of the object
  *****************************************************************************/
 EDIT(oedit_name){
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
 
     EDIT_OBJ(ch, pObj);
     if (argument[0] == '\0') {
@@ -1039,7 +1039,7 @@ EDIT(oedit_name){
  *	edits the short description of the object
  *****************************************************************************/
 EDIT(oedit_short){
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
 
     EDIT_OBJ(ch, pObj);
     if (argument[0] == '\0') {
@@ -1060,7 +1060,7 @@ EDIT(oedit_short){
  *	edits the long description of the object
  *****************************************************************************/
 EDIT(oedit_long){
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
 
     EDIT_OBJ(ch, pObj);
     if (argument[0] == '\0') {
@@ -1084,7 +1084,7 @@ EDIT(oedit_long){
  *****************************************************************************/
 static bool oedit_values(CHAR_DATA *ch, const char *argument, int value)
 {
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
 
     EDIT_OBJ(ch, pObj);
 
@@ -1145,7 +1145,7 @@ EDIT(oedit_value4){
  *	edit the weight property of the object
  *****************************************************************************/
 EDIT(oedit_weight){
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
 
     EDIT_OBJ(ch, pObj);
     if (argument[0] == '\0' || !is_number(argument)) {
@@ -1165,7 +1165,7 @@ EDIT(oedit_weight){
  *	edit the cost property of the object
  *****************************************************************************/
 EDIT(oedit_cost){
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
 
     EDIT_OBJ(ch, pObj);
     if (argument[0] == '\0' || !is_number(argument)) {
@@ -1185,7 +1185,7 @@ EDIT(oedit_cost){
  *	edit the extra description of an object
  *****************************************************************************/
 EDIT(oedit_ed){
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
     EXTRA_DESCR_DATA *ed;
     char command[MAX_INPUT_LENGTH];
     char keyword[MAX_INPUT_LENGTH];
@@ -1301,7 +1301,7 @@ EDIT(oedit_ed){
  *	edit the extra flags for an object
  *****************************************************************************/
 EDIT(oedit_extra){
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
     int value;
 
     EDIT_OBJ(ch, pObj);
@@ -1324,7 +1324,7 @@ EDIT(oedit_extra){
  *       edit the extra2 flags for an object
  *****************************************************************************/
 EDIT(oedit_extra2){
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
     int value;
 
     EDIT_OBJ(ch, pObj);
@@ -1348,7 +1348,7 @@ EDIT(oedit_extra2){
  *	edit the wear locations of an object
  *****************************************************************************/
 EDIT(oedit_wear){
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
     int value;
 
     EDIT_OBJ(ch, pObj);
@@ -1372,7 +1372,7 @@ EDIT(oedit_wear){
  *	set the object type
  *****************************************************************************/
 EDIT(oedit_type){
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
     int value;
 
     EDIT_OBJ(ch, pObj);
@@ -1402,7 +1402,7 @@ EDIT(oedit_type){
  *	edit the material property of an object
  *****************************************************************************/
 EDIT(oedit_material){
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
 
     EDIT_OBJ(ch, pObj);
     if (argument[0] == '\0') {
@@ -1418,7 +1418,7 @@ EDIT(oedit_material){
 
 /** edit the timer property of an object (auto destroy)	Added by Monrick, 5/2008 */
 EDIT(oedit_timer){
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
 
     EDIT_OBJ(ch, pObj);
     if (argument[0] == '\0') {
@@ -1437,7 +1437,7 @@ EDIT(oedit_timer){
  *	edit the level of the object
  *****************************************************************************/
 EDIT(oedit_level){
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
 
     EDIT_OBJ(ch, pObj);
     if (argument[0] == '\0' || !is_number(argument)) {
@@ -1457,7 +1457,7 @@ EDIT(oedit_level){
  *	edit the condition of the object
  *****************************************************************************/
 EDIT(oedit_condition){
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
     int value;
 
     EDIT_OBJ(ch, pObj);
@@ -1476,7 +1476,7 @@ EDIT(oedit_condition){
 
 
 EDIT(oedit_xptolevel){
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
     int amount;
 
     EDIT_OBJ(ch, pObj);

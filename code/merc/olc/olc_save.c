@@ -17,7 +17,7 @@ static void save_area(AREA_DATA * area);
 static void save_mobprogs(FILE *fp, AREA_DATA *area);
 static void save_mobile(FILE *fp, MOB_INDEX_DATA *mob_idx);
 static void save_mobiles(FILE *fp, AREA_DATA *area);
-static void save_object(FILE *fp, OBJECTPROTOTYPE *pObjIndex);
+static void save_object(FILE *fp, struct objectprototype *pObjIndex);
 static void save_objects(FILE *fp, AREA_DATA *area);
 static void save_rooms(FILE *fp, AREA_DATA *area);
 static void save_door_resets(FILE *fp, AREA_DATA *area);
@@ -160,7 +160,7 @@ void do_asave(CHAR_DATA *ch, const char *argument)
               area = ch->in_room->area;
               break;
           case ED_OBJECT:
-              area = ((OBJECTPROTOTYPE *)ch->desc->ed_data)->area;
+              area = ((struct objectprototype *)ch->desc->ed_data)->area;
               break;
           case ED_MOBILE:
               area = ((MOB_INDEX_DATA *)ch->desc->ed_data)->area;
@@ -386,7 +386,7 @@ void save_mobiles(FILE *fp, AREA_DATA *area)
 
 
 
-//void save_object(FILE *fp, OBJECTPROTOTYPE *pObjIndex)
+//void save_object(FILE *fp, struct objectprototype *pObjIndex)
 //{
 //    struct keyvaluepair_array *serialized;
 //
@@ -395,7 +395,7 @@ void save_mobiles(FILE *fp, AREA_DATA *area)
 //    free(serialized);
 //}
 
-void save_object(FILE *fp, OBJECTPROTOTYPE *pObjIndex)
+void save_object(FILE *fp, struct objectprototype *pObjIndex)
 {
     AFFECT_DATA *pAf;
     EXTRA_DESCR_DATA *extra;
@@ -533,7 +533,7 @@ void save_object(FILE *fp, OBJECTPROTOTYPE *pObjIndex)
 
 void save_objects(FILE *fp, AREA_DATA *area)
 {
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
     long iter;
 
     fprintf(fp, "#OBJECTS\n");

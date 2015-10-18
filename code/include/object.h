@@ -1,12 +1,12 @@
 typedef struct object_iterator_filter OBJECT_ITERATOR_FILTER;
 struct object_iterator_filter {
     /*@null@*/const char *name;
-    /*@null@*/OBJECTPROTOTYPE *object_template;
+    /*@null@*/struct objectprototype *object_template;
 };
 extern const OBJECT_ITERATOR_FILTER object_empty_filter;
 
 /** Create a new object instance, tracked on the master object list, from the specified prototype. */
-/*@dependent@*/GAMEOBJECT *object_new(/*@dependent@*/OBJECTPROTOTYPE *prototypedata);
+/*@dependent@*/GAMEOBJECT *object_new(/*@dependent@*/struct objectprototype *prototypedata);
 
 /** Create a new object instance, tracked on the master object list, from the specified prototype. */
 /*@dependent@*/GAMEOBJECT *object_clone(/*@dependent@*/GAMEOBJECT *parent);

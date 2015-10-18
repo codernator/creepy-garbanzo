@@ -295,7 +295,7 @@ char *olc_ed_vnum(CHAR_DATA *ch)
 {
     AREA_DATA *pArea;
     ROOM_INDEX_DATA *pRoom;
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
     MOB_INDEX_DATA *pMob;
     MPROG_CODE *pMprog;
     HELP_DATA *pHelp;
@@ -314,7 +314,7 @@ char *olc_ed_vnum(CHAR_DATA *ch)
           sprintf(buf, "%ld", pRoom ? pRoom->vnum : 0);
           break;
       case ED_OBJECT:
-          pObj = (OBJECTPROTOTYPE *)ch->desc->ed_data;
+          pObj = (struct objectprototype *)ch->desc->ed_data;
           sprintf(buf, "%ld", pObj ? pObj->vnum : 0);
           break;
       case ED_MOBILE:
@@ -553,7 +553,7 @@ void redit(CHAR_DATA *ch, const char *argument)
 void oedit(CHAR_DATA *ch, const char *argument)
 {
     AREA_DATA *pArea;
-    OBJECTPROTOTYPE *pObj;
+    struct objectprototype *pObj;
     char arg[MAX_STRING_LENGTH];
     const char *parg;
     char command[MAX_INPUT_LENGTH];
@@ -773,10 +773,10 @@ static void display_resets(CHAR_DATA *ch)
                  "==== ======== ============= =================== ======== ===== ===========\n\r", ch);
 
     for (pReset = pRoom->reset_first; pReset; pReset = pReset->next) {
-        OBJECTPROTOTYPE *pObj;
+        struct objectprototype *pObj;
         MOB_INDEX_DATA *pMobIndex;
-        OBJECTPROTOTYPE *pObjIndex;
-        OBJECTPROTOTYPE *pObjToIndex;
+        struct objectprototype *pObjIndex;
+        struct objectprototype *pObjToIndex;
         ROOM_INDEX_DATA *pRoomIndex;
         ROOM_INDEX_DATA *pRoomIndexPrev;
 
@@ -1081,7 +1081,7 @@ void do_resets(CHAR_DATA *ch, const char *argument)
                 pReset->arg1 = parse_int(arg3);
 
                 if (!str_prefix(arg4, "inside")) {
-                    OBJECTPROTOTYPE *temp;
+                    struct objectprototype *temp;
 
                     temp = objectprototype_getbyvnum(is_number(arg5) ? parse_int(arg5) : 1);
                     if (temp == NULL

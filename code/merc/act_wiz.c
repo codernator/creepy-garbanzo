@@ -1917,7 +1917,7 @@ void do_mload(CHAR_DATA *ch, const char *argument)
 
 void do_oload(CHAR_DATA *ch, const char *argument)
 {
-    OBJECTPROTOTYPE *pObjIndex;
+    struct objectprototype *pObjIndex;
     GAMEOBJECT *obj;
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
@@ -3091,8 +3091,8 @@ void do_olevel(CHAR_DATA *ch, const char *argument)
     found = false;
 
     {
-        OBJECTPROTOTYPE *current;
-        OBJECTPROTOTYPE *pending;
+        struct objectprototype *current;
+        struct objectprototype *pending;
 
         pending = objectprototype_iterator_start(&objectprototype_empty_filter);
         while ((current = pending) != NULL) {

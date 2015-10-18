@@ -496,7 +496,7 @@ void do_mpmload(CHAR_DATA *ch, const char *argument)
  */
 void do_mpoload(CHAR_DATA *ch, const char *argument)
 {
-    OBJECTPROTOTYPE *objprototype;
+    struct objectprototype *objprototype;
     GAMEOBJECT *obj;
     char arg[MAX_INPUT_LENGTH];
     int level;
