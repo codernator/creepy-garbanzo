@@ -88,8 +88,8 @@ void remote_deafen(int control)
 void remote_poll(int control, new_cnxn_handler *on_new_connection)
 {
     static struct timeval null_time = { .tv_sec = 0, .tv_usec = 0 };
-    DESCRIPTOR_DATA *d;
-    DESCRIPTOR_DATA *dpending;
+    struct descriptor_data *d;
+    struct descriptor_data *dpending;
     fd_set in_set;
     fd_set out_set;
     fd_set exc_set;

@@ -823,7 +823,7 @@ static void mobile_update(void)
 static void weather_update(void)
 {
     struct descriptor_iterator_filter filter = { .must_playing = true };
-    DESCRIPTOR_DATA *d;
+    struct descriptor_data *d;
     char buf[MAX_STRING_LENGTH];
     int diff;
 
@@ -931,7 +931,7 @@ static void weather_update(void)
     }
 
     if (buf[0] != '\0') {
-	DESCRIPTOR_DATA *dpending;
+	struct descriptor_data *dpending;
 
 	dpending = descriptor_iterator_start(&filter);
 	while ((d = dpending) != NULL) {
@@ -951,8 +951,8 @@ static void weather_update(void)
 static void auto_restore(void)
 {
     struct descriptor_iterator_filter filter = { .must_playing = true };
-    DESCRIPTOR_DATA *d;
-    DESCRIPTOR_DATA *dpending;
+    struct descriptor_data *d;
+    struct descriptor_data *dpending;
     CHAR_DATA *victim;
 
     dpending = descriptor_iterator_start(&filter);

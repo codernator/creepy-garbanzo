@@ -177,9 +177,9 @@ EDIT(hedit_text){
 
 EDIT(hedit_delete){
     HELP_DATA *help;
-    DESCRIPTOR_DATA *d;
+    struct descriptor_data *d;
     struct descriptor_iterator_filter playing_filter = { .all = true, .must_playing = true };
-    DESCRIPTOR_DATA *dpending;
+    struct descriptor_data *dpending;
 
     EDIT_HELP(ch, help);
 

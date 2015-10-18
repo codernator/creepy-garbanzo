@@ -240,8 +240,8 @@ void do_mpdump(CHAR_DATA *ch, const char *argument)
 void do_mpgecho(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
-    DESCRIPTOR_DATA *d;
-    DESCRIPTOR_DATA *dpending;
+    struct descriptor_data *d;
+    struct descriptor_data *dpending;
 
     if (argument[0] == '\0') {
 	log_bug("MpGEcho: missing argument from vnum %d", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
@@ -263,8 +263,8 @@ void do_mpgecho(CHAR_DATA *ch, const char *argument)
 void do_mpzecho(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
-    DESCRIPTOR_DATA *d;
-    DESCRIPTOR_DATA *dpending;
+    struct descriptor_data *d;
+    struct descriptor_data *dpending;
 
     if (argument[0] == '\0') {
 	log_bug("MpZEcho: missing argument from vnum %d", IS_NPC(ch) ? ch->mob_idx->vnum : 0);

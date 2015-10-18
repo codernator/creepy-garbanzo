@@ -14,7 +14,7 @@ merc/comm.c:247:		    close_socket(d);
     disconnect due to write error
     - close_socket (false, true)
 
-merc/comm.c:292:void close_socket(DESCRIPTOR_DATA *dclose, bool withProcessOutput, bool withSaveChar)
+merc/comm.c:292:void close_socket(struct descriptor_data *dclose, bool withProcessOutput, bool withSaveChar)
     the magic happens here
     - process output if withProcessOutput && any
     - save_char_obj if withSaveChar && level > 1
@@ -143,4 +143,4 @@ merc/nanny.c:769:		close_socket(d);
 	- when newbie found with same name
 	    - close_socket(true, false) 
 
-include/merc.h:2035:void close_socket(DESCRIPTOR_DATA * dclose);
+include/merc.h:2035:void close_socket(struct descriptor_data * dclose);

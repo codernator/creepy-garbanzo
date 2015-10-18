@@ -230,8 +230,8 @@ const CHANNEL_DEFINITION const *channels_find(CHANNEL_FLAG_TYPE channel_flag)
 void broadcast_shout(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = sender };
-    DESCRIPTOR_DATA *d;
-    DESCRIPTOR_DATA *dpending;
+    struct descriptor_data *d;
+    struct descriptor_data *dpending;
     CHAR_DATA *actual;
     CHAR_DATA *receiver;
 
@@ -252,8 +252,8 @@ void broadcast_global(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender
 {
     static char buf[2*MAX_INPUT_LENGTH];
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = sender };
-    DESCRIPTOR_DATA *dpending;
-    DESCRIPTOR_DATA *d;
+    struct descriptor_data *dpending;
+    struct descriptor_data *d;
     CHAR_DATA *actual;
 
     (void)snprintf(buf, 2 * MAX_INPUT_LENGTH, "``$n %s: %s``", channel->print_name, argument);
@@ -495,8 +495,8 @@ void broadcast_gtell(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender,
 void broadcast_sayto(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, CHAR_DATA *whom, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = sender };
-    DESCRIPTOR_DATA *d;
-    DESCRIPTOR_DATA *dpending;
+    struct descriptor_data *d;
+    struct descriptor_data *dpending;
 
     if (IS_SET(whom->comm, COMM_AFK) && IS_NPC(whom)) {
 	act("$E is `!A`@F`OK``, and is unable to pay attention.", sender, NULL, whom, TO_CHAR);

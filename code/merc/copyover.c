@@ -23,7 +23,7 @@ void copyover_recover(void);
 bool copyover()
 {
     FILE *fp;
-    DESCRIPTOR_DATA *d, *dpending;
+    struct descriptor_data *d, *dpending;
     char buf [100], buf2[100];
 
     fp = fopen(COPYOVER_FILE, "w");
@@ -78,7 +78,7 @@ bool copyover()
 /* Recover from a copyover - load players */
 void copyover_recover()
 {
-    DESCRIPTOR_DATA *d;
+    struct descriptor_data *d;
     FILE *fp;
     char name [100];
     char host[MAX_STRING_LENGTH];

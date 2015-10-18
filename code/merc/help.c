@@ -185,7 +185,7 @@ struct helpdata_iterator *helpdata_iteratornext(struct helpdata_iterator *iterat
     return iterator;
 }
 
-void show_help(DESCRIPTOR_DATA *descriptor, const char *topic, const char *argument)
+void show_help(struct descriptor_data *descriptor, const char *topic, const char *argument)
 {
     /*@observer@*/const struct help_table_entry *custom;
     int trust;

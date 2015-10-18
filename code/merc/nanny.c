@@ -29,7 +29,7 @@ extern const char *password_accept_message(int code);
 static char log_buf[MAX_INPUT_LENGTH];
 
 
-static void ansi_answered(DESCRIPTOR_DATA *d, const char *argument)
+static void ansi_answered(struct descriptor_data *d, const char *argument)
 {
     char *the_greeting;
     extern char *help_greeting;
@@ -52,7 +52,7 @@ static void ansi_answered(DESCRIPTOR_DATA *d, const char *argument)
     d->connected = CON_GET_NAME;
 }
 
-static void name_answered(DESCRIPTOR_DATA *d, const char *argument)
+static void name_answered(struct descriptor_data *d, const char *argument)
 {
     CHAR_DATA *ch;
     static char name_buf[MAX_NAME_LENGTH+1];
@@ -139,7 +139,7 @@ static void name_answered(DESCRIPTOR_DATA *d, const char *argument)
 }
 
 
-static void oldpassword_answered(DESCRIPTOR_DATA *d, const char *argument)
+static void oldpassword_answered(struct descriptor_data *d, const char *argument)
 {
     CHAR_DATA *ch = d->character;
 
@@ -180,14 +180,14 @@ static void oldpassword_answered(DESCRIPTOR_DATA *d, const char *argument)
 }
 
 /** RT code for breaking link */
-static void breakconnect_answered(DESCRIPTOR_DATA *d, const char *argument)
+static void breakconnect_answered(struct descriptor_data *d, const char *argument)
 {
     switch (*argument) {
       case 'y':
       case 'Y': 
           {
-              DESCRIPTOR_DATA *d_old;
-              DESCRIPTOR_DATA *dpending;
+              struct descriptor_data *d_old;
+              struct descriptor_data *dpending;
               CHAR_DATA *ch = d->character;
 
               dpending = descriptor_iterator_start(&descriptor_empty_filter);
@@ -233,7 +233,7 @@ static void breakconnect_answered(DESCRIPTOR_DATA *d, const char *argument)
 }
 
 
-static void confirmnew_answered(DESCRIPTOR_DATA *d, const char *argument)
+static void confirmnew_answered(struct descriptor_data *d, const char *argument)
 {
     CHAR_DATA *ch = d->character;
     static char buf[MAX_INPUT_LENGTH];
@@ -260,7 +260,7 @@ static void confirmnew_answered(DESCRIPTOR_DATA *d, const char *argument)
     }
 }
 
-static void newpassword_answered(DESCRIPTOR_DATA *d, const char *argument)
+static void newpassword_answered(struct descriptor_data *d, const char *argument)
 {
     CHAR_DATA *ch = d->character;
     int passaccept;
@@ -278,7 +278,7 @@ static void newpassword_answered(DESCRIPTOR_DATA *d, const char *argument)
     d->connected = CON_CONFIRM_NEW_PASSWORD;
 }
 
-static void confirmnewpass_answered(DESCRIPTOR_DATA *d, const char *argument)
+static void confirmnewpass_answered(struct descriptor_data *d, const char *argument)
 {
     CHAR_DATA *ch = d->character;
     int race_idx;
@@ -305,7 +305,7 @@ static void confirmnewpass_answered(DESCRIPTOR_DATA *d, const char *argument)
     d->connected = CON_GET_NEW_RACE;
 }
 
-static void newrace_answered(DESCRIPTOR_DATA *d, const char *argument)
+static void newrace_answered(struct descriptor_data *d, const char *argument)
 {
     CHAR_DATA *ch = d->character;
     int idx;
@@ -374,7 +374,7 @@ static void newrace_answered(DESCRIPTOR_DATA *d, const char *argument)
     d->connected = CON_GET_NEW_SEX;
 }
 
-static void newsex_answered(DESCRIPTOR_DATA *d, const char *argument)
+static void newsex_answered(struct descriptor_data *d, const char *argument)
 {
     CHAR_DATA *ch = d->character;
 
@@ -402,7 +402,7 @@ static void newsex_answered(DESCRIPTOR_DATA *d, const char *argument)
     //d->connected = CON_GET_NEW_CLASS;
 }
 
-static void newclass_answered(DESCRIPTOR_DATA *d, const char *argument)
+static void newclass_answered(struct descriptor_data *d, const char *argument)
 {
     static char arg[MAX_INPUT_LENGTH];
     CHAR_DATA *ch = d->character;
@@ -454,7 +454,7 @@ static void newclass_answered(DESCRIPTOR_DATA *d, const char *argument)
     d->connected = CON_GEN_GROUPS;
 }
 
-static void pickweapon_answered(DESCRIPTOR_DATA *d, const char *argument)
+static void pickweapon_answered(struct descriptor_data *d, const char *argument)
 {
     CHAR_DATA *ch = d->character;
     LEARNED *learned;
@@ -488,7 +488,7 @@ static void pickweapon_answered(DESCRIPTOR_DATA *d, const char *argument)
     d->connected = CON_READ_MOTD;
 }
 
-static void gengroups_answered(DESCRIPTOR_DATA *d, const char *argument)
+static void gengroups_answered(struct descriptor_data *d, const char *argument)
 {
     CHAR_DATA *ch = d->character;
 
@@ -533,14 +533,14 @@ static void gengroups_answered(DESCRIPTOR_DATA *d, const char *argument)
     show_help(d, "menu choice", NULL);
 }
 
-static void readimotd_answered(DESCRIPTOR_DATA *d, /*@unused@*/const char *argument)
+static void readimotd_answered(struct descriptor_data *d, /*@unused@*/const char *argument)
 {
     write_to_buffer(d, "\n\r", 2);
     show_help(d, "motd", NULL);
     d->connected = CON_READ_MOTD;
 }
 
-static void readmotd_answered(DESCRIPTOR_DATA *d, const char *argument)
+static void readmotd_answered(struct descriptor_data *d, const char *argument)
 {
     CHAR_DATA *ch = d->character;
 
@@ -628,7 +628,7 @@ static void readmotd_answered(DESCRIPTOR_DATA *d, const char *argument)
     do_unread(ch, "");
 }
 
-void nanny(DESCRIPTOR_DATA *d, const char *argument)
+void nanny(struct descriptor_data *d, const char *argument)
 {
     while (isspace((int)*argument))
         argument++;
@@ -763,7 +763,7 @@ bool check_parse_name(const char *name)
      */
     {
         int count = 0;
-        DESCRIPTOR_DATA *d, *dpending;
+        struct descriptor_data *d, *dpending;
 
         dpending = descriptor_iterator_start(&descriptor_empty_filter);
         while ((d = dpending) != NULL) {
@@ -804,7 +804,7 @@ bool check_parse_name(const char *name)
 /**
  * see if there is an existing player to reconnect
  */
-bool check_reconnect(DESCRIPTOR_DATA *d, const char *name, bool reconnect)
+bool check_reconnect(struct descriptor_data *d, const char *name, bool reconnect)
 {
     CHAR_DATA *ch;
 
@@ -851,10 +851,10 @@ bool check_reconnect(DESCRIPTOR_DATA *d, const char *name, bool reconnect)
 /**
  * determine whether a character is already playing
  */
-bool check_playing(DESCRIPTOR_DATA *d, const char *name)
+bool check_playing(struct descriptor_data *d, const char *name)
 {
-    DESCRIPTOR_DATA *dpending;
-    DESCRIPTOR_DATA *dold;
+    struct descriptor_data *dpending;
+    struct descriptor_data *dold;
 
     dpending = descriptor_iterator_start(&descriptor_empty_filter);
     while ((dold = dpending) != NULL) {

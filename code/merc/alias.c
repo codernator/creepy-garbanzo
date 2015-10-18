@@ -9,7 +9,7 @@ bool add_alias(CHAR_DATA * ch, char *alias, char *cmd);
 
 
 /** expand an alias before calling into interpret */
-void substitute_alias(DESCRIPTOR_DATA *d, const char *argument)
+void substitute_alias(struct descriptor_data *d, const char *argument)
 {
     CHAR_DATA *ch;
     char buf[MAX_STRING_LENGTH];

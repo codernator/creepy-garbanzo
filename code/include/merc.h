@@ -64,7 +64,6 @@ typedef struct affect_data AFFECT_DATA;
 typedef struct ban_data BAN_DATA;
 typedef struct buf_type BUFFER;
 typedef struct char_data CHAR_DATA;
-typedef struct descriptor_data DESCRIPTOR_DATA;
 typedef struct exit_data EXIT_DATA;
 typedef struct extra_descr_data EXTRA_DESCR_DATA;
 typedef struct kill_data KILL_DATA;
@@ -240,10 +239,10 @@ struct weather_data {
 
 /* Descriptor (channel) structure. */
 struct descriptor_data {
-    /*@owned@*//*@partial@*//*@null@*/DESCRIPTOR_DATA *next;
-    /*@dependent@*//*@partial@*//*@null@*/DESCRIPTOR_DATA *prev;
+    /*@owned@*//*@partial@*//*@null@*/struct descriptor_data *next;
+    /*@dependent@*//*@partial@*//*@null@*/struct descriptor_data *prev;
 
-    /*@dependent@*//*@null@*/DESCRIPTOR_DATA *snoop_by;
+    /*@dependent@*//*@null@*/struct descriptor_data *snoop_by;
     /*@dependent@*//*@null@*/CHAR_DATA *character;
     /*@dependent@*//*@null@*/CHAR_DATA *original;
 
@@ -1323,7 +1322,7 @@ struct char_data {
     CHAR_DATA *mobmem;
     CHAR_DATA *mprog_target;
     /*@null@*/MOB_INDEX_DATA *mob_idx;
-    DESCRIPTOR_DATA *desc;
+    struct descriptor_data *desc;
     AFFECT_DATA *affected;
     NOTE_DATA *pnote;
     GAMEOBJECT *carrying;
@@ -1980,7 +1979,7 @@ void wiznet(char *string, /*@null@*/ CHAR_DATA * ch, /*@null@*/ GAMEOBJECT * obj
 void impnet(char *string, CHAR_DATA * ch, GAMEOBJECT * obj, long flag, long flag_skip, int min_level);
 
 /* alias.c */
-void substitute_alias(DESCRIPTOR_DATA * d, const char *input);
+void substitute_alias(struct descriptor_data * d, const char *input);
 
 
 /* ban.c */
@@ -1988,8 +1987,8 @@ bool check_ban(const char *site, int type);
 
 /* comm.c */
 void show_string(struct descriptor_data *d, char *input);
-void close_socket(DESCRIPTOR_DATA * dclose, bool withProcessOutput, bool withSaveChar);
-void write_to_buffer(DESCRIPTOR_DATA * d, const char *txt, int length);
+void close_socket(struct descriptor_data * dclose, bool withProcessOutput, bool withSaveChar);
+void write_to_buffer(struct descriptor_data * d, const char *txt, int length);
 void send_to_char(char *txt, /*@partial@*/CHAR_DATA * ch);
 void send_to_char_ascii(char *txt, /*@partial@*/CHAR_DATA * ch);
 void page_to_char(const char *txt, /*@partial@*/const CHAR_DATA * ch);
@@ -1999,10 +1998,10 @@ void printf_to_char(CHAR_DATA *, char *, ...);
 
 
 /* nanny.c */
-void nanny(DESCRIPTOR_DATA * d, const char *argument);
+void nanny(struct descriptor_data * d, const char *argument);
 bool check_parse_name(const char *name);
-bool check_reconnect(DESCRIPTOR_DATA * d, const char *name, bool fConn);
-bool check_playing(DESCRIPTOR_DATA * d, const char *name);
+bool check_reconnect(struct descriptor_data * d, const char *name, bool fConn);
+bool check_playing(struct descriptor_data * d, const char *name);
 void stop_idling(CHAR_DATA * ch);
 
 /* db.c */
@@ -2066,7 +2065,7 @@ ONE_ATTACK_RESULT one_attack(CHAR_DATA *ch, CHAR_DATA *victim, int dt, /*@null@*
 
 
 /* handler.c */
-void cancel_snoops(DESCRIPTOR_DATA *snooper);
+void cancel_snoops(struct descriptor_data *snooper);
 AFFECT_DATA *affect_find(AFFECT_DATA * paf, SKILL * skill);
 void affect_check(CHAR_DATA * ch, int where, long vector);
 int count_users(GAMEOBJECT * obj);
@@ -2189,7 +2188,7 @@ bool can_trans_room(CHAR_DATA * ch, CHAR_DATA * victim, int sn);
 
 /* save.c */
 void save_char_obj(CHAR_DATA * ch);
-bool load_char_obj(DESCRIPTOR_DATA * d, char *name);
+bool load_char_obj(struct descriptor_data * d, char *name);
 bool load_char_obj_2(CHAR_DATA * tempch, char *name);
 
 

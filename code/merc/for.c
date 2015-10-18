@@ -131,8 +131,8 @@ static void for_all(CHAR_DATA *ch, char *name, const char *argument)
 static void for_gods(CHAR_DATA *ch, char *name, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
-    DESCRIPTOR_DATA *d;
-    DESCRIPTOR_DATA *dpending;
+    struct descriptor_data *d;
+    struct descriptor_data *dpending;
     ROOM_INDEX_DATA *origin;
     struct area_data *area;
     char cmd[MAX_STRING_LENGTH];
@@ -180,8 +180,8 @@ static void for_gods(CHAR_DATA *ch, char *name, const char *argument)
 static void for_morts(CHAR_DATA *ch, char *name, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
-    DESCRIPTOR_DATA *d;
-    DESCRIPTOR_DATA *dpending;
+    struct descriptor_data *d;
+    struct descriptor_data *dpending;
     ROOM_INDEX_DATA *origin;
     struct area_data *area;
     char cmd[MAX_STRING_LENGTH];

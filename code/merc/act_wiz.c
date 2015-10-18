@@ -184,8 +184,8 @@ void do_ignore(CHAR_DATA *ch, const char *argument)
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
     CHAR_DATA *rch;
     char arg[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
-    DESCRIPTOR_DATA *d;
-    DESCRIPTOR_DATA *dpending;
+    struct descriptor_data *d;
+    struct descriptor_data *dpending;
     int pos;
     bool found = false;
 
@@ -487,7 +487,7 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ const char *argument)
 
     /** if a character somehow gets duped and linked to multiple descriptors, close them, too. */
     {
-        DESCRIPTOR_DATA *dpending, *d;
+        struct descriptor_data *dpending, *d;
 
         dpending = descriptor_iterator_start(&descriptor_empty_filter);
         while ((d = dpending) != NULL) {
@@ -605,8 +605,8 @@ void do_wiznet(CHAR_DATA *ch, const char *argument)
 void wiznet(char *string, /*@null@*/ CHAR_DATA *ch, /*@null@*/ GAMEOBJECT *obj, long flag, long flag_skip, int min_level)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
-    DESCRIPTOR_DATA *d;
-    DESCRIPTOR_DATA *dpending;
+    struct descriptor_data *d;
+    struct descriptor_data *dpending;
 
     dpending = descriptor_iterator_start(&playing_filter);
     while ((d = dpending) != NULL) {
@@ -713,8 +713,8 @@ void do_impnet(CHAR_DATA *ch, const char *argument)
 void impnet(char *string, CHAR_DATA *ch, GAMEOBJECT *obj, long flag, long flag_skip, int min_level)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
-    DESCRIPTOR_DATA *d;
-    DESCRIPTOR_DATA *dpending;
+    struct descriptor_data *d;
+    struct descriptor_data *dpending;
 
     dpending = descriptor_iterator_start(&playing_filter);
     while ((d = dpending) != NULL) {
@@ -890,7 +890,7 @@ void do_deny(CHAR_DATA *ch, const char *argument)
 
 void do_disconnect(CHAR_DATA *ch, const char *argument)
 {
-    DESCRIPTOR_DATA *d;
+    struct descriptor_data *d;
     CHAR_DATA *victim;
     char arg[MAX_INPUT_LENGTH];
 
@@ -978,8 +978,8 @@ void do_chown(CHAR_DATA *ch, const char *argument)
 void do_echo(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
-    DESCRIPTOR_DATA *d;
-    DESCRIPTOR_DATA *dpending;
+    struct descriptor_data *d;
+    struct descriptor_data *dpending;
 
     DENY_NPC(ch);
 
@@ -1004,8 +1004,8 @@ void do_echo(CHAR_DATA *ch, const char *argument)
 void do_recho(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
-    DESCRIPTOR_DATA *d;
-    DESCRIPTOR_DATA *dpending;
+    struct descriptor_data *d;
+    struct descriptor_data *dpending;
 
     DENY_NPC(ch);
 
@@ -1030,8 +1030,8 @@ void do_recho(CHAR_DATA *ch, const char *argument)
 void do_zecho(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
-    DESCRIPTOR_DATA *d;
-    DESCRIPTOR_DATA *dpending;
+    struct descriptor_data *d;
+    struct descriptor_data *dpending;
 
     DENY_NPC(ch);
 
@@ -1253,8 +1253,8 @@ void do_transfer(CHAR_DATA *ch, const char *argument)
         location = ch->in_room;
 
     if (!str_cmp(arg1, "all")) {
-        DESCRIPTOR_DATA *d;
-        DESCRIPTOR_DATA *dpending;
+        struct descriptor_data *d;
+        struct descriptor_data *dpending;
 
         dpending = descriptor_iterator_start(&playing_filter);
         while ((d = dpending) != NULL) {
@@ -1426,7 +1426,7 @@ void do_reboo(CHAR_DATA *ch, const char *argument)
 
 void do_reboot(CHAR_DATA *ch, const char *argument)
 {
-    DESCRIPTOR_DATA *d, *dpending;
+    struct descriptor_data *d, *dpending;
     char buf[MAX_STRING_LENGTH];
 
     DENY_NPC(ch);
@@ -1459,7 +1459,7 @@ void do_shutdow(CHAR_DATA *ch, const char *argument)
 void do_shutdown(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
-    DESCRIPTOR_DATA *d, *dpending;
+    struct descriptor_data *d, *dpending;
     char buf[MAX_STRING_LENGTH];
 
     DENY_NPC(ch);
@@ -1531,7 +1531,7 @@ void do_snoop(CHAR_DATA *ch, const char *argument)
     }
 
     if (ch->desc != NULL) {
-        DESCRIPTOR_DATA *d;
+        struct descriptor_data *d;
         for (d = ch->desc->snoop_by; d != NULL; d = d->snoop_by) {
             if (d->character == victim || d->original == victim) {
                 send_to_char("No snoop loops.\n\r", ch);
@@ -1552,7 +1552,7 @@ void do_snoop(CHAR_DATA *ch, const char *argument)
 /* SnoopList ..  November 1996  */
 void do_snlist(CHAR_DATA *ch, const char *argument)
 {
-    DESCRIPTOR_DATA *d, *dpending;
+    struct descriptor_data *d, *dpending;
     char buf[MAX_STRING_LENGTH];
 
     DENY_NPC(ch);
@@ -2409,7 +2409,7 @@ void do_slot(CHAR_DATA *ch, const char *argument)
 
 void do_sockets(CHAR_DATA *ch, const char *argument)
 {
-    DESCRIPTOR_DATA *d, *dpending;
+    struct descriptor_data *d, *dpending;
     BUFFER *buf;
     char *state;
     char arg[MAX_INPUT_LENGTH];
@@ -2906,7 +2906,7 @@ void do_rename(CHAR_DATA *ch, const char *argument)
 
 void do_pnlist(CHAR_DATA *ch, const char *argument)
 {
-    DESCRIPTOR_DATA *d, *dpending;
+    struct descriptor_data *d, *dpending;
 
     DENY_NPC(ch);
 
@@ -2966,8 +2966,8 @@ void do_repop(CHAR_DATA *ch, const char *argument)
 void do_omnistat(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
-    DESCRIPTOR_DATA *d;
-    DESCRIPTOR_DATA *dpending;
+    struct descriptor_data *d;
+    struct descriptor_data *dpending;
     BUFFER *output;
     char buf[MAX_STRING_LENGTH];
     int immmatch;
@@ -3389,7 +3389,7 @@ void do_addalias(CHAR_DATA *ch, const char *argument)
 
 void fry_char(CHAR_DATA *ch, char *argument)
 {
-    DESCRIPTOR_DATA *d;
+    struct descriptor_data *d;
     GAMEOBJECT *obj;
     GAMEOBJECT *obj_next;
 

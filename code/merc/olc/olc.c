@@ -206,7 +206,7 @@ static const struct olc_cmd_type medit_table[] =
  *	send the descriptor to the proper editor interpreter
  *	based on their current edit state
  ***************************************************************************/
-bool run_olc_editor(DESCRIPTOR_DATA *d)
+bool run_olc_editor(struct descriptor_data *d)
 {
     bool success = true;
 

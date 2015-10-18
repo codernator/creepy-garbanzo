@@ -26,10 +26,10 @@ extern void affect_join_obj(GAMEOBJECT * obj, AFFECT_DATA * paf);
 
 
 
-void cancel_snoops(DESCRIPTOR_DATA *snooper) 
+void cancel_snoops(struct descriptor_data *snooper) 
 {
     static const struct descriptor_iterator_filter all_filter = { .all = true };
-    DESCRIPTOR_DATA *snoopee, *next;
+    struct descriptor_data *snoopee, *next;
 
     next = descriptor_iterator_start(&all_filter);
     while ((snoopee = next) != NULL) {

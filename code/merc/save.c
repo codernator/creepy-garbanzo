@@ -619,7 +619,7 @@ static void fwrite_obj(CHAR_DATA *ch, GAMEOBJECT *obj, FILE *fp, int iNest)
 /***************************************************************************
  *	load_char_obj
  ***************************************************************************/
-bool load_char_obj(DESCRIPTOR_DATA *d, char *name)
+bool load_char_obj(struct descriptor_data *d, char *name)
 {
     CHAR_DATA *ch;
     FILE *fp;

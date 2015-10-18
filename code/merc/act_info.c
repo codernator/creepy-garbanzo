@@ -1856,8 +1856,8 @@ void do_finger(CHAR_DATA *ch, const char *argument)
 void do_laston(CHAR_DATA *ch, const char *argument)
 {
     struct descriptor_iterator_filter filter = { .must_playing = true, .skip_character = ch };
-    DESCRIPTOR_DATA *d;
-    DESCRIPTOR_DATA *dpending;
+    struct descriptor_data *d;
+    struct descriptor_data *dpending;
     CHAR_DATA *victim = ch;
     FILE *fp;
     char arg[MAX_INPUT_LENGTH];

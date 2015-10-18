@@ -19,7 +19,7 @@ struct helpdata_iterator {
 /* help.c */
 //TODO - this is maybe overly encapsulated. Maybe it should be 
 //   show_help(desc, helpdata_find(topic, argument));
-void show_help(/*@observer@*/DESCRIPTOR_DATA *descriptor, /*@observer@*/const char *topic, /*@observer@*/const char *argument);
+void show_help(/*@observer@*/struct descriptor_data *descriptor, /*@observer@*/const char *topic, /*@observer@*/const char *argument);
 bool is_help(/*@observer@*/const char *argument);
 int count_helps();
 /*@dependent@*/HELP_DATA *helpdata_new();

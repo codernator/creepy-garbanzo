@@ -2521,7 +2521,7 @@ void do_dump(CHAR_DATA *ch, const char *argument)
     MOB_INDEX_DATA *mob_idx;
     PC_DATA *pc;
     GAMEOBJECT *obj;
-    DESCRIPTOR_DATA *d;
+    struct descriptor_data *d;
     AFFECT_DATA *af;
     FILE *fp;
     long count;

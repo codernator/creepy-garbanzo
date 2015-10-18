@@ -971,8 +971,8 @@ static void message_show(CHAR_DATA *ch, const char *argument, int type)
 static void message_post(CHAR_DATA *ch, const char *argument, int type)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
-    DESCRIPTOR_DATA *d;
-    DESCRIPTOR_DATA *dpending;
+    struct descriptor_data *d;
+    struct descriptor_data *dpending;
     char *time_str;
     int msg_idx;
 
