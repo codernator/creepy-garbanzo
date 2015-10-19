@@ -448,10 +448,10 @@ void free_affect_list(struct affect_list *affects)
 /**
  * create a new argument structure
  */
-ARGUMENT *new_argument(void)
+struct argument_type *new_argument(void)
 {
-    static ARGUMENT arg_zero;
-    ARGUMENT *arg;
+    static struct argument_type arg_zero;
+    struct argument_type *arg;
 
     if (spell_list_free == NULL) {
         arg = alloc_perm((unsigned int)sizeof(*arg));
@@ -469,7 +469,7 @@ ARGUMENT *new_argument(void)
 /**
  * free the argument structure
  */
-void free_argument(ARGUMENT *argument)
+void free_argument(struct argument_type *argument)
 {
     if (!IS_VALID(argument))
         return;
@@ -546,14 +546,14 @@ void add_affect(struct dynamic_skill *skill, AFFECT_FUN *affect)
 /**
  * add an argument to the list
  */
-void add_argument(struct dynamic_skill *skill, ARGUMENT *arg)
+void add_argument(struct dynamic_skill *skill, struct argument_type *arg)
 {
     if (arg != NULL) {
         if (skill->args == NULL) {
             arg->next = skill->args;
             skill->args = arg;
         } else {
-            ARGUMENT *arg_idx;
+            struct argument_type *arg_idx;
 
             for (arg_idx = skill->args;
                  arg_idx->next != NULL;
@@ -571,9 +571,9 @@ void add_argument(struct dynamic_skill *skill, ARGUMENT *arg)
 /**
  * find an argument in the list
  */
-VARIANT *find_argument(ARGUMENT *argument, char *key)
+VARIANT *find_argument(struct argument_type *argument, char *key)
 {
-    ARGUMENT *arg;
+    struct argument_type *arg;
 
     for (arg = argument; arg != NULL; arg = arg->next)
         if (!str_cmp(arg->key, key))

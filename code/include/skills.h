@@ -3,65 +3,43 @@
 
 #include "utility.h"
 
-/***************************************************************************
-*	persistence definitions
-***************************************************************************/
 #define SKILL_FILE      "./db/skill_file.txt"
 #define GROUP_FILE      "./db/group_file.txt"
 
-
-/***************************************************************************
-*	learned type definitions
-***************************************************************************/
 #define LEARNED_TYPE_SKILL              1
 #define LEARNED_TYPE_GROUP              2
-
-/***************************************************************************
-*	typdefs
-***************************************************************************/
-typedef struct argument_type ARGUMENT;
 
 typedef struct dynamic_skill DYNAMIC_SKILL;
 typedef void SPELL_FUN(DYNAMIC_SKILL * skill, int level, CHAR_DATA * ch, void *vo, int target, const char *argument);
 typedef void AFFECT_FUN(DYNAMIC_SKILL * skill, void *target, int type, AFFECT_DATA *paf);
 
 
-/***************************************************************************
-*	argument_type
-*
-*	a list of semi-static arguments for a spell
-***************************************************************************/
+/**
+ * a list of semi-static arguments for a spell
+ */
 struct argument_type {
-	ARGUMENT *	next;
+	struct argument_type *	next;
 	char *		key;
 	VARIANT *	data;
 	bool		valid;
 };
 
-/***************************************************************************
-*	level_info
-*
-*	dynamic level information for a skill
-***************************************************************************/
+/**
+ * dynamic level information for a skill
+ */
 struct level_info {
 	struct level_info *	next;
 	int		class;
 	int		level;
 	int		difficulty;
 	bool		valid;
-	/*
-	 *      this is for future use
-	 * struct level_info *	prerequisites;
-	 */
 };
 
-/***************************************************************************
-*	dynamic_skill
-*
-*	these are presisted to a file and contain all of the
-*	information for a spell - persisting to a file allows
-*	this data to be easily expanded upon or edited
-***************************************************************************/
+/**
+ * these are presisted to a file and contain all of the
+ * information for a spell - persisting to a file allows
+ * this data to be easily expanded upon or edited
+ */
 struct dynamic_skill {
 	struct dynamic_skill *next;
 	int sn;
@@ -80,7 +58,7 @@ struct dynamic_skill {
 	struct spell_list *spells;
 	struct affect_list *affects;
 	struct level_info *levels;
-	ARGUMENT *args;
+	struct argument_type *args;
 	char *help_keyword;
 	/* mob specific information */
 	long act_flag;
@@ -88,11 +66,9 @@ struct dynamic_skill {
 	int	 percent;
 };
 
-/***************************************************************************
-*	dynamic_skill_list
-*
-*	a list of linked skills
-***************************************************************************/
+/**
+ * a list of linked skills
+ */
 struct dynamic_skill_list {
 	struct dynamic_skill_list *next;
 	struct dynamic_skill_list *prev;
@@ -100,11 +76,9 @@ struct dynamic_skill_list {
 	bool valid;
 };
 
-/***************************************************************************
-*	dynamic_group
-*
-*	a list of spell groups
-***************************************************************************/
+/**
+ * a list of spell groups
+ */
 struct dynamic_group {
 	struct dynamic_group *next;
 	int	 gn;
@@ -116,12 +90,9 @@ struct dynamic_group {
 };
 
 
-/***************************************************************************
-*	learned_info
-*
-*	linked list of learned percentage for skills
-*	tied to a character
-***************************************************************************/
+/**
+ * linked list of learned percentage for skills tied to a character
+ */
 struct learned_info {
 	struct learned_info *	next;
 	struct learned_info *	prev;
@@ -136,11 +107,9 @@ struct learned_info {
 
 
 
-/***************************************************************************
-*	spell_list
-*
-*	a list of spell functions - used for spell chaining
-***************************************************************************/
+/**
+ * a list of spell functions - used for spell chaining
+ */
 struct spell_list {
 	struct spell_list *	next;
 	SPELL_FUN *	spell_fn;
@@ -148,26 +117,21 @@ struct spell_list {
 };
 
 
-/***************************************************************************
-*	affect_list
-*
-*	a list of affect functions - used for affect chaining
-***************************************************************************/
+/**
+ * a list of affect functions - used for affect chaining
+ */
 struct affect_list {
 	struct affect_list *	next;
 	AFFECT_FUN *	affect_fn;
 	bool		valid;
 };
 
-/***************************************************************************
-*	memory recycling
-***************************************************************************/
 struct level_info *level_info_free;
 struct learned_info *learned_free;
 struct dynamic_skill_list *skill_list_free;
 struct spell_list *spell_list_free;
 struct affect_list *affect_list_free;
-ARGUMENT *argument_free;
+struct argument_type *argument_free;
 struct dynamic_group *group_free;
 struct dynamic_group *group_list;
 struct dynamic_skill *skill_free;
@@ -195,12 +159,9 @@ void free_spell_list(struct spell_list * spells);
 struct affect_list *new_affect_list(void);
 void free_affect_list(struct affect_list * affects);
 
-ARGUMENT *new_argument(void);
-void free_argument(ARGUMENT * argument);
+struct argument_type *new_argument(void);
+void free_argument(struct argument_type * argument);
 
-/***************************************************************************
-*	lookup data
-***************************************************************************/
 struct spell_lookup_type {
 	char *		name;
 	SPELL_FUN *	fn;
@@ -215,9 +176,6 @@ extern const struct spell_lookup_type spell_lookup_table[];
 extern const struct affect_lookup_type affect_lookup_table[];
 
 
-/***************************************************************************
-*	save functions
-***************************************************************************/
 void load_skills(void);
 void save_skills(void);
 void load_groups(void);
@@ -265,9 +223,9 @@ char *affect_fn_name(AFFECT_FUN * fn);
 /* functions used for spell/affect chaining */
 void add_spell(struct dynamic_skill * skill, SPELL_FUN * spell);
 void add_affect(struct dynamic_skill * skill, AFFECT_FUN * affect);
-void add_argument(struct dynamic_skill * skill, ARGUMENT * argument);
+void add_argument(struct dynamic_skill * skill, struct argument_type * argument);
 
-VARIANT *find_argument(ARGUMENT * argument, char *key);
+VARIANT *find_argument(struct argument_type * argument, char *key);
 
 /* functions used for global caching of spells */
 void resolve_global_skills(void);

@@ -305,7 +305,7 @@ EDIT(skedit_show){
     printf_to_char(ch, "`&Help``:        [%s]\n\r", skill->help_keyword);
 
     if (skill->args != NULL) {
-        ARGUMENT *args;
+        struct argument_type *args;
         send_to_char("\n\r`!OPTIONAL ARGUMENTS``\n\r", ch);
         send_to_char("`1================================================\n\r", ch);
 
@@ -863,7 +863,7 @@ EDIT(skedit_affect){
  ***************************************************************************/
 EDIT(skedit_argument){
     struct dynamic_skill *skill;
-    ARGUMENT *arg;
+    struct argument_type *arg;
     char cmd[MAX_INPUT_LENGTH];
 
     EDIT_SKILL(ch, skill);
@@ -897,7 +897,7 @@ EDIT(skedit_argument){
         }
 
         if (!str_prefix(argument, "all")) {
-            ARGUMENT *arg_next;
+            struct argument_type *arg_next;
 
             for (arg = skill->args; arg != NULL; arg = arg_next) {
                 arg_next = arg->next;
@@ -916,7 +916,7 @@ EDIT(skedit_argument){
 
                 free_argument(arg);
             } else {
-                ARGUMENT *arg_prev = NULL;
+                struct argument_type *arg_prev = NULL;
 
                 for (arg = skill->args; arg != NULL; arg = arg->next) {
                     if (!str_prefix(argument, arg->key))
@@ -1212,7 +1212,7 @@ void load_skills()
 
 
             if (!str_cmp(word, "Arg")) {
-                ARGUMENT *arg;
+                struct argument_type *arg;
                 char *data;
 
                 arg = new_argument();
@@ -1307,7 +1307,7 @@ void save_skills()
         }
 
         if (skill->args != NULL) {
-            ARGUMENT *arg;
+            struct argument_type *arg;
             for (arg = skill->args; arg != NULL; arg = arg->next)
                 if (arg->data != NULL && VALIDATE_VARIANT(arg->data, VARIANT_STRING))
                     fprintf(fp, "Arg '%s' %s~\n", arg->key, (char *)arg->data->data);
