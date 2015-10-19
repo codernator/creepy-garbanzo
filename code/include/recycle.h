@@ -14,8 +14,8 @@ extern int mobile_count;
 #define BUFFER_FREED            2
 
 /* note recycling */
-NOTE_DATA * new_note(void);
-void free_note(NOTE_DATA * note);
+struct note_data * new_note(void);
+void free_note(struct note_data * note);
 
 /* ban data recycling */
 BAN_DATA * new_ban(void);

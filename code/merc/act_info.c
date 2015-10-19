@@ -35,7 +35,7 @@ extern void show_char_to_char(CHAR_DATA * list, CHAR_DATA * ch);
 extern void show_char_to_char_2(CHAR_DATA * victim, CHAR_DATA * ch);
 
 #define MAX_NEST        100
-static GAMEOBJECT *rgObjNest[MAX_NEST];
+static struct gameobject *rgObjNest[MAX_NEST];
 extern void fread_char(CHAR_DATA * ch, FILE * fp);
 
 
@@ -600,7 +600,7 @@ void do_nosummon(CHAR_DATA *ch, const char *argument)
 
 void do_lore(CHAR_DATA *ch, const char *argument)
 {
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     SKILL *skill;
     char arg[MAX_INPUT_LENGTH];
     int percent;
@@ -691,7 +691,7 @@ void do_glance(CHAR_DATA *ch, const char *argument)
 void do_look(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
     char arg3[MAX_INPUT_LENGTH];
@@ -760,7 +760,7 @@ void do_examine(CHAR_DATA *ch, const char *argument)
 {
     char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
 
     (void)one_argument(argument, arg);
 
@@ -1263,8 +1263,8 @@ void do_compare(CHAR_DATA *ch, const char *argument)
 {
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
-    GAMEOBJECT *obj1;
-    GAMEOBJECT *obj2;
+    struct gameobject *obj1;
+    struct gameobject *obj2;
     long value1;
     long value2;
     char *msg;

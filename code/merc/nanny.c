@@ -814,7 +814,7 @@ bool check_reconnect(struct descriptor_data *d, const char *name, bool reconnect
                 free_string(d->character->pcdata->pwd);
                 d->character->pcdata->pwd = str_dup(ch->pcdata->pwd);
             } else {
-                GAMEOBJECT *obj;
+                struct gameobject *obj;
 
                 free_char(d->character);
                 d->character = ch;

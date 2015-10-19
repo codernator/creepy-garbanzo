@@ -429,8 +429,8 @@ void do_mpassist(CHAR_DATA *ch, const char *argument)
 void do_mpjunk(CHAR_DATA *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
-    GAMEOBJECT *obj;
-    GAMEOBJECT *obj_next;
+    struct gameobject *obj;
+    struct gameobject *obj_next;
 
     one_argument(argument, arg);
 
@@ -497,7 +497,7 @@ void do_mpmload(CHAR_DATA *ch, const char *argument)
 void do_mpoload(CHAR_DATA *ch, const char *argument)
 {
     struct objectprototype *objprototype;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
     int level;
     long vnum;
@@ -597,14 +597,14 @@ void do_mppurge(CHAR_DATA *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
     CHAR_DATA *victim;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
 
     one_argument(argument, arg);
 
     if (arg[0] == '\0') {
 	/* 'purge' */
 	CHAR_DATA *vnext;
-	GAMEOBJECT *obj_next;
+	struct gameobject *obj_next;
 
 	for (victim = ch->in_room->people; victim != NULL; victim = vnext) {
 	    vnext = victim->next_in_room;
@@ -683,7 +683,7 @@ void do_mpat(CHAR_DATA *ch, const char *argument)
     struct room_index_data *location;
     struct room_index_data *original;
     CHAR_DATA *wch;
-    GAMEOBJECT *on;
+    struct gameobject *on;
 
     argument = one_argument(argument, arg);
 
@@ -939,7 +939,7 @@ void do_mpvforce(CHAR_DATA *ch, const char *argument)
 void do_mpcast(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *vch;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     SKILL *skill;
     void *victim = NULL;
     char spell[MAX_INPUT_LENGTH];
@@ -1127,7 +1127,7 @@ void do_mpcall(CHAR_DATA *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
     CHAR_DATA *vch;
-    GAMEOBJECT *obj1, *obj2;
+    struct gameobject *obj1, *obj2;
     MPROG_CODE *prg;
     extern void program_flow(long, char *, CHAR_DATA *, CHAR_DATA *, const void *, const void *);
 
@@ -1205,7 +1205,7 @@ void do_mpflee(CHAR_DATA *ch, const char *argument)
  */
 void do_mpotransfer(CHAR_DATA *ch, const char *argument)
 {
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     struct room_index_data *location;
     char arg[MAX_INPUT_LENGTH];
     char buf[MAX_INPUT_LENGTH];
@@ -1243,7 +1243,7 @@ void do_mpotransfer(CHAR_DATA *ch, const char *argument)
 void do_mpremove(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    GAMEOBJECT *obj, *obj_next;
+    struct gameobject *obj, *obj_next;
     long vnum = 0;
     bool fAll = false;
     char arg[MAX_INPUT_LENGTH];

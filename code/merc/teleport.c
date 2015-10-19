@@ -13,9 +13,9 @@ extern DECLARE_DO_FUN(do_look);
 
 void do_teleport(CHAR_DATA *ch, const char *argument)
 {
-    GAMEOBJECT *teleporter;
-    GAMEOBJECT *obj, *opending;
-    GAMEOBJECT *in_obj;
+    struct gameobject *teleporter;
+    struct gameobject *obj, *opending;
+    struct gameobject *in_obj;
     struct room_index_data *location;
     char arg[MAX_INPUT_LENGTH];
     BUFFER *buf;

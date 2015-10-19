@@ -147,7 +147,7 @@ KEYVALUEPAIR_ARRAY *objectprototype_serialize(const struct objectprototype *obj)
     keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "condition", "%d", obj->condition);
     //~TODO
     
-    // count is a runtime value only used to track number of GAMEOBJECT *instances from this prototype.
+    // count is a runtime value only used to track number of struct gameobject *instances from this prototype.
     //keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "count", "%d", obj->count);
     keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "tnl", "%d", obj->xp_tolevel);
 

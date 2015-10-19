@@ -19,7 +19,7 @@ static void show_mob_stats(CHAR_DATA *ch, const char *argument);
  */
 void do_stat(CHAR_DATA *ch, const char *argument)
 {
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     struct room_index_data *location;
     CHAR_DATA *victim;
     char arg[MAX_INPUT_LENGTH];
@@ -81,7 +81,7 @@ void do_stat(CHAR_DATA *ch, const char *argument)
 void show_room_stats(CHAR_DATA *ch, const char *argument)
 {
     struct room_index_data *location;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     CHAR_DATA *rch;
     AFFECT_DATA *paf;
     SKILL *skill;
@@ -188,7 +188,7 @@ void show_room_stats(CHAR_DATA *ch, const char *argument)
 void show_object_stats(CHAR_DATA *ch, const char *argument)
 {
     AFFECT_DATA *paf;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     SKILL *skill;
     char arg[MAX_INPUT_LENGTH];
     int idx;

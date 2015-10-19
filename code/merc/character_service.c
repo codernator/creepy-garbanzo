@@ -30,7 +30,7 @@ void show_char_to_char_2(CHAR_DATA * victim, CHAR_DATA * ch);
 
 static void show_char_to_char_0(CHAR_DATA * victim, CHAR_DATA * ch);
 static void show_char_to_char_1(CHAR_DATA * victim, CHAR_DATA * ch);
-static char *format_obj_to_char(GAMEOBJECT * obj, CHAR_DATA * ch, bool fShort);
+static char *format_obj_to_char(struct gameobject * obj, CHAR_DATA * ch, bool fShort);
 
 
 static bool validate_look(CHAR_DATA *ch);
@@ -122,7 +122,7 @@ void replay(CHAR_DATA *ch) {
 }
 
 void look_equipment(CHAR_DATA *ch) {
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     int iWear;
 
     send_to_char("`&  You are using: \n\r ------------------``\n\r", ch);
@@ -201,7 +201,7 @@ void look_direction(CHAR_DATA *ch, const int door) {
 }
 
 void look_extras(CHAR_DATA *ch, const char *name, const int number) {
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     int count;
     char *pdesc;
 
@@ -352,8 +352,8 @@ void look_room(CHAR_DATA *ch, struct room_index_data *in_room) {
     return;
 }
 
-void look_object(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument) {
-    GAMEOBJECT *portal;
+void look_object(CHAR_DATA *ch, struct gameobject *obj, const char *argument) {
+    struct gameobject *portal;
     struct room_index_data *location;
 
     if (!validate_look(ch)) {
@@ -421,7 +421,7 @@ void look_object(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument) {
     }
 }
 
-void sit(CHAR_DATA *ch, GAMEOBJECT *on)
+void sit(CHAR_DATA *ch, struct gameobject *on)
 {
     // TODO - it is currently possible to defeat object pickup restrictions by
     // sitting on them. Need to extract can_get_obj from get_obj and use it!
@@ -537,7 +537,7 @@ void sit(CHAR_DATA *ch, GAMEOBJECT *on)
     }
 }
 
-void stand(CHAR_DATA *ch, GAMEOBJECT *on)
+void stand(CHAR_DATA *ch, struct gameobject *on)
 {
     // TODO - need to extract can_get_obj from get_obj
 
@@ -581,7 +581,7 @@ void stand(CHAR_DATA *ch, GAMEOBJECT *on)
     // stand up, possibly on something.
     ch->position = POS_STANDING;
     if (on != ch->on) {
-	GAMEOBJECT *old_on = ch->on;
+	struct gameobject *old_on = ch->on;
 	ch->on = on;
 	if (old_on != NULL && can_see_obj(ch, old_on)) {
 	    // TODO - only if object is gettable.
@@ -626,7 +626,7 @@ void stand(CHAR_DATA *ch, GAMEOBJECT *on)
     }
 }
 
-void get_obj(CHAR_DATA *ch, GAMEOBJECT *obj, GAMEOBJECT *container)
+void get_obj(CHAR_DATA *ch, struct gameobject *obj, struct gameobject *container)
 {
     CHAR_DATA *gch;
     int members;
@@ -920,7 +920,7 @@ void show_char_to_char_1(CHAR_DATA *victim, CHAR_DATA *ch)
 
 void show_char_to_char_2(CHAR_DATA *victim, CHAR_DATA *ch)
 {
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     SKILL *skill_peek;
     int iWear;
     bool found;
@@ -968,9 +968,9 @@ void show_char_to_char_2(CHAR_DATA *victim, CHAR_DATA *ch)
  * Show a list to a character.
  * Can coalesce duplicated items.
  */
-void show_list_to_char(GAMEOBJECT *list, CHAR_DATA *ch, bool fShort, bool fShowNothing)
+void show_list_to_char(struct gameobject *list, CHAR_DATA *ch, bool fShort, bool fShowNothing)
 {
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     char buf[13000];
     char **prgpstrShow;
     char *pstrShow;
@@ -1075,7 +1075,7 @@ void show_list_to_char(GAMEOBJECT *list, CHAR_DATA *ch, bool fShort, bool fShowN
     return;
 }
 
-char *format_obj_to_char(GAMEOBJECT *obj, CHAR_DATA *ch, bool fShort)
+char *format_obj_to_char(struct gameobject *obj, CHAR_DATA *ch, bool fShort)
 {
     static char buf[MAX_STRING_LENGTH * 2];
 

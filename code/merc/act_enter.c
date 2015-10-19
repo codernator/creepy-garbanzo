@@ -37,7 +37,7 @@ void do_enter(CHAR_DATA *ch, const char *argument)
 /* nifty portal stuff */
 	if (argument[0] != '\0') {
 		struct room_index_data *old_room;
-		GAMEOBJECT *portal;
+		struct gameobject *portal;
 		CHAR_DATA *fch, *fch_next;
 
 		old_room = ch->in_room;

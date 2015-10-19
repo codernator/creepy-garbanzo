@@ -16,7 +16,7 @@ void dam_message(CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt, bool immun
 /***************************************************************************
 *	affect_enchant
 ***************************************************************************/
-void affect_enchant(GAMEOBJECT *obj)
+void affect_enchant(struct gameobject *obj)
 {
 	if (!obj->enchanted) {
 		AFFECT_DATA *paf;
@@ -49,7 +49,7 @@ void affect_enchant(GAMEOBJECT *obj)
 ***************************************************************************/
 void affect_modify(CHAR_DATA *ch, AFFECT_DATA *paf, bool fAdd)
 {
-	GAMEOBJECT *wield;
+	struct gameobject *wield;
 	long mod;
 	int iter;
 
@@ -233,7 +233,7 @@ AFFECT_DATA *affect_find(AFFECT_DATA *paf, SKILL *skill)
 void affect_check(CHAR_DATA *ch, int where, long vector)
 {
 	AFFECT_DATA *paf;
-	GAMEOBJECT *obj;
+	struct gameobject *obj;
 
 	if (where == TO_OBJECT
 	    || where == TO_WEAPON
@@ -347,7 +347,7 @@ void affect_to_char(CHAR_DATA *ch, AFFECT_DATA *paf)
 *
 *	give an affect to an object
 ***************************************************************************/
-void affect_to_obj(GAMEOBJECT *obj, AFFECT_DATA *paf)
+void affect_to_obj(struct gameobject *obj, AFFECT_DATA *paf)
 {
 	AFFECT_DATA *paf_new;
 
@@ -446,7 +446,7 @@ void affect_remove(CHAR_DATA *ch, AFFECT_DATA *paf)
 *
 *	remove an affect from an object
 ***************************************************************************/
-void affect_remove_obj(GAMEOBJECT *obj, AFFECT_DATA *paf)
+void affect_remove_obj(struct gameobject *obj, AFFECT_DATA *paf)
 {
 	int where;
 	long vector;

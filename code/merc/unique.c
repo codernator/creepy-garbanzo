@@ -50,19 +50,19 @@ extern DECLARE_DO_FUN(do_wear);
 
 
 CHAR_DATA *random_unique_mob(void);
-void format_obj(GAMEOBJECT * obj);
+void format_obj(struct gameobject * obj);
 extern int wear_bit(int loc);
-void name_obj(CHAR_DATA * mob, GAMEOBJECT * obj);
-void apply_random_affect(GAMEOBJECT * obj, bool positive);
+void name_obj(CHAR_DATA * mob, struct gameobject * obj);
+void apply_random_affect(struct gameobject * obj, bool positive);
 
 
 /***************************************************************************
  *	local function declarations
  ***************************************************************************/
-static void format_obj_weapon(GAMEOBJECT * obj);
-static void format_obj_armor(GAMEOBJECT * obj);
-static char *weapon_type_name(GAMEOBJECT * obj);
-static char *armor_type_name(GAMEOBJECT * obj);
+static void format_obj_weapon(struct gameobject * obj);
+static void format_obj_armor(struct gameobject * obj);
+static char *weapon_type_name(struct gameobject * obj);
+static char *armor_type_name(struct gameobject * obj);
 static int random_location(void);
 
 
@@ -151,7 +151,7 @@ static struct unique_attrib_table unique_table_prefix[] =
  ***************************************************************************/
 void do_cuo(CHAR_DATA *ch, const char *argument)
 {
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     CHAR_DATA *mob;
     int num_affects;
     int number_objects;
@@ -233,7 +233,7 @@ void do_cuo(CHAR_DATA *ch, const char *argument)
  ***************************************************************************/
 void do_tally(CHAR_DATA *ch, const char *argument)
 {
-    GAMEOBJECT *obj, *opending;
+    struct gameobject *obj, *opending;
     int unique_tally = 0;
 
     opending = object_iterator_start(&object_empty_filter);
@@ -266,7 +266,7 @@ void do_tally(CHAR_DATA *ch, const char *argument)
  ***************************************************************************/
 void do_untally(CHAR_DATA *ch, const char *argument)
 {
-    GAMEOBJECT *obj, *opending;
+    struct gameobject *obj, *opending;
     int tally = 0;
 
     opending = object_iterator_start(&object_empty_filter);
@@ -296,7 +296,7 @@ void do_untally(CHAR_DATA *ch, const char *argument)
  *
  *	apply a random affect to an item
  ***************************************************************************/
-void apply_random_affect(GAMEOBJECT *obj, bool positive)
+void apply_random_affect(struct gameobject *obj, bool positive)
 {
     AFFECT_DATA *paf;
     AFFECT_DATA *paf_find;
@@ -391,7 +391,7 @@ void apply_random_affect(GAMEOBJECT *obj, bool positive)
  *
  *	randomly generate a name for an object
  ***************************************************************************/
-void name_obj(CHAR_DATA *mob, GAMEOBJECT *obj)
+void name_obj(CHAR_DATA *mob, struct gameobject *obj)
 {
     char buf[MAX_STRING_LENGTH];
     char *uncolor_buf;
@@ -439,7 +439,7 @@ void name_obj(CHAR_DATA *mob, GAMEOBJECT *obj)
  *
  *	format a weapon
  ***************************************************************************/
-static void format_obj_weapon(GAMEOBJECT *obj)
+static void format_obj_weapon(struct gameobject *obj)
 {
     int size;
     int dice;
@@ -475,7 +475,7 @@ static void format_obj_weapon(GAMEOBJECT *obj)
  *
  *	get a name for a weapon
  ***************************************************************************/
-static char *weapon_type_name(GAMEOBJECT *obj)
+static char *weapon_type_name(struct gameobject *obj)
 {
     int idx;
 
@@ -528,7 +528,7 @@ static const struct armor_type_name_definition {
  *
  *	get a random armor name from the above ugly chart
  ***************************************************************************/
-static char *armor_type_name(GAMEOBJECT *obj)
+static char *armor_type_name(struct gameobject *obj)
 {
     int idx;
 
@@ -551,7 +551,7 @@ static char *armor_type_name(GAMEOBJECT *obj)
  *
  *	format an armor object
  ***************************************************************************/
-static void format_obj_armor(GAMEOBJECT *obj)
+static void format_obj_armor(struct gameobject *obj)
 {
     int wear_loc;
     bool set;
@@ -659,7 +659,7 @@ static void format_obj_armor(GAMEOBJECT *obj)
  *	choose a random type for the object and format it
  *	appropriately
  ***************************************************************************/
-void format_obj(GAMEOBJECT *obj)
+void format_obj(struct gameobject *obj)
 {
     int random;
 

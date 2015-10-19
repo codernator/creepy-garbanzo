@@ -62,7 +62,7 @@ void do_at(CHAR_DATA *ch, const char *argument)
     struct room_index_data *original;
     CHAR_DATA *wch = NULL;
     CHAR_DATA *vch = NULL;
-    GAMEOBJECT *on;
+    struct gameobject *on;
     char arg[MAX_INPUT_LENGTH];
     char cmd[MAX_STRING_LENGTH];
 

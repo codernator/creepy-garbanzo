@@ -16,28 +16,28 @@ extern void free_extra_descr(EXTRA_DESCR_DATA *ed);
 
 
 /** locals */
-static GAMEOBJECT head_node;
-static bool passes(GAMEOBJECT *testee, const OBJECT_ITERATOR_FILTER *filter);
+static struct gameobject head_node;
+static bool passes(struct gameobject *testee, const OBJECT_ITERATOR_FILTER *filter);
 
 
 
 
-GAMEOBJECT *object_new(struct objectprototype *prototypedata)
+struct gameobject *object_new(struct objectprototype *prototypedata)
 {
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
 
-    obj = malloc(sizeof(GAMEOBJECT));
+    obj = malloc(sizeof(struct gameobject));
     assert(obj != NULL);
 
     /** Default values */
     {
-	memset(obj, 0, sizeof(GAMEOBJECT));
+	memset(obj, 0, sizeof(struct gameobject));
 	obj->objprototype = prototypedata;
     }
 
     /** Place on list. */
     {
-	GAMEOBJECT *headnext;
+	struct gameobject *headnext;
 	obj->prev = &head_node;
 	headnext = head_node.next;
 	if (headnext != NULL) {
@@ -52,24 +52,24 @@ GAMEOBJECT *object_new(struct objectprototype *prototypedata)
     return obj;
 }
 
-GAMEOBJECT *object_clone(GAMEOBJECT *parent)
+struct gameobject *object_clone(struct gameobject *parent)
 {
-    GAMEOBJECT *clone;
+    struct gameobject *clone;
 
     assert(parent != NULL);
-    clone = malloc(sizeof(GAMEOBJECT));
+    clone = malloc(sizeof(struct gameobject));
     assert(clone != NULL);
 
 
     /** Default values */
     {
-	memset(clone, 0, sizeof(GAMEOBJECT));
+	memset(clone, 0, sizeof(struct gameobject));
 	clone->objprototype = parent->objprototype;
     }
 
     /** Place on list. */
     {
-	GAMEOBJECT *headnext;
+	struct gameobject *headnext;
 	clone->prev = &head_node;
 	headnext = head_node.next;
 	if (headnext != NULL) {
@@ -128,15 +128,15 @@ GAMEOBJECT *object_clone(GAMEOBJECT *parent)
     return clone;
 }
 
-void object_free(GAMEOBJECT *obj)
+void object_free(struct gameobject *obj)
 {
     assert(obj != NULL);
     assert(obj != &head_node);
 
     /** Extract from list. */
     {
-	GAMEOBJECT *prev = obj->prev;
-	GAMEOBJECT *next = obj->next;
+	struct gameobject *prev = obj->prev;
+	struct gameobject *next = obj->next;
 
 	assert(prev != NULL); /** because only the head node has no previous. */
 	prev->next = next;
@@ -181,21 +181,21 @@ void object_free(GAMEOBJECT *obj)
 
 int object_list_count()
 {
-    GAMEOBJECT *o;
+    struct gameobject *o;
     int counter = 0;
     for (o = head_node.next; o != NULL; o = o->next)
 	counter++;
     return counter;
 }
 
-GAMEOBJECT *object_iterator_start(const OBJECT_ITERATOR_FILTER *filter)
+struct gameobject *object_iterator_start(const OBJECT_ITERATOR_FILTER *filter)
 {
     return object_iterator(&head_node, filter);
 }
 
-GAMEOBJECT *object_iterator(GAMEOBJECT *current, const OBJECT_ITERATOR_FILTER *filter)
+struct gameobject *object_iterator(struct gameobject *current, const OBJECT_ITERATOR_FILTER *filter)
 {
-    GAMEOBJECT *next;
+    struct gameobject *next;
 
     if (current == NULL) {
 	return NULL;
@@ -209,12 +209,12 @@ GAMEOBJECT *object_iterator(GAMEOBJECT *current, const OBJECT_ITERATOR_FILTER *f
     return next;
 }
 
-inline const char *object_ownername_get(const GAMEOBJECT *object)
+inline const char *object_ownername_get(const struct gameobject *object)
 {
     return object->owner_name;
 }
 
-void object_ownername_set(GAMEOBJECT *object, const CHAR_DATA *owner)
+void object_ownername_set(struct gameobject *object, const CHAR_DATA *owner)
 {
     if (object->owner_name != NULL)
 	free_string(object->owner_name);
@@ -225,12 +225,12 @@ void object_ownername_set(GAMEOBJECT *object, const CHAR_DATA *owner)
 	object->owner_name = str_dup(owner->name);
 }
 
-inline const char *object_name_get(const GAMEOBJECT *object)
+inline const char *object_name_get(const struct gameobject *object)
 {
     return object->override_name == NULL ? object->objprototype->name : object->override_name;
 }
 
-void object_name_set(GAMEOBJECT *object, const char *name)
+void object_name_set(struct gameobject *object, const char *name)
 {
     if (object->override_name != NULL)
 	free_string(object->override_name);
@@ -243,17 +243,17 @@ void object_name_set(GAMEOBJECT *object, const char *name)
 }
 
 
-inline bool is_situpon(GAMEOBJECT *obj) {
+inline bool is_situpon(struct gameobject *obj) {
     return (obj->item_type == ITEM_FURNITURE) && (IS_SET(obj->value[2], SIT_ON) || IS_SET(obj->value[2], SIT_IN) || IS_SET(obj->value[2], SIT_AT));
 }
 
-inline bool is_standupon(GAMEOBJECT *obj) {
+inline bool is_standupon(struct gameobject *obj) {
     return (obj->item_type == ITEM_FURNITURE && (IS_SET(obj->value[2], STAND_AT) || IS_SET(obj->value[2], STAND_ON) || IS_SET(obj->value[2], STAND_IN)));
 }
 
 
 
-bool passes(GAMEOBJECT *testee, const OBJECT_ITERATOR_FILTER *filter)
+bool passes(struct gameobject *testee, const OBJECT_ITERATOR_FILTER *filter)
 {
     if (filter->name != NULL && filter->name[0] != '\0' && testee->override_name != NULL && str_cmp(filter->name, testee->override_name)) {
 	/** name filter specified but does not match current object. */

@@ -158,7 +158,7 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
 	if ((in_room->sector_type == SECT_WATER_NOSWIM
 		    || to_room->sector_type == SECT_WATER_NOSWIM)
 		&& !IS_AFFECTED(ch, AFF_FLYING)) {
-	    GAMEOBJECT *obj;
+	    struct gameobject *obj;
 	    bool found;
 
 	    /*
@@ -1015,7 +1015,7 @@ int find_exit(CHAR_DATA *ch, char *arg)
  ***************************************************************************/
 void do_open(CHAR_DATA *ch, const char *argument)
 {
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
     int door;
 
@@ -1116,7 +1116,7 @@ void do_open(CHAR_DATA *ch, const char *argument)
  ***************************************************************************/
 void do_close(CHAR_DATA *ch, const char *argument)
 {
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
     int door;
 
@@ -1206,7 +1206,7 @@ void do_close(CHAR_DATA *ch, const char *argument)
  ***************************************************************************/
 bool has_key(CHAR_DATA *ch, long key)
 {
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
 
     for (obj = ch->carrying; obj != NULL; obj = obj->next_content)
 	if (obj->objprototype->vnum == key)
@@ -1223,7 +1223,7 @@ bool has_key(CHAR_DATA *ch, long key)
  ***************************************************************************/
 void do_lock(CHAR_DATA *ch, const char *argument)
 {
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
     int door;
 
@@ -1344,7 +1344,7 @@ void do_lock(CHAR_DATA *ch, const char *argument)
  ***************************************************************************/
 void do_unlock(CHAR_DATA *ch, const char *argument)
 {
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
     int door;
 
@@ -1464,7 +1464,7 @@ void do_unlock(CHAR_DATA *ch, const char *argument)
 void do_pick(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *gch;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     SKILL *skill;
     char arg[MAX_INPUT_LENGTH];
     int door;
@@ -1689,7 +1689,7 @@ void do_visible(CHAR_DATA *ch, const char *argument)
  ***************************************************************************/
 void do_sit(CHAR_DATA *ch, const char *argument)
 {
-    GAMEOBJECT *on = NULL;
+    struct gameobject *on = NULL;
 
     if (argument[0] != '\0') {
 	on = get_obj_list(ch, argument, ch->in_room->contents);
@@ -1698,7 +1698,7 @@ void do_sit(CHAR_DATA *ch, const char *argument)
 	    return;
 	}
     } else {
-	GAMEOBJECT *obj = NULL;
+	struct gameobject *obj = NULL;
 	/* Try to pull a sittable object from inventory. */
 	for (obj = ch->carrying; obj != NULL; obj = obj->next_content) {
 	    if (is_situpon(obj)
@@ -1720,7 +1720,7 @@ void do_sit(CHAR_DATA *ch, const char *argument)
  ***************************************************************************/
 void do_stand(CHAR_DATA *ch, const char *argument)
 {
-    GAMEOBJECT *obj = NULL;
+    struct gameobject *obj = NULL;
 
     if (argument[0] != '\0') {
 	obj = get_obj_list(ch, argument, ch->in_room->contents);
@@ -1744,8 +1744,8 @@ void do_stand(CHAR_DATA *ch, const char *argument)
  ***************************************************************************/
 void do_rest(CHAR_DATA *ch, const char *argument)
 {
-    GAMEOBJECT *obj = NULL;
-    GAMEOBJECT *obj_on = NULL;
+    struct gameobject *obj = NULL;
+    struct gameobject *obj_on = NULL;
 
     if (ch->position == POS_FIGHTING) {
 	send_to_char("You are already fighting!\n\r", ch);
@@ -1865,8 +1865,8 @@ void do_rest(CHAR_DATA *ch, const char *argument)
  ***************************************************************************/
 void do_sleep(CHAR_DATA *ch, const char *argument)
 {
-    GAMEOBJECT *obj = NULL;
-    GAMEOBJECT *obj_on = NULL;
+    struct gameobject *obj = NULL;
+    struct gameobject *obj_on = NULL;
 
     for (obj = ch->carrying; obj; obj = obj->next_content) {
 	if ((obj->item_type == ITEM_FURNITURE)

@@ -24,11 +24,11 @@
 /** exports */
 char str_empty[1];
 CHAR_DATA *char_list;
-NOTE_DATA *note_list;
+struct note_data *note_list;
 MPROG_CODE *mprog_list;
 struct shop_data *shop_first;
 struct shop_data *shop_last;
-NOTE_DATA *note_free;
+struct note_data *note_free;
 /*@observer@*/const char *help_greeting;
 MOB_INDEX_DATA *mob_index_hash[MAX_KEY_HASH];
 struct room_index_data *room_index_hash[MAX_KEY_HASH];
@@ -52,7 +52,7 @@ extern int _filbuf(FILE *);
 extern void init_mm(void);
 extern unsigned int fread_uint(FILE *fp);
 extern long fread_long(FILE *fp);
-extern GAMEOBJECT *obj_free;
+extern struct gameobject *obj_free;
 extern CHAR_DATA *char_free;
 extern struct pc_data *pcdata_free;
 extern AFFECT_DATA *affect_free;
@@ -1439,9 +1439,9 @@ void reset_room(struct room_index_data *room)
     struct reset_data *reset;
     CHAR_DATA *mob_it;
     CHAR_DATA *mob = NULL;
-    GAMEOBJECT *obj = NULL;
+    struct gameobject *obj = NULL;
     CHAR_DATA *last_mob = NULL;
-    GAMEOBJECT *last_obj = NULL;
+    struct gameobject *last_obj = NULL;
     int exit_dir;
     bool last;
 
@@ -1949,10 +1949,10 @@ void clone_mobile(CHAR_DATA *parent, CHAR_DATA *clone)
 /*
  * Create an instance of an object.
  */
-GAMEOBJECT *create_object(struct objectprototype *objprototype, int level)
+struct gameobject *create_object(struct objectprototype *objprototype, int level)
 {
     AFFECT_DATA *paf;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
 
     if (objprototype == NULL) {
         log_bug("Create_object: NULL objprototype.");
@@ -2520,7 +2520,7 @@ void do_dump(CHAR_DATA *ch, const char *argument)
     CHAR_DATA *fch;
     MOB_INDEX_DATA *mob_idx;
     struct pc_data *pc;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     struct descriptor_data *d;
     AFFECT_DATA *af;
     FILE *fp;

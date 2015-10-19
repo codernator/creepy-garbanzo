@@ -14,7 +14,7 @@ extern void mob_interpret(CHAR_DATA * ch, const char *argument);
 
 void mp_bribe_trigger(CHAR_DATA * mob, CHAR_DATA * ch, long amount);
 bool mp_exit_trigger(CHAR_DATA * ch, int dir);
-void mp_give_trigger(CHAR_DATA * mob, CHAR_DATA * ch, GAMEOBJECT * obj);
+void mp_give_trigger(CHAR_DATA * mob, CHAR_DATA * ch, struct gameobject * obj);
 void mp_greet_trigger(CHAR_DATA * ch);
 void mp_hprct_trigger(CHAR_DATA * mob, CHAR_DATA * ch);
 
@@ -273,7 +273,7 @@ static int get_order(CHAR_DATA *ch)
  */
 static bool has_item(CHAR_DATA *ch, long vnum, int item_type, bool fWear)
 {
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
 
     for (obj = ch->carrying; obj; obj = obj->next_content)
 	if ((vnum < 0 || obj->objprototype->vnum == vnum)
@@ -301,7 +301,7 @@ static bool get_mob_vnum_room(CHAR_DATA *ch, long vnum)
  */
 static bool get_obj_vnum_room(CHAR_DATA *ch, long vnum)
 {
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
 
     for (obj = ch->in_room->contents; obj; obj = obj->next_content)
 	if (obj->objprototype->vnum == vnum)
@@ -325,9 +325,9 @@ static bool cmd_eval(long vnum, const char *line, int check, CHAR_DATA *mob, CHA
 {
     CHAR_DATA *lval_char = mob;
     CHAR_DATA *vch = (CHAR_DATA *)arg2;
-    GAMEOBJECT *obj1 = (GAMEOBJECT *)arg1;
-    GAMEOBJECT *obj2 = (GAMEOBJECT *)arg2;
-    GAMEOBJECT *lval_obj = NULL;
+    struct gameobject *obj1 = (struct gameobject *)arg1;
+    struct gameobject *obj2 = (struct gameobject *)arg2;
+    struct gameobject *lval_obj = NULL;
 
     const char *original;
     char buf[MAX_INPUT_LENGTH], code;
@@ -611,8 +611,8 @@ static void expand_arg(char *buf,
 
     char fname[MAX_INPUT_LENGTH];
     CHAR_DATA *vch = (CHAR_DATA *)arg2;
-    GAMEOBJECT *obj1 = (GAMEOBJECT *)arg1;
-    GAMEOBJECT *obj2 = (GAMEOBJECT *)arg2;
+    struct gameobject *obj1 = (struct gameobject *)arg1;
+    struct gameobject *obj2 = (struct gameobject *)arg2;
     const char *str;
     const char *i;
     char *point;
@@ -1088,7 +1088,7 @@ bool mp_exit_trigger(CHAR_DATA *ch, int dir)
     return false;
 }
 
-void mp_give_trigger(CHAR_DATA *mob, CHAR_DATA *ch, GAMEOBJECT *obj)
+void mp_give_trigger(CHAR_DATA *mob, CHAR_DATA *ch, struct gameobject *obj)
 {
     char buf[MAX_INPUT_LENGTH];
     MPROG_LIST *prg;

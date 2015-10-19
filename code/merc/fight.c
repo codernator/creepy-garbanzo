@@ -42,7 +42,7 @@ extern bool in_battlefield(CHAR_DATA * ch);
 #define MAX_DAMAGE_MESSAGE 58
 
 bool is_safe(CHAR_DATA * ch, CHAR_DATA * victim);
-bool one_hit(CHAR_DATA * ch, CHAR_DATA * victim, int dt, GAMEOBJECT * wield);
+bool one_hit(CHAR_DATA * ch, CHAR_DATA * victim, int dt, struct gameobject * wield);
 void set_fighting(CHAR_DATA * ch, CHAR_DATA * victim);
 bool check_dispel(int dis_level, CHAR_DATA * victim, SKILL * skill);
 void dam_message(CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt, bool immune);
@@ -192,8 +192,8 @@ void multi_hit(CHAR_DATA *ch, CHAR_DATA *victim, int dt)
 {
     CHAR_DATA *vch;
     CHAR_DATA *vch_next;
-    GAMEOBJECT *weapon;
-    GAMEOBJECT *off_weapon;
+    struct gameobject *weapon;
+    struct gameobject *off_weapon;
     SKILL *skill;
     int chance;
 
@@ -341,7 +341,7 @@ void mob_hit(CHAR_DATA *ch, CHAR_DATA *victim, int dt)
 {
     CHAR_DATA *vch;
     CHAR_DATA *vch_next;
-    GAMEOBJECT *weapon;
+    struct gameobject *weapon;
     int chance;
     int number;
 
@@ -404,7 +404,7 @@ void mob_hit(CHAR_DATA *ch, CHAR_DATA *victim, int dt)
 }
 
 
-static void validate_attack_type(int *dt, CHAR_DATA *ch, GAMEOBJECT *wield)
+static void validate_attack_type(int *dt, CHAR_DATA *ch, struct gameobject *wield)
 {
     /*
      * Figure out the type of damage message.
@@ -419,7 +419,7 @@ static void validate_attack_type(int *dt, CHAR_DATA *ch, GAMEOBJECT *wield)
     }
 }
 
-static int get_dam_type(CHAR_DATA *ch, int dt, GAMEOBJECT *wield)
+static int get_dam_type(CHAR_DATA *ch, int dt, struct gameobject *wield)
 {
     int dam_type = -1;
 
@@ -501,7 +501,7 @@ static inline int get_victim_ac(CHAR_DATA *victim, int damage_type)
     return victim_ac;
 }
 
-ONE_ATTACK_RESULT one_attack(CHAR_DATA *ch, CHAR_DATA *victim, int dt, GAMEOBJECT *attacker_wield)
+ONE_ATTACK_RESULT one_attack(CHAR_DATA *ch, CHAR_DATA *victim, int dt, struct gameobject *attacker_wield)
 {
     ONE_ATTACK_RESULT result = oar_error;
 
@@ -599,7 +599,7 @@ ONE_ATTACK_RESULT one_attack(CHAR_DATA *ch, CHAR_DATA *victim, int dt, GAMEOBJEC
  *
  *	hit a character once with a weapon
  ***************************************************************************/
-bool one_hit(CHAR_DATA *ch, CHAR_DATA *victim, int dt, GAMEOBJECT *wield)
+bool one_hit(CHAR_DATA *ch, CHAR_DATA *victim, int dt, struct gameobject *wield)
 {
     SKILL *attack;
     long victim_ac;
@@ -921,7 +921,7 @@ bool one_hit(CHAR_DATA *ch, CHAR_DATA *victim, int dt, GAMEOBJECT *wield)
  ***************************************************************************/
 int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool show)
 {
-    GAMEOBJECT *corpse;
+    struct gameobject *corpse;
     bool immune;
 
     if (victim->position == POS_DEAD)
@@ -1124,7 +1124,7 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
 	}
 
 	if (!IS_NPC(ch) && IS_NPC(victim)) {
-	    GAMEOBJECT *coins;
+	    struct gameobject *coins;
 
 	    corpse = get_obj_list(ch, "corpse", ch->in_room->contents);
 
@@ -1626,9 +1626,9 @@ void stop_fighting(CHAR_DATA *ch, bool fBoth)
 void make_corpse(CHAR_DATA *ch)
 {
     char buf[MAX_STRING_LENGTH];
-    GAMEOBJECT *corpse;
-    GAMEOBJECT *obj;
-    GAMEOBJECT *obj_next;
+    struct gameobject *corpse;
+    struct gameobject *obj;
+    struct gameobject *obj_next;
     char *name;
 
 
@@ -1779,7 +1779,7 @@ void death_cry(CHAR_DATA *ch, CHAR_DATA *killer)
 
     if (vnum != 0) {
 	char buf[MAX_STRING_LENGTH];
-	GAMEOBJECT *obj;
+	struct gameobject *obj;
 	char *name;
 
 	name = IS_NPC(ch) ? ch->short_descr : ch->name;
@@ -1889,8 +1889,8 @@ void group_gain(CHAR_DATA *ch, CHAR_DATA *victim)
     }
 
     for (gch = ch->in_room->people; gch != NULL; gch = gch->next_in_room) {
-	GAMEOBJECT *obj;
-	GAMEOBJECT *obj_next;
+	struct gameobject *obj;
+	struct gameobject *obj_next;
 
 	if (!is_same_group(gch, ch) || IS_NPC(gch))
 	    continue;
@@ -2265,7 +2265,7 @@ int max_damage(CHAR_DATA *ch, CHAR_DATA *victim, int dt, int dam)
  ***************************************************************************/
 void disarm(CHAR_DATA *ch, CHAR_DATA *victim)
 {
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
 
     if ((obj = get_eq_char(victim, WEAR_WIELD)) == NULL)
 	return;
@@ -2304,8 +2304,8 @@ void disarm(CHAR_DATA *ch, CHAR_DATA *victim)
  ***************************************************************************/
 void check_deathdrop(CHAR_DATA *ch)
 {
-    GAMEOBJECT *obj;
-    GAMEOBJECT *obj_next;
+    struct gameobject *obj;
+    struct gameobject *obj_next;
 
     for (obj = ch->carrying; obj != NULL; obj = obj_next) {
 	obj_next = obj->next_content;
@@ -2323,8 +2323,8 @@ void check_deathdrop(CHAR_DATA *ch)
 
 void use_magical_item(CHAR_DATA *ch)
 {
-    GAMEOBJECT *obj;
-    GAMEOBJECT *cobj = NULL;
+    struct gameobject *obj;
+    struct gameobject *cobj = NULL;
     int number = 0;
     char buf[MAX_INPUT_LENGTH];
 

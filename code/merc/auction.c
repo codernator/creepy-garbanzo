@@ -15,17 +15,17 @@
 /** exports */
 void auction_update(void);
 bool is_auction_participant(CHAR_DATA *ch);
-/*@shared@*//*@null@*/GAMEOBJECT *get_auction_item();
+/*@shared@*//*@null@*/struct gameobject *get_auction_item();
 
 
 /** imports */
-extern void recursive_clone(CHAR_DATA * ch, GAMEOBJECT * obj, GAMEOBJECT * clone);
+extern void recursive_clone(CHAR_DATA * ch, struct gameobject * obj, struct gameobject * clone);
 
 
 /** locals */
 typedef struct auction_data AUCTION_DATA;
 struct auction_data {
-    GAMEOBJECT * item;
+    struct gameobject * item;
     CHAR_DATA * seller;
     CHAR_DATA * buyer;
     unsigned int bet;
@@ -71,7 +71,7 @@ static const struct auction_types auction_type_table[] =
  ***************************************************************************/
 void do_auction(CHAR_DATA *ch, const char *argument)
 {
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
     char buf[MAX_STRING_LENGTH];
@@ -134,7 +134,7 @@ void do_auction(CHAR_DATA *ch, const char *argument)
         }
 
         if (currentAuction.item != NULL && !str_cmp(arg1, "clone")) {
-            GAMEOBJECT *obj_new = NULL;
+            struct gameobject *obj_new = NULL;
 
             obj_new = object_clone(currentAuction.item);
             obj_to_char(obj_new, ch);
@@ -372,7 +372,7 @@ inline bool is_auction_participant(CHAR_DATA *ch)
     return (currentAuction.item != NULL && ((ch == currentAuction.buyer) || (ch == currentAuction.seller)));
 }
 
-inline GAMEOBJECT *get_auction_item()
+inline struct gameobject *get_auction_item()
 {
     return currentAuction.item;
 }

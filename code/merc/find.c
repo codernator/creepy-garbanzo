@@ -70,9 +70,9 @@ static void help_ovnum_properties(CHAR_DATA *ch);
 
 
 
-GAMEOBJECT *get_object_by_itemtype_and_room(int item_type, struct room_index_data *room, CHAR_DATA *ch)
+struct gameobject *get_object_by_itemtype_and_room(int item_type, struct room_index_data *room, CHAR_DATA *ch)
 {
-    GAMEOBJECT *instance = NULL;
+    struct gameobject *instance = NULL;
 
     for (instance = room->contents; instance != NULL; instance = instance->next_content)
         if (instance->item_type == item_type && (ch == NULL || can_see_obj(ch, instance)))
@@ -153,8 +153,8 @@ void do_owhere(CHAR_DATA *ch, const char *argument)
         (*cmp_fn)(object_iterator_start(&object_empty_filter), argument, buffer);
         page_to_char(buf_string(buffer), ch);
     } else {
-        GAMEOBJECT *obj, *opending;
-        GAMEOBJECT *in_obj;
+        struct gameobject *obj, *opending;
+        struct gameobject *in_obj;
         char *clr1;
         char *clr2;
         int number;
@@ -236,7 +236,7 @@ void do_owhere(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	obj_cmp_vnum
  ***************************************************************************/
-bool obj_cmp_vnum(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
+bool obj_cmp_vnum(struct gameobject *obj, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by an object's vnum.\n\r");
@@ -246,7 +246,7 @@ bool obj_cmp_vnum(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	obj_cmp_name
  ***************************************************************************/
-bool obj_cmp_name(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
+bool obj_cmp_name(struct gameobject *obj, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by an object's name.\n\r");
@@ -256,7 +256,7 @@ bool obj_cmp_name(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	obj_cmp_short
  ***************************************************************************/
-bool obj_cmp_short(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
+bool obj_cmp_short(struct gameobject *obj, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by an object's short description.\n\r");
@@ -266,7 +266,7 @@ bool obj_cmp_short(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	obj_cmp_long
  ***************************************************************************/
-bool obj_cmp_long(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
+bool obj_cmp_long(struct gameobject *obj, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by an object's long description.\n\r");
@@ -276,7 +276,7 @@ bool obj_cmp_long(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	obj_cmp_type
  ***************************************************************************/
-bool obj_cmp_type(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
+bool obj_cmp_type(struct gameobject *obj, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
         add_buf(buf, "search by an object's type.\n\r");
@@ -288,7 +288,7 @@ bool obj_cmp_type(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	obj_cmp_location
  ***************************************************************************/
-bool obj_cmp_location(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
+bool obj_cmp_location(struct gameobject *obj, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
         add_buf(buf, "search by an object's wear location.\n\r");
@@ -300,7 +300,7 @@ bool obj_cmp_location(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	obj_cmp_weight
  ***************************************************************************/
-bool obj_cmp_weight(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
+bool obj_cmp_weight(struct gameobject *obj, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by an object's weight.\n\r");
@@ -310,7 +310,7 @@ bool obj_cmp_weight(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	obj_cmp_cost
  ***************************************************************************/
-bool obj_cmp_cost(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
+bool obj_cmp_cost(struct gameobject *obj, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by an object's cost.\n\r");
@@ -320,7 +320,7 @@ bool obj_cmp_cost(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	obj_cmp_level
  ***************************************************************************/
-bool obj_cmp_level(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
+bool obj_cmp_level(struct gameobject *obj, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by an object's level.\n\r");
@@ -330,7 +330,7 @@ bool obj_cmp_level(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	obj_cmp_extra
  ***************************************************************************/
-bool obj_cmp_extra(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
+bool obj_cmp_extra(struct gameobject *obj, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
         add_buf(buf, "search by an object's wear location.\n\r");
@@ -342,7 +342,7 @@ bool obj_cmp_extra(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	obj_cmp_wear
  ***************************************************************************/
-bool obj_cmp_wear(GAMEOBJECT *obj, const char *arg, BUFFER *buf)
+bool obj_cmp_wear(struct gameobject *obj, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
         add_buf(buf, "search by an object's wear location.\n\r");

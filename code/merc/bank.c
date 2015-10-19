@@ -11,16 +11,16 @@
 
 
 /** imports */
-extern GAMEOBJECT *get_object_by_itemtype_and_room(int item_type, struct room_index_data *room, CHAR_DATA *ch);
+extern struct gameobject *get_object_by_itemtype_and_room(int item_type, struct room_index_data *room, CHAR_DATA *ch);
 extern void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is, const char *message);
 
 
 /** locals */
-static void complete_transaction(CHAR_DATA *ch, bool withdraw, unsigned int amount, unsigned int *purse, unsigned int *drawer, const char *tender, GAMEOBJECT *atm);
-static bool check_for_bank(CHAR_DATA *ch, /*@out@*/ GAMEOBJECT **atm);
+static void complete_transaction(CHAR_DATA *ch, bool withdraw, unsigned int amount, unsigned int *purse, unsigned int *drawer, const char *tender, struct gameobject *atm);
+static bool check_for_bank(CHAR_DATA *ch, /*@out@*/ struct gameobject **atm);
 static void evaluate_transaction(CHAR_DATA *ch, bool withdraw, char *arg_amount, char *arg_tender);
 static void find_money(CHAR_DATA *ch);
-static void give_receipt(CHAR_DATA *ch, unsigned int amount, const char *action, const char *tender, GAMEOBJECT *atm);
+static void give_receipt(CHAR_DATA *ch, unsigned int amount, const char *action, const char *tender, struct gameobject *atm);
 static void report_balance(CHAR_DATA *ch);
 
 
@@ -42,7 +42,7 @@ void do_atm_deposit(CHAR_DATA *ch, const char *argument)
 
 void do_balance(CHAR_DATA *ch, const char *vo)
 {
-    GAMEOBJECT *atm;
+    struct gameobject *atm;
 
     DENY_NPC(ch);
 
@@ -80,7 +80,7 @@ void do_withdraw(CHAR_DATA *ch, const char *argument)
 void evaluate_transaction(CHAR_DATA *ch, bool withdraw, char *arg_amount, char *arg_tender)
 {
     char buf[MAX_INPUT_LENGTH];
-    GAMEOBJECT *atm = NULL;
+    struct gameobject *atm = NULL;
 
     if (check_for_bank(ch, &atm)) {
 	long parsed_arg = 0;
@@ -135,9 +135,9 @@ void find_money(CHAR_DATA *ch)
 	ch->pcdata->silver_in_bank = 10000000u;
 }
 
-bool check_for_bank(CHAR_DATA *ch, /*@out@*/ GAMEOBJECT **atm)
+bool check_for_bank(CHAR_DATA *ch, /*@out@*/ struct gameobject **atm)
 {
-    GAMEOBJECT *temp_atm = NULL;
+    struct gameobject *temp_atm = NULL;
 
     if (!IS_SET(ch->in_room->room_flags, ROOM_BANK)) {
 	temp_atm = get_object_by_itemtype_and_room(ITEM_ATM, ch->in_room, ch);
@@ -154,7 +154,7 @@ bool check_for_bank(CHAR_DATA *ch, /*@out@*/ GAMEOBJECT **atm)
     }
 }
 
-void complete_transaction(CHAR_DATA *ch, bool withdraw, unsigned int amount, unsigned int *purse, unsigned int *drawer, const char *tender, GAMEOBJECT *atm)
+void complete_transaction(CHAR_DATA *ch, bool withdraw, unsigned int amount, unsigned int *purse, unsigned int *drawer, const char *tender, struct gameobject *atm)
 {
     char buf[MAX_INPUT_LENGTH];
 
@@ -184,7 +184,7 @@ void report_balance(CHAR_DATA *ch)
     printf_to_char(ch, "You have %u gold and %u silver pieces in the bank.\n\r", ch->pcdata->gold_in_bank, ch->pcdata->silver_in_bank);
 }
 
-void give_receipt(CHAR_DATA *ch, unsigned int amount, const char *action, const char *tender, GAMEOBJECT *atm)
+void give_receipt(CHAR_DATA *ch, unsigned int amount, const char *action, const char *tender, struct gameobject *atm)
 {
     char buf[MAX_INPUT_LENGTH];
 

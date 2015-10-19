@@ -416,7 +416,7 @@ void do_rescue(CHAR_DATA *ch, const char *argument)
 void do_disarm(CHAR_DATA *ch, /*@unused@*/const char *argument)
 {
     CHAR_DATA *victim;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     SKILL *skill;
     int chance;
     int hth;

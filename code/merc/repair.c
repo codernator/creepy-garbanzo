@@ -6,9 +6,9 @@
 
 
 extern CHAR_DATA * find_keeper(CHAR_DATA * ch);
-extern int get_cost(CHAR_DATA * keeper, GAMEOBJECT * obj, bool fbuy);
-extern GAMEOBJECT * get_obj_keeper(CHAR_DATA * ch, CHAR_DATA * keeper, char *argument);
-extern void obj_to_keeper(GAMEOBJECT * obj, CHAR_DATA * ch);
+extern int get_cost(CHAR_DATA * keeper, struct gameobject * obj, bool fbuy);
+extern struct gameobject * get_obj_keeper(CHAR_DATA * ch, CHAR_DATA * keeper, char *argument);
+extern void obj_to_keeper(struct gameobject * obj, CHAR_DATA * ch);
 
 
 /***************************************************************************
@@ -19,7 +19,7 @@ extern void obj_to_keeper(GAMEOBJECT * obj, CHAR_DATA * ch);
 void do_estimate(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *mob;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
     unsigned int cost;
@@ -109,7 +109,7 @@ void do_estimate(CHAR_DATA *ch, const char *argument)
 void do_poison(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *mob;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
     unsigned int cost;
@@ -169,7 +169,7 @@ void do_poison(CHAR_DATA *ch, const char *argument)
 void do_engulf(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *mob;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
     unsigned int cost;
 
@@ -229,7 +229,7 @@ void do_engulf(CHAR_DATA *ch, const char *argument)
 void do_sharpen(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *mob;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
     unsigned int cost;
 
@@ -285,7 +285,7 @@ void do_sharpen(CHAR_DATA *ch, const char *argument)
 void do_chill(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *mob;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
     unsigned int cost;
 
@@ -342,7 +342,7 @@ void do_chill(CHAR_DATA *ch, const char *argument)
 void do_electrify(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *mob;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
     unsigned int cost;
 
@@ -400,7 +400,7 @@ void do_electrify(CHAR_DATA *ch, const char *argument)
 void do_energize(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *mob;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
     unsigned int cost;
 

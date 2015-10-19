@@ -59,10 +59,10 @@ extern void string_append(CHAR_DATA * ch, char **string);
 /***************************************************************************
  *	local procedures
  ***************************************************************************/
-static void load_thread(char *name, NOTE_DATA * *list, int type, time_t free_time);
+static void load_thread(char *name, struct note_data * *list, int type, time_t free_time);
 static void parse_message(CHAR_DATA * ch, const char *argument, int type);
-static bool is_message_hidden(CHAR_DATA * ch, NOTE_DATA * pnote);
-static int count_thread(CHAR_DATA * ch, NOTE_DATA * spool);
+static bool is_message_hidden(CHAR_DATA * ch, struct note_data * pnote);
+static int count_thread(CHAR_DATA * ch, struct note_data * spool);
 static void list_thread(CHAR_DATA * ch, int type, const char *argument, bool search);
 
 /***************************************************************************
@@ -72,15 +72,15 @@ int message_type_lookup(char *name);
 static int get_message_index(int type);
 static char *get_message_file(int type);
 static char *get_message_name(int type);
-static NOTE_DATA **get_message_thread(int type);
-static NOTE_DATA *get_message(CHAR_DATA * ch, int *msg_num, int type);
-static NOTE_DATA *clone_message(NOTE_DATA * src);
+static struct note_data **get_message_thread(int type);
+static struct note_data *get_message(CHAR_DATA * ch, int *msg_num, int type);
+static struct note_data *clone_message(struct note_data * src);
 
 
 /***************************************************************************
  *	message specific vars
  ***************************************************************************/
-static NOTE_DATA *note_thread;
+static struct note_data *note_thread;
 
 
 #define WEEK    (7 * 24 * 60 * 60)
@@ -170,7 +170,7 @@ static char *get_message_file(int type)
  *
  *	get the index of the note type structure in the table
  ***************************************************************************/
-static NOTE_DATA **get_message_thread(int type)
+static struct note_data **get_message_thread(int type)
 {
     int msg_idx;
 
@@ -186,9 +186,9 @@ static NOTE_DATA **get_message_thread(int type)
  *
  *	count the number of unread messages in a thread
  ***************************************************************************/
-static int count_thread(CHAR_DATA *ch, NOTE_DATA *thread)
+static int count_thread(CHAR_DATA *ch, struct note_data *thread)
 {
-    NOTE_DATA *note;
+    struct note_data *note;
     int count;
 
     count = 0;
@@ -207,8 +207,8 @@ static int count_thread(CHAR_DATA *ch, NOTE_DATA *thread)
  ***************************************************************************/
 static void save_thread(int type)
 {
-    NOTE_DATA **list;
-    NOTE_DATA *note;
+    struct note_data **list;
+    struct note_data *note;
     FILE *fp;
     char *file_name;
 
@@ -243,7 +243,7 @@ static void save_thread(int type)
  ***************************************************************************/
 void load_threads(void)
 {
-    NOTE_DATA *msg_list;
+    struct note_data *msg_list;
     char *file_name;
     int msg_type;
     int idx;
@@ -267,9 +267,9 @@ void load_threads(void)
  *
  *	load a single thread
  ***************************************************************************/
-static void load_thread(char *name, NOTE_DATA **list, int type, time_t free_time)
+static void load_thread(char *name, struct note_data **list, int type, time_t free_time)
 {
-    NOTE_DATA *note_last;
+    struct note_data *note_last;
     FILE *fp;
 
     if ((fp = fopen(name, "r")) == NULL)
@@ -277,7 +277,7 @@ static void load_thread(char *name, NOTE_DATA **list, int type, time_t free_time
 
     note_last = NULL;
     for (;; ) {
-	NOTE_DATA *note;
+	struct note_data *note;
 	char letter;
 
 	do {
@@ -343,10 +343,10 @@ static void load_thread(char *name, NOTE_DATA **list, int type, time_t free_time
  *
  *	append a message to the end of a thread
  ***************************************************************************/
-static void append_message(NOTE_DATA *note)
+static void append_message(struct note_data *note)
 {
-    NOTE_DATA **list;
-    NOTE_DATA *last;
+    struct note_data **list;
+    struct note_data *last;
     FILE *fp;
     char *file_name;
 
@@ -385,7 +385,7 @@ static void append_message(NOTE_DATA *note)
  ***************************************************************************/
 static void attach_message(CHAR_DATA *ch, int type)
 {
-    NOTE_DATA *note;
+    struct note_data *note;
 
     if (ch->pnote != NULL)
 	return;
@@ -409,10 +409,10 @@ static void attach_message(CHAR_DATA *ch, int type)
  *
  *	remove a note from a thread
  ***************************************************************************/
-static void remove_message(NOTE_DATA *note)
+static void remove_message(struct note_data *note)
 {
-    NOTE_DATA *prev;
-    NOTE_DATA **list;
+    struct note_data *prev;
+    struct note_data **list;
 
     if ((list = get_message_thread(note->type)) == NULL)
 	return;
@@ -444,7 +444,7 @@ static void remove_message(NOTE_DATA *note)
  *
  *	check to see if a character is the recipient of a message
  ***************************************************************************/
-static bool is_message_to(CHAR_DATA *ch, NOTE_DATA *note)
+static bool is_message_to(CHAR_DATA *ch, struct note_data *note)
 {
     if (IS_NPC(ch))
 	return false;
@@ -476,7 +476,7 @@ static bool is_message_to(CHAR_DATA *ch, NOTE_DATA *note)
  *	can a character see a note and is that note newer than the
  *	characters last read
  ***************************************************************************/
-static bool is_message_hidden(CHAR_DATA *ch, NOTE_DATA *note)
+static bool is_message_hidden(CHAR_DATA *ch, struct note_data *note)
 {
     if (IS_NPC(ch))
 	return true;
@@ -501,7 +501,7 @@ static bool is_message_hidden(CHAR_DATA *ch, NOTE_DATA *note)
  *
  *	update the read time stamp for the current thread
  ***************************************************************************/
-static void update_read(CHAR_DATA *ch, NOTE_DATA *note)
+static void update_read(CHAR_DATA *ch, struct note_data *note)
 {
     time_t stamp;
 
@@ -633,7 +633,7 @@ static void parse_message(CHAR_DATA *ch, const char *argument, int type)
  ***************************************************************************/
 static void message_read(CHAR_DATA *ch, const char *argument, int type)
 {
-    NOTE_DATA *note;
+    struct note_data *note;
     int msg_num;
 
     if (argument[0] == '\0' || !str_prefix(argument, "next")) {
@@ -700,8 +700,8 @@ static void message_search(CHAR_DATA *ch, const char *argument, int type)
  ***************************************************************************/
 static void message_remove(CHAR_DATA *ch, const char *argument, int type)
 {
-    NOTE_DATA **list;
-    NOTE_DATA *note;
+    struct note_data **list;
+    struct note_data *note;
     int msg_num;
 
     if (!is_number(argument)) {
@@ -737,8 +737,8 @@ static void message_remove(CHAR_DATA *ch, const char *argument, int type)
  ***************************************************************************/
 static void message_delete(CHAR_DATA *ch, const char *argument, int type)
 {
-    NOTE_DATA **list;
-    NOTE_DATA *note;
+    struct note_data **list;
+    struct note_data *note;
     int msg_num;
 
     if (get_trust(ch) < LEVEL_IMMORTAL) {
@@ -1045,8 +1045,8 @@ static void message_post(CHAR_DATA *ch, const char *argument, int type)
  ***************************************************************************/
 static void message_recall(CHAR_DATA *ch, const char *argument, int type)
 {
-    NOTE_DATA *note;
-    NOTE_DATA *clone_msg;
+    struct note_data *note;
+    struct note_data *clone_msg;
     int msg_num;
 
     if (ch->pnote != NULL) {
@@ -1084,8 +1084,8 @@ static void message_recall(CHAR_DATA *ch, const char *argument, int type)
  ***************************************************************************/
 static void message_reply(CHAR_DATA *ch, const char *argument, int type)
 {
-    NOTE_DATA *note;
-    NOTE_DATA *clone_msg;
+    struct note_data *note;
+    struct note_data *clone_msg;
     BUFFER *buf;
     int msg_num;
 
@@ -1150,8 +1150,8 @@ static void message_reply(CHAR_DATA *ch, const char *argument, int type)
  ***************************************************************************/
 static void message_forward(CHAR_DATA *ch, const char *argument, int type)
 {
-    NOTE_DATA *note;
-    NOTE_DATA *clone_msg;
+    struct note_data *note;
+    struct note_data *clone_msg;
     BUFFER *buf;
     int msg_num;
 
@@ -1213,8 +1213,8 @@ static void message_forward(CHAR_DATA *ch, const char *argument, int type)
  ***************************************************************************/
 static void list_thread(CHAR_DATA *ch, int type, const char *argument, bool search)
 {
-    NOTE_DATA **list;
-    NOTE_DATA *note;
+    struct note_data **list;
+    struct note_data *note;
     BUFFER *buf;
     char *txt;
     int msg_idx;
@@ -1270,10 +1270,10 @@ static void list_thread(CHAR_DATA *ch, int type, const char *argument, bool sear
  *
  *	get a single message by number
  ***************************************************************************/
-static NOTE_DATA *get_message(CHAR_DATA *ch, int *msg_num, int type)
+static struct note_data *get_message(CHAR_DATA *ch, int *msg_num, int type)
 {
-    NOTE_DATA **list;
-    NOTE_DATA *note;
+    struct note_data **list;
+    struct note_data *note;
     int idx;
 
     if ((list = get_message_thread(type)) != NULL) {
@@ -1299,9 +1299,9 @@ static NOTE_DATA *get_message(CHAR_DATA *ch, int *msg_num, int type)
  *
  *	clone a message
  ***************************************************************************/
-static NOTE_DATA *clone_message(NOTE_DATA *src)
+static struct note_data *clone_message(struct note_data *src)
 {
-    NOTE_DATA *clone;
+    struct note_data *clone;
 
     clone = new_note();
     clone->next = NULL;

@@ -32,7 +32,7 @@ heal_cmd_table[] =
 void do_heal(CHAR_DATA *ch, const char *argument)
 {
 	CHAR_DATA *mob;
-	GAMEOBJECT *acid;
+	struct gameobject *acid;
 	SKILL *skill;
 	char arg[MAX_INPUT_LENGTH];
 	unsigned int cost;

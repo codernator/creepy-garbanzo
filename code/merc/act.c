@@ -18,8 +18,8 @@ void act_new(const char *format, CHAR_DATA *ch, const void *arg1, const void *ar
 
     CHAR_DATA *to;
     CHAR_DATA *vch = (CHAR_DATA *)arg2;
-    GAMEOBJECT *obj1 = (GAMEOBJECT *)arg1;
-    GAMEOBJECT *obj2 = (GAMEOBJECT *)arg2;
+    struct gameobject *obj1 = (struct gameobject *)arg1;
+    struct gameobject *obj2 = (struct gameobject *)arg2;
     char buf[MAX_STRING_LENGTH];
     char fname[MAX_INPUT_LENGTH];
     const char *str;

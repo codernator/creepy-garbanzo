@@ -702,7 +702,7 @@ EDIT(redit_oshow){
  ***************************************************************************/
 EDIT(redit_show){
     struct room_index_data *room;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     CHAR_DATA *rch;
     char buf[MAX_STRING_LENGTH];
     int door;
@@ -1319,8 +1319,8 @@ EDIT(redit_mreset){
 EDIT(redit_oreset){
     struct room_index_data *room;
     struct objectprototype *obj;
-    GAMEOBJECT *newobj;
-    GAMEOBJECT *to_obj;
+    struct gameobject *newobj;
+    struct gameobject *to_obj;
     CHAR_DATA *to_mob;
     struct reset_data *pReset;
     char arg1[MAX_INPUT_LENGTH];

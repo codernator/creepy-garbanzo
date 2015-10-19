@@ -11,16 +11,16 @@
 
 /** imports */
 extern char str_empty[1];
-extern NOTE_DATA *note_free;
+extern struct note_data *note_free;
 
 /** locals */
 
 
 
 
-NOTE_DATA *new_note()
+struct note_data *new_note()
 {
-    NOTE_DATA *note;
+    struct note_data *note;
 
     if (note_free == NULL) {
         note = alloc_perm((unsigned int)sizeof(*note));
@@ -33,7 +33,7 @@ NOTE_DATA *new_note()
     return note;
 }
 
-void free_note(NOTE_DATA *note)
+void free_note(struct note_data *note)
 {
     if (!IS_VALID(note))
         return;
@@ -247,8 +247,8 @@ CHAR_DATA *new_char(void)
  ***************************************************************************/
 void free_char(CHAR_DATA *ch)
 {
-    GAMEOBJECT *obj;
-    GAMEOBJECT *obj_next;
+    struct gameobject *obj;
+    struct gameobject *obj_next;
     AFFECT_DATA *paf;
     AFFECT_DATA *paf_next;
 

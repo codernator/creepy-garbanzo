@@ -24,7 +24,7 @@ extern long top_mob_index;
 extern bool copyover();
 extern AFFECT_DATA *affect_free;
 extern bool is_auction_participant(CHAR_DATA *ch);
-extern GAMEOBJECT *get_auction_item();
+extern struct gameobject *get_auction_item();
 extern void reset_area(struct area_data * pArea);
 extern bool add_alias(CHAR_DATA * ch, char *alias, char *cmd);
 extern bool set_char_hunger(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
@@ -453,7 +453,7 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ const char *argument)
     }
 
     if (is_auction_participant(ch)) {
-        GAMEOBJECT *item = get_auction_item();
+        struct gameobject *item = get_auction_item();
         if (item == NULL) {
             log_bug("%s reported as auction participant with no auction item.", ch->name);
         } else {
@@ -602,7 +602,7 @@ void do_wiznet(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void wiznet(char *string, /*@null@*/ CHAR_DATA *ch, /*@null@*/ GAMEOBJECT *obj, long flag, long flag_skip, int min_level)
+void wiznet(char *string, /*@null@*/ CHAR_DATA *ch, /*@null@*/ struct gameobject *obj, long flag, long flag_skip, int min_level)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
     struct descriptor_data *d;
@@ -710,7 +710,7 @@ void do_impnet(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void impnet(char *string, CHAR_DATA *ch, GAMEOBJECT *obj, long flag, long flag_skip, int min_level)
+void impnet(char *string, CHAR_DATA *ch, struct gameobject *obj, long flag, long flag_skip, int min_level)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
     struct descriptor_data *d;
@@ -939,7 +939,7 @@ void do_disconnect(CHAR_DATA *ch, const char *argument)
 void do_chown(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
 
@@ -1674,7 +1674,7 @@ void do_return(CHAR_DATA *ch, const char *argument)
 }
 
 /* trust levels for load and clone */
-bool obj_check(CHAR_DATA *ch, GAMEOBJECT *obj)
+bool obj_check(CHAR_DATA *ch, struct gameobject *obj)
 {
     if (IS_TRUSTED(ch, GOD)
         || (IS_TRUSTED(ch, IMMORTAL) && obj->level <= 20 && obj->cost <= 1000)
@@ -1687,10 +1687,10 @@ bool obj_check(CHAR_DATA *ch, GAMEOBJECT *obj)
 }
 
 /* for clone, to insure that cloning goes many levels deep */
-void recursive_clone(CHAR_DATA *ch, GAMEOBJECT *obj, GAMEOBJECT *clone)
+void recursive_clone(CHAR_DATA *ch, struct gameobject *obj, struct gameobject *clone)
 {
-    GAMEOBJECT *c_obj;
-    GAMEOBJECT *t_obj;
+    struct gameobject *c_obj;
+    struct gameobject *t_obj;
 
     for (c_obj = obj->contains; c_obj != NULL; c_obj = c_obj->next_content) {
         if (obj_check(ch, c_obj)) {
@@ -1705,7 +1705,7 @@ void recursive_clone(CHAR_DATA *ch, GAMEOBJECT *obj, GAMEOBJECT *clone)
 void do_clone(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *mob;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     static char arg[MAX_INPUT_LENGTH];
     static char buf[MAX_INPUT_LENGTH];
     const char *rest;
@@ -1769,7 +1769,7 @@ void do_clone(CHAR_DATA *ch, const char *argument)
             send_to_char("Your powers are not great enough for such a task.\n\r", ch);
             return;
         } else {
-            GAMEOBJECT *clone = NULL;
+            struct gameobject *clone = NULL;
 
             for (iter = 0; iter < count; iter++) {
                 clone = object_clone(obj);
@@ -1817,7 +1817,7 @@ void do_clone(CHAR_DATA *ch, const char *argument)
 
                     for (obj = mob->carrying; obj != NULL; obj = obj->next_content) {
                         if (obj_check(ch, obj)) {
-                            GAMEOBJECT *new_obj = object_clone(obj);
+                            struct gameobject *new_obj = object_clone(obj);
                             recursive_clone(ch, obj, new_obj);
                             obj_to_char(new_obj, clone);
                             new_obj->wear_loc = obj->wear_loc;
@@ -1918,7 +1918,7 @@ void do_mload(CHAR_DATA *ch, const char *argument)
 void do_oload(CHAR_DATA *ch, const char *argument)
 {
     struct objectprototype *pObjIndex;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
     char buf[MAX_STRING_LENGTH];
@@ -1971,7 +1971,7 @@ void do_oload(CHAR_DATA *ch, const char *argument)
 void do_purge(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *victim;
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
     char buf[100];
 
@@ -1982,7 +1982,7 @@ void do_purge(CHAR_DATA *ch, const char *argument)
     if (arg[0] == '\0') {
         /* 'purge' */
         CHAR_DATA *vnext;
-        GAMEOBJECT *obj_next;
+        struct gameobject *obj_next;
 
         for (victim = ch->in_room->people; victim != NULL; victim = vnext) {
             vnext = victim->next_in_room;
@@ -3390,8 +3390,8 @@ void do_addalias(CHAR_DATA *ch, const char *argument)
 void fry_char(CHAR_DATA *ch, char *argument)
 {
     struct descriptor_data *d;
-    GAMEOBJECT *obj;
-    GAMEOBJECT *obj_next;
+    struct gameobject *obj;
+    struct gameobject *obj_next;
 
     DENY_NPC(ch);
 
@@ -3424,7 +3424,7 @@ void fry_char(CHAR_DATA *ch, char *argument)
 
 void do_mrelic(CHAR_DATA *ch, const char *argument)
 {
-    GAMEOBJECT *obj;
+    struct gameobject *obj;
     int i = 1500;
 
     if (argument[0] == '\0') {

@@ -11,8 +11,8 @@
 * Repair code - 08-09-2002
 ***************************************************************************/
 static bool is_negative_affect(AFFECT_DATA * paf);
-static unsigned int repair_cost(GAMEOBJECT * obj, char *stat);
-static void enchant_item(GAMEOBJECT * obj);
+static unsigned int repair_cost(struct gameobject * obj, char *stat);
+static void enchant_item(struct gameobject * obj);
 
 /***************************************************************************
 *	item_affect_stats
@@ -51,7 +51,7 @@ item_affect_stats[] =
 ***************************************************************************/
 void do_enchant(CHAR_DATA *ch, const char *argument)
 {
-	GAMEOBJECT *obj;
+	struct gameobject *obj;
 	AFFECT_DATA af;
 	char item[MAX_INPUT_LENGTH];
 	char affect[MAX_INPUT_LENGTH];
@@ -176,7 +176,7 @@ void do_enchant(CHAR_DATA *ch, const char *argument)
 ***************************************************************************/
 void do_disenchant(CHAR_DATA *ch, const char *argument)
 {
-	GAMEOBJECT *obj;
+	struct gameobject *obj;
 	AFFECT_DATA *paf;
 	AFFECT_DATA *paf_next;
 	char item[MAX_INPUT_LENGTH];
@@ -337,7 +337,7 @@ bool is_negative_affect(AFFECT_DATA *paf)
 void do_repair(CHAR_DATA *ch, const char *argument)
 {
 	CHAR_DATA *mob;
-	GAMEOBJECT *obj;
+	struct gameobject *obj;
 	AFFECT_DATA *paf;
 	SKILL *skill_haggle;
 	char cmd[MAX_STRING_LENGTH];
@@ -489,7 +489,7 @@ void do_repair(CHAR_DATA *ch, const char *argument)
 *
 *	get the cost to repair an item
 ***************************************************************************/
-unsigned int repair_cost(GAMEOBJECT *obj, char *stat)
+unsigned int repair_cost(struct gameobject *obj, char *stat)
 {
 	AFFECT_DATA *paf;
 	unsigned int cost = 0;
@@ -555,7 +555,7 @@ unsigned int repair_cost(GAMEOBJECT *obj, char *stat)
 *	take item affects from an object index and copy them to the
 *	affects specific to the item
 ***************************************************************************/
-void enchant_item(GAMEOBJECT *obj)
+void enchant_item(struct gameobject *obj)
 {
 	AFFECT_DATA *copy;
 	AFFECT_DATA *copy_next;
