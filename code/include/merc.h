@@ -56,7 +56,6 @@ typedef enum e_one_attack_result {
 /*Structure types. */
 typedef struct affect_data AFFECT_DATA;
 typedef struct ban_data BAN_DATA;
-typedef struct weather_data WEATHER_DATA;
 
 typedef struct mprog_list MPROG_LIST;
 typedef struct mprog_code MPROG_CODE;
@@ -136,7 +135,7 @@ struct system_state {
 
 
 struct game_state {
-    WEATHER_DATA *weather;
+    struct weather_data *weather;
     struct time_info_data *gametime;
 };
 

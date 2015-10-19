@@ -36,7 +36,7 @@
 int listen_port;
 int listen_control;
 
-static WEATHER_DATA weather = { 
+static struct weather_data weather = { 
     .mmhg = 0,
     .change = 0,
     .sky = 0,
