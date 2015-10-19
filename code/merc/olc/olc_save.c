@@ -399,7 +399,6 @@ void save_object(FILE *fp, struct objectprototype *pObjIndex)
 {
     struct affect_data *pAf;
     struct extra_descr_data *extra;
-    char letter;
     char buf[MAX_STRING_LENGTH];
 
     fprintf(fp, "#%ld\n", pObjIndex->vnum);

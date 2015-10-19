@@ -162,11 +162,11 @@ static void fwrite_char(struct char_data *ch, FILE *fp)
 
     fprintf(fp, "Plyd %d\n", ch->played + (int)(globalSystemState.current_time - ch->logon));
 
-    //for (idx = 0; message_type_table[idx].name[0] != '\0'; idx++) {
-    //    fprintf(fp, "Msg '%s' %ld\n",
-    //            message_type_table[idx].name,
-    //            (long)ch->pcdata->last_read[message_type_table[idx].type]);
-    //}
+    for (idx = 0; message_type_table[idx].name[0] != '\0'; idx++) {
+        fprintf(fp, "Msg '%s' %ld\n",
+                message_type_table[idx].name,
+                (long)ch->pcdata->last_read[message_type_table[idx].type]);
+    }
 
     fprintf(fp, "Scro %d\n", ch->lines);
 

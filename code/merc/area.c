@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include "entityload.h"
 
 const struct area_filter area_empty_filter;
 
@@ -138,25 +139,6 @@ KEYVALUEPAIR_ARRAY *area_serialize(const struct area_data *areadata)
 }
 
 
-#define ASSIGN_ULONG_KEY(field, name) \
-    entry = keyvaluepairarray_find(data, (name)); \
-    (field) = (entry != NULL) ? parse_unsigned_long(entry) : 0;
-
-#define ASSIGN_UINT_KEY(field, name) \
-    entry = keyvaluepairarray_find(data, (name)); \
-    (field) = (entry != NULL) ? parse_unsigned_int(entry) : 0;
-
-#define ASSIGN_STRING_KEY(field, name) \
-    entry = keyvaluepairarray_find(data, (name)); \
-    (field) = (entry != NULL) ? string_copy(entry) : 0;
-
-#define ASSIGN_FLAG_KEY(field, name) \
-    entry = keyvaluepairarray_find(data, (name)); \
-    (field) = (entry != NULL) ? flag_from_string(entry) : 0;
-
-#define ASSIGN_BOOL_KEY(field, name) \
-    entry = keyvaluepairarray_find(data, (name)); \
-    (field) = (entry != NULL) ? parse_int(entry) == 1 : false;
 
 struct area_data *area_deserialize(const KEYVALUEPAIR_ARRAY *data, const char *filename)
 {
@@ -168,18 +150,18 @@ struct area_data *area_deserialize(const KEYVALUEPAIR_ARRAY *data, const char *f
     memset(areadata, 0, sizeof(struct area_data));
 
     /*@-mustfreeonly@*/
-    ASSIGN_ULONG_KEY(areadata->vnum, "vnum");
+    ASSIGN_ULONG_KEY(data, areadata->vnum, "vnum");
     areadata->file_name = string_copy(filename);
-    ASSIGN_STRING_KEY(areadata->name, "name");
-    ASSIGN_STRING_KEY(areadata->description, "description");
-    ASSIGN_STRING_KEY(areadata->credits, "credits");
-    ASSIGN_STRING_KEY(areadata->builders, "builders");
-    ASSIGN_ULONG_KEY(areadata->min_vnum, "min_vnum");
-    ASSIGN_ULONG_KEY(areadata->max_vnum, "max_vnum");
-    ASSIGN_FLAG_KEY(areadata->area_flags, "flags");
-    ASSIGN_UINT_KEY(areadata->security, "security");
-    ASSIGN_UINT_KEY(areadata->llevel, "llevel");
-    ASSIGN_UINT_KEY(areadata->ulevel, "ulevel");
+    ASSIGN_STRING_KEY(data, areadata->name, "name");
+    ASSIGN_STRING_KEY(data, areadata->description, "description");
+    ASSIGN_STRING_KEY(data, areadata->credits, "credits");
+    ASSIGN_STRING_KEY(data, areadata->builders, "builders");
+    ASSIGN_ULONG_KEY(data, areadata->min_vnum, "min_vnum");
+    ASSIGN_ULONG_KEY(data, areadata->max_vnum, "max_vnum");
+    ASSIGN_FLAG_KEY(data, areadata->area_flags, "flags");
+    ASSIGN_UINT_KEY(data, areadata->security, "security");
+    ASSIGN_UINT_KEY(data, areadata->llevel, "llevel");
+    ASSIGN_UINT_KEY(data, areadata->ulevel, "ulevel");
     /*@+mustfreeonly@*/
 
     headlist_add(areadata);
