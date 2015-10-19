@@ -129,7 +129,7 @@ void save_char_obj(struct char_data *ch)
 static void fwrite_char(struct char_data *ch, FILE *fp)
 {
     struct affect_data *paf;
-    LEARNED *learned;
+    struct learned_info *learned;
     int pos;
     int idx;
 
@@ -623,7 +623,7 @@ bool load_char_obj(struct descriptor_data *d, char *name)
 {
     struct char_data *ch;
     FILE *fp;
-    LEARNED *learned;
+    struct learned_info *learned;
     char strsave[MAX_INPUT_LENGTH];
     bool found;
     int stat;
@@ -1068,7 +1068,7 @@ void fread_char(struct char_data *ch, FILE *fp)
               KEY("Gres", ch->pcdata->grestore_string, fread_string(fp));
               if (!str_cmp(word, "Group") || !str_cmp(word, "Gr")) {
                   GROUP *group;
-                  LEARNED *learned;
+                  struct learned_info *learned;
                   char *temp;
 
                   temp = fread_word(fp);
@@ -1235,7 +1235,7 @@ void fread_char(struct char_data *ch, FILE *fp)
 
               if (!str_cmp(word, "Skill") || !str_cmp(word, "Sk")) {
                   SKILL *skill;
-                  LEARNED *learned;
+                  struct learned_info *learned;
                   char *temp;
                   int value;
 

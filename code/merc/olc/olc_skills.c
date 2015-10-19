@@ -336,7 +336,7 @@ EDIT(skedit_show){
     send_to_char("`!Class        Level           Cost\n\r", ch);
     send_to_char("`1------------------------------------------------\n\r", ch);
     if (skill->levels != NULL) {
-        LEVEL_INFO *levels;
+        struct level_info *levels;
 
         for (levels = skill->levels; levels != NULL; levels = levels->next) {
             sprintf(buf, "%s``:", capitalize(class_table[levels->class].name));
@@ -356,8 +356,8 @@ EDIT(skedit_show){
  ***************************************************************************/
 EDIT(skedit_level){
     SKILL *skill;
-    LEVEL_INFO *level_info;
-    LEVEL_INFO *level_idx;
+    struct level_info *level_info;
+    struct level_info *level_idx;
     char arg[MAX_STRING_LENGTH];
     int cls;
     int level;
@@ -420,7 +420,7 @@ EDIT(skedit_level){
         }
 
         if (level_info == NULL) {
-            send_to_char("Error creating LEVEL_INFO structure.\n\r", ch);
+            send_to_char("Error creating struct level_info structure.\n\r", ch);
             return false;
         }
 
@@ -429,7 +429,7 @@ EDIT(skedit_level){
 
         add_skill_level(skill, level_info);
     } else {
-        LEVEL_INFO *level_prev = NULL;
+        struct level_info *level_prev = NULL;
 
         if (level_info == NULL) {
             send_to_char("That level information does not exist.\n\r", ch);
@@ -1229,7 +1229,7 @@ void load_skills()
 
 
             if (!str_cmp(word, "Lvl")) {
-                LEVEL_INFO *level;
+                struct level_info *level;
 
                 level = new_level_info();
 
@@ -1300,7 +1300,7 @@ void save_skills()
         }
 
         if (skill->levels != NULL) {
-            LEVEL_INFO *level;
+            struct level_info *level;
 
             for (level = skill->levels; level != NULL; level = level->next)
                 fprintf(fp, "Lvl %d %d %d\n", level->class, level->level, level->difficulty);

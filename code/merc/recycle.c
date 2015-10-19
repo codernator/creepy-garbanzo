@@ -331,8 +331,8 @@ struct pc_data *new_pcdata(void)
  ***************************************************************************/
 void free_pcdata(struct pc_data *pcdata)
 {
-    LEARNED *learned;
-    LEARNED *learned_next;
+    struct learned_info *learned;
+    struct learned_info *learned_next;
     int alias;
 
     if (!IS_VALID(pcdata))

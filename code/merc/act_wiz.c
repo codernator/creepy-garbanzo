@@ -748,8 +748,8 @@ void do_grant(struct char_data *ch, const char *argument)
 {
     struct char_data *victim;
     SKILL *skill;
-    LEARNED *learned;
-    LEARNED *learned_found;
+    struct learned_info *learned;
+    struct learned_info *learned_found;
     char arg[MAX_INPUT_LENGTH];
 
     DENY_NPC(ch)

@@ -186,10 +186,10 @@ void resolve_global_hash()
 /**
  * create a new level info structure
  */
-LEVEL_INFO *new_level_info(void)
+struct level_info *new_level_info(void)
 {
-    static LEVEL_INFO li_zero;
-    LEVEL_INFO *li;
+    static struct level_info li_zero;
+    struct level_info *li;
 
     if (level_info_free == NULL) {
         li = alloc_perm((unsigned int)sizeof(*li));
@@ -207,7 +207,7 @@ LEVEL_INFO *new_level_info(void)
 /**
  * free the level info structure
  */
-void free_level_info(LEVEL_INFO *li)
+void free_level_info(struct level_info *li)
 {
     if (!IS_VALID(li))
         return;
@@ -220,10 +220,10 @@ void free_level_info(LEVEL_INFO *li)
 /**
  * create a new learned skill structure
  */
-LEARNED *new_learned(void)
+struct learned_info *new_learned(void)
 {
-    static LEARNED learned_zero;
-    LEARNED *learned;
+    static struct learned_info learned_zero;
+    struct learned_info *learned;
 
     if (learned_free == NULL) {
         learned = alloc_perm((unsigned int)sizeof(*learned));
@@ -241,7 +241,7 @@ LEARNED *new_learned(void)
 /**
  * free the learned skill structure
  */
-void free_learned(LEARNED *learned)
+void free_learned(struct learned_info *learned)
 {
     if (!IS_VALID(learned))
         return;
@@ -841,9 +841,9 @@ SKILL *resolve_skill_affect(struct affect_data *paf)
 /**
  * get the level of a skill for a given class
  */
-LEVEL_INFO *get_skill_level(struct char_data *ch, SKILL *skill)
+struct level_info *get_skill_level(struct char_data *ch, SKILL *skill)
 {
-    LEVEL_INFO *levels;
+    struct level_info *levels;
 
     if (IS_NPC(ch))
         return NULL;
@@ -858,9 +858,9 @@ LEVEL_INFO *get_skill_level(struct char_data *ch, SKILL *skill)
 /**
  * get the level of a group for a given class
  */
-LEVEL_INFO *get_group_level(GROUP *group, int cls)
+struct level_info *get_group_level(GROUP *group, int cls)
 {
-    LEVEL_INFO *levels;
+    struct level_info *levels;
 
     for (levels = group->levels; levels != NULL; levels = levels->next)
         if (levels->class == cls)
@@ -872,9 +872,9 @@ LEVEL_INFO *get_group_level(GROUP *group, int cls)
 /**
  * get a learned group
  */
-LEARNED *get_learned_group(struct char_data *ch, GROUP *group)
+struct learned_info *get_learned_group(struct char_data *ch, GROUP *group)
 {
-    LEARNED *learned;
+    struct learned_info *learned;
 
     if (IS_NPC(ch))
         return NULL;
@@ -891,9 +891,9 @@ LEARNED *get_learned_group(struct char_data *ch, GROUP *group)
 /**
  * get a learned skill
  */
-LEARNED *get_learned_skill(struct char_data *ch, SKILL *skill)
+struct learned_info *get_learned_skill(struct char_data *ch, SKILL *skill)
 {
-    LEARNED *learned;
+    struct learned_info *learned;
 
     if (IS_NPC(ch))
         return NULL;
@@ -914,9 +914,9 @@ LEARNED *get_learned_skill(struct char_data *ch, SKILL *skill)
 /**
  * find a learned group on a character
  */
-LEARNED *get_learned(struct char_data *ch, char *name)
+struct learned_info *get_learned(struct char_data *ch, char *name)
 {
-    LEARNED *learned;
+    struct learned_info *learned;
 
     if (IS_NPC(ch))
         return NULL;
@@ -933,7 +933,7 @@ LEARNED *get_learned(struct char_data *ch, char *name)
 /**
  * add a learned skill to a characters pcdata
  */
-void add_learned(struct char_data *ch, LEARNED *learned)
+void add_learned(struct char_data *ch, struct learned_info *learned)
 {
     if (learned == NULL)
         return;
@@ -955,9 +955,9 @@ void add_learned(struct char_data *ch, LEARNED *learned)
 /**
  * add a learned skill
  */
-void add_learned_skill(struct char_data *ch, LEARNED *learned)
+void add_learned_skill(struct char_data *ch, struct learned_info *learned)
 {
-    LEARNED *learned_idx;
+    struct learned_info *learned_idx;
 
     if (learned->skill == NULL
         || learned->type != LEARNED_TYPE_SKILL)
@@ -970,9 +970,9 @@ void add_learned_skill(struct char_data *ch, LEARNED *learned)
 
     learned_idx = get_learned_skill(ch, learned->skill);
     if (learned_idx == NULL) {
-        LEARNED *last_skill;
-        LEVEL_INFO *level;
-        LEVEL_INFO *level_idx;
+        struct learned_info *last_skill;
+        struct level_info *level;
+        struct level_info *level_idx;
 
         /* we have a skill - insert it at the right place
          * in the list */
@@ -998,7 +998,7 @@ void add_learned_skill(struct char_data *ch, LEARNED *learned)
                     && level_idx->level >= level->level) {
                     /* reset the previous item in the list */
                     if (learned_idx->prev != NULL) {
-                        LEARNED *prev;
+                        struct learned_info *prev;
 
                         prev = learned_idx->prev;
                         prev->next = learned;
@@ -1035,7 +1035,7 @@ void add_learned_skill(struct char_data *ch, LEARNED *learned)
 
             /* realistically, this case should never happen */
             if (last_skill->next != NULL) {
-                LEARNED *next;
+                struct learned_info *next;
 
                 next = last_skill->next;
                 learned->next = next;
@@ -1056,10 +1056,10 @@ void add_learned_skill(struct char_data *ch, LEARNED *learned)
 /**
  * add a learned group
  */
-void add_learned_group(struct char_data *ch, LEARNED *learned)
+void add_learned_group(struct char_data *ch, struct learned_info *learned)
 {
-    LEARNED *learned_idx;
-    LEARNED *learned_new;
+    struct learned_info *learned_idx;
+    struct learned_info *learned_new;
     SKILL_LIST *list;
 
 
@@ -1105,11 +1105,11 @@ void add_learned_group(struct char_data *ch, LEARNED *learned)
 /**
  * remove a learned skill to a characters pcdata
  */
-void remove_learned(struct char_data *ch, LEARNED *learned)
+void remove_learned(struct char_data *ch, struct learned_info *learned)
 {
-    LEARNED *learned_idx;
-    LEARNED *learned_next;
-    LEARNED *learned_prev;
+    struct learned_info *learned_idx;
+    struct learned_info *learned_next;
+    struct learned_info *learned_prev;
 
     if (learned == NULL
         || ch->pcdata == NULL
@@ -1165,10 +1165,10 @@ void remove_learned(struct char_data *ch, LEARNED *learned)
 /**
  * create a learned group by name
  */
-LEARNED *create_learned_group(char *name)
+struct learned_info *create_learned_group(char *name)
 {
     GROUP *group;
-    LEARNED *learned;
+    struct learned_info *learned;
 
     group = group_lookup(name);
     if (group != NULL) {
@@ -1185,10 +1185,10 @@ LEARNED *create_learned_group(char *name)
 /**
  * create a learned skill by name
  */
-LEARNED *create_learned_skill(char *name, int percent)
+struct learned_info *create_learned_skill(char *name, int percent)
 {
     SKILL *skill;
-    LEARNED *learned;
+    struct learned_info *learned;
 
     skill = skill_lookup(name);
     if (skill != NULL) {
@@ -1229,8 +1229,8 @@ bool check_affected(struct char_data *ch, char *name)
  */
 int get_learned_percent(struct char_data *ch, SKILL *skill)
 {
-    LEARNED *learned;
-    LEVEL_INFO *level;
+    struct learned_info *learned;
+    struct level_info *level;
     int pcnt = 0;
 
     if (skill == NULL) {
@@ -1294,10 +1294,10 @@ void add_group_skill(GROUP *group, SKILL *skill)
 /**
  * add a level information structure to a skill
  */
-void add_skill_level(SKILL *skill, LEVEL_INFO *level)
+void add_skill_level(SKILL *skill, struct level_info *level)
 {
-    LEVEL_INFO *level_idx;
-    LEVEL_INFO *level_prev;
+    struct level_info *level_idx;
+    struct level_info *level_prev;
 
     if (skill == NULL || level == NULL)
         return;
@@ -1324,10 +1324,10 @@ void add_skill_level(SKILL *skill, LEVEL_INFO *level)
 /**
  * add a level information structure to a group
  */
-void add_group_level(GROUP *group, LEVEL_INFO *level)
+void add_group_level(GROUP *group, struct level_info *level)
 {
-    LEVEL_INFO *level_idx;
-    LEVEL_INFO *level_prev;
+    struct level_info *level_idx;
+    struct level_info *level_prev;
 
     if (group == NULL || level == NULL)
         return;
@@ -1367,8 +1367,8 @@ static void gain_list(struct char_data *ch, struct char_data *trainer)
 {
     GROUP *group;
     SKILL *skill;
-    LEVEL_INFO *level;
-    LEARNED *learned;
+    struct level_info *level;
+    struct learned_info *learned;
     int col;
 
     col = 0;
@@ -1474,8 +1474,8 @@ static void gain_points(struct char_data *ch, struct char_data *trainer)
  */
 static void gain_group(struct char_data *ch, struct char_data *trainer, GROUP *group)
 {
-    LEVEL_INFO *level;
-    LEARNED *learned;
+    struct level_info *level;
+    struct learned_info *learned;
 
     if (group == NULL) {
         act("$N tells you 'You cannot learn that group.'", ch, NULL, trainer, TO_CHAR);
@@ -1517,8 +1517,8 @@ static void gain_group(struct char_data *ch, struct char_data *trainer, GROUP *g
  */
 static void gain_skill(struct char_data *ch, struct char_data *trainer, SKILL *skill)
 {
-    LEVEL_INFO *level;
-    LEARNED *learned;
+    struct level_info *level;
+    struct learned_info *learned;
 
     if (skill == NULL) {
         act("$N tells you 'You cannot learn that skill.'", ch, NULL, trainer, TO_CHAR);
@@ -1634,7 +1634,7 @@ void do_gain(struct char_data *ch, const char *argument)
  */
 static void skill_info(struct char_data *ch, SKILL *skill)
 {
-    LEVEL_INFO *level;
+    struct level_info *level;
     char buf[MAX_STRING_LENGTH];
 
     printf_to_char(ch, "\n\r%-17.17s %s\n\r", (skill->spells == NULL) ? "`@Skill`2:``" : "`1Spell`!:``", capitalize(skill->name));
@@ -1704,9 +1704,9 @@ static bool parse_levels(const char *argument, int *min_level, int *max_level)
 void do_skills(struct char_data *ch, const char *argument)
 {
     struct buf_type *buf;
-    LEARNED *learned;
+    struct learned_info *learned;
     SKILL *skill;
-    LEVEL_INFO *level;
+    struct level_info *level;
     int min_level;
     int max_level;
     int last_level;
@@ -1778,9 +1778,9 @@ void do_skills(struct char_data *ch, const char *argument)
 void do_spells(struct char_data *ch, const char *argument)
 {
     struct buf_type *buf;
-    LEARNED *learned;
+    struct learned_info *learned;
     SKILL *skill;
-    LEVEL_INFO *level;
+    struct level_info *level;
     int min_level;
     int max_level;
     int last_level;
@@ -1856,8 +1856,8 @@ void list_group_costs(struct char_data *ch)
 {
     GROUP *group;
     SKILL *skill;
-    LEVEL_INFO *level;
-    LEARNED *learned;
+    struct level_info *level;
+    struct learned_info *learned;
     int col;
 
     col = 0;
@@ -1913,8 +1913,8 @@ void list_group_costs(struct char_data *ch)
  */
 static void list_group_chosen(struct char_data *ch)
 {
-    LEARNED *learned;
-    LEVEL_INFO *level;
+    struct learned_info *learned;
+    struct level_info *level;
     int col;
 
     if (IS_NPC(ch))
@@ -2011,8 +2011,8 @@ bool parse_gen_groups(struct char_data *ch, const char *argument)
 {
     GROUP *group;
     SKILL *skill;
-    LEARNED *learned;
-    LEVEL_INFO *level;
+    struct learned_info *learned;
+    struct level_info *level;
     char arg[MAX_INPUT_LENGTH];
 
     if (argument[0] == '\0')
@@ -2169,8 +2169,8 @@ void do_groups(struct char_data *ch, const char *argument)
 {
     GROUP *group;
     SKILL_LIST *skill_idx;
-    LEARNED *learned;
-    LEVEL_INFO *level;
+    struct learned_info *learned;
+    struct level_info *level;
     int col;
 
     if (IS_NPC(ch))
@@ -2237,8 +2237,8 @@ void do_groups(struct char_data *ch, const char *argument)
  */
 void check_improve(struct char_data *ch, SKILL *skill, bool success, int multiplier)
 {
-    LEARNED *learned;
-    LEVEL_INFO *level;
+    struct learned_info *learned;
+    struct level_info *level;
     int chance;
     int rating;
 
@@ -2307,8 +2307,8 @@ void do_practice(struct char_data *ch, const char *argument)
     one_argument(argument, arg);
     if (arg[0] == '\0' || !str_prefix(arg, "list")) {
         struct buf_type *buf;
-        LEARNED *learned;
-        LEVEL_INFO *level;
+        struct learned_info *learned;
+        struct level_info *level;
         int col;
         bool check_percent;
         bool found;
@@ -2379,8 +2379,8 @@ void do_practice(struct char_data *ch, const char *argument)
         free_buf(buf);
     } else {
         struct char_data *mob;
-        LEARNED *learned;
-        LEVEL_INFO *level;
+        struct learned_info *learned;
+        struct level_info *level;
         SKILL *skill;
 
         if (!IS_AWAKE(ch)) {

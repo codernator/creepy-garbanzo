@@ -25,8 +25,8 @@ int count_slots(struct gameobject * obj);
 static void spell_imprint(SKILL *skill, int level, struct char_data *ch, void *vo)
 {
     struct gameobject *obj = (struct gameobject *)vo;
-    LEVEL_INFO *level_info;
-    LEARNED *learned;
+    struct level_info *level_info;
+    struct learned_info *learned;
     SKILL *skill_retro;
     char buf[MAX_STRING_LENGTH];
     char short_descr[MAX_STRING_LENGTH];
@@ -152,8 +152,8 @@ void do_brew(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     SKILL *skill;
-    LEARNED *learned_brew;
-    LEARNED *learned_spell;
+    struct learned_info *learned_brew;
+    struct learned_info *learned_spell;
     char arg[MAX_INPUT_LENGTH];
     int slots;
     int modifier;
@@ -280,8 +280,8 @@ void do_scribe(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     SKILL *skill;
-    LEARNED *learned_scribe;
-    LEARNED *learned_spell;
+    struct learned_info *learned_scribe;
+    struct learned_info *learned_spell;
     char arg[MAX_INPUT_LENGTH];
     int slots;
     int modifier;

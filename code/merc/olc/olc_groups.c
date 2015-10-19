@@ -189,7 +189,7 @@ EDIT(gredit_show){
     send_to_char("`1================================================\n\r", ch);
 
     if (group->levels != NULL) {
-        LEVEL_INFO *levels;
+        struct level_info *levels;
 
         for (levels = group->levels; levels != NULL; levels = levels->next) {
             sprintf(buf, "%s``:", capitalize(class_table[levels->class].name));
@@ -371,8 +371,8 @@ EDIT(gredit_skills){
  ***************************************************************************/
 EDIT(gredit_cost){
     GROUP *group;
-    LEVEL_INFO *level_info;
-    LEVEL_INFO *level_idx;
+    struct level_info *level_info;
+    struct level_info *level_idx;
     char arg[MAX_STRING_LENGTH];
     int cls;
     int cost;
@@ -419,7 +419,7 @@ EDIT(gredit_cost){
         }
 
         if (level_info == NULL) {
-            send_to_char("Error creating LEVEL_INFO structure.\n\r", ch);
+            send_to_char("Error creating struct level_info structure.\n\r", ch);
             return false;
         }
 
@@ -428,7 +428,7 @@ EDIT(gredit_cost){
 
         add_group_level(group, level_info);
     } else {
-        LEVEL_INFO *level_prev = NULL;
+        struct level_info *level_prev = NULL;
 
         if (level_info == NULL) {
             send_to_char("That level information does not exist.\n\r", ch);
@@ -520,7 +520,7 @@ void load_groups()
             KEY("Name", group->name, fread_string(fp));
 
             if (!str_cmp(word, "Lvl")) {
-                LEVEL_INFO *level;
+                struct level_info *level;
 
                 level = new_level_info();
 
@@ -577,7 +577,7 @@ void save_groups()
     FILE *fp;
     GROUP *group;
     SKILL_LIST *skills;
-    LEVEL_INFO *level;
+    struct level_info *level;
 
     if ((fp = fopen(GROUP_FILE, "w")) == NULL) {
         log_bug("save_groups: fopen");

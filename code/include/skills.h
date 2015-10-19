@@ -19,8 +19,6 @@
 /***************************************************************************
 *	typdefs
 ***************************************************************************/
-typedef struct level_info LEVEL_INFO;
-typedef struct learned_info LEARNED;
 typedef struct dynamic_skill SKILL;
 typedef struct dynamic_skill_list SKILL_LIST;
 typedef struct dynamic_group GROUP;
@@ -50,14 +48,14 @@ struct argument_type {
 *	dynamic level information for a skill
 ***************************************************************************/
 struct level_info {
-	LEVEL_INFO *	next;
+	struct level_info *	next;
 	int		class;
 	int		level;
 	int		difficulty;
 	bool		valid;
 	/*
 	 *      this is for future use
-	 * LEVEL_INFO *	prerequisites;
+	 * struct level_info *	prerequisites;
 	 */
 };
 
@@ -85,7 +83,7 @@ struct dynamic_skill {
 	bool valid;
 	SPELL_LIST *spells;
 	AFFECT_LIST *affects;
-	LEVEL_INFO *levels;
+	struct level_info *levels;
 	ARGUMENT *args;
 	char *help_keyword;
 	/* mob specific information */
@@ -116,7 +114,7 @@ struct dynamic_group {
 	int	 gn;
 	char *name;
 	SKILL_LIST *skills;
-	LEVEL_INFO *levels;
+	struct level_info *levels;
 	bool valid;
 	char *help_keyword;
 };
@@ -129,8 +127,8 @@ struct dynamic_group {
 *	tied to a character
 ***************************************************************************/
 struct learned_info {
-	LEARNED *	next;
-	LEARNED *	prev;
+	struct learned_info *	next;
+	struct learned_info *	prev;
 	SKILL *		skill;
 	GROUP *		group;
 	int		percent;
@@ -168,8 +166,8 @@ struct affect_list {
 /***************************************************************************
 *	memory recycling
 ***************************************************************************/
-LEVEL_INFO *level_info_free;
-LEARNED *learned_free;
+struct level_info *level_info_free;
+struct learned_info *learned_free;
 SKILL_LIST *skill_list_free;
 SPELL_LIST *spell_list_free;
 AFFECT_LIST *affect_list_free;
@@ -180,11 +178,11 @@ SKILL *skill_free;
 SKILL *skill_list;
 
 
-LEVEL_INFO *new_level_info(void);
-void free_level_info(LEVEL_INFO * li);
+struct level_info *new_level_info(void);
+void free_level_info(struct level_info * li);
 
-LEARNED *new_learned(void);
-void free_learned(LEARNED * learned);
+struct learned_info *new_learned(void);
+void free_learned(struct learned_info * learned);
 
 SKILL_LIST *new_skill_list(void);
 void free_skill_list(SKILL_LIST * list);
@@ -238,24 +236,24 @@ SKILL *resolve_skill_sn(int sn);
 SKILL *resolve_skill_affect(AFFECT_DATA *paf);
 int get_skill_number(char *name);
 
-void add_learned(CHAR_DATA * ch, LEARNED * learned);
-void add_learned_group(CHAR_DATA * ch, LEARNED * learned);
-void add_learned_skill(CHAR_DATA * ch, LEARNED * learned);
-void remove_learned(CHAR_DATA * ch, LEARNED * learned);
-void add_skill_level(SKILL * skill, LEVEL_INFO * level);
-void add_group_level(GROUP * group, LEVEL_INFO * level);
+void add_learned(CHAR_DATA * ch, struct learned_info * learned);
+void add_learned_group(CHAR_DATA * ch, struct learned_info * learned);
+void add_learned_skill(CHAR_DATA * ch, struct learned_info * learned);
+void remove_learned(CHAR_DATA * ch, struct learned_info * learned);
+void add_skill_level(SKILL * skill, struct level_info * level);
+void add_group_level(GROUP * group, struct level_info * level);
 void add_group_skill(GROUP * group, SKILL * skill);
 
-LEARNED *create_learned_skill(char *name, int percent);
-LEARNED *create_learned_group(char *name);
+struct learned_info *create_learned_skill(char *name, int percent);
+struct learned_info *create_learned_group(char *name);
 
-LEVEL_INFO *get_skill_level(CHAR_DATA * ch, SKILL * skill);
-LEVEL_INFO *get_group_level(GROUP * group, int cls);
+struct level_info *get_skill_level(CHAR_DATA * ch, SKILL * skill);
+struct level_info *get_group_level(GROUP * group, int cls);
 
 
-LEARNED *get_learned(CHAR_DATA * ch, char *name);
-LEARNED *get_learned_group(CHAR_DATA * ch, GROUP * group);
-LEARNED *get_learned_skill(CHAR_DATA * ch, SKILL * skill);
+struct learned_info *get_learned(CHAR_DATA * ch, char *name);
+struct learned_info *get_learned_group(CHAR_DATA * ch, GROUP * group);
+struct learned_info *get_learned_skill(CHAR_DATA * ch, SKILL * skill);
 
 int get_learned_percent(CHAR_DATA * ch, SKILL * skill);
 bool check_affected(CHAR_DATA * ch, char *name);

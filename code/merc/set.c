@@ -1784,7 +1784,7 @@ static void set_skill(struct char_data *ch, const char *argument)
 {
     struct char_data *vch;
     SKILL *skill;
-    LEARNED *learned;
+    struct learned_info *learned;
     char arg[MAX_INPUT_LENGTH];
     int percent;
 

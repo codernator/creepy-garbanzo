@@ -37,8 +37,8 @@ extern void dam_message(struct char_data * ch, struct char_data * victim, int da
 int find_spell(struct char_data *ch, const char *name)
 {
     SKILL *skill;
-    LEARNED *learned;
-    LEVEL_INFO *level;
+    struct learned_info *learned;
+    struct level_info *level;
     int found = -1;
 
 
@@ -324,8 +324,8 @@ void do_cast(struct char_data *ch, const char *argument)
 {
     struct char_data *victim;
     struct gameobject *obj;
-    LEARNED *learned;
-    LEVEL_INFO *level_info;
+    struct learned_info *learned;
+    struct level_info *level_info;
     SKILL *skill;
     char spell[MAX_INPUT_LENGTH];
     char arg[MAX_INPUT_LENGTH];

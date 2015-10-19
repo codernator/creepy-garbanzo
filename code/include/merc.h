@@ -1400,7 +1400,7 @@ struct pc_data {
     int true_sex;
     int last_level;
     long condition[COND_MAX];
-    LEARNED *skills;
+    struct learned_info *skills;
     int  points;
     bool confirm_delete;
     bool confirm_suicide;

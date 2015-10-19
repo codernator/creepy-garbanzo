@@ -310,7 +310,7 @@ static void newrace_answered(struct descriptor_data *d, const char *argument)
     struct char_data *ch = d->character;
     int idx;
     int race_idx;
-    LEARNED *learned;
+    struct learned_info *learned;
     static char arg[MAX_INPUT_LENGTH];
 
     one_argument(argument, arg);
@@ -406,7 +406,7 @@ static void newclass_answered(struct descriptor_data *d, const char *argument)
 {
     static char arg[MAX_INPUT_LENGTH];
     struct char_data *ch = d->character;
-    LEARNED *learned;
+    struct learned_info *learned;
     int class_idx;
 
     one_argument(argument, arg);
@@ -457,7 +457,7 @@ static void newclass_answered(struct descriptor_data *d, const char *argument)
 static void pickweapon_answered(struct descriptor_data *d, const char *argument)
 {
     struct char_data *ch = d->character;
-    LEARNED *learned;
+    struct learned_info *learned;
     int weapon_idx;
 
     write_to_buffer(d, "\n\r", 2);
