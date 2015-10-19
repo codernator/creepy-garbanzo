@@ -8,7 +8,7 @@
 
 
 /** exports */
-SYSTEM_STATE globalSystemState = {
+struct system_state globalSystemState = {
     .current_time = 0,
     .tickset = 0,
     .merc_down = false,
@@ -37,7 +37,7 @@ extern void copyover_recover(void);
 
 /** locals */
 static void init_signals();
-static void init_time(SYSTEM_STATE *);
+static void init_time(struct system_state *);
 static void sig_handler(int sig);
 static volatile sig_atomic_t fatal_error_in_progress = 0;
 
@@ -103,7 +103,7 @@ void init_signals()
 }
 
 
-void init_time(SYSTEM_STATE *system_state) 
+void init_time(struct system_state *system_state) 
 {
     time_t now_time;
 

@@ -26,8 +26,8 @@ char str_empty[1];
 CHAR_DATA *char_list;
 NOTE_DATA *note_list;
 MPROG_CODE *mprog_list;
-SHOP_DATA *shop_first;
-SHOP_DATA *shop_last;
+struct shop_data *shop_first;
+struct shop_data *shop_last;
 NOTE_DATA *note_free;
 /*@observer@*/const char *help_greeting;
 MOB_INDEX_DATA *mob_index_hash[MAX_KEY_HASH];
@@ -711,7 +711,7 @@ char *capitalize(const char *str)
  */
 void load_shops(FILE *fp)
 {
-    SHOP_DATA *shop;
+    struct shop_data *shop;
 
     for (;; ) {
         MOB_INDEX_DATA *mob_idx;

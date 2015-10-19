@@ -753,7 +753,7 @@ void save_resets(FILE *fp, struct area_data *area)
 
 void save_shops(FILE *fp, struct area_data *area)
 {
-    SHOP_DATA *shopIndex;
+    struct shop_data *shopIndex;
     MOB_INDEX_DATA *mob_idx;
     int iTrade;
     int hash_idx;

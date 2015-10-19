@@ -1949,7 +1949,7 @@ void do_steal(CHAR_DATA *ch, const char *argument)
 CHAR_DATA *find_keeper(CHAR_DATA *ch)
 {
     CHAR_DATA *keeper;
-    SHOP_DATA *shop;
+    struct shop_data *shop;
 
     shop = NULL;
     for (keeper = ch->in_room->people; keeper; keeper = keeper->next_in_room) {

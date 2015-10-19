@@ -316,8 +316,8 @@ void free_exit(EXIT_DATA * pExit);
 extern AFFECT_DATA *new_affect(void);
 extern void free_affect(AFFECT_DATA * pAf);
 /* shop data */
-SHOP_DATA *new_shop(void);
-void free_shop(SHOP_DATA * pShop);
+struct shop_data *new_shop(void);
+void free_shop(struct shop_data * pShop);
 
 extern MPROG_LIST *new_mprog(void);
 extern void free_mprog(MPROG_LIST * mp);

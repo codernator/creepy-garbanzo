@@ -214,7 +214,7 @@ EDIT(medit_show){
     printf_to_char(ch, "`&Description``:\n\r%s", mob_idx->description);
 
     if (mob_idx->shop) {
-        SHOP_DATA *shop;
+        struct shop_data *shop;
         int iTrade;
 
         shop = mob_idx->shop;
@@ -635,7 +635,7 @@ EDIT(medit_shop){
     }
 
     if (!str_prefix(command, "remove")) {
-        SHOP_DATA *shop;
+        struct shop_data *shop;
 
         shop = mob_idx->shop;
         mob_idx->shop = NULL;
@@ -648,7 +648,7 @@ EDIT(medit_shop){
                 shop_first = shop->next;
             }
         } else {
-            SHOP_DATA *ishop;
+            struct shop_data *ishop;
 
             for (ishop = shop_first; ishop; ishop = ishop->next) {
                 if (ishop->next == shop) {

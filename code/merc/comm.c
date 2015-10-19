@@ -43,14 +43,14 @@ static WEATHER_DATA weather = {
     .sunlight = 0
 };
 
-static TIME_INFO_DATA gametime = {
+static struct time_info_data gametime = {
     .hour = 0,
     .day = 0,
     .month = 0,
     .year = 0
 };
 
-GAME_STATE globalGameState = {
+struct game_state globalGameState = {
     .weather = &weather,
     .gametime = &gametime
 };

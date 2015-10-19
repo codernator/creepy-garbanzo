@@ -74,14 +74,10 @@ typedef struct gameobject GAMEOBJECT;
 typedef struct pc_data PC_DATA;
 typedef struct reset_data RESET_DATA;
 typedef struct room_index_data ROOM_INDEX_DATA;
-typedef struct shop_data SHOP_DATA;
-typedef struct time_info_data TIME_INFO_DATA;
 typedef struct weather_data WEATHER_DATA;
 
 typedef struct mprog_list MPROG_LIST;
 typedef struct mprog_code MPROG_CODE;
-typedef struct system_state SYSTEM_STATE;
-typedef struct game_state GAME_STATE;
 
 
 /* required for new skill system */
@@ -158,7 +154,7 @@ struct system_state {
 
 struct game_state {
     WEATHER_DATA *weather;
-    TIME_INFO_DATA *gametime;
+    struct time_info_data *gametime;
 };
 
 
@@ -288,7 +284,7 @@ struct descriptor_data {
 #define MAX_TRADE       5
 
 struct shop_data {
-    SHOP_DATA * next;                   /* Next shop in list            */
+    struct shop_data * next;                   /* Next shop in list            */
     long keeper;                        /* Vnum of shop keeper mob      */
     int buy_type[MAX_TRADE];            /* Item types shop will buy     */
     int profit_buy;                     /* Cost multiplier for buying   */
@@ -1245,7 +1241,7 @@ struct liq_type {
  ***************************************************************************/
 struct mob_index_data {
     MOB_INDEX_DATA *next;
-    SHOP_DATA *shop;
+    struct shop_data *shop;
     MPROG_LIST *mprogs;
     struct area_data *area;
     long vnum;
@@ -1885,14 +1881,14 @@ extern int gn_max_group_sn;
 #define NO_FLAG -99     /* Must not be used in flags or stats. */
 
 /* Global variables. */
-extern SYSTEM_STATE globalSystemState;
-extern GAME_STATE globalGameState;
+extern struct system_state globalSystemState;
+extern struct game_state globalGameState;
 
 /* Global Constants */
 extern char *const dir_name[];
 extern const int rev_dir[];                 /* int - ROM OLC */
-extern SHOP_DATA *shop_last;
-extern SHOP_DATA *shop_first;
+extern struct shop_data *shop_last;
+extern struct shop_data *shop_first;
 extern CHAR_DATA *char_list;
 extern MPROG_CODE *mprog_list;
 extern int top_affect;

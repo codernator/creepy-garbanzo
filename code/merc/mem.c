@@ -34,7 +34,7 @@ extern int top_mprog_index;
 /** locals */
 static EXIT_DATA *exit_free;
 static ROOM_INDEX_DATA *room_index_free;
-static SHOP_DATA *shop_free;
+static struct shop_data *shop_free;
 static MOB_INDEX_DATA *mob_index_free;
 static RESET_DATA *reset_free;
 
@@ -178,9 +178,9 @@ void free_room_index(ROOM_INDEX_DATA *room)
 extern AFFECT_DATA *affect_free;
 
 
-SHOP_DATA *new_shop(void)
+struct shop_data *new_shop(void)
 {
-    SHOP_DATA *shop;
+    struct shop_data *shop;
     int buy;
 
     if (!shop_free) {
@@ -207,7 +207,7 @@ SHOP_DATA *new_shop(void)
 
 
 
-void free_shop(SHOP_DATA *shop)
+void free_shop(struct shop_data *shop)
 {
     shop->next = shop_free;
     shop_free = shop;

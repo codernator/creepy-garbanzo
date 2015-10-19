@@ -7,7 +7,7 @@
 #include "recycle.h"
 
 
-SYSTEM_STATE globalSystemState = {
+struct system_state globalSystemState = {
     .current_time = 0,
     .tickset = 0,
     .merc_down = false,
