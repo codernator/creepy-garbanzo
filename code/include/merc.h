@@ -66,7 +66,6 @@ typedef struct buf_type BUFFER;
 typedef struct char_data CHAR_DATA;
 typedef struct exit_data EXIT_DATA;
 typedef struct extra_descr_data EXTRA_DESCR_DATA;
-typedef struct kill_data KILL_DATA;
 typedef struct weather_data WEATHER_DATA;
 
 typedef struct mprog_list MPROG_LIST;
