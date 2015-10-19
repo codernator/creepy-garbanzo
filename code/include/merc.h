@@ -34,7 +34,6 @@ int unlink();
 int system();
 
 typedef int SOCKET;
-typedef int sh_int;
 
 #if !defined(false)
 #define false    0
