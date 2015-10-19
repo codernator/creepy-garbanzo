@@ -209,7 +209,7 @@ void flag_set_obj(CHAR_DATA *ch, const char *argument)
  ***************************************************************************/
 void flag_set_room(CHAR_DATA *ch, const char *argument)
 {
-    ROOM_INDEX_DATA *room;
+    struct room_index_data *room;
     char index[MAX_INPUT_LENGTH];
     long vnum;
 
@@ -511,7 +511,7 @@ void flag_char_act(CHAR_DATA *ch, void *target, const char *argument)
 void flag_char_deathroom(CHAR_DATA *ch, void *target, const char *argument)
 {
     CHAR_DATA *vch = (CHAR_DATA *)target;
-    ROOM_INDEX_DATA *room;
+    struct room_index_data *room;
     long value;
 
     if (IS_NPC(vch)) {
@@ -623,7 +623,7 @@ void flag_char_plr(CHAR_DATA *ch, void *target, const char *argument)
  ***************************************************************************/
 void flag_room_room(CHAR_DATA *ch, void *target, const char *argument)
 {
-    ROOM_INDEX_DATA *room = (ROOM_INDEX_DATA *)target;
+    struct room_index_data *room = (struct room_index_data *)target;
     long value;
 
     if ((value = flag_value(room_flags, argument)) != NO_FLAG) {

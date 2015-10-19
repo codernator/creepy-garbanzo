@@ -1236,7 +1236,7 @@ void do_transfer(CHAR_DATA *ch, const char *argument)
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
-    ROOM_INDEX_DATA *location;
+    struct room_index_data *location;
     CHAR_DATA *victim;
 
     argument = one_argument(argument, arg1);
@@ -1313,7 +1313,7 @@ void do_transfer(CHAR_DATA *ch, const char *argument)
 
 void do_goto(CHAR_DATA *ch, const char *argument)
 {
-    ROOM_INDEX_DATA *location;
+    struct room_index_data *location;
     CHAR_DATA *rch;
     int count = 0;
 
@@ -1369,7 +1369,7 @@ void do_goto(CHAR_DATA *ch, const char *argument)
 
 void do_violate(CHAR_DATA *ch, const char *argument)
 {
-    ROOM_INDEX_DATA *location;
+    struct room_index_data *location;
     CHAR_DATA *rch;
 
     DENY_NPC(ch);

@@ -1651,7 +1651,7 @@ void make_corpse(CHAR_DATA *ch)
 
 	if (ch->level < LEVEL_IMMORTAL) {
 	    if (ch->gold > 1 || ch->silver > 1) {
-		ROOM_INDEX_DATA *gold_room;
+		struct room_index_data *gold_room;
 
 		gold_room = get_random_room(ch, NULL);
 		obj_to_room(create_money(ch->gold / 5, ch->silver / 5), gold_room);

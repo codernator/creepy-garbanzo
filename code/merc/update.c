@@ -753,8 +753,8 @@ static void mobile_update(void)
 	}
 
 	if (ch->mob_wuss != NULL && ch->in_room->people != NULL) {
-	    ROOM_INDEX_DATA *was_in;
-	    ROOM_INDEX_DATA *now_in;
+	    struct room_index_data *was_in;
+	    struct room_index_data *now_in;
 	    CHAR_DATA *laters;
 	    CHAR_DATA *laters_next;
 	    int attempt;
@@ -979,7 +979,7 @@ static void auto_restore(void)
  ***************************************************************************/
 static void room_update(void)
 {
-    ROOM_INDEX_DATA *room;
+    struct room_index_data *room;
     int index;
     static int decr;
 

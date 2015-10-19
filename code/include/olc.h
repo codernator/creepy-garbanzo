@@ -75,7 +75,7 @@ enum medit_auto_config_type { mact_easy, mact_normal, mact_hard, mact_insane };
 
 
 /* utility functions */
-void add_reset(ROOM_INDEX_DATA * room, RESET_DATA * pReset, long index);
+void add_reset(struct room_index_data * room, struct reset_data * pReset, long index);
 char *mprog_type_to_name(int type);
 
 
@@ -298,8 +298,8 @@ DECLARE_OLC_FUN(muedit_text);
 
 
 /* rooms */
-ROOM_INDEX_DATA * new_room_index(void);
-void free_room_index(ROOM_INDEX_DATA * pRoom);
+struct room_index_data * new_room_index(void);
+void free_room_index(struct room_index_data * pRoom);
 /* mob indexes */
 MOB_INDEX_DATA *new_mob_index(void);
 void free_mob_index(MOB_INDEX_DATA * pMob);
@@ -307,8 +307,8 @@ void free_mob_index(MOB_INDEX_DATA * pMob);
 extern EXTRA_DESCR_DATA *new_extra_descr(void);
 extern void free_extra_descr(EXTRA_DESCR_DATA * pExtra);
 /* reset data */
-RESET_DATA *new_reset_data(void);
-void free_reset_data(RESET_DATA * pReset);
+struct reset_data *new_reset_data(void);
+void free_reset_data(struct reset_data * pReset);
 /* exit data */
 EXIT_DATA *new_exit(void);
 void free_exit(EXIT_DATA * pExit);

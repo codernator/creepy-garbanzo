@@ -382,7 +382,7 @@ void affect_to_obj(GAMEOBJECT *obj, AFFECT_DATA *paf)
 *
 *	add an affect to a room
 ***************************************************************************/
-void affect_to_room(ROOM_INDEX_DATA *room, AFFECT_DATA *paf)
+void affect_to_room(struct room_index_data *room, AFFECT_DATA *paf)
 {
 	AFFECT_DATA *paf_new;
 
@@ -504,7 +504,7 @@ void affect_remove_obj(GAMEOBJECT *obj, AFFECT_DATA *paf)
 *
 *	remove an affect from a room
 ***************************************************************************/
-void affect_remove_room(ROOM_INDEX_DATA *room, AFFECT_DATA *paf)
+void affect_remove_room(struct room_index_data *room, AFFECT_DATA *paf)
 {
 	if (room->affected == NULL) {
 		log_bug("affect_remove_room: no affect.");
@@ -559,7 +559,7 @@ void affect_strip(CHAR_DATA *ch, SKILL *skill)
 *
 *	strips all affects of the given sn
 ***************************************************************************/
-void affect_strip_room(ROOM_INDEX_DATA *room, int sn)
+void affect_strip_room(struct room_index_data *room, int sn)
 {
 	AFFECT_DATA *paf;
 	AFFECT_DATA *paf_next;
@@ -623,7 +623,7 @@ bool is_affected(CHAR_DATA *ch, SKILL *skill)
 *
 *	check to see if a room is affected by a spell
 ***************************************************************************/
-bool is_affected_room(ROOM_INDEX_DATA *room, SKILL *skill)
+bool is_affected_room(struct room_index_data *room, SKILL *skill)
 {
 	AFFECT_DATA *paf;
 
@@ -681,8 +681,8 @@ char *room_affect(AFFECT_DATA *paf)
 ***************************************************************************/
 void affect_displacement(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
 {
-	ROOM_INDEX_DATA *room = (ROOM_INDEX_DATA *)target;
-	ROOM_INDEX_DATA *to = NULL;
+	struct room_index_data *room = (struct room_index_data *)target;
+	struct room_index_data *to = NULL;
 	CHAR_DATA *vch;
 	CHAR_DATA *vch_next;
 
@@ -714,7 +714,7 @@ void affect_displacement(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
 ***************************************************************************/
 void affect_parasitic_cloud(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
 {
-	ROOM_INDEX_DATA *room = (ROOM_INDEX_DATA *)target;
+	struct room_index_data *room = (struct room_index_data *)target;
 	CHAR_DATA *vch;
 	CHAR_DATA *vch_next;
 

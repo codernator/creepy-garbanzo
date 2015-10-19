@@ -1559,7 +1559,7 @@ void spell_faerie_fire(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int tar
 
 void spell_faerie_fog(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, const char *argument)
 {
-    ROOM_INDEX_DATA *room;
+    struct room_index_data *room;
     CHAR_DATA *ich;
     AFFECT_DATA af;
 
@@ -3136,7 +3136,7 @@ void spell_shatter_curse(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int t
 
 void spell_winds(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, const char *argument)
 {
-    ROOM_INDEX_DATA *room;
+    struct room_index_data *room;
     SKILL *skill_fog;
 
     skill_fog = gsp_faerie_fog;
@@ -3243,7 +3243,7 @@ void spell_web(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, con
  ***************************************************************************/
 void spell_displacement(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, const char *argument)
 {
-    ROOM_INDEX_DATA *room;
+    struct room_index_data *room;
     AFFECT_DATA af;
 
     if ((room = ch->in_room) == NULL)
@@ -3278,7 +3278,7 @@ void spell_displacement(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
  ***************************************************************************/
 void spell_haven(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, const char *argument)
 {
-    ROOM_INDEX_DATA *room;
+    struct room_index_data *room;
     AFFECT_DATA af;
 
     if ((room = ch->in_room) == NULL)
@@ -3311,7 +3311,7 @@ void spell_haven(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, c
  ***************************************************************************/
 void spell_mana_vortex(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, const char *argument)
 {
-    ROOM_INDEX_DATA *room;
+    struct room_index_data *room;
     AFFECT_DATA af;
 
     if ((room = ch->in_room) == NULL)
@@ -3344,7 +3344,7 @@ void spell_mana_vortex(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int tar
  ***************************************************************************/
 void spell_parasitic_cloud(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, const char *argument)
 {
-    ROOM_INDEX_DATA *room;
+    struct room_index_data *room;
     AFFECT_DATA af;
 
     if ((room = ch->in_room) == NULL)
@@ -3486,8 +3486,8 @@ void spell_nexus(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, c
 {
     CHAR_DATA *victim;
     GAMEOBJECT *portal;
-    ROOM_INDEX_DATA *to_room;
-    ROOM_INDEX_DATA *from_room;
+    struct room_index_data *to_room;
+    struct room_index_data *from_room;
 
 
     if ((victim = get_char_world(ch, argument)) == NULL
@@ -3689,7 +3689,7 @@ void spell_ring_of_fire(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
     CHAR_DATA *last_vict;
     CHAR_DATA *next_vict;
     EXIT_DATA *pexit;
-    ROOM_INDEX_DATA *curr_room;
+    struct room_index_data *curr_room;
     int dam;
     int door;
 

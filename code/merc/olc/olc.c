@@ -294,7 +294,7 @@ char *olc_ed_name(CHAR_DATA *ch)
 char *olc_ed_vnum(CHAR_DATA *ch)
 {
     struct area_data *pArea;
-    ROOM_INDEX_DATA *pRoom;
+    struct room_index_data *pRoom;
     struct objectprototype *pObj;
     MOB_INDEX_DATA *pMob;
     MPROG_CODE *pMprog;
@@ -498,7 +498,7 @@ void aedit(CHAR_DATA *ch, const char *argument)
 void redit(CHAR_DATA *ch, const char *argument)
 {
     struct area_data *pArea;
-    ROOM_INDEX_DATA *pRoom;
+    struct room_index_data *pRoom;
     char arg[MAX_STRING_LENGTH];
     const char *parg;
     char command[MAX_INPUT_LENGTH];
@@ -758,8 +758,8 @@ void do_aedit(CHAR_DATA *ch, const char *argument)
  *****************************************************************************/
 static void display_resets(CHAR_DATA *ch)
 {
-    ROOM_INDEX_DATA *pRoom;
-    RESET_DATA *pReset;
+    struct room_index_data *pRoom;
+    struct reset_data *pReset;
     MOB_INDEX_DATA *pMob = NULL;
     BUFFER *final;
     char *uncolor;
@@ -777,8 +777,8 @@ static void display_resets(CHAR_DATA *ch)
         MOB_INDEX_DATA *pMobIndex;
         struct objectprototype *pObjIndex;
         struct objectprototype *pObjToIndex;
-        ROOM_INDEX_DATA *pRoomIndex;
-        ROOM_INDEX_DATA *pRoomIndexPrev;
+        struct room_index_data *pRoomIndex;
+        struct room_index_data *pRoomIndexPrev;
 
         printf_buf(final, "[`1%2d``] ", ++num);
         switch (pReset->command) {
@@ -944,9 +944,9 @@ static void display_resets(CHAR_DATA *ch)
  * Purpose:	Inserts a new reset in the given index slot.
  * Called by:	do_resets(olc.c).
  ****************************************************************************/
-void add_reset(ROOM_INDEX_DATA *room, RESET_DATA *pReset, long index)
+void add_reset(struct room_index_data *room, struct reset_data *pReset, long index)
 {
-    RESET_DATA *reset;
+    struct reset_data *reset;
     long num = 0;
 
     if (!room->reset_first) {
@@ -980,7 +980,7 @@ void add_reset(ROOM_INDEX_DATA *room, RESET_DATA *pReset, long index)
  *****************************************************************************/
 void do_resets(CHAR_DATA *ch, const char *argument)
 {
-    RESET_DATA *pReset = NULL;
+    struct reset_data *pReset = NULL;
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
     char arg3[MAX_INPUT_LENGTH];
@@ -1016,7 +1016,7 @@ void do_resets(CHAR_DATA *ch, const char *argument)
 
 
     if (is_number(arg1)) {
-        ROOM_INDEX_DATA *pRoom = ch->in_room;
+        struct room_index_data *pRoom = ch->in_room;
 
         if (!str_cmp(arg2, "delete")) {
             int insert_loc = parse_int(arg1);
@@ -1032,7 +1032,7 @@ void do_resets(CHAR_DATA *ch, const char *argument)
                 if (!pRoom->reset_first)
                     pRoom->reset_last = NULL;
             } else {
-                RESET_DATA *prev = NULL;
+                struct reset_data *prev = NULL;
                 long num = 0;
 
                 for (pReset = pRoom->reset_first;

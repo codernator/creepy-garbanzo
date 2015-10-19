@@ -2127,8 +2127,8 @@ void do_buy(CHAR_DATA *ch, const char *argument)
         char arg[MAX_INPUT_LENGTH];
         char buf[MAX_STRING_LENGTH];
         CHAR_DATA *pet;
-        ROOM_INDEX_DATA *pRoomIndexNext;
-        ROOM_INDEX_DATA *in_room;
+        struct room_index_data *pRoomIndexNext;
+        struct room_index_data *in_room;
 
         if (IS_NPC(ch))
             return;
@@ -2346,7 +2346,7 @@ void do_buy(CHAR_DATA *ch, const char *argument)
 void do_list(CHAR_DATA *ch, const char *argument)
 {
     if (IS_SET(ch->in_room->room_flags, ROOM_PET_SHOP)) {
-        ROOM_INDEX_DATA *pRoomIndexNext;
+        struct room_index_data *pRoomIndexNext;
         CHAR_DATA *pet;
         bool found;
 

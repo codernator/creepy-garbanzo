@@ -303,7 +303,7 @@ void look_character(CHAR_DATA *ch, CHAR_DATA *victim) {
     show_char_to_char_1(victim, ch);
 }
 
-void look_room(CHAR_DATA *ch, ROOM_INDEX_DATA *in_room) {
+void look_room(CHAR_DATA *ch, struct room_index_data *in_room) {
     if (!validate_look(ch)) {
 	return;
     }
@@ -354,7 +354,7 @@ void look_room(CHAR_DATA *ch, ROOM_INDEX_DATA *in_room) {
 
 void look_object(CHAR_DATA *ch, GAMEOBJECT *obj, const char *argument) {
     GAMEOBJECT *portal;
-    ROOM_INDEX_DATA *location;
+    struct room_index_data *location;
 
     if (!validate_look(ch)) {
 	return;

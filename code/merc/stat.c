@@ -20,7 +20,7 @@ static void show_mob_stats(CHAR_DATA *ch, const char *argument);
 void do_stat(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
-    ROOM_INDEX_DATA *location;
+    struct room_index_data *location;
     CHAR_DATA *victim;
     char arg[MAX_INPUT_LENGTH];
     const char *string;
@@ -80,7 +80,7 @@ void do_stat(CHAR_DATA *ch, const char *argument)
  */
 void show_room_stats(CHAR_DATA *ch, const char *argument)
 {
-    ROOM_INDEX_DATA *location;
+    struct room_index_data *location;
     GAMEOBJECT *obj;
     CHAR_DATA *rch;
     AFFECT_DATA *paf;

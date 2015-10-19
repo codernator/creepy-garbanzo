@@ -7,9 +7,9 @@ extern bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1
 extern void mp_greet_trigger(CHAR_DATA * ch);
 
 /* random room generation procedure */
-ROOM_INDEX_DATA *get_random_room(CHAR_DATA *ch, struct area_data *area)
+struct room_index_data *get_random_room(CHAR_DATA *ch, struct area_data *area)
 {
-	ROOM_INDEX_DATA *room;
+	struct room_index_data *room;
 
 	for (;; ) {
 		room = get_room_index(number_range(1, MAX_KEY_HASH));
@@ -29,14 +29,14 @@ ROOM_INDEX_DATA *get_random_room(CHAR_DATA *ch, struct area_data *area)
 /* RT Enter portals */
 void do_enter(CHAR_DATA *ch, const char *argument)
 {
-	ROOM_INDEX_DATA *location;
+	struct room_index_data *location;
 
 	if (ch->fighting != NULL)
 		return;
 
 /* nifty portal stuff */
 	if (argument[0] != '\0') {
-		ROOM_INDEX_DATA *old_room;
+		struct room_index_data *old_room;
 		GAMEOBJECT *portal;
 		CHAR_DATA *fch, *fch_next;
 

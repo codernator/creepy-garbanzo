@@ -21,9 +21,9 @@ struct role_trust_type {
  * role_flag: any value from the PLAYER_ROLE_[A-Z]+ definitions.
  * trust: any integer
  */
-bool is_trusted_role(PC_DATA *player, long role_flag, int min_trust);
-void assign_role(PC_DATA *player, long role_flag, int trust);
-void remove_role(PC_DATA *player, long role_flag);
+bool is_trusted_role(struct pc_data *player, long role_flag, int min_trust);
+void assign_role(struct pc_data *player, long role_flag, int trust);
+void remove_role(struct pc_data *player, long role_flag);
 
 
 

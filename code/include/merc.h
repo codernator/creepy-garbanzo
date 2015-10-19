@@ -71,9 +71,6 @@ typedef struct mem_data MEM_DATA;
 typedef struct mob_index_data MOB_INDEX_DATA;
 typedef struct note_data NOTE_DATA;
 typedef struct gameobject GAMEOBJECT;
-typedef struct pc_data PC_DATA;
-typedef struct reset_data RESET_DATA;
-typedef struct room_index_data ROOM_INDEX_DATA;
 typedef struct weather_data WEATHER_DATA;
 
 typedef struct mprog_list MPROG_LIST;
@@ -1323,10 +1320,10 @@ struct char_data {
     NOTE_DATA *pnote;
     GAMEOBJECT *carrying;
     GAMEOBJECT *on;
-    ROOM_INDEX_DATA *in_room;
-    ROOM_INDEX_DATA *was_in_room;
+    struct room_index_data *in_room;
+    struct room_index_data *was_in_room;
     struct area_data *zone;
-    PC_DATA *pcdata;
+    struct pc_data *pcdata;
     bool valid;
     char *name;
     long id;
@@ -1398,7 +1395,7 @@ struct char_data {
  * data specific to a player
  ***************************************************************************/
 struct pc_data {
-    /*@null@*/PC_DATA *next;
+    /*@null@*/struct pc_data *next;
     BUFFER *buffer;
     bool valid;
     char *pwd;
@@ -1525,7 +1522,7 @@ struct extra_descr_data {
     /*@owned@*//*@null@*/EXTRA_DESCR_DATA *extra_descr;
     /*@dependent@*//*@null@*/AFFECT_DATA *affected;
     /*@dependent@*/struct objectprototype *objprototype;
-    /*@dependent@*//*@null@*/ROOM_INDEX_DATA *in_room;
+    /*@dependent@*//*@null@*/struct room_index_data *in_room;
     bool enchanted;
     /*@shared@*//*@null@*/char *owner_name;
     /*@shared@*//*@null@*/char *override_name;
@@ -1554,7 +1551,7 @@ struct extra_descr_data {
  ***************************************************************************/
 struct exit_data {
     union {
-	ROOM_INDEX_DATA * to_room;
+	struct room_index_data * to_room;
 	long   vnum;
     } u1;
     int  exit_info;
@@ -1584,7 +1581,7 @@ struct exit_data {
  *  'S': stop (end of list)
  ***************************************************************************/
 struct reset_data {
-    RESET_DATA * next;
+    struct reset_data * next;
     char  command;
     long  arg1;
     int  arg2;
@@ -1610,8 +1607,8 @@ struct area_data {
     unsigned int ulevel;
     unsigned int security;
 
-    /*@owned@*//*@null@*//*@partial@*/RESET_DATA *reset_first;
-    /*@owned@*//*@null@*//*@partial@*/RESET_DATA *reset_last;
+    /*@owned@*//*@null@*//*@partial@*/struct reset_data *reset_first;
+    /*@owned@*//*@null@*//*@partial@*/struct reset_data *reset_last;
     int age;
     int nplayer;
     bool empty;
@@ -1619,14 +1616,14 @@ struct area_data {
 
 
 struct room_index_data {
-    ROOM_INDEX_DATA * next;
+    struct room_index_data * next;
     CHAR_DATA *  people;
     GAMEOBJECT *  contents;
     EXTRA_DESCR_DATA * extra_descr;
     struct area_data *  area;
     EXIT_DATA *  exit[6];
-    RESET_DATA *  reset_first;
-    RESET_DATA *  reset_last;
+    struct reset_data *  reset_first;
+    struct reset_data *  reset_last;
     AFFECT_DATA *  affected;
     char *   name;
     char *   description;
@@ -1899,7 +1896,7 @@ extern long top_vnum_mob;
 extern long top_vnum_obj;
 extern long top_vnum_room;
 extern MOB_INDEX_DATA *mob_index_hash  [MAX_KEY_HASH];
-extern ROOM_INDEX_DATA *room_index_hash [MAX_KEY_HASH];
+extern struct room_index_data *room_index_hash [MAX_KEY_HASH];
 
 
 
@@ -1951,7 +1948,7 @@ void set_bash(CHAR_DATA * ch, int pulse);
 
 
 /* act_enter.c */
-ROOM_INDEX_DATA *get_random_room(CHAR_DATA * ch, struct area_data * area);
+struct room_index_data *get_random_room(CHAR_DATA * ch, struct area_data * area);
 
 /* act_info.c */
 void set_title(CHAR_DATA * ch, char *title);
@@ -2014,7 +2011,7 @@ void clear_char(CHAR_DATA * ch);
 /* find functions  */
 char *get_extra_descr(const char *name, EXTRA_DESCR_DATA * ed);
 MOB_INDEX_DATA *get_mob_index(long vnum);
-ROOM_INDEX_DATA *get_room_index(long vnum);
+struct room_index_data *get_room_index(long vnum);
 
 
 /* memory management */
@@ -2036,7 +2033,7 @@ void tail_chain(void);
 /* olc/mprogs */
 MPROG_CODE *get_mprog_index(long vnum);
 void reset_area(struct area_data * pArea);
-void reset_room(ROOM_INDEX_DATA * pRoom);
+void reset_room(struct room_index_data * pRoom);
 void load_socials(void);
 
 /* effects.c */
@@ -2094,7 +2091,7 @@ int can_carry_w(CHAR_DATA * ch);
 int get_wield_weight(CHAR_DATA * ch);
 bool is_name(const char *str, const char *namelist);
 void char_from_room(CHAR_DATA * ch);
-void char_to_room(CHAR_DATA * ch, ROOM_INDEX_DATA * pRoomIndex);
+void char_to_room(CHAR_DATA * ch, struct room_index_data * pRoomIndex);
 void obj_to_char(GAMEOBJECT * obj, CHAR_DATA * ch);
 void obj_from_char(GAMEOBJECT * obj);
 long apply_ac(GAMEOBJECT * obj, int iWear, int type);
@@ -2103,7 +2100,7 @@ void equip_char(CHAR_DATA * ch, GAMEOBJECT * obj, int iWear);
 void unequip_char(CHAR_DATA * ch, GAMEOBJECT * obj);
 int count_obj_list(struct objectprototype * obj, GAMEOBJECT * list);
 void obj_from_room(GAMEOBJECT * obj);
-void obj_to_room(GAMEOBJECT * obj, ROOM_INDEX_DATA * pRoomIndex);
+void obj_to_room(GAMEOBJECT * obj, struct room_index_data * pRoomIndex);
 void obj_to_obj(GAMEOBJECT * obj, GAMEOBJECT * obj_to);
 void obj_from_obj(GAMEOBJECT * obj);
 void extract_obj(GAMEOBJECT * obj);
@@ -2120,12 +2117,12 @@ GAMEOBJECT *create_money(unsigned int gold, unsigned int silver);
 int get_obj_number(GAMEOBJECT * obj);
 int get_obj_weight(GAMEOBJECT * obj);
 int get_true_weight(GAMEOBJECT * obj);
-bool room_is_dark(CHAR_DATA * ch, ROOM_INDEX_DATA * pRoomIndex);
-bool is_room_owner(CHAR_DATA * ch, ROOM_INDEX_DATA * room);
-bool room_is_private(ROOM_INDEX_DATA * pRoomIndex);
+bool room_is_dark(CHAR_DATA * ch, struct room_index_data * pRoomIndex);
+bool is_room_owner(CHAR_DATA * ch, struct room_index_data * room);
+bool room_is_private(struct room_index_data * pRoomIndex);
 bool can_see(CHAR_DATA * ch, CHAR_DATA * victim);
 bool can_see_obj(CHAR_DATA * ch, GAMEOBJECT * obj);
-bool can_see_room(CHAR_DATA * ch, ROOM_INDEX_DATA * pRoomIndex);
+bool can_see_room(CHAR_DATA * ch, struct room_index_data * pRoomIndex);
 bool can_drop_obj(CHAR_DATA * ch, GAMEOBJECT * obj);
 char *item_type_name(GAMEOBJECT * obj);
 char *affect_loc_name(long location);
@@ -2144,25 +2141,25 @@ char *comm_bit_name(long comm_flags);
 char *cont_bit_name(long cont_flags);
 char *token_bit_name(long token_flags);
 const char *first_arg(const char *argument, char *arg_first, bool fCase);
-char *room_flag_bit_name(ROOM_INDEX_DATA * room);
+char *room_flag_bit_name(struct room_index_data * room);
 /*@observer@*/char *uncolor_str(char *txt);
 void identify_item(CHAR_DATA * ch, GAMEOBJECT * obj);
 void furniture_check(CHAR_DATA * ch);
-ROOM_INDEX_DATA *find_location(CHAR_DATA * ch, const char *arg);
-ROOM_INDEX_DATA *get_death_room(CHAR_DATA * ch);
+struct room_index_data *find_location(CHAR_DATA * ch, const char *arg);
+struct room_index_data *get_death_room(CHAR_DATA * ch);
 
 /* affects.c */
 void affect_to_char(CHAR_DATA * ch, /*@partial@*/AFFECT_DATA * paf);
 void affect_to_obj(GAMEOBJECT * obj, AFFECT_DATA * paf);
-void affect_to_room(ROOM_INDEX_DATA * room, AFFECT_DATA * paf);
+void affect_to_room(struct room_index_data * room, AFFECT_DATA * paf);
 void affect_remove(CHAR_DATA * ch, AFFECT_DATA * paf);
 void affect_remove_obj(GAMEOBJECT * obj, AFFECT_DATA * paf);
-void affect_remove_room(ROOM_INDEX_DATA * room, AFFECT_DATA * paf);
+void affect_remove_room(struct room_index_data * room, AFFECT_DATA * paf);
 void affect_strip(CHAR_DATA * ch, SKILL * skill);
-void affect_strip_room(ROOM_INDEX_DATA * room, int sn);
+void affect_strip_room(struct room_index_data * room, int sn);
 void affect_join(CHAR_DATA * ch, AFFECT_DATA * paf);
 bool is_affected(CHAR_DATA * ch, SKILL * skill);
-bool is_affected_room(ROOM_INDEX_DATA * room, SKILL * skill);
+bool is_affected_room(struct room_index_data * room, SKILL * skill);
 
 /* rooms.c */
 char *room_affect(AFFECT_DATA * paf);
@@ -2196,7 +2193,7 @@ int exp_per_level(CHAR_DATA * ch, int points);
 void check_improve(CHAR_DATA * ch, SKILL * skill, bool success, int multiplier);
 
 /* teleport.c */
-ROOM_INDEX_DATA *room_by_name(char *target, int level, bool error);
+struct room_index_data *room_by_name(char *target, int level, bool error);
 
 /* update.c */
 void advance_level(CHAR_DATA * ch, int level);

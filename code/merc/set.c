@@ -26,7 +26,7 @@ static void item_type_help(CHAR_DATA * ch, int item_type);
  *	set functions
  ***************************************************************************/
 typedef void SET_FN(CHAR_DATA * ch, const char *argument);
-typedef bool SET_ROOM_FN(CHAR_DATA * ch, ROOM_INDEX_DATA * room, const char *argument);
+typedef bool SET_ROOM_FN(CHAR_DATA * ch, struct room_index_data * room, const char *argument);
 typedef bool SET_CHAR_FN(CHAR_DATA * ch, CHAR_DATA * vch, const char *argument);
 typedef bool SET_OBJ_FN(CHAR_DATA * ch, GAMEOBJECT * obj, const char *argument);
 
@@ -951,7 +951,7 @@ bool set_char_feed(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
  ***************************************************************************/
 static bool set_char_deathroom(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 {
-    ROOM_INDEX_DATA *room;
+    struct room_index_data *room;
     int value;
 
     if (is_help(argument)) {
@@ -1580,7 +1580,7 @@ set_room_cmd_table[] =
  ***************************************************************************/
 static void set_room(CHAR_DATA *ch, const char *argument)
 {
-    ROOM_INDEX_DATA *room;
+    struct room_index_data *room;
     char arg[MAX_INPUT_LENGTH];
     char cmd[MAX_INPUT_LENGTH];
     int idx;
@@ -1641,7 +1641,7 @@ static void set_room(CHAR_DATA *ch, const char *argument)
  *
  *	set the flags on a room
  ***************************************************************************/
-static bool set_room_flags(CHAR_DATA *ch, ROOM_INDEX_DATA *room, const char *argument)
+static bool set_room_flags(CHAR_DATA *ch, struct room_index_data *room, const char *argument)
 {
     long value;
 
@@ -1687,7 +1687,7 @@ static bool set_room_flags(CHAR_DATA *ch, ROOM_INDEX_DATA *room, const char *arg
  *
  *	set the sector of a room
  ***************************************************************************/
-static bool set_room_sector(CHAR_DATA *ch, ROOM_INDEX_DATA *room, const char *argument)
+static bool set_room_sector(CHAR_DATA *ch, struct room_index_data *room, const char *argument)
 {
     int value;
 
@@ -1724,7 +1724,7 @@ static bool set_room_sector(CHAR_DATA *ch, ROOM_INDEX_DATA *room, const char *ar
  *
  *	set the mana heal rate on a room
  ***************************************************************************/
-static bool set_room_mana_rate(CHAR_DATA *ch, ROOM_INDEX_DATA *room, const char *argument)
+static bool set_room_mana_rate(CHAR_DATA *ch, struct room_index_data *room, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: mana_rate <rate number>\n\r", ch);
@@ -1741,7 +1741,7 @@ static bool set_room_mana_rate(CHAR_DATA *ch, ROOM_INDEX_DATA *room, const char 
  *
  *	set the hp heal rate on a room
  ***************************************************************************/
-static bool set_room_heal_rate(CHAR_DATA *ch, ROOM_INDEX_DATA *room, const char *argument)
+static bool set_room_heal_rate(CHAR_DATA *ch, struct room_index_data *room, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: heal_rate <rate number>\n\r", ch);
@@ -1759,7 +1759,7 @@ static bool set_room_heal_rate(CHAR_DATA *ch, ROOM_INDEX_DATA *room, const char 
  *
  *	set the light value of a room
  ***************************************************************************/
-static bool set_room_light(CHAR_DATA *ch, ROOM_INDEX_DATA *room, const char *argument)
+static bool set_room_light(CHAR_DATA *ch, struct room_index_data *room, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: light <light duration>\n\r", ch);

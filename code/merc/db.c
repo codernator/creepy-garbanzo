@@ -31,7 +31,7 @@ struct shop_data *shop_last;
 NOTE_DATA *note_free;
 /*@observer@*/const char *help_greeting;
 MOB_INDEX_DATA *mob_index_hash[MAX_KEY_HASH];
-ROOM_INDEX_DATA *room_index_hash[MAX_KEY_HASH];
+struct room_index_data *room_index_hash[MAX_KEY_HASH];
 int top_affect;
 int top_ed;
 long top_exit;
@@ -54,7 +54,7 @@ extern unsigned int fread_uint(FILE *fp);
 extern long fread_long(FILE *fp);
 extern GAMEOBJECT *obj_free;
 extern CHAR_DATA *char_free;
-extern PC_DATA *pcdata_free;
+extern struct pc_data *pcdata_free;
 extern AFFECT_DATA *affect_free;
 
 
@@ -411,9 +411,9 @@ void load_helps(const char const *filepath)
  * Adds a reset to a room.  OLC
  * Similar to add_reset in olc.c
  */
-static void new_reset(ROOM_INDEX_DATA *pR, RESET_DATA *reset)
+static void new_reset(struct room_index_data *pR, struct reset_data *reset)
 {
-    RESET_DATA *pr;
+    struct reset_data *pr;
 
     if (!pR)
         return;
@@ -439,9 +439,9 @@ static void new_reset(ROOM_INDEX_DATA *pR, RESET_DATA *reset)
  */
 void load_resets(FILE *fp)
 {
-    RESET_DATA *reset;
+    struct reset_data *reset;
     EXIT_DATA *pexit;
-    ROOM_INDEX_DATA *room_idx;
+    struct room_index_data *room_idx;
     long rVnum = -1;
 
     if (g_area_loading == NULL) {
@@ -452,7 +452,7 @@ void load_resets(FILE *fp)
     for (;; ) {
         /*
          *      OLC
-         *              ROOM_INDEX_DATA *	room_idx;
+         *              struct room_index_data *	room_idx;
          *              EXIT_DATA *			pexit;
          *              struct objectprototype *	temp_index;
          */
@@ -543,7 +543,7 @@ void load_resets(FILE *fp)
  */
 void load_rooms(FILE *fp)
 {
-    ROOM_INDEX_DATA *room_idx;
+    struct room_index_data *room_idx;
 
     if (g_area_loading == NULL) {
         bug(fp, "Load_rooms: no #AREA seen yet.");
@@ -1122,13 +1122,13 @@ void load_objects(FILE *fp)
 void fix_exits(void)
 {
     extern const int rev_dir[];
-    ROOM_INDEX_DATA *room_idx;
-    ROOM_INDEX_DATA *to_room;
+    struct room_index_data *room_idx;
+    struct room_index_data *to_room;
     EXIT_DATA *pexit;
     EXIT_DATA *pexit_rev;
-    RESET_DATA *reset;
-    ROOM_INDEX_DATA *iLastRoom;
-    ROOM_INDEX_DATA *ilast_obj;
+    struct reset_data *reset;
+    struct room_index_data *iLastRoom;
+    struct room_index_data *ilast_obj;
     int hash_idx;
     int door;
 
@@ -1411,7 +1411,7 @@ void area_update(void)
              */
             if ((!area->empty && (area->nplayer == 0 || area->age >= 15))
                 || area->age >= 31) {
-                ROOM_INDEX_DATA *room_idx;
+                struct room_index_data *room_idx;
 
                 reset_area(area);
                 sprintf(buf, "%s has just been reset.", area->name);
@@ -1434,9 +1434,9 @@ void area_update(void)
 /* OLC
  * Reset one room.  Called by reset_area and olc.
  */
-void reset_room(ROOM_INDEX_DATA *room)
+void reset_room(struct room_index_data *room)
 {
-    RESET_DATA *reset;
+    struct reset_data *reset;
     CHAR_DATA *mob_it;
     CHAR_DATA *mob = NULL;
     GAMEOBJECT *obj = NULL;
@@ -1465,7 +1465,7 @@ void reset_room(ROOM_INDEX_DATA *room)
         MOB_INDEX_DATA *mob_idx;
         struct objectprototype *objprototype;
         struct objectprototype *obj_to_idx;
-        ROOM_INDEX_DATA *room_idx;
+        struct room_index_data *room_idx;
         int count;
         int limit = 0;
 
@@ -1517,7 +1517,7 @@ void reset_room(ROOM_INDEX_DATA *room)
                * Pet shop mobiles get ACT_PET set.
                */
               {
-                  ROOM_INDEX_DATA *room_idxPrev;
+                  struct room_index_data *room_idxPrev;
 
                   room_idxPrev = get_room_index(room->vnum - 1);
                   if (room_idxPrev && IS_SET(room_idxPrev->room_flags, ROOM_PET_SHOP))
@@ -1679,7 +1679,7 @@ void reset_room(ROOM_INDEX_DATA *room)
  */
 void reset_area(struct area_data *area)
 {
-    ROOM_INDEX_DATA *room;
+    struct room_index_data *room;
     long vnum;
 
     for (vnum = area->min_vnum; vnum <= area->max_vnum; vnum++)
@@ -2126,9 +2126,9 @@ MOB_INDEX_DATA *get_mob_index(long vnum)
  * Translates mob virtual number to its room index struct.
  * Hash table lookup.
  */
-ROOM_INDEX_DATA *get_room_index(long vnum)
+struct room_index_data *get_room_index(long vnum)
 {
-    ROOM_INDEX_DATA *room_idx;
+    struct room_index_data *room_idx;
 
     for (room_idx = room_index_hash[vnum % MAX_KEY_HASH];
          room_idx != NULL;
@@ -2519,7 +2519,7 @@ void do_dump(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *fch;
     MOB_INDEX_DATA *mob_idx;
-    PC_DATA *pc;
+    struct pc_data *pc;
     GAMEOBJECT *obj;
     struct descriptor_data *d;
     AFFECT_DATA *af;
@@ -2594,7 +2594,7 @@ void do_dump(CHAR_DATA *ch, const char *argument)
     fprintf(fp, "Affects	%10ld(%12ld bytes), %10ld free(%12ld bytes)\n", aff_count, (long)aff_count * (long)(sizeof(*af)), count, (long)count * (long)(sizeof(*af)));
 
     /* rooms */
-    fprintf(fp, "Rooms	%10ld(%12ld bytes)\n", top_room, top_room * (long)(sizeof(ROOM_INDEX_DATA *)));
+    fprintf(fp, "Rooms	%10ld(%12ld bytes)\n", top_room, top_room * (long)(sizeof(struct room_index_data *)));
 
     /* exits */
     fprintf(fp, "Exits	%10ld(%12ld bytes)\n", top_exit, top_exit * (long)(sizeof(EXIT_DATA *)));

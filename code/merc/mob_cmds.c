@@ -14,7 +14,7 @@
 
 
 extern DECLARE_DO_FUN(do_look);
-extern ROOM_INDEX_DATA *find_location(CHAR_DATA *, const char *);
+extern struct room_index_data *find_location(CHAR_DATA *, const char *);
 void mob_interpret(CHAR_DATA * ch, const char *argument);
 
 /*
@@ -290,7 +290,7 @@ void do_mpzecho(CHAR_DATA *ch, const char *argument)
  */
 void do_mpasound(CHAR_DATA *ch, const char *argument)
 {
-    ROOM_INDEX_DATA *was_in_room;
+    struct room_index_data *was_in_room;
     int door;
 
     if (argument[0] == '\0')
@@ -646,7 +646,7 @@ void do_mppurge(CHAR_DATA *ch, const char *argument)
  */
 void do_mpgoto(CHAR_DATA *ch, const char *argument)
 {
-    ROOM_INDEX_DATA *location;
+    struct room_index_data *location;
     char arg[MAX_INPUT_LENGTH];
 
     one_argument(argument, arg);
@@ -680,8 +680,8 @@ void do_mpgoto(CHAR_DATA *ch, const char *argument)
 void do_mpat(CHAR_DATA *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
-    ROOM_INDEX_DATA *location;
-    ROOM_INDEX_DATA *original;
+    struct room_index_data *location;
+    struct room_index_data *original;
     CHAR_DATA *wch;
     GAMEOBJECT *on;
 
@@ -730,7 +730,7 @@ void do_mptransfer(CHAR_DATA *ch, const char *argument)
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
     char buf[MAX_STRING_LENGTH];
-    ROOM_INDEX_DATA *location;
+    struct room_index_data *location;
     CHAR_DATA *victim;
 
     argument = one_argument(argument, arg1);
@@ -1162,7 +1162,7 @@ void do_mpcall(CHAR_DATA *ch, const char *argument)
  */
 void do_mpflee(CHAR_DATA *ch, const char *argument)
 {
-    ROOM_INDEX_DATA *was_in;
+    struct room_index_data *was_in;
     EXIT_DATA *pexit;
     int door, attempt, dir;
 
@@ -1206,7 +1206,7 @@ void do_mpflee(CHAR_DATA *ch, const char *argument)
 void do_mpotransfer(CHAR_DATA *ch, const char *argument)
 {
     GAMEOBJECT *obj;
-    ROOM_INDEX_DATA *location;
+    struct room_index_data *location;
     char arg[MAX_INPUT_LENGTH];
     char buf[MAX_INPUT_LENGTH];
 

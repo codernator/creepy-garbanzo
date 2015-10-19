@@ -88,8 +88,8 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
 {
     CHAR_DATA *fch;
     CHAR_DATA *fch_next;
-    ROOM_INDEX_DATA *in_room;
-    ROOM_INDEX_DATA *to_room;
+    struct room_index_data *in_room;
+    struct room_index_data *to_room;
     EXIT_DATA *pexit;
     char buf[MAX_STRING_LENGTH];
 
@@ -289,8 +289,8 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
  ***************************************************************************/
 void do_push(CHAR_DATA *ch, const const char *argument)
 {
-    ROOM_INDEX_DATA *in_room;
-    ROOM_INDEX_DATA *to_room;
+    struct room_index_data *in_room;
+    struct room_index_data *to_room;
     CHAR_DATA *victim;
     EXIT_DATA *pexit;
     char arg[MAX_INPUT_LENGTH];
@@ -393,8 +393,8 @@ void do_push(CHAR_DATA *ch, const const char *argument)
 void do_drag(CHAR_DATA *ch, const const char *argument)
 {
     CHAR_DATA *victim;
-    ROOM_INDEX_DATA *in_room;
-    ROOM_INDEX_DATA *to_room;
+    struct room_index_data *in_room;
+    struct room_index_data *to_room;
     EXIT_DATA *pexit;
     char arg[MAX_INPUT_LENGTH];
     int door;
@@ -490,8 +490,8 @@ void push_char(CHAR_DATA *ch, CHAR_DATA *vch, int door, bool follow)
 {
     CHAR_DATA *fch;
     CHAR_DATA *fch_next;
-    ROOM_INDEX_DATA *in_room;
-    ROOM_INDEX_DATA *to_room;
+    struct room_index_data *in_room;
+    struct room_index_data *to_room;
     EXIT_DATA *pexit;
     char buf[256];
 
@@ -578,8 +578,8 @@ void drag_char(CHAR_DATA *ch, CHAR_DATA *victim, int door, bool follow)
 {
     CHAR_DATA *fch;
     CHAR_DATA *fch_next;
-    ROOM_INDEX_DATA *in_room;
-    ROOM_INDEX_DATA *to_room;
+    struct room_index_data *in_room;
+    struct room_index_data *to_room;
     EXIT_DATA *pexit;
 
     if (check_affected(ch, "web")) {
@@ -1075,7 +1075,7 @@ void do_open(CHAR_DATA *ch, const char *argument)
 
     if ((door = find_door(ch, arg)) >= 0) {
 	/* 'open door' */
-	ROOM_INDEX_DATA *to_room;
+	struct room_index_data *to_room;
 	EXIT_DATA *pexit;
 	EXIT_DATA *pexit_rev;
 
@@ -1170,7 +1170,7 @@ void do_close(CHAR_DATA *ch, const char *argument)
 
     if ((door = find_door(ch, arg)) >= 0) {
 	/* 'close door' */
-	ROOM_INDEX_DATA *to_room;
+	struct room_index_data *to_room;
 	EXIT_DATA *pexit;
 	EXIT_DATA *pexit_rev;
 
@@ -1301,7 +1301,7 @@ void do_lock(CHAR_DATA *ch, const char *argument)
 
     if ((door = find_door(ch, arg)) >= 0) {
 	/* 'lock door' */
-	ROOM_INDEX_DATA *to_room;
+	struct room_index_data *to_room;
 	EXIT_DATA *pexit;
 	EXIT_DATA *pexit_rev;
 
@@ -1419,7 +1419,7 @@ void do_unlock(CHAR_DATA *ch, const char *argument)
 
     if ((door = find_door(ch, arg)) >= 0) {
 	/* 'unlock door' */
-	ROOM_INDEX_DATA *to_room;
+	struct room_index_data *to_room;
 	EXIT_DATA *pexit;
 	EXIT_DATA *pexit_rev;
 
@@ -1559,7 +1559,7 @@ void do_pick(CHAR_DATA *ch, const char *argument)
 
     if ((door = find_door(ch, arg)) >= 0) {
 	/* 'pick door' */
-	ROOM_INDEX_DATA *to_room;
+	struct room_index_data *to_room;
 	EXIT_DATA *pexit;
 	EXIT_DATA *pexit_rev;
 

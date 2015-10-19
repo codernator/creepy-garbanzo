@@ -289,17 +289,17 @@ void free_char(CHAR_DATA *ch)
 /***************************************************************************
  *	player data
  ***************************************************************************/
-PC_DATA *pcdata_free;
+struct pc_data *pcdata_free;
 
 /***************************************************************************
  *	new_pcdata
  *
  *	allocate new pcdata
  ***************************************************************************/
-PC_DATA *new_pcdata(void)
+struct pc_data *new_pcdata(void)
 {
-    static PC_DATA pcdata_zero;
-    PC_DATA *pcdata;
+    static struct pc_data pcdata_zero;
+    struct pc_data *pcdata;
     int alias;
 
 
@@ -329,7 +329,7 @@ PC_DATA *new_pcdata(void)
  *
  *	recylce unused pcdata
  ***************************************************************************/
-void free_pcdata(PC_DATA *pcdata)
+void free_pcdata(struct pc_data *pcdata)
 {
     LEARNED *learned;
     LEARNED *learned_next;

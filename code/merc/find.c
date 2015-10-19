@@ -70,7 +70,7 @@ static void help_ovnum_properties(CHAR_DATA *ch);
 
 
 
-GAMEOBJECT *get_object_by_itemtype_and_room(int item_type, ROOM_INDEX_DATA *room, CHAR_DATA *ch)
+GAMEOBJECT *get_object_by_itemtype_and_room(int item_type, struct room_index_data *room, CHAR_DATA *ch)
 {
     GAMEOBJECT *instance = NULL;
 

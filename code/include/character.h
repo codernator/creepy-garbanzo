@@ -8,7 +8,7 @@ void toggle_afk(/*@partial@*/CHAR_DATA *ch, /*@null@*/const char *message);
 void replay(/*@partial@*/CHAR_DATA *ch);
 void sit(/*@partial@*/CHAR_DATA *ch, /*@nulL@*//*@partial@*/GAMEOBJECT *on);
 void stand(/*@partial@*/CHAR_DATA *ch, /*@nulL@*//*@partial@*/GAMEOBJECT *on);
-void look_room(/*@partial@*/CHAR_DATA *ch, /*@partial@*/ROOM_INDEX_DATA *room);
+void look_room(/*@partial@*/CHAR_DATA *ch, /*@partial@*/struct room_index_data *room);
 void look_object(/*@partial@*/CHAR_DATA *ch, /*@partial@*/GAMEOBJECT *obj, const char *argument);
 void look_character(/*@partial@*/CHAR_DATA *ch, /*@partial@*/CHAR_DATA *victim);
 void look_extras(/*@partial@*/CHAR_DATA *ch, const char *name, const int number);

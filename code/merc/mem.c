@@ -33,16 +33,16 @@ extern int top_mprog_index;
 
 /** locals */
 static EXIT_DATA *exit_free;
-static ROOM_INDEX_DATA *room_index_free;
+static struct room_index_data *room_index_free;
 static struct shop_data *shop_free;
 static MOB_INDEX_DATA *mob_index_free;
-static RESET_DATA *reset_free;
+static struct reset_data *reset_free;
 
 
 
-RESET_DATA *new_reset_data(void)
+struct reset_data *new_reset_data(void)
 {
-    RESET_DATA *reset;
+    struct reset_data *reset;
 
     if (!reset_free) {
         reset = alloc_perm((unsigned int)sizeof(*reset));
@@ -64,7 +64,7 @@ RESET_DATA *new_reset_data(void)
 
 
 
-void free_reset_data(RESET_DATA *reset)
+void free_reset_data(struct reset_data *reset)
 {
     reset->next = reset_free;
     reset_free = reset;
@@ -112,9 +112,9 @@ void free_exit(EXIT_DATA *exit)
 }
 
 
-ROOM_INDEX_DATA *new_room_index(void)
+struct room_index_data *new_room_index(void)
 {
-    ROOM_INDEX_DATA *room;
+    struct room_index_data *room;
     int door;
 
     if (!room_index_free) {
@@ -150,10 +150,10 @@ ROOM_INDEX_DATA *new_room_index(void)
 
 
 
-void free_room_index(ROOM_INDEX_DATA *room)
+void free_room_index(struct room_index_data *room)
 {
     EXTRA_DESCR_DATA *extra;
-    RESET_DATA *reset;
+    struct reset_data *reset;
     long door;
 
     free_string(room->name);

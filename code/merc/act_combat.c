@@ -271,8 +271,8 @@ void do_murder(CHAR_DATA *ch, const char *argument)
 
 void do_flee(/*@dependent@*/CHAR_DATA *ch, /*@unused@*/const char *argument)
 {
-    ROOM_INDEX_DATA *was_in;
-    ROOM_INDEX_DATA *now_in;
+    struct room_index_data *was_in;
+    struct room_index_data *now_in;
     CHAR_DATA *victim;
     int attempt;
 

@@ -302,7 +302,7 @@ int check_immune(CHAR_DATA *ch, int dam_type)
         return immune;
 }
 
-ROOM_INDEX_DATA *find_location(CHAR_DATA *ch, const char *arg)
+struct room_index_data *find_location(CHAR_DATA *ch, const char *arg)
 {
     CHAR_DATA *victim;
     GAMEOBJECT *obj;
@@ -884,12 +884,12 @@ void char_from_room(CHAR_DATA *ch)
     return;
 }
 
-void char_to_room(CHAR_DATA *ch, ROOM_INDEX_DATA *pRoomIndex)
+void char_to_room(CHAR_DATA *ch, struct room_index_data *pRoomIndex)
 {
     GAMEOBJECT *obj;
 
     if (pRoomIndex == NULL) {
-        ROOM_INDEX_DATA *room;
+        struct room_index_data *room;
 
         log_bug("Char_to_room: NULL.", 0);
 
@@ -1167,7 +1167,7 @@ int count_obj_list(struct objectprototype *pObjIndex, GAMEOBJECT *list)
  */
 void obj_from_room(GAMEOBJECT *obj)
 {
-    ROOM_INDEX_DATA *in_room;
+    struct room_index_data *in_room;
     CHAR_DATA *ch;
 
     if ((in_room = obj->in_room) == NULL) {
@@ -1207,7 +1207,7 @@ void obj_from_room(GAMEOBJECT *obj)
 /*
  * Move an obj into a room.
  */
-void obj_to_room(GAMEOBJECT *obj, ROOM_INDEX_DATA *pRoomIndex)
+void obj_to_room(GAMEOBJECT *obj, struct room_index_data *pRoomIndex)
 {
     /*    int max_obj;
      *
@@ -1750,7 +1750,7 @@ int get_true_weight(GAMEOBJECT *obj)
  *
  * is the room dark?
  ***************************************************************************/
-bool room_is_dark(CHAR_DATA *ch, ROOM_INDEX_DATA *room)
+bool room_is_dark(CHAR_DATA *ch, struct room_index_data *room)
 {
     if (room == NULL)
         return false;
@@ -1793,7 +1793,7 @@ bool room_is_dark(CHAR_DATA *ch, ROOM_INDEX_DATA *room)
  *
  * is the character the owner of a room?
  ***************************************************************************/
-bool is_room_owner(CHAR_DATA *ch, ROOM_INDEX_DATA *room)
+bool is_room_owner(CHAR_DATA *ch, struct room_index_data *room)
 {
     if (room->owner == NULL
         || room->owner[0] == '\0')
@@ -1807,7 +1807,7 @@ bool is_room_owner(CHAR_DATA *ch, ROOM_INDEX_DATA *room)
  *
  * checks to see if a room is private
  ***************************************************************************/
-bool room_is_private(ROOM_INDEX_DATA *room)
+bool room_is_private(struct room_index_data *room)
 {
     CHAR_DATA *rch;
     int count;
@@ -1840,7 +1840,7 @@ bool room_is_private(ROOM_INDEX_DATA *room)
  *
  * can a character see a room
  ***************************************************************************/
-bool can_see_room(CHAR_DATA *ch, ROOM_INDEX_DATA *room)
+bool can_see_room(CHAR_DATA *ch, struct room_index_data *room)
 {
     /* imp-only rooms */
     if (IS_SET(room->room_flags, ROOM_IMP_ONLY)
@@ -1980,7 +1980,7 @@ bool can_drop_obj(CHAR_DATA *ch, GAMEOBJECT *obj)
  *
  * return the room flags for a room
  ***************************************************************************/
-char *room_flag_bit_name(ROOM_INDEX_DATA *room)
+char *room_flag_bit_name(struct room_index_data *room)
 {
     return flag_string(room_flags, room->room_flags);
 }
@@ -2457,9 +2457,9 @@ void furniture_check(CHAR_DATA *ch)
 /***************************************************************************
  * get the deathroom for a character
  ***************************************************************************/
-ROOM_INDEX_DATA *get_death_room(CHAR_DATA *ch)
+struct room_index_data *get_death_room(CHAR_DATA *ch)
 {
-    ROOM_INDEX_DATA *location;
+    struct room_index_data *location;
     long deathroom;
 
     deathroom = ROOM_VNUM_ALTAR;

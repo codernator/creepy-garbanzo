@@ -2,14 +2,14 @@
 
 
 
-ROOM_INDEX_DATA *get_scan_room(ROOM_INDEX_DATA * room, int direction, int distance);
+struct room_index_data *get_scan_room(struct room_index_data * room, int direction, int distance);
 
 
 /***************************************************************************
 *	local declarations
 ***************************************************************************/
 /* local functions */
-static void scan_list(ROOM_INDEX_DATA * scan_room, CHAR_DATA * ch, int depth, int door, const char *argument);
+static void scan_list(struct room_index_data * scan_room, CHAR_DATA * ch, int depth, int door, const char *argument);
 
 /*
  * Right Here
@@ -42,7 +42,7 @@ static char *const direction_name[] =
 ***************************************************************************/
 void do_scan(CHAR_DATA *ch, const char *argument)
 {
-	ROOM_INDEX_DATA *room;
+	struct room_index_data *room;
 	int max_dist;
 	int dist;
 	int dir;
@@ -99,7 +99,7 @@ void do_scan(CHAR_DATA *ch, const char *argument)
 *	generate a list of all the people in a give room
 *	or just the people who match <argument>
 ***************************************************************************/
-static void scan_list(ROOM_INDEX_DATA *scan_room, CHAR_DATA *ch, int depth, int direction, const char *argument)
+static void scan_list(struct room_index_data *scan_room, CHAR_DATA *ch, int depth, int direction, const char *argument)
 {
 	CHAR_DATA *rch;
 	bool found;
@@ -143,11 +143,11 @@ static void scan_list(ROOM_INDEX_DATA *scan_room, CHAR_DATA *ch, int depth, int 
 *	get a room in a direct <direction> - distance rooms away
 *	returns NULL if there is no room there
 ***************************************************************************/
-ROOM_INDEX_DATA *get_scan_room(ROOM_INDEX_DATA *room,
+struct room_index_data *get_scan_room(struct room_index_data *room,
 			       int		direction,
 			       int		distance)
 {
-	ROOM_INDEX_DATA *scan_room;
+	struct room_index_data *scan_room;
 	EXIT_DATA *exit;
 	int depth;
 
@@ -177,7 +177,7 @@ ROOM_INDEX_DATA *get_scan_room(ROOM_INDEX_DATA *room,
 ***************************************************************************/
 CHAR_DATA *get_char_scan(CHAR_DATA *ch, const char *argument)
 {
-	ROOM_INDEX_DATA *room;
+	struct room_index_data *room;
 	CHAR_DATA *rch;
 	CHAR_DATA *vch;
 	int max_dist;

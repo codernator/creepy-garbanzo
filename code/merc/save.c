@@ -27,7 +27,7 @@ extern int message_type_lookup(char *name);
 
 extern char *fread_norm_string(FILE * fp);
 int rename(const char *oldfname, const char *newfname);
-static bool load_rdesc(ROOM_INDEX_DATA * location, const char *name);
+static bool load_rdesc(struct room_index_data * location, const char *name);
 
 
 /***************************************************************************
@@ -36,10 +36,10 @@ static bool load_rdesc(ROOM_INDEX_DATA * location, const char *name);
 static void fwrite_char(CHAR_DATA * ch, FILE * fp);
 static void fwrite_obj(CHAR_DATA * ch, GAMEOBJECT * obj, FILE * fp, int iNest);
 static void fwrite_pet(CHAR_DATA * pet, FILE * fp);
-static void fwrite_rdesc(ROOM_INDEX_DATA * location, FILE * fp);
+static void fwrite_rdesc(struct room_index_data * location, FILE * fp);
 static void fread_pet(CHAR_DATA * ch, FILE * fp);
 static void fread_obj(CHAR_DATA * ch, FILE * fp);
-static void fread_rdesc(ROOM_INDEX_DATA * location, FILE * fp);
+static void fread_rdesc(struct room_index_data * location, FILE * fp);
 
 
 
@@ -1771,7 +1771,7 @@ static void fread_obj(CHAR_DATA *ch, FILE *fp)
  ***************************************************************************/
 void do_rload(CHAR_DATA *ch, const char *argument)
 {
-    ROOM_INDEX_DATA *location;
+    struct room_index_data *location;
 
     location = ch->in_room;
     if (location == NULL) {
@@ -1801,7 +1801,7 @@ void do_rload(CHAR_DATA *ch, const char *argument)
 void do_rsave(CHAR_DATA *ch, const char *argument)
 {
     char strsave[MAX_INPUT_LENGTH];
-    ROOM_INDEX_DATA *location;
+    struct room_index_data *location;
     FILE *fp;
 
     location = ch->in_room;
@@ -1844,7 +1844,7 @@ void do_rsave(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	fwrite_rdesc
  ***************************************************************************/
-static void fwrite_rdesc(ROOM_INDEX_DATA *location, FILE *fp)
+static void fwrite_rdesc(struct room_index_data *location, FILE *fp)
 {
     fprintf(fp, "#RDESC\n");
     fprintf(fp, "%s~\n", location->name);
@@ -1861,7 +1861,7 @@ static void fwrite_rdesc(ROOM_INDEX_DATA *location, FILE *fp)
 /***************************************************************************
  *	load_rdesc
  ***************************************************************************/
-static bool load_rdesc(ROOM_INDEX_DATA *location, const char *name)
+static bool load_rdesc(struct room_index_data *location, const char *name)
 {
     char strsave[MAX_INPUT_LENGTH];
     FILE *fp;
@@ -1903,7 +1903,7 @@ static bool load_rdesc(ROOM_INDEX_DATA *location, const char *name)
     return found;
 }
 
-static void fread_rdesc(ROOM_INDEX_DATA *location, FILE *fp)
+static void fread_rdesc(struct room_index_data *location, FILE *fp)
 {
     char letter;
 

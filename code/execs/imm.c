@@ -25,7 +25,7 @@ extern char *password_encrypt(const char *plain);
 
 
 static CHAR_DATA *create();
-static PC_DATA *create_pcdata();
+static struct pc_data *create_pcdata();
 
 static char *name = "Codernator";
 static char *empty = "";
@@ -81,9 +81,9 @@ CHAR_DATA *create()
     return ch;
 }
 
-PC_DATA *create_pcdata()
+struct pc_data *create_pcdata()
 {
-    PC_DATA *ch = new_pcdata();
+    struct pc_data *ch = new_pcdata();
 
     ch->pwd = password_encrypt(password);
     ch->security = 9;

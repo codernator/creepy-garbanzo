@@ -548,7 +548,7 @@ void save_objects(FILE *fp, struct area_data *area)
 
 void save_rooms(FILE *fp, struct area_data *area)
 {
-    ROOM_INDEX_DATA *room;
+    struct room_index_data *room;
     EXTRA_DESCR_DATA *extra;
     EXIT_DATA *exit;
     AFFECT_DATA *paf;
@@ -650,7 +650,7 @@ void save_rooms(FILE *fp, struct area_data *area)
 
 void save_door_resets(FILE *fp, struct area_data *area)
 {
-    ROOM_INDEX_DATA *room;
+    struct room_index_data *room;
     EXIT_DATA *exit;
     int hash_idx;
     int door;
@@ -677,9 +677,9 @@ void save_door_resets(FILE *fp, struct area_data *area)
 
 void save_resets(FILE *fp, struct area_data *area)
 {
-    RESET_DATA *pReset;
+    struct reset_data *pReset;
     MOB_INDEX_DATA *pLastMob = NULL;
-    ROOM_INDEX_DATA *pRoom;
+    struct room_index_data *pRoom;
     int hash_idx;
 
     fprintf(fp, "#RESETS\n");

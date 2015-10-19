@@ -8,7 +8,7 @@ void acid_effect(void *vo, int level, int dam, int target)
 	GAMEOBJECT *obj_next;
 
 	if (target == TARGET_ROOM) { /* nail objects on the floor */
-		ROOM_INDEX_DATA *room = (ROOM_INDEX_DATA *)vo;
+		struct room_index_data *room = (struct room_index_data *)vo;
 
 		for (obj = room->contents; obj != NULL; obj = obj_next) {
 			obj_next = obj->next_content;
@@ -159,7 +159,7 @@ void cold_effect(void *vo, int level, int dam, int target)
 	GAMEOBJECT *obj_next;
 
 	if (target == TARGET_ROOM) { /* nail objects on the floor */
-		ROOM_INDEX_DATA *room = (ROOM_INDEX_DATA *)vo;
+		struct room_index_data *room = (struct room_index_data *)vo;
 		GAMEOBJECT *obj;
 		GAMEOBJECT *obj_next;
 
@@ -263,7 +263,7 @@ void fire_effect(void *vo, int level, int dam, int target)
 	GAMEOBJECT *obj_next;
 
 	if (target == TARGET_ROOM) {     /* nail objects on the floor */
-		ROOM_INDEX_DATA *room = (ROOM_INDEX_DATA *)vo;
+		struct room_index_data *room = (struct room_index_data *)vo;
 
 		for (obj = room->contents; obj != NULL; obj = obj_next) {
 			obj_next = obj->next_content;
@@ -402,7 +402,7 @@ void poison_effect(void *vo, int level, int dam, int target)
 	GAMEOBJECT *obj_next;
 
 	if (target == TARGET_ROOM) { /* nail objects on the floor */
-		ROOM_INDEX_DATA *room = (ROOM_INDEX_DATA *)vo;
+		struct room_index_data *room = (struct room_index_data *)vo;
 
 		for (obj = room->contents; obj != NULL; obj = obj_next) {
 			obj_next = obj->next_content;
@@ -489,7 +489,7 @@ void shock_effect(void *vo, int level, int dam, int target)
 	GAMEOBJECT *obj_next;
 
 	if (target == TARGET_ROOM) {
-		ROOM_INDEX_DATA *room = (ROOM_INDEX_DATA *)vo;
+		struct room_index_data *room = (struct room_index_data *)vo;
 
 		for (obj = room->contents; obj != NULL; obj = obj_next) {
 			obj_next = obj->next_content;
