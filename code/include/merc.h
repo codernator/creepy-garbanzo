@@ -2245,12 +2245,8 @@ void printf_buf(struct buf_type * buffer, char *fmt, ...);
     unsigned long vnum;
 };
 
-struct area_iterator {
-    /*@observer@*/struct area_data *current;
-};
-
-/*@only@*//*@null@*/struct area_iterator *area_iterator_start(/*@null@*/const struct area_filter *);
-/*@only@*//*@null@*/struct area_iterator *area_iterator(/*@only@*/struct area_iterator *, /*@null@*/const struct area_filter *);
+/*@dependent@*//*@null@*/struct area_data *area_iterator_start(/*@null@*/const struct area_filter *);
+/*@dependent@*//*@null@*/struct area_data *area_iterator(struct area_data *, /*@null@*/const struct area_filter *);
 /*@observer@*//*@null@*/struct area_data *area_getbyvnum(unsigned long vnum);
 /*@observer@*//*@null@*/struct area_data *area_getbycontainingvnum(unsigned long vnum);
 /*@dependent@*//*@null@*/struct area_data *area_new(unsigned long vnum);

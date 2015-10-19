@@ -2952,11 +2952,11 @@ void do_repop(struct char_data *ch, const char *argument)
 
 
     if (!str_cmp(argument, "world")) {
-        struct area_iterator *iterator;
+        struct area_data *iterator;
 
         iterator = area_iterator_start(NULL);
         while (iterator != NULL) {
-            reset_area(iterator->current);
+            reset_area(iterator);
             iterator = area_iterator(iterator, NULL);
         }
         send_to_char("World Repop!", ch);

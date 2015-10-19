@@ -199,20 +199,17 @@ EDIT(hedit_list){
     static char buf[MAX_INPUT_LENGTH];
     struct buf_type *buffer;
     int cnt = 0;
-    struct helpdata_iterator *iterator;
     HELP_DATA *help;
 
     EDIT_HELP(ch, help);
 
     buffer = new_buf();
-    iterator = helpdata_iteratorstart();
-    while (iterator != NULL) {
-        help = iterator->current;
-
+    help = helpdata_iteratorstart();
+    while (help != NULL) {
         (void)snprintf(buf, MAX_INPUT_LENGTH, "%3d. %-14.14s%s", cnt, help->keyword, cnt % 4 == 3 ? "\n\r" : " ");
         add_buf(buffer, buf);
         cnt++;
-        iterator = helpdata_iteratornext(iterator);
+        help = helpdata_iteratornext(help);
     }
 
     if (cnt % 4) {

@@ -39,11 +39,9 @@ static bool check_range(long lower, long upper)
 {
     struct area_data *pArea;
     int cnt = 0;
-    struct area_iterator *iterator;
 
-    iterator = area_iterator_start(NULL);
-    while (iterator != NULL) {
-        pArea = iterator->current;
+    pArea = area_iterator_start(NULL);
+    while (pArea != NULL) {
         if ((lower <= pArea->min_vnum && pArea->min_vnum <= upper) 
             || (lower <= pArea->max_vnum && pArea->max_vnum <= upper))
             ++cnt;
@@ -51,7 +49,7 @@ static bool check_range(long lower, long upper)
         // TODO - would love to short circuit this because I don't really
         // care how many overlaps there are, but iterator needs to be freed
         // first.
-        iterator = area_iterator(iterator, NULL);
+        pArea = area_iterator(pArea, NULL);
     }
 
     return cnt == 0;

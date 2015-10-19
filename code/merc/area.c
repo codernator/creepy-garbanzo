@@ -11,40 +11,25 @@ static struct area_data head_node;
 static bool passes(struct area_data *testee, /*@null@*//*@partial@*/const struct area_filter *filter);
 static void headlist_add(/*@owned@*/struct area_data *entry);
 
-struct area_iterator *area_iterator_start(const struct area_filter *filter)
+struct area_data *area_iterator_start(const struct area_filter *filter)
 {
-    struct area_iterator *iterator;
     struct area_data *current = head_node.next;
 
     while (current != NULL && !passes(current, filter)) {
         current = current->next;
     }
 
-    if (current == NULL) {
-        return NULL;
-    }
-
-    iterator = malloc(sizeof(struct area_iterator));
-    assert(iterator != NULL);
-    iterator->current = current;
-
-    return iterator;
+    return current;
 }
 
-struct area_iterator *area_iterator(struct area_iterator *iterator, const struct area_filter *filter)
+struct area_data *area_iterator(struct area_data *iterator, const struct area_filter *filter)
 {
-    struct area_data *current = iterator->current->next;
+    struct area_data *current = iterator->next;
     while (current != NULL && !passes(current, filter)) {
         current = current->next;
     }
 
-    if (current == NULL) {
-        free(iterator);
-        return NULL;
-    }
-
-    iterator->current = current;
-    return iterator;
+    return current;
 }
 
 struct area_data *area_getbyvnum(unsigned long vnum)

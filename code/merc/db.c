@@ -1382,11 +1382,11 @@ void fix_mobprogs(void)
 
 void reset_areas()
 {
-    struct area_iterator *iterator;
+    struct area_data *iterator;
 
     iterator = area_iterator_start(NULL);
     while (iterator != NULL) {
-        reset_area(iterator->current);
+        reset_area(iterator);
         iterator = area_iterator(iterator, NULL);
     }
 }
@@ -1398,12 +1398,9 @@ void area_update(void)
 {
     struct area_data *area;
     char buf[MAX_STRING_LENGTH];
-    struct area_iterator *iterator;
 
-    iterator = area_iterator_start(NULL);
-    while (iterator != NULL) {
-        area = iterator->current;
-
+    area = area_iterator_start(NULL);
+    while (area != NULL) {
         if (++area->age > 3) {
             /*
              * Check age and reset.
@@ -1426,7 +1423,7 @@ void area_update(void)
             }
         }
 
-        iterator = area_iterator(iterator, NULL);
+        area = area_iterator(area, NULL);
     }
 }
 

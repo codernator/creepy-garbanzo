@@ -1156,7 +1156,6 @@ void do_resets(struct char_data *ch, const char *argument)
 void do_alist(struct char_data *ch, const char *argument)
 {
     struct area_data *pArea;
-    struct area_iterator *iterator;
     struct buf_type *buf;
 
     DENY_NPC(ch);
@@ -1166,9 +1165,8 @@ void do_alist(struct char_data *ch, const char *argument)
                "Num", "Area Name", "lvnum", "uvnum", "Filename", "Sec", "Builders");
 
 
-    iterator = area_iterator_start(NULL);
-    while (iterator != NULL) {
-        pArea = iterator->current;
+    pArea = area_iterator_start(NULL);
+    while (pArea != NULL) {
         printf_buf(buf, "[%3d] %-29.29s(%-5d-%5d) %-12.12s [%d] [%-10.10s]\n\r",
                    pArea->vnum,
                    pArea->name,
@@ -1177,7 +1175,7 @@ void do_alist(struct char_data *ch, const char *argument)
                    pArea->file_name,
                    pArea->security,
                    pArea->builders);
-        iterator = area_iterator(iterator, NULL);
+        pArea = area_iterator(pArea, NULL);
     }
 
     page_to_char(buf_string(buf), ch);

@@ -67,21 +67,18 @@ void do_asave(struct char_data *ch, const char *argument)
 
     /* save everything */
     if (!str_cmp(arg, "world")) {
-        struct area_iterator *iterator;
         struct area_data *area;
 
         save_area_list();
         save_helps(HELP_FILE);
 
-        iterator = area_iterator_start(NULL);
-        while (iterator != NULL) {
-            area = iterator->current;
-            if (!IS_BUILDER(ch, area))
-                continue;
-
-            save_area(area);
-            REMOVE_BIT(area->area_flags, AREA_CHANGED);
-            iterator = area_iterator(iterator, NULL);
+        area = area_iterator_start(NULL);
+        while (area != NULL) {
+            if (IS_BUILDER(ch, area)) {
+                save_area(area);
+                REMOVE_BIT(area->area_flags, AREA_CHANGED);
+            }
+            area = area_iterator(area, NULL);
         }
 
         send_to_char("You saved the world.\n\r", ch);
@@ -98,7 +95,6 @@ void do_asave(struct char_data *ch, const char *argument)
     /* ------------------------------------------ */
     if (!str_cmp(arg, "changed")) {
         bool saved;
-        struct area_iterator *iterator;
         struct area_data *area;
 
         save_area_list();
@@ -109,26 +105,23 @@ void do_asave(struct char_data *ch, const char *argument)
 
         saved = false;
 
-        iterator = area_iterator_start(NULL);
-        while (iterator != NULL) {
-            area = iterator->current;
-
+        area = area_iterator_start(NULL);
+        while (area != NULL) {
             /* Builder must be assigned this area. */
-            if (!IS_BUILDER(ch, area))
+            if (IS_BUILDER(ch, area))
             {
-                continue;
+                /* Save changed areas. */
+                if (IS_SET(area->area_flags, AREA_CHANGED)) {
+                    save_area(area);
+                    saved = true;
+                    printf_to_char(ch, "%24s - '%s'\n\r", area->name, area->file_name);
+                    log_string("%24s - '%s'", area->name, area->file_name);
+
+                    REMOVE_BIT(area->area_flags, AREA_CHANGED);
+                }
             }
 
-            /* Save changed areas. */
-            if (IS_SET(area->area_flags, AREA_CHANGED)) {
-                save_area(area);
-                saved = true;
-                printf_to_char(ch, "%24s - '%s'\n\r", area->name, area->file_name);
-                log_string("%24s - '%s'", area->name, area->file_name);
-
-                REMOVE_BIT(area->area_flags, AREA_CHANGED);
-            }
-            iterator = area_iterator(iterator, NULL);
+            area = area_iterator(area, NULL);
         }
 
         if (!saved) {
@@ -249,6 +242,7 @@ char *fwrite_flag(long flags, char buf[])
 void save_area_list()
 {
     FILE *fp;
+    struct area_data *iterator;
 
     if ((fp = fopen(AREA_LIST, "w")) == NULL) {
         log_bug("Save_area_list: fopen");
@@ -256,11 +250,10 @@ void save_area_list()
         return;
     }
 
-    struct area_iterator *iterator;
 
     iterator = area_iterator_start(NULL);
     while (iterator != NULL) {
-        fprintf(fp, "%s\n", iterator->current->file_name);
+        fprintf(fp, "%s\n", iterator->file_name);
         iterator = area_iterator(iterator, NULL);
     }
 
@@ -784,7 +777,7 @@ void save_shops(FILE *fp, struct area_data *area)
 void save_helps(const char const *filename)
 {
     struct database_controller *db;
-    struct helpdata_iterator *iterator;
+    HELP_DATA *current;
 
     db = database_open(filename);
     if (db == NULL) {
@@ -793,13 +786,12 @@ void save_helps(const char const *filename)
         return;
     }
     
-    iterator = helpdata_iteratorstart();
-    while (iterator != NULL) {
-        HELP_DATA *current = iterator->current;
+    current = helpdata_iteratorstart();
+    while (current != NULL) {
         KEYVALUEPAIR_ARRAY *data = helpdata_serialize(current);
         database_write(db, data);
         free(data);
-        iterator = helpdata_iteratornext(iterator);
+        current = helpdata_iteratornext(current);
     }
 
     database_close(db);

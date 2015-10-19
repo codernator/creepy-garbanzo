@@ -160,29 +160,14 @@ HELP_DATA *help_lookup(const char *keyword)
     return NULL;
 }
 
-struct helpdata_iterator *helpdata_iteratorstart()
+struct help_data *helpdata_iteratorstart()
 {
-    HELP_DATA *current = head_node.next;
-    struct helpdata_iterator *iterator;
-    if (current == NULL)
-        return NULL;
-
-    iterator = malloc(sizeof (struct helpdata_iterator));
-    assert(iterator != NULL);
-    iterator->current = current;
-    return iterator;
+    return head_node.next;
 }
 
-struct helpdata_iterator *helpdata_iteratornext(struct helpdata_iterator *iterator)
+struct help_data *helpdata_iteratornext(struct help_data *current)
 {
-    HELP_DATA *current = iterator->current->next;
-    if (current == NULL) {
-        free(iterator);
-        return NULL;
-    }
-
-    iterator->current = current;
-    return iterator;
+    return current->next;;
 }
 
 void show_help(struct descriptor_data *descriptor, const char *topic, const char *argument)
