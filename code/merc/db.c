@@ -25,7 +25,7 @@
 char str_empty[1];
 struct char_data *char_list;
 struct note_data *note_list;
-MPROG_CODE *mprog_list;
+struct mprog_code *mprog_list;
 struct shop_data *shop_first;
 struct shop_data *shop_last;
 struct note_data *note_free;
@@ -882,7 +882,7 @@ void load_mobiles(FILE *fp)
                     ABORT;
                 }
             } else if (letter == 'M') {
-                MPROG_LIST *mprog;
+                struct mprog_list *mprog;
                 char *word;
                 int trigger = 0;
 
@@ -1240,7 +1240,7 @@ void fix_exits(void)
  */
 void load_mobprogs(FILE *fp)
 {
-    MPROG_CODE *pMprog;
+    struct mprog_code *pMprog;
 
     if (g_area_loading == NULL) {
         bug(fp, "Load_mobprogs: no #AREA seen yet.");
@@ -1289,7 +1289,7 @@ void load_mobprogs(FILE *fp)
 
 void load_mobprogs_new(FILE *fp)
 {
-    MPROG_CODE *mprog;
+    struct mprog_code *mprog;
 
     if (g_area_loading == NULL) {
         bug(fp, "load_mobprogs: no #AREA seen yet.");
@@ -1360,8 +1360,8 @@ void load_mobprogs_new(FILE *fp)
 void fix_mobprogs(void)
 {
     struct mob_index_data *mob_idx;
-    MPROG_LIST *list;
-    MPROG_CODE *prog;
+    struct mprog_list *list;
+    struct mprog_code *prog;
     int hash_idx;
 
     for (hash_idx = 0; hash_idx < MAX_KEY_HASH; hash_idx++) {
@@ -2144,9 +2144,9 @@ struct room_index_data *get_room_index(long vnum)
     return NULL;
 }
 
-MPROG_CODE *get_mprog_index(long vnum)
+struct mprog_code *get_mprog_index(long vnum)
 {
-    MPROG_CODE *prg;
+    struct mprog_code *prg;
 
     for (prg = mprog_list; prg; prg = prg->next)
         if (prg->vnum == vnum)

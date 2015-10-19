@@ -61,7 +61,7 @@ const struct olc_cmd_type mpedit_table[] =
  ***************************************************************************/
 void mpedit(struct char_data *ch, const char *argument)
 {
-    MPROG_CODE *mpcode;
+    struct mprog_code *mpcode;
     struct area_data *ad;
     char arg[MAX_INPUT_LENGTH];
     const char *parg;
@@ -119,7 +119,7 @@ void mpedit(struct char_data *ch, const char *argument)
  ***************************************************************************/
 void do_mpedit(struct char_data *ch, const char *argument)
 {
-    MPROG_CODE *mpcode;
+    struct mprog_code *mpcode;
     char command[MAX_INPUT_LENGTH];
     char arg[MAX_INPUT_LENGTH];
 
@@ -187,7 +187,7 @@ void do_mpedit(struct char_data *ch, const char *argument)
  *	create a new mob program
  ***************************************************************************/
 MPEDIT(mpedit_create){
-    MPROG_CODE *mpcode;
+    struct mprog_code *mpcode;
     struct area_data *ad;
     int value = parse_int(argument);
 
@@ -231,8 +231,8 @@ MPEDIT(mpedit_create){
  *	clone one mprogs code from another
  ***************************************************************************/
 MPEDIT(mpedit_clone){
-    MPROG_CODE *mpcode;
-    MPROG_CODE *pClone;
+    struct mprog_code *mpcode;
+    struct mprog_code *pClone;
     int value;
 
     EDIT_MPCODE(ch, mpcode);
@@ -260,7 +260,7 @@ MPEDIT(mpedit_clone){
  *	show the details of a mob program
  ***************************************************************************/
 MPEDIT(mpedit_show){
-    MPROG_CODE *mpcode;
+    struct mprog_code *mpcode;
 
     EDIT_MPCODE(ch, mpcode);
     printf_to_char(ch, "`&Vnum``:       [%d]\n\r"
@@ -279,7 +279,7 @@ MPEDIT(mpedit_show){
  *	edit the code for a mob program
  ***************************************************************************/
 MPEDIT(mpedit_code){
-    MPROG_CODE *mpcode;
+    struct mprog_code *mpcode;
 
     EDIT_MPCODE(ch, mpcode);
     if (argument[0] == '\0') {
@@ -298,7 +298,7 @@ MPEDIT(mpedit_code){
  *	edit the code for a mob program
  ***************************************************************************/
 MPEDIT(mpedit_comment){
-    MPROG_CODE *mpcode;
+    struct mprog_code *mpcode;
 
     EDIT_MPCODE(ch, mpcode);
 
@@ -319,7 +319,7 @@ MPEDIT(mpedit_comment){
  *	show a list of mob programs
  ***************************************************************************/
 MPEDIT(mpedit_list){
-    MPROG_CODE *mprg;
+    struct mprog_code *mprg;
     struct area_data *ad;
     int count = 1;
     bool show_all = !str_cmp(argument, "all");

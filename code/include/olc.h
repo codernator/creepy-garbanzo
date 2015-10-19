@@ -291,7 +291,7 @@ DECLARE_OLC_FUN(muedit_text);
 #define EDIT_OBJ(ch, obj)       (obj = (struct objectprototype *)ch->desc->ed_data)
 #define EDIT_ROOM(ch, room)     (room = ch->in_room)
 #define EDIT_AREA(ch, area)     (area = (struct area_data *)ch->desc->ed_data)
-#define EDIT_MPCODE(ch, code)   (code = (MPROG_CODE *)ch->desc->ed_data)
+#define EDIT_MPCODE(ch, code)   (code = (struct mprog_code *)ch->desc->ed_data)
 #define EDIT_HELP(ch, help)     (help = (HELP_DATA *)ch->desc->ed_data)
 #define EDIT_SKILL(ch, skill)   (skill = (SKILL *)ch->desc->ed_data)
 #define EDIT_GROUP(ch, group)   (group = (GROUP *)ch->desc->ed_data)
@@ -319,9 +319,9 @@ extern void free_affect(struct affect_data * pAf);
 struct shop_data *new_shop(void);
 void free_shop(struct shop_data * pShop);
 
-extern MPROG_LIST *new_mprog(void);
-extern void free_mprog(MPROG_LIST * mp);
+extern struct mprog_list *new_mprog(void);
+extern void free_mprog(struct mprog_list * mp);
 
-MPROG_CODE *new_mpcode(void);
-void free_mpcode(MPROG_CODE * pMcode);
+struct mprog_code *new_mpcode(void);
+void free_mpcode(struct mprog_code * pMcode);
 

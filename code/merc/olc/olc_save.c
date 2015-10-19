@@ -270,7 +270,7 @@ void save_area_list()
 
 void save_mobprogs(FILE *fp, struct area_data *area)
 {
-    MPROG_CODE *mprog;
+    struct mprog_code *mprog;
     long iter;
 
     fprintf(fp, "#PROGRAMS\n");
@@ -290,7 +290,7 @@ void save_mobprogs(FILE *fp, struct area_data *area)
 
 void save_mobile(FILE *fp, struct mob_index_data *mob_idx)
 {
-    MPROG_LIST *mprog;
+    struct mprog_list *mprog;
     int race = mob_idx->race;
     char buf[MAX_STRING_LENGTH];
     long temp;

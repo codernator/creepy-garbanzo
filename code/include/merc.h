@@ -53,14 +53,10 @@ typedef enum e_one_attack_result {
 } ONE_ATTACK_RESULT;
 
 
-/*Structure types. */
-typedef struct mprog_list MPROG_LIST;
-typedef struct mprog_code MPROG_CODE;
 
-
-/* required for new skill system */
 typedef struct affect_data AFFECT_DATA;
 typedef struct char_data CHAR_DATA;
+/* required for new skill system */
 #include "skills.h"
 
 /* Function types. */
@@ -1222,7 +1218,7 @@ struct liq_type {
 struct mob_index_data {
     struct mob_index_data *next;
     struct shop_data *shop;
-    MPROG_LIST *mprogs;
+    struct mprog_list *mprogs;
     struct area_data *area;
     long vnum;
     long group;
@@ -1714,7 +1710,7 @@ struct mprog_list {
     char *  trig_phrase;
     long  vnum;
     char *  code;
-    MPROG_LIST * next;
+    struct mprog_list * next;
     bool  valid;
 };
 
@@ -1722,7 +1718,7 @@ struct mprog_code {
     long  vnum;
     char *  comment;
     char *  code;
-    MPROG_CODE * next;
+    struct mprog_code * next;
 };
 
 
@@ -1870,7 +1866,7 @@ extern const int rev_dir[];                 /* int - ROM OLC */
 extern struct shop_data *shop_last;
 extern struct shop_data *shop_first;
 extern struct char_data *char_list;
-extern MPROG_CODE *mprog_list;
+extern struct mprog_code *mprog_list;
 extern int top_affect;
 extern int top_ed;
 extern int top_reset;
@@ -2014,7 +2010,7 @@ void smash_tilde(char *str);
 void tail_chain(void);
 
 /* olc/mprogs */
-MPROG_CODE *get_mprog_index(long vnum);
+struct mprog_code *get_mprog_index(long vnum);
 void reset_area(struct area_data * pArea);
 void reset_room(struct room_index_data * pRoom);
 void load_socials(void);

@@ -646,17 +646,17 @@ char *buf_string(struct buf_type *buffer)
 /***************************************************************************
  *	mob program recycling
  ***************************************************************************/
-static MPROG_LIST *mprog_free;
+static struct mprog_list *mprog_free;
 
 /***************************************************************************
  *	new_mprog
  *
  *	create a new mob program
  ***************************************************************************/
-MPROG_LIST *new_mprog(void)
+struct mprog_list *new_mprog(void)
 {
-    static MPROG_LIST mp_zero;
-    MPROG_LIST *mp;
+    static struct mprog_list mp_zero;
+    struct mprog_list *mp;
 
     if (mprog_free == NULL) {
         mp = alloc_perm((unsigned int)sizeof(*mp));
@@ -682,7 +682,7 @@ MPROG_LIST *new_mprog(void)
  *
  *	free the mob program
  ***************************************************************************/
-void free_mprog(MPROG_LIST *mp)
+void free_mprog(struct mprog_list *mp)
 {
     if (!IS_VALID(mp))
         return;

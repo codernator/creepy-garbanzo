@@ -297,7 +297,7 @@ char *olc_ed_vnum(struct char_data *ch)
     struct room_index_data *pRoom;
     struct objectprototype *pObj;
     struct mob_index_data *pMob;
-    MPROG_CODE *pMprog;
+    struct mprog_code *pMprog;
     HELP_DATA *pHelp;
     SKILL *pSkill;
     GROUP *pGroup;
@@ -322,7 +322,7 @@ char *olc_ed_vnum(struct char_data *ch)
           sprintf(buf, "%ld", pMob ? pMob->vnum : 0);
           break;
       case ED_MPCODE:
-          pMprog = (MPROG_CODE *)ch->desc->ed_data;
+          pMprog = (struct mprog_code *)ch->desc->ed_data;
           sprintf(buf, "%ld", pMprog ? pMprog->vnum : 0);
           break;
       case ED_HELP:

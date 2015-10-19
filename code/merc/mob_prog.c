@@ -1005,7 +1005,7 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
  */
 void mp_act_trigger(const char *argument, struct char_data *mob, struct char_data *ch, const void *arg1, const void *arg2, int type)
 {
-    MPROG_LIST *prg;
+    struct mprog_list *prg;
 
     for (prg = mob->mob_idx->mprogs; prg != NULL; prg = prg->next) {
 	if (prg->trig_type == type && strstr(argument, prg->trig_phrase) != NULL) {
@@ -1022,7 +1022,7 @@ void mp_act_trigger(const char *argument, struct char_data *mob, struct char_dat
  */
 bool mp_percent_trigger(struct char_data *mob, struct char_data *ch, const void *arg1, const void *arg2, int type)
 {
-    MPROG_LIST *prg;
+    struct mprog_list *prg;
 
     for (prg = mob->mob_idx->mprogs; prg != NULL; prg = prg->next) {
 	if (prg->trig_type == type
@@ -1036,7 +1036,7 @@ bool mp_percent_trigger(struct char_data *mob, struct char_data *ch, const void 
 
 void mp_bribe_trigger(struct char_data *mob, struct char_data *ch, long amount)
 {
-    MPROG_LIST *prg;
+    struct mprog_list *prg;
     long parsed;
 
     /*
@@ -1059,7 +1059,7 @@ void mp_bribe_trigger(struct char_data *mob, struct char_data *ch, long amount)
 bool mp_exit_trigger(struct char_data *ch, int dir)
 {
     struct char_data *mob;
-    MPROG_LIST *prg;
+    struct mprog_list *prg;
 
     for (mob = ch->in_room->people; mob != NULL; mob = mob->next_in_room) {
 	if (IS_NPC(mob)
@@ -1091,7 +1091,7 @@ bool mp_exit_trigger(struct char_data *ch, int dir)
 void mp_give_trigger(struct char_data *mob, struct char_data *ch, struct gameobject *obj)
 {
     char buf[MAX_INPUT_LENGTH];
-    MPROG_LIST *prg;
+    struct mprog_list *prg;
 
     for (prg = mob->mob_idx->mprogs; prg; prg = prg->next)
 	if (prg->trig_type == TRIG_GIVE) {
@@ -1148,7 +1148,7 @@ void mp_greet_trigger(struct char_data *ch)
 
 void mp_hprct_trigger(struct char_data *mob, struct char_data *ch)
 {
-    MPROG_LIST *prg;
+    struct mprog_list *prg;
 
     for (prg = mob->mob_idx->mprogs; prg != NULL; prg = prg->next)
 	if ((prg->trig_type == TRIG_HPCNT)

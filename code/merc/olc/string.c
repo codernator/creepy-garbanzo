@@ -214,8 +214,8 @@ void string_add(struct char_data *ch, const char *argument)
         if (ch->desc->editor == ED_MPCODE) {
             struct mob_index_data *mob;
             int hash;
-            MPROG_LIST *mpl;
-            MPROG_CODE *mpc;
+            struct mprog_list *mpl;
+            struct mprog_code *mpc;
 
             EDIT_MPCODE(ch, mpc);
             if (mpc != NULL) {

@@ -18,7 +18,7 @@
 struct extra_descr_data *extra_descr_free;
 void free_extra_descr(struct extra_descr_data * extra);
 void free_affect(struct affect_data * af);
-void free_mprog(MPROG_LIST * mp);
+void free_mprog(struct mprog_list * mp);
 
 
 /** imports */
@@ -291,11 +291,11 @@ void free_mob_index(struct mob_index_data *mob)
     return;
 }
 
-static MPROG_CODE *mpcode_free;
+static struct mprog_code *mpcode_free;
 
-MPROG_CODE *new_mpcode(void)
+struct mprog_code *new_mpcode(void)
 {
-    MPROG_CODE *mpcode;
+    struct mprog_code *mpcode;
 
     if (!mpcode_free) {
         mpcode = alloc_perm((unsigned int)sizeof(*mpcode));
@@ -313,7 +313,7 @@ MPROG_CODE *new_mpcode(void)
     return mpcode;
 }
 
-void free_mpcode(MPROG_CODE *mpcode)
+void free_mpcode(struct mprog_code *mpcode)
 {
     free_string(mpcode->comment);
     free_string(mpcode->code);

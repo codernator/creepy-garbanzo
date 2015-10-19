@@ -170,7 +170,7 @@ char *mprog_type_to_name(int type)
  */
 void do_mpstat(struct char_data *ch, const char *argument)
 {
-    MPROG_LIST *mprg;
+    struct mprog_list *mprg;
     struct char_data *victim;
     int idx;
 
@@ -219,7 +219,7 @@ void do_mpstat(struct char_data *ch, const char *argument)
  */
 void do_mpdump(struct char_data *ch, const char *argument)
 {
-    MPROG_CODE *mprg;
+    struct mprog_code *mprg;
     char buf[MAX_INPUT_LENGTH];
 
     one_argument(argument, buf);
@@ -1128,7 +1128,7 @@ void do_mpcall(struct char_data *ch, const char *argument)
     char arg[MAX_INPUT_LENGTH];
     struct char_data *vch;
     struct gameobject *obj1, *obj2;
-    MPROG_CODE *prg;
+    struct mprog_code *prg;
     extern void program_flow(long, char *, struct char_data *, struct char_data *, const void *, const void *);
 
     argument = one_argument(argument, arg);

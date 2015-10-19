@@ -131,7 +131,7 @@ void do_medit(struct char_data *ch, const char *argument)
  *****************************************************************************/
 EDIT(medit_show){
     struct mob_index_data *mob_idx;
-    MPROG_LIST *list;
+    struct mprog_list *list;
 
     EDIT_MOB(ch, mob_idx);
     printf_to_char(ch, "`&Name``:        [%s]\n\r`&Area``:        [%5d] %s\n\r",
@@ -1417,8 +1417,8 @@ EDIT(medit_group){
  ***************************************************************************/
 EDIT(medit_addmprog){
     struct mob_index_data *mob_idx;
-    MPROG_LIST *list;
-    MPROG_CODE *code;
+    struct mprog_list *list;
+    struct mprog_code *code;
     char trigger[MAX_STRING_LENGTH];
     char phrase[MAX_STRING_LENGTH];
     char num[MAX_STRING_LENGTH];
@@ -1467,8 +1467,8 @@ EDIT(medit_addmprog){
  ***************************************************************************/
 EDIT(medit_delmprog){
     struct mob_index_data *mob_idx;
-    MPROG_LIST *list;
-    MPROG_LIST *list_next;
+    struct mprog_list *list;
+    struct mprog_list *list_next;
     char mprog[MAX_STRING_LENGTH];
     int value;
     int cnt = 0;

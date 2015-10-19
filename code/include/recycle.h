@@ -52,6 +52,6 @@ struct mem_data *find_memory(struct mem_data * memory, long id);
 /***************************************************************************
 *	mob program recycling
 ***************************************************************************/
-MPROG_LIST *new_mprog(void);
-void free_mprog(MPROG_LIST * mp);
+struct mprog_list *new_mprog(void);
+void free_mprog(struct mprog_list * mp);
 
