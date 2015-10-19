@@ -1046,7 +1046,7 @@ void do_zap(struct char_data *ch, const char *argument)
  ***************************************************************************/
 void cast_spell(struct char_data *ch, struct dynamic_skill *skill, int level, void *vo, int target, const char *argument)
 {
-    SPELL_LIST *spells;
+    struct spell_list *spells;
 
     if (skill != NULL && skill->spells != NULL) {
 	for (spells = skill->spells; spells != NULL; spells = spells->next)

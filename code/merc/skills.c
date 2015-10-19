@@ -293,10 +293,10 @@ void free_skill_list(struct dynamic_skill_list *list)
 /**
  * create a skill group structure
  */
-GROUP *new_group(void)
+struct dynamic_group *new_group(void)
 {
-    static GROUP group_zero;
-    GROUP *group;
+    static struct dynamic_group group_zero;
+    struct dynamic_group *group;
 
     if (group_free == NULL) {
         group = alloc_perm((unsigned int)sizeof(*group));
@@ -314,7 +314,7 @@ GROUP *new_group(void)
 /**
  * free the skill group structure
  */
-void free_group(GROUP *group)
+void free_group(struct dynamic_group *group)
 {
     if (!IS_VALID(group))
         return;
@@ -380,10 +380,10 @@ void free_skill(struct dynamic_skill *skill)
 /**
  * create a new spell list
  */
-SPELL_LIST *new_spell_list(void)
+struct spell_list *new_spell_list(void)
 {
-    static SPELL_LIST spells_zero;
-    SPELL_LIST *spells;
+    static struct spell_list spells_zero;
+    struct spell_list *spells;
 
     if (spell_list_free == NULL) {
         spells = alloc_perm((unsigned int)sizeof(*spells));
@@ -401,7 +401,7 @@ SPELL_LIST *new_spell_list(void)
 /**
  * free the spell list structure
  */
-void free_spell_list(SPELL_LIST *spells)
+void free_spell_list(struct spell_list *spells)
 {
     if (!IS_VALID(spells))
         return;
@@ -414,10 +414,10 @@ void free_spell_list(SPELL_LIST *spells)
 /**
  * create a new affect list
  */
-AFFECT_LIST *new_affect_list(void)
+struct affect_list *new_affect_list(void)
 {
-    static AFFECT_LIST affects_zero;
-    AFFECT_LIST *affects;
+    static struct affect_list affects_zero;
+    struct affect_list *affects;
 
     if (affect_list_free == NULL) {
         affects = alloc_perm((unsigned int)sizeof(*affects));
@@ -435,7 +435,7 @@ AFFECT_LIST *new_affect_list(void)
 /**
  * free the affect list structure
  */
-void free_affect_list(AFFECT_LIST *affects)
+void free_affect_list(struct affect_list *affects)
 {
     if (!IS_VALID(affects))
         return;
@@ -488,7 +488,7 @@ void free_argument(ARGUMENT *argument)
  */
 void add_spell(struct dynamic_skill *skill, SPELL_FUN *spell)
 {
-    SPELL_LIST *spells;
+    struct spell_list *spells;
 
     if (spell != NULL) {
         spells = new_spell_list();
@@ -498,7 +498,7 @@ void add_spell(struct dynamic_skill *skill, SPELL_FUN *spell)
             spells->next = skill->spells;
             skill->spells = spells;
         } else {
-            SPELL_LIST *spells_idx;
+            struct spell_list *spells_idx;
 
             for (spells_idx = skill->spells;
                  spells_idx->next != NULL;
@@ -518,7 +518,7 @@ void add_spell(struct dynamic_skill *skill, SPELL_FUN *spell)
  */
 void add_affect(struct dynamic_skill *skill, AFFECT_FUN *affect)
 {
-    AFFECT_LIST *affects;
+    struct affect_list *affects;
 
     if (affect != NULL) {
         affects = new_affect_list();
@@ -528,7 +528,7 @@ void add_affect(struct dynamic_skill *skill, AFFECT_FUN *affect)
             affects->next = skill->affects;
             skill->affects = affects;
         } else {
-            AFFECT_LIST *affects_idx;
+            struct affect_list *affects_idx;
 
             for (affects_idx = skill->affects;
                  affects_idx->next != NULL;
@@ -783,10 +783,10 @@ struct dynamic_skill *skill_lookup(const char *name)
 }
 
 /** lookup a dynamic group */
-GROUP *group_lookup(const char *name)
+struct dynamic_group *group_lookup(const char *name)
 {
-    GROUP *group;
-    GROUP *group_tmp;
+    struct dynamic_group *group;
+    struct dynamic_group *group_tmp;
 
     if (name[0] == '\0')
         return NULL;
@@ -858,7 +858,7 @@ struct level_info *get_skill_level(struct char_data *ch, struct dynamic_skill *s
 /**
  * get the level of a group for a given class
  */
-struct level_info *get_group_level(GROUP *group, int cls)
+struct level_info *get_group_level(struct dynamic_group *group, int cls)
 {
     struct level_info *levels;
 
@@ -872,7 +872,7 @@ struct level_info *get_group_level(GROUP *group, int cls)
 /**
  * get a learned group
  */
-struct learned_info *get_learned_group(struct char_data *ch, GROUP *group)
+struct learned_info *get_learned_group(struct char_data *ch, struct dynamic_group *group)
 {
     struct learned_info *learned;
 
@@ -1167,7 +1167,7 @@ void remove_learned(struct char_data *ch, struct learned_info *learned)
  */
 struct learned_info *create_learned_group(char *name)
 {
-    GROUP *group;
+    struct dynamic_group *group;
     struct learned_info *learned;
 
     group = group_lookup(name);
@@ -1272,7 +1272,7 @@ int get_skill_number(char *name)
 /**
  * add a skill to a group
  */
-void add_group_skill(GROUP *group, struct dynamic_skill *skill)
+void add_group_skill(struct dynamic_group *group, struct dynamic_skill *skill)
 {
     struct dynamic_skill_list *list;
 
@@ -1324,7 +1324,7 @@ void add_skill_level(struct dynamic_skill *skill, struct level_info *level)
 /**
  * add a level information structure to a group
  */
-void add_group_level(GROUP *group, struct level_info *level)
+void add_group_level(struct dynamic_group *group, struct level_info *level)
 {
     struct level_info *level_idx;
     struct level_info *level_prev;
@@ -1356,7 +1356,7 @@ static void gain_list(struct char_data * ch, struct char_data * trainer);
 static void gain_convert(struct char_data * ch, struct char_data * trainer);
 static void gain_study(struct char_data * ch, struct char_data * trainer);
 static void gain_points(struct char_data * ch, struct char_data * trainer);
-static void gain_group(struct char_data * ch, struct char_data * trainer, GROUP * group);
+static void gain_group(struct char_data * ch, struct char_data * trainer, struct dynamic_group * group);
 static void gain_skill(struct char_data * ch, struct char_data * trainer, struct dynamic_skill * skill);
 
 
@@ -1365,7 +1365,7 @@ static void gain_skill(struct char_data * ch, struct char_data * trainer, struct
  */
 static void gain_list(struct char_data *ch, struct char_data *trainer)
 {
-    GROUP *group;
+    struct dynamic_group *group;
     struct dynamic_skill *skill;
     struct level_info *level;
     struct learned_info *learned;
@@ -1472,7 +1472,7 @@ static void gain_points(struct char_data *ch, struct char_data *trainer)
 /**
  * gain a group
  */
-static void gain_group(struct char_data *ch, struct char_data *trainer, GROUP *group)
+static void gain_group(struct char_data *ch, struct char_data *trainer, struct dynamic_group *group)
 {
     struct level_info *level;
     struct learned_info *learned;
@@ -1566,7 +1566,7 @@ static void gain_skill(struct char_data *ch, struct char_data *trainer, struct d
 void do_gain(struct char_data *ch, const char *argument)
 {
     struct char_data *trainer;
-    GROUP *group;
+    struct dynamic_group *group;
     struct dynamic_skill *skill;
     char arg[MAX_INPUT_LENGTH];
 
@@ -1854,7 +1854,7 @@ void do_spells(struct char_data *ch, const char *argument)
  */
 void list_group_costs(struct char_data *ch)
 {
-    GROUP *group;
+    struct dynamic_group *group;
     struct dynamic_skill *skill;
     struct level_info *level;
     struct learned_info *learned;
@@ -2009,7 +2009,7 @@ int exp_per_level(struct char_data *ch, int points)
  */
 bool parse_gen_groups(struct char_data *ch, const char *argument)
 {
-    GROUP *group;
+    struct dynamic_group *group;
     struct dynamic_skill *skill;
     struct learned_info *learned;
     struct level_info *level;
@@ -2167,7 +2167,7 @@ bool parse_gen_groups(struct char_data *ch, const char *argument)
  */
 void do_groups(struct char_data *ch, const char *argument)
 {
-    GROUP *group;
+    struct dynamic_group *group;
     struct dynamic_skill_list *skill_idx;
     struct learned_info *learned;
     struct level_info *level;

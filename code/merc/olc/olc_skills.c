@@ -260,7 +260,7 @@ EDIT(skedit_show){
 
     /* spell/affects */
     if (skill->spells != NULL) {
-        SPELL_LIST *spells;
+        struct spell_list *spells;
         bool first;
 
         first = true;
@@ -279,7 +279,7 @@ EDIT(skedit_show){
     }
 
     if (skill->affects != NULL) {
-        AFFECT_LIST *affects;
+        struct affect_list *affects;
         bool first;
 
         first = true;
@@ -662,7 +662,7 @@ EDIT(skedit_others_message){
 EDIT(skedit_spell){
     struct dynamic_skill *skill;
     SPELL_FUN *spell;
-    SPELL_LIST *spells;
+    struct spell_list *spells;
     char cmd[MAX_INPUT_LENGTH];
 
     EDIT_SKILL(ch, skill);
@@ -689,7 +689,7 @@ EDIT(skedit_spell){
         }
 
         if (!str_prefix(argument, "all")) {
-            SPELL_LIST *spells_next;
+            struct spell_list *spells_next;
 
             for (spells = skill->spells; spells != NULL; spells = spells_next) {
                 spells_next = spells->next;
@@ -708,7 +708,7 @@ EDIT(skedit_spell){
 
                 free_spell_list(spells);
             } else {
-                SPELL_LIST *spells_prev = NULL;
+                struct spell_list *spells_prev = NULL;
 
                 for (spells = skill->spells; spells != NULL; spells = spells->next) {
                     if (spells->spell_fn == spell)
@@ -762,7 +762,7 @@ EDIT(skedit_spell){
 EDIT(skedit_affect){
     struct dynamic_skill *skill;
     AFFECT_FUN *affect;
-    AFFECT_LIST *affects;
+    struct affect_list *affects;
     char cmd[MAX_INPUT_LENGTH];
 
     EDIT_SKILL(ch, skill);
@@ -789,7 +789,7 @@ EDIT(skedit_affect){
         }
 
         if (!str_prefix(argument, "all")) {
-            AFFECT_LIST *affects_next;
+            struct affect_list *affects_next;
 
             for (affects = skill->affects; affects != NULL; affects = affects_next) {
                 affects_next = affects->next;
@@ -808,7 +808,7 @@ EDIT(skedit_affect){
 
                 free_affect_list(affects);
             } else {
-                AFFECT_LIST *affects_prev = NULL;
+                struct affect_list *affects_prev = NULL;
 
                 for (affects = skill->affects; affects != NULL; affects = affects->next) {
                     if (affects->affect_fn == affect)
@@ -1280,7 +1280,7 @@ void save_skills()
         fprintf(fp, "Name %s~\n", skill->name);
 
         if (skill->spells != NULL) {
-            SPELL_LIST *spells;
+            struct spell_list *spells;
 
             for (spells = skill->spells; spells != NULL; spells = spells->next) {
                 tmp = spell_fn_name(spells->spell_fn);
@@ -1290,7 +1290,7 @@ void save_skills()
         }
 
         if (skill->affects != NULL) {
-            AFFECT_LIST *affects;
+            struct affect_list *affects;
 
             for (affects = skill->affects; affects != NULL; affects = affects->next) {
                 tmp = affect_fn_name(affects->affect_fn);

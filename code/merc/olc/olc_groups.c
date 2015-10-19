@@ -84,7 +84,7 @@ void gredit(struct char_data *ch, const char *argument)
  ***************************************************************************/
 void do_gredit(struct char_data *ch, const char *argument)
 {
-    GROUP *group;
+    struct dynamic_group *group;
     char arg[MAX_STRING_LENGTH];
 
     if (IS_NPC(ch))
@@ -117,7 +117,7 @@ void do_gredit(struct char_data *ch, const char *argument)
  *	delete the group
  ***************************************************************************/
 EDIT(gredit_delete){
-    GROUP *group;
+    struct dynamic_group *group;
 
     EDIT_GROUP(ch, group);
 
@@ -125,8 +125,8 @@ EDIT(gredit_delete){
     if (group == group_list) {
         group_list = group->next;
     } else {
-        GROUP *group_idx;
-        GROUP *group_prev = NULL;
+        struct dynamic_group *group_idx;
+        struct dynamic_group *group_prev = NULL;
 
         for (group_idx = group_list;
              group_idx != NULL;
@@ -156,7 +156,7 @@ EDIT(gredit_delete){
  *	show the properties for the group
  ***************************************************************************/
 EDIT(gredit_show){
-    GROUP *group;
+    struct dynamic_group *group;
     char buf[MAX_STRING_LENGTH];
 
     EDIT_GROUP(ch, group);
@@ -208,7 +208,7 @@ EDIT(gredit_show){
  *	create a new group
  ***************************************************************************/
 EDIT(gredit_new){
-    GROUP *group;
+    struct dynamic_group *group;
 
     if (is_help(argument)) {
         send_to_char("Syntax   : new [name]\n\r", ch);
@@ -226,7 +226,7 @@ EDIT(gredit_new){
 
     group->next = group_list;
     group_list = group;
-    ch->desc->ed_data = (GROUP *)group;
+    ch->desc->ed_data = (struct dynamic_group *)group;
     ch->desc->editor = ED_GROUP;
 
     send_to_char("Ok.\n\r", ch);
@@ -240,7 +240,7 @@ EDIT(gredit_new){
  *	edit the help file for the group
  ***************************************************************************/
 EDIT(gredit_help){
-    GROUP *group;
+    struct dynamic_group *group;
     HELP_DATA *help;
 
     EDIT_GROUP(ch, group);
@@ -271,7 +271,7 @@ EDIT(gredit_help){
  *	add or remove a skill from the group list
  ***************************************************************************/
 EDIT(gredit_skills){
-    GROUP *group;
+    struct dynamic_group *group;
     struct dynamic_skill *skill;
     struct dynamic_skill_list *list;
     char cmd[MAX_INPUT_LENGTH];
@@ -370,7 +370,7 @@ EDIT(gredit_skills){
  *	edit the costs of the group
  ***************************************************************************/
 EDIT(gredit_cost){
-    GROUP *group;
+    struct dynamic_group *group;
     struct level_info *level_info;
     struct level_info *level_idx;
     char arg[MAX_STRING_LENGTH];
@@ -484,7 +484,7 @@ EDIT(gredit_cost){
 void load_groups()
 {
     FILE *fp;
-    GROUP *group = NULL;
+    struct dynamic_group *group = NULL;
     struct dynamic_skill *skill;
     char *word;
     int gn;
@@ -575,7 +575,7 @@ void load_groups()
 void save_groups()
 {
     FILE *fp;
-    GROUP *group;
+    struct dynamic_group *group;
     struct dynamic_skill_list *skills;
     struct level_info *level;
 

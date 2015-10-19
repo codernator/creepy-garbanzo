@@ -300,7 +300,7 @@ char *olc_ed_vnum(struct char_data *ch)
     struct mprog_code *pMprog;
     HELP_DATA *pHelp;
     struct dynamic_skill *pSkill;
-    GROUP *pGroup;
+    struct dynamic_group *pGroup;
     static char buf[MAX_INPUT_LENGTH];
 
     buf[0] = '\0';
@@ -334,7 +334,7 @@ char *olc_ed_vnum(struct char_data *ch)
           sprintf(buf, "%s", pSkill ? pSkill->name : "");
           break;
       case ED_GROUP:
-          pGroup = (GROUP *)ch->desc->ed_data;
+          pGroup = (struct dynamic_group *)ch->desc->ed_data;
           sprintf(buf, "%s", pGroup ? pGroup->name : "");
       default:
           sprintf(buf, " ");

@@ -1001,7 +1001,7 @@ static void room_update(void)
 
 		    if ((skill = resolve_skill_affect(paf)) != NULL) {
 			if (skill->affects != NULL) {
-			    AFFECT_LIST *affects;
+			    struct affect_list *affects;
 			    for (affects = skill->affects; affects != NULL; affects = affects->next)
 				if (affects->affect_fn != NULL)
 				    (*affects->affect_fn)(skill, (void *)room, AFFECT_TYPE_ROOM, paf);
@@ -1182,7 +1182,7 @@ static void char_update(void)
 
 	    if ((skill = resolve_skill_affect(paf)) != NULL) {
 		if (skill->affects != NULL) {
-		    AFFECT_LIST *affects;
+		    struct affect_list *affects;
 
 		    for (affects = skill->affects; affects != NULL; affects = affects->next)
 			if (affects->affect_fn != NULL)

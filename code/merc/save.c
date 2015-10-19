@@ -1067,7 +1067,7 @@ void fread_char(struct char_data *ch, FILE *fp)
               KEY("Grestore_string", ch->pcdata->grestore_string, fread_string(fp));
               KEY("Gres", ch->pcdata->grestore_string, fread_string(fp));
               if (!str_cmp(word, "Group") || !str_cmp(word, "Gr")) {
-                  GROUP *group;
+                  struct dynamic_group *group;
                   struct learned_info *learned;
                   char *temp;
 
