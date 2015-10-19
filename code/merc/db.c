@@ -647,7 +647,7 @@ void load_rooms(FILE *fp)
                 /*room_idx->old_exit[door] = pexit; */
                 top_exit++;
             } else if (letter == 'E') {
-                EXTRA_DESCR_DATA *ed;
+                struct extra_descr_data *ed;
 
                 ed = new_extra_descr();
                 ed->keyword = fread_string(fp);
@@ -1087,7 +1087,7 @@ void load_objects(FILE *fp)
                 objprototype->affected = paf;
                 top_affect++;
             } else if (letter == 'E') {
-                EXTRA_DESCR_DATA *ed;
+                struct extra_descr_data *ed;
 
                 ed = new_extra_descr();
                 ed->keyword = fread_string(fp);
@@ -2086,7 +2086,7 @@ void clear_char(CHAR_DATA *ch)
 /*
  * Get an extra description from a list.
  */
-char *get_extra_descr(const char *name, EXTRA_DESCR_DATA *ed)
+char *get_extra_descr(const char *name, struct extra_descr_data *ed)
 {
     for (; ed != NULL; ed = ed->next)
         if (is_name((char *)name, ed->keyword))

@@ -123,7 +123,7 @@ void show_room_stats(CHAR_DATA *ch, const char *argument)
 
 
     if (location->extra_descr != NULL) {
-        EXTRA_DESCR_DATA *ed;
+        struct extra_descr_data *ed;
 
         send_to_char("Extra description keywords: '", ch);
         for (ed = location->extra_descr; ed; ed = ed->next) {
@@ -333,7 +333,7 @@ void show_object_stats(CHAR_DATA *ch, const char *argument)
 
 
     if (obj->extra_descr != NULL || obj->objprototype->extra_descr != NULL) {
-        EXTRA_DESCR_DATA *ed;
+        struct extra_descr_data *ed;
 
         send_to_char("Extra description keywords: '", ch);
 

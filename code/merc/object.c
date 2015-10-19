@@ -12,7 +12,7 @@ const OBJECT_ITERATOR_FILTER object_empty_filter;
 
 /** imports */
 extern void free_affect(AFFECT_DATA *af);
-extern void free_extra_descr(EXTRA_DESCR_DATA *ed);
+extern void free_extra_descr(struct extra_descr_data *ed);
 
 
 /** locals */
@@ -113,7 +113,7 @@ struct gameobject *object_clone(struct gameobject *parent)
 
     /* extended desc */
     {
-	EXTRA_DESCR_DATA *ed, *ed_new;
+	struct extra_descr_data *ed, *ed_new;
 	for (ed = parent->extra_descr; ed != NULL; ed = ed->next) {
 	    ed_new = new_extra_descr();
 	    /*@-mustfreeonly@*/
@@ -168,8 +168,8 @@ void object_free(struct gameobject *obj)
     /** Clean up extra descriptions */
     if (obj->extra_descr != NULL) {
 	//TODO - extras managment.
-	/*@dependent@*/EXTRA_DESCR_DATA *ed;
-	/*@dependent@*/EXTRA_DESCR_DATA *ed_next;
+	/*@dependent@*/struct extra_descr_data *ed;
+	/*@dependent@*/struct extra_descr_data *ed_next;
 	for (ed = obj->extra_descr; ed != NULL; ed = ed_next) {
 	    ed_next = ed->next;
 	    free_extra_descr(ed);

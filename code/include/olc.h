@@ -304,8 +304,8 @@ void free_room_index(struct room_index_data * pRoom);
 struct mob_index_data *new_mob_index(void);
 void free_mob_index(struct mob_index_data * pMob);
 /* extra descriptions */
-extern EXTRA_DESCR_DATA *new_extra_descr(void);
-extern void free_extra_descr(EXTRA_DESCR_DATA * pExtra);
+extern struct extra_descr_data *new_extra_descr(void);
+extern void free_extra_descr(struct extra_descr_data * pExtra);
 /* reset data */
 struct reset_data *new_reset_data(void);
 void free_reset_data(struct reset_data * pReset);

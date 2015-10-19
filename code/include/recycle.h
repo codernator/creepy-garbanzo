@@ -23,8 +23,8 @@ void free_ban(BAN_DATA * ban);
 
 
 /* extra descr recycling */
-EXTRA_DESCR_DATA * new_extra_descr(void);
-void free_extra_descr(EXTRA_DESCR_DATA * ed);
+struct extra_descr_data * new_extra_descr(void);
+void free_extra_descr(struct extra_descr_data * ed);
 
 /* affect recycling */
 AFFECT_DATA * new_affect(void);

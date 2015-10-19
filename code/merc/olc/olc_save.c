@@ -398,7 +398,7 @@ void save_mobiles(FILE *fp, struct area_data *area)
 void save_object(FILE *fp, struct objectprototype *pObjIndex)
 {
     AFFECT_DATA *pAf;
-    EXTRA_DESCR_DATA *extra;
+    struct extra_descr_data *extra;
     char letter;
     char buf[MAX_STRING_LENGTH];
 
@@ -549,7 +549,7 @@ void save_objects(FILE *fp, struct area_data *area)
 void save_rooms(FILE *fp, struct area_data *area)
 {
     struct room_index_data *room;
-    EXTRA_DESCR_DATA *extra;
+    struct extra_descr_data *extra;
     EXIT_DATA *exit;
     AFFECT_DATA *paf;
     SKILL *skill;

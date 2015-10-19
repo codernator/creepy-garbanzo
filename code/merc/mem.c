@@ -15,8 +15,8 @@
 
 
 /** exports */
-EXTRA_DESCR_DATA *extra_descr_free;
-void free_extra_descr(EXTRA_DESCR_DATA * extra);
+struct extra_descr_data *extra_descr_free;
+void free_extra_descr(struct extra_descr_data * extra);
 void free_affect(AFFECT_DATA * af);
 void free_mprog(MPROG_LIST * mp);
 
@@ -152,7 +152,7 @@ struct room_index_data *new_room_index(void)
 
 void free_room_index(struct room_index_data *room)
 {
-    EXTRA_DESCR_DATA *extra;
+    struct extra_descr_data *extra;
     struct reset_data *reset;
     long door;
 

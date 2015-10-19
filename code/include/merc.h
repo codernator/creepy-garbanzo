@@ -65,7 +65,6 @@ typedef struct ban_data BAN_DATA;
 typedef struct buf_type BUFFER;
 typedef struct char_data CHAR_DATA;
 typedef struct exit_data EXIT_DATA;
-typedef struct extra_descr_data EXTRA_DESCR_DATA;
 typedef struct weather_data WEATHER_DATA;
 
 typedef struct mprog_list MPROG_LIST;
@@ -1465,7 +1464,7 @@ struct pc_data {
 
 
 struct extra_descr_data {
-    /*@owned@*//*@null@*/EXTRA_DESCR_DATA *next;
+    /*@owned@*//*@null@*/struct extra_descr_data *next;
     bool valid;
     /*@shared@*/char *keyword;        /* Keyword in look/examine */
     /*@shared@*/char *description;    /* What to see    */
@@ -1480,7 +1479,7 @@ struct extra_descr_data {
     /*@dependent@*//*@null@*//*@partial@*/struct objectprototype *prev;
 
     long vnum;
-    /*@owned@*//*@null@*/EXTRA_DESCR_DATA *extra_descr;
+    /*@owned@*//*@null@*/struct extra_descr_data *extra_descr;
     /*@dependent@*//*@null@*/AFFECT_DATA *affected;
     /*@dependent@*//*@null@*/struct area_data *area;
     /*@shared@*/char *name;
@@ -1514,7 +1513,7 @@ struct extra_descr_data {
     /*@dependent@*//*@null@*/struct gameobject *on;
     /*@dependent@*//*@null@*/CHAR_DATA *carried_by;
     /*@dependent@*//*@null@*/CHAR_DATA *target;
-    /*@owned@*//*@null@*/EXTRA_DESCR_DATA *extra_descr;
+    /*@owned@*//*@null@*/struct extra_descr_data *extra_descr;
     /*@dependent@*//*@null@*/AFFECT_DATA *affected;
     /*@dependent@*/struct objectprototype *objprototype;
     /*@dependent@*//*@null@*/struct room_index_data *in_room;
@@ -1614,7 +1613,7 @@ struct room_index_data {
     struct room_index_data * next;
     CHAR_DATA *  people;
     struct gameobject *  contents;
-    EXTRA_DESCR_DATA * extra_descr;
+    struct extra_descr_data * extra_descr;
     struct area_data *  area;
     EXIT_DATA *  exit[6];
     struct reset_data *  reset_first;
@@ -2004,7 +2003,7 @@ struct gameobject *create_object(struct objectprototype * objprototype, int leve
 void clear_char(CHAR_DATA * ch);
 
 /* find functions  */
-char *get_extra_descr(const char *name, EXTRA_DESCR_DATA * ed);
+char *get_extra_descr(const char *name, struct extra_descr_data * ed);
 struct mob_index_data *get_mob_index(long vnum);
 struct room_index_data *get_room_index(long vnum);
 

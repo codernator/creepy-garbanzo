@@ -486,7 +486,7 @@ static void fwrite_pet(CHAR_DATA *pet, FILE *fp)
  ***************************************************************************/
 static void fwrite_obj(CHAR_DATA *ch, struct gameobject *obj, FILE *fp, int iNest)
 {
-    EXTRA_DESCR_DATA *ed;
+    struct extra_descr_data *ed;
     AFFECT_DATA *paf;
     SKILL *skill;
 
@@ -1637,7 +1637,7 @@ static void fread_obj(CHAR_DATA *ch, FILE *fp)
               KEY("Ex2F", obj->extra2_flags, fread_number(fp));
 
               if (!str_cmp(word, "ExtraDescr") || !str_cmp(word, "ExDe")) {
-                  EXTRA_DESCR_DATA *ed;
+                  struct extra_descr_data *ed;
 
                   ed = new_extra_descr();
 

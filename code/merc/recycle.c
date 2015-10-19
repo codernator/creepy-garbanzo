@@ -97,16 +97,16 @@ void free_ban(BAN_DATA *ban)
 /***************************************************************************
  *	extended descriptions
  ***************************************************************************/
-extern EXTRA_DESCR_DATA *extra_descr_free;
+extern struct extra_descr_data *extra_descr_free;
 
 /***************************************************************************
  *	new_extra_descr
  *
  *	create a new extra description
  ***************************************************************************/
-EXTRA_DESCR_DATA *new_extra_descr(void)
+struct extra_descr_data *new_extra_descr(void)
 {
-    EXTRA_DESCR_DATA *ed;
+    struct extra_descr_data *ed;
 
     if (extra_descr_free == NULL) {
         ed = alloc_perm((unsigned int)sizeof(*ed));
@@ -128,7 +128,7 @@ EXTRA_DESCR_DATA *new_extra_descr(void)
  *
  *	free an extra description
  ***************************************************************************/
-void free_extra_descr(EXTRA_DESCR_DATA *ed)
+void free_extra_descr(struct extra_descr_data *ed)
 {
     if (!IS_VALID(ed))
         return;

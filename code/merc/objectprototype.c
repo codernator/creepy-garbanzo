@@ -18,7 +18,7 @@ const OBJECTPROTOTYPE_FILTER objectprototype_empty_filter;
 
 /** imports */
 extern void free_affect(AFFECT_DATA *af);
-extern void free_extra_descr(EXTRA_DESCR_DATA *ed);
+extern void free_extra_descr(struct extra_descr_data *ed);
 
 
 /** locals */
@@ -172,7 +172,7 @@ KEYVALUEPAIR_ARRAY *objectprototype_serialize(const struct objectprototype *obj)
     /** append extras */
     {
         static char keybuf[MAX_INPUT_LENGTH];
-        EXTRA_DESCR_DATA *desc = obj->extra_descr;
+        struct extra_descr_data *desc = obj->extra_descr;
         while (desc != NULL) {
             (void)snprintf(keybuf, MAX_INPUT_LENGTH, "extra-%s", desc->keyword);
             keyvaluepairarray_append(answer, keybuf, desc->description);
@@ -218,8 +218,8 @@ void objectprototype_free(struct objectprototype *prototypedata)
     /** Clean up extra descriptions */
     if (prototypedata->extra_descr != NULL) {
         //TODO - extras managment.
-        /*@dependent@*/EXTRA_DESCR_DATA *ed;
-        /*@dependent@*/EXTRA_DESCR_DATA *ed_next;
+        /*@dependent@*/struct extra_descr_data *ed;
+        /*@dependent@*/struct extra_descr_data *ed_next;
         for (ed = prototypedata->extra_descr; ed != NULL; ed = ed_next) {
             ed_next = ed->next;
             free_extra_descr(ed);
@@ -330,7 +330,7 @@ void lookup_remove(long entrykey, struct objectprototype *entry)
 size_t count_extras(const struct objectprototype *obj)
 {
     size_t keys = 0;
-    EXTRA_DESCR_DATA *extra = obj->extra_descr;
+    struct extra_descr_data *extra = obj->extra_descr;
     while (extra != NULL) {
         keys++;
         extra = extra->next;

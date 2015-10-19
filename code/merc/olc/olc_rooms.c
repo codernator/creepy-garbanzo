@@ -726,7 +726,7 @@ EDIT(redit_show){
         printf_to_char(ch, "`&Owner``:       [%s]\n\r", room->owner);
 
     if (room->extra_descr) {
-        EXTRA_DESCR_DATA *ed;
+        struct extra_descr_data *ed;
 
 
         printf_to_char(ch, "`&Desc Kwds``:   [");
@@ -900,7 +900,7 @@ EDIT(redit_down){
  ***************************************************************************/
 EDIT(redit_ed){
     struct room_index_data *room;
-    EXTRA_DESCR_DATA *ed;
+    struct extra_descr_data *ed;
     char command[MAX_INPUT_LENGTH];
     char keyword[MAX_INPUT_LENGTH];
 
@@ -955,7 +955,7 @@ EDIT(redit_ed){
 
 
     if (!str_cmp(command, "delete")) {
-        EXTRA_DESCR_DATA *ped = NULL;
+        struct extra_descr_data *ped = NULL;
 
         if (keyword[0] == '\0') {
             send_to_char("Syntax:  ed delete [keyword]\n\r", ch);
