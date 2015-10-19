@@ -9,19 +9,19 @@
 
 
 
-static void show_room_stats(CHAR_DATA *ch, const char *argument);
-static void show_object_stats(CHAR_DATA *ch, const char *argument);
-static void show_mob_stats(CHAR_DATA *ch, const char *argument);
+static void show_room_stats(struct char_data *ch, const char *argument);
+static void show_object_stats(struct char_data *ch, const char *argument);
+static void show_mob_stats(struct char_data *ch, const char *argument);
 
 
 /**
  * entry function into various game entity statistics.
  */
-void do_stat(CHAR_DATA *ch, const char *argument)
+void do_stat(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     struct room_index_data *location;
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char arg[MAX_INPUT_LENGTH];
     const char *string;
 
@@ -78,11 +78,11 @@ void do_stat(CHAR_DATA *ch, const char *argument)
 /**
  * show statistics for a room
  */
-void show_room_stats(CHAR_DATA *ch, const char *argument)
+void show_room_stats(struct char_data *ch, const char *argument)
 {
     struct room_index_data *location;
     struct gameobject *obj;
-    CHAR_DATA *rch;
+    struct char_data *rch;
     AFFECT_DATA *paf;
     SKILL *skill;
     char buf[MAX_STRING_LENGTH];
@@ -185,7 +185,7 @@ void show_room_stats(CHAR_DATA *ch, const char *argument)
 /**
  * show statistics for an object
  */
-void show_object_stats(CHAR_DATA *ch, const char *argument)
+void show_object_stats(struct char_data *ch, const char *argument)
 {
     AFFECT_DATA *paf;
     struct gameobject *obj;
@@ -423,10 +423,10 @@ void show_object_stats(CHAR_DATA *ch, const char *argument)
 /**
  * show statistics for a character
  */
-void show_mob_stats(CHAR_DATA *ch, const char *argument)
+void show_mob_stats(struct char_data *ch, const char *argument)
 {
     AFFECT_DATA *paf;
-    CHAR_DATA *victim;
+    struct char_data *victim;
     SKILL *skill;
     char arg[MAX_INPUT_LENGTH];
 

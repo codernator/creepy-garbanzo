@@ -40,32 +40,32 @@ bool obj_cmp_level(struct gameobject * obj, const char *arg, BUFFER * buf);
 /***************************************************************************
  *	characters
  ***************************************************************************/
-typedef bool CHAR_CMP_FN (CHAR_DATA *vch, const char *arg, BUFFER *buf);
+typedef bool CHAR_CMP_FN (struct char_data *vch, const char *arg, BUFFER *buf);
 
 struct cmp_vars_char_data {
     char *		var;
     CHAR_CMP_FN *	fn;
 };
 
-bool char_cmp_vnum(CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_name(CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_short(CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_long(CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_race(CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_level(CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_sex(CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_hit(CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_mana(CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_move(CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_max_hit(CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_max_mana(CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_max_move(CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_gold(CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_silver(CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_offense(CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_form(CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_act(CHAR_DATA * vch, const char *arg, BUFFER * buf);
-bool char_cmp_player(CHAR_DATA * vch, const char *arg, BUFFER * buf);
+bool char_cmp_vnum(struct char_data * vch, const char *arg, BUFFER * buf);
+bool char_cmp_name(struct char_data * vch, const char *arg, BUFFER * buf);
+bool char_cmp_short(struct char_data * vch, const char *arg, BUFFER * buf);
+bool char_cmp_long(struct char_data * vch, const char *arg, BUFFER * buf);
+bool char_cmp_race(struct char_data * vch, const char *arg, BUFFER * buf);
+bool char_cmp_level(struct char_data * vch, const char *arg, BUFFER * buf);
+bool char_cmp_sex(struct char_data * vch, const char *arg, BUFFER * buf);
+bool char_cmp_hit(struct char_data * vch, const char *arg, BUFFER * buf);
+bool char_cmp_mana(struct char_data * vch, const char *arg, BUFFER * buf);
+bool char_cmp_move(struct char_data * vch, const char *arg, BUFFER * buf);
+bool char_cmp_max_hit(struct char_data * vch, const char *arg, BUFFER * buf);
+bool char_cmp_max_mana(struct char_data * vch, const char *arg, BUFFER * buf);
+bool char_cmp_max_move(struct char_data * vch, const char *arg, BUFFER * buf);
+bool char_cmp_gold(struct char_data * vch, const char *arg, BUFFER * buf);
+bool char_cmp_silver(struct char_data * vch, const char *arg, BUFFER * buf);
+bool char_cmp_offense(struct char_data * vch, const char *arg, BUFFER * buf);
+bool char_cmp_form(struct char_data * vch, const char *arg, BUFFER * buf);
+bool char_cmp_act(struct char_data * vch, const char *arg, BUFFER * buf);
+bool char_cmp_player(struct char_data * vch, const char *arg, BUFFER * buf);
 
 
 

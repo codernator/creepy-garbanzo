@@ -5,7 +5,7 @@
 
 
 
-void command_channel(CHAR_DATA *ch, const char *argument) {
+void command_channel(struct char_data *ch, const char *argument) {
     static char arg1[MAX_INPUT_LENGTH];
     static char arg2[MAX_INPUT_LENGTH];
     const CHANNEL_DEFINITION const *channel;
@@ -27,7 +27,7 @@ void command_channel(CHAR_DATA *ch, const char *argument) {
             
             char operation = argument[0];
             const char *chanName;
-            CHAR_DATA *victim;
+            struct char_data *victim;
 
             if (argument[1] != '\0') {
                 /** EX2, chanName = "say" */
@@ -70,7 +70,7 @@ void command_channel(CHAR_DATA *ch, const char *argument) {
         }
         default:
         {
-            CHAR_DATA *target = NULL;
+            struct char_data *target = NULL;
 
             if (argument[0] == '\0') {
                 /** TODO - automatic "current channel" */
@@ -122,13 +122,13 @@ void command_channel(CHAR_DATA *ch, const char *argument) {
 }
 
 
-void do_afk(CHAR_DATA *ch, const char *argument)
+void do_afk(struct char_data *ch, const char *argument)
 {
     DENY_NPC(ch);
     toggle_afk(ch, argument);
 }
 
-void do_replay(CHAR_DATA *ch, /*@unused@*/ const char *argument)
+void do_replay(struct char_data *ch, /*@unused@*/ const char *argument)
 {
     DENY_NPC(ch);
     replay(ch);

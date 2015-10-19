@@ -57,7 +57,6 @@ typedef enum e_one_attack_result {
 typedef struct affect_data AFFECT_DATA;
 typedef struct ban_data BAN_DATA;
 typedef struct buf_type BUFFER;
-typedef struct char_data CHAR_DATA;
 typedef struct weather_data WEATHER_DATA;
 
 typedef struct mprog_list MPROG_LIST;
@@ -65,10 +64,11 @@ typedef struct mprog_code MPROG_CODE;
 
 
 /* required for new skill system */
+typedef struct char_data CHAR_DATA;
 #include "skills.h"
 
 /* Function types. */
-typedef void DO_FUN(/*@partial@*/CHAR_DATA * ch, /*@observer@*/const char *argument);
+typedef void DO_FUN(/*@partial@*/CHAR_DATA* ch, /*@observer@*/const char *argument);
 
 
 /*String and memory management parameters. */
@@ -1290,17 +1290,17 @@ struct mem_data {
  * player
  ***************************************************************************/
 struct char_data {
-    CHAR_DATA *next;
-    CHAR_DATA *next_in_room;
-    CHAR_DATA *master;
-    CHAR_DATA *leader;
-    CHAR_DATA *fighting;
-    CHAR_DATA *linked;
-    CHAR_DATA *reply;
-    CHAR_DATA *pet;
-    CHAR_DATA *mob_wuss;
-    CHAR_DATA *mobmem;
-    CHAR_DATA *mprog_target;
+    struct char_data *next;
+    struct char_data *next_in_room;
+    struct char_data *master;
+    struct char_data *leader;
+    struct char_data *fighting;
+    struct char_data *linked;
+    struct char_data *reply;
+    struct char_data *pet;
+    struct char_data *mob_wuss;
+    struct char_data *mobmem;
+    struct char_data *mprog_target;
     /*@null@*/struct mob_index_data *mob_idx;
     struct descriptor_data *desc;
     AFFECT_DATA *affected;
@@ -1504,8 +1504,8 @@ struct extra_descr_data {
     /*@dependent@*//*@null@*/struct gameobject *contains;
     /*@dependent@*//*@null@*/struct gameobject *in_obj;
     /*@dependent@*//*@null@*/struct gameobject *on;
-    /*@dependent@*//*@null@*/CHAR_DATA *carried_by;
-    /*@dependent@*//*@null@*/CHAR_DATA *target;
+    /*@dependent@*//*@null@*/struct char_data *carried_by;
+    /*@dependent@*//*@null@*/struct char_data *target;
     /*@owned@*//*@null@*/struct extra_descr_data *extra_descr;
     /*@dependent@*//*@null@*/AFFECT_DATA *affected;
     /*@dependent@*/struct objectprototype *objprototype;
@@ -1604,7 +1604,7 @@ struct area_data {
 
 struct room_index_data {
     struct room_index_data * next;
-    CHAR_DATA *  people;
+    struct char_data *  people;
     struct gameobject *  contents;
     struct extra_descr_data * extra_descr;
     struct area_data *  area;
@@ -1873,7 +1873,7 @@ extern char *const dir_name[];
 extern const int rev_dir[];                 /* int - ROM OLC */
 extern struct shop_data *shop_last;
 extern struct shop_data *shop_first;
-extern CHAR_DATA *char_list;
+extern struct char_data *char_list;
 extern MPROG_CODE *mprog_list;
 extern int top_affect;
 extern int top_ed;
@@ -1920,43 +1920,43 @@ extern struct room_index_data *room_index_hash [MAX_KEY_HASH];
 /**
  * services/follower_service.c
  */
-void add_follower(CHAR_DATA * ch, CHAR_DATA * master);
-void stop_follower(CHAR_DATA * ch);
-void nuke_pets(CHAR_DATA * ch);
-void die_follower(CHAR_DATA * ch);
-bool is_same_group(CHAR_DATA * ach, CHAR_DATA * bch);
+void add_follower(struct char_data * ch, struct char_data * master);
+void stop_follower(struct char_data * ch);
+void nuke_pets(struct char_data * ch);
+void die_follower(struct char_data * ch);
+bool is_same_group(struct char_data * ach, struct char_data * bch);
 
 
 
 /** somewhere */
 int get_item_apply_val(char *name);
-void set_wait(CHAR_DATA * ch, int pulse);
-void set_bash(CHAR_DATA * ch, int pulse);
+void set_wait(struct char_data * ch, int pulse);
+void set_bash(struct char_data * ch, int pulse);
 
 
 /* act_enter.c */
-struct room_index_data *get_random_room(CHAR_DATA * ch, struct area_data * area);
+struct room_index_data *get_random_room(struct char_data * ch, struct area_data * area);
 
 /* act_info.c */
-void set_title(CHAR_DATA * ch, char *title);
-void set_seek(CHAR_DATA * ch, char *seek);
-void show_list_to_char(struct gameobject * list, CHAR_DATA * ch, bool fShort, bool fShowNothing);
-void show_damage_display(CHAR_DATA * ch, CHAR_DATA * victim);
+void set_title(struct char_data * ch, char *title);
+void set_seek(struct char_data * ch, char *seek);
+void show_list_to_char(struct gameobject * list, struct char_data * ch, bool fShort, bool fShowNothing);
+void show_damage_display(struct char_data * ch, struct char_data * victim);
 
 /* act_move.c */
-void move_char(CHAR_DATA * ch, int door, bool follow);
-void push_char(CHAR_DATA * ch, CHAR_DATA * vch, int door, bool follow);
-void drag_char(CHAR_DATA * ch, CHAR_DATA * victim, int door, bool follow);
-int find_door(CHAR_DATA * ch, char *arg);
-int find_exit(CHAR_DATA * ch, char *arg);
+void move_char(struct char_data * ch, int door, bool follow);
+void push_char(struct char_data * ch, struct char_data * vch, int door, bool follow);
+void drag_char(struct char_data * ch, struct char_data * victim, int door, bool follow);
+int find_door(struct char_data * ch, char *arg);
+int find_exit(struct char_data * ch, char *arg);
 
 /* act_obj.c */
-bool can_loot(CHAR_DATA * ch, struct gameobject * obj);
-void wear_obj(CHAR_DATA * ch, struct gameobject * obj, bool fReplace);
+bool can_loot(struct char_data * ch, struct gameobject * obj);
+void wear_obj(struct char_data * ch, struct gameobject * obj, bool fReplace);
 
 /* act_wiz.c */
-void wiznet(char *string, /*@null@*/ CHAR_DATA * ch, /*@null@*/ struct gameobject * obj, long flag, long flag_skip, int min_level);
-void impnet(char *string, CHAR_DATA * ch, struct gameobject * obj, long flag, long flag_skip, int min_level);
+void wiznet(char *string, /*@null@*/ struct char_data * ch, /*@null@*/ struct gameobject * obj, long flag, long flag_skip, int min_level);
+void impnet(char *string, struct char_data * ch, struct gameobject * obj, long flag, long flag_skip, int min_level);
 
 /* alias.c */
 void substitute_alias(struct descriptor_data * d, const char *input);
@@ -1969,12 +1969,12 @@ bool check_ban(const char *site, int type);
 void show_string(struct descriptor_data *d, char *input);
 void close_socket(struct descriptor_data * dclose, bool withProcessOutput, bool withSaveChar);
 void write_to_buffer(struct descriptor_data * d, const char *txt, int length);
-void send_to_char(char *txt, /*@partial@*/CHAR_DATA * ch);
-void send_to_char_ascii(char *txt, /*@partial@*/CHAR_DATA * ch);
-void page_to_char(const char *txt, /*@partial@*/const CHAR_DATA * ch);
-void act(const char *format, /*@partial@*/CHAR_DATA * ch, /*@null@*/const void *arg1, /*@null@*/const void *arg2, int type);
-void act_new(const char *format, /*@partial@*/CHAR_DATA * ch, /*@null@*/const void *arg1, /*@null@*/const void *arg2, int type, int min_pos, bool mob_trigger);
-void printf_to_char(CHAR_DATA *, char *, ...);
+void send_to_char(char *txt, /*@partial@*/struct char_data * ch);
+void send_to_char_ascii(char *txt, /*@partial@*/struct char_data * ch);
+void page_to_char(const char *txt, /*@partial@*/const struct char_data * ch);
+void act(const char *format, /*@partial@*/struct char_data * ch, /*@null@*/const void *arg1, /*@null@*/const void *arg2, int type);
+void act_new(const char *format, /*@partial@*/struct char_data * ch, /*@null@*/const void *arg1, /*@null@*/const void *arg2, int type, int min_pos, bool mob_trigger);
+void printf_to_char(struct char_data *, char *, ...);
 
 
 /* nanny.c */
@@ -1982,7 +1982,7 @@ void nanny(struct descriptor_data * d, const char *argument);
 bool check_parse_name(const char *name);
 bool check_reconnect(struct descriptor_data * d, const char *name, bool fConn);
 bool check_playing(struct descriptor_data * d, const char *name);
-void stop_idling(CHAR_DATA * ch);
+void stop_idling(struct char_data * ch);
 
 /* db.c */
 char *print_flags(long flag);
@@ -1990,10 +1990,10 @@ void boot_db(void);
 void area_update(void);
 
 /* creation/cloning */
-CHAR_DATA *create_mobile(struct mob_index_data * mob_idx);
-void clone_mobile(CHAR_DATA * parent, CHAR_DATA * clone);
+struct char_data *create_mobile(struct mob_index_data * mob_idx);
+void clone_mobile(struct char_data * parent, struct char_data * clone);
 struct gameobject *create_object(struct objectprototype * objprototype, int level);
-void clear_char(CHAR_DATA * ch);
+void clear_char(struct char_data * ch);
 
 /* find functions  */
 char *get_extra_descr(const char *name, struct extra_descr_data * ed);
@@ -2029,29 +2029,29 @@ void cold_effect(void *vo, int level, int dam, int target);
 void fire_effect(void *vo, int level, int dam, int target);
 void poison_effect(void *vo, int level, int dam, int target);
 void shock_effect(void *vo, int level, int dam, int target);
-bool vorpal_effect(CHAR_DATA * ch, CHAR_DATA * victim, struct gameobject * wield);
+bool vorpal_effect(struct char_data * ch, struct char_data * victim, struct gameobject * wield);
 
 /* fight.c */
-bool is_safe(CHAR_DATA * ch, CHAR_DATA * victim);
-bool is_safe_spell(CHAR_DATA * ch, CHAR_DATA * victim, bool area);
+bool is_safe(struct char_data * ch, struct char_data * victim);
+bool is_safe_spell(struct char_data * ch, struct char_data * victim, bool area);
 void violence_update(void);
-void multi_hit(CHAR_DATA * ch, CHAR_DATA * victim, int dt);
-int damage(CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt, int class, bool show);
-void update_pos(CHAR_DATA * victim);
-void stop_fighting(CHAR_DATA * ch, bool fBoth);
-void check_killer(CHAR_DATA * ch, CHAR_DATA * victim);
-void raw_kill(CHAR_DATA * victim, /*@null@*/CHAR_DATA * killer);
-ONE_ATTACK_RESULT one_attack(CHAR_DATA *ch, CHAR_DATA *victim, int dt, /*@null@*/struct gameobject *wield);
+void multi_hit(struct char_data * ch, struct char_data * victim, int dt);
+int damage(struct char_data * ch, struct char_data * victim, int dam, int dt, int class, bool show);
+void update_pos(struct char_data * victim);
+void stop_fighting(struct char_data * ch, bool fBoth);
+void check_killer(struct char_data * ch, struct char_data * victim);
+void raw_kill(struct char_data * victim, /*@null@*/struct char_data * killer);
+ONE_ATTACK_RESULT one_attack(struct char_data *ch, struct char_data *victim, int dt, /*@null@*/struct gameobject *wield);
 
 
 /* handler.c */
 void cancel_snoops(struct descriptor_data *snooper);
 AFFECT_DATA *affect_find(AFFECT_DATA * paf, SKILL * skill);
-void affect_check(CHAR_DATA * ch, int where, long vector);
+void affect_check(struct char_data * ch, int where, long vector);
 int count_users(struct gameobject * obj);
-void deduct_cost(CHAR_DATA * ch, unsigned int cost);
+void deduct_cost(struct char_data * ch, unsigned int cost);
 void affect_enchant(struct gameobject * obj);
-int check_immune(CHAR_DATA * ch, int dam_type);
+int check_immune(struct char_data * ch, int dam_type);
 int weapon_lookup(const char *name);
 int weapon_type(const char *name);
 char *weapon_name(int weapon_Type);
@@ -2060,57 +2060,57 @@ int attack_lookup(const char *name);
 long wiznet_lookup(const char *name);
 long impnet_lookup(const char *name);
 int class_lookup(const char *name);
-int get_weapon_sn(CHAR_DATA * ch, /*@null@*/struct gameobject * wield);
-int get_weapon_skill(CHAR_DATA * ch, int sn);
-int get_age(CHAR_DATA * ch);
-void reset_char(CHAR_DATA * ch);
-int get_trust(CHAR_DATA * ch);
-int get_hours_played(CHAR_DATA * ch);
-int get_minutes_played(CHAR_DATA * ch);
-int get_seconds_played(CHAR_DATA * ch);
-int get_session_hours(CHAR_DATA * ch);
-int get_session_minutes(CHAR_DATA * ch);
-int get_session_seconds(CHAR_DATA * ch);
-int get_curr_stat(CHAR_DATA * ch, int stat);
-int get_max_train(CHAR_DATA * ch, int stat);
-int can_carry_n(CHAR_DATA * ch);
-int can_carry_w(CHAR_DATA * ch);
-int get_wield_weight(CHAR_DATA * ch);
+int get_weapon_sn(struct char_data * ch, /*@null@*/struct gameobject * wield);
+int get_weapon_skill(struct char_data * ch, int sn);
+int get_age(struct char_data * ch);
+void reset_char(struct char_data * ch);
+int get_trust(struct char_data * ch);
+int get_hours_played(struct char_data * ch);
+int get_minutes_played(struct char_data * ch);
+int get_seconds_played(struct char_data * ch);
+int get_session_hours(struct char_data * ch);
+int get_session_minutes(struct char_data * ch);
+int get_session_seconds(struct char_data * ch);
+int get_curr_stat(struct char_data * ch, int stat);
+int get_max_train(struct char_data * ch, int stat);
+int can_carry_n(struct char_data * ch);
+int can_carry_w(struct char_data * ch);
+int get_wield_weight(struct char_data * ch);
 bool is_name(const char *str, const char *namelist);
-void char_from_room(CHAR_DATA * ch);
-void char_to_room(CHAR_DATA * ch, struct room_index_data * pRoomIndex);
-void obj_to_char(struct gameobject * obj, CHAR_DATA * ch);
+void char_from_room(struct char_data * ch);
+void char_to_room(struct char_data * ch, struct room_index_data * pRoomIndex);
+void obj_to_char(struct gameobject * obj, struct char_data * ch);
 void obj_from_char(struct gameobject * obj);
 long apply_ac(struct gameobject * obj, int iWear, int type);
-struct gameobject *get_eq_char(CHAR_DATA * ch, int iWear);
-void equip_char(CHAR_DATA * ch, struct gameobject * obj, int iWear);
-void unequip_char(CHAR_DATA * ch, struct gameobject * obj);
+struct gameobject *get_eq_char(struct char_data * ch, int iWear);
+void equip_char(struct char_data * ch, struct gameobject * obj, int iWear);
+void unequip_char(struct char_data * ch, struct gameobject * obj);
 int count_obj_list(struct objectprototype * obj, struct gameobject * list);
 void obj_from_room(struct gameobject * obj);
 void obj_to_room(struct gameobject * obj, struct room_index_data * pRoomIndex);
 void obj_to_obj(struct gameobject * obj, struct gameobject * obj_to);
 void obj_from_obj(struct gameobject * obj);
 void extract_obj(struct gameobject * obj);
-void extract_char(CHAR_DATA * ch, bool fPull);
-CHAR_DATA *get_char_room(CHAR_DATA * ch, const char *argument);
-CHAR_DATA *get_char_world(CHAR_DATA * ch, const char *argument);
+void extract_char(struct char_data * ch, bool fPull);
+struct char_data *get_char_room(struct char_data * ch, const char *argument);
+struct char_data *get_char_world(struct char_data * ch, const char *argument);
 struct gameobject *get_obj_type(struct objectprototype * objprototypeData);
-struct gameobject *get_obj_list(CHAR_DATA * ch, const char *argument, struct gameobject * list);
-struct gameobject *get_obj_carry(CHAR_DATA * ch, const char *argument);
-struct gameobject *get_obj_wear(CHAR_DATA * ch, const char *argument);
-struct gameobject *get_obj_here(CHAR_DATA * ch, const char *argument);
-struct gameobject *get_obj_world(CHAR_DATA * ch, const char *argument);
+struct gameobject *get_obj_list(struct char_data * ch, const char *argument, struct gameobject * list);
+struct gameobject *get_obj_carry(struct char_data * ch, const char *argument);
+struct gameobject *get_obj_wear(struct char_data * ch, const char *argument);
+struct gameobject *get_obj_here(struct char_data * ch, const char *argument);
+struct gameobject *get_obj_world(struct char_data * ch, const char *argument);
 struct gameobject *create_money(unsigned int gold, unsigned int silver);
 int get_obj_number(struct gameobject * obj);
 int get_obj_weight(struct gameobject * obj);
 int get_true_weight(struct gameobject * obj);
-bool room_is_dark(CHAR_DATA * ch, struct room_index_data * pRoomIndex);
-bool is_room_owner(CHAR_DATA * ch, struct room_index_data * room);
+bool room_is_dark(struct char_data * ch, struct room_index_data * pRoomIndex);
+bool is_room_owner(struct char_data * ch, struct room_index_data * room);
 bool room_is_private(struct room_index_data * pRoomIndex);
-bool can_see(CHAR_DATA * ch, CHAR_DATA * victim);
-bool can_see_obj(CHAR_DATA * ch, struct gameobject * obj);
-bool can_see_room(CHAR_DATA * ch, struct room_index_data * pRoomIndex);
-bool can_drop_obj(CHAR_DATA * ch, struct gameobject * obj);
+bool can_see(struct char_data * ch, struct char_data * victim);
+bool can_see_obj(struct char_data * ch, struct gameobject * obj);
+bool can_see_room(struct char_data * ch, struct room_index_data * pRoomIndex);
+bool can_drop_obj(struct char_data * ch, struct gameobject * obj);
 char *item_type_name(struct gameobject * obj);
 char *affect_loc_name(long location);
 char *affect_bit_name(long vector);
@@ -2130,67 +2130,67 @@ char *token_bit_name(long token_flags);
 const char *first_arg(const char *argument, char *arg_first, bool fCase);
 char *room_flag_bit_name(struct room_index_data * room);
 /*@observer@*/char *uncolor_str(char *txt);
-void identify_item(CHAR_DATA * ch, struct gameobject * obj);
-void furniture_check(CHAR_DATA * ch);
-struct room_index_data *find_location(CHAR_DATA * ch, const char *arg);
-struct room_index_data *get_death_room(CHAR_DATA * ch);
+void identify_item(struct char_data * ch, struct gameobject * obj);
+void furniture_check(struct char_data * ch);
+struct room_index_data *find_location(struct char_data * ch, const char *arg);
+struct room_index_data *get_death_room(struct char_data * ch);
 
 /* affects.c */
-void affect_to_char(CHAR_DATA * ch, /*@partial@*/AFFECT_DATA * paf);
+void affect_to_char(struct char_data * ch, /*@partial@*/AFFECT_DATA * paf);
 void affect_to_obj(struct gameobject * obj, AFFECT_DATA * paf);
 void affect_to_room(struct room_index_data * room, AFFECT_DATA * paf);
-void affect_remove(CHAR_DATA * ch, AFFECT_DATA * paf);
+void affect_remove(struct char_data * ch, AFFECT_DATA * paf);
 void affect_remove_obj(struct gameobject * obj, AFFECT_DATA * paf);
 void affect_remove_room(struct room_index_data * room, AFFECT_DATA * paf);
-void affect_strip(CHAR_DATA * ch, SKILL * skill);
+void affect_strip(struct char_data * ch, SKILL * skill);
 void affect_strip_room(struct room_index_data * room, int sn);
-void affect_join(CHAR_DATA * ch, AFFECT_DATA * paf);
-bool is_affected(CHAR_DATA * ch, SKILL * skill);
+void affect_join(struct char_data * ch, AFFECT_DATA * paf);
+bool is_affected(struct char_data * ch, SKILL * skill);
 bool is_affected_room(struct room_index_data * room, SKILL * skill);
 
 /* rooms.c */
 char *room_affect(AFFECT_DATA * paf);
 
 /* interp.c */
-void interpret(CHAR_DATA * ch, const char *argument);
+void interpret(struct char_data * ch, const char *argument);
 int number_argument(const char *argument, char *arg);
 int mult_argument(const char *argument, char *arg);
 /*@observer@*/const char *one_argument(const char *argument, /*@out@*/ char *arg_first);
 char *one_line(char *base, char *buf);
 
 /* magic.c */
-void remove_all_affects(CHAR_DATA * victim);
-int find_spell(CHAR_DATA * ch, const char *name);
-int mana_cost(CHAR_DATA * ch, int min_mana, int level);
-bool saves_spell(int level, CHAR_DATA * victim, int dam_type);
-void obj_cast_spell(int sn, int level, CHAR_DATA * ch, CHAR_DATA * victim, struct gameobject * obj);
-bool can_trans_room(CHAR_DATA * ch, CHAR_DATA * victim, int sn);
+void remove_all_affects(struct char_data * victim);
+int find_spell(struct char_data * ch, const char *name);
+int mana_cost(struct char_data * ch, int min_mana, int level);
+bool saves_spell(int level, struct char_data * victim, int dam_type);
+void obj_cast_spell(int sn, int level, struct char_data * ch, struct char_data * victim, struct gameobject * obj);
+bool can_trans_room(struct char_data * ch, struct char_data * victim, int sn);
 
 /* save.c */
-void save_char_obj(CHAR_DATA * ch);
+void save_char_obj(struct char_data * ch);
 bool load_char_obj(struct descriptor_data * d, char *name);
-bool load_char_obj_2(CHAR_DATA * tempch, char *name);
+bool load_char_obj_2(struct char_data * tempch, char *name);
 
 
 /* skills.c */
-bool parse_gen_groups(CHAR_DATA * ch, const char *argument);
-void list_group_costs(CHAR_DATA * ch);
-void list_group_known(CHAR_DATA * ch);
-int exp_per_level(CHAR_DATA * ch, int points);
-void check_improve(CHAR_DATA * ch, SKILL * skill, bool success, int multiplier);
+bool parse_gen_groups(struct char_data * ch, const char *argument);
+void list_group_costs(struct char_data * ch);
+void list_group_known(struct char_data * ch);
+int exp_per_level(struct char_data * ch, int points);
+void check_improve(struct char_data * ch, SKILL * skill, bool success, int multiplier);
 
 /* teleport.c */
 struct room_index_data *room_by_name(char *target, int level, bool error);
 
 /* update.c */
-void advance_level(CHAR_DATA * ch, int level);
-void advance_level2(CHAR_DATA * ch);
-void gain_exp(CHAR_DATA * ch, int gain);
-void gain_object_exp(CHAR_DATA * ch, struct gameobject * obj, int gain);
-void gain_condition(CHAR_DATA * ch, int condition, long value);
+void advance_level(struct char_data * ch, int level);
+void advance_level2(struct char_data * ch);
+void gain_exp(struct char_data * ch, int gain);
+void gain_object_exp(struct char_data * ch, struct gameobject * obj, int gain);
+void gain_condition(struct char_data * ch, int condition, long value);
 void update_handler(void);
-void restore_char(CHAR_DATA * ch);
-void strip_negative_affects(CHAR_DATA * ch);
+void restore_char(struct char_data * ch);
+void strip_negative_affects(struct char_data * ch);
 
 /* lookup.c */
 int race_lookup(const char *name);
@@ -2207,7 +2207,7 @@ typedef struct descriptor_iterator_filter DESCRIPTOR_ITERATOR_FILTER;
 struct descriptor_iterator_filter {
     bool all;
     bool must_playing;
-    /*@null@*/CHAR_DATA *skip_character;
+    /*@null@*/struct char_data *skip_character;
     SOCKET descriptor;
 };
 extern const DESCRIPTOR_ITERATOR_FILTER descriptor_empty_filter;

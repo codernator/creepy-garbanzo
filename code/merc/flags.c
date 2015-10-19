@@ -10,7 +10,7 @@ extern char *flag_string(const struct flag_type *flag_table, long bits);
 /***************************************************************************
  *	declarations
  ***************************************************************************/
-typedef void FLAG_CMD (CHAR_DATA *ch, void *target, const char *argument);
+typedef void FLAG_CMD (struct char_data *ch, void *target, const char *argument);
 
 /* flag command map */
 struct flag_cmd_map {
@@ -20,45 +20,45 @@ struct flag_cmd_map {
 };
 
 /* utility functions */
-static void flag_list(CHAR_DATA * ch, const struct flag_cmd_map *flag_table);
-static void flag_list_value(CHAR_DATA * ch, const struct flag_type *flag_table);
+static void flag_list(struct char_data * ch, const struct flag_cmd_map *flag_table);
+static void flag_list_value(struct char_data * ch, const struct flag_type *flag_table);
 
-static void flag_set(CHAR_DATA * ch, void *target, char *title, const struct flag_cmd_map *table, const char *argument);
+static void flag_set(struct char_data * ch, void *target, char *title, const struct flag_cmd_map *table, const char *argument);
 
 /* top-level functions */
-static void flag_set_char(CHAR_DATA * ch, const char *argument);
-static void flag_set_room(CHAR_DATA * ch, const char *argument);
-static void flag_set_obj(CHAR_DATA * ch, const char *argument);
+static void flag_set_char(struct char_data * ch, const char *argument);
+static void flag_set_room(struct char_data * ch, const char *argument);
+static void flag_set_obj(struct char_data * ch, const char *argument);
 
 
 /* mob specific flag functions */
-static void flag_char_act(CHAR_DATA * ch, void *target, const char *argument);
-static void flag_char_off(CHAR_DATA * ch, void *target, const char *argument);
-static void flag_char_form(CHAR_DATA * ch, void *target, const char *argument);
-static void flag_char_part(CHAR_DATA * ch, void *target, const char *argument);
+static void flag_char_act(struct char_data * ch, void *target, const char *argument);
+static void flag_char_off(struct char_data * ch, void *target, const char *argument);
+static void flag_char_form(struct char_data * ch, void *target, const char *argument);
+static void flag_char_part(struct char_data * ch, void *target, const char *argument);
 
 /* shared between mob and char */
-static void flag_char_aff(CHAR_DATA * ch, void *target, const char *argument);
-static void flag_char_imm(CHAR_DATA * ch, void *target, const char *argument);
-static void flag_char_res(CHAR_DATA * ch, void *target, const char *argument);
-static void flag_char_vuln(CHAR_DATA * ch, void *target, const char *argument);
+static void flag_char_aff(struct char_data * ch, void *target, const char *argument);
+static void flag_char_imm(struct char_data * ch, void *target, const char *argument);
+static void flag_char_res(struct char_data * ch, void *target, const char *argument);
+static void flag_char_vuln(struct char_data * ch, void *target, const char *argument);
 
 /* char specific flag functions */
-static void flag_char_plr(CHAR_DATA * ch, void *target, const char *argument);
-static void flag_char_comm(CHAR_DATA * ch, void *target, const char *argument);
-static void flag_char_deathroom(CHAR_DATA * ch, void *target, const char *argument);
+static void flag_char_plr(struct char_data * ch, void *target, const char *argument);
+static void flag_char_comm(struct char_data * ch, void *target, const char *argument);
+static void flag_char_deathroom(struct char_data * ch, void *target, const char *argument);
 
 /* room flag functions */
-static void flag_room_room(CHAR_DATA * ch, void *target, const char *argument);
+static void flag_room_room(struct char_data * ch, void *target, const char *argument);
 
 /* object flag functions */
-static void flag_obj_type(CHAR_DATA * ch, void *target, const char *argument);
-static void flag_obj_wear(CHAR_DATA * ch, void *target, const char *argument);
-static void flag_obj_extra(CHAR_DATA * ch, void *target, const char *argument);
-static void flag_obj_extra2(CHAR_DATA * ch, void *target, const char *argument);
-static void flag_obj_wpn_class(CHAR_DATA * ch, void *target, const char *argument);
-static void flag_obj_wpn_flags(CHAR_DATA * ch, void *target, const char *argument);
-static void flag_obj_wpn_damage(CHAR_DATA * ch, void *target, const char *argument);
+static void flag_obj_type(struct char_data * ch, void *target, const char *argument);
+static void flag_obj_wear(struct char_data * ch, void *target, const char *argument);
+static void flag_obj_extra(struct char_data * ch, void *target, const char *argument);
+static void flag_obj_extra2(struct char_data * ch, void *target, const char *argument);
+static void flag_obj_wpn_class(struct char_data * ch, void *target, const char *argument);
+static void flag_obj_wpn_flags(struct char_data * ch, void *target, const char *argument);
+static void flag_obj_wpn_damage(struct char_data * ch, void *target, const char *argument);
 
 
 static const struct flag_cmd_map mob_set_flags[] =
@@ -115,7 +115,7 @@ static const struct flag_cmd_map obj_set_flags[] =
  *
  *	entry point for the flag function
  ***************************************************************************/
-void do_flag(CHAR_DATA *ch, const char *argument)
+void do_flag(struct char_data *ch, const char *argument)
 {
     char type[MAX_INPUT_LENGTH];
 
@@ -160,9 +160,9 @@ void do_flag(CHAR_DATA *ch, const char *argument)
  *
  *	flag affects on a character
  ***************************************************************************/
-void flag_set_char(CHAR_DATA *ch, const char *argument)
+void flag_set_char(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *vch;
+    struct char_data *vch;
     char name[MAX_INPUT_LENGTH];
 
     argument = one_argument(argument, name);
@@ -185,7 +185,7 @@ void flag_set_char(CHAR_DATA *ch, const char *argument)
  *
  *	flag affects on an object
  ***************************************************************************/
-void flag_set_obj(CHAR_DATA *ch, const char *argument)
+void flag_set_obj(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     char name[MAX_INPUT_LENGTH];
@@ -207,7 +207,7 @@ void flag_set_obj(CHAR_DATA *ch, const char *argument)
  *
  *	flag affects on a room
  ***************************************************************************/
-void flag_set_room(CHAR_DATA *ch, const char *argument)
+void flag_set_room(struct char_data *ch, const char *argument)
 {
     struct room_index_data *room;
     char index[MAX_INPUT_LENGTH];
@@ -244,9 +244,9 @@ void flag_set_room(CHAR_DATA *ch, const char *argument)
  *
  *	flag affects on a character
  ***************************************************************************/
-void flag_char_aff(CHAR_DATA *ch, void *target, const char *argument)
+void flag_char_aff(struct char_data *ch, void *target, const char *argument)
 {
-    CHAR_DATA *vch = (CHAR_DATA *)target;
+    struct char_data *vch = (struct char_data *)target;
     long value;
 
     if ((value = flag_value(affect_flags, argument)) != NO_FLAG) {
@@ -273,9 +273,9 @@ void flag_char_aff(CHAR_DATA *ch, void *target, const char *argument)
  *
  *	flag vulnerable flags on a character
  ***************************************************************************/
-void flag_char_vuln(CHAR_DATA *ch, void *target, const char *argument)
+void flag_char_vuln(struct char_data *ch, void *target, const char *argument)
 {
-    CHAR_DATA *vch = (CHAR_DATA *)target;
+    struct char_data *vch = (struct char_data *)target;
     long value;
 
     if ((value = flag_value(vuln_flags, argument)) != NO_FLAG) {
@@ -302,9 +302,9 @@ void flag_char_vuln(CHAR_DATA *ch, void *target, const char *argument)
  *
  *	flag resistance flags on a character
  ***************************************************************************/
-void flag_char_res(CHAR_DATA *ch, void *target, const char *argument)
+void flag_char_res(struct char_data *ch, void *target, const char *argument)
 {
-    CHAR_DATA *vch = (CHAR_DATA *)target;
+    struct char_data *vch = (struct char_data *)target;
     long value;
 
     if ((value = flag_value(res_flags, argument)) != NO_FLAG) {
@@ -331,9 +331,9 @@ void flag_char_res(CHAR_DATA *ch, void *target, const char *argument)
  *
  *	flag immunity flags on a character
  ***************************************************************************/
-void flag_char_imm(CHAR_DATA *ch, void *target, const char *argument)
+void flag_char_imm(struct char_data *ch, void *target, const char *argument)
 {
-    CHAR_DATA *vch = (CHAR_DATA *)target;
+    struct char_data *vch = (struct char_data *)target;
     long value;
 
     if ((value = flag_value(imm_flags, argument)) != NO_FLAG) {
@@ -364,9 +364,9 @@ void flag_char_imm(CHAR_DATA *ch, void *target, const char *argument)
  *
  *	flag part flags on a mob
  ***************************************************************************/
-void flag_char_part(CHAR_DATA *ch, void *target, const char *argument)
+void flag_char_part(struct char_data *ch, void *target, const char *argument)
 {
-    CHAR_DATA *vch = (CHAR_DATA *)target;
+    struct char_data *vch = (struct char_data *)target;
     long value;
 
     if (!IS_NPC(vch)) {
@@ -398,9 +398,9 @@ void flag_char_part(CHAR_DATA *ch, void *target, const char *argument)
  *
  *	flag form flags on a mob
  ***************************************************************************/
-void flag_char_form(CHAR_DATA *ch, void *target, const char *argument)
+void flag_char_form(struct char_data *ch, void *target, const char *argument)
 {
-    CHAR_DATA *vch = (CHAR_DATA *)target;
+    struct char_data *vch = (struct char_data *)target;
     long value;
 
     if (!IS_NPC(vch)) {
@@ -433,9 +433,9 @@ void flag_char_form(CHAR_DATA *ch, void *target, const char *argument)
  *
  *	flag offensive flags on a mob
  ***************************************************************************/
-void flag_char_off(CHAR_DATA *ch, void *target, const char *argument)
+void flag_char_off(struct char_data *ch, void *target, const char *argument)
 {
-    CHAR_DATA *vch = (CHAR_DATA *)target;
+    struct char_data *vch = (struct char_data *)target;
     long value;
 
     if (!IS_NPC(vch)) {
@@ -467,9 +467,9 @@ void flag_char_off(CHAR_DATA *ch, void *target, const char *argument)
  *
  *	flag act flags on a mob
  ***************************************************************************/
-void flag_char_act(CHAR_DATA *ch, void *target, const char *argument)
+void flag_char_act(struct char_data *ch, void *target, const char *argument)
 {
-    CHAR_DATA *vch = (CHAR_DATA *)target;
+    struct char_data *vch = (struct char_data *)target;
     long value;
 
     if (!IS_NPC(vch)) {
@@ -508,9 +508,9 @@ void flag_char_act(CHAR_DATA *ch, void *target, const char *argument)
  *
  *	flag the death room on a character
  ***************************************************************************/
-void flag_char_deathroom(CHAR_DATA *ch, void *target, const char *argument)
+void flag_char_deathroom(struct char_data *ch, void *target, const char *argument)
 {
-    CHAR_DATA *vch = (CHAR_DATA *)target;
+    struct char_data *vch = (struct char_data *)target;
     struct room_index_data *room;
     long value;
 
@@ -546,9 +546,9 @@ void flag_char_deathroom(CHAR_DATA *ch, void *target, const char *argument)
  *
  *	flag comm flags on a character
  ***************************************************************************/
-void flag_char_comm(CHAR_DATA *ch, void *target, const char *argument)
+void flag_char_comm(struct char_data *ch, void *target, const char *argument)
 {
-    CHAR_DATA *vch = (CHAR_DATA *)target;
+    struct char_data *vch = (struct char_data *)target;
     long value;
 
     if (IS_NPC(vch)) {
@@ -582,9 +582,9 @@ void flag_char_comm(CHAR_DATA *ch, void *target, const char *argument)
  *
  *	flag player flags on a character
  ***************************************************************************/
-void flag_char_plr(CHAR_DATA *ch, void *target, const char *argument)
+void flag_char_plr(struct char_data *ch, void *target, const char *argument)
 {
-    CHAR_DATA *vch = (CHAR_DATA *)target;
+    struct char_data *vch = (struct char_data *)target;
     long value;
 
     if (IS_NPC(vch)) {
@@ -621,7 +621,7 @@ void flag_char_plr(CHAR_DATA *ch, void *target, const char *argument)
  *
  *	flag room flags on a room
  ***************************************************************************/
-void flag_room_room(CHAR_DATA *ch, void *target, const char *argument)
+void flag_room_room(struct char_data *ch, void *target, const char *argument)
 {
     struct room_index_data *room = (struct room_index_data *)target;
     long value;
@@ -655,7 +655,7 @@ void flag_room_room(CHAR_DATA *ch, void *target, const char *argument)
  *
  *	flag item type on an object
  ***************************************************************************/
-void flag_obj_type(CHAR_DATA *ch, void *target, const char *argument)
+void flag_obj_type(struct char_data *ch, void *target, const char *argument)
 {
     struct gameobject *obj = (struct gameobject *)target;
     long value;
@@ -675,7 +675,7 @@ void flag_obj_type(CHAR_DATA *ch, void *target, const char *argument)
  *
  *	flag wear flags on an object
  ***************************************************************************/
-void flag_obj_wear(CHAR_DATA *ch, void *target, const char *argument)
+void flag_obj_wear(struct char_data *ch, void *target, const char *argument)
 {
     struct gameobject *obj = (struct gameobject *)target;
     long value;
@@ -704,7 +704,7 @@ void flag_obj_wear(CHAR_DATA *ch, void *target, const char *argument)
  *
  *	flag extra flags on an object
  ***************************************************************************/
-void flag_obj_extra(CHAR_DATA *ch, void *target, const char *argument)
+void flag_obj_extra(struct char_data *ch, void *target, const char *argument)
 {
     struct gameobject *obj = (struct gameobject *)target;
     long value;
@@ -728,7 +728,7 @@ void flag_obj_extra(CHAR_DATA *ch, void *target, const char *argument)
     return;
 }
 
-void flag_obj_extra2(CHAR_DATA *ch, void *target, const char *argument)
+void flag_obj_extra2(struct char_data *ch, void *target, const char *argument)
 {
     struct gameobject *obj = (struct gameobject *)target;
     long value;
@@ -757,7 +757,7 @@ void flag_obj_extra2(CHAR_DATA *ch, void *target, const char *argument)
  *
  *	flag weapon class flags on an object
  ***************************************************************************/
-void flag_obj_wpn_class(CHAR_DATA *ch, void *target, const char *argument)
+void flag_obj_wpn_class(struct char_data *ch, void *target, const char *argument)
 {
     struct gameobject *obj = (struct gameobject *)target;
     long value;
@@ -784,7 +784,7 @@ void flag_obj_wpn_class(CHAR_DATA *ch, void *target, const char *argument)
  *
  *	flag weapon flags on a weapon
  ***************************************************************************/
-void flag_obj_wpn_flags(CHAR_DATA *ch, void *target, const char *argument)
+void flag_obj_wpn_flags(struct char_data *ch, void *target, const char *argument)
 {
     struct gameobject *obj = (struct gameobject *)target;
     long value;
@@ -821,7 +821,7 @@ void flag_obj_wpn_flags(CHAR_DATA *ch, void *target, const char *argument)
  *
  *	flag damage on a weapon
  ***************************************************************************/
-void flag_obj_wpn_damage(CHAR_DATA *ch, void *target, const char *argument)
+void flag_obj_wpn_damage(struct char_data *ch, void *target, const char *argument)
 {
     struct gameobject *obj = (struct gameobject *)target;
     long value;
@@ -850,7 +850,7 @@ void flag_obj_wpn_damage(CHAR_DATA *ch, void *target, const char *argument)
  *
  *	finds and invokes the proper flag function
  ***************************************************************************/
-void flag_set(CHAR_DATA *ch, void *target, char *title, const struct flag_cmd_map *table, const char *argument)
+void flag_set(struct char_data *ch, void *target, char *title, const struct flag_cmd_map *table, const char *argument)
 {
     char flag[MAX_INPUT_LENGTH];
     int idx;
@@ -901,7 +901,7 @@ void flag_set(CHAR_DATA *ch, void *target, char *title, const struct flag_cmd_ma
  *
  *	display a list of available flags for a type
  ***************************************************************************/
-void flag_list(CHAR_DATA *ch, const struct flag_cmd_map *flag_table)
+void flag_list(struct char_data *ch, const struct flag_cmd_map *flag_table)
 {
     int idx;
 
@@ -921,7 +921,7 @@ void flag_list(CHAR_DATA *ch, const struct flag_cmd_map *flag_table)
  *
  *	display a list of available values for a given flag
  ***************************************************************************/
-void flag_list_value(CHAR_DATA *ch, const struct flag_type *flag_table)
+void flag_list_value(struct char_data *ch, const struct flag_type *flag_table)
 {
     int idx;
 

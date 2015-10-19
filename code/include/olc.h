@@ -18,13 +18,13 @@
 /*
  * New typedefs.
  */
-typedef bool OLC_FUN(CHAR_DATA * ch, const char *argument);
+typedef bool OLC_FUN(struct char_data * ch, const char *argument);
 #define DECLARE_OLC_FUN(fn)     OLC_FUN fn
 
 
 
 /* Return true if area changed, false if not. */
-#define EDIT(fn)                bool fn(CHAR_DATA * ch, const char *argument)
+#define EDIT(fn)                bool fn(struct char_data * ch, const char *argument)
 
 /*
  * Connected states for editor.
@@ -45,12 +45,12 @@ typedef bool OLC_FUN(CHAR_DATA * ch, const char *argument);
 
 
 /* eidting interpreter entry functions */
-void mpedit(CHAR_DATA * ch, const char *argument);
-void hedit(CHAR_DATA * ch, const char *argument);
-void skedit(CHAR_DATA * ch, const char *argument);
-void gredit(CHAR_DATA * ch, const char *argument);
-void scedit(CHAR_DATA * ch, const char *argument);
-void muedit(CHAR_DATA * ch, const char *argument);
+void mpedit(struct char_data * ch, const char *argument);
+void hedit(struct char_data * ch, const char *argument);
+void skedit(struct char_data * ch, const char *argument);
+void gredit(struct char_data * ch, const char *argument);
+void scedit(struct char_data * ch, const char *argument);
+void muedit(struct char_data * ch, const char *argument);
 
 
 /*
@@ -109,9 +109,9 @@ extern const struct olc_cmd_type muedit_table[];
  * General Functions
  */
 /* general functions */
-bool show_commands(CHAR_DATA * ch, const char *argument);
-bool show_olc_help(CHAR_DATA * ch, const char *argument);
-bool edit_done(CHAR_DATA * ch);
+bool show_commands(struct char_data * ch, const char *argument);
+bool show_olc_help(struct char_data * ch, const char *argument);
+bool edit_done(struct char_data * ch);
 
 
 /* area editor */

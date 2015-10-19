@@ -12,20 +12,20 @@
 #include "help.h"
 
 /** exports */
-bool expand_cmd(CHAR_DATA * vch, const char *arg, char *buf, char find);
+bool expand_cmd(struct char_data * vch, const char *arg, char *buf, char find);
 
 
 /** locals */
-typedef void FOR_CMD (CHAR_DATA *ch, char *name, const char *argument);
+typedef void FOR_CMD (struct char_data *ch, char *name, const char *argument);
 
-static void for_all(CHAR_DATA * ch, char *name, const char *argument);
-static void for_gods(CHAR_DATA * ch, char *name, const char *argument);
-static void for_morts(CHAR_DATA * ch, char *name, const char *argument);
-static void for_room(CHAR_DATA * ch, char *name, const char *argument);
-static void for_name(CHAR_DATA * ch, char *name, const char *argument);
-static void for_count(CHAR_DATA * ch, char *name, const char *argument);
-static bool valid_cmd(CHAR_DATA * vcn, const char *cmd);
-static const char *get_name(CHAR_DATA * vch);
+static void for_all(struct char_data * ch, char *name, const char *argument);
+static void for_gods(struct char_data * ch, char *name, const char *argument);
+static void for_morts(struct char_data * ch, char *name, const char *argument);
+static void for_room(struct char_data * ch, char *name, const char *argument);
+static void for_name(struct char_data * ch, char *name, const char *argument);
+static void for_count(struct char_data * ch, char *name, const char *argument);
+static bool valid_cmd(struct char_data * vcn, const char *cmd);
+static const char *get_name(struct char_data * vch);
 
 static const struct for_cmds {
     char *		cmd;
@@ -47,7 +47,7 @@ static const char *invalid_cmds[] =
     "quit", "for", "fry", "ffry", "string", "disconnect", "purge", NULL
 };
 
-bool valid_cmd(CHAR_DATA *vch, const char *cmd)
+bool valid_cmd(struct char_data *vch, const char *cmd)
 {
     const CMD *cmd_base;
     bool success = true;
@@ -65,7 +65,7 @@ bool valid_cmd(CHAR_DATA *vch, const char *cmd)
     return success;
 }
 
-void do_for(CHAR_DATA *ch, const char *argument)
+void do_for(struct char_data *ch, const char *argument)
 {
     char name[MAX_INPUT_LENGTH];
     int iter;
@@ -116,7 +116,7 @@ void do_for(CHAR_DATA *ch, const char *argument)
  *
  *	for all players -- gods and mortals
  ***************************************************************************/
-static void for_all(CHAR_DATA *ch, char *name, const char *argument)
+static void for_all(struct char_data *ch, char *name, const char *argument)
 {
     for_gods(ch, name, argument);
     for_morts(ch, name, argument);
@@ -128,7 +128,7 @@ static void for_all(CHAR_DATA *ch, char *name, const char *argument)
  *
  *	for all imms
  ***************************************************************************/
-static void for_gods(CHAR_DATA *ch, char *name, const char *argument)
+static void for_gods(struct char_data *ch, char *name, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
     struct descriptor_data *d;
@@ -177,7 +177,7 @@ static void for_gods(CHAR_DATA *ch, char *name, const char *argument)
 /**
  * for_morts
  */
-static void for_morts(CHAR_DATA *ch, char *name, const char *argument)
+static void for_morts(struct char_data *ch, char *name, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
     struct descriptor_data *d;
@@ -227,10 +227,10 @@ static void for_morts(CHAR_DATA *ch, char *name, const char *argument)
  *
  *	for each person in the room - affect mobiles
  ***************************************************************************/
-static void for_room(CHAR_DATA *ch, char *name, const char *argument)
+static void for_room(struct char_data *ch, char *name, const char *argument)
 {
-    CHAR_DATA *vch;
-    CHAR_DATA *vch_next;
+    struct char_data *vch;
+    struct char_data *vch_next;
     char cmd[MAX_STRING_LENGTH];
     int count = 0;
 
@@ -255,11 +255,11 @@ static void for_room(CHAR_DATA *ch, char *name, const char *argument)
  *
  *	for each character with a given name -- PC and NPCs
  ***************************************************************************/
-static void for_name(CHAR_DATA *ch, char *name, const char *argument)
+static void for_name(struct char_data *ch, char *name, const char *argument)
 {
     struct room_index_data *origin;
-    CHAR_DATA *vch;
-    CHAR_DATA *vch_next;
+    struct char_data *vch;
+    struct char_data *vch_next;
     struct area_data *area;
     char cmd[MAX_STRING_LENGTH];
     int count = 0;
@@ -305,7 +305,7 @@ static void for_name(CHAR_DATA *ch, char *name, const char *argument)
  *
  *	do a command parse_int(name) times
  ***************************************************************************/
-static void for_count(CHAR_DATA *ch, char *name, const char *argument)
+static void for_count(struct char_data *ch, char *name, const char *argument)
 {
     int count = 0;
     int number;
@@ -336,7 +336,7 @@ static void for_count(CHAR_DATA *ch, char *name, const char *argument)
  *	expands any special characters(defined by "find") in a
  *	command to a valid target
  ***************************************************************************/
-bool expand_cmd(CHAR_DATA *vch, const char *arg, char *buf, char find)
+bool expand_cmd(struct char_data *vch, const char *arg, char *buf, char find)
 {
     const char *name = get_name(vch);
     const char *orig = arg;
@@ -368,9 +368,9 @@ bool expand_cmd(CHAR_DATA *vch, const char *arg, char *buf, char find)
  *
  *	gets the proper name(with #.xxx notation) for a character
  ***************************************************************************/
-static const char *get_name(CHAR_DATA *vch)
+static const char *get_name(struct char_data *vch)
 {
-    CHAR_DATA *rch;
+    struct char_data *rch;
     char name[MAX_INPUT_LENGTH];
     static char outbuf[MAX_INPUT_LENGTH];
 

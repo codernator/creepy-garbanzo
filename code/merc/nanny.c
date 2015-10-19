@@ -54,7 +54,7 @@ static void ansi_answered(struct descriptor_data *d, const char *argument)
 
 static void name_answered(struct descriptor_data *d, const char *argument)
 {
-    CHAR_DATA *ch;
+    struct char_data *ch;
     static char name_buf[MAX_NAME_LENGTH+1];
     static char buf[MAX_INPUT_LENGTH];
     bool found;
@@ -141,7 +141,7 @@ static void name_answered(struct descriptor_data *d, const char *argument)
 
 static void oldpassword_answered(struct descriptor_data *d, const char *argument)
 {
-    CHAR_DATA *ch = d->character;
+    struct char_data *ch = d->character;
 
     write_to_buffer(d, "\n\r", 2);
 
@@ -188,7 +188,7 @@ static void breakconnect_answered(struct descriptor_data *d, const char *argumen
           {
               struct descriptor_data *d_old;
               struct descriptor_data *dpending;
-              CHAR_DATA *ch = d->character;
+              struct char_data *ch = d->character;
 
               dpending = descriptor_iterator_start(&descriptor_empty_filter);
               while ((d_old = dpending) != NULL) {
@@ -235,7 +235,7 @@ static void breakconnect_answered(struct descriptor_data *d, const char *argumen
 
 static void confirmnew_answered(struct descriptor_data *d, const char *argument)
 {
-    CHAR_DATA *ch = d->character;
+    struct char_data *ch = d->character;
     static char buf[MAX_INPUT_LENGTH];
 
     switch (*argument) {
@@ -262,7 +262,7 @@ static void confirmnew_answered(struct descriptor_data *d, const char *argument)
 
 static void newpassword_answered(struct descriptor_data *d, const char *argument)
 {
-    CHAR_DATA *ch = d->character;
+    struct char_data *ch = d->character;
     int passaccept;
 
     write_to_buffer(d, "\n\r", 2);
@@ -280,7 +280,7 @@ static void newpassword_answered(struct descriptor_data *d, const char *argument
 
 static void confirmnewpass_answered(struct descriptor_data *d, const char *argument)
 {
-    CHAR_DATA *ch = d->character;
+    struct char_data *ch = d->character;
     int race_idx;
 
     write_to_buffer(d, "\n\r", 2);
@@ -307,7 +307,7 @@ static void confirmnewpass_answered(struct descriptor_data *d, const char *argum
 
 static void newrace_answered(struct descriptor_data *d, const char *argument)
 {
-    CHAR_DATA *ch = d->character;
+    struct char_data *ch = d->character;
     int idx;
     int race_idx;
     LEARNED *learned;
@@ -376,7 +376,7 @@ static void newrace_answered(struct descriptor_data *d, const char *argument)
 
 static void newsex_answered(struct descriptor_data *d, const char *argument)
 {
-    CHAR_DATA *ch = d->character;
+    struct char_data *ch = d->character;
 
     switch (argument[0]) {
       case 'm':
@@ -405,7 +405,7 @@ static void newsex_answered(struct descriptor_data *d, const char *argument)
 static void newclass_answered(struct descriptor_data *d, const char *argument)
 {
     static char arg[MAX_INPUT_LENGTH];
-    CHAR_DATA *ch = d->character;
+    struct char_data *ch = d->character;
     LEARNED *learned;
     int class_idx;
 
@@ -456,7 +456,7 @@ static void newclass_answered(struct descriptor_data *d, const char *argument)
 
 static void pickweapon_answered(struct descriptor_data *d, const char *argument)
 {
-    CHAR_DATA *ch = d->character;
+    struct char_data *ch = d->character;
     LEARNED *learned;
     int weapon_idx;
 
@@ -490,7 +490,7 @@ static void pickweapon_answered(struct descriptor_data *d, const char *argument)
 
 static void gengroups_answered(struct descriptor_data *d, const char *argument)
 {
-    CHAR_DATA *ch = d->character;
+    struct char_data *ch = d->character;
 
     send_to_char("\n\r", ch);
 
@@ -542,7 +542,7 @@ static void readimotd_answered(struct descriptor_data *d, /*@unused@*/const char
 
 static void readmotd_answered(struct descriptor_data *d, const char *argument)
 {
-    CHAR_DATA *ch = d->character;
+    struct char_data *ch = d->character;
 
     if (ch->played < 0)
         ch->played = 0;
@@ -806,7 +806,7 @@ bool check_parse_name(const char *name)
  */
 bool check_reconnect(struct descriptor_data *d, const char *name, bool reconnect)
 {
-    CHAR_DATA *ch;
+    struct char_data *ch;
 
     for (ch = char_list; ch != NULL; ch = ch->next) {
         if (!IS_NPC(ch) && (!reconnect || ch->desc == NULL) && !str_cmp(d->character->name, ch->name)) {
@@ -882,7 +882,7 @@ bool check_playing(struct descriptor_data *d, const char *name)
  *    bring a character back from the void if they have
  *    poofed off to limbo
  ***************************************************************************/
-void stop_idling(CHAR_DATA *ch)
+void stop_idling(struct char_data *ch)
 {
     if (ch == NULL
         || ch->desc == NULL

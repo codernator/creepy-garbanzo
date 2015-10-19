@@ -10,13 +10,13 @@
 #endif
 
 extern long flag_lookup(const char *word, const struct flag_type *flag_table);
-extern void mob_interpret(CHAR_DATA * ch, const char *argument);
+extern void mob_interpret(struct char_data * ch, const char *argument);
 
-void mp_bribe_trigger(CHAR_DATA * mob, CHAR_DATA * ch, long amount);
-bool mp_exit_trigger(CHAR_DATA * ch, int dir);
-void mp_give_trigger(CHAR_DATA * mob, CHAR_DATA * ch, struct gameobject * obj);
-void mp_greet_trigger(CHAR_DATA * ch);
-void mp_hprct_trigger(CHAR_DATA * mob, CHAR_DATA * ch);
+void mp_bribe_trigger(struct char_data * mob, struct char_data * ch, long amount);
+bool mp_exit_trigger(struct char_data * ch, int dir);
+void mp_give_trigger(struct char_data * mob, struct char_data * ch, struct gameobject * obj);
+void mp_greet_trigger(struct char_data * ch);
+void mp_hprct_trigger(struct char_data * mob, struct char_data * ch);
 
 /*
  * These defines correspond to the entries in fn_keyword[] table.
@@ -202,9 +202,9 @@ static bool num_eval(long lval, long oper, long rval)
 /*
  * Get a random PC in the room (for $r parameter)
  */
-static CHAR_DATA *get_random_char(CHAR_DATA *mob)
+static struct char_data *get_random_char(struct char_data *mob)
 {
-    CHAR_DATA *vch, *victim = NULL;
+    struct char_data *vch, *victim = NULL;
     int now = 0, highest = 0;
 
     for (vch = mob->in_room->people; vch; vch = vch->next_in_room) {
@@ -223,9 +223,9 @@ static CHAR_DATA *get_random_char(CHAR_DATA *mob)
  * How many other players / mobs are there in the room
  * iFlag: 0: all, 1: players, 2: mobiles 3: mobs w/ same vnum 4: same group
  */
-static int count_people_room(CHAR_DATA *mob, int iFlag)
+static int count_people_room(struct char_data *mob, int iFlag)
 {
-    CHAR_DATA *vch;
+    struct char_data *vch;
     int count;
 
     for (count = 0, vch = mob->in_room->people; vch; vch = vch->next_in_room) {
@@ -248,9 +248,9 @@ static int count_people_room(CHAR_DATA *mob, int iFlag)
  * a room have the same trigger and you want only the first of them
  * to act
  */
-static int get_order(CHAR_DATA *ch)
+static int get_order(struct char_data *ch)
 {
-    CHAR_DATA *vch;
+    struct char_data *vch;
     int i;
 
     if (!IS_NPC(ch))
@@ -271,7 +271,7 @@ static int get_order(CHAR_DATA *ch)
  * item_type: item type or -1
  * fWear: true: item must be worn, false: don't care
  */
-static bool has_item(CHAR_DATA *ch, long vnum, int item_type, bool fWear)
+static bool has_item(struct char_data *ch, long vnum, int item_type, bool fWear)
 {
     struct gameobject *obj;
 
@@ -286,9 +286,9 @@ static bool has_item(CHAR_DATA *ch, long vnum, int item_type, bool fWear)
 /*
  * Check if there's a mob with given vnum in the room
  */
-static bool get_mob_vnum_room(CHAR_DATA *ch, long vnum)
+static bool get_mob_vnum_room(struct char_data *ch, long vnum)
 {
-    CHAR_DATA *mob;
+    struct char_data *mob;
 
     for (mob = ch->in_room->people; mob; mob = mob->next_in_room)
 	if (IS_NPC(mob) && mob->mob_idx->vnum == vnum)
@@ -299,7 +299,7 @@ static bool get_mob_vnum_room(CHAR_DATA *ch, long vnum)
 /*
  * Check if there's an object with given vnum in the room
  */
-static bool get_obj_vnum_room(CHAR_DATA *ch, long vnum)
+static bool get_obj_vnum_room(struct char_data *ch, long vnum)
 {
     struct gameobject *obj;
 
@@ -321,10 +321,10 @@ static bool get_obj_vnum_room(CHAR_DATA *ch, long vnum)
  *
  *----------------------------------------------------------------------
  */
-static bool cmd_eval(long vnum, const char *line, int check, CHAR_DATA *mob, CHAR_DATA *ch, const void *arg1, const void *arg2, CHAR_DATA *rch)
+static bool cmd_eval(long vnum, const char *line, int check, struct char_data *mob, struct char_data *ch, const void *arg1, const void *arg2, struct char_data *rch)
 {
-    CHAR_DATA *lval_char = mob;
-    CHAR_DATA *vch = (CHAR_DATA *)arg2;
+    struct char_data *lval_char = mob;
+    struct char_data *vch = (struct char_data *)arg2;
     struct gameobject *obj1 = (struct gameobject *)arg1;
     struct gameobject *obj2 = (struct gameobject *)arg2;
     struct gameobject *lval_obj = NULL;
@@ -599,8 +599,8 @@ static bool cmd_eval(long vnum, const char *line, int check, CHAR_DATA *mob, CHA
  */
 static void expand_arg(char *buf,
 	const char *format,
-	CHAR_DATA *mob, CHAR_DATA *ch,
-	const void *arg1, const void *arg2, CHAR_DATA *rch)
+	struct char_data *mob, struct char_data *ch,
+	const void *arg1, const void *arg2, struct char_data *rch)
 {
     static char *const he_she  [] = { "it", "he", "she" };
     static char *const him_her [] = { "it", "him", "her" };
@@ -610,7 +610,7 @@ static void expand_arg(char *buf,
     const char *someones = "someone's";
 
     char fname[MAX_INPUT_LENGTH];
-    CHAR_DATA *vch = (CHAR_DATA *)arg2;
+    struct char_data *vch = (struct char_data *)arg2;
     struct gameobject *obj1 = (struct gameobject *)arg1;
     struct gameobject *obj2 = (struct gameobject *)arg2;
     const char *str;
@@ -818,12 +818,12 @@ static void expand_arg(char *buf,
 
 void program_flow(long		pvnum,  /* For diagnostic purposes */
 	char *	source, /* the actual MOBprog code */
-	CHAR_DATA *	mob,
-	CHAR_DATA *	ch,
+	struct char_data *	mob,
+	struct char_data *	ch,
 	const void *	arg1,
 	const void *	arg2)
 {
-    CHAR_DATA *rch = NULL;
+    struct char_data *rch = NULL;
     char *code;
     char buf[MAX_STRING_LENGTH];
     char control[MAX_INPUT_LENGTH];
@@ -1003,7 +1003,7 @@ void program_flow(long		pvnum,  /* For diagnostic purposes */
  * A general purpose string trigger. Matches argument to a string trigger
  * phrase.
  */
-void mp_act_trigger(const char *argument, CHAR_DATA *mob, CHAR_DATA *ch, const void *arg1, const void *arg2, int type)
+void mp_act_trigger(const char *argument, struct char_data *mob, struct char_data *ch, const void *arg1, const void *arg2, int type)
 {
     MPROG_LIST *prg;
 
@@ -1020,7 +1020,7 @@ void mp_act_trigger(const char *argument, CHAR_DATA *mob, CHAR_DATA *ch, const v
  * A general purpose percentage trigger. Checks if a random percentage
  * number is less than trigger phrase
  */
-bool mp_percent_trigger(CHAR_DATA *mob, CHAR_DATA *ch, const void *arg1, const void *arg2, int type)
+bool mp_percent_trigger(struct char_data *mob, struct char_data *ch, const void *arg1, const void *arg2, int type)
 {
     MPROG_LIST *prg;
 
@@ -1034,7 +1034,7 @@ bool mp_percent_trigger(CHAR_DATA *mob, CHAR_DATA *ch, const void *arg1, const v
     return false;
 }
 
-void mp_bribe_trigger(CHAR_DATA *mob, CHAR_DATA *ch, long amount)
+void mp_bribe_trigger(struct char_data *mob, struct char_data *ch, long amount)
 {
     MPROG_LIST *prg;
     long parsed;
@@ -1056,9 +1056,9 @@ void mp_bribe_trigger(CHAR_DATA *mob, CHAR_DATA *ch, long amount)
     return;
 }
 
-bool mp_exit_trigger(CHAR_DATA *ch, int dir)
+bool mp_exit_trigger(struct char_data *ch, int dir)
 {
-    CHAR_DATA *mob;
+    struct char_data *mob;
     MPROG_LIST *prg;
 
     for (mob = ch->in_room->people; mob != NULL; mob = mob->next_in_room) {
@@ -1088,7 +1088,7 @@ bool mp_exit_trigger(CHAR_DATA *ch, int dir)
     return false;
 }
 
-void mp_give_trigger(CHAR_DATA *mob, CHAR_DATA *ch, struct gameobject *obj)
+void mp_give_trigger(struct char_data *mob, struct char_data *ch, struct gameobject *obj)
 {
     char buf[MAX_INPUT_LENGTH];
     MPROG_LIST *prg;
@@ -1121,9 +1121,9 @@ void mp_give_trigger(CHAR_DATA *mob, CHAR_DATA *ch, struct gameobject *obj)
 	}
 }
 
-void mp_greet_trigger(CHAR_DATA *ch)
+void mp_greet_trigger(struct char_data *ch)
 {
-    CHAR_DATA *mob;
+    struct char_data *mob;
 
     for (mob = ch->in_room->people; mob != NULL; mob = mob->next_in_room) {
 	if (IS_NPC(mob)
@@ -1146,7 +1146,7 @@ void mp_greet_trigger(CHAR_DATA *ch)
     return;
 }
 
-void mp_hprct_trigger(CHAR_DATA *mob, CHAR_DATA *ch)
+void mp_hprct_trigger(struct char_data *mob, struct char_data *ch)
 {
     MPROG_LIST *prg;
 

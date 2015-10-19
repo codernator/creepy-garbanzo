@@ -13,14 +13,14 @@
 
 
 
-static bool is_whois_target(CHAR_DATA *ch, char *arg)
+static bool is_whois_target(struct char_data *ch, char *arg)
 {
 	return (!str_prefix(arg, ch->name));
 }
 
 
 
-char *who_string(CHAR_DATA *ch)
+char *who_string(struct char_data *ch)
 {
 	const char *class;
 	static char buf[512];
@@ -102,7 +102,7 @@ char *who_string(CHAR_DATA *ch)
 /***************************************************************************
 *	do_whois
 ***************************************************************************/
-void do_whois(CHAR_DATA *ch, const char *argument)
+void do_whois(struct char_data *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	struct descriptor_data *d;
@@ -123,7 +123,7 @@ void do_whois(CHAR_DATA *ch, const char *argument)
 
     dpending = descriptor_iterator_start(&playing_filter);
     while ((d = dpending) != NULL) {
-		CHAR_DATA *wch;
+		struct char_data *wch;
         dpending = descriptor_iterator(d, &playing_filter);
 
 		if (!can_see(ch, d->character))
@@ -154,7 +154,7 @@ void do_whois(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
 *	do_who
 ***************************************************************************/
-void do_who(CHAR_DATA *ch, const char *argument)
+void do_who(struct char_data *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	struct descriptor_data *d;
@@ -236,7 +236,7 @@ void do_who(CHAR_DATA *ch, const char *argument)
 
     dpending = descriptor_iterator_start(&playing_filter);
     while ((d = dpending) != NULL) {
-		CHAR_DATA *wch;
+		struct char_data *wch;
         dpending = descriptor_iterator(d, &playing_filter);
 
 		/*
@@ -270,7 +270,7 @@ void do_who(CHAR_DATA *ch, const char *argument)
 
     dpending = descriptor_iterator_start(&playing_filter);
     while ((d = dpending) != NULL) {
-		CHAR_DATA *wch;
+		struct char_data *wch;
         dpending = descriptor_iterator(d, &playing_filter);
 
 		/*
@@ -314,7 +314,7 @@ void do_who(CHAR_DATA *ch, const char *argument)
 *
 *	extended who
 ***************************************************************************/
-void do_ewho(CHAR_DATA *ch, const char *argument)
+void do_ewho(struct char_data *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	struct descriptor_data *d;
@@ -389,7 +389,7 @@ void do_ewho(CHAR_DATA *ch, const char *argument)
 
     dpending = descriptor_iterator_start(&playing_filter);
     while ((d = dpending) != NULL) {
-		CHAR_DATA *wch;
+		struct char_data *wch;
         dpending = descriptor_iterator(d, &playing_filter);
 
 		/*
@@ -437,12 +437,12 @@ void do_ewho(CHAR_DATA *ch, const char *argument)
 *
 *	check to see what characters are in the area
 ***************************************************************************/
-void do_where(CHAR_DATA *ch, const char *argument)
+void do_where(struct char_data *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	struct descriptor_data *d;
     struct descriptor_data *dpending;
-	CHAR_DATA *victim;
+	struct char_data *victim;
 	char arg[MAX_INPUT_LENGTH];
 	bool found;
 

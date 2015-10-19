@@ -357,7 +357,7 @@ const struct cmd_type cmd_table[] =
  *
  *	command interpreter
  ***************************************************************************/
-void interpret(CHAR_DATA *ch, const char *argument)
+void interpret(struct char_data *ch, const char *argument)
 {
     char buf[MAX_STRING_LENGTH];
     char command[MAX_INPUT_LENGTH];
@@ -617,7 +617,7 @@ const char *one_argument(const char *argument, char *arg_first)
 /*
  * Contributed by Alander.
  */
-void do_commands(CHAR_DATA *ch, const char *argument)
+void do_commands(struct char_data *ch, const char *argument)
 {
     char buf[MAX_STRING_LENGTH];
     int cmd;
@@ -644,7 +644,7 @@ void do_commands(CHAR_DATA *ch, const char *argument)
 /*
  * Contributed by Monrick.
  */
-void do_wizcommands(CHAR_DATA *ch, const char *argument)
+void do_wizcommands(struct char_data *ch, const char *argument)
 {
     BUFFER *buf;
     int cmd;
@@ -679,7 +679,7 @@ void do_wizcommands(CHAR_DATA *ch, const char *argument)
 
 
 
-void do_wizhelp(CHAR_DATA *ch, const char *argument)
+void do_wizhelp(struct char_data *ch, const char *argument)
 {
     char buf[MAX_STRING_LENGTH];
     int cmd;
@@ -706,7 +706,7 @@ void do_wizhelp(CHAR_DATA *ch, const char *argument)
 }
 
 
-const CMD *cmd_lookup(CHAR_DATA *ch, const char *argument)
+const CMD *cmd_lookup(struct char_data *ch, const char *argument)
 {
     char cmd_buf[MAX_STRING_LENGTH];
     int trust;

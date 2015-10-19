@@ -13,11 +13,11 @@
 #include "find.h"
 
 
-struct area_data *grok_area(CHAR_DATA *ch, const char *arg, BUFFER *out_buffer);
+struct area_data *grok_area(struct char_data *ch, const char *arg, BUFFER *out_buffer);
 
 
 
-struct area_data *grok_area(CHAR_DATA *ch, const char *arg, BUFFER *out_buffer)
+struct area_data *grok_area(struct char_data *ch, const char *arg, BUFFER *out_buffer)
 {
     struct area_data *ad = NULL;
 
@@ -82,7 +82,7 @@ static CHECK_EXISTS_FN *get_check_exists_function(char type)
     return fn;
 }
 
-static void find_empty_vnums(char type, CHAR_DATA *ch, const char *arg, BUFFER *out_buffer)
+static void find_empty_vnums(char type, struct char_data *ch, const char *arg, BUFFER *out_buffer)
 {
     struct area_data *ad;
     long vnum, low_empty_range = 0, high_empty_range = 0;
@@ -137,14 +137,14 @@ static void find_empty_vnums(char type, CHAR_DATA *ch, const char *arg, BUFFER *
 }
 
 
-void ovnum_find_empty(CHAR_DATA *ch, const char *arg, BUFFER *out_buffer)
+void ovnum_find_empty(struct char_data *ch, const char *arg, BUFFER *out_buffer)
 {
     add_buf(out_buffer, "`#QUERY``: ovnum find empty vnums in area.\n\r\n\r");
 
     find_empty_vnums('o', ch, arg, out_buffer);
 }
 
-void mvnum_find_empty(CHAR_DATA *ch, const char *arg, BUFFER *out_buffer)
+void mvnum_find_empty(struct char_data *ch, const char *arg, BUFFER *out_buffer)
 {
     add_buf(out_buffer, "`#QUERY``: mvnum find empty vnums in area.\n\r\n\r");
 

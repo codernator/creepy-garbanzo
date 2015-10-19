@@ -4,11 +4,11 @@
 #include "mob_cmds.h"
 #include "channels.h"
 
-extern void make_corpse(CHAR_DATA *ch);
-extern bool check_shield_block(CHAR_DATA *ch, CHAR_DATA *victim);
-extern void disarm(CHAR_DATA *ch, CHAR_DATA *victim);
-extern void spell_charm_person(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int target, const char *argument);
-extern void set_fighting(CHAR_DATA *ch, CHAR_DATA *victim);
+extern void make_corpse(struct char_data *ch);
+extern bool check_shield_block(struct char_data *ch, struct char_data *victim);
+extern void disarm(struct char_data *ch, struct char_data *victim);
+extern void spell_charm_person(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument);
+extern void set_fighting(struct char_data *ch, struct char_data *victim);
 extern int battlefield_count(void);
 
 extern SKILL* gsp_hand_to_hand;
@@ -21,9 +21,9 @@ int number_door(void)
     return number_range(0, 5);
 }
 
-void do_bash(CHAR_DATA *ch, const char *argument)
+void do_bash(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     SKILL *skill;
     char arg[MAX_INPUT_LENGTH];
     int chance;
@@ -155,10 +155,10 @@ void do_bash(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_kill(CHAR_DATA *ch, const char *argument)
+void do_kill(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
-    CHAR_DATA *victim;
+    struct char_data *victim;
 
     (void)one_argument(argument, arg);
 
@@ -206,14 +206,14 @@ void do_kill(CHAR_DATA *ch, const char *argument)
     multi_hit(ch, victim, TYPE_UNDEFINED);
 }
 
-void do_murde(CHAR_DATA *ch, /*@unused@*/const char *argument)
+void do_murde(struct char_data *ch, /*@unused@*/const char *argument)
 {
     send_to_char("If you want to MURDER, spell it out.\n\r", ch);
 }
 
-void do_murder(CHAR_DATA *ch, const char *argument)
+void do_murder(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
 
@@ -269,11 +269,11 @@ void do_murder(CHAR_DATA *ch, const char *argument)
     multi_hit(ch, victim, TYPE_UNDEFINED);
 }
 
-void do_flee(/*@dependent@*/CHAR_DATA *ch, /*@unused@*/const char *argument)
+void do_flee(/*@dependent@*/struct char_data *ch, /*@unused@*/const char *argument)
 {
     struct room_index_data *was_in;
     struct room_index_data *now_in;
-    CHAR_DATA *victim;
+    struct char_data *victim;
     int attempt;
 
     if ((victim = ch->fighting) == NULL) {
@@ -336,10 +336,10 @@ void do_flee(/*@dependent@*/CHAR_DATA *ch, /*@unused@*/const char *argument)
     send_to_char("```#PANIC``! You couldn't escape!\n\r", ch);
 }
 
-void do_rescue(CHAR_DATA *ch, const char *argument)
+void do_rescue(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
-    CHAR_DATA *fch;
+    struct char_data *victim;
+    struct char_data *fch;
     SKILL *skill;
     char arg[MAX_INPUT_LENGTH];
     int heal;
@@ -413,9 +413,9 @@ void do_rescue(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_disarm(CHAR_DATA *ch, /*@unused@*/const char *argument)
+void do_disarm(struct char_data *ch, /*@unused@*/const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     struct gameobject *obj;
     SKILL *skill;
     int chance;
@@ -492,9 +492,9 @@ void do_disarm(CHAR_DATA *ch, /*@unused@*/const char *argument)
     check_killer(ch, victim);
 }
 
-void do_surrender(CHAR_DATA *ch, /*@unused@*/const char *argument)
+void do_surrender(struct char_data *ch, /*@unused@*/const char *argument)
 {
-    CHAR_DATA *mob;
+    struct char_data *mob;
 
     if ((mob = ch->fighting) == NULL) {
 	send_to_char("But you're not fighting!\n\r", ch);
@@ -512,14 +512,14 @@ void do_surrender(CHAR_DATA *ch, /*@unused@*/const char *argument)
     }
 }
 
-void do_sla(CHAR_DATA *ch, /*@unused@*/const char *argument)
+void do_sla(struct char_data *ch, /*@unused@*/const char *argument)
 {
     send_to_char("If you want to SLAY, spell it out.\n\r", ch);
 }
 
-void do_slay(CHAR_DATA *ch, const char *argument)
+void do_slay(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char arg[MAX_INPUT_LENGTH];
 
     (void)one_argument(argument, arg);
@@ -551,9 +551,9 @@ void do_slay(CHAR_DATA *ch, const char *argument)
     raw_kill(victim, ch);
 }
 
-void do_intimidate(CHAR_DATA *ch, const char *argument)
+void do_intimidate(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     SKILL *skill;
     char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
@@ -634,10 +634,10 @@ void do_intimidate(CHAR_DATA *ch, const char *argument)
  *
  * Implemented for BT by Monrick, March 2008
  * ******************************************************************** */
-void do_familiar(/*@dependent@*/CHAR_DATA *ch, /*@unused@*/const char *argument)
+void do_familiar(/*@dependent@*/struct char_data *ch, /*@unused@*/const char *argument)
 {
     struct mob_index_data *pMobIndex;
-    CHAR_DATA *mount;
+    struct char_data *mount;
     SKILL *skill;
     int i, chance;
 

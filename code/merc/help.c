@@ -6,7 +6,7 @@
 #include <string.h>
 
 
-typedef void HELP_HANDLER(/*@partial@*/CHAR_DATA *, int trust, /*@observer@*/const char *argument);
+typedef void HELP_HANDLER(/*@partial@*/struct char_data *, int trust, /*@observer@*/const char *argument);
 struct help_table_entry {
     const char const *key;
     HELP_HANDLER *handler;
@@ -17,9 +17,9 @@ static HELP_DATA head_node;
 static int help_count = 0;
 
 static /*@observer@*/const struct help_table_entry *findcustom(/*@observer@*/const char *topic);
-static void handle_help_keyfind(CHAR_DATA *ch, int trust, /*@observer@*/const char *argument);
-static void handle_help_fullsearch(CHAR_DATA *ch, int trust, /*@observer@*/const char *argument);
-static void handle_help_other(CHAR_DATA *ch, int trust, /*@observer@*/const char *argument);
+static void handle_help_keyfind(struct char_data *ch, int trust, /*@observer@*/const char *argument);
+static void handle_help_fullsearch(struct char_data *ch, int trust, /*@observer@*/const char *argument);
+static void handle_help_other(struct char_data *ch, int trust, /*@observer@*/const char *argument);
 static void headlist_add(/*@owned@*/HELP_DATA *entry);
 
 
@@ -189,7 +189,7 @@ void show_help(struct descriptor_data *descriptor, const char *topic, const char
 {
     /*@observer@*/const struct help_table_entry *custom;
     int trust;
-    CHAR_DATA *actual;
+    struct char_data *actual;
 
     actual = CH(descriptor);
     trust = get_trust(actual);
@@ -212,7 +212,7 @@ const struct help_table_entry *findcustom(const char *topic)
     return custom;
 }
 
-void handle_help_keyfind(CHAR_DATA *ch, int trust, const char *argument)
+void handle_help_keyfind(struct char_data *ch, int trust, const char *argument)
 {
     HELP_DATA *help;
     BUFFER *buf;
@@ -237,7 +237,7 @@ void handle_help_keyfind(CHAR_DATA *ch, int trust, const char *argument)
     free_buf(buf);
 }
 
-void handle_help_fullsearch(CHAR_DATA *ch, int trust, const char *argument)
+void handle_help_fullsearch(struct char_data *ch, int trust, const char *argument)
 {
     HELP_DATA *help;
     BUFFER *buf;
@@ -265,7 +265,7 @@ void handle_help_fullsearch(CHAR_DATA *ch, int trust, const char *argument)
     free_buf(buf);
 }
 
-void handle_help_other(CHAR_DATA *ch, int trust, const char *topic)
+void handle_help_other(struct char_data *ch, int trust, const char *topic)
 {
     HELP_DATA *help;
 

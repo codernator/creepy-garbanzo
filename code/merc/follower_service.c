@@ -1,7 +1,7 @@
 #include "merc.h"
 
 
-void add_follower(CHAR_DATA *ch, CHAR_DATA *master)
+void add_follower(struct char_data *ch, struct char_data *master)
 {
 	if (ch->master != NULL) {
 		log_bug("Add_follower: non-null master.");
@@ -17,9 +17,9 @@ void add_follower(CHAR_DATA *ch, CHAR_DATA *master)
 	act("You now follow $N.", ch, NULL, master, TO_CHAR);
 }
 
-void die_follower(CHAR_DATA *ch)
+void die_follower(struct char_data *ch)
 {
-	CHAR_DATA *fch;
+	struct char_data *fch;
 
 	if (ch->master != NULL) {
 		if (ch->master->pet == ch)
@@ -43,7 +43,7 @@ void die_follower(CHAR_DATA *ch)
  *(2) if A ~ B then B ~ A
  *(3) if A ~ B  and B ~ C, then A ~ C
  */
-bool is_same_group(CHAR_DATA *ach, CHAR_DATA *bch)
+bool is_same_group(struct char_data *ach, struct char_data *bch)
 {
 	if (ach == NULL || bch == NULL)
 		return false;
@@ -62,9 +62,9 @@ bool is_same_group(CHAR_DATA *ach, CHAR_DATA *bch)
 }
 
 // nukes charmed monsters and pets
-void nuke_pets(CHAR_DATA *ch)
+void nuke_pets(struct char_data *ch)
 {
-	CHAR_DATA *pet;
+	struct char_data *pet;
 
 	if ((pet = ch->pet) != NULL) {
 		stop_follower(pet);
@@ -77,7 +77,7 @@ void nuke_pets(CHAR_DATA *ch)
 	ch->pet = NULL;
 }
 
-void stop_follower(CHAR_DATA *ch)
+void stop_follower(struct char_data *ch)
 {
 	if (ch->master == NULL) {
 		log_bug("Stop_follower: null master.");

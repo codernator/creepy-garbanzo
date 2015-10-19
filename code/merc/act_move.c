@@ -7,9 +7,9 @@
 #include <stdio.h>
 
 
-extern bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
-extern bool mp_exit_trigger(CHAR_DATA * ch, int dir);
-extern void mp_greet_trigger(CHAR_DATA * ch);
+extern bool mp_percent_trigger(struct char_data * mob, struct char_data * ch, const void *arg1, const void *arg2, int type);
+extern bool mp_exit_trigger(struct char_data * ch, int dir);
+extern void mp_greet_trigger(struct char_data * ch);
 
 extern SKILL *gsp_faerie_fog;
 extern SKILL *gsp_invisibility;
@@ -43,8 +43,8 @@ const int movement_loss[SECT_MAX] =
 /***************************************************************************
  *	local functions
  ***************************************************************************/
-bool has_key(CHAR_DATA * ch, long key);
-int check_dir(CHAR_DATA * ch, int dir);
+bool has_key(struct char_data * ch, long key);
+int check_dir(struct char_data * ch, int dir);
 int direction_lookup(char *name);
 
 
@@ -73,7 +73,7 @@ int direction_lookup(char *direction)
  *	check to make sure that a valid direction is given - handle
  *	drunk, confusion, and IDIOT flags
  ***************************************************************************/
-int check_dir(CHAR_DATA *ch, int dir)
+int check_dir(struct char_data *ch, int dir)
 {
     if (dir < 0 || dir > 5)
 	return dir;
@@ -84,10 +84,10 @@ int check_dir(CHAR_DATA *ch, int dir)
 /**
  * move a character in a given direction
  */
-void move_char(CHAR_DATA *ch, int door, bool follow)
+void move_char(struct char_data *ch, int door, bool follow)
 {
-    CHAR_DATA *fch;
-    CHAR_DATA *fch_next;
+    struct char_data *fch;
+    struct char_data *fch_next;
     struct room_index_data *in_room;
     struct room_index_data *to_room;
     struct exit_data *pexit;
@@ -206,8 +206,8 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
     if (!IS_AFFECTED(ch, AFF_SNEAK) && ch->invis_level < LEVEL_HERO) {
 	act("$n leaves $T.", ch, NULL, dir_name[door], TO_ROOM);
     } else {
-	CHAR_DATA *watcher;
-	CHAR_DATA *next_watcher;
+	struct char_data *watcher;
+	struct char_data *next_watcher;
 
 	for (watcher = ch->in_room->people; watcher; watcher = next_watcher) {
 	    next_watcher = watcher->next_in_room;
@@ -224,8 +224,8 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
     if (!IS_AFFECTED(ch, AFF_SNEAK) && ch->invis_level < LEVEL_HERO) {
 	act("$n has arrived.", ch, NULL, NULL, TO_ROOM);
     } else {
-	CHAR_DATA *watcher;
-	CHAR_DATA *next_watcher;
+	struct char_data *watcher;
+	struct char_data *next_watcher;
 
 	for (watcher = ch->in_room->people; watcher; watcher = next_watcher) {
 	    next_watcher = watcher->next_in_room;
@@ -287,11 +287,11 @@ void move_char(CHAR_DATA *ch, int door, bool follow)
  *
  *	push a character out of the room
  ***************************************************************************/
-void do_push(CHAR_DATA *ch, const const char *argument)
+void do_push(struct char_data *ch, const const char *argument)
 {
     struct room_index_data *in_room;
     struct room_index_data *to_room;
-    CHAR_DATA *victim;
+    struct char_data *victim;
     struct exit_data *pexit;
     char arg[MAX_INPUT_LENGTH];
     int door;
@@ -390,9 +390,9 @@ void do_push(CHAR_DATA *ch, const const char *argument)
  *
  *	drag a character from one room to another
  ***************************************************************************/
-void do_drag(CHAR_DATA *ch, const const char *argument)
+void do_drag(struct char_data *ch, const const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     struct room_index_data *in_room;
     struct room_index_data *to_room;
     struct exit_data *pexit;
@@ -486,10 +486,10 @@ void do_drag(CHAR_DATA *ch, const const char *argument)
  *
  *	push a character out of the room
  ***************************************************************************/
-void push_char(CHAR_DATA *ch, CHAR_DATA *vch, int door, bool follow)
+void push_char(struct char_data *ch, struct char_data *vch, int door, bool follow)
 {
-    CHAR_DATA *fch;
-    CHAR_DATA *fch_next;
+    struct char_data *fch;
+    struct char_data *fch_next;
     struct room_index_data *in_room;
     struct room_index_data *to_room;
     struct exit_data *pexit;
@@ -574,10 +574,10 @@ void push_char(CHAR_DATA *ch, CHAR_DATA *vch, int door, bool follow)
  *
  *	drag a character from a room to another
  ***************************************************************************/
-void drag_char(CHAR_DATA *ch, CHAR_DATA *victim, int door, bool follow)
+void drag_char(struct char_data *ch, struct char_data *victim, int door, bool follow)
 {
-    CHAR_DATA *fch;
-    CHAR_DATA *fch_next;
+    struct char_data *fch;
+    struct char_data *fch_next;
     struct room_index_data *in_room;
     struct room_index_data *to_room;
     struct exit_data *pexit;
@@ -673,10 +673,10 @@ void drag_char(CHAR_DATA *ch, CHAR_DATA *victim, int door, bool follow)
     return;
 }
 
-void do_follow(CHAR_DATA *ch, const char *argument)
+void do_follow(struct char_data *ch, const char *argument)
 {
     /* RT changed to allow unlimited following and follow the NOFOLLOW rules */
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char arg[MAX_INPUT_LENGTH];
 
     (void)one_argument(argument, arg);
@@ -718,17 +718,17 @@ void do_follow(CHAR_DATA *ch, const char *argument)
     add_follower(ch, victim);
 }
 
-void do_group(CHAR_DATA *ch, const char *argument)
+void do_group(struct char_data *ch, const char *argument)
 {
     char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
-    CHAR_DATA *victim;
+    struct char_data *victim;
 
     (void)one_argument(argument, arg);
 
     if (arg[0] == '\0') {
-	CHAR_DATA *gch;
-	CHAR_DATA *leader;
+	struct char_data *gch;
+	struct char_data *leader;
 
 	leader = (ch->leader != NULL) ? ch->leader : ch;
 	(void)snprintf(buf, MAX_STRING_LENGTH, "%s's group:\n\r", PERS(leader, ch));
@@ -787,11 +787,11 @@ void do_group(CHAR_DATA *ch, const char *argument)
     act("$N joins your group.", ch, NULL, victim, TO_CHAR);
 }
 
-void do_split(CHAR_DATA *ch, const char *argument)
+void do_split(struct char_data *ch, const char *argument)
 {
     char buf[MAX_STRING_LENGTH];
     char arg1[MAX_INPUT_LENGTH], arg2[MAX_INPUT_LENGTH];
-    CHAR_DATA *gch;
+    struct char_data *gch;
     int members;
     unsigned int amount_gold = 0, amount_silver = 0;
     unsigned int share_gold, share_silver;
@@ -888,7 +888,7 @@ void do_split(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_north
  ***************************************************************************/
-void do_north(CHAR_DATA *ch, const char *argument)
+void do_north(struct char_data *ch, const char *argument)
 {
     move_char(ch, check_dir(ch, DIR_NORTH), false);
 }
@@ -897,7 +897,7 @@ void do_north(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_east
  ***************************************************************************/
-void do_east(CHAR_DATA *ch, const char *argument)
+void do_east(struct char_data *ch, const char *argument)
 {
     move_char(ch, check_dir(ch, DIR_EAST), false);
 }
@@ -906,7 +906,7 @@ void do_east(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_south
  ***************************************************************************/
-void do_south(CHAR_DATA *ch, const char *argument)
+void do_south(struct char_data *ch, const char *argument)
 {
     move_char(ch, check_dir(ch, DIR_SOUTH), false);
 }
@@ -915,7 +915,7 @@ void do_south(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_west
  ***************************************************************************/
-void do_west(CHAR_DATA *ch, const char *argument)
+void do_west(struct char_data *ch, const char *argument)
 {
     move_char(ch, check_dir(ch, DIR_WEST), false);
 }
@@ -924,7 +924,7 @@ void do_west(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_up
  ***************************************************************************/
-void do_up(CHAR_DATA *ch, const char *argument)
+void do_up(struct char_data *ch, const char *argument)
 {
     move_char(ch, check_dir(ch, DIR_UP), false);
 }
@@ -932,7 +932,7 @@ void do_up(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_down
  ***************************************************************************/
-void do_down(CHAR_DATA *ch, const char *argument)
+void do_down(struct char_data *ch, const char *argument)
 {
     move_char(ch, check_dir(ch, DIR_DOWN), false);
 }
@@ -944,7 +944,7 @@ void do_down(CHAR_DATA *ch, const char *argument)
  *
  *	find a door by direction or name
  ***************************************************************************/
-int find_door(CHAR_DATA *ch, char *arg)
+int find_door(struct char_data *ch, char *arg)
 {
     struct exit_data *pexit;
     int door;
@@ -981,7 +981,7 @@ int find_door(CHAR_DATA *ch, char *arg)
  *
  *	find an exit by direction or name
  ***************************************************************************/
-int find_exit(CHAR_DATA *ch, char *arg)
+int find_exit(struct char_data *ch, char *arg)
 {
     struct exit_data *pexit;
     int door;
@@ -1013,7 +1013,7 @@ int find_exit(CHAR_DATA *ch, char *arg)
  *
  *	open a door or a container
  ***************************************************************************/
-void do_open(CHAR_DATA *ch, const char *argument)
+void do_open(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
@@ -1098,7 +1098,7 @@ void do_open(CHAR_DATA *ch, const char *argument)
 	if ((to_room = pexit->u1.to_room) != NULL
 		&& (pexit_rev = to_room->exit[rev_dir[door]]) != NULL
 		&& pexit_rev->u1.to_room == ch->in_room) {
-	    CHAR_DATA *rch;
+	    struct char_data *rch;
 
 	    REMOVE_BIT(pexit_rev->exit_info, EX_CLOSED);
 	    for (rch = to_room->people; rch != NULL; rch = rch->next_in_room)
@@ -1114,7 +1114,7 @@ void do_open(CHAR_DATA *ch, const char *argument)
  *
  *	close a door or a container
  ***************************************************************************/
-void do_close(CHAR_DATA *ch, const char *argument)
+void do_close(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
@@ -1188,7 +1188,7 @@ void do_close(CHAR_DATA *ch, const char *argument)
 	if ((to_room = pexit->u1.to_room) != NULL
 		&& (pexit_rev = to_room->exit[rev_dir[door]]) != 0
 		&& pexit_rev->u1.to_room == ch->in_room) {
-	    CHAR_DATA *rch;
+	    struct char_data *rch;
 
 	    SET_BIT(pexit_rev->exit_info, EX_CLOSED);
 	    for (rch = to_room->people; rch != NULL; rch = rch->next_in_room)
@@ -1204,7 +1204,7 @@ void do_close(CHAR_DATA *ch, const char *argument)
  *
  *	check to see if a character has a given key
  ***************************************************************************/
-bool has_key(CHAR_DATA *ch, long key)
+bool has_key(struct char_data *ch, long key)
 {
     struct gameobject *obj;
 
@@ -1221,7 +1221,7 @@ bool has_key(CHAR_DATA *ch, long key)
  *
  *	lock a container or door
  ***************************************************************************/
-void do_lock(CHAR_DATA *ch, const char *argument)
+void do_lock(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
@@ -1342,7 +1342,7 @@ void do_lock(CHAR_DATA *ch, const char *argument)
  *
  *	unlock a container or door
  ***************************************************************************/
-void do_unlock(CHAR_DATA *ch, const char *argument)
+void do_unlock(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
@@ -1461,9 +1461,9 @@ void do_unlock(CHAR_DATA *ch, const char *argument)
  *
  *	pick a lock
  ***************************************************************************/
-void do_pick(CHAR_DATA *ch, const char *argument)
+void do_pick(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *gch;
+    struct char_data *gch;
     struct gameobject *obj;
     SKILL *skill;
     char arg[MAX_INPUT_LENGTH];
@@ -1599,7 +1599,7 @@ void do_pick(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_sneak
  ***************************************************************************/
-void do_sneak(CHAR_DATA *ch, const char *argument)
+void do_sneak(struct char_data *ch, const char *argument)
 {
     SKILL *skill;
     AFFECT_DATA af;
@@ -1634,7 +1634,7 @@ void do_sneak(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_hide
  ***************************************************************************/
-void do_hide(CHAR_DATA *ch, const char *argument)
+void do_hide(struct char_data *ch, const char *argument)
 {
     SKILL *skill;
 
@@ -1667,7 +1667,7 @@ void do_hide(CHAR_DATA *ch, const char *argument)
  *
  *	strip all invisiblity-type affects
  ***************************************************************************/
-void do_visible(CHAR_DATA *ch, const char *argument)
+void do_visible(struct char_data *ch, const char *argument)
 {
     affect_strip(ch, gsp_invisibility);
     affect_strip(ch, gsp_mass_invisibility);
@@ -1687,7 +1687,7 @@ void do_visible(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_sit
  ***************************************************************************/
-void do_sit(CHAR_DATA *ch, const char *argument)
+void do_sit(struct char_data *ch, const char *argument)
 {
     struct gameobject *on = NULL;
 
@@ -1718,7 +1718,7 @@ void do_sit(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_stand
  ***************************************************************************/
-void do_stand(CHAR_DATA *ch, const char *argument)
+void do_stand(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj = NULL;
 
@@ -1742,7 +1742,7 @@ void do_stand(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_rest
  ***************************************************************************/
-void do_rest(CHAR_DATA *ch, const char *argument)
+void do_rest(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj = NULL;
     struct gameobject *obj_on = NULL;
@@ -1863,7 +1863,7 @@ void do_rest(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_sleep
  ***************************************************************************/
-void do_sleep(CHAR_DATA *ch, const char *argument)
+void do_sleep(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj = NULL;
     struct gameobject *obj_on = NULL;
@@ -1950,9 +1950,9 @@ void do_sleep(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_wake
  ***************************************************************************/
-void do_wake(CHAR_DATA *ch, const char *argument)
+void do_wake(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char arg[MAX_INPUT_LENGTH];
 
     (void)one_argument(argument, arg);

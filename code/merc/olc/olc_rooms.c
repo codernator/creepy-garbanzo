@@ -32,7 +32,7 @@
  ***************************************************************************/
 extern int wear_bit(int loc);
 extern char *format_string(char *oldstring /*, bool fSpace */);
-extern void string_append(CHAR_DATA * ch, char **string);
+extern void string_append(struct char_data * ch, char **string);
 
 
 /***************************************************************************
@@ -40,7 +40,7 @@ extern void string_append(CHAR_DATA * ch, char **string);
  *
  *	change the values of an exit
  ***************************************************************************/
-static bool change_exit(CHAR_DATA *ch, const char *argument, int door)
+static bool change_exit(struct char_data *ch, const char *argument, int door)
 {
     struct room_index_data *room;
     char command[MAX_INPUT_LENGTH];
@@ -274,7 +274,7 @@ static bool change_exit(CHAR_DATA *ch, const char *argument, int door)
  *
  *	entry level function into the room editor
  *****************************************************************************/
-void do_redit(CHAR_DATA *ch, const char *argument)
+void do_redit(struct char_data *ch, const char *argument)
 {
     struct room_index_data *room;
     char arg[MAX_STRING_LENGTH];
@@ -703,7 +703,7 @@ EDIT(redit_oshow){
 EDIT(redit_show){
     struct room_index_data *room;
     struct gameobject *obj;
-    CHAR_DATA *rch;
+    struct char_data *rch;
     char buf[MAX_STRING_LENGTH];
     int door;
     bool fcnt;
@@ -1260,7 +1260,7 @@ EDIT(redit_format){
 EDIT(redit_mreset){
     struct room_index_data *room;
     struct mob_index_data *mob;
-    CHAR_DATA *newmob;
+    struct char_data *newmob;
     struct reset_data *pReset;
     char arg[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
@@ -1321,7 +1321,7 @@ EDIT(redit_oreset){
     struct objectprototype *obj;
     struct gameobject *newobj;
     struct gameobject *to_obj;
-    CHAR_DATA *to_mob;
+    struct char_data *to_mob;
     struct reset_data *pReset;
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];

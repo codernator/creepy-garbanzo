@@ -27,7 +27,7 @@
  * IMPORTS
  ***************************************************************************/
 extern void mob_auto_hit_dice(struct mob_index_data *mix, enum medit_auto_config_type auto_config_type);
-extern void string_append(CHAR_DATA * ch, char **string);
+extern void string_append(struct char_data * ch, char **string);
 
 
 
@@ -36,7 +36,7 @@ extern void string_append(CHAR_DATA * ch, char **string);
  *
  *	entry level function for mob editing
  *****************************************************************************/
-void do_medit(CHAR_DATA *ch, const char *argument)
+void do_medit(struct char_data *ch, const char *argument)
 {
     struct mob_index_data *mob_idx;
     struct area_data *area;
@@ -1000,7 +1000,7 @@ EDIT(medit_size){
     return false;
 }
 
-static bool ShowMEditHitdiceSyntax(CHAR_DATA *ch)
+static bool ShowMEditHitdiceSyntax(struct char_data *ch)
 {
     send_to_char("MEdit (hitdice): Syntax:  hitdice <number> d <type> + <bonus>\n\r", ch);
     send_to_char("MEdit (hitdice): -or- hitdice auto <easy|norm|hard|insane>\n\r", ch);

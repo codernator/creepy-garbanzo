@@ -11,7 +11,7 @@ extern DECLARE_DO_FUN(do_look);
 
 #define _MAX_FOUND              200
 
-void do_teleport(CHAR_DATA *ch, const char *argument)
+void do_teleport(struct char_data *ch, const char *argument)
 {
     struct gameobject *teleporter;
     struct gameobject *obj, *opending;

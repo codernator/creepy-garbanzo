@@ -8,14 +8,14 @@
 #include "help.h"
 
 /** imports */
-extern bool expand_cmd(CHAR_DATA * vch, const char *arg, char *buf, char find);
+extern bool expand_cmd(struct char_data * vch, const char *arg, char *buf, char find);
 
 
 
-CHAR_DATA *get_random_npc(CHAR_DATA *ch, struct area_data *area)
+struct char_data *get_random_npc(struct char_data *ch, struct area_data *area)
 {
-    CHAR_DATA *vch = NULL;
-    CHAR_DATA *wch;
+    struct char_data *vch = NULL;
+    struct char_data *wch;
     int count = 0;
 
     for (wch = char_list; wch != NULL; wch = wch->next) {
@@ -33,10 +33,10 @@ CHAR_DATA *get_random_npc(CHAR_DATA *ch, struct area_data *area)
     return vch;
 }
 
-CHAR_DATA *get_random_pc(CHAR_DATA *ch, struct area_data *area)
+struct char_data *get_random_pc(struct char_data *ch, struct area_data *area)
 {
-    CHAR_DATA *vch = NULL;
-    CHAR_DATA *wch;
+    struct char_data *vch = NULL;
+    struct char_data *wch;
     int count = 0;
 
     for (wch = char_list; wch != NULL; wch = wch->next) {
@@ -56,12 +56,12 @@ CHAR_DATA *get_random_pc(CHAR_DATA *ch, struct area_data *area)
     return vch;
 }
 
-void do_at(CHAR_DATA *ch, const char *argument)
+void do_at(struct char_data *ch, const char *argument)
 {
     struct room_index_data *location = NULL;
     struct room_index_data *original;
-    CHAR_DATA *wch = NULL;
-    CHAR_DATA *vch = NULL;
+    struct char_data *wch = NULL;
+    struct char_data *vch = NULL;
     struct gameobject *on;
     char arg[MAX_INPUT_LENGTH];
     char cmd[MAX_STRING_LENGTH];

@@ -14,9 +14,9 @@
 
 
 /** imports */
-extern void ovnum_find_empty(CHAR_DATA *ch, const char *arg, BUFFER *out_buffer);
-extern void mvnum_find_empty(CHAR_DATA *ch, const char *arg, BUFFER *out_buffer);
-extern struct area_data *grok_area(CHAR_DATA *ch, const char *arg, BUFFER *out_buffer);
+extern void ovnum_find_empty(struct char_data *ch, const char *arg, BUFFER *out_buffer);
+extern void mvnum_find_empty(struct char_data *ch, const char *arg, BUFFER *out_buffer);
+extern struct area_data *grok_area(struct char_data *ch, const char *arg, BUFFER *out_buffer);
 
 
 /** locals */
@@ -66,11 +66,11 @@ static const struct cmp_vars_gameobject obj_flags[] =
 };
 
 
-static void help_ovnum_properties(CHAR_DATA *ch);
+static void help_ovnum_properties(struct char_data *ch);
 
 
 
-struct gameobject *get_object_by_itemtype_and_room(int item_type, struct room_index_data *room, CHAR_DATA *ch)
+struct gameobject *get_object_by_itemtype_and_room(int item_type, struct room_index_data *room, struct char_data *ch)
 {
     struct gameobject *instance = NULL;
 
@@ -92,7 +92,7 @@ struct gameobject *get_object_by_itemtype_and_room(int item_type, struct room_in
 /**
  * owhere <var> <value>
  */
-void do_owhere(CHAR_DATA *ch, const char *argument)
+void do_owhere(struct char_data *ch, const char *argument)
 {
     BUFFER *buffer;
     OBJ_CMP_FN *cmp_fn;
@@ -381,7 +381,7 @@ const struct cmp_vars_char_data char_flags[] =
 };
 
 /** mwhere <var> <value> */
-void do_mwhere(CHAR_DATA *ch, const char *argument)
+void do_mwhere(struct char_data *ch, const char *argument)
 {
     BUFFER *buffer;
     CHAR_CMP_FN *cmp_fn;
@@ -447,7 +447,7 @@ void do_mwhere(CHAR_DATA *ch, const char *argument)
         (*cmp_fn)(char_list, argument, buffer);
         page_to_char(buf_string(buffer), ch);
     } else {
-        CHAR_DATA *vch;
+        struct char_data *vch;
         char *clr1;
         char *clr2;
         int number;
@@ -500,7 +500,7 @@ void do_mwhere(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	char_cmp_vnum
  ***************************************************************************/
-bool char_cmp_vnum(CHAR_DATA *vch, const char *arg, BUFFER *buf)
+bool char_cmp_vnum(struct char_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by a mob's vnum.\n\r");
@@ -511,7 +511,7 @@ bool char_cmp_vnum(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	char_cmp_name
  ***************************************************************************/
-bool char_cmp_name(CHAR_DATA *vch, const char *arg, BUFFER *buf)
+bool char_cmp_name(struct char_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by characters name.\n\r");
@@ -522,7 +522,7 @@ bool char_cmp_name(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	char_cmp_short
  ***************************************************************************/
-bool char_cmp_short(CHAR_DATA *vch, const char *arg, BUFFER *buf)
+bool char_cmp_short(struct char_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by a mob's short description.\n\r");
@@ -532,7 +532,7 @@ bool char_cmp_short(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	char_cmp_long
  ***************************************************************************/
-bool char_cmp_long(CHAR_DATA *vch, const char *arg, BUFFER *buf)
+bool char_cmp_long(struct char_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by a mob's long description.\n\r");
@@ -542,7 +542,7 @@ bool char_cmp_long(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	char_cmp_race
  ***************************************************************************/
-bool char_cmp_race(CHAR_DATA *vch, const char *arg, BUFFER *buf)
+bool char_cmp_race(struct char_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
         char flag[MAX_STRING_LENGTH];
@@ -574,7 +574,7 @@ bool char_cmp_race(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	char_cmp_sex
  ***************************************************************************/
-bool char_cmp_sex(CHAR_DATA *vch, const char *arg, BUFFER *buf)
+bool char_cmp_sex(struct char_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
         char flag[MAX_STRING_LENGTH];
@@ -607,7 +607,7 @@ bool char_cmp_sex(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	char_cmp_level
  ***************************************************************************/
-bool char_cmp_level(CHAR_DATA *vch, const char *arg, BUFFER *buf)
+bool char_cmp_level(struct char_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by a mob's level.\n\r");
@@ -617,7 +617,7 @@ bool char_cmp_level(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	char_cmp_hit
  ***************************************************************************/
-bool char_cmp_hit(CHAR_DATA *vch, const char *arg, BUFFER *buf)
+bool char_cmp_hit(struct char_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by a mob's current hit points.\n\r");
@@ -628,7 +628,7 @@ bool char_cmp_hit(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	char_cmp_mana
  ***************************************************************************/
-bool char_cmp_mana(CHAR_DATA *vch, const char *arg, BUFFER *buf)
+bool char_cmp_mana(struct char_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by a mob's current mana.\n\r");
@@ -638,7 +638,7 @@ bool char_cmp_mana(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	char_cmp_move
  ***************************************************************************/
-bool char_cmp_move(CHAR_DATA *vch, const char *arg, BUFFER *buf)
+bool char_cmp_move(struct char_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by a mob's current movement.\n\r");
@@ -648,7 +648,7 @@ bool char_cmp_move(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	char_cmp_max_hit
  ***************************************************************************/
-bool char_cmp_max_hit(CHAR_DATA *vch, const char *arg, BUFFER *buf)
+bool char_cmp_max_hit(struct char_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by a mob's max hit points.\n\r");
@@ -658,7 +658,7 @@ bool char_cmp_max_hit(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	char_cmp_max_mana
  ***************************************************************************/
-bool char_cmp_max_mana(CHAR_DATA *vch, const char *arg, BUFFER *buf)
+bool char_cmp_max_mana(struct char_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by a mob's max mana.\n\r");
@@ -668,7 +668,7 @@ bool char_cmp_max_mana(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	char_cmp_max_move
  ***************************************************************************/
-bool char_cmp_max_move(CHAR_DATA *vch, const char *arg, BUFFER *buf)
+bool char_cmp_max_move(struct char_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by a mob's max movement.\n\r");
@@ -678,7 +678,7 @@ bool char_cmp_max_move(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	char_cmp_gold
  ***************************************************************************/
-bool char_cmp_gold(CHAR_DATA *vch, const char *arg, BUFFER *buf)
+bool char_cmp_gold(struct char_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by a mob's gold.\n\r");
@@ -688,7 +688,7 @@ bool char_cmp_gold(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	char_cmp_silver
  ***************************************************************************/
-bool char_cmp_silver(CHAR_DATA *vch, const char *arg, BUFFER *buf)
+bool char_cmp_silver(struct char_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by a mob's silver.\n\r");
@@ -698,7 +698,7 @@ bool char_cmp_silver(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	char_cmp_off_flags
  ***************************************************************************/
-bool char_cmp_offense(CHAR_DATA *vch, const char *arg, BUFFER *buf)
+bool char_cmp_offense(struct char_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
         add_buf(buf, "search by a mob's offensive flags.\n\r");
@@ -710,7 +710,7 @@ bool char_cmp_offense(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	char_cmp_form
  ***************************************************************************/
-bool char_cmp_form(CHAR_DATA *vch, const char *arg, BUFFER *buf)
+bool char_cmp_form(struct char_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
         add_buf(buf, "search by a mob's form flags.\n\r");
@@ -722,7 +722,7 @@ bool char_cmp_form(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	char_cmp_act
  ***************************************************************************/
-bool char_cmp_act(CHAR_DATA *vch, const char *arg, BUFFER *buf)
+bool char_cmp_act(struct char_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
         add_buf(buf, "search by a mob's act flags.\n\r");
@@ -734,7 +734,7 @@ bool char_cmp_act(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	char_cmp_plr
  ***************************************************************************/
-bool char_cmp_player(CHAR_DATA *vch, const char *arg, BUFFER *buf)
+bool char_cmp_player(struct char_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
         add_buf(buf, "search by a character's player flags.\n\r");
@@ -746,7 +746,7 @@ bool char_cmp_player(CHAR_DATA *vch, const char *arg, BUFFER *buf)
 }
 
 
-static void help_ovnum_properties(CHAR_DATA *ch)
+static void help_ovnum_properties(struct char_data *ch)
 {
     BUFFER *buffer = new_buf();
     int iter;
@@ -765,7 +765,7 @@ static void help_ovnum_properties(CHAR_DATA *ch)
     free_buf(buffer);
 }
 
-static void help_mvnum_properties(CHAR_DATA *ch)
+static void help_mvnum_properties(struct char_data *ch)
 {
     BUFFER *buffer = new_buf();
     char buf[MAX_INPUT_LENGTH];
@@ -783,7 +783,7 @@ static void help_mvnum_properties(CHAR_DATA *ch)
     free_buf(buffer);
 }
 
-static const char *get_search_vnum_range(CHAR_DATA *ch, const char *argument, char *arg, BUFFER *buffer, long *out_high_vnum, long *out_low_vnum)
+static const char *get_search_vnum_range(struct char_data *ch, const char *argument, char *arg, BUFFER *buffer, long *out_high_vnum, long *out_low_vnum)
 {
     struct area_data *ad = NULL;
     char buf[MAX_INPUT_LENGTH];
@@ -807,9 +807,9 @@ static const char *get_search_vnum_range(CHAR_DATA *ch, const char *argument, ch
 
 
 
-static const char *prep_find_entity_vnum(CHAR_DATA *ch, const char *argument, char *arg, const char *entity,
-                                         void (*help_entity_properties_fn)(CHAR_DATA *ch),
-                                         void (*entity_empty_fn)(CHAR_DATA *ch, const char *arg, BUFFER *buffer))
+static const char *prep_find_entity_vnum(struct char_data *ch, const char *argument, char *arg, const char *entity,
+                                         void (*help_entity_properties_fn)(struct char_data *ch),
+                                         void (*entity_empty_fn)(struct char_data *ch, const char *arg, BUFFER *buffer))
 {
     if (ch == NULL || IS_NPC(ch))
         return NULL;
@@ -853,7 +853,7 @@ static const char *prep_find_entity_vnum(CHAR_DATA *ch, const char *argument, ch
 
 
 /** ovnum <var> <value> */
-void do_ovnum(CHAR_DATA *ch, const char *argument)
+void do_ovnum(struct char_data *ch, const char *argument)
 {
     const char *original_argument = argument;
     static char arg[MAX_INPUT_LENGTH];
@@ -1040,7 +1040,7 @@ bool objprototype_cmp_wear(struct objectprototype *obj, const char *arg, BUFFER 
 
 
 /** mvnum <var> <value> */
-void do_mvnum(CHAR_DATA *ch, const char *argument)
+void do_mvnum(struct char_data *ch, const char *argument)
 {
     static char arg[MAX_INPUT_LENGTH];
     const char *original_argument = argument;

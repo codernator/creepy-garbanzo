@@ -23,7 +23,7 @@
 
 /** exports */
 char str_empty[1];
-CHAR_DATA *char_list;
+struct char_data *char_list;
 struct note_data *note_list;
 MPROG_CODE *mprog_list;
 struct shop_data *shop_first;
@@ -53,7 +53,7 @@ extern void init_mm(void);
 extern unsigned int fread_uint(FILE *fp);
 extern long fread_long(FILE *fp);
 extern struct gameobject *obj_free;
-extern CHAR_DATA *char_free;
+extern struct char_data *char_free;
 extern struct pc_data *pcdata_free;
 extern AFFECT_DATA *affect_free;
 
@@ -1437,10 +1437,10 @@ void area_update(void)
 void reset_room(struct room_index_data *room)
 {
     struct reset_data *reset;
-    CHAR_DATA *mob_it;
-    CHAR_DATA *mob = NULL;
+    struct char_data *mob_it;
+    struct char_data *mob = NULL;
     struct gameobject *obj = NULL;
-    CHAR_DATA *last_mob = NULL;
+    struct char_data *last_mob = NULL;
     struct gameobject *last_obj = NULL;
     int exit_dir;
     bool last;
@@ -1693,9 +1693,9 @@ void reset_area(struct area_data *area)
 /*
  * Create an instance of a mobile.
  */
-CHAR_DATA *create_mobile(struct mob_index_data *mob_idx)
+struct char_data *create_mobile(struct mob_index_data *mob_idx)
 {
-    CHAR_DATA *mob;
+    struct char_data *mob;
     SKILL *skill;
     int idx;
     AFFECT_DATA af;
@@ -1874,7 +1874,7 @@ CHAR_DATA *create_mobile(struct mob_index_data *mob_idx)
 
 
 /* duplicate a mobile exactly -- except inventory */
-void clone_mobile(CHAR_DATA *parent, CHAR_DATA *clone)
+void clone_mobile(struct char_data *parent, struct char_data *clone)
 {
     int i;
     AFFECT_DATA *paf;
@@ -2054,9 +2054,9 @@ struct gameobject *create_object(struct objectprototype *objprototype, int level
 /*
  * Clear a new character.
  */
-void clear_char(CHAR_DATA *ch)
+void clear_char(struct char_data *ch)
 {
-    static CHAR_DATA ch_zero;
+    static struct char_data ch_zero;
     int i;
 
     *ch = ch_zero;
@@ -2498,7 +2498,7 @@ void free_string(char *pstr)
 
 
 
-void do_memory(CHAR_DATA *ch, const char *argument)
+void do_memory(struct char_data *ch, const char *argument)
 {
     printf_to_char(ch, "Affects %5d\n\r", top_affect);
     printf_to_char(ch, "ExDes   %5d\n\r", top_ed);
@@ -2515,9 +2515,9 @@ void do_memory(CHAR_DATA *ch, const char *argument)
     printf_to_char(ch, "Perms   %5d blocks  of %7d bytes.\n\r", nAllocPerm, sAllocPerm);
 }
 
-void do_dump(CHAR_DATA *ch, const char *argument)
+void do_dump(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *fch;
+    struct char_data *fch;
     struct mob_index_data *mob_idx;
     struct pc_data *pc;
     struct gameobject *obj;

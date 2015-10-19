@@ -18,7 +18,7 @@ void acid_effect(void *vo, int level, int dam, int target)
 	}
 
 	if (target == TARGET_CHAR) { /* do the effect on a victim */
-		CHAR_DATA *victim = (CHAR_DATA *)vo;
+		struct char_data *victim = (struct char_data *)vo;
 
 		/* let's toast some gear */
 		for (obj = victim->carrying; obj != NULL; obj = obj_next) {
@@ -171,7 +171,7 @@ void cold_effect(void *vo, int level, int dam, int target)
 	}
 
 	if (target == TARGET_CHAR) { /* whack a character */
-		CHAR_DATA *victim = (CHAR_DATA *)vo;
+		struct char_data *victim = (struct char_data *)vo;
 		SKILL *skill;
 
 		skill = skill_lookup("chill touch");
@@ -273,7 +273,7 @@ void fire_effect(void *vo, int level, int dam, int target)
 	}
 
 	if (target == TARGET_CHAR) {     /* do the effect on a victim */
-		CHAR_DATA *victim = (CHAR_DATA *)vo;
+		struct char_data *victim = (struct char_data *)vo;
 		SKILL *skill;
 
 		skill = skill_lookup("fire breath");
@@ -412,7 +412,7 @@ void poison_effect(void *vo, int level, int dam, int target)
 	}
 
 	if (target == TARGET_CHAR) { /* do the effect on a victim */
-		CHAR_DATA *victim = (CHAR_DATA *)vo;
+		struct char_data *victim = (struct char_data *)vo;
 		SKILL *skill;
 		/* chance of poisoning */
 		skill = skill_lookup("poison");
@@ -499,7 +499,7 @@ void shock_effect(void *vo, int level, int dam, int target)
 	}
 
 	if (target == TARGET_CHAR) {
-		CHAR_DATA *victim = (CHAR_DATA *)vo;
+		struct char_data *victim = (struct char_data *)vo;
 
 		/* toast some gear */
 		for (obj = victim->carrying; obj != NULL; obj = obj_next) {
@@ -559,7 +559,7 @@ void shock_effect(void *vo, int level, int dam, int target)
 	}
 }
 
-bool vorpal_effect(CHAR_DATA *ch, CHAR_DATA *victim, struct gameobject *wield)
+bool vorpal_effect(struct char_data *ch, struct char_data *victim, struct gameobject *wield)
 {
 	int vorpal_chance = 0;
 

@@ -22,7 +22,7 @@ int count_slots(struct gameobject * obj);
  *	imprint a spell onto an object - scroll or potion
  *	used for brew and scribe
  ***************************************************************************/
-static void spell_imprint(SKILL *skill, int level, CHAR_DATA *ch, void *vo)
+static void spell_imprint(SKILL *skill, int level, struct char_data *ch, void *vo)
 {
     struct gameobject *obj = (struct gameobject *)vo;
     LEVEL_INFO *level_info;
@@ -148,7 +148,7 @@ static void spell_imprint(SKILL *skill, int level, CHAR_DATA *ch, void *vo)
 /***************************************************************************
  *	do_brew
  ***************************************************************************/
-void do_brew(CHAR_DATA *ch, const char *argument)
+void do_brew(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     SKILL *skill;
@@ -276,7 +276,7 @@ void do_brew(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_scribe
  ***************************************************************************/
-void do_scribe(CHAR_DATA *ch, const char *argument)
+void do_scribe(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     SKILL *skill;

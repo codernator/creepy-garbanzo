@@ -58,7 +58,7 @@ const struct olc_cmd_type skedit_table[] =
  *
  *	command interpreter for the skill editor
  ***************************************************************************/
-void skedit(CHAR_DATA *ch, const char *argument)
+void skedit(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
     const char *parg;
@@ -102,7 +102,7 @@ void skedit(CHAR_DATA *ch, const char *argument)
  *
  *	entry point for the skill editor
  ***************************************************************************/
-void do_skedit(CHAR_DATA *ch, const char *argument)
+void do_skedit(struct char_data *ch, const char *argument)
 {
     SKILL *skill;
     char arg[MAX_STRING_LENGTH];

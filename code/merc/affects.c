@@ -11,7 +11,7 @@
 /***************************************************************************
 *	external functions
 ***************************************************************************/
-void dam_message(CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt, bool immune);
+void dam_message(struct char_data * ch, struct char_data * victim, int dam, int dt, bool immune);
 
 /***************************************************************************
 *	affect_enchant
@@ -47,7 +47,7 @@ void affect_enchant(struct gameobject *obj)
 *
 *	modify the properties of an affect
 ***************************************************************************/
-void affect_modify(CHAR_DATA *ch, AFFECT_DATA *paf, bool fAdd)
+void affect_modify(struct char_data *ch, AFFECT_DATA *paf, bool fAdd)
 {
 	struct gameobject *wield;
 	long mod;
@@ -230,7 +230,7 @@ AFFECT_DATA *affect_find(AFFECT_DATA *paf, SKILL *skill)
 *
 *	fix a characters affects when they remove an item
 ***************************************************************************/
-void affect_check(CHAR_DATA *ch, int where, long vector)
+void affect_check(struct char_data *ch, int where, long vector)
 {
 	AFFECT_DATA *paf;
 	struct gameobject *obj;
@@ -324,7 +324,7 @@ void affect_check(CHAR_DATA *ch, int where, long vector)
 *
 *	give an affect to a character
 ***************************************************************************/
-void affect_to_char(CHAR_DATA *ch, AFFECT_DATA *paf)
+void affect_to_char(struct char_data *ch, AFFECT_DATA *paf)
 {
 	AFFECT_DATA *paf_new;
 
@@ -404,7 +404,7 @@ void affect_to_room(struct room_index_data *room, AFFECT_DATA *paf)
 *
 *	remove an affect from a character
 ***************************************************************************/
-void affect_remove(CHAR_DATA *ch, AFFECT_DATA *paf)
+void affect_remove(struct char_data *ch, AFFECT_DATA *paf)
 {
 	int where;
 	long vector;
@@ -539,7 +539,7 @@ void affect_remove_room(struct room_index_data *room, AFFECT_DATA *paf)
 *
 *	strips all affects of the given sn
 ***************************************************************************/
-void affect_strip(CHAR_DATA *ch, SKILL *skill)
+void affect_strip(struct char_data *ch, SKILL *skill)
 {
 	AFFECT_DATA *paf;
 	AFFECT_DATA *paf_next;
@@ -580,7 +580,7 @@ void affect_strip_room(struct room_index_data *room, int sn)
 *	add the properties of one affect to an existing affect of
 *	the same type
 ***************************************************************************/
-void affect_join(CHAR_DATA *ch, AFFECT_DATA *paf)
+void affect_join(struct char_data *ch, AFFECT_DATA *paf)
 {
 	AFFECT_DATA *paf_old;
 
@@ -605,7 +605,7 @@ void affect_join(CHAR_DATA *ch, AFFECT_DATA *paf)
 *
 *	check to see if a character is affected by a spell
 ***************************************************************************/
-bool is_affected(CHAR_DATA *ch, SKILL *skill)
+bool is_affected(struct char_data *ch, SKILL *skill)
 {
 	AFFECT_DATA *paf;
 
@@ -683,8 +683,8 @@ void affect_displacement(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
 {
 	struct room_index_data *room = (struct room_index_data *)target;
 	struct room_index_data *to = NULL;
-	CHAR_DATA *vch;
-	CHAR_DATA *vch_next;
+	struct char_data *vch;
+	struct char_data *vch_next;
 
 	if ((type = AFFECT_TYPE_ROOM) && paf != NULL) {
 		for (vch = room->people; vch != NULL; vch = vch_next) {
@@ -715,8 +715,8 @@ void affect_displacement(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
 void affect_parasitic_cloud(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
 {
 	struct room_index_data *room = (struct room_index_data *)target;
-	CHAR_DATA *vch;
-	CHAR_DATA *vch_next;
+	struct char_data *vch;
+	struct char_data *vch_next;
 
 	if ((type = AFFECT_TYPE_ROOM) && paf != NULL) {
 		for (vch = room->people; vch != NULL; vch = vch_next) {
@@ -758,7 +758,7 @@ void affect_parasitic_cloud(SKILL *skill, void *target, int type, AFFECT_DATA *p
  ***************************************************************************/
 void affect_burning_flames(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
 {
-	CHAR_DATA *ch = (CHAR_DATA *)target;
+	struct char_data *ch = (struct char_data *)target;
 
 	if (paf->level == 1)
 		return;
@@ -785,7 +785,7 @@ void affect_burning_flames(SKILL *skill, void *target, int type, AFFECT_DATA *pa
  ***************************************************************************/
 void affect_poison(SKILL *skill, void *target, int type, AFFECT_DATA *paf)
 {
-	CHAR_DATA *ch = (CHAR_DATA *)target;
+	struct char_data *ch = (struct char_data *)target;
 
 	if (paf->level == 1)
 		return;

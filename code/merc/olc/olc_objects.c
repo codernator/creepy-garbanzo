@@ -10,13 +10,13 @@
 
 
 extern char *format_string(char *oldstring /*, bool fSpace */);
-extern void string_append(CHAR_DATA * ch, char **string);
+extern void string_append(struct char_data * ch, char **string);
 
 
 /*****************************************************************************
  *	display the value properties of an item based on it's type
  *****************************************************************************/
-static void show_obj_values(CHAR_DATA *ch, struct objectprototype *obj)
+static void show_obj_values(struct char_data *ch, struct objectprototype *obj)
 {
     SKILL *skill;
     int idx;
@@ -176,7 +176,7 @@ static void show_obj_values(CHAR_DATA *ch, struct objectprototype *obj)
  *
  *	set the value properties of an item based on it's type
  *****************************************************************************/
-static bool set_obj_values(CHAR_DATA *ch, struct objectprototype *pObj, int value_num, const char *argument)
+static bool set_obj_values(struct char_data *ch, struct objectprototype *pObj, int value_num, const char *argument)
 {
     SKILL *skill;
     int value;
@@ -536,7 +536,7 @@ static bool set_obj_values(CHAR_DATA *ch, struct objectprototype *pObj, int valu
  *
  *	set one of the 4 value properties on the object
  *****************************************************************************/
-static bool set_value(CHAR_DATA *ch, struct objectprototype *pObj, const char *argument, int value)
+static bool set_value(struct char_data *ch, struct objectprototype *pObj, const char *argument, int value)
 {
     if (argument[0] == '\0') {
         set_obj_values(ch, pObj, -1, "");
@@ -554,7 +554,7 @@ static bool set_value(CHAR_DATA *ch, struct objectprototype *pObj, const char *a
 /*****************************************************************************
  *	do_oedit
  *****************************************************************************/
-void do_oedit(CHAR_DATA *ch, const char *argument)
+void do_oedit(struct char_data *ch, const char *argument)
 {
     struct objectprototype *pObj;
     struct area_data *pArea;
@@ -1082,7 +1082,7 @@ EDIT(oedit_long){
  *	edit the five values on an object
  *	single point of entry/failure for the oedit_valueN functions
  *****************************************************************************/
-static bool oedit_values(CHAR_DATA *ch, const char *argument, int value)
+static bool oedit_values(struct char_data *ch, const char *argument, int value)
 {
     struct objectprototype *pObj;
 

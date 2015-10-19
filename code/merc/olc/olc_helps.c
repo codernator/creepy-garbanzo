@@ -8,7 +8,7 @@
 #include "help.h"
 
 
-extern void string_append(CHAR_DATA * ch, char **string);
+extern void string_append(struct char_data * ch, char **string);
 
 
 const struct olc_cmd_type hedit_table[] =
@@ -31,7 +31,7 @@ const struct olc_cmd_type hedit_table[] =
 
 
 
-void hedit(CHAR_DATA *ch, const char *argument)
+void hedit(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
     const char *parg;
@@ -68,7 +68,7 @@ void hedit(CHAR_DATA *ch, const char *argument)
     interpret(ch, arg);
 }
 
-void do_hedit(CHAR_DATA *ch, const char *argument)
+void do_hedit(struct char_data *ch, const char *argument)
 {
     HELP_DATA *help;
     char cmd[MAX_INPUT_LENGTH];

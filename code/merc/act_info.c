@@ -17,29 +17,29 @@
 #include "libfile.h"
 
 
-extern void string_append(CHAR_DATA * ch, char **string);
+extern void string_append(struct char_data * ch, char **string);
 extern char *password_encrypt(const char *plain);
 extern bool password_matches(char *existing, const char *plain);
 extern int password_acceptance(const char *plain);
 extern const char *password_accept_message(int code);
 
 
-void print_weather(CHAR_DATA * ch);
+void print_weather(struct char_data * ch);
 
 
 
 /*
  * Local functions.
  */
-extern void show_char_to_char(CHAR_DATA * list, CHAR_DATA * ch);
-extern void show_char_to_char_2(CHAR_DATA * victim, CHAR_DATA * ch);
+extern void show_char_to_char(struct char_data * list, struct char_data * ch);
+extern void show_char_to_char_2(struct char_data * victim, struct char_data * ch);
 
 #define MAX_NEST        100
 static struct gameobject *rgObjNest[MAX_NEST];
-extern void fread_char(CHAR_DATA * ch, FILE * fp);
+extern void fread_char(struct char_data * ch, FILE * fp);
 
 
-void do_help(CHAR_DATA *ch, const char *argument)
+void do_help(struct char_data *ch, const char *argument)
 {
     char topic[MAX_INPUT_LENGTH];
 
@@ -52,7 +52,7 @@ void do_help(CHAR_DATA *ch, const char *argument)
 
 
 /* changes your scroll */
-void do_scroll(CHAR_DATA *ch, const char *argument)
+void do_scroll(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
     char buf[100];
@@ -96,34 +96,34 @@ void do_scroll(CHAR_DATA *ch, const char *argument)
 
 /* RT Commands to replace news, motd, imotd, etc from ROM */
 
-void do_motd(CHAR_DATA *ch, const char *argument)
+void do_motd(struct char_data *ch, const char *argument)
 {
     show_help(ch->desc, "motd", NULL);
 }
 
-void do_imotd(CHAR_DATA *ch, const char *argument)
+void do_imotd(struct char_data *ch, const char *argument)
 {
     show_help(ch->desc, "imotd", NULL);
 }
 
-void do_rules(CHAR_DATA *ch, const char *argument)
+void do_rules(struct char_data *ch, const char *argument)
 {
     show_help(ch->desc, "rules", NULL);
 }
 
-void do_story(CHAR_DATA *ch, const char *argument)
+void do_story(struct char_data *ch, const char *argument)
 {
     show_help(ch->desc, "story", NULL);
 }
 
-void do_wizlist(CHAR_DATA *ch, const char *argument)
+void do_wizlist(struct char_data *ch, const char *argument)
 {
     show_help(ch->desc, "wizlist", NULL);
 }
 
 /* RT this following section holds all the auto commands from ROM, as well as
  * replacements for config */
-void do_autolist(CHAR_DATA *ch, const char *argument)
+void do_autolist(struct char_data *ch, const char *argument)
 {
     /* lists most player flags */
     if (IS_NPC(ch))
@@ -214,7 +214,7 @@ void do_autolist(CHAR_DATA *ch, const char *argument)
         send_to_char("You accept followers.\n\r", ch);
 }
 
-void do_autoassist(CHAR_DATA *ch, const char *argument)
+void do_autoassist(struct char_data *ch, const char *argument)
 {
     if (IS_NPC(ch))
         return;
@@ -228,7 +228,7 @@ void do_autoassist(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_autoeq(CHAR_DATA *ch, const char *argument)
+void do_autoeq(struct char_data *ch, const char *argument)
 {
     if (IS_NPC(ch))
         return;
@@ -242,7 +242,7 @@ void do_autoeq(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_autoexit(CHAR_DATA *ch, const char *argument)
+void do_autoexit(struct char_data *ch, const char *argument)
 {
     if (IS_NPC(ch))
         return;
@@ -256,7 +256,7 @@ void do_autoexit(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_autogold(CHAR_DATA *ch, const char *argument)
+void do_autogold(struct char_data *ch, const char *argument)
 {
     if (IS_NPC(ch))
         return;
@@ -270,7 +270,7 @@ void do_autogold(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_autoloot(CHAR_DATA *ch, const char *argument)
+void do_autoloot(struct char_data *ch, const char *argument)
 {
     if (IS_NPC(ch))
         return;
@@ -284,7 +284,7 @@ void do_autoloot(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_autosac(CHAR_DATA *ch, const char *argument)
+void do_autosac(struct char_data *ch, const char *argument)
 {
     if (IS_NPC(ch))
         return;
@@ -298,7 +298,7 @@ void do_autosac(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_autosplit(CHAR_DATA *ch, const char *argument)
+void do_autosplit(struct char_data *ch, const char *argument)
 {
     if (IS_NPC(ch))
         return;
@@ -312,7 +312,7 @@ void do_autosplit(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_brief(CHAR_DATA *ch, const char *argument)
+void do_brief(struct char_data *ch, const char *argument)
 {
     if (IS_SET(ch->comm, COMM_BRIEF)) {
         send_to_char("Full descriptions activated.\n\r", ch);
@@ -323,7 +323,7 @@ void do_brief(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_compact(CHAR_DATA *ch, const char *argument)
+void do_compact(struct char_data *ch, const char *argument)
 {
     if (IS_SET(ch->comm, COMM_COMPACT)) {
         send_to_char("Compact mode removed.\n\r", ch);
@@ -334,13 +334,13 @@ void do_compact(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void send_color_status(CHAR_DATA *ch, char *a, char *c, byte b)
+void send_color_status(struct char_data *ch, char *a, char *c, byte b)
 {
     sprintf(c, "%s %s %s\n\r", color_table[b], a, ANSI_NORMAL);
     send_to_char(c, ch);
 }
 
-void do_autoticks(CHAR_DATA *ch, const char *argument)
+void do_autoticks(struct char_data *ch, const char *argument)
 {
     if (IS_NPC(ch))
         return;
@@ -354,7 +354,7 @@ void do_autoticks(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_color(CHAR_DATA *ch, const char *argument)
+void do_color(struct char_data *ch, const char *argument)
 {
     unsigned int i = 0;
     byte a = (byte)0;
@@ -492,7 +492,7 @@ void do_color(CHAR_DATA *ch, const char *argument)
 }
 
 
-void do_show(CHAR_DATA *ch, /*@unused@*/const char *argument)
+void do_show(struct char_data *ch, /*@unused@*/const char *argument)
 {
     if (IS_SET(ch->comm, COMM_SHOW_AFFECTS)) {
         send_to_char("Affects will no longer be shown in score.\n\r", ch);
@@ -503,7 +503,7 @@ void do_show(CHAR_DATA *ch, /*@unused@*/const char *argument)
     }
 }
 
-void do_prompt(CHAR_DATA *ch, const char *argument)
+void do_prompt(struct char_data *ch, const char *argument)
 {
     char buf[MAX_STRING_LENGTH];
 
@@ -533,7 +533,7 @@ void do_prompt(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_combine(CHAR_DATA *ch, const char *argument)
+void do_combine(struct char_data *ch, const char *argument)
 {
     if (IS_SET(ch->comm, COMM_COMBINE)) {
         send_to_char("Long inventory selected.\n\r", ch);
@@ -544,7 +544,7 @@ void do_combine(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_noloot(CHAR_DATA *ch, const char *argument)
+void do_noloot(struct char_data *ch, const char *argument)
 {
     if (IS_NPC(ch))
         return;
@@ -558,7 +558,7 @@ void do_noloot(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_nofollow(CHAR_DATA *ch, const char *argument)
+void do_nofollow(struct char_data *ch, const char *argument)
 {
     if (IS_NPC(ch))
         return;
@@ -577,7 +577,7 @@ void do_nofollow(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_nosummon(CHAR_DATA *ch, const char *argument)
+void do_nosummon(struct char_data *ch, const char *argument)
 {
     if (IS_NPC(ch)) {
         if (IS_SET(ch->imm_flags, IMM_SUMMON)) {
@@ -598,7 +598,7 @@ void do_nosummon(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_lore(CHAR_DATA *ch, const char *argument)
+void do_lore(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     SKILL *skill;
@@ -636,12 +636,12 @@ void do_lore(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_glance(CHAR_DATA *ch, const char *argument)
+void do_glance(struct char_data *ch, const char *argument)
 {
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
     char arg3[MAX_INPUT_LENGTH];
-    CHAR_DATA *victim;
+    struct char_data *victim;
 
     if (ch->desc == NULL)
         return;
@@ -688,9 +688,9 @@ void do_glance(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_look(CHAR_DATA *ch, const char *argument)
+void do_look(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     struct gameobject *obj;
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
@@ -756,7 +756,7 @@ void do_look(CHAR_DATA *ch, const char *argument)
 }
 
 
-void do_examine(CHAR_DATA *ch, const char *argument)
+void do_examine(struct char_data *ch, const char *argument)
 {
     char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
@@ -812,7 +812,7 @@ void do_examine(CHAR_DATA *ch, const char *argument)
 /*
  * Thanks to Zrin for auto-exit part.
  */
-void do_exits(CHAR_DATA *ch, const char *argument)
+void do_exits(struct char_data *ch, const char *argument)
 {
     extern char *const dir_name[];
     struct exit_data *pexit;
@@ -899,7 +899,7 @@ void do_exits(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_worth(CHAR_DATA *ch, const char *argument)
+void do_worth(struct char_data *ch, const char *argument)
 {
     if (!IS_NPC(ch)) printf_to_char(ch, "Extended Experience Points: %ld, Extended Level: %d\n\r",
                                     ch->pcdata->extendedexp, ch->pcdata->extendedlevel);
@@ -919,7 +919,7 @@ void do_worth(CHAR_DATA *ch, const char *argument)
 }
 
 
-void do_score(CHAR_DATA *ch, const char *argument)
+void do_score(struct char_data *ch, const char *argument)
 {
     char hours[MAX_STRING_LENGTH];
     char mins[MAX_STRING_LENGTH];
@@ -1137,7 +1137,7 @@ void do_score(CHAR_DATA *ch, const char *argument)
         do_affects(ch, "");
 }
 
-void do_affects(CHAR_DATA *ch, const char *argument)
+void do_affects(struct char_data *ch, const char *argument)
 {
     AFFECT_DATA *paf;
     AFFECT_DATA *paf_last = NULL;
@@ -1202,7 +1202,7 @@ char *const month_name[] =
     "the Long Shadows",   "the Ancient Darkness", "the Great Evil"
 };
 
-void do_time(CHAR_DATA *ch, const char *argument)
+void do_time(struct char_data *ch, const char *argument)
 {
     char *suf;
     int day;
@@ -1245,7 +1245,7 @@ void do_time(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_inventory(CHAR_DATA *ch, const char *argument)
+void do_inventory(struct char_data *ch, const char *argument)
 {
     send_to_char("You are carrying```8:``\n\r", ch);
     show_list_to_char(ch->carrying, ch, true, true);
@@ -1253,13 +1253,13 @@ void do_inventory(CHAR_DATA *ch, const char *argument)
 }
 
 /* New do_equipment() function. Shows eq slots not worn.*/
-void do_equipment(CHAR_DATA *ch, /*@unused@*/const char *argument)
+void do_equipment(struct char_data *ch, /*@unused@*/const char *argument)
 {
     look_equipment(ch);
     return;
 }
 
-void do_compare(CHAR_DATA *ch, const char *argument)
+void do_compare(struct char_data *ch, const char *argument)
 {
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
@@ -1341,14 +1341,14 @@ void do_compare(CHAR_DATA *ch, const char *argument)
 
 
 
-void do_credits(CHAR_DATA *ch, const char *argument)
+void do_credits(struct char_data *ch, const char *argument)
 {
     show_help(ch->desc, "diku", NULL);
     return;
 }
 
 
-void do_here(CHAR_DATA *ch, const char *argument)
+void do_here(struct char_data *ch, const char *argument)
 {
     if (ch->desc == NULL)
         return;
@@ -1381,10 +1381,10 @@ void do_here(CHAR_DATA *ch, const char *argument)
 }
 
 
-void do_consider(CHAR_DATA *ch, const char *argument)
+void do_consider(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char *msg;
     int diff;
 
@@ -1428,7 +1428,7 @@ void do_consider(CHAR_DATA *ch, const char *argument)
 
 
 
-void set_title(CHAR_DATA *ch, char *title)
+void set_title(struct char_data *ch, char *title)
 {
     char buf[MAX_STRING_LENGTH];
 
@@ -1454,7 +1454,7 @@ void set_title(CHAR_DATA *ch, char *title)
 /***************************************************************************
  *	do_title
  ***************************************************************************/
-void do_title(CHAR_DATA *ch, const char *argument)
+void do_title(struct char_data *ch, const char *argument)
 {
     static char buf[MAX_STRING_LENGTH];
 
@@ -1476,7 +1476,7 @@ void do_title(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_deathcry
  ***************************************************************************/
-void do_deathcry(CHAR_DATA *ch, const char *argument)
+void do_deathcry(struct char_data *ch, const char *argument)
 {
     static char buf[MAX_STRING_LENGTH];
     int rand;
@@ -1536,7 +1536,7 @@ void do_deathcry(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_description
  ***************************************************************************/
-void do_description(CHAR_DATA *ch, const char *argument)
+void do_description(struct char_data *ch, const char *argument)
 {
 
     static char buf[MAX_STRING_LENGTH];
@@ -1616,7 +1616,7 @@ void do_description(CHAR_DATA *ch, const char *argument)
 
 
 
-void do_report(CHAR_DATA *ch, const char *argument)
+void do_report(struct char_data *ch, const char *argument)
 {
     char buf[MAX_INPUT_LENGTH];
 
@@ -1644,7 +1644,7 @@ void do_report(CHAR_DATA *ch, const char *argument)
 /*
  * 'Wimpy' originally by Dionysos.
  */
-void do_wimpy(CHAR_DATA *ch, const char *argument)
+void do_wimpy(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
     int wimpy;
@@ -1673,7 +1673,7 @@ void do_wimpy(CHAR_DATA *ch, const char *argument)
 
 
 
-void do_password(CHAR_DATA *ch, const char *argument)
+void do_password(struct char_data *ch, const char *argument)
 {
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
@@ -1746,9 +1746,9 @@ void do_password(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_finger(CHAR_DATA *ch, const char *argument)
+void do_finger(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     FILE *fp;
     char arg[MAX_INPUT_LENGTH];
     char buf[MAX_STRING_LENGTH];
@@ -1853,12 +1853,12 @@ void do_finger(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_laston(CHAR_DATA *ch, const char *argument)
+void do_laston(struct char_data *ch, const char *argument)
 {
     struct descriptor_iterator_filter filter = { .must_playing = true, .skip_character = ch };
     struct descriptor_data *d;
     struct descriptor_data *dpending;
-    CHAR_DATA *victim = ch;
+    struct char_data *victim = ch;
     FILE *fp;
     char arg[MAX_INPUT_LENGTH];
     char buf[MAX_STRING_LENGTH];
@@ -1875,7 +1875,7 @@ void do_laston(CHAR_DATA *ch, const char *argument)
 
     dpending = descriptor_iterator_start(&filter);
     while ((d = dpending) != NULL) {
-        CHAR_DATA *wch;
+        struct char_data *wch;
         dpending = descriptor_iterator(d, &filter);
 
         if (can_see(ch, d->character)) {
@@ -1956,7 +1956,7 @@ void do_laston(CHAR_DATA *ch, const char *argument)
     free_char(victim);
 }
 
-void print_weather(CHAR_DATA *ch)
+void print_weather(struct char_data *ch)
 {
     static char *const sky_look[4] =
     {
@@ -1969,7 +1969,7 @@ void print_weather(CHAR_DATA *ch)
     printf_to_char(ch, "The sky is %s and %s\n\r", sky_look[globalGameState.weather->sky], globalGameState.weather->change >= 0 ? "rainy." : "snowing.");
 }
 
-void do_weather(CHAR_DATA *ch, const char *argument)
+void do_weather(struct char_data *ch, const char *argument)
 {
     if (!IS_OUTSIDE(ch)) {
         send_to_char("You can't see the weather indoors.\n\r", ch);
@@ -1979,7 +1979,7 @@ void do_weather(CHAR_DATA *ch, const char *argument)
     print_weather(ch);
 }
 
-void do_die(CHAR_DATA *ch, const char *argument)
+void do_die(struct char_data *ch, const char *argument)
 {
     show_help(ch->desc, "BLOW", NULL);
     return;
@@ -1988,7 +1988,7 @@ void do_die(CHAR_DATA *ch, const char *argument)
 
 
 /* add this function - add definition in merc.h*/
-void show_damage_display(CHAR_DATA *ch, CHAR_DATA *victim)
+void show_damage_display(struct char_data *ch, struct char_data *victim)
 {
     char buf[MAX_STRING_LENGTH];
     int percent;
@@ -2025,7 +2025,7 @@ void show_damage_display(CHAR_DATA *ch, CHAR_DATA *victim)
 }
 
 
-static void print_history_help(CHAR_DATA *ch)
+static void print_history_help(struct char_data *ch)
 {
     send_to_char("Syntax: history [cmd]\n\r\n\r", ch);
     send_to_char("Available commands:\n\r", ch);
@@ -2045,7 +2045,7 @@ static void print_history_help(CHAR_DATA *ch)
  *   Modified (rewritten) by Monrick: January 6, 2008
  *    for Bad Trip
  */
-void do_history(CHAR_DATA *ch, const char *argument)
+void do_history(struct char_data *ch, const char *argument)
 {
     char cmd[MAX_STRING_LENGTH];
     int len;
@@ -2153,10 +2153,10 @@ void do_history(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_viewhist(CHAR_DATA *ch, const char *argument)
+void do_viewhist(struct char_data *ch, const char *argument)
 {
     char arg1[MAX_INPUT_LENGTH];
-    CHAR_DATA *victim;
+    struct char_data *victim;
 
     argument = one_argument(argument, arg1);
 

@@ -4,14 +4,14 @@
 
 
 
-bool remove_alias(CHAR_DATA * ch, char *alias);
-bool add_alias(CHAR_DATA * ch, char *alias, char *cmd);
+bool remove_alias(struct char_data * ch, char *alias);
+bool add_alias(struct char_data * ch, char *alias, char *cmd);
 
 
 /** expand an alias before calling into interpret */
 void substitute_alias(struct descriptor_data *d, const char *argument)
 {
-    CHAR_DATA *ch;
+    struct char_data *ch;
     char buf[MAX_STRING_LENGTH];
     char prefix[MAX_INPUT_LENGTH];
     char name[MAX_INPUT_LENGTH];
@@ -68,7 +68,7 @@ void substitute_alias(struct descriptor_data *d, const char *argument)
 /***************************************************************************
  *	do_alia
  ***************************************************************************/
-void do_alia(CHAR_DATA *ch, const char *argument)
+void do_alia(struct char_data *ch, const char *argument)
 {
     send_to_char("I'm sorry, alias must be entered in full.\n\r", ch);
     return;
@@ -80,9 +80,9 @@ void do_alia(CHAR_DATA *ch, const char *argument)
  *
  *	alias a command
  ***************************************************************************/
-void do_alias(CHAR_DATA *ch, const char *argument)
+void do_alias(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *rch;
+    struct char_data *rch;
     char arg[MAX_INPUT_LENGTH];
     int pos;
 
@@ -163,9 +163,9 @@ void do_alias(CHAR_DATA *ch, const char *argument)
  *
  *	unalias a command
  ***************************************************************************/
-void do_unalias(CHAR_DATA *ch, const char *argument)
+void do_unalias(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *rch;
+    struct char_data *rch;
     char arg[MAX_INPUT_LENGTH];
 
     if (ch->desc == NULL)
@@ -194,7 +194,7 @@ void do_unalias(CHAR_DATA *ch, const char *argument)
  *
  *	add an alias to a characters pcdata
  ***************************************************************************/
-bool add_alias(CHAR_DATA *ch, char *alias, char *cmd)
+bool add_alias(struct char_data *ch, char *alias, char *cmd)
 {
     bool success = false;
     int pos;
@@ -229,7 +229,7 @@ bool add_alias(CHAR_DATA *ch, char *alias, char *cmd)
  *
  *	remove an alias from a characters alias list
  ***************************************************************************/
-bool remove_alias(CHAR_DATA *ch, char *alias)
+bool remove_alias(struct char_data *ch, char *alias)
 {
     bool success = false;
     int pos;

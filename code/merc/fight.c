@@ -32,39 +32,39 @@ extern SKILL *gsp_dodge;
 extern SKILL *gsp_sleep;
 
 
-extern bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
-extern void mp_hprct_trigger(CHAR_DATA * mob, CHAR_DATA * ch);
+extern bool mp_percent_trigger(struct char_data * mob, struct char_data * ch, const void *arg1, const void *arg2, int type);
+extern void mp_hprct_trigger(struct char_data * mob, struct char_data * ch);
 extern int battlefield_count(void);
 extern void battlefield_notify(char *buf);
 extern int battlefield_participants(void);
-extern bool in_battlefield(CHAR_DATA * ch);
+extern bool in_battlefield(struct char_data * ch);
 
 #define MAX_DAMAGE_MESSAGE 58
 
-bool is_safe(CHAR_DATA * ch, CHAR_DATA * victim);
-bool one_hit(CHAR_DATA * ch, CHAR_DATA * victim, int dt, struct gameobject * wield);
-void set_fighting(CHAR_DATA * ch, CHAR_DATA * victim);
-bool check_dispel(int dis_level, CHAR_DATA * victim, SKILL * skill);
-void dam_message(CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt, bool immune);
-void make_corpse(CHAR_DATA * ch);
-bool check_shield_block(CHAR_DATA * ch, CHAR_DATA * victim);
-void disarm(CHAR_DATA * ch, CHAR_DATA * victim);
+bool is_safe(struct char_data * ch, struct char_data * victim);
+bool one_hit(struct char_data * ch, struct char_data * victim, int dt, struct gameobject * wield);
+void set_fighting(struct char_data * ch, struct char_data * victim);
+bool check_dispel(int dis_level, struct char_data * victim, SKILL * skill);
+void dam_message(struct char_data * ch, struct char_data * victim, int dam, int dt, bool immune);
+void make_corpse(struct char_data * ch);
+bool check_shield_block(struct char_data * ch, struct char_data * victim);
+void disarm(struct char_data * ch, struct char_data * victim);
 
 
 /*
  * Local functions.
  */
-static void check_assist(CHAR_DATA * ch, CHAR_DATA * victim);
-static bool check_dodge(CHAR_DATA * ch, CHAR_DATA * victim);
-static bool check_parry(CHAR_DATA * ch, CHAR_DATA * victim);
-static bool check_evade(CHAR_DATA * ch, CHAR_DATA * victim);
-static void death_cry(CHAR_DATA * ch, CHAR_DATA * killer);
-static void group_gain(CHAR_DATA * ch, CHAR_DATA * victim);
-static int xp_compute(CHAR_DATA * gch, CHAR_DATA * victim, int total_levels);
-static void use_magical_item(CHAR_DATA * ch);
-static int max_damage(CHAR_DATA * ch, CHAR_DATA * victim, int dt, int amt);
-static void mob_hit(CHAR_DATA * ch, CHAR_DATA * victim, int dt);
-static void check_deathdrop(CHAR_DATA * ch);
+static void check_assist(struct char_data * ch, struct char_data * victim);
+static bool check_dodge(struct char_data * ch, struct char_data * victim);
+static bool check_parry(struct char_data * ch, struct char_data * victim);
+static bool check_evade(struct char_data * ch, struct char_data * victim);
+static void death_cry(struct char_data * ch, struct char_data * killer);
+static void group_gain(struct char_data * ch, struct char_data * victim);
+static int xp_compute(struct char_data * gch, struct char_data * victim, int total_levels);
+static void use_magical_item(struct char_data * ch);
+static int max_damage(struct char_data * ch, struct char_data * victim, int dt, int amt);
+static void mob_hit(struct char_data * ch, struct char_data * victim, int dt);
+static void check_deathdrop(struct char_data * ch);
 
 
 /***************************************************************************
@@ -75,9 +75,9 @@ static void check_deathdrop(CHAR_DATA * ch);
  ***************************************************************************/
 void violence_update(void)
 {
-    CHAR_DATA *ch;
-    CHAR_DATA *ch_next;
-    CHAR_DATA *victim;
+    struct char_data *ch;
+    struct char_data *ch_next;
+    struct char_data *victim;
 
     for (ch = char_list; ch != NULL; ch = ch_next) {
 	ch_next = ch->next;
@@ -114,9 +114,9 @@ void violence_update(void)
  *
  *	check for auto-assist
  ***************************************************************************/
-void check_assist(CHAR_DATA *ch, CHAR_DATA *victim)
+void check_assist(struct char_data *ch, struct char_data *victim)
 {
-    CHAR_DATA *rch, *rch_next;
+    struct char_data *rch, *rch_next;
 
     for (rch = ch->in_room->people; rch != NULL; rch = rch_next) {
 	rch_next = rch->next_in_room;
@@ -154,8 +154,8 @@ void check_assist(CHAR_DATA *ch, CHAR_DATA *victim)
 			|| (IS_NPC(rch) && rch->group && rch->group == ch->group)
 			|| (IS_NPC(rch) && rch->race == ch->race && IS_SET(rch->off_flags, ASSIST_RACE))
 			|| (rch->mob_idx == ch->mob_idx && IS_SET(rch->off_flags, ASSIST_VNUM))) {
-		    CHAR_DATA *vch;
-		    CHAR_DATA *target;
+		    struct char_data *vch;
+		    struct char_data *target;
 		    int number;
 
 		    if (number_bits(1) == 0)
@@ -188,10 +188,10 @@ void check_assist(CHAR_DATA *ch, CHAR_DATA *victim)
  *
  *	do one group of attacks
  ***************************************************************************/
-void multi_hit(CHAR_DATA *ch, CHAR_DATA *victim, int dt)
+void multi_hit(struct char_data *ch, struct char_data *victim, int dt)
 {
-    CHAR_DATA *vch;
-    CHAR_DATA *vch_next;
+    struct char_data *vch;
+    struct char_data *vch_next;
     struct gameobject *weapon;
     struct gameobject *off_weapon;
     SKILL *skill;
@@ -337,10 +337,10 @@ void multi_hit(CHAR_DATA *ch, CHAR_DATA *victim, int dt)
 
 
 /* procedure for all mobile attacks */
-void mob_hit(CHAR_DATA *ch, CHAR_DATA *victim, int dt)
+void mob_hit(struct char_data *ch, struct char_data *victim, int dt)
 {
-    CHAR_DATA *vch;
-    CHAR_DATA *vch_next;
+    struct char_data *vch;
+    struct char_data *vch_next;
     struct gameobject *weapon;
     int chance;
     int number;
@@ -404,7 +404,7 @@ void mob_hit(CHAR_DATA *ch, CHAR_DATA *victim, int dt)
 }
 
 
-static void validate_attack_type(int *dt, CHAR_DATA *ch, struct gameobject *wield)
+static void validate_attack_type(int *dt, struct char_data *ch, struct gameobject *wield)
 {
     /*
      * Figure out the type of damage message.
@@ -419,7 +419,7 @@ static void validate_attack_type(int *dt, CHAR_DATA *ch, struct gameobject *wiel
     }
 }
 
-static int get_dam_type(CHAR_DATA *ch, int dt, struct gameobject *wield)
+static int get_dam_type(struct char_data *ch, int dt, struct gameobject *wield)
 {
     int dam_type = -1;
 
@@ -437,7 +437,7 @@ static int get_dam_type(CHAR_DATA *ch, int dt, struct gameobject *wield)
     return dam_type;
 }
 
-int lookup_class_table_index(CHAR_DATA *ch)
+int lookup_class_table_index(struct char_data *ch)
 {
     if (IS_NPC(ch)) {
 	if (IS_SET(ch->act, ACT_WARRIOR))
@@ -471,14 +471,14 @@ static inline float get_combat_rating(int class_table_idx, int class_level, bool
     return (combat_rating + (0.1f * class_level / cr_improve)) * class_level;
 }
 
-static inline int get_dex_bonus(CHAR_DATA *ch)
+static inline int get_dex_bonus(struct char_data *ch)
 {
     return IS_AWAKE(ch)
 	? get_curr_stat(ch, STAT_DEX) * (ch->level / 25)
 	: 0;
 }
 
-static inline int get_victim_ac(CHAR_DATA *victim, int damage_type)
+static inline int get_victim_ac(struct char_data *victim, int damage_type)
 {
     long victim_ac = 0;
 
@@ -501,7 +501,7 @@ static inline int get_victim_ac(CHAR_DATA *victim, int damage_type)
     return victim_ac;
 }
 
-ONE_ATTACK_RESULT one_attack(CHAR_DATA *ch, CHAR_DATA *victim, int dt, struct gameobject *attacker_wield)
+ONE_ATTACK_RESULT one_attack(struct char_data *ch, struct char_data *victim, int dt, struct gameobject *attacker_wield)
 {
     ONE_ATTACK_RESULT result = oar_error;
 
@@ -599,7 +599,7 @@ ONE_ATTACK_RESULT one_attack(CHAR_DATA *ch, CHAR_DATA *victim, int dt, struct ga
  *
  *	hit a character once with a weapon
  ***************************************************************************/
-bool one_hit(CHAR_DATA *ch, CHAR_DATA *victim, int dt, struct gameobject *wield)
+bool one_hit(struct char_data *ch, struct char_data *victim, int dt, struct gameobject *wield)
 {
     SKILL *attack;
     long victim_ac;
@@ -919,7 +919,7 @@ bool one_hit(CHAR_DATA *ch, CHAR_DATA *victim, int dt, struct gameobject *wield)
  *	damage a character -- this function is long and freakin ugly
  *	it needs to be tweaked so it is more managable
  ***************************************************************************/
-int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool show)
+int damage(struct char_data *ch, struct char_data *victim, int dam, int dt, int dam_type, bool show)
 {
     struct gameobject *corpse;
     bool immune;
@@ -1184,7 +1184,7 @@ int damage(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, int dam_type, bool
  *
  *	check to see if a character is safe from attackes
  ***************************************************************************/
-bool is_safe(CHAR_DATA *ch, CHAR_DATA *victim)
+bool is_safe(struct char_data *ch, struct char_data *victim)
 {
     if (victim->in_room == NULL || ch->in_room == NULL)
 	return true;
@@ -1275,7 +1275,7 @@ bool is_safe(CHAR_DATA *ch, CHAR_DATA *victim)
 }
 
 
-bool is_safe_spell(CHAR_DATA *ch, CHAR_DATA *victim, bool area)
+bool is_safe_spell(struct char_data *ch, struct char_data *victim, bool area)
 {
     if (IS_IMMORTAL(ch))
 	return false;
@@ -1364,7 +1364,7 @@ bool is_safe_spell(CHAR_DATA *ch, CHAR_DATA *victim, bool area)
 /*
  * See if an attack justifies a KILLER flag.
  */
-void check_killer(CHAR_DATA *ch, CHAR_DATA *victim)
+void check_killer(struct char_data *ch, struct char_data *victim)
 {
     char buf[MAX_STRING_LENGTH];
 
@@ -1428,7 +1428,7 @@ void check_killer(CHAR_DATA *ch, CHAR_DATA *victim)
 /***************************************************************************
  * Check for parry.
  ***************************************************************************/
-bool check_parry(CHAR_DATA *ch, CHAR_DATA *victim)
+bool check_parry(struct char_data *ch, struct char_data *victim)
 {
     int chance;
 
@@ -1461,7 +1461,7 @@ bool check_parry(CHAR_DATA *ch, CHAR_DATA *victim)
 /***************************************************************************
  * Check for evade.
  ***************************************************************************/
-bool check_evade(CHAR_DATA *ch, CHAR_DATA *victim)
+bool check_evade(struct char_data *ch, struct char_data *victim)
 {
     int chance;
 
@@ -1496,7 +1496,7 @@ bool check_evade(CHAR_DATA *ch, CHAR_DATA *victim)
 /***************************************************************************
  * Check for shield block.
  ***************************************************************************/
-bool check_shield_block(CHAR_DATA *ch, CHAR_DATA *victim)
+bool check_shield_block(struct char_data *ch, struct char_data *victim)
 {
     int chance;
 
@@ -1521,7 +1521,7 @@ bool check_shield_block(CHAR_DATA *ch, CHAR_DATA *victim)
 /***************************************************************************
  * Check for dodge.
  ***************************************************************************/
-bool check_dodge(CHAR_DATA *ch, CHAR_DATA *victim)
+bool check_dodge(struct char_data *ch, struct char_data *victim)
 {
     int chance;
 
@@ -1548,7 +1548,7 @@ bool check_dodge(CHAR_DATA *ch, CHAR_DATA *victim)
 /*
  * Set position of a victim.
  */
-void update_pos(CHAR_DATA *victim)
+void update_pos(struct char_data *victim)
 {
     if (victim->hit > 0) {
 	if (victim->position <= POS_STUNNED)
@@ -1581,7 +1581,7 @@ void update_pos(CHAR_DATA *victim)
 /*
  * Start fights.
  */
-void set_fighting(CHAR_DATA *ch, CHAR_DATA *victim)
+void set_fighting(struct char_data *ch, struct char_data *victim)
 {
     if (ch->fighting != NULL) {
 	log_bug("Set_fighting: already fighting");
@@ -1603,9 +1603,9 @@ void set_fighting(CHAR_DATA *ch, CHAR_DATA *victim)
 /*
  * Stop fights.
  */
-void stop_fighting(CHAR_DATA *ch, bool fBoth)
+void stop_fighting(struct char_data *ch, bool fBoth)
 {
-    CHAR_DATA *fch;
+    struct char_data *fch;
 
     for (fch = char_list; fch != NULL; fch = fch->next) {
 	if (fch == ch || (fBoth && fch->fighting == ch)) {
@@ -1623,7 +1623,7 @@ void stop_fighting(CHAR_DATA *ch, bool fBoth)
 /*
  * Make a corpse out of a character.
  */
-void make_corpse(CHAR_DATA *ch)
+void make_corpse(struct char_data *ch)
 {
     char buf[MAX_STRING_LENGTH];
     struct gameobject *corpse;
@@ -1712,7 +1712,7 @@ void make_corpse(CHAR_DATA *ch)
 /*
  * Improved Death_cry contributed by Diavolo.
  */
-void death_cry(CHAR_DATA *ch, CHAR_DATA *killer)
+void death_cry(struct char_data *ch, struct char_data *killer)
 {
     char *msg;
     long vnum;
@@ -1811,7 +1811,7 @@ void death_cry(CHAR_DATA *ch, CHAR_DATA *killer)
 }
 
 
-void raw_kill(CHAR_DATA *victim, CHAR_DATA *killer)
+void raw_kill(struct char_data *victim, struct char_data *killer)
 {
     stop_fighting(victim, true);
 
@@ -1852,10 +1852,10 @@ void raw_kill(CHAR_DATA *victim, CHAR_DATA *killer)
 
 
 
-void group_gain(CHAR_DATA *ch, CHAR_DATA *victim)
+void group_gain(struct char_data *ch, struct char_data *victim)
 {
     char buf[MAX_STRING_LENGTH];
-    CHAR_DATA *gch;
+    struct char_data *gch;
     int xp;
     int members;
     int group_levels;
@@ -1924,7 +1924,7 @@ void group_gain(CHAR_DATA *ch, CHAR_DATA *victim)
  * Compute xp for a kill.
  * Edit this function to change xp computations.
  */
-int xp_compute(CHAR_DATA *gch, CHAR_DATA *victim, int total_levels)
+int xp_compute(struct char_data *gch, struct char_data *victim, int total_levels)
 {
     int xp, base_exp;
     int level_range;
@@ -2005,7 +2005,7 @@ int xp_compute(CHAR_DATA *gch, CHAR_DATA *victim, int total_levels)
 }
 
 
-void dam_message(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, bool immune)
+void dam_message(struct char_data *ch, struct char_data *victim, int dam, int dt, bool immune)
 {
     const char *vs;
     const char *vp;
@@ -2204,7 +2204,7 @@ void dam_message(CHAR_DATA *ch, CHAR_DATA *victim, int dam, int dt, bool immune)
  *	set an upper limit on the amount of damage
  *	a pc-vs-pc attack can do
  ***************************************************************************/
-int max_damage(CHAR_DATA *ch, CHAR_DATA *victim, int dt, int dam)
+int max_damage(struct char_data *ch, struct char_data *victim, int dt, int dam)
 {
     int value = 0;
     int mod;
@@ -2263,7 +2263,7 @@ int max_damage(CHAR_DATA *ch, CHAR_DATA *victim, int dt, int dam)
  *	disarm
  *	disarm a character - caller is responsible for success or failure
  ***************************************************************************/
-void disarm(CHAR_DATA *ch, CHAR_DATA *victim)
+void disarm(struct char_data *ch, struct char_data *victim)
 {
     struct gameobject *obj;
 
@@ -2302,7 +2302,7 @@ void disarm(CHAR_DATA *ch, CHAR_DATA *victim)
  *	that is flaged deathdrop - if they are, remove it
  *	from their inventory and put it in the room
  ***************************************************************************/
-void check_deathdrop(CHAR_DATA *ch)
+void check_deathdrop(struct char_data *ch)
 {
     struct gameobject *obj;
     struct gameobject *obj_next;
@@ -2321,7 +2321,7 @@ void check_deathdrop(CHAR_DATA *ch)
 
 
 
-void use_magical_item(CHAR_DATA *ch)
+void use_magical_item(struct char_data *ch)
 {
     struct gameobject *obj;
     struct gameobject *cobj = NULL;

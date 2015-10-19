@@ -25,10 +25,10 @@ static void save_resets(FILE *fp, struct area_data *area);
 static void save_shops(FILE *fp, struct area_data *area);
 static void save_helps(const char const *filename);
 static void save_area(struct area_data *area);
-static void show_save_help(CHAR_DATA *ch);
+static void show_save_help(struct char_data *ch);
 
 
-void do_asave(CHAR_DATA *ch, const char *argument)
+void do_asave(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
     int value;
@@ -839,7 +839,7 @@ void save_area(struct area_data *area)
     database_close(db);
 }
 
-void show_save_help(CHAR_DATA *ch)
+void show_save_help(struct char_data *ch)
 {
     send_to_char("`#Syntax`3:``\n\r", ch);
     send_to_char("  `!asave `1<`!vnum`1>``   - saves a particular area\n\r", ch);

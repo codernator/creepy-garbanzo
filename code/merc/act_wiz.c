@@ -15,7 +15,7 @@
 
 
 /** exports */
-void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is, const char *message);
+void sick_harvey_proctor(struct char_data *ch, enum e_harvey_proctor_is, const char *message);
 
 
 /** imports */
@@ -23,25 +23,25 @@ void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is, const char *me
 extern long top_mob_index;
 extern bool copyover();
 extern AFFECT_DATA *affect_free;
-extern bool is_auction_participant(CHAR_DATA *ch);
+extern bool is_auction_participant(struct char_data *ch);
 extern struct gameobject *get_auction_item();
 extern void reset_area(struct area_data * pArea);
-extern bool add_alias(CHAR_DATA * ch, char *alias, char *cmd);
-extern bool set_char_hunger(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
-extern bool set_char_thirst(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
-extern bool set_char_feed(CHAR_DATA * ch, CHAR_DATA * vch, char *argument);
+extern bool add_alias(struct char_data * ch, char *alias, char *cmd);
+extern bool set_char_hunger(struct char_data * ch, struct char_data * vch, char *argument);
+extern bool set_char_thirst(struct char_data * ch, struct char_data * vch, char *argument);
+extern bool set_char_feed(struct char_data * ch, struct char_data * vch, char *argument);
 
 /** locals */
-static void set_grestore(CHAR_DATA *ch, const char *argument);
-static void set_rrestore(CHAR_DATA *ch, const char *argument);
-static void fry_char(CHAR_DATA * ch, char *argument);
+static void set_grestore(struct char_data *ch, const char *argument);
+static void set_rrestore(struct char_data *ch, const char *argument);
+static void fry_char(struct char_data * ch, char *argument);
 
 
-void do_order(CHAR_DATA *ch, const char *argument)
+void do_order(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
-    CHAR_DATA *och;
-    CHAR_DATA *och_next;
+    struct char_data *victim;
+    struct char_data *och;
+    struct char_data *och_next;
     char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
@@ -174,15 +174,15 @@ void do_order(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_ignor(CHAR_DATA *ch, /*@unused@*/ const char *argument)
+void do_ignor(struct char_data *ch, /*@unused@*/ const char *argument)
 {
     send_to_char("You must enter the full command to ignore someone.\n\r", ch);
 }
 
-void do_ignore(CHAR_DATA *ch, const char *argument)
+void do_ignore(struct char_data *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
-    CHAR_DATA *rch;
+    struct char_data *rch;
     char arg[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
     struct descriptor_data *d;
     struct descriptor_data *dpending;
@@ -228,7 +228,7 @@ void do_ignore(CHAR_DATA *ch, const char *argument)
 
     dpending = descriptor_iterator_start(&playing_filter);
     while ((d = dpending) != NULL) {
-        CHAR_DATA *wch;
+        struct char_data *wch;
         dpending = descriptor_iterator(d, &playing_filter);
 
         if (!can_see(ch, d->character))
@@ -271,9 +271,9 @@ void do_ignore(CHAR_DATA *ch, const char *argument)
     send_to_char(buf, ch);
 }
 
-void do_unignore(CHAR_DATA *ch, const char *argument)
+void do_unignore(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *rch;
+    struct char_data *rch;
     char arg[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
     int pos;
     bool found = false;
@@ -327,7 +327,7 @@ void do_unignore(CHAR_DATA *ch, const char *argument)
         send_to_char("You aren't ignoring anyone by that name!\n\r", ch);
 }
 
-void do_bug(CHAR_DATA *ch, const char *argument)
+void do_bug(struct char_data *ch, const char *argument)
 {
     log_to(LOG_SINK_BUG,
            "[%5ld] %s > %s\n",
@@ -337,7 +337,7 @@ void do_bug(CHAR_DATA *ch, const char *argument)
     send_to_char("Bug logged.\n\r", ch);
 }
 
-void do_typo(CHAR_DATA *ch, const char *argument)
+void do_typo(struct char_data *ch, const char *argument)
 {
     log_to(LOG_SINK_TYPO,
            "[%5ld] %s > %s\n",
@@ -347,12 +347,12 @@ void do_typo(CHAR_DATA *ch, const char *argument)
     send_to_char("Typo logged.\n\r", ch);
 }
 
-void do_delet(CHAR_DATA *ch, /*@unused@*/ const char *argument)
+void do_delet(struct char_data *ch, /*@unused@*/ const char *argument)
 {
     send_to_char("You must type the full command to delete yourself.\n\r", ch);
 }
 
-void do_delete(CHAR_DATA *ch, const char *argument)
+void do_delete(struct char_data *ch, const char *argument)
 {
     char strsave[MAX_INPUT_LENGTH];
 
@@ -399,7 +399,7 @@ void do_delete(CHAR_DATA *ch, const char *argument)
     log_string("DELETE: %s .. %s's thinking about it ..", ch->name, ch->sex == 0 ? "It" : ch->sex == 1 ? "He" : "She");
 }
 
-void do_fixscreen(CHAR_DATA *ch, const char *argument)
+void do_fixscreen(struct char_data *ch, const char *argument)
 {
     // fix the screen....send clear screen and set the number of lines
     int lines;
@@ -417,17 +417,17 @@ void do_fixscreen(CHAR_DATA *ch, const char *argument)
     printf_to_char(ch, "\033[0;37;40m\033[%d;1f\033[2J\n\rScreen fixed.\n\r", lines);
 }
 
-void do_clearscreen(CHAR_DATA *ch, /*@unused@*/const char *argument)
+void do_clearscreen(struct char_data *ch, /*@unused@*/const char *argument)
 {
     send_to_char("\033[0H\033[2J\n", ch);
 }
 
-void do_qui(CHAR_DATA *ch, /*@unused@*/ const char *argument)
+void do_qui(struct char_data *ch, /*@unused@*/ const char *argument)
 {
     send_to_char("If you want to QUIT, you have to spell it out.\n\r", ch);
 }
 
-void do_quit(CHAR_DATA *ch, /*@unused@*/ const char *argument)
+void do_quit(struct char_data *ch, /*@unused@*/ const char *argument)
 {
     char strsave[2*MAX_INPUT_LENGTH];
     long id;
@@ -491,7 +491,7 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ const char *argument)
 
         dpending = descriptor_iterator_start(&descriptor_empty_filter);
         while ((d = dpending) != NULL) {
-            CHAR_DATA *tch;
+            struct char_data *tch;
             dpending = descriptor_iterator(d, &descriptor_empty_filter);
 
             tch = CH(d);
@@ -503,7 +503,7 @@ void do_quit(CHAR_DATA *ch, /*@unused@*/ const char *argument)
     }
 }
 
-void do_save(CHAR_DATA *ch, /*@unused@*/ const char *argument)
+void do_save(struct char_data *ch, /*@unused@*/ const char *argument)
 {
     if (IS_NPC(ch))
         return;
@@ -513,7 +513,7 @@ void do_save(CHAR_DATA *ch, /*@unused@*/ const char *argument)
     send_to_char("```^You are saved... for now!!!``\n\r", ch);
 }
 
-void do_wiznet(CHAR_DATA *ch, const char *argument)
+void do_wiznet(struct char_data *ch, const char *argument)
 {
     BUFFER *buf;
     long flag;
@@ -602,7 +602,7 @@ void do_wiznet(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void wiznet(char *string, /*@null@*/ CHAR_DATA *ch, /*@null@*/ struct gameobject *obj, long flag, long flag_skip, int min_level)
+void wiznet(char *string, /*@null@*/ struct char_data *ch, /*@null@*/ struct gameobject *obj, long flag, long flag_skip, int min_level)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
     struct descriptor_data *d;
@@ -626,7 +626,7 @@ void wiznet(char *string, /*@null@*/ CHAR_DATA *ch, /*@null@*/ struct gameobject
     }
 }
 
-void do_impnet(CHAR_DATA *ch, const char *argument)
+void do_impnet(struct char_data *ch, const char *argument)
 {
     BUFFER *buf;
     long flag;
@@ -710,7 +710,7 @@ void do_impnet(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void impnet(char *string, CHAR_DATA *ch, struct gameobject *obj, long flag, long flag_skip, int min_level)
+void impnet(char *string, struct char_data *ch, struct gameobject *obj, long flag, long flag_skip, int min_level)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
     struct descriptor_data *d;
@@ -735,7 +735,7 @@ void impnet(char *string, CHAR_DATA *ch, struct gameobject *obj, long flag, long
     return;
 }
 
-void do_tick(CHAR_DATA *ch, const char *argument)
+void do_tick(struct char_data *ch, const char *argument)
 {
     DENY_NPC(ch)
 
@@ -744,9 +744,9 @@ void do_tick(CHAR_DATA *ch, const char *argument)
         wiznet("$N forces a TICK!.", ch, NULL, 0, 0, 0);
 }
 
-void do_grant(CHAR_DATA *ch, const char *argument)
+void do_grant(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     SKILL *skill;
     LEARNED *learned;
     LEARNED *learned_found;
@@ -802,7 +802,7 @@ void do_grant(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_bamfin(CHAR_DATA *ch, const char *argument)
+void do_bamfin(struct char_data *ch, const char *argument)
 {
     char buf[MAX_STRING_LENGTH];
 
@@ -823,7 +823,7 @@ void do_bamfin(CHAR_DATA *ch, const char *argument)
     printf_to_char(ch, "Your poofin is now `8:``%s\n\r", ch->pcdata->bamfin);
 }
 
-void do_bamfout(CHAR_DATA *ch, const char *argument)
+void do_bamfout(struct char_data *ch, const char *argument)
 {
     char buf[MAX_STRING_LENGTH];
 
@@ -844,9 +844,9 @@ void do_bamfout(CHAR_DATA *ch, const char *argument)
     printf_to_char(ch, "Your poofout is now `8:``%s\n\r", ch->pcdata->bamfout);
 }
 
-void do_deny(CHAR_DATA *ch, const char *argument)
+void do_deny(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char arg[MAX_INPUT_LENGTH];
     char buf[MAX_STRING_LENGTH];
 
@@ -888,10 +888,10 @@ void do_deny(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_disconnect(CHAR_DATA *ch, const char *argument)
+void do_disconnect(struct char_data *ch, const char *argument)
 {
     struct descriptor_data *d;
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char arg[MAX_INPUT_LENGTH];
 
     DENY_NPC(ch);
@@ -936,9 +936,9 @@ void do_disconnect(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_chown(CHAR_DATA *ch, const char *argument)
+void do_chown(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     struct gameobject *obj;
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
@@ -975,7 +975,7 @@ void do_chown(CHAR_DATA *ch, const char *argument)
     act("$p flys from $N to you.", ch, obj, victim, TO_CHAR);
 }
 
-void do_echo(CHAR_DATA *ch, const char *argument)
+void do_echo(struct char_data *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
     struct descriptor_data *d;
@@ -1001,7 +1001,7 @@ void do_echo(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_recho(CHAR_DATA *ch, const char *argument)
+void do_recho(struct char_data *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
     struct descriptor_data *d;
@@ -1027,7 +1027,7 @@ void do_recho(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_zecho(CHAR_DATA *ch, const char *argument)
+void do_zecho(struct char_data *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
     struct descriptor_data *d;
@@ -1053,9 +1053,9 @@ void do_zecho(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_pecho(CHAR_DATA *ch, const char *argument)
+void do_pecho(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char arg[MAX_INPUT_LENGTH];
 
     DENY_NPC(ch);
@@ -1079,9 +1079,9 @@ void do_pecho(CHAR_DATA *ch, const char *argument)
     printf_to_char(ch, "personal> %s\n\r", argument);
 }
 
-void do_fry(CHAR_DATA *ch, const char *argument)
+void do_fry(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char file[MAX_INPUT_LENGTH];
     char arg[MAX_INPUT_LENGTH];
     char vName[MAX_INPUT_LENGTH];
@@ -1140,9 +1140,9 @@ void do_fry(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_ffry(CHAR_DATA *ch, const char *argument)
+void do_ffry(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char arg[MAX_INPUT_LENGTH];
 
     DENY_NPC(ch);
@@ -1182,9 +1182,9 @@ void do_ffry(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_pardon(CHAR_DATA *ch, const char *argument)
+void do_pardon(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
 
@@ -1231,13 +1231,13 @@ void do_pardon(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_transfer(CHAR_DATA *ch, const char *argument)
+void do_transfer(struct char_data *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
     struct room_index_data *location;
-    CHAR_DATA *victim;
+    struct char_data *victim;
 
     argument = one_argument(argument, arg1);
     argument = one_argument(argument, arg2);
@@ -1311,10 +1311,10 @@ void do_transfer(CHAR_DATA *ch, const char *argument)
     send_to_char("Ok.\n\r", ch);
 }
 
-void do_goto(CHAR_DATA *ch, const char *argument)
+void do_goto(struct char_data *ch, const char *argument)
 {
     struct room_index_data *location;
-    CHAR_DATA *rch;
+    struct char_data *rch;
     int count = 0;
 
     DENY_NPC(ch);
@@ -1367,10 +1367,10 @@ void do_goto(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_violate(CHAR_DATA *ch, const char *argument)
+void do_violate(struct char_data *ch, const char *argument)
 {
     struct room_index_data *location;
-    CHAR_DATA *rch;
+    struct char_data *rch;
 
     DENY_NPC(ch);
 
@@ -1418,13 +1418,13 @@ void do_violate(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_reboo(CHAR_DATA *ch, const char *argument)
+void do_reboo(struct char_data *ch, const char *argument)
 {
     send_to_char("If you want to REBOOT, spell it out.\n\r", ch);
     return;
 }
 
-void do_reboot(CHAR_DATA *ch, const char *argument)
+void do_reboot(struct char_data *ch, const char *argument)
 {
     struct descriptor_data *d, *dpending;
     char buf[MAX_STRING_LENGTH];
@@ -1451,12 +1451,12 @@ void do_reboot(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_shutdow(CHAR_DATA *ch, const char *argument)
+void do_shutdow(struct char_data *ch, const char *argument)
 {
     send_to_char("If you want to SHUTDOWN, spell it out.\n\r", ch);
 }
 
-void do_shutdown(CHAR_DATA *ch, const char *argument)
+void do_shutdown(struct char_data *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
     struct descriptor_data *d, *dpending;
@@ -1487,9 +1487,9 @@ void do_shutdown(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_snoop(CHAR_DATA *ch, const char *argument)
+void do_snoop(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
 
@@ -1550,7 +1550,7 @@ void do_snoop(CHAR_DATA *ch, const char *argument)
 }
 
 /* SnoopList ..  November 1996  */
-void do_snlist(CHAR_DATA *ch, const char *argument)
+void do_snlist(struct char_data *ch, const char *argument)
 {
     struct descriptor_data *d, *dpending;
     char buf[MAX_STRING_LENGTH];
@@ -1562,7 +1562,7 @@ void do_snlist(CHAR_DATA *ch, const char *argument)
 
     dpending = descriptor_iterator_start(&descriptor_empty_filter);
     while ((d = dpending) != NULL) {
-        CHAR_DATA *wch;
+        struct char_data *wch;
 
         dpending = descriptor_iterator(d, &descriptor_empty_filter);
         wch = CH(d);
@@ -1576,9 +1576,9 @@ void do_snlist(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_switch(CHAR_DATA *ch, const char *argument)
+void do_switch(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char arg[MAX_INPUT_LENGTH];
     char buf[MAX_STRING_LENGTH];
 
@@ -1645,7 +1645,7 @@ void do_switch(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_return(CHAR_DATA *ch, const char *argument)
+void do_return(struct char_data *ch, const char *argument)
 {
     char buf[MAX_STRING_LENGTH];
 
@@ -1674,7 +1674,7 @@ void do_return(CHAR_DATA *ch, const char *argument)
 }
 
 /* trust levels for load and clone */
-bool obj_check(CHAR_DATA *ch, struct gameobject *obj)
+bool obj_check(struct char_data *ch, struct gameobject *obj)
 {
     if (IS_TRUSTED(ch, GOD)
         || (IS_TRUSTED(ch, IMMORTAL) && obj->level <= 20 && obj->cost <= 1000)
@@ -1687,7 +1687,7 @@ bool obj_check(CHAR_DATA *ch, struct gameobject *obj)
 }
 
 /* for clone, to insure that cloning goes many levels deep */
-void recursive_clone(CHAR_DATA *ch, struct gameobject *obj, struct gameobject *clone)
+void recursive_clone(struct char_data *ch, struct gameobject *obj, struct gameobject *clone)
 {
     struct gameobject *c_obj;
     struct gameobject *t_obj;
@@ -1702,9 +1702,9 @@ void recursive_clone(CHAR_DATA *ch, struct gameobject *obj, struct gameobject *c
 }
 
 /* command that is similar to load */
-void do_clone(CHAR_DATA *ch, const char *argument)
+void do_clone(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *mob;
+    struct char_data *mob;
     struct gameobject *obj;
     static char arg[MAX_INPUT_LENGTH];
     static char buf[MAX_INPUT_LENGTH];
@@ -1808,7 +1808,7 @@ void do_clone(CHAR_DATA *ch, const char *argument)
                 send_to_char("Your powers are not great enough for such a task.\n\r", ch);
                 return;
             } else {
-                CHAR_DATA *clone = NULL;
+                struct char_data *clone = NULL;
                 char buf[MAX_STRING_LENGTH];
 
                 for (iter = 0; iter < count; iter++) {
@@ -1847,7 +1847,7 @@ void do_clone(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_load(CHAR_DATA *ch, const char *argument)
+void do_load(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
 
@@ -1884,10 +1884,10 @@ void do_load(CHAR_DATA *ch, const char *argument)
     do_load(ch, "");
 }
 
-void do_mload(CHAR_DATA *ch, const char *argument)
+void do_mload(struct char_data *ch, const char *argument)
 {
     struct mob_index_data *pMobIndex;
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char arg[MAX_INPUT_LENGTH];
     char buf[MAX_STRING_LENGTH];
 
@@ -1915,7 +1915,7 @@ void do_mload(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_oload(CHAR_DATA *ch, const char *argument)
+void do_oload(struct char_data *ch, const char *argument)
 {
     struct objectprototype *pObjIndex;
     struct gameobject *obj;
@@ -1968,9 +1968,9 @@ void do_oload(CHAR_DATA *ch, const char *argument)
     send_to_char(buf, ch);
 }
 
-void do_purge(CHAR_DATA *ch, const char *argument)
+void do_purge(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
     char buf[100];
@@ -1981,7 +1981,7 @@ void do_purge(CHAR_DATA *ch, const char *argument)
 
     if (arg[0] == '\0') {
         /* 'purge' */
-        CHAR_DATA *vnext;
+        struct char_data *vnext;
         struct gameobject *obj_next;
 
         for (victim = ch->in_room->people; victim != NULL; victim = vnext) {
@@ -2037,9 +2037,9 @@ void do_purge(CHAR_DATA *ch, const char *argument)
     extract_char(victim, true);
 }
 
-void do_advance(CHAR_DATA *ch, const char *argument)
+void do_advance(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
     char arg3[MAX_INPUT_LENGTH];
@@ -2139,9 +2139,9 @@ void do_advance(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_trust(CHAR_DATA *ch, const char *argument)
+void do_trust(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
     int level;
@@ -2185,9 +2185,9 @@ void do_trust(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_affstrip(CHAR_DATA *ch, const char *argument)
+void do_affstrip(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char target[MAX_INPUT_LENGTH];
     char affect[MAX_STRING_LENGTH];
 
@@ -2240,10 +2240,10 @@ void do_affstrip(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_log(CHAR_DATA *ch, const char *argument)
+void do_log(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
-    CHAR_DATA *victim;
+    struct char_data *victim;
 
     one_argument(argument, arg);
 
@@ -2288,9 +2288,9 @@ void do_log(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_peace(CHAR_DATA *ch, const char *argument)
+void do_peace(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *rch;
+    struct char_data *rch;
 
     DENY_NPC(ch)
 
@@ -2306,7 +2306,7 @@ void do_peace(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_wizlock(CHAR_DATA *ch, const char *argument)
+void do_wizlock(struct char_data *ch, const char *argument)
 {
     DENY_NPC(ch)
 
@@ -2321,7 +2321,7 @@ void do_wizlock(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_newlock(CHAR_DATA *ch, const char *argument)
+void do_newlock(struct char_data *ch, const char *argument)
 {
     DENY_NPC(ch);
 
@@ -2336,7 +2336,7 @@ void do_newlock(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_mode(CHAR_DATA *ch, const char *argument)
+void do_mode(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
@@ -2384,7 +2384,7 @@ void do_mode(CHAR_DATA *ch, const char *argument)
     do_mode(ch, "");
 }
 
-void do_slot(CHAR_DATA *ch, const char *argument)
+void do_slot(struct char_data *ch, const char *argument)
 {
     SKILL *skill;
     char arg[MAX_INPUT_LENGTH];
@@ -2407,7 +2407,7 @@ void do_slot(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_sockets(CHAR_DATA *ch, const char *argument)
+void do_sockets(struct char_data *ch, const char *argument)
 {
     struct descriptor_data *d, *dpending;
     BUFFER *buf;
@@ -2510,7 +2510,7 @@ void do_sockets(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_force(CHAR_DATA *ch, const char *argument)
+void do_force(struct char_data *ch, const char *argument)
 {
     char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
@@ -2549,8 +2549,8 @@ void do_force(CHAR_DATA *ch, const char *argument)
 
     sprintf(buf, "$n forces you to '%s'.", argument);
     if (!str_cmp(arg, "all")) {
-        CHAR_DATA *vch;
-        CHAR_DATA *vch_next;
+        struct char_data *vch;
+        struct char_data *vch_next;
 
         if (get_trust(ch) < MAX_LEVEL - 3) {
             send_to_char("Not at your level!\n\r", ch);
@@ -2575,8 +2575,8 @@ void do_force(CHAR_DATA *ch, const char *argument)
             }
         }
     } else if (!str_cmp(arg, "players")) {
-        CHAR_DATA *vch;
-        CHAR_DATA *vch_next;
+        struct char_data *vch;
+        struct char_data *vch_next;
 
         if (get_trust(ch) < MAX_LEVEL - 2) {
             send_to_char("Not at your level!\n\r", ch);
@@ -2593,8 +2593,8 @@ void do_force(CHAR_DATA *ch, const char *argument)
             }
         }
     } else if (!str_cmp(arg, "gods")) {
-        CHAR_DATA *vch;
-        CHAR_DATA *vch_next;
+        struct char_data *vch;
+        struct char_data *vch_next;
 
         if (get_trust(ch) < MAX_LEVEL - 2) {
             send_to_char("Not at your level!\n\r", ch);
@@ -2611,7 +2611,7 @@ void do_force(CHAR_DATA *ch, const char *argument)
             }
         }
     } else {
-        CHAR_DATA *victim;
+        struct char_data *victim;
 
         if ((victim = get_char_world(ch, arg)) == NULL) {
             send_to_char("They aren't here.\n\r", ch);
@@ -2652,7 +2652,7 @@ void do_force(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_winvis(CHAR_DATA *ch, const char *argument)
+void do_winvis(struct char_data *ch, const char *argument)
 {
     int level;
     char arg[MAX_STRING_LENGTH];
@@ -2691,7 +2691,7 @@ void do_winvis(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_incognito(CHAR_DATA *ch, const char *argument)
+void do_incognito(struct char_data *ch, const char *argument)
 {
     int level;
     char arg[MAX_STRING_LENGTH];
@@ -2730,7 +2730,7 @@ void do_incognito(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_holylight(CHAR_DATA *ch, const char *argument)
+void do_holylight(struct char_data *ch, const char *argument)
 {
     if (IS_NPC(ch))
         return;
@@ -2746,13 +2746,13 @@ void do_holylight(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_prefi(CHAR_DATA *ch, const char *argument)
+void do_prefi(struct char_data *ch, const char *argument)
 {
     send_to_char("You cannot abbreviate the prefix command.\r\n", ch);
     return;
 }
 
-void do_prefix(CHAR_DATA *ch, const char *argument)
+void do_prefix(struct char_data *ch, const char *argument)
 {
     char buf[MAX_INPUT_LENGTH];
 
@@ -2789,18 +2789,18 @@ void do_prefix(CHAR_DATA *ch, const char *argument)
  *  Adapted to Diku by Erwin S. Andreasen, <erwin@pip.dknet.dk>
  *  Changed into a ROM patch after seeing the 100th request for it :)
  */
-void do_copyover(CHAR_DATA *ch, const char *argument)
+void do_copyover(struct char_data *ch, const char *argument)
 {
     if (!copyover()) {
         send_to_char("Copyover FAILED! (check std err for reason.)\n\r", ch);
     }
 }
 
-void do_rename(CHAR_DATA *ch, const char *argument)
+void do_rename(struct char_data *ch, const char *argument)
 {
     char old_name[MAX_INPUT_LENGTH], new_name[MAX_INPUT_LENGTH], strsave[MAX_INPUT_LENGTH];
 
-    CHAR_DATA *victim;
+    struct char_data *victim;
     FILE *file;
 
     argument = one_argument(argument, old_name);
@@ -2904,7 +2904,7 @@ void do_rename(CHAR_DATA *ch, const char *argument)
 
 
 
-void do_pnlist(CHAR_DATA *ch, const char *argument)
+void do_pnlist(struct char_data *ch, const char *argument)
 {
     struct descriptor_data *d, *dpending;
 
@@ -2917,7 +2917,7 @@ void do_pnlist(CHAR_DATA *ch, const char *argument)
 
     dpending = descriptor_iterator_start(&descriptor_empty_filter);
     while ((d = dpending) != NULL) {
-        CHAR_DATA *wch;
+        struct char_data *wch;
         dpending = descriptor_iterator(d, &descriptor_empty_filter);
 
         wch = CH(d);
@@ -2941,7 +2941,7 @@ void do_pnlist(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_repop(CHAR_DATA *ch, const char *argument)
+void do_repop(struct char_data *ch, const char *argument)
 {
     DENY_NPC(ch);
 
@@ -2963,7 +2963,7 @@ void do_repop(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_omnistat(CHAR_DATA *ch, const char *argument)
+void do_omnistat(struct char_data *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
     struct descriptor_data *d;
@@ -2986,7 +2986,7 @@ void do_omnistat(CHAR_DATA *ch, const char *argument)
 
     dpending = descriptor_iterator_start(&playing_filter);
     while ((d = dpending) != NULL) {
-        CHAR_DATA *wch;
+        struct char_data *wch;
         dpending = descriptor_iterator(d, &playing_filter);
 
         wch = CH(d);
@@ -3014,7 +3014,7 @@ void do_omnistat(CHAR_DATA *ch, const char *argument)
     hptemp = 0;
     dpending = descriptor_iterator_start(&playing_filter);
     while ((d = dpending) != NULL) {
-        CHAR_DATA *wch;
+        struct char_data *wch;
         dpending = descriptor_iterator(d, &playing_filter);
         char const *class;
 
@@ -3065,7 +3065,7 @@ void do_omnistat(CHAR_DATA *ch, const char *argument)
     free_buf(output);
 }
 
-void do_olevel(CHAR_DATA *ch, const char *argument)
+void do_olevel(struct char_data *ch, const char *argument)
 {
     char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
@@ -3114,7 +3114,7 @@ void do_olevel(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_mlevel(CHAR_DATA *ch, const char *argument)
+void do_mlevel(struct char_data *ch, const char *argument)
 {
     char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
@@ -3160,7 +3160,7 @@ void do_mlevel(CHAR_DATA *ch, const char *argument)
 }
 
 
-static void print_setrestore_help(CHAR_DATA *ch)
+static void print_setrestore_help(struct char_data *ch)
 {
     send_to_char("Srestore syntax:\n\r", ch);
     send_to_char("  srestore room <text>  :  set restore string for rooms\n\r", ch);
@@ -3168,7 +3168,7 @@ static void print_setrestore_help(CHAR_DATA *ch)
     send_to_char("  srestore global <text>:  set restore string for global\n\r", ch);
 }
 
-void do_setrestore(CHAR_DATA *ch, const char *argument)
+void do_setrestore(struct char_data *ch, const char *argument)
 {
     static char arg[MAX_INPUT_LENGTH];
     static char buf[MAX_INPUT_LENGTH];
@@ -3199,7 +3199,7 @@ void do_setrestore(CHAR_DATA *ch, const char *argument)
     print_setrestore_help(ch);
 }
 
-void set_grestore(CHAR_DATA *ch, const char *argument)
+void set_grestore(struct char_data *ch, const char *argument)
 {
     DENY_NPC(ch);
 
@@ -3218,7 +3218,7 @@ void set_grestore(CHAR_DATA *ch, const char *argument)
     printf_to_char(ch, "Your `Oglobal`7 restore string is now set to:\n%s\n", ch->pcdata->grestore_string);
 }
 
-void set_rrestore(CHAR_DATA *ch, const char *argument)
+void set_rrestore(struct char_data *ch, const char *argument)
 {
     DENY_NPC(ch);
 
@@ -3237,7 +3237,7 @@ void set_rrestore(CHAR_DATA *ch, const char *argument)
     printf_to_char(ch, "Your `Oroom`7 restore string is now set to:\n%s\n", ch->pcdata->rrestore_string);
 }
 
-void do_review(CHAR_DATA *ch, const char *argument)
+void do_review(struct char_data *ch, const char *argument)
 {
     char buf[MAX_STRING_LENGTH];
 
@@ -3277,10 +3277,10 @@ void do_review(CHAR_DATA *ch, const char *argument)
 /* Expand the name of a character into a string that identifies THAT
  * character within a room. E.g. the second 'guard' -> 2. guard
  */
-const char *name_expand(CHAR_DATA *ch)
+const char *name_expand(struct char_data *ch)
 {
     int count = 1;
-    CHAR_DATA *rch;
+    struct char_data *rch;
     char name[MAX_INPUT_LENGTH];
 
     static char outbuf[MAX_INPUT_LENGTH];
@@ -3302,9 +3302,9 @@ const char *name_expand(CHAR_DATA *ch)
     return outbuf;
 }
 
-void do_addalias(CHAR_DATA *ch, const char *argument)
+void do_addalias(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *rch;
+    struct char_data *rch;
     char arg[MAX_INPUT_LENGTH];
     int pos;
 
@@ -3387,7 +3387,7 @@ void do_addalias(CHAR_DATA *ch, const char *argument)
 }
 
 
-void fry_char(CHAR_DATA *ch, char *argument)
+void fry_char(struct char_data *ch, char *argument)
 {
     struct descriptor_data *d;
     struct gameobject *obj;
@@ -3422,7 +3422,7 @@ void fry_char(CHAR_DATA *ch, char *argument)
     return;
 }
 
-void do_mrelic(CHAR_DATA *ch, const char *argument)
+void do_mrelic(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     int i = 1500;
@@ -3454,9 +3454,9 @@ void do_mrelic(CHAR_DATA *ch, const char *argument)
  *  World Peace - stops all fighting in the game
  *  Added by Monrick, 1/2008
  *************************************************/
-void do_wpeace(CHAR_DATA *ch, const char *argument)
+void do_wpeace(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *fch;
+    struct char_data *fch;
 
     for (fch = char_list; fch != NULL; fch = fch->next) {
         if (fch->desc == NULL || fch->desc->connected != CON_PLAYING)
@@ -3474,7 +3474,7 @@ void do_wpeace(CHAR_DATA *ch, const char *argument)
 }
 
 
-void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is mood, const char *message)
+void sick_harvey_proctor(struct char_data *ch, enum e_harvey_proctor_is mood, const char *message)
 {
     char buf[MAX_STRING_LENGTH];
     const char *censor_name = "Harvey Proctor";
@@ -3501,7 +3501,7 @@ void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is mood, const cha
     send_to_char(buf, ch);
 }
 
-void do_busy(CHAR_DATA *ch, /*@unused@*/ const char *argument)
+void do_busy(struct char_data *ch, /*@unused@*/ const char *argument)
 {
     if (IS_SET(ch->comm, COMM_BUSY)) {
         send_to_char("Busy flag removed. Type 'replay' to see tells.\n\r", ch);
@@ -3512,7 +3512,7 @@ void do_busy(CHAR_DATA *ch, /*@unused@*/ const char *argument)
     }
 }
 
-void do_coding(CHAR_DATA *ch, /*@unused@*/ const char *argument)
+void do_coding(struct char_data *ch, /*@unused@*/ const char *argument)
 {
     if (IS_SET(ch->comm, COMM_CODING)) {
         send_to_char("Coding flag removed. Type 'replay' to see tells.\n\r", ch);
@@ -3523,7 +3523,7 @@ void do_coding(CHAR_DATA *ch, /*@unused@*/ const char *argument)
     }
 }
 
-void do_building(CHAR_DATA *ch, /*@unused@*/ const char *argument)
+void do_building(struct char_data *ch, /*@unused@*/ const char *argument)
 {
     if (IS_SET(ch->comm, COMM_BUILD)) {
         send_to_char("Building flag removed. Type 'replay' to see tells.\n\r", ch);

@@ -13,21 +13,21 @@ bool check_ban(const char *site, int type);
 /** locals */
 static BAN_DATA *ban_list;
 static void save_bans(void);
-static void ban_site(CHAR_DATA *ch, const char *argument, bool fPerm);
+static void ban_site(struct char_data *ch, const char *argument, bool fPerm);
 
 
 
-void do_ban(CHAR_DATA *ch, const char *argument)
+void do_ban(struct char_data *ch, const char *argument)
 {
     ban_site(ch, argument, false);
 }
 
-void do_permban(CHAR_DATA *ch, const char *argument)
+void do_permban(struct char_data *ch, const char *argument)
 {
     ban_site(ch, argument, true);
 }
 
-void do_allow(CHAR_DATA *ch, const char *argument)
+void do_allow(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
     char buf[MAX_STRING_LENGTH];
@@ -151,7 +151,7 @@ bool check_ban(const char *site, int type)
 }
 
 
-void ban_site(CHAR_DATA *ch, const char *argument, bool fPerm)
+void ban_site(struct char_data *ch, const char *argument, bool fPerm)
 {
     char buf[MAX_STRING_LENGTH], buf2[MAX_STRING_LENGTH];
     char arg1[MAX_INPUT_LENGTH], arg2[MAX_INPUT_LENGTH];

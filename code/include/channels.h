@@ -14,8 +14,8 @@
 #define CHANNEL_TARGET_REQUIRED    3
 
 typedef struct channel_definition CHANNEL_DEFINITION;
-typedef void BROADCAST_FUNCTION(/*@notnull@*/const CHANNEL_DEFINITION const *channel, /*@partial@*/CHAR_DATA *sender, const char *argument);
-typedef void BROADCAST_TARGET_FUNCTION(/*@notnull@*/const CHANNEL_DEFINITION const *channel, /*@partial@*/CHAR_DATA *sender, /*@partial@*//*@null@*/CHAR_DATA *target, const char *argument);
+typedef void BROADCAST_FUNCTION(/*@notnull@*/const CHANNEL_DEFINITION const *channel, /*@partial@*/struct char_data *sender, const char *argument);
+typedef void BROADCAST_TARGET_FUNCTION(/*@notnull@*/const CHANNEL_DEFINITION const *channel, /*@partial@*/struct char_data *sender, /*@partial@*//*@null@*/struct char_data *target, const char *argument);
 typedef unsigned long CHANNEL_FLAG_TYPE;
 
 struct channel_definition {
@@ -29,9 +29,9 @@ struct channel_definition {
     /*@null@*/BROADCAST_TARGET_FUNCTION *targeted_broadcaster;
 };
 
-void channels_toggle(/*@partial@*/CHAR_DATA *ch, /*@notnull@*/const CHANNEL_DEFINITION const *channel);
-void channels_show(/*@partial@*/CHAR_DATA *ch);
-void channels_permission(/*@partial@*/CHAR_DATA *grantor, /*@partial@*/CHAR_DATA *grantee, bool granted, /*@notnull@*/const CHANNEL_DEFINITION const *channel);
+void channels_toggle(/*@partial@*/struct char_data *ch, /*@notnull@*/const CHANNEL_DEFINITION const *channel);
+void channels_show(/*@partial@*/struct char_data *ch);
+void channels_permission(/*@partial@*/struct char_data *grantor, /*@partial@*/struct char_data *grantee, bool granted, /*@notnull@*/const CHANNEL_DEFINITION const *channel);
 const CHANNEL_DEFINITION const *channels_parse(const char *argument);
 const CHANNEL_DEFINITION const *channels_find(CHANNEL_FLAG_TYPE channel_flag);
-void broadcast_channel(/*@partial@*/CHAR_DATA *sender, const CHANNEL_DEFINITION const *channel, /*@partial@*//*@null@*/CHAR_DATA *target, const char *argument);
+void broadcast_channel(/*@partial@*/struct char_data *sender, const CHANNEL_DEFINITION const *channel, /*@partial@*//*@null@*/struct char_data *target, const char *argument);

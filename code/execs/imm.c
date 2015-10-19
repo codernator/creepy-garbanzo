@@ -24,7 +24,7 @@ struct system_state globalSystemState = {
 extern char *password_encrypt(const char *plain);
 
 
-static CHAR_DATA *create();
+static struct char_data *create();
 static struct pc_data *create_pcdata();
 
 static char *name = "Codernator";
@@ -38,7 +38,7 @@ static time_t now_time;
 
 int main(int argc, char **argv)
 {
-    CHAR_DATA *ch;
+    struct char_data *ch;
     (void)time(&now_time);
     globalSystemState.current_time = now_time;
     boot_db();
@@ -50,9 +50,9 @@ int main(int argc, char **argv)
 }
 
 
-CHAR_DATA *create()
+struct char_data *create()
 {
-    CHAR_DATA *ch = new_char();
+    struct char_data *ch = new_char();
 
     ch->pcdata = create_pcdata();
 

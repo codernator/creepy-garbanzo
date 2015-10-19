@@ -29,9 +29,9 @@ heal_cmd_table[] =
 	{ "",	       "",		    "",			    0	  },
 };
 
-void do_heal(CHAR_DATA *ch, const char *argument)
+void do_heal(struct char_data *ch, const char *argument)
 {
-	CHAR_DATA *mob;
+	struct char_data *mob;
 	struct gameobject *acid;
 	SKILL *skill;
 	char arg[MAX_INPUT_LENGTH];

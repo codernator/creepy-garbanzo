@@ -39,7 +39,7 @@ const struct olc_cmd_type gredit_table[] =
  *
  *	command interpreter for the group editor
  ***************************************************************************/
-void gredit(CHAR_DATA *ch, const char *argument)
+void gredit(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
     const char *parg;
@@ -82,7 +82,7 @@ void gredit(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	entry point for the skill editor
  ***************************************************************************/
-void do_gredit(CHAR_DATA *ch, const char *argument)
+void do_gredit(struct char_data *ch, const char *argument)
 {
     GROUP *group;
     char arg[MAX_STRING_LENGTH];

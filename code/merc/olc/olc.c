@@ -22,13 +22,13 @@ struct olc_help_type {
 };
 
 
-static bool show_version(CHAR_DATA * ch, const char *argument);
-static void show_liqlist(CHAR_DATA * ch);
-static void show_damlist(CHAR_DATA * ch);
-static void aedit(CHAR_DATA * ch, const char *argument);
-static void redit(CHAR_DATA * ch, const char *argument);
-static void medit(CHAR_DATA * ch, const char *argument);
-static void oedit(CHAR_DATA * ch, const char *argument);
+static bool show_version(struct char_data * ch, const char *argument);
+static void show_liqlist(struct char_data * ch);
+static void show_damlist(struct char_data * ch);
+static void aedit(struct char_data * ch, const char *argument);
+static void redit(struct char_data * ch, const char *argument);
+static void medit(struct char_data * ch, const char *argument);
+static void oedit(struct char_data * ch, const char *argument);
 
 
 
@@ -249,7 +249,7 @@ bool run_olc_editor(struct descriptor_data *d)
  *
  *	get the name of the editor
  ***************************************************************************/
-char *olc_ed_name(CHAR_DATA *ch)
+char *olc_ed_name(struct char_data *ch)
 {
     static char buf[10];
 
@@ -291,7 +291,7 @@ char *olc_ed_name(CHAR_DATA *ch)
 /***************************************************************************
  *	olc_ed_vnum
  ***************************************************************************/
-char *olc_ed_vnum(CHAR_DATA *ch)
+char *olc_ed_vnum(struct char_data *ch)
 {
     struct area_data *pArea;
     struct room_index_data *pRoom;
@@ -351,7 +351,7 @@ char *olc_ed_vnum(CHAR_DATA *ch)
  * Purpose:	Format up the commands from given table.
  * Called by:	show_commands(olc_act.c).
  ****************************************************************************/
-static void show_olc_cmds(CHAR_DATA *ch, const struct olc_cmd_type *olc_table)
+static void show_olc_cmds(struct char_data *ch, const struct olc_cmd_type *olc_table)
 {
     BUFFER *out;
     char buf[MAX_STRING_LENGTH];
@@ -382,7 +382,7 @@ static void show_olc_cmds(CHAR_DATA *ch, const struct olc_cmd_type *olc_table)
  * Purpose:	Display all olc commands.
  * Called by:	olc interpreters.
  ****************************************************************************/
-bool show_commands(CHAR_DATA *ch, const char *argument)
+bool show_commands(struct char_data *ch, const char *argument)
 {
     switch (ch->desc->editor) {
       case ED_AREA:
@@ -420,7 +420,7 @@ bool show_commands(CHAR_DATA *ch, const char *argument)
  * Purpose:	Resets builder information on completion.
  * Called by:	aedit, redit, oedit, medit(olc.c)
  **************************************************************************/
-bool edit_done(CHAR_DATA *ch)
+bool edit_done(struct char_data *ch)
 {
     ch->desc->ed_data = NULL;
     ch->desc->editor = 0;
@@ -436,7 +436,7 @@ bool edit_done(CHAR_DATA *ch)
  *
  *	area editing interpreter
  ***************************************************************************/
-void aedit(CHAR_DATA *ch, const char *argument)
+void aedit(struct char_data *ch, const char *argument)
 {
     struct area_data *pArea;
     char command[MAX_INPUT_LENGTH];
@@ -495,7 +495,7 @@ void aedit(CHAR_DATA *ch, const char *argument)
  *
  *	room editing interpreter
  *****************************************************************************/
-void redit(CHAR_DATA *ch, const char *argument)
+void redit(struct char_data *ch, const char *argument)
 {
     struct area_data *pArea;
     struct room_index_data *pRoom;
@@ -550,7 +550,7 @@ void redit(CHAR_DATA *ch, const char *argument)
  *
  *	object editing interpreter
  *****************************************************************************/
-void oedit(CHAR_DATA *ch, const char *argument)
+void oedit(struct char_data *ch, const char *argument)
 {
     struct area_data *pArea;
     struct objectprototype *pObj;
@@ -606,7 +606,7 @@ void oedit(CHAR_DATA *ch, const char *argument)
  *
  *	mobile editing interpreter
  *****************************************************************************/
-void medit(CHAR_DATA *ch, const char *argument)
+void medit(struct char_data *ch, const char *argument)
 {
     struct area_data *pArea;
     struct mob_index_data *pMob;
@@ -677,7 +677,7 @@ static const struct editor_cmd_type editor_table[] =
 /*****************************************************************************
  *	do_olc
  *****************************************************************************/
-void do_olc(CHAR_DATA *ch, const char *argument)
+void do_olc(struct char_data *ch, const char *argument)
 {
     char command[MAX_INPUT_LENGTH];
     int cmd;
@@ -710,7 +710,7 @@ void do_olc(CHAR_DATA *ch, const char *argument)
 /*****************************************************************************
  *	do_aedit
  *****************************************************************************/
-void do_aedit(CHAR_DATA *ch, const char *argument)
+void do_aedit(struct char_data *ch, const char *argument)
 {
     struct area_data *pArea;
     int value;
@@ -756,7 +756,7 @@ void do_aedit(CHAR_DATA *ch, const char *argument)
 /*****************************************************************************
  *	display_resets
  *****************************************************************************/
-static void display_resets(CHAR_DATA *ch)
+static void display_resets(struct char_data *ch)
 {
     struct room_index_data *pRoom;
     struct reset_data *pReset;
@@ -978,7 +978,7 @@ void add_reset(struct room_index_data *room, struct reset_data *pReset, long ind
 /*****************************************************************************
  *	do_resets
  *****************************************************************************/
-void do_resets(CHAR_DATA *ch, const char *argument)
+void do_resets(struct char_data *ch, const char *argument)
 {
     struct reset_data *pReset = NULL;
     char arg1[MAX_INPUT_LENGTH];
@@ -1153,7 +1153,7 @@ void do_resets(CHAR_DATA *ch, const char *argument)
  * Purpose:	Normal command to list areas and display area information.
  * Called by:	interpreter(interp.c)
  ****************************************************************************/
-void do_alist(CHAR_DATA *ch, const char *argument)
+void do_alist(struct char_data *ch, const char *argument)
 {
     struct area_data *pArea;
     struct area_iterator *iterator;
@@ -1189,7 +1189,7 @@ void do_alist(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	show_version
  ***************************************************************************/
-bool show_version(CHAR_DATA *ch, const char *argument)
+bool show_version(struct char_data *ch, const char *argument)
 {
     printf_to_char(ch, "%s\n\r%s\n\r%s\n\r%s\n\r", OLCVERSION, AUTHOR, DATE, CREDITS);
     return false;
@@ -1256,7 +1256,7 @@ static const struct olc_help_type help_table[] =
  * Purpose:	Displays settable flags and stats.
  * Called by:	show_olc_help(olc_act.c).
  ****************************************************************************/
-static void show_flag_cmds(CHAR_DATA *ch, const struct flag_type *flag_table)
+static void show_flag_cmds(struct char_data *ch, const struct flag_type *flag_table)
 {
     char buf[MAX_STRING_LENGTH];
     char buf1[MAX_STRING_LENGTH];
@@ -1291,7 +1291,7 @@ static void show_flag_cmds(CHAR_DATA *ch, const struct flag_type *flag_table)
  *              (2) Adding a check for a level range.
  * Called by:	show_olc_help(olc_act.c).
  ****************************************************************************/
-void show_skill_cmds(CHAR_DATA *ch, int tar)
+void show_skill_cmds(struct char_data *ch, int tar)
 {
     BUFFER *buf;
     SKILL *skill;
@@ -1325,7 +1325,7 @@ void show_skill_cmds(CHAR_DATA *ch, int tar)
  *
  *	show helps for most of the tables used in OLC
  ***************************************************************************/
-bool show_olc_help(CHAR_DATA *ch, const char *argument)
+bool show_olc_help(struct char_data *ch, const char *argument)
 {
     bool found;
     int cnt;
@@ -1456,7 +1456,7 @@ long wear_bit(int loc)
  *
  *	show a list of all the available liquids
  ***************************************************************************/
-void show_liqlist(CHAR_DATA *ch)
+void show_liqlist(struct char_data *ch)
 {
     int liq;
 
@@ -1483,7 +1483,7 @@ void show_liqlist(CHAR_DATA *ch)
  *
  *	shows a list of all the damage types
  ***************************************************************************/
-void show_damlist(CHAR_DATA *ch)
+void show_damlist(struct char_data *ch)
 {
     int att;
 

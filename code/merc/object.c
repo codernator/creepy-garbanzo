@@ -214,7 +214,7 @@ inline const char *object_ownername_get(const struct gameobject *object)
     return object->owner_name;
 }
 
-void object_ownername_set(struct gameobject *object, const CHAR_DATA *owner)
+void object_ownername_set(struct gameobject *object, const struct char_data *owner)
 {
     if (object->owner_name != NULL)
 	free_string(object->owner_name);

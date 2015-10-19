@@ -14,20 +14,20 @@
 
 /** exports */
 void auction_update(void);
-bool is_auction_participant(CHAR_DATA *ch);
+bool is_auction_participant(struct char_data *ch);
 /*@shared@*//*@null@*/struct gameobject *get_auction_item();
 
 
 /** imports */
-extern void recursive_clone(CHAR_DATA * ch, struct gameobject * obj, struct gameobject * clone);
+extern void recursive_clone(struct char_data * ch, struct gameobject * obj, struct gameobject * clone);
 
 
 /** locals */
 typedef struct auction_data AUCTION_DATA;
 struct auction_data {
     struct gameobject * item;
-    CHAR_DATA * seller;
-    CHAR_DATA * buyer;
+    struct char_data * seller;
+    struct char_data * buyer;
     unsigned int bet;
     int  going;
     int  pulse;
@@ -47,8 +47,8 @@ struct auction_types {
 static AUCTION_DATA currentAuction;
 static int auction_type_lookup(int type);
 static int auction_name_lookup(char *name);
-static bool check_bid(CHAR_DATA * ch, unsigned int bid, int type);
-static void credit_player_bid(CHAR_DATA * ch, long bid, int type);
+static bool check_bid(struct char_data * ch, unsigned int bid, int type);
+static void credit_player_bid(struct char_data * ch, long bid, int type);
 static unsigned int parsebet(const unsigned int currentbet, const char *argument);
 static unsigned int advatoi(const char *s);
 
@@ -69,7 +69,7 @@ static const struct auction_types auction_type_table[] =
 /***************************************************************************
  *	do_auction
  ***************************************************************************/
-void do_auction(CHAR_DATA *ch, const char *argument)
+void do_auction(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     char arg1[MAX_INPUT_LENGTH];
@@ -367,7 +367,7 @@ void auction_update(void)
     }
 }
 
-inline bool is_auction_participant(CHAR_DATA *ch)
+inline bool is_auction_participant(struct char_data *ch)
 {
     return (currentAuction.item != NULL && ((ch == currentAuction.buyer) || (ch == currentAuction.seller)));
 }
@@ -492,7 +492,7 @@ int auction_name_lookup(char *name)
 /***************************************************************************
  * see if a player has the proper bid of a given type
  ***************************************************************************/
-bool check_bid(CHAR_DATA *ch, unsigned int bid, int type)
+bool check_bid(struct char_data *ch, unsigned int bid, int type)
 {
     switch (type) {
       case AUCTION_TYPE_GOLD:
@@ -505,7 +505,7 @@ bool check_bid(CHAR_DATA *ch, unsigned int bid, int type)
 /***************************************************************************
  * see if a player has the proper bid of a given type
  ***************************************************************************/
-void credit_player_bid(CHAR_DATA *ch, long bid, int type)
+void credit_player_bid(struct char_data *ch, long bid, int type)
 {
     unsigned int *target;
     long result;

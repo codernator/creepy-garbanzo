@@ -14,8 +14,8 @@
 
 
 extern DECLARE_DO_FUN(do_look);
-extern struct room_index_data *find_location(CHAR_DATA *, const char *);
-void mob_interpret(CHAR_DATA * ch, const char *argument);
+extern struct room_index_data *find_location(struct char_data *, const char *);
+void mob_interpret(struct char_data * ch, const char *argument);
 
 /*
  * Command functions.
@@ -89,7 +89,7 @@ const struct  mob_cmd_type mob_cmd_table   [] =
     { "",		0		}
 };
 
-void do_mob(CHAR_DATA *ch, const char *argument)
+void do_mob(struct char_data *ch, const char *argument)
 {
     if (ch->desc != NULL && get_trust(ch) < MAX_LEVEL)
 	return;
@@ -102,7 +102,7 @@ void do_mob(CHAR_DATA *ch, const char *argument)
  * Mob command interpreter. Implemented separately for security and speed
  * reasons. A trivial hack of interpret()
  */
-void mob_interpret(CHAR_DATA *ch, const char *argument)
+void mob_interpret(struct char_data *ch, const char *argument)
 {
     char command[MAX_INPUT_LENGTH];
     int cmd;
@@ -168,10 +168,10 @@ char *mprog_type_to_name(int type)
  *
  * Syntax: mpstat [name]
  */
-void do_mpstat(CHAR_DATA *ch, const char *argument)
+void do_mpstat(struct char_data *ch, const char *argument)
 {
     MPROG_LIST *mprg;
-    CHAR_DATA *victim;
+    struct char_data *victim;
     int idx;
 
     if (argument[0] == '\0') {
@@ -217,7 +217,7 @@ void do_mpstat(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mpdump [vnum]
  */
-void do_mpdump(CHAR_DATA *ch, const char *argument)
+void do_mpdump(struct char_data *ch, const char *argument)
 {
     MPROG_CODE *mprg;
     char buf[MAX_INPUT_LENGTH];
@@ -237,7 +237,7 @@ void do_mpdump(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob gecho [string]
  */
-void do_mpgecho(CHAR_DATA *ch, const char *argument)
+void do_mpgecho(struct char_data *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
     struct descriptor_data *d;
@@ -260,7 +260,7 @@ void do_mpgecho(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob zecho [string]
  */
-void do_mpzecho(CHAR_DATA *ch, const char *argument)
+void do_mpzecho(struct char_data *ch, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
     struct descriptor_data *d;
@@ -288,7 +288,7 @@ void do_mpzecho(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob asound [string]
  */
-void do_mpasound(CHAR_DATA *ch, const char *argument)
+void do_mpasound(struct char_data *ch, const char *argument)
 {
     struct room_index_data *was_in_room;
     int door;
@@ -315,9 +315,9 @@ void do_mpasound(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob echoaround [victim] [string]
  */
-void do_mpechoaround(CHAR_DATA *ch, const char *argument)
+void do_mpechoaround(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char arg[MAX_INPUT_LENGTH];
 
     argument = one_argument(argument, arg);
@@ -335,9 +335,9 @@ void do_mpechoaround(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob echoat [victim] [string]
  */
-void do_mpechoat(CHAR_DATA *ch, const char *argument)
+void do_mpechoat(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char arg[MAX_INPUT_LENGTH];
 
     argument = one_argument(argument, arg);
@@ -355,7 +355,7 @@ void do_mpechoat(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob echo [string]
  */
-void do_mpecho(CHAR_DATA *ch, const char *argument)
+void do_mpecho(struct char_data *ch, const char *argument)
 {
     if (argument[0] == '\0')
 	return;
@@ -369,9 +369,9 @@ void do_mpecho(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob kill [victim]
  */
-void do_mpkill(CHAR_DATA *ch, const char *argument)
+void do_mpkill(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char arg[MAX_INPUT_LENGTH];
 
     one_argument(argument, arg);
@@ -399,9 +399,9 @@ void do_mpkill(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob assist [character]
  */
-void do_mpassist(CHAR_DATA *ch, const char *argument)
+void do_mpassist(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char arg[MAX_INPUT_LENGTH];
 
     one_argument(argument, arg);
@@ -426,7 +426,7 @@ void do_mpassist(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob junk [item]
  */
-void do_mpjunk(CHAR_DATA *ch, const char *argument)
+void do_mpjunk(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
     struct gameobject *obj;
@@ -467,10 +467,10 @@ void do_mpjunk(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob mload [vnum]
  */
-void do_mpmload(CHAR_DATA *ch, const char *argument)
+void do_mpmload(struct char_data *ch, const char *argument)
 {
     struct mob_index_data *pMobIndex;
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char arg[MAX_INPUT_LENGTH];
     int vnum;
 
@@ -494,7 +494,7 @@ void do_mpmload(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob oload [vnum] [level] {R}
  */
-void do_mpoload(CHAR_DATA *ch, const char *argument)
+void do_mpoload(struct char_data *ch, const char *argument)
 {
     struct objectprototype *objprototype;
     struct gameobject *obj;
@@ -593,17 +593,17 @@ void do_mpoload(CHAR_DATA *ch, const char *argument)
  *
  * syntax mob purge {target}
  */
-void do_mppurge(CHAR_DATA *ch, const char *argument)
+void do_mppurge(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
-    CHAR_DATA *victim;
+    struct char_data *victim;
     struct gameobject *obj;
 
     one_argument(argument, arg);
 
     if (arg[0] == '\0') {
 	/* 'purge' */
-	CHAR_DATA *vnext;
+	struct char_data *vnext;
 	struct gameobject *obj_next;
 
 	for (victim = ch->in_room->people; victim != NULL; victim = vnext) {
@@ -644,7 +644,7 @@ void do_mppurge(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob goto [location]
  */
-void do_mpgoto(CHAR_DATA *ch, const char *argument)
+void do_mpgoto(struct char_data *ch, const char *argument)
 {
     struct room_index_data *location;
     char arg[MAX_INPUT_LENGTH];
@@ -677,12 +677,12 @@ void do_mpgoto(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob at [location] [commands]
  */
-void do_mpat(CHAR_DATA *ch, const char *argument)
+void do_mpat(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
     struct room_index_data *location;
     struct room_index_data *original;
-    CHAR_DATA *wch;
+    struct char_data *wch;
     struct gameobject *on;
 
     argument = one_argument(argument, arg);
@@ -725,13 +725,13 @@ void do_mpat(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob transfer [target|'all'] [location]
  */
-void do_mptransfer(CHAR_DATA *ch, const char *argument)
+void do_mptransfer(struct char_data *ch, const char *argument)
 {
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
     char buf[MAX_STRING_LENGTH];
     struct room_index_data *location;
-    CHAR_DATA *victim;
+    struct char_data *victim;
 
     argument = one_argument(argument, arg1);
     argument = one_argument(argument, arg2);
@@ -742,7 +742,7 @@ void do_mptransfer(CHAR_DATA *ch, const char *argument)
     }
 
     if (!str_cmp(arg1, "all")) {
-	CHAR_DATA *victim_next;
+	struct char_data *victim_next;
 
 	for (victim = ch->in_room->people; victim != NULL; victim = victim_next) {
 	    victim_next = victim->next_in_room;
@@ -789,12 +789,12 @@ void do_mptransfer(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob gtransfer [victim] [location]
  */
-void do_mpgtransfer(CHAR_DATA *ch, const char *argument)
+void do_mpgtransfer(struct char_data *ch, const char *argument)
 {
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
     char buf[MAX_STRING_LENGTH];
-    CHAR_DATA *who, *victim, *victim_next;
+    struct char_data *who, *victim, *victim_next;
 
     argument = one_argument(argument, arg1);
     argument = one_argument(argument, arg2);
@@ -823,7 +823,7 @@ void do_mpgtransfer(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob force [victim] [commands]
  */
-void do_mpforce(CHAR_DATA *ch, const char *argument)
+void do_mpforce(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
 
@@ -835,8 +835,8 @@ void do_mpforce(CHAR_DATA *ch, const char *argument)
     }
 
     if (!str_cmp(arg, "all")) {
-	CHAR_DATA *vch;
-	CHAR_DATA *vch_next;
+	struct char_data *vch;
+	struct char_data *vch_next;
 
 	for (vch = char_list; vch != NULL; vch = vch_next) {
 	    vch_next = vch->next;
@@ -847,7 +847,7 @@ void do_mpforce(CHAR_DATA *ch, const char *argument)
 		interpret(vch, argument);
 	}
     } else {
-	CHAR_DATA *victim;
+	struct char_data *victim;
 
 	if ((victim = get_char_room(ch, arg)) == NULL)
 	    return;
@@ -866,10 +866,10 @@ void do_mpforce(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob gforce [victim] [commands]
  */
-void do_mpgforce(CHAR_DATA *ch, const char *argument)
+void do_mpgforce(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
-    CHAR_DATA *victim, *vch, *vch_next;
+    struct char_data *victim, *vch, *vch_next;
 
     argument = one_argument(argument, arg);
 
@@ -898,9 +898,9 @@ void do_mpgforce(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob vforce [vnum] [commands]
  */
-void do_mpvforce(CHAR_DATA *ch, const char *argument)
+void do_mpvforce(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim, *victim_next;
+    struct char_data *victim, *victim_next;
     char arg[MAX_INPUT_LENGTH];
     long vnum;
 
@@ -936,9 +936,9 @@ void do_mpvforce(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob cast [spell] {target}
  */
-void do_mpcast(CHAR_DATA *ch, const char *argument)
+void do_mpcast(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *vch;
+    struct char_data *vch;
     struct gameobject *obj;
     SKILL *skill;
     void *victim = NULL;
@@ -996,9 +996,9 @@ void do_mpcast(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob damage [victim] [min] [max] {kill}
  */
-void do_mpdamage(CHAR_DATA *ch, const char *argument)
+void do_mpdamage(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim = NULL, *victim_next;
+    struct char_data *victim = NULL, *victim_next;
     char target[MAX_INPUT_LENGTH],
 	 min[MAX_INPUT_LENGTH],
 	 max[MAX_INPUT_LENGTH];
@@ -1064,7 +1064,7 @@ void do_mpdamage(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob remember [victim]
  */
-void do_mpremember(CHAR_DATA *ch, const char *argument)
+void do_mpremember(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
 
@@ -1080,7 +1080,7 @@ void do_mpremember(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob forget
  */
-void do_mpforget(CHAR_DATA *ch, const char *argument)
+void do_mpforget(struct char_data *ch, const char *argument)
 {
     ch->mprog_target = NULL;
 }
@@ -1092,7 +1092,7 @@ void do_mpforget(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob delay [pulses]
  */
-void do_mpdelay(CHAR_DATA *ch, const char *argument)
+void do_mpdelay(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
 
@@ -1109,7 +1109,7 @@ void do_mpdelay(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob cancel
  */
-void do_mpcancel(CHAR_DATA *ch, const char *argument)
+void do_mpcancel(struct char_data *ch, const char *argument)
 {
     ch->mprog_delay = -1;
 }
@@ -1123,13 +1123,13 @@ void do_mpcancel(CHAR_DATA *ch, const char *argument)
  * Syntax: mob call [vnum] [victim|'null'] [object1|'null'] [object2|'null']
  *
  */
-void do_mpcall(CHAR_DATA *ch, const char *argument)
+void do_mpcall(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
-    CHAR_DATA *vch;
+    struct char_data *vch;
     struct gameobject *obj1, *obj2;
     MPROG_CODE *prg;
-    extern void program_flow(long, char *, CHAR_DATA *, CHAR_DATA *, const void *, const void *);
+    extern void program_flow(long, char *, struct char_data *, struct char_data *, const void *, const void *);
 
     argument = one_argument(argument, arg);
     if (arg[0] == '\0') {
@@ -1160,7 +1160,7 @@ void do_mpcall(CHAR_DATA *ch, const char *argument)
  * Syntax: mob flee
  *
  */
-void do_mpflee(CHAR_DATA *ch, const char *argument)
+void do_mpflee(struct char_data *ch, const char *argument)
 {
     struct room_index_data *was_in;
     struct exit_data *pexit;
@@ -1203,7 +1203,7 @@ void do_mpflee(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob otransfer [item name] [location]
  */
-void do_mpotransfer(CHAR_DATA *ch, const char *argument)
+void do_mpotransfer(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     struct room_index_data *location;
@@ -1240,9 +1240,9 @@ void do_mpotransfer(CHAR_DATA *ch, const char *argument)
  *
  * Syntax: mob remove [victim] [object vnum|'all']
  */
-void do_mpremove(CHAR_DATA *ch, const char *argument)
+void do_mpremove(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     struct gameobject *obj, *obj_next;
     long vnum = 0;
     bool fAll = false;

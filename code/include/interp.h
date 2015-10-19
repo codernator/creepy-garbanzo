@@ -69,7 +69,7 @@ typedef struct cmd_type {
 	int		show;
 }CMD;
 
-const CMD *cmd_lookup(CHAR_DATA * ch, const char *argument);
+const CMD *cmd_lookup(struct char_data * ch, const char *argument);
 
 extern const struct cmd_type cmd_table[];
 

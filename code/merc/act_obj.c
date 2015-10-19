@@ -15,8 +15,8 @@
  *	external commands
  ***************************************************************************/
 
-extern void mp_bribe_trigger(CHAR_DATA * mob, CHAR_DATA * ch, long amount);
-extern void mp_give_trigger(CHAR_DATA * mob, CHAR_DATA * ch, struct gameobject * obj);
+extern void mp_bribe_trigger(struct char_data * mob, struct char_data * ch, long amount);
+extern void mp_give_trigger(struct char_data * mob, struct char_data * ch, struct gameobject * obj);
 
 extern SKILL *gsp_poison;
 extern SKILL *gsp_hand_to_hand;
@@ -25,20 +25,20 @@ extern SKILL *gsp_haggle;
 /*
  * Local functions.
  */
-bool remove_obj(CHAR_DATA * ch, int iWear, bool fReplace);
-void wear_obj(CHAR_DATA * ch, struct gameobject * obj, bool fReplace);
-CHAR_DATA *find_keeper(CHAR_DATA * ch);
-unsigned int get_cost(CHAR_DATA * keeper, struct gameobject * obj, bool fBuy);
-void obj_to_keeper(struct gameobject * obj, CHAR_DATA * ch);
-struct gameobject *get_obj_keeper(CHAR_DATA * ch, CHAR_DATA * keeper, char *argument);
+bool remove_obj(struct char_data * ch, int iWear, bool fReplace);
+void wear_obj(struct char_data * ch, struct gameobject * obj, bool fReplace);
+struct char_data *find_keeper(struct char_data * ch);
+unsigned int get_cost(struct char_data * keeper, struct gameobject * obj, bool fBuy);
+void obj_to_keeper(struct gameobject * obj, struct char_data * ch);
+struct gameobject *get_obj_keeper(struct char_data * ch, struct char_data * keeper, char *argument);
 int count_slots(struct gameobject * obj);
 
 
-bool can_loot(CHAR_DATA *ch, struct gameobject *obj)
+bool can_loot(struct char_data *ch, struct gameobject *obj)
 {
     /*@dependent@*/const char *ownername;
-    CHAR_DATA *owner;
-    CHAR_DATA *wch;
+    struct char_data *owner;
+    struct char_data *wch;
 
     if (IS_IMMORTAL(ch))
         return true;
@@ -89,7 +89,7 @@ void affect_join_obj(struct gameobject *obj, AFFECT_DATA *paf)
     return;
 }
 
-void do_get(CHAR_DATA *ch, const char *argument)
+void do_get(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     struct gameobject *obj_next;
@@ -229,7 +229,7 @@ void do_get(CHAR_DATA *ch, const char *argument)
     save_char_obj(ch);
 }
 
-void do_put(CHAR_DATA *ch, const char *argument)
+void do_put(struct char_data *ch, const char *argument)
 {
     struct gameobject *container;
     struct gameobject *obj;
@@ -374,7 +374,7 @@ void do_put(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_drop(CHAR_DATA *ch, const char *argument)
+void do_drop(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     struct gameobject *obj_next;
@@ -521,9 +521,9 @@ void do_drop(CHAR_DATA *ch, const char *argument)
     return;
 }
 
-void do_give(CHAR_DATA *ch, const char *argument)
+void do_give(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     struct gameobject *obj;
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
@@ -691,7 +691,7 @@ void do_give(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_fill
  ***************************************************************************/
-void do_fill(CHAR_DATA *ch, const char *argument)
+void do_fill(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     struct gameobject *fountain;
@@ -754,11 +754,11 @@ void do_fill(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_pour
  ***************************************************************************/
-void do_pour(CHAR_DATA *ch, const char *argument)
+void do_pour(struct char_data *ch, const char *argument)
 {
     struct gameobject *out;
     struct gameobject *in;
-    CHAR_DATA *vch = NULL;
+    struct char_data *vch = NULL;
     char arg[MAX_STRING_LENGTH];
     char buf[MAX_STRING_LENGTH];
     long amount;
@@ -858,7 +858,7 @@ void do_pour(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_drink
  ***************************************************************************/
-void do_drink(CHAR_DATA *ch, const char *argument)
+void do_drink(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
@@ -969,7 +969,7 @@ void do_drink(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_eat
  ***************************************************************************/
-void do_eat(CHAR_DATA *ch, const char *argument)
+void do_eat(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
@@ -1062,7 +1062,7 @@ void do_eat(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	remove_obj
  ***************************************************************************/
-bool remove_obj(CHAR_DATA *ch, int iWear, bool fReplace)
+bool remove_obj(struct char_data *ch, int iWear, bool fReplace)
 {
     struct gameobject *obj;
 
@@ -1089,7 +1089,7 @@ bool remove_obj(CHAR_DATA *ch, int iWear, bool fReplace)
 /***************************************************************************
  *	wear_obj
  ***************************************************************************/
-void wear_obj(CHAR_DATA *ch, struct gameobject *obj, bool fReplace)
+void wear_obj(struct char_data *ch, struct gameobject *obj, bool fReplace)
 {
     char buf[MAX_STRING_LENGTH];
 
@@ -1435,7 +1435,7 @@ void wear_obj(CHAR_DATA *ch, struct gameobject *obj, bool fReplace)
 /***************************************************************************
  *	do_wear
  ***************************************************************************/
-void do_wear(CHAR_DATA *ch, const char *argument)
+void do_wear(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
@@ -1471,7 +1471,7 @@ void do_wear(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_remove
  ***************************************************************************/
-void do_remove(CHAR_DATA *ch, const char *argument)
+void do_remove(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
@@ -1505,7 +1505,7 @@ void do_remove(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_sacrifice
  ***************************************************************************/
-void do_sacrifice(CHAR_DATA *ch, const char *argument)
+void do_sacrifice(struct char_data *ch, const char *argument)
 {
     static char *god_name_table[] =
     {
@@ -1513,7 +1513,7 @@ void do_sacrifice(CHAR_DATA *ch, const char *argument)
     };
 
     struct gameobject *obj;
-    CHAR_DATA *gch;
+    struct char_data *gch;
     char arg[MAX_INPUT_LENGTH];
     char buf[MAX_STRING_LENGTH];
     int MAX_GOD_NAME;
@@ -1676,7 +1676,7 @@ void do_sacrifice(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	donate_obj
  ***************************************************************************/
-void donate_obj(CHAR_DATA *ch, struct gameobject *obj)
+void donate_obj(struct char_data *ch, struct gameobject *obj)
 {
     char buf[MAX_INPUT_LENGTH];
 
@@ -1716,7 +1716,7 @@ void donate_obj(CHAR_DATA *ch, struct gameobject *obj)
 /***************************************************************************
  *	do_donate
  ***************************************************************************/
-void do_donate(CHAR_DATA *ch, const char *argument)
+void do_donate(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
@@ -1784,9 +1784,9 @@ void do_donate(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_steal
  ***************************************************************************/
-void do_steal(CHAR_DATA *ch, const char *argument)
+void do_steal(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     struct gameobject *obj;
     SKILL *skill_steal;
     char buf[MAX_STRING_LENGTH];
@@ -1946,9 +1946,9 @@ void do_steal(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	find_keeper
  ***************************************************************************/
-CHAR_DATA *find_keeper(CHAR_DATA *ch)
+struct char_data *find_keeper(struct char_data *ch)
 {
-    CHAR_DATA *keeper;
+    struct char_data *keeper;
     struct shop_data *shop;
 
     shop = NULL;
@@ -1986,7 +1986,7 @@ CHAR_DATA *find_keeper(CHAR_DATA *ch)
 /***************************************************************************
  *	obj_to_keeper
  ***************************************************************************/
-void obj_to_keeper(struct gameobject *obj, CHAR_DATA *ch)
+void obj_to_keeper(struct gameobject *obj, struct char_data *ch)
 {
     struct gameobject *t_obj;
     struct gameobject *t_obj_next;
@@ -2024,7 +2024,7 @@ void obj_to_keeper(struct gameobject *obj, CHAR_DATA *ch)
 /***************************************************************************
  *	get_obj_keeper
  ***************************************************************************/
-struct gameobject *get_obj_keeper(CHAR_DATA *ch, CHAR_DATA *keeper, char *argument)
+struct gameobject *get_obj_keeper(struct char_data *ch, struct char_data *keeper, char *argument)
 {
     struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
@@ -2055,7 +2055,7 @@ struct gameobject *get_obj_keeper(CHAR_DATA *ch, CHAR_DATA *keeper, char *argume
 /***************************************************************************
  *	get_cost
  ***************************************************************************/
-unsigned int get_cost(CHAR_DATA *keeper, struct gameobject *obj, bool fBuy)
+unsigned int get_cost(struct char_data *keeper, struct gameobject *obj, bool fBuy)
 {
     unsigned int cost;
 
@@ -2105,7 +2105,7 @@ unsigned int get_cost(CHAR_DATA *keeper, struct gameobject *obj, bool fBuy)
 /***************************************************************************
  *	do_buy
  ***************************************************************************/
-void do_buy(CHAR_DATA *ch, const char *argument)
+void do_buy(struct char_data *ch, const char *argument)
 {
     SKILL *skill;
     char buf[MAX_STRING_LENGTH];
@@ -2126,7 +2126,7 @@ void do_buy(CHAR_DATA *ch, const char *argument)
     if (IS_SET(ch->in_room->room_flags, ROOM_PET_SHOP)) {
         char arg[MAX_INPUT_LENGTH];
         char buf[MAX_STRING_LENGTH];
-        CHAR_DATA *pet;
+        struct char_data *pet;
         struct room_index_data *pRoomIndexNext;
         struct room_index_data *in_room;
 
@@ -2211,7 +2211,7 @@ void do_buy(CHAR_DATA *ch, const char *argument)
         act("$n bought $N as a pet.", ch, NULL, pet, TO_ROOM);
         return;
     } else {
-        CHAR_DATA *keeper;
+        struct char_data *keeper;
         struct gameobject *obj;
         struct gameobject *t_obj;
         char arg[MAX_INPUT_LENGTH];
@@ -2343,11 +2343,11 @@ void do_buy(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_list
  ***************************************************************************/
-void do_list(CHAR_DATA *ch, const char *argument)
+void do_list(struct char_data *ch, const char *argument)
 {
     if (IS_SET(ch->in_room->room_flags, ROOM_PET_SHOP)) {
         struct room_index_data *pRoomIndexNext;
-        CHAR_DATA *pet;
+        struct char_data *pet;
         bool found;
 
         /* hack to make new thalos pets work */
@@ -2378,7 +2378,7 @@ void do_list(CHAR_DATA *ch, const char *argument)
             send_to_char("Sorry, we're out of pets right now.\n\r", ch);
         return;
     } else {
-        CHAR_DATA *keeper;
+        struct char_data *keeper;
         struct gameobject *obj;
         unsigned int cost;
         int count;
@@ -2426,9 +2426,9 @@ void do_list(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_sell
  ***************************************************************************/
-void do_sell(CHAR_DATA *ch, const char *argument)
+void do_sell(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *keeper;
+    struct char_data *keeper;
     struct gameobject *obj;
     SKILL *skill_haggle;
     char buf[MAX_STRING_LENGTH];
@@ -2515,9 +2515,9 @@ void do_sell(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_value
  ***************************************************************************/
-void do_value(CHAR_DATA *ch, const char *argument)
+void do_value(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *keeper;
+    struct char_data *keeper;
     struct gameobject *obj;
     char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
@@ -2564,7 +2564,7 @@ void do_value(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_second
  ***************************************************************************/
-void do_second(CHAR_DATA *ch, const char *argument)
+void do_second(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     char buf[MAX_STRING_LENGTH];
@@ -2623,7 +2623,7 @@ void do_second(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_envenom
  ***************************************************************************/
-void do_envenom(CHAR_DATA *ch, const char *argument)
+void do_envenom(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     AFFECT_DATA af;
@@ -2729,7 +2729,7 @@ void do_envenom(CHAR_DATA *ch, const char *argument)
  *
  *	roll dice if it is in your inventory
  ***************************************************************************/
-void do_dice(CHAR_DATA *ch, const char *argument)
+void do_dice(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     char buf[MAX_STRING_LENGTH];
@@ -2788,13 +2788,13 @@ void do_dice(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *   do_objident
  ***************************************************************************/
-void do_objident(CHAR_DATA *ch, const char *argument)
+void do_objident(struct char_data *ch, const char *argument)
 {
     if (IS_SET(ch->in_room->room_flags, ROOM_PET_SHOP)) {
         send_to_char("You cannot identify pets.\n\r", ch);
         return;
     } else {
-        CHAR_DATA *keeper;
+        struct char_data *keeper;
         struct gameobject *obj;
         unsigned int cost;
         bool found;

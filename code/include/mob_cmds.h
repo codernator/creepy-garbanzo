@@ -33,7 +33,7 @@
 *                                                                         *
 ***************************************************************************/
 
-bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, /*@null@*/const void *arg1, /*@null@*/const void *arg2, int type);
+bool mp_percent_trigger(struct char_data * mob, struct char_data * ch, /*@null@*/const void *arg1, /*@null@*/const void *arg2, int type);
 
 struct  mob_cmd_type {
 	char *const	name;

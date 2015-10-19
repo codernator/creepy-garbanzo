@@ -32,8 +32,8 @@ void free_affect(AFFECT_DATA * af);
 
 
 /* character recyling */
-CHAR_DATA * new_char(void);
-void free_char(CHAR_DATA * ch);
+struct char_data * new_char(void);
+void free_char(struct char_data * ch);
 struct pc_data *new_pcdata(void);
 void free_pcdata(struct pc_data * pcdata);
 

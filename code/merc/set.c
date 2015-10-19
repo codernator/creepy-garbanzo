@@ -20,15 +20,15 @@ static bool set_integer_arg(int *value, const char *argument);
 static bool set_uint_arg(unsigned int *value, const char *argument);
 static bool set_long_arg(long *value, const char *argument);
 static bool set_obj_value_idx(struct gameobject * obj, int idx, const char *argument);
-static void item_type_help(CHAR_DATA * ch, int item_type);
+static void item_type_help(struct char_data * ch, int item_type);
 
 /***************************************************************************
  *	set functions
  ***************************************************************************/
-typedef void SET_FN(CHAR_DATA * ch, const char *argument);
-typedef bool SET_ROOM_FN(CHAR_DATA * ch, struct room_index_data * room, const char *argument);
-typedef bool SET_CHAR_FN(CHAR_DATA * ch, CHAR_DATA * vch, const char *argument);
-typedef bool SET_OBJ_FN(CHAR_DATA * ch, struct gameobject * obj, const char *argument);
+typedef void SET_FN(struct char_data * ch, const char *argument);
+typedef bool SET_ROOM_FN(struct char_data * ch, struct room_index_data * room, const char *argument);
+typedef bool SET_CHAR_FN(struct char_data * ch, struct char_data * vch, const char *argument);
+typedef bool SET_OBJ_FN(struct char_data * ch, struct gameobject * obj, const char *argument);
 
 static SET_FN set_character;
 static SET_FN set_object;
@@ -64,7 +64,7 @@ set_cmd_table[] =
  *
  *	entry level function for set commands
  ***************************************************************************/
-void do_set(CHAR_DATA *ch, const char *argument)
+void do_set(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
     int idx;
@@ -182,9 +182,9 @@ set_char_cmd_table[] =
  *
  *	set properties on a character data structure
  ***************************************************************************/
-static void set_character(CHAR_DATA *ch, const char *argument)
+static void set_character(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *vch;
+    struct char_data *vch;
     char arg[MAX_INPUT_LENGTH];
     char cmd[MAX_INPUT_LENGTH];
     int idx;
@@ -248,7 +248,7 @@ static void set_character(CHAR_DATA *ch, const char *argument)
  *
  *	set the strength of a character
  ***************************************************************************/
-static bool set_char_str(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_str(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: str [+/-]<number>\n\r", ch);
@@ -265,7 +265,7 @@ static bool set_char_str(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
  *
  *	set the dexterity of a character
  ***************************************************************************/
-static bool set_char_int(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_int(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: int [+/-]<number>\n\r", ch);
@@ -282,7 +282,7 @@ static bool set_char_int(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
  *
  *	set the wisdom of a character
  ***************************************************************************/
-static bool set_char_wis(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_wis(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: wis [+/-]<number>\n\r", ch);
@@ -300,7 +300,7 @@ static bool set_char_wis(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
  *
  *	set the dexterity of a character
  ***************************************************************************/
-static bool set_char_dex(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_dex(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: dex [+/-]<number>\n\r", ch);
@@ -317,7 +317,7 @@ static bool set_char_dex(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
  *
  *	set the constitution of a character
  ***************************************************************************/
-static bool set_char_con(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_con(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: con [+/-]<number>\n\r", ch);
@@ -334,7 +334,7 @@ static bool set_char_con(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
  *
  *	set the luck of a character
  ***************************************************************************/
-static bool set_char_luck(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_luck(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: luck [+/-]<number>\n\r", ch);
@@ -352,7 +352,7 @@ static bool set_char_luck(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
  *
  *	set the sex of a character
  ***************************************************************************/
-static bool set_char_sex(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_sex(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     int value;
 
@@ -379,7 +379,7 @@ static bool set_char_sex(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
  *
  *	set the race of a character
  ***************************************************************************/
-static bool set_char_race(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_race(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     int value;
     char buf[MAX_STRING_LENGTH];
@@ -457,7 +457,7 @@ static bool set_char_race(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
  *
  *	set the hp of a character
  ***************************************************************************/
-static bool set_char_hp(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_hp(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: hp [+/-]<number>\n\r", ch);
@@ -477,7 +477,7 @@ static bool set_char_hp(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 /***************************************************************************
  *	set the mana of a character
  ***************************************************************************/
-static bool set_char_mana(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_mana(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: mana [+/-]<number>\n\r", ch);
@@ -497,7 +497,7 @@ static bool set_char_mana(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 /***************************************************************************
  *	set the move of a character
  ***************************************************************************/
-static bool set_char_move(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_move(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: move [+/-]<number>\n\r", ch);
@@ -517,7 +517,7 @@ static bool set_char_move(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 /***************************************************************************
  *	set the gold property of a character
  ***************************************************************************/
-static bool set_char_gold(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_gold(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: gold [+/-]<number>\n\r", ch);
@@ -533,7 +533,7 @@ static bool set_char_gold(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
 /***************************************************************************
  *	set the silver in bank property of a character
  ***************************************************************************/
-static bool set_char_silver(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_silver(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: silver [+/-]<number>\n\r", ch);
@@ -551,9 +551,9 @@ static bool set_char_silver(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
  *
  *	set the reply property for a character
  ***************************************************************************/
-static bool set_char_reply(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_reply(struct char_data *ch, struct char_data *vch, const char *argument)
 {
-    CHAR_DATA *reply;
+    struct char_data *reply;
 
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: reply <character to reply to>\n\r", ch);
@@ -578,7 +578,7 @@ static bool set_char_reply(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
  *
  *	set the class of a character
  ***************************************************************************/
-static bool set_char_class(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_class(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     int value;
 
@@ -612,7 +612,7 @@ static bool set_char_class(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
  *
  *	set the number of trains for a player
  ***************************************************************************/
-static bool set_char_train(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_train(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: train [+/-]<number>\n\r", ch);
@@ -634,7 +634,7 @@ static bool set_char_train(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
  *
  *	set the number of practices for a player
  ***************************************************************************/
-static bool set_char_practice(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_practice(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: practice [+/-]<number>\n\r", ch);
@@ -656,7 +656,7 @@ static bool set_char_practice(CHAR_DATA *ch, CHAR_DATA *vch, const char *argumen
  *
  *	set the gold in bank property of a player
  ***************************************************************************/
-static bool set_char_bank_gold(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_bank_gold(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: bank_gold [+/-]<number>\n\r", ch);
@@ -679,7 +679,7 @@ static bool set_char_bank_gold(CHAR_DATA *ch, CHAR_DATA *vch, const char *argume
  *
  *	set the silver in bank property of a player
  ***************************************************************************/
-static bool set_char_bank_silver(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_bank_silver(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: bank_silver [+/-]<number>\n\r", ch);
@@ -701,7 +701,7 @@ static bool set_char_bank_silver(CHAR_DATA *ch, CHAR_DATA *vch, const char *argu
  *
  *	set the player kills property of a player
  ***************************************************************************/
-static bool set_char_pkills(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_pkills(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: pkills [+/-]<number>\n\r", ch);
@@ -724,7 +724,7 @@ static bool set_char_pkills(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
  *
  *	set the player deaths property of a player
  ***************************************************************************/
-static bool set_char_pdeaths(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_pdeaths(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: pdeaths [+/-]<number>\n\r", ch);
@@ -747,7 +747,7 @@ static bool set_char_pdeaths(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument
  *
  *	set the mob kills property of a player
  ***************************************************************************/
-static bool set_char_mobkills(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_mobkills(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: mobkills [+/-]<number>\n\r", ch);
@@ -770,7 +770,7 @@ static bool set_char_mobkills(CHAR_DATA *ch, CHAR_DATA *vch, const char *argumen
  *
  *	set the mob deaths property of a player
  ***************************************************************************/
-static bool set_char_mobdeaths(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_mobdeaths(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: mobdeaths [+/-]<number>\n\r", ch);
@@ -793,7 +793,7 @@ static bool set_char_mobdeaths(CHAR_DATA *ch, CHAR_DATA *vch, const char *argume
  *
  *	set the full condition of a player
  ***************************************************************************/
-static bool set_char_full(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_full(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     int value;
 
@@ -833,7 +833,7 @@ static bool set_char_full(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
  *
  *	set the hunger condition of a player
  ***************************************************************************/
-bool set_char_hunger(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+bool set_char_hunger(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     int value;
 
@@ -872,7 +872,7 @@ bool set_char_hunger(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
  *
  *	set the thirst condition of a player
  ***************************************************************************/
-bool set_char_thirst(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+bool set_char_thirst(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     int value;
 
@@ -910,7 +910,7 @@ bool set_char_thirst(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
  *
  *	set the feed condition of a player
  ***************************************************************************/
-bool set_char_feed(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+bool set_char_feed(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     int value;
 
@@ -949,7 +949,7 @@ bool set_char_feed(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
  *
  *	set the deathroom room for a player
  ***************************************************************************/
-static bool set_char_deathroom(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_deathroom(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     struct room_index_data *room;
     int value;
@@ -980,7 +980,7 @@ static bool set_char_deathroom(CHAR_DATA *ch, CHAR_DATA *vch, const char *argume
  *
  *	set the security property of a player
  ***************************************************************************/
-static bool set_char_security(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_security(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     int value;
 
@@ -1014,7 +1014,7 @@ static bool set_char_security(CHAR_DATA *ch, CHAR_DATA *vch, const char *argumen
  *
  *	set the extended exp for a pc (added by Monrick, May 2008)
  ***************************************************************************/
-static bool set_char_extendedexp(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_extendedexp(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     int plusminus = 0;
     int value;
@@ -1068,7 +1068,7 @@ static bool set_char_extendedexp(CHAR_DATA *ch, CHAR_DATA *vch, const char *argu
  *
  *	set the level property for a mob
  ***************************************************************************/
-static bool set_char_level(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_level(struct char_data *ch, struct char_data *vch, const char *argument)
 {
     int value;
 
@@ -1098,9 +1098,9 @@ static bool set_char_level(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
  *
  *	set the memory property for a mob
  ***************************************************************************/
-static bool set_char_memory(CHAR_DATA *ch, CHAR_DATA *vch, const char *argument)
+static bool set_char_memory(struct char_data *ch, struct char_data *vch, const char *argument)
 {
-    CHAR_DATA *mem;
+    struct char_data *mem;
 
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: memory <character to remember>\n\r", ch);
@@ -1174,7 +1174,7 @@ set_obj_cmd_table[] =
  *
  *	set a property on an object
  ***************************************************************************/
-static void set_object(CHAR_DATA *ch, const char *argument)
+static void set_object(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
@@ -1236,7 +1236,7 @@ static void set_object(CHAR_DATA *ch, const char *argument)
  *
  *	set the value 0 property of an object
  ***************************************************************************/
-static bool set_obj_v0(CHAR_DATA *ch, struct gameobject *obj, const char *argument)
+static bool set_obj_v0(struct char_data *ch, struct gameobject *obj, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: v0 <value>\n\r\n\r", ch);
@@ -1258,7 +1258,7 @@ static bool set_obj_v0(CHAR_DATA *ch, struct gameobject *obj, const char *argume
  *
  *	set the value 1 property of an object
  ***************************************************************************/
-static bool set_obj_v1(CHAR_DATA *ch, struct gameobject *obj, const char *argument)
+static bool set_obj_v1(struct char_data *ch, struct gameobject *obj, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: v1 <value>\n\r\n\r", ch);
@@ -1279,7 +1279,7 @@ static bool set_obj_v1(CHAR_DATA *ch, struct gameobject *obj, const char *argume
  *
  *	set the value 2 property of an object
  ***************************************************************************/
-static bool set_obj_v2(CHAR_DATA *ch, struct gameobject *obj, const char *argument)
+static bool set_obj_v2(struct char_data *ch, struct gameobject *obj, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: v2 <value>\n\r\n\r", ch);
@@ -1300,7 +1300,7 @@ static bool set_obj_v2(CHAR_DATA *ch, struct gameobject *obj, const char *argume
  *
  *	set the value 3 property of an object
  ***************************************************************************/
-static bool set_obj_v3(CHAR_DATA *ch, struct gameobject *obj, const char *argument)
+static bool set_obj_v3(struct char_data *ch, struct gameobject *obj, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: v3 <value>\n\r\n\r", ch);
@@ -1322,7 +1322,7 @@ static bool set_obj_v3(CHAR_DATA *ch, struct gameobject *obj, const char *argume
  *
  *	set the value 0 property of an object
  ***************************************************************************/
-static bool set_obj_v4(CHAR_DATA *ch, struct gameobject *obj, const char *argument)
+static bool set_obj_v4(struct char_data *ch, struct gameobject *obj, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: v4 <value>\n\r\n\r", ch);
@@ -1343,7 +1343,7 @@ static bool set_obj_v4(CHAR_DATA *ch, struct gameobject *obj, const char *argume
  *
  *	set the extra property of an object
  ***************************************************************************/
-static bool set_obj_extra(CHAR_DATA *ch, struct gameobject *obj, const char *argument)
+static bool set_obj_extra(struct char_data *ch, struct gameobject *obj, const char *argument)
 {
     if (is_help(argument)) {
         int idx;
@@ -1387,7 +1387,7 @@ static bool set_obj_extra(CHAR_DATA *ch, struct gameobject *obj, const char *arg
  *
  *       set the extra2 property of an object
  ***************************************************************************/
-static bool set_obj_extra2(CHAR_DATA *ch, struct gameobject *obj, const char *argument)
+static bool set_obj_extra2(struct char_data *ch, struct gameobject *obj, const char *argument)
 {
     if (is_help(argument)) {
         int idx;
@@ -1431,7 +1431,7 @@ static bool set_obj_extra2(CHAR_DATA *ch, struct gameobject *obj, const char *ar
  *
  *	set the wear flags property of an object
  ***************************************************************************/
-static bool set_obj_wear(CHAR_DATA *ch, struct gameobject *obj, const char *argument)
+static bool set_obj_wear(struct char_data *ch, struct gameobject *obj, const char *argument)
 {
     if (is_help(argument)) {
         int idx;
@@ -1478,7 +1478,7 @@ static bool set_obj_wear(CHAR_DATA *ch, struct gameobject *obj, const char *argu
  *
  *	set the level of an object
  ***************************************************************************/
-static bool set_obj_level(CHAR_DATA *ch, struct gameobject *obj, const char *argument)
+static bool set_obj_level(struct char_data *ch, struct gameobject *obj, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: level <level>\n\r", ch);
@@ -1496,7 +1496,7 @@ static bool set_obj_level(CHAR_DATA *ch, struct gameobject *obj, const char *arg
  *
  *	set the cost of an object
  ***************************************************************************/
-static bool set_obj_cost(CHAR_DATA *ch, struct gameobject *obj, const char *argument)
+static bool set_obj_cost(struct char_data *ch, struct gameobject *obj, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: cost <amount>\n\r", ch);
@@ -1514,7 +1514,7 @@ static bool set_obj_cost(CHAR_DATA *ch, struct gameobject *obj, const char *argu
  *
  *	set the weight of an object
  ***************************************************************************/
-static bool set_obj_weight(CHAR_DATA *ch, struct gameobject *obj, const char *argument)
+static bool set_obj_weight(struct char_data *ch, struct gameobject *obj, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: weight <amount>\n\r", ch);
@@ -1532,7 +1532,7 @@ static bool set_obj_weight(CHAR_DATA *ch, struct gameobject *obj, const char *ar
  *
  *	set the light value of a room
  ***************************************************************************/
-static bool set_obj_timer(CHAR_DATA *ch, struct gameobject *obj, const char *argument)
+static bool set_obj_timer(struct char_data *ch, struct gameobject *obj, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: timer <number of ticks>\n\r", ch);
@@ -1578,7 +1578,7 @@ set_room_cmd_table[] =
  *
  *	set a property on a room structure
  ***************************************************************************/
-static void set_room(CHAR_DATA *ch, const char *argument)
+static void set_room(struct char_data *ch, const char *argument)
 {
     struct room_index_data *room;
     char arg[MAX_INPUT_LENGTH];
@@ -1641,7 +1641,7 @@ static void set_room(CHAR_DATA *ch, const char *argument)
  *
  *	set the flags on a room
  ***************************************************************************/
-static bool set_room_flags(CHAR_DATA *ch, struct room_index_data *room, const char *argument)
+static bool set_room_flags(struct char_data *ch, struct room_index_data *room, const char *argument)
 {
     long value;
 
@@ -1687,7 +1687,7 @@ static bool set_room_flags(CHAR_DATA *ch, struct room_index_data *room, const ch
  *
  *	set the sector of a room
  ***************************************************************************/
-static bool set_room_sector(CHAR_DATA *ch, struct room_index_data *room, const char *argument)
+static bool set_room_sector(struct char_data *ch, struct room_index_data *room, const char *argument)
 {
     int value;
 
@@ -1724,7 +1724,7 @@ static bool set_room_sector(CHAR_DATA *ch, struct room_index_data *room, const c
  *
  *	set the mana heal rate on a room
  ***************************************************************************/
-static bool set_room_mana_rate(CHAR_DATA *ch, struct room_index_data *room, const char *argument)
+static bool set_room_mana_rate(struct char_data *ch, struct room_index_data *room, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: mana_rate <rate number>\n\r", ch);
@@ -1741,7 +1741,7 @@ static bool set_room_mana_rate(CHAR_DATA *ch, struct room_index_data *room, cons
  *
  *	set the hp heal rate on a room
  ***************************************************************************/
-static bool set_room_heal_rate(CHAR_DATA *ch, struct room_index_data *room, const char *argument)
+static bool set_room_heal_rate(struct char_data *ch, struct room_index_data *room, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: heal_rate <rate number>\n\r", ch);
@@ -1759,7 +1759,7 @@ static bool set_room_heal_rate(CHAR_DATA *ch, struct room_index_data *room, cons
  *
  *	set the light value of a room
  ***************************************************************************/
-static bool set_room_light(CHAR_DATA *ch, struct room_index_data *room, const char *argument)
+static bool set_room_light(struct char_data *ch, struct room_index_data *room, const char *argument)
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: light <light duration>\n\r", ch);
@@ -1780,9 +1780,9 @@ static bool set_room_light(CHAR_DATA *ch, struct room_index_data *room, const ch
  *
  *	set a characters learend skill information
  ***************************************************************************/
-static void set_skill(CHAR_DATA *ch, const char *argument)
+static void set_skill(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *vch;
+    struct char_data *vch;
     SKILL *skill;
     LEARNED *learned;
     char arg[MAX_INPUT_LENGTH];
@@ -1857,7 +1857,7 @@ static void set_skill(CHAR_DATA *ch, const char *argument)
  *
  *	initiate or cancel a reboot sequence
  ***************************************************************************/
-static void set_reboot(CHAR_DATA *ch, const char *argument)
+static void set_reboot(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
     char buf[MAX_INPUT_LENGTH];
@@ -1906,7 +1906,7 @@ static void set_reboot(CHAR_DATA *ch, const char *argument)
  *	shamelessly copied from the above by Dalamar
  *	initiate or cancel a copyover sequence
  ***************************************************************************/
-static void set_copyover(CHAR_DATA *ch, const char *argument)
+static void set_copyover(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
     char buf[MAX_INPUT_LENGTH];
@@ -2189,7 +2189,7 @@ static bool set_obj_value_idx(struct gameobject *obj, int idx, const char *argum
  *
  *	get help for an item type
  *****************************************************************************/
-static void item_type_help(CHAR_DATA *ch, int item_type)
+static void item_type_help(struct char_data *ch, int item_type)
 {
     int idx;
 

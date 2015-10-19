@@ -43,7 +43,7 @@ bool copyover()
     /* For each playing descriptor, save its state */
     dpending = descriptor_iterator_start(&descriptor_empty_filter);
     while ((d = dpending) != NULL) {
-	CHAR_DATA *och = CH(d);
+	struct char_data *och = CH(d);
 
 	dpending = descriptor_iterator(d, &descriptor_empty_filter);
 

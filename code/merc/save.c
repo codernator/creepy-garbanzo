@@ -22,7 +22,7 @@ extern long fread_long(FILE *fp);
 static struct gameobject *rgObjNest[MAX_NEST];
 
 
-void fread_char(CHAR_DATA * ch, FILE * fp);
+void fread_char(struct char_data * ch, FILE * fp);
 extern int message_type_lookup(char *name);
 
 extern char *fread_norm_string(FILE * fp);
@@ -33,12 +33,12 @@ static bool load_rdesc(struct room_index_data * location, const char *name);
 /***************************************************************************
  *	local functions
  ***************************************************************************/
-static void fwrite_char(CHAR_DATA * ch, FILE * fp);
-static void fwrite_obj(CHAR_DATA * ch, struct gameobject * obj, FILE * fp, int iNest);
-static void fwrite_pet(CHAR_DATA * pet, FILE * fp);
+static void fwrite_char(struct char_data * ch, FILE * fp);
+static void fwrite_obj(struct char_data * ch, struct gameobject * obj, FILE * fp, int iNest);
+static void fwrite_pet(struct char_data * pet, FILE * fp);
 static void fwrite_rdesc(struct room_index_data * location, FILE * fp);
-static void fread_pet(CHAR_DATA * ch, FILE * fp);
-static void fread_obj(CHAR_DATA * ch, FILE * fp);
+static void fread_pet(struct char_data * ch, FILE * fp);
+static void fread_obj(struct char_data * ch, FILE * fp);
 static void fread_rdesc(struct room_index_data * location, FILE * fp);
 
 
@@ -77,7 +77,7 @@ char *print_flags(long flag)
 /***************************************************************************
  *	save_char_obj
  ***************************************************************************/
-void save_char_obj(CHAR_DATA *ch)
+void save_char_obj(struct char_data *ch)
 {
     extern SKILL *gsp_deft;
     extern SKILL *gsp_dash;
@@ -126,7 +126,7 @@ void save_char_obj(CHAR_DATA *ch)
 /***************************************************************************
  *	fwrite_char
  ***************************************************************************/
-static void fwrite_char(CHAR_DATA *ch, FILE *fp)
+static void fwrite_char(struct char_data *ch, FILE *fp)
 {
     AFFECT_DATA *paf;
     LEARNED *learned;
@@ -380,7 +380,7 @@ static void fwrite_char(CHAR_DATA *ch, FILE *fp)
 /***************************************************************************
  *	fwrite_pet
  ***************************************************************************/
-static void fwrite_pet(CHAR_DATA *pet, FILE *fp)
+static void fwrite_pet(struct char_data *pet, FILE *fp)
 {
     AFFECT_DATA *paf;
 
@@ -484,7 +484,7 @@ static void fwrite_pet(CHAR_DATA *pet, FILE *fp)
 /***************************************************************************
  *	fwrite_obj
  ***************************************************************************/
-static void fwrite_obj(CHAR_DATA *ch, struct gameobject *obj, FILE *fp, int iNest)
+static void fwrite_obj(struct char_data *ch, struct gameobject *obj, FILE *fp, int iNest)
 {
     struct extra_descr_data *ed;
     AFFECT_DATA *paf;
@@ -621,7 +621,7 @@ static void fwrite_obj(CHAR_DATA *ch, struct gameobject *obj, FILE *fp, int iNes
  ***************************************************************************/
 bool load_char_obj(struct descriptor_data *d, char *name)
 {
-    CHAR_DATA *ch;
+    struct char_data *ch;
     FILE *fp;
     LEARNED *learned;
     char strsave[MAX_INPUT_LENGTH];
@@ -826,7 +826,7 @@ bool load_char_obj(struct descriptor_data *d, char *name)
 /***************************************************************************
  *	fread_char
  ***************************************************************************/
-void fread_char(CHAR_DATA *ch, FILE *fp)
+void fread_char(struct char_data *ch, FILE *fp)
 {
     char buf[MAX_STRING_LENGTH];
     char *word;
@@ -1311,10 +1311,10 @@ void fread_char(CHAR_DATA *ch, FILE *fp)
 /***************************************************************************
  *	fread_pet
  ***************************************************************************/
-static void fread_pet(CHAR_DATA *ch, FILE *fp)
+static void fread_pet(struct char_data *ch, FILE *fp)
 {
     char *word;
-    CHAR_DATA *pet;
+    struct char_data *pet;
     bool fMatch;
 
     word = feof(fp) ? "END" : fread_word(fp);
@@ -1509,7 +1509,7 @@ static void fread_pet(CHAR_DATA *ch, FILE *fp)
 /***************************************************************************
  *	fread_obj
  ***************************************************************************/
-static void fread_obj(CHAR_DATA *ch, FILE *fp)
+static void fread_obj(struct char_data *ch, FILE *fp)
 {
     struct gameobject *obj;
     char *word;
@@ -1769,7 +1769,7 @@ static void fread_obj(CHAR_DATA *ch, FILE *fp)
 /***************************************************************************
  *	do_rload
  ***************************************************************************/
-void do_rload(CHAR_DATA *ch, const char *argument)
+void do_rload(struct char_data *ch, const char *argument)
 {
     struct room_index_data *location;
 
@@ -1798,7 +1798,7 @@ void do_rload(CHAR_DATA *ch, const char *argument)
     }
 }
 
-void do_rsave(CHAR_DATA *ch, const char *argument)
+void do_rsave(struct char_data *ch, const char *argument)
 {
     char strsave[MAX_INPUT_LENGTH];
     struct room_index_data *location;

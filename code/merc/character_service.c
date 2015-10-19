@@ -22,18 +22,18 @@ extern DO_FUN do_at;
 // TODO - used by get_obj
 extern DO_FUN do_split;
 
-extern void print_weather(CHAR_DATA * ch);
+extern void print_weather(struct char_data * ch);
 
 
-void show_char_to_char(CHAR_DATA * list, CHAR_DATA * ch);
-void show_char_to_char_2(CHAR_DATA * victim, CHAR_DATA * ch);
+void show_char_to_char(struct char_data * list, struct char_data * ch);
+void show_char_to_char_2(struct char_data * victim, struct char_data * ch);
 
-static void show_char_to_char_0(CHAR_DATA * victim, CHAR_DATA * ch);
-static void show_char_to_char_1(CHAR_DATA * victim, CHAR_DATA * ch);
-static char *format_obj_to_char(struct gameobject * obj, CHAR_DATA * ch, bool fShort);
+static void show_char_to_char_0(struct char_data * victim, struct char_data * ch);
+static void show_char_to_char_1(struct char_data * victim, struct char_data * ch);
+static char *format_obj_to_char(struct gameobject * obj, struct char_data * ch, bool fShort);
 
 
-static bool validate_look(CHAR_DATA *ch);
+static bool validate_look(struct char_data *ch);
 static struct { int	wear_loc; char *desc; } where_name[] =
 {
     { WEAR_LIGHT,	  "<used as light>     " },
@@ -66,7 +66,7 @@ static struct { int	wear_loc; char *desc; } where_name[] =
     { -1,		  ""			 }
 };
 
-void toggle_afk(CHAR_DATA *ch, const char *message)
+void toggle_afk(struct char_data *ch, const char *message)
 {
     bool now_on;
     now_on = character_toggle_comm(ch, COMM_AFK);
@@ -84,7 +84,7 @@ void toggle_afk(CHAR_DATA *ch, const char *message)
     }
 }
 
-void show_channels(CHAR_DATA *ch)
+void show_channels(struct char_data *ch)
 {
     send_to_char("CHANNEL        STATUS\n\r", ch);
     send_to_char("```&---------------------``\n\r", ch);
@@ -115,13 +115,13 @@ void show_channels(CHAR_DATA *ch)
     return;
 }
 
-void replay(CHAR_DATA *ch) {
+void replay(struct char_data *ch) {
     page_to_char(buf_string(ch->pcdata->buffer), ch);
     clear_buf(ch->pcdata->buffer);
     return;
 }
 
-void look_equipment(CHAR_DATA *ch) {
+void look_equipment(struct char_data *ch) {
     struct gameobject *obj;
     int iWear;
 
@@ -165,7 +165,7 @@ void look_equipment(CHAR_DATA *ch) {
     send_to_char("`8", ch);
 }
 
-void look_direction(CHAR_DATA *ch, const int door) {
+void look_direction(struct char_data *ch, const int door) {
     struct exit_data *pexit;
 
     if (!validate_look(ch)) {
@@ -200,7 +200,7 @@ void look_direction(CHAR_DATA *ch, const int door) {
     return;
 }
 
-void look_extras(CHAR_DATA *ch, const char *name, const int number) {
+void look_extras(struct char_data *ch, const char *name, const int number) {
     struct gameobject *obj;
     int count;
     char *pdesc;
@@ -295,7 +295,7 @@ void look_extras(CHAR_DATA *ch, const char *name, const int number) {
 
 }
 
-void look_character(CHAR_DATA *ch, CHAR_DATA *victim) {
+void look_character(struct char_data *ch, struct char_data *victim) {
     if (!validate_look(ch)) {
 	return;
     }
@@ -303,7 +303,7 @@ void look_character(CHAR_DATA *ch, CHAR_DATA *victim) {
     show_char_to_char_1(victim, ch);
 }
 
-void look_room(CHAR_DATA *ch, struct room_index_data *in_room) {
+void look_room(struct char_data *ch, struct room_index_data *in_room) {
     if (!validate_look(ch)) {
 	return;
     }
@@ -352,7 +352,7 @@ void look_room(CHAR_DATA *ch, struct room_index_data *in_room) {
     return;
 }
 
-void look_object(CHAR_DATA *ch, struct gameobject *obj, const char *argument) {
+void look_object(struct char_data *ch, struct gameobject *obj, const char *argument) {
     struct gameobject *portal;
     struct room_index_data *location;
 
@@ -421,7 +421,7 @@ void look_object(CHAR_DATA *ch, struct gameobject *obj, const char *argument) {
     }
 }
 
-void sit(CHAR_DATA *ch, struct gameobject *on)
+void sit(struct char_data *ch, struct gameobject *on)
 {
     // TODO - it is currently possible to defeat object pickup restrictions by
     // sitting on them. Need to extract can_get_obj from get_obj and use it!
@@ -537,7 +537,7 @@ void sit(CHAR_DATA *ch, struct gameobject *on)
     }
 }
 
-void stand(CHAR_DATA *ch, struct gameobject *on)
+void stand(struct char_data *ch, struct gameobject *on)
 {
     // TODO - need to extract can_get_obj from get_obj
 
@@ -626,9 +626,9 @@ void stand(CHAR_DATA *ch, struct gameobject *on)
     }
 }
 
-void get_obj(CHAR_DATA *ch, struct gameobject *obj, struct gameobject *container)
+void get_obj(struct char_data *ch, struct gameobject *obj, struct gameobject *container)
 {
-    CHAR_DATA *gch;
+    struct char_data *gch;
     int members;
     char buffer[100];
 
@@ -705,7 +705,7 @@ void get_obj(CHAR_DATA *ch, struct gameobject *obj, struct gameobject *container
     return;
 }
 
-bool validate_look(CHAR_DATA *ch) {
+bool validate_look(struct char_data *ch) {
     if (ch->desc == NULL)
 	return false;
 
@@ -734,9 +734,9 @@ bool validate_look(CHAR_DATA *ch) {
 }
 
 
-void show_char_to_char(CHAR_DATA *list, CHAR_DATA *ch)
+void show_char_to_char(struct char_data *list, struct char_data *ch)
 {
-    CHAR_DATA *rch;
+    struct char_data *rch;
 
     for (rch = list; rch != NULL; rch = rch->next_in_room) {
 	if (rch == ch)
@@ -755,7 +755,7 @@ void show_char_to_char(CHAR_DATA *list, CHAR_DATA *ch)
     return;
 }
 
-void show_char_to_char_0(CHAR_DATA *victim, CHAR_DATA *ch)
+void show_char_to_char_0(struct char_data *victim, struct char_data *ch)
 {
     char buf[MAX_STRING_LENGTH], message[MAX_STRING_LENGTH];
 
@@ -897,7 +897,7 @@ void show_char_to_char_0(CHAR_DATA *victim, CHAR_DATA *ch)
     return;
 }
 
-void show_char_to_char_1(CHAR_DATA *victim, CHAR_DATA *ch)
+void show_char_to_char_1(struct char_data *victim, struct char_data *ch)
 {
     if (can_see(victim, ch)) {
 	if (ch == victim) {
@@ -918,7 +918,7 @@ void show_char_to_char_1(CHAR_DATA *victim, CHAR_DATA *ch)
     return;
 }
 
-void show_char_to_char_2(CHAR_DATA *victim, CHAR_DATA *ch)
+void show_char_to_char_2(struct char_data *victim, struct char_data *ch)
 {
     struct gameobject *obj;
     SKILL *skill_peek;
@@ -968,7 +968,7 @@ void show_char_to_char_2(CHAR_DATA *victim, CHAR_DATA *ch)
  * Show a list to a character.
  * Can coalesce duplicated items.
  */
-void show_list_to_char(struct gameobject *list, CHAR_DATA *ch, bool fShort, bool fShowNothing)
+void show_list_to_char(struct gameobject *list, struct char_data *ch, bool fShort, bool fShowNothing)
 {
     struct gameobject *obj;
     char buf[13000];
@@ -1075,7 +1075,7 @@ void show_list_to_char(struct gameobject *list, CHAR_DATA *ch, bool fShort, bool
     return;
 }
 
-char *format_obj_to_char(struct gameobject *obj, CHAR_DATA *ch, bool fShort)
+char *format_obj_to_char(struct gameobject *obj, struct char_data *ch, bool fShort)
 {
     static char buf[MAX_STRING_LENGTH * 2];
 

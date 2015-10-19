@@ -11,36 +11,36 @@
 
 
 /** imports */
-extern struct gameobject *get_object_by_itemtype_and_room(int item_type, struct room_index_data *room, CHAR_DATA *ch);
-extern void sick_harvey_proctor(CHAR_DATA *ch, enum e_harvey_proctor_is, const char *message);
+extern struct gameobject *get_object_by_itemtype_and_room(int item_type, struct room_index_data *room, struct char_data *ch);
+extern void sick_harvey_proctor(struct char_data *ch, enum e_harvey_proctor_is, const char *message);
 
 
 /** locals */
-static void complete_transaction(CHAR_DATA *ch, bool withdraw, unsigned int amount, unsigned int *purse, unsigned int *drawer, const char *tender, struct gameobject *atm);
-static bool check_for_bank(CHAR_DATA *ch, /*@out@*/ struct gameobject **atm);
-static void evaluate_transaction(CHAR_DATA *ch, bool withdraw, char *arg_amount, char *arg_tender);
-static void find_money(CHAR_DATA *ch);
-static void give_receipt(CHAR_DATA *ch, unsigned int amount, const char *action, const char *tender, struct gameobject *atm);
-static void report_balance(CHAR_DATA *ch);
+static void complete_transaction(struct char_data *ch, bool withdraw, unsigned int amount, unsigned int *purse, unsigned int *drawer, const char *tender, struct gameobject *atm);
+static bool check_for_bank(struct char_data *ch, /*@out@*/ struct gameobject **atm);
+static void evaluate_transaction(struct char_data *ch, bool withdraw, char *arg_amount, char *arg_tender);
+static void find_money(struct char_data *ch);
+static void give_receipt(struct char_data *ch, unsigned int amount, const char *action, const char *tender, struct gameobject *atm);
+static void report_balance(struct char_data *ch);
 
 
-void do_atm_withdraw(CHAR_DATA *ch, const char *argument)
+void do_atm_withdraw(struct char_data *ch, const char *argument)
 {
     do_withdraw(ch, argument);
 }
 
-void do_atm_balance(CHAR_DATA *ch, const char *argument)
+void do_atm_balance(struct char_data *ch, const char *argument)
 {
     do_balance(ch, argument);
 }
 
-void do_atm_deposit(CHAR_DATA *ch, const char *argument)
+void do_atm_deposit(struct char_data *ch, const char *argument)
 {
     do_deposit(ch, argument);
 }
 
 
-void do_balance(CHAR_DATA *ch, const char *vo)
+void do_balance(struct char_data *ch, const char *vo)
 {
     struct gameobject *atm;
 
@@ -51,7 +51,7 @@ void do_balance(CHAR_DATA *ch, const char *vo)
     }
 }
 
-void do_deposit(CHAR_DATA *ch, const char *argument)
+void do_deposit(struct char_data *ch, const char *argument)
 {
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
@@ -64,7 +64,7 @@ void do_deposit(CHAR_DATA *ch, const char *argument)
     evaluate_transaction(ch, false, arg1, arg2);
 }
 
-void do_withdraw(CHAR_DATA *ch, const char *argument)
+void do_withdraw(struct char_data *ch, const char *argument)
 {
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
@@ -77,7 +77,7 @@ void do_withdraw(CHAR_DATA *ch, const char *argument)
     evaluate_transaction(ch, true, arg1, arg2);
 }
 
-void evaluate_transaction(CHAR_DATA *ch, bool withdraw, char *arg_amount, char *arg_tender)
+void evaluate_transaction(struct char_data *ch, bool withdraw, char *arg_amount, char *arg_tender)
 {
     char buf[MAX_INPUT_LENGTH];
     struct gameobject *atm = NULL;
@@ -115,7 +115,7 @@ void evaluate_transaction(CHAR_DATA *ch, bool withdraw, char *arg_amount, char *
     }
 }
 
-void find_money(CHAR_DATA *ch)
+void find_money(struct char_data *ch)
 {
     int j;
 
@@ -135,7 +135,7 @@ void find_money(CHAR_DATA *ch)
 	ch->pcdata->silver_in_bank = 10000000u;
 }
 
-bool check_for_bank(CHAR_DATA *ch, /*@out@*/ struct gameobject **atm)
+bool check_for_bank(struct char_data *ch, /*@out@*/ struct gameobject **atm)
 {
     struct gameobject *temp_atm = NULL;
 
@@ -154,7 +154,7 @@ bool check_for_bank(CHAR_DATA *ch, /*@out@*/ struct gameobject **atm)
     }
 }
 
-void complete_transaction(CHAR_DATA *ch, bool withdraw, unsigned int amount, unsigned int *purse, unsigned int *drawer, const char *tender, struct gameobject *atm)
+void complete_transaction(struct char_data *ch, bool withdraw, unsigned int amount, unsigned int *purse, unsigned int *drawer, const char *tender, struct gameobject *atm)
 {
     char buf[MAX_INPUT_LENGTH];
 
@@ -178,13 +178,13 @@ void complete_transaction(CHAR_DATA *ch, bool withdraw, unsigned int amount, uns
 }
 
 
-void report_balance(CHAR_DATA *ch)
+void report_balance(struct char_data *ch)
 {
     find_money(ch);
     printf_to_char(ch, "You have %u gold and %u silver pieces in the bank.\n\r", ch->pcdata->gold_in_bank, ch->pcdata->silver_in_bank);
 }
 
-void give_receipt(CHAR_DATA *ch, unsigned int amount, const char *action, const char *tender, struct gameobject *atm)
+void give_receipt(struct char_data *ch, unsigned int amount, const char *action, const char *tender, struct gameobject *atm)
 {
     char buf[MAX_INPUT_LENGTH];
 

@@ -26,7 +26,7 @@
 
 extern char *string_replace(char *orig, char *old, char *new);
 extern char *string_unpad(char *argument);
-extern void string_append(CHAR_DATA * ch, char **string);
+extern void string_append(struct char_data * ch, char **string);
 extern char *string_proper(char *argument);
 
 

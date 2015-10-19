@@ -70,15 +70,15 @@ extern int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds
 /** Game declarations. */
 extern char *color_table[];
 extern bool run_olc_editor(struct descriptor_data * d);
-extern char *olc_ed_name(CHAR_DATA * ch);
-extern char *olc_ed_vnum(CHAR_DATA * ch);
-extern void string_add(CHAR_DATA * ch, const char *argument);
+extern char *olc_ed_name(struct char_data * ch);
+extern char *olc_ed_vnum(struct char_data * ch);
+extern void string_add(struct char_data * ch, const char *argument);
 extern char *string_replace(char *orig, char *old, char *new);
 
 static bool process_output(struct descriptor_data * d, bool fPrompt);
 static void read_from_buffer(struct descriptor_data * d);
-static void check_afk(CHAR_DATA * ch);
-static void bust_a_prompt(CHAR_DATA * ch);
+static void check_afk(struct char_data * ch);
+static void bust_a_prompt(struct char_data * ch);
 
 static void on_new_connection(int descriptor, int ipaddress, const char *hostname);
 static void process_all_input();
@@ -130,7 +130,7 @@ void synchronize(clock_t last_clock)
 
 void close_socket(struct descriptor_data *dclose, bool withProcessOutput, bool withSaveChar)
 {
-    CHAR_DATA *ch;
+    struct char_data *ch;
 
     if (withProcessOutput ) {
         if (dclose->outtop > 0)
@@ -261,8 +261,8 @@ bool process_output(struct descriptor_data *d, bool fPrompt)
         } else if (fPrompt && d->ed_string && d->connected == CON_PLAYING) {
             write_to_buffer(d, "> ", 2);
         } else if (fPrompt && !globalSystemState.merc_down && d->connected == CON_PLAYING) {
-            CHAR_DATA *ch;
-            CHAR_DATA *victim;
+            struct char_data *ch;
+            struct char_data *victim;
 
             ch = d->character;
 
@@ -306,7 +306,7 @@ bool process_output(struct descriptor_data *d, bool fPrompt)
  * Bust a prompt(player settable prompt)
  * coded by Morgenes for Aldara Mud
  */
-void bust_a_prompt(CHAR_DATA *ch)
+void bust_a_prompt(struct char_data *ch)
 {
     struct exit_data *pexit;
     const char *str;
@@ -548,7 +548,7 @@ void write_to_buffer(struct descriptor_data *d, const char *txt, int length)
 
 
 #define CNUM(x) ch->pcdata->x
-void process_color(CHAR_DATA *ch, char a)
+void process_color(struct char_data *ch, char a)
 {
     byte c = (byte)0;
     bool real = true;
@@ -726,7 +726,7 @@ void process_color(CHAR_DATA *ch, char a)
 /*
  * Write to one char.
  */
-void send_to_char(char *txt, CHAR_DATA *ch)
+void send_to_char(char *txt, struct char_data *ch)
 {
     char *a, *b;
     int length, l, c = 0, curlen = 0;
@@ -768,7 +768,7 @@ void send_to_char(char *txt, CHAR_DATA *ch)
 
 /* routine used to send color codes without displaying colors */
 /* JDS */
-void send_to_char_ascii(char *txt, CHAR_DATA *ch)
+void send_to_char_ascii(char *txt, struct char_data *ch)
 {
     if (txt != NULL && ch->desc != NULL)
         write_to_buffer(ch->desc, string_replace(txt, "|", "?"), (int)strlen(txt));
@@ -778,7 +778,7 @@ void send_to_char_ascii(char *txt, CHAR_DATA *ch)
 /*
  * Send a page to one char.
  */
-void page_to_char(const char *txt, const CHAR_DATA *ch)
+void page_to_char(const char *txt, const struct char_data *ch)
 {
     if (txt == NULL || ch->desc == NULL)
         return;
@@ -843,7 +843,7 @@ void show_string(struct descriptor_data *d, char *input)
 /***************************************************************************
  *	printf_to_char
  ***************************************************************************/
-void printf_to_char(CHAR_DATA *ch, char *fmt, ...)
+void printf_to_char(struct char_data *ch, char *fmt, ...)
 {
     char buf[MAX_STRING_LENGTH];
 
@@ -856,9 +856,9 @@ void printf_to_char(CHAR_DATA *ch, char *fmt, ...)
     send_to_char(buf, ch);
 }
 
-void set_wait(CHAR_DATA *ch, int len)
+void set_wait(struct char_data *ch, int len)
 {
-    CHAR_DATA *vch;
+    struct char_data *vch;
     int mod;
     float newmod;
 
@@ -903,7 +903,7 @@ void auto_shutdown()
 /**
  * determine whether a character is active - if they are, remove the AFK bit
  */
-void check_afk(CHAR_DATA *ch)
+void check_afk(struct char_data *ch)
 {
     if (ch == NULL || ch->desc == NULL || ch->desc->connected != CON_PLAYING)
         return;

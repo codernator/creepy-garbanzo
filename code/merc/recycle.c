@@ -190,17 +190,17 @@ void free_affect(AFFECT_DATA *af)
 /***************************************************************************
  *	characters
  ***************************************************************************/
-CHAR_DATA *char_free;
+struct char_data *char_free;
 
 /***************************************************************************
  *	new_char
  *
  *	create a new character
  ***************************************************************************/
-CHAR_DATA *new_char(void)
+struct char_data *new_char(void)
 {
-    static CHAR_DATA ch_zero;
-    CHAR_DATA *ch;
+    static struct char_data ch_zero;
+    struct char_data *ch;
     int iter;
 
     if (char_free == NULL) {
@@ -245,7 +245,7 @@ CHAR_DATA *new_char(void)
  *
  *	free an unused character
  ***************************************************************************/
-void free_char(CHAR_DATA *ch)
+void free_char(struct char_data *ch)
 {
     struct gameobject *obj;
     struct gameobject *obj_next;

@@ -1,23 +1,23 @@
 #include "merc.h"
 
 /** imports */
-extern void mp_act_trigger(const char *argument, CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
+extern void mp_act_trigger(const char *argument, struct char_data * mob, struct char_data * ch, const void *arg1, const void *arg2, int type);
 
 
-void act(const char *format, CHAR_DATA *ch, const void *arg1, const void *arg2, int type)
+void act(const char *format, struct char_data *ch, const void *arg1, const void *arg2, int type)
 {
     /* to be compatible with older code */
     act_new(format, ch, arg1, arg2, type, POS_RESTING, true);
 }
 
-void act_new(const char *format, CHAR_DATA *ch, const void *arg1, const void *arg2, int type, int min_pos, bool mob_trigger)
+void act_new(const char *format, struct char_data *ch, const void *arg1, const void *arg2, int type, int min_pos, bool mob_trigger)
 {
     static char *const he_she[] = { "it", "he", "she" };
     static char *const him_her[] = { "it", "him", "her" };
     static char *const his_her[] = { "its", "his", "her" };
 
-    CHAR_DATA *to;
-    CHAR_DATA *vch = (CHAR_DATA *)arg2;
+    struct char_data *to;
+    struct char_data *vch = (struct char_data *)arg2;
     struct gameobject *obj1 = (struct gameobject *)arg1;
     struct gameobject *obj2 = (struct gameobject *)arg2;
     char buf[MAX_STRING_LENGTH];

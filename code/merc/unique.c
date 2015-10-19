@@ -49,10 +49,10 @@
 extern DECLARE_DO_FUN(do_wear);
 
 
-CHAR_DATA *random_unique_mob(void);
+struct char_data *random_unique_mob(void);
 void format_obj(struct gameobject * obj);
 extern int wear_bit(int loc);
-void name_obj(CHAR_DATA * mob, struct gameobject * obj);
+void name_obj(struct char_data * mob, struct gameobject * obj);
 void apply_random_affect(struct gameobject * obj, bool positive);
 
 
@@ -149,10 +149,10 @@ static struct unique_attrib_table unique_table_prefix[] =
  *	create a number of unique arguments and randomly put them
  *	out in the world
  ***************************************************************************/
-void do_cuo(CHAR_DATA *ch, const char *argument)
+void do_cuo(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
-    CHAR_DATA *mob;
+    struct char_data *mob;
     int num_affects;
     int number_objects;
     int chance;
@@ -231,14 +231,14 @@ void do_cuo(CHAR_DATA *ch, const char *argument)
  *
  *	get a count of unique items in the world still carried by a mob
  ***************************************************************************/
-void do_tally(CHAR_DATA *ch, const char *argument)
+void do_tally(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj, *opending;
     int unique_tally = 0;
 
     opending = object_iterator_start(&object_empty_filter);
     while ((obj = opending) != NULL) {
-	CHAR_DATA *vch;
+	struct char_data *vch;
 
 	opending = object_iterator(obj, &object_empty_filter);
 
@@ -264,14 +264,14 @@ void do_tally(CHAR_DATA *ch, const char *argument)
  *
  *	remove all of the uniques from the world
  ***************************************************************************/
-void do_untally(CHAR_DATA *ch, const char *argument)
+void do_untally(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj, *opending;
     int tally = 0;
 
     opending = object_iterator_start(&object_empty_filter);
     while ((obj = opending) != NULL) {
-	CHAR_DATA *vch;
+	struct char_data *vch;
 
 	opending = object_iterator(obj, &object_empty_filter);
 	if ((vch = obj->carried_by) == NULL)
@@ -391,7 +391,7 @@ void apply_random_affect(struct gameobject *obj, bool positive)
  *
  *	randomly generate a name for an object
  ***************************************************************************/
-void name_obj(CHAR_DATA *mob, struct gameobject *obj)
+void name_obj(struct char_data *mob, struct gameobject *obj)
 {
     char buf[MAX_STRING_LENGTH];
     char *uncolor_buf;
@@ -681,10 +681,10 @@ void format_obj(struct gameobject *obj)
  *
  *	pick a random mob from the world
  ***************************************************************************/
-CHAR_DATA *random_unique_mob()
+struct char_data *random_unique_mob()
 {
-    CHAR_DATA *mob = NULL;
-    CHAR_DATA *vch;
+    struct char_data *mob = NULL;
+    struct char_data *vch;
     int chance;
     int num_found;
 

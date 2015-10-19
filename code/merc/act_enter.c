@@ -3,11 +3,11 @@
 #include "interp.h"
 
 
-extern bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
-extern void mp_greet_trigger(CHAR_DATA * ch);
+extern bool mp_percent_trigger(struct char_data * mob, struct char_data * ch, const void *arg1, const void *arg2, int type);
+extern void mp_greet_trigger(struct char_data * ch);
 
 /* random room generation procedure */
-struct room_index_data *get_random_room(CHAR_DATA *ch, struct area_data *area)
+struct room_index_data *get_random_room(struct char_data *ch, struct area_data *area)
 {
 	struct room_index_data *room;
 
@@ -27,7 +27,7 @@ struct room_index_data *get_random_room(CHAR_DATA *ch, struct area_data *area)
 }
 
 /* RT Enter portals */
-void do_enter(CHAR_DATA *ch, const char *argument)
+void do_enter(struct char_data *ch, const char *argument)
 {
 	struct room_index_data *location;
 
@@ -38,7 +38,7 @@ void do_enter(CHAR_DATA *ch, const char *argument)
 	if (argument[0] != '\0') {
 		struct room_index_data *old_room;
 		struct gameobject *portal;
-		CHAR_DATA *fch, *fch_next;
+		struct char_data *fch, *fch_next;
 
 		old_room = ch->in_room;
 

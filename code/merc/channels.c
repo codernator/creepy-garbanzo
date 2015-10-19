@@ -20,12 +20,12 @@
 
 
 /** imports */
-extern void mp_act_trigger(const char *argument, CHAR_DATA * mob, CHAR_DATA * sender, const void *arg1, const void *arg2, int type);
+extern void mp_act_trigger(const char *argument, struct char_data * mob, struct char_data * sender, const void *arg1, const void *arg2, int type);
 
 
 /** locals */
-static bool is_ignoring(/*@partial@*/CHAR_DATA *sender, /*@partial@*/CHAR_DATA *receiver);
-static bool send_tell(/*@partial@*/CHAR_DATA *sender, /*@partial@*/CHAR_DATA *whom, const char* argument);
+static bool is_ignoring(/*@partial@*/struct char_data *sender, /*@partial@*/struct char_data *receiver);
+static bool send_tell(/*@partial@*/struct char_data *sender, /*@partial@*/struct char_data *whom, const char* argument);
 static char *emote_parse(const char *argument);
 
 static DECLARE_BROADCASTER(broadcast_global);
@@ -61,7 +61,7 @@ static const CHANNEL_DEFINITION const channels[] =
  * Interface
  */
 
-void channels_toggle(CHAR_DATA *sender, const CHANNEL_DEFINITION const *channel)
+void channels_toggle(struct char_data *sender, const CHANNEL_DEFINITION const *channel)
 {
     bool now_on;
 
@@ -81,7 +81,7 @@ void channels_toggle(CHAR_DATA *sender, const CHANNEL_DEFINITION const *channel)
     printf_to_char(sender, "%s is now %s.\n\r", channel->name, now_on ? "ON" : "OFF");
 }
 
-void channels_show(CHAR_DATA *sender)
+void channels_show(struct char_data *sender)
 {
     int i;
     bool enabled;
@@ -99,7 +99,7 @@ void channels_show(CHAR_DATA *sender)
     }
 }
 
-void channels_permission(CHAR_DATA *grantor, CHAR_DATA *grantee, bool granted, const CHANNEL_DEFINITION const *channel)
+void channels_permission(struct char_data *grantor, struct char_data *grantee, bool granted, const CHANNEL_DEFINITION const *channel)
 {
     static char buf[MAX_INPUT_LENGTH];
 
@@ -136,7 +136,7 @@ void channels_permission(CHAR_DATA *grantor, CHAR_DATA *grantee, bool granted, c
     wiznet(buf, grantor, NULL, WIZ_PENALTIES, WIZ_SECURE, 0);
 }
 
-void broadcast_channel(CHAR_DATA *sender, const CHANNEL_DEFINITION const *channel, CHAR_DATA *target, const char *argument)
+void broadcast_channel(struct char_data *sender, const CHANNEL_DEFINITION const *channel, struct char_data *target, const char *argument)
 {
     if (sender != NULL) {
 	if (CHAN_DENIED(sender, channel->flag)) {
@@ -227,13 +227,13 @@ const CHANNEL_DEFINITION const *channels_find(CHANNEL_FLAG_TYPE channel_flag)
  * Broadcasters
  */
 
-void broadcast_shout(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, const char *argument)
+void broadcast_shout(const CHANNEL_DEFINITION const *channel, struct char_data *sender, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = sender };
     struct descriptor_data *d;
     struct descriptor_data *dpending;
-    CHAR_DATA *actual;
-    CHAR_DATA *receiver;
+    struct char_data *actual;
+    struct char_data *receiver;
 
     act_new("`1You shout '`!$T`1'``", sender, NULL, argument, TO_CHAR, POS_DEAD, channel->mob_trigger);
     dpending = descriptor_iterator_start(&playing_filter);
@@ -248,13 +248,13 @@ void broadcast_shout(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender,
     }
 }
 
-void broadcast_global(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, const char *argument)
+void broadcast_global(const CHANNEL_DEFINITION const *channel, struct char_data *sender, const char *argument)
 {
     static char buf[2*MAX_INPUT_LENGTH];
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = sender };
     struct descriptor_data *dpending;
     struct descriptor_data *d;
-    CHAR_DATA *actual;
+    struct char_data *actual;
 
     (void)snprintf(buf, 2 * MAX_INPUT_LENGTH, "``$n %s: %s``", channel->print_name, argument);
     if (sender != NULL) {
@@ -272,7 +272,7 @@ void broadcast_global(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender
     }
 }
 
-void broadcast_say(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, const char *argument)
+void broadcast_say(const CHANNEL_DEFINITION const *channel, struct char_data *sender, const char *argument)
 {
 #define VERBSIZE 20
     static char buf[2*MAX_INPUT_LENGTH];
@@ -321,15 +321,15 @@ void broadcast_say(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, c
     act_new(buf, sender, NULL, argument, TO_ROOM, channel->receiver_position, false);
 }
 
-void broadcast_emote(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, const char *argument)
+void broadcast_emote(const CHANNEL_DEFINITION const *channel, struct char_data *sender, const char *argument)
 {
     act_new("$n $T", sender, NULL, emote_parse(argument), TO_CHAR, POS_RESTING, channel->mob_trigger);
     act_new("$n $T", sender, NULL, emote_parse(argument), TO_ROOM, channel->receiver_position, false);
 }
 
-void broadcast_pmote(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, const char *argument)
+void broadcast_pmote(const CHANNEL_DEFINITION const *channel, struct char_data *sender, const char *argument)
 {
-    CHAR_DATA *vch;
+    struct char_data *vch;
     char *letter;
     char *name;
     char last[MAX_INPUT_LENGTH];
@@ -390,9 +390,9 @@ void broadcast_pmote(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender,
     }
 }
 
-void broadcast_smote(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, const char *argument)
+void broadcast_smote(const CHANNEL_DEFINITION const *channel, struct char_data *sender, const char *argument)
 {
-    CHAR_DATA *vch;
+    struct char_data *vch;
     char *letter;
     char *name;
     char last[MAX_INPUT_LENGTH];
@@ -460,9 +460,9 @@ void broadcast_smote(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender,
     }
 }
 
-void broadcast_reply(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, const char *argument)
+void broadcast_reply(const CHANNEL_DEFINITION const *channel, struct char_data *sender, const char *argument)
 {
-    CHAR_DATA *whom;
+    struct char_data *whom;
 
     if ((whom = sender->reply) == NULL) {
 	send_to_char("They aren't here.\n\r", sender);
@@ -476,9 +476,9 @@ void broadcast_reply(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender,
     return;
 }
 
-void broadcast_gtell(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, const char *argument)
+void broadcast_gtell(const CHANNEL_DEFINITION const *channel, struct char_data *sender, const char *argument)
 {
-    CHAR_DATA *gch;
+    struct char_data *gch;
 
     for (gch = char_list; gch != NULL; gch = gch->next) {
 	if (is_same_group(gch, sender)) {
@@ -492,7 +492,7 @@ void broadcast_gtell(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender,
  * Targetted Broadcasters
  */
 
-void broadcast_sayto(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, CHAR_DATA *whom, const char *argument)
+void broadcast_sayto(const CHANNEL_DEFINITION const *channel, struct char_data *sender, struct char_data *whom, const char *argument)
 {
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = sender };
     struct descriptor_data *d;
@@ -517,7 +517,7 @@ void broadcast_sayto(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender,
     }
 }
 
-void broadcast_tell(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, CHAR_DATA *whom, const char *argument)
+void broadcast_tell(const CHANNEL_DEFINITION const *channel, struct char_data *sender, struct char_data *whom, const char *argument)
 {
     if (send_tell(sender, whom, argument)) {
 	whom->reply = sender;
@@ -532,7 +532,7 @@ void broadcast_tell(const CHANNEL_DEFINITION const *channel, CHAR_DATA *sender, 
  * Util
  */
 
-bool is_ignoring(CHAR_DATA *sender, CHAR_DATA *receiver)
+bool is_ignoring(struct char_data *sender, struct char_data *receiver)
 {
     int pos;
     bool found = false;
@@ -553,7 +553,7 @@ bool is_ignoring(CHAR_DATA *sender, CHAR_DATA *receiver)
     return found;
 }
 
-bool send_tell(CHAR_DATA *sender, CHAR_DATA *whom, const char* argument)
+bool send_tell(struct char_data *sender, struct char_data *whom, const char* argument)
 {
     static char buf[MAX_STRING_LENGTH];
 

@@ -17,15 +17,15 @@ extern SKILL *gsp_mana_vortex;
 /***************************************************************************
  *	local functions
  ***************************************************************************/
-static void say_spell(CHAR_DATA * ch, SKILL * skill);
+static void say_spell(struct char_data * ch, SKILL * skill);
 
 
 /***************************************************************************
  *	imported functions
  ***************************************************************************/
-extern bool remove_obj(CHAR_DATA * ch, int iWear, bool fReplace);
-extern void wear_obj(CHAR_DATA * ch, struct gameobject * obj, bool fReplace);
-extern void dam_message(CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt, bool immune);
+extern bool remove_obj(struct char_data * ch, int iWear, bool fReplace);
+extern void wear_obj(struct char_data * ch, struct gameobject * obj, bool fReplace);
+extern void dam_message(struct char_data * ch, struct char_data * victim, int dam, int dt, bool immune);
 
 
 
@@ -34,7 +34,7 @@ extern void dam_message(CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt, boo
  *
  *	finds a a spell that a character can cast if possible
  ***************************************************************************/
-int find_spell(CHAR_DATA *ch, const char *name)
+int find_spell(struct char_data *ch, const char *name)
 {
     SKILL *skill;
     LEARNED *learned;
@@ -60,7 +60,7 @@ int find_spell(CHAR_DATA *ch, const char *name)
  *
  *	lookup a dynamic skill
  ***************************************************************************/
-static SKILL *spell_lookup(CHAR_DATA *ch, char *name)
+static SKILL *spell_lookup(struct char_data *ch, char *name)
 {
     SKILL *skill;
     SKILL *skill_tmp;
@@ -94,9 +94,9 @@ static SKILL *spell_lookup(CHAR_DATA *ch, char *name)
  *
  *	say gibberish incantation of a spell
  ***************************************************************************/
-static void say_spell(CHAR_DATA *ch, SKILL *skill)
+static void say_spell(struct char_data *ch, SKILL *skill)
 {
-    CHAR_DATA *rch;
+    struct char_data *rch;
     char buf[MAX_STRING_LENGTH];
     char buf_nonclass[MAX_STRING_LENGTH];
     char buf_inclass[MAX_STRING_LENGTH];
@@ -195,7 +195,7 @@ static void say_spell(CHAR_DATA *ch, SKILL *skill)
  *	compute a saving throw
  *	negative applies make the saving throw easier
  ***************************************************************************/
-bool saves_spell(int level, CHAR_DATA *victim, int dam_type)
+bool saves_spell(int level, struct char_data *victim, int dam_type)
 {
     int vch_lvl;
     int save;
@@ -259,7 +259,7 @@ bool saves_dispel(int dis_level, int spell_level, int duration)
  *
  *	co-routine for dispel magic and cancellation
  ***************************************************************************/
-bool check_dispel(int dis_level, CHAR_DATA *victim, SKILL *skill)
+bool check_dispel(int dis_level, struct char_data *victim, SKILL *skill)
 {
     AFFECT_DATA *af;
 
@@ -296,7 +296,7 @@ bool check_dispel(int dis_level, CHAR_DATA *victim, SKILL *skill)
  *
  *	removes all of the affects on a victim
  ***************************************************************************/
-void remove_all_affects(CHAR_DATA *victim)
+void remove_all_affects(struct char_data *victim)
 {
     AFFECT_DATA *af;
     SKILL *skill;
@@ -320,9 +320,9 @@ void remove_all_affects(CHAR_DATA *victim)
  *
  *	cast a spell
  ***************************************************************************/
-void do_cast(CHAR_DATA *ch, const char *argument)
+void do_cast(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     struct gameobject *obj;
     LEARNED *learned;
     LEVEL_INFO *level_info;
@@ -616,8 +616,8 @@ void do_cast(CHAR_DATA *ch, const char *argument)
 
     if ((skill->target == TAR_CHAR_OFFENSIVE || (skill->target == TAR_OBJ_CHAR_OFF && target == TARGET_CHAR))) {
 	if (victim != ch && victim->master != ch) {
-	    CHAR_DATA *vch;
-	    CHAR_DATA *vch_next;
+	    struct char_data *vch;
+	    struct char_data *vch_next;
 
 	    for (vch = ch->in_room->people; vch; vch = vch_next) {
 		vch_next = vch->next_in_room;
@@ -642,7 +642,7 @@ void do_cast(CHAR_DATA *ch, const char *argument)
  *
  *	cast a spell using a magical object
  ***************************************************************************/
-void obj_cast_spell(int	sn, int	level, CHAR_DATA * ch, CHAR_DATA * victim, struct gameobject *	obj)
+void obj_cast_spell(int	sn, int	level, struct char_data * ch, struct char_data * victim, struct gameobject *	obj)
 {
     SKILL *skill;
     void *vo;
@@ -749,8 +749,8 @@ void obj_cast_spell(int	sn, int	level, CHAR_DATA * ch, CHAR_DATA * victim, struc
 		|| (skill->target == TAR_OBJ_CHAR_OFF && target == TARGET_CHAR))) {
 	if (victim != ch
 		&& victim->master != ch) {
-	    CHAR_DATA *vch;
-	    CHAR_DATA *vch_next;
+	    struct char_data *vch;
+	    struct char_data *vch_next;
 
 	    for (vch = ch->in_room->people; vch; vch = vch_next) {
 		vch_next = vch->next_in_room;
@@ -772,7 +772,7 @@ void obj_cast_spell(int	sn, int	level, CHAR_DATA * ch, CHAR_DATA * victim, struc
 /***************************************************************************
  *	do_quaff
  ***************************************************************************/
-void do_quaff(CHAR_DATA *ch, const char *argument)
+void do_quaff(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
@@ -814,9 +814,9 @@ void do_quaff(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_recite
  ***************************************************************************/
-void do_recite(CHAR_DATA *ch, const char *argument)
+void do_recite(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     struct gameobject *scroll;
     struct gameobject *obj;
     SKILL *skill;
@@ -879,10 +879,10 @@ void do_recite(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_brandish
  ***************************************************************************/
-void do_brandish(CHAR_DATA *ch, const char *argument)
+void do_brandish(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *vch;
-    CHAR_DATA *vch_next;
+    struct char_data *vch;
+    struct char_data *vch_next;
     struct gameobject *staff;
     SKILL *skill;
     SKILL *cast;
@@ -964,9 +964,9 @@ void do_brandish(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_zap
  ***************************************************************************/
-void do_zap(CHAR_DATA *ch, const char *argument)
+void do_zap(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     struct gameobject *wand;
     struct gameobject *obj;
     SKILL *skill;
@@ -1044,7 +1044,7 @@ void do_zap(CHAR_DATA *ch, const char *argument)
  *
  *	cast a spell - should be able to be tweaked for spell-chaining
  ***************************************************************************/
-void cast_spell(CHAR_DATA *ch, SKILL *skill, int level, void *vo, int target, const char *argument)
+void cast_spell(struct char_data *ch, SKILL *skill, int level, void *vo, int target, const char *argument)
 {
     SPELL_LIST *spells;
 
@@ -1058,7 +1058,7 @@ void cast_spell(CHAR_DATA *ch, SKILL *skill, int level, void *vo, int target, co
 /***************************************************************************
  *	do_deft
  ***************************************************************************/
-void do_deft(CHAR_DATA *ch, const char *argument)
+void do_deft(struct char_data *ch, const char *argument)
 {
     AFFECT_DATA af;
     SKILL *skill;
@@ -1103,7 +1103,7 @@ void do_deft(CHAR_DATA *ch, const char *argument)
 /***************************************************************************
  *	do_dash
  ***************************************************************************/
-void do_dash(CHAR_DATA *ch, const char *argument)
+void do_dash(struct char_data *ch, const char *argument)
 {
     AFFECT_DATA af;
     SKILL *skill;

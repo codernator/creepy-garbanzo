@@ -17,15 +17,15 @@ extern DECLARE_DO_FUN(do_look);
 extern DECLARE_DO_FUN(do_btrans);
 extern DECLARE_DO_FUN(do_reboot);
 extern DECLARE_DO_FUN(do_copyover);
-extern bool mp_percent_trigger(CHAR_DATA * mob, CHAR_DATA * ch, const void *arg1, const void *arg2, int type);
+extern bool mp_percent_trigger(struct char_data * mob, struct char_data * ch, const void *arg1, const void *arg2, int type);
 extern void random_drop(void);
 extern AFFECT_DATA *new_affect(void);
 extern void auction_update(void);
 
 
-void gain_object_exp(CHAR_DATA * ch, struct gameobject * obj, int gain);
-void update_pktimer(CHAR_DATA * ch);
-char *who_string(CHAR_DATA * ch);
+void gain_object_exp(struct char_data * ch, struct gameobject * obj, int gain);
+void update_pktimer(struct char_data * ch);
+char *who_string(struct char_data * ch);
 
 
 /***************************************************************************
@@ -36,11 +36,11 @@ static int save_number = 0;
 static void add_cache_affect(struct gameobject * obj, int bit, int sn, int level, int mod);
 static void mobile_update(void);
 static void weather_update(void);
-static int hit_gain(CHAR_DATA * ch);
-static int mana_gain(CHAR_DATA * ch);
-static int move_gain(CHAR_DATA * ch);
+static int hit_gain(struct char_data * ch);
+static int mana_gain(struct char_data * ch);
+static int move_gain(struct char_data * ch);
 static void char_update(void);
-static void advance_level_object(CHAR_DATA * ch, struct gameobject * obj);
+static void advance_level_object(struct char_data * ch, struct gameobject * obj);
 static void obj_update(void);
 static void aggr_update(void);
 static void room_update(void);
@@ -48,7 +48,7 @@ static void underwater_update(void);
 
 
 
-void gain_object_exp(CHAR_DATA *ch, struct gameobject *obj, int gain)
+void gain_object_exp(struct char_data *ch, struct gameobject *obj, int gain)
 {
     int leftover = 0;
 
@@ -73,7 +73,7 @@ void gain_object_exp(CHAR_DATA *ch, struct gameobject *obj, int gain)
     return;
 }
 
-static void advance_level_object(CHAR_DATA *ch, struct gameobject *obj)
+static void advance_level_object(struct char_data *ch, struct gameobject *obj)
 {
     int pbonus = number_range(5, 10);
     int bonus = number_range(4, 8);
@@ -148,7 +148,7 @@ static void add_cache_affect(struct gameobject *obj, int bit, int sn, int level,
  *
  *	advance (or demote) a character n levels
  ***************************************************************************/
-void advance_level(CHAR_DATA *ch, int level)
+void advance_level(struct char_data *ch, int level)
 {
     int loop;
     int add_hp;
@@ -255,7 +255,7 @@ void advance_level(CHAR_DATA *ch, int level)
  *
  *	gain experience - advance level if attained
  ***************************************************************************/
-void gain_exp(CHAR_DATA *ch, int gain)
+void gain_exp(struct char_data *ch, int gain)
 {
     static char buf[MAX_INPUT_LENGTH];
 
@@ -301,9 +301,9 @@ void gain_exp(CHAR_DATA *ch, int gain)
  *                                                                          *
  *   gain 1 extended level - immcommand                                     *
  ***************************************************************************/
-void do_extend(CHAR_DATA *ch, const char *argument)
+void do_extend(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *victim;
+    struct char_data *victim;
     char arg1[MAX_INPUT_LENGTH];
 
     argument = one_argument(argument, arg1);
@@ -352,7 +352,7 @@ void do_extend(CHAR_DATA *ch, const char *argument)
  *
  *	restores a character
  ***************************************************************************/
-void restore_char(CHAR_DATA *ch)
+void restore_char(struct char_data *ch)
 {
     ch->hit = ch->max_hit;
     ch->mana = ch->max_mana;
@@ -367,7 +367,7 @@ void restore_char(CHAR_DATA *ch)
  *
  *	strip the negative affects from a character
  ***************************************************************************/
-void strip_negative_affects(CHAR_DATA *ch)
+void strip_negative_affects(struct char_data *ch)
 {
     SKILL *skill_idx;
 
@@ -384,7 +384,7 @@ void strip_negative_affects(CHAR_DATA *ch)
  *
  *	determine how many hp a character gets every tick
  ***************************************************************************/
-static int hit_gain(CHAR_DATA *ch)
+static int hit_gain(struct char_data *ch)
 {
     int gain;
     int number;
@@ -465,7 +465,7 @@ static int hit_gain(CHAR_DATA *ch)
  *	determine the amount of a mana a character gains at each
  *	tick
  ***************************************************************************/
-static int mana_gain(CHAR_DATA *ch)
+static int mana_gain(struct char_data *ch)
 {
     int gain;
     int number;
@@ -546,7 +546,7 @@ static int mana_gain(CHAR_DATA *ch)
  *
  *	determine the amount of movement a character gains at a tick
  ***************************************************************************/
-static int move_gain(CHAR_DATA *ch)
+static int move_gain(struct char_data *ch)
 {
     int gain;
 
@@ -594,7 +594,7 @@ static int move_gain(CHAR_DATA *ch)
  *
  *	does condition handling such as thirst, hunger, etc.
  ***************************************************************************/
-void gain_condition(CHAR_DATA *ch, int condition_idx, long value)
+void gain_condition(struct char_data *ch, int condition_idx, long value)
 {
     long condition;
 
@@ -634,8 +634,8 @@ void gain_condition(CHAR_DATA *ch, int condition_idx, long value)
  ***************************************************************************/
 static void mobile_update(void)
 {
-    CHAR_DATA *ch;
-    CHAR_DATA *ch_next;
+    struct char_data *ch;
+    struct char_data *ch_next;
     struct exit_data *pexit;
     int door;
 
@@ -733,8 +733,8 @@ static void mobile_update(void)
 
 	/*Mob Memory by Urgo 7/28/96 */
 	if (ch->mobmem != NULL && ch->in_room->people != NULL) {
-	    CHAR_DATA *pissed;
-	    CHAR_DATA *pissed_next;
+	    struct char_data *pissed;
+	    struct char_data *pissed_next;
 
 	    for (pissed = ch->in_room->people; pissed; pissed = pissed_next) {
 		pissed_next = pissed->next_in_room;
@@ -755,8 +755,8 @@ static void mobile_update(void)
 	if (ch->mob_wuss != NULL && ch->in_room->people != NULL) {
 	    struct room_index_data *was_in;
 	    struct room_index_data *now_in;
-	    CHAR_DATA *laters;
-	    CHAR_DATA *laters_next;
+	    struct char_data *laters;
+	    struct char_data *laters_next;
 	    int attempt;
 
 
@@ -953,7 +953,7 @@ static void auto_restore(void)
     struct descriptor_iterator_filter filter = { .must_playing = true };
     struct descriptor_data *d;
     struct descriptor_data *dpending;
-    CHAR_DATA *victim;
+    struct char_data *victim;
 
     dpending = descriptor_iterator_start(&filter);
     while ((d = dpending) != NULL) {
@@ -1039,8 +1039,8 @@ static void room_update(void)
  ***************************************************************************/
 static void char_update(void)
 {
-    CHAR_DATA *ch;
-    CHAR_DATA *ch_next;
+    struct char_data *ch;
+    struct char_data *ch_next;
 
     save_number++;
     if (save_number > 29)
@@ -1265,7 +1265,7 @@ static void obj_update(void)
 
     opending = object_iterator_start(&object_empty_filter);
     while ((obj = opending) != NULL) {
-	CHAR_DATA *rch;
+	struct char_data *rch;
 	char *message;
 
 	opending = object_iterator(obj, &object_empty_filter);
@@ -1402,13 +1402,13 @@ static void obj_update(void)
  */
 static void aggr_update(void)
 {
-    CHAR_DATA *wch;
-    CHAR_DATA *wch_next;
-    CHAR_DATA *ch;
-    CHAR_DATA *ch_next;
-    CHAR_DATA *vch;
-    CHAR_DATA *vch_next;
-    CHAR_DATA *victim;
+    struct char_data *wch;
+    struct char_data *wch_next;
+    struct char_data *ch;
+    struct char_data *ch_next;
+    struct char_data *vch;
+    struct char_data *vch_next;
+    struct char_data *victim;
 
     for (wch = char_list; wch != NULL; wch = wch_next) {
 	wch_next = wch->next;
@@ -1567,8 +1567,8 @@ void update_handler(void)
 
 static void underwater_update(void)
 {
-    CHAR_DATA *ch;
-    CHAR_DATA *ch_next;
+    struct char_data *ch;
+    struct char_data *ch_next;
     int dam;
 
     for (ch = char_list; ch != NULL; ch = ch_next) {

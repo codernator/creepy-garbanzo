@@ -25,7 +25,7 @@ char *format_string(char *oldstring);
  *
  *	clears a string and puts the player into editing mode
  ***************************************************************************/
-void string_edit(CHAR_DATA *ch, char **string)
+void string_edit(struct char_data *ch, char **string)
 {
     send_to_char("`3-`#========`3- `@Entering `2EDIT `@Mode `3-`#=========`3-``\n\r", ch);
     send_to_char("    Type `2.`@h`` on a new line for help\n\r", ch);
@@ -47,7 +47,7 @@ void string_edit(CHAR_DATA *ch, char **string)
  *
  *	puts a player into append mode for a given string
  ***************************************************************************/
-void string_append(CHAR_DATA *ch, char **string)
+void string_append(struct char_data *ch, char **string)
 {
     send_to_char("`3-`#========`3- `@Entering `2APPEND `@Mode `3-`#=========`3-``\n\r", ch);
     send_to_char("    Type `2.`@h`` on a new line for help\n\r", ch);
@@ -99,7 +99,7 @@ char *string_replace(char *orig, char *find, char *replace)
  *	up a bit, fix a couple of things that i think are really
  *	tanked and let it be
  ***************************************************************************/
-void string_add(CHAR_DATA *ch, const char *argument)
+void string_add(struct char_data *ch, const char *argument)
 {
     char buf[MAX_STRING_LENGTH];
     bool done = false;

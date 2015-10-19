@@ -5,10 +5,10 @@
 #include "recycle.h"
 
 
-extern CHAR_DATA * find_keeper(CHAR_DATA * ch);
-extern int get_cost(CHAR_DATA * keeper, struct gameobject * obj, bool fbuy);
-extern struct gameobject * get_obj_keeper(CHAR_DATA * ch, CHAR_DATA * keeper, char *argument);
-extern void obj_to_keeper(struct gameobject * obj, CHAR_DATA * ch);
+extern struct char_data * find_keeper(struct char_data * ch);
+extern int get_cost(struct char_data * keeper, struct gameobject * obj, bool fbuy);
+extern struct gameobject * get_obj_keeper(struct char_data * ch, struct char_data * keeper, char *argument);
+extern void obj_to_keeper(struct gameobject * obj, struct char_data * ch);
 
 
 /***************************************************************************
@@ -16,9 +16,9 @@ extern void obj_to_keeper(struct gameobject * obj, CHAR_DATA * ch);
  *
  *	estimate the cost of a particular flag for a weapon
  ***************************************************************************/
-void do_estimate(CHAR_DATA *ch, const char *argument)
+void do_estimate(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *mob;
+    struct char_data *mob;
     struct gameobject *obj;
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
@@ -106,9 +106,9 @@ void do_estimate(CHAR_DATA *ch, const char *argument)
  *
  *	add the poison affect to a weapon
  ***************************************************************************/
-void do_poison(CHAR_DATA *ch, const char *argument)
+void do_poison(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *mob;
+    struct char_data *mob;
     struct gameobject *obj;
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
@@ -166,9 +166,9 @@ void do_poison(CHAR_DATA *ch, const char *argument)
  *
  *	set the weapon on fire
  ***************************************************************************/
-void do_engulf(CHAR_DATA *ch, const char *argument)
+void do_engulf(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *mob;
+    struct char_data *mob;
     struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
     unsigned int cost;
@@ -226,9 +226,9 @@ void do_engulf(CHAR_DATA *ch, const char *argument)
  *
  *	add the sharp flag to a weapon
  ***************************************************************************/
-void do_sharpen(CHAR_DATA *ch, const char *argument)
+void do_sharpen(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *mob;
+    struct char_data *mob;
     struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
     unsigned int cost;
@@ -282,9 +282,9 @@ void do_sharpen(CHAR_DATA *ch, const char *argument)
  *
  *	add a chill affect to the weapon
  ***************************************************************************/
-void do_chill(CHAR_DATA *ch, const char *argument)
+void do_chill(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *mob;
+    struct char_data *mob;
     struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
     unsigned int cost;
@@ -339,9 +339,9 @@ void do_chill(CHAR_DATA *ch, const char *argument)
  *
  *	add an electricity attack to the weapon
  ***************************************************************************/
-void do_electrify(CHAR_DATA *ch, const char *argument)
+void do_electrify(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *mob;
+    struct char_data *mob;
     struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
     unsigned int cost;
@@ -397,9 +397,9 @@ void do_electrify(CHAR_DATA *ch, const char *argument)
  *
  *	make the weapon vampiric
  ***************************************************************************/
-void do_energize(CHAR_DATA *ch, const char *argument)
+void do_energize(struct char_data *ch, const char *argument)
 {
-    CHAR_DATA *mob;
+    struct char_data *mob;
     struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
     unsigned int cost;

@@ -29,12 +29,12 @@
 
 
 
-extern void string_append(CHAR_DATA * ch, char **string);
+extern void string_append(struct char_data * ch, char **string);
 
 /***************************************************************************
  *	local defines
  ***************************************************************************/
-#define MPEDIT(fun)           bool fun(CHAR_DATA * ch, const char *argument)
+#define MPEDIT(fun)           bool fun(struct char_data * ch, const char *argument)
 
 /* editor table */
 const struct olc_cmd_type mpedit_table[] =
@@ -59,7 +59,7 @@ const struct olc_cmd_type mpedit_table[] =
  *
  *	run the mob program interpreter
  ***************************************************************************/
-void mpedit(CHAR_DATA *ch, const char *argument)
+void mpedit(struct char_data *ch, const char *argument)
 {
     MPROG_CODE *mpcode;
     struct area_data *ad;
@@ -117,7 +117,7 @@ void mpedit(CHAR_DATA *ch, const char *argument)
  *
  *	entry point for editing mob programs
  ***************************************************************************/
-void do_mpedit(CHAR_DATA *ch, const char *argument)
+void do_mpedit(struct char_data *ch, const char *argument)
 {
     MPROG_CODE *mpcode;
     char command[MAX_INPUT_LENGTH];
