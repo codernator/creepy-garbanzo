@@ -6,7 +6,7 @@
 #define MAX_COMBAT_DICE_POOL 24
 
 typedef struct combat_roll_box {
-	SKILL * special_attack;
+	struct dynamic_skill * special_attack;
 	int	weapon_sn;
 	int	weapon_skill;
 	int	combatant_level;

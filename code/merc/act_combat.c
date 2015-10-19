@@ -7,11 +7,11 @@
 extern void make_corpse(struct char_data *ch);
 extern bool check_shield_block(struct char_data *ch, struct char_data *victim);
 extern void disarm(struct char_data *ch, struct char_data *victim);
-extern void spell_charm_person(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument);
+extern void spell_charm_person(struct dynamic_skill *skill, int level, struct char_data *ch, void *vo, int target, const char *argument);
 extern void set_fighting(struct char_data *ch, struct char_data *victim);
 extern int battlefield_count(void);
 
-extern SKILL* gsp_hand_to_hand;
+extern struct dynamic_skill* gsp_hand_to_hand;
 
 /*
  * Generate a random door.
@@ -24,7 +24,7 @@ int number_door(void)
 void do_bash(struct char_data *ch, const char *argument)
 {
     struct char_data *victim;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     char arg[MAX_INPUT_LENGTH];
     int chance;
     int total;
@@ -340,7 +340,7 @@ void do_rescue(struct char_data *ch, const char *argument)
 {
     struct char_data *victim;
     struct char_data *fch;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     char arg[MAX_INPUT_LENGTH];
     int heal;
 
@@ -417,7 +417,7 @@ void do_disarm(struct char_data *ch, /*@unused@*/const char *argument)
 {
     struct char_data *victim;
     struct gameobject *obj;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     int chance;
     int hth;
     int ch_weapon;
@@ -554,7 +554,7 @@ void do_slay(struct char_data *ch, const char *argument)
 void do_intimidate(struct char_data *ch, const char *argument)
 {
     struct char_data *victim;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
     int chance;
@@ -638,7 +638,7 @@ void do_familiar(/*@dependent@*/struct char_data *ch, /*@unused@*/const char *ar
 {
     struct mob_index_data *pMobIndex;
     struct char_data *mount;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     int i, chance;
 
     if ((skill = skill_lookup("raise dead")) == NULL) {

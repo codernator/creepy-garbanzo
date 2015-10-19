@@ -212,7 +212,7 @@ void affect_modify(struct char_data *ch, struct affect_data *paf, bool fAdd)
 *
 *	find an affect in an affects list
 ***************************************************************************/
-struct affect_data *affect_find(struct affect_data *paf, SKILL *skill)
+struct affect_data *affect_find(struct affect_data *paf, struct dynamic_skill *skill)
 {
 	struct affect_data *paf_find;
 
@@ -539,7 +539,7 @@ void affect_remove_room(struct room_index_data *room, struct affect_data *paf)
 *
 *	strips all affects of the given sn
 ***************************************************************************/
-void affect_strip(struct char_data *ch, SKILL *skill)
+void affect_strip(struct char_data *ch, struct dynamic_skill *skill)
 {
 	struct affect_data *paf;
 	struct affect_data *paf_next;
@@ -605,7 +605,7 @@ void affect_join(struct char_data *ch, struct affect_data *paf)
 *
 *	check to see if a character is affected by a spell
 ***************************************************************************/
-bool is_affected(struct char_data *ch, SKILL *skill)
+bool is_affected(struct char_data *ch, struct dynamic_skill *skill)
 {
 	struct affect_data *paf;
 
@@ -623,7 +623,7 @@ bool is_affected(struct char_data *ch, SKILL *skill)
 *
 *	check to see if a room is affected by a spell
 ***************************************************************************/
-bool is_affected_room(struct room_index_data *room, SKILL *skill)
+bool is_affected_room(struct room_index_data *room, struct dynamic_skill *skill)
 {
 	struct affect_data *paf;
 
@@ -679,7 +679,7 @@ char *room_affect(struct affect_data *paf)
 *
 *	do the displacement affect for a room
 ***************************************************************************/
-void affect_displacement(SKILL *skill, void *target, int type, struct affect_data *paf)
+void affect_displacement(struct dynamic_skill *skill, void *target, int type, struct affect_data *paf)
 {
 	struct room_index_data *room = (struct room_index_data *)target;
 	struct room_index_data *to = NULL;
@@ -712,7 +712,7 @@ void affect_displacement(SKILL *skill, void *target, int type, struct affect_dat
 *
 *	to be used in the vault and in the battlefield
 ***************************************************************************/
-void affect_parasitic_cloud(SKILL *skill, void *target, int type, struct affect_data *paf)
+void affect_parasitic_cloud(struct dynamic_skill *skill, void *target, int type, struct affect_data *paf)
 {
 	struct room_index_data *room = (struct room_index_data *)target;
 	struct char_data *vch;
@@ -756,7 +756,7 @@ void affect_parasitic_cloud(SKILL *skill, void *target, int type, struct affect_
  *
  *	do the burning flames affect
  ***************************************************************************/
-void affect_burning_flames(SKILL *skill, void *target, int type, struct affect_data *paf)
+void affect_burning_flames(struct dynamic_skill *skill, void *target, int type, struct affect_data *paf)
 {
 	struct char_data *ch = (struct char_data *)target;
 
@@ -783,7 +783,7 @@ void affect_burning_flames(SKILL *skill, void *target, int type, struct affect_d
  *
  *	do the poison affect
  ***************************************************************************/
-void affect_poison(SKILL *skill, void *target, int type, struct affect_data *paf)
+void affect_poison(struct dynamic_skill *skill, void *target, int type, struct affect_data *paf)
 {
 	struct char_data *ch = (struct char_data *)target;
 

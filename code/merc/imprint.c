@@ -22,12 +22,12 @@ int count_slots(struct gameobject * obj);
  *	imprint a spell onto an object - scroll or potion
  *	used for brew and scribe
  ***************************************************************************/
-static void spell_imprint(SKILL *skill, int level, struct char_data *ch, void *vo)
+static void spell_imprint(struct dynamic_skill *skill, int level, struct char_data *ch, void *vo)
 {
     struct gameobject *obj = (struct gameobject *)vo;
     struct level_info *level_info;
     struct learned_info *learned;
-    SKILL *skill_retro;
+    struct dynamic_skill *skill_retro;
     char buf[MAX_STRING_LENGTH];
     char short_descr[MAX_STRING_LENGTH];
     char name[MAX_STRING_LENGTH];
@@ -151,7 +151,7 @@ static void spell_imprint(SKILL *skill, int level, struct char_data *ch, void *v
 void do_brew(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     struct learned_info *learned_brew;
     struct learned_info *learned_spell;
     char arg[MAX_INPUT_LENGTH];
@@ -279,7 +279,7 @@ void do_brew(struct char_data *ch, const char *argument)
 void do_scribe(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     struct learned_info *learned_scribe;
     struct learned_info *learned_spell;
     char arg[MAX_INPUT_LENGTH];
@@ -410,7 +410,7 @@ void do_scribe(struct char_data *ch, const char *argument)
  ***************************************************************************/
 int count_slots(struct gameobject *obj)
 {
-    SKILL *skill;
+    struct dynamic_skill *skill;
     int slots;
     int iter;
 

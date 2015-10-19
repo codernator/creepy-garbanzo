@@ -459,7 +459,7 @@ void save_object(FILE *fp, struct objectprototype *pObjIndex)
       case ITEM_POTION:
       case ITEM_SCROLL:
           {
-              SKILL *skills[4];
+              struct dynamic_skill *skills[4];
               int idx;
 
               for (idx = 1; idx <= 4; idx++)
@@ -477,7 +477,7 @@ void save_object(FILE *fp, struct objectprototype *pObjIndex)
       case ITEM_STAFF:
       case ITEM_WAND:
           {
-              SKILL *skill;
+              struct dynamic_skill *skill;
 
               skill = resolve_skill_sn((int)pObjIndex->value[3]);
 
@@ -552,7 +552,7 @@ void save_rooms(FILE *fp, struct area_data *area)
     struct extra_descr_data *extra;
     struct exit_data *exit;
     struct affect_data *paf;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     int hash_idx;
     int door;
 

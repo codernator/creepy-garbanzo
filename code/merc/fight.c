@@ -10,26 +10,26 @@
 #include "channels.h"
 
 
-extern SKILL *gsp_web;
-extern SKILL *gsp_banzai;
-extern SKILL *gsp_second_attack;
-extern SKILL *gsp_aggressive_parry;
-extern SKILL *gsp_third_attack;
-extern SKILL *gsp_fourth_attack;
-extern SKILL *gsp_fifth_attack;
-extern SKILL *gsp_enhanced_damage;
-extern SKILL *gsp_aggressive_parry;
-extern SKILL *gsp_flanking;
-extern SKILL *gsp_poison;
-extern SKILL *gsp_invisibility;
-extern SKILL *gsp_mass_invisibility;
-extern SKILL *gsp_darkness;
-extern SKILL *gsp_haven;
-extern SKILL *gsp_parry;
-extern SKILL *gsp_evade;
-extern SKILL *gsp_shield_block;
-extern SKILL *gsp_dodge;
-extern SKILL *gsp_sleep;
+extern struct dynamic_skill *gsp_web;
+extern struct dynamic_skill *gsp_banzai;
+extern struct dynamic_skill *gsp_second_attack;
+extern struct dynamic_skill *gsp_aggressive_parry;
+extern struct dynamic_skill *gsp_third_attack;
+extern struct dynamic_skill *gsp_fourth_attack;
+extern struct dynamic_skill *gsp_fifth_attack;
+extern struct dynamic_skill *gsp_enhanced_damage;
+extern struct dynamic_skill *gsp_aggressive_parry;
+extern struct dynamic_skill *gsp_flanking;
+extern struct dynamic_skill *gsp_poison;
+extern struct dynamic_skill *gsp_invisibility;
+extern struct dynamic_skill *gsp_mass_invisibility;
+extern struct dynamic_skill *gsp_darkness;
+extern struct dynamic_skill *gsp_haven;
+extern struct dynamic_skill *gsp_parry;
+extern struct dynamic_skill *gsp_evade;
+extern struct dynamic_skill *gsp_shield_block;
+extern struct dynamic_skill *gsp_dodge;
+extern struct dynamic_skill *gsp_sleep;
 
 
 extern bool mp_percent_trigger(struct char_data * mob, struct char_data * ch, const void *arg1, const void *arg2, int type);
@@ -44,7 +44,7 @@ extern bool in_battlefield(struct char_data * ch);
 bool is_safe(struct char_data * ch, struct char_data * victim);
 bool one_hit(struct char_data * ch, struct char_data * victim, int dt, struct gameobject * wield);
 void set_fighting(struct char_data * ch, struct char_data * victim);
-bool check_dispel(int dis_level, struct char_data * victim, SKILL * skill);
+bool check_dispel(int dis_level, struct char_data * victim, struct dynamic_skill * skill);
 void dam_message(struct char_data * ch, struct char_data * victim, int dam, int dt, bool immune);
 void make_corpse(struct char_data * ch);
 bool check_shield_block(struct char_data * ch, struct char_data * victim);
@@ -194,7 +194,7 @@ void multi_hit(struct char_data *ch, struct char_data *victim, int dt)
     struct char_data *vch_next;
     struct gameobject *weapon;
     struct gameobject *off_weapon;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     int chance;
 
     weapon = get_eq_char(ch, WEAR_WIELD);
@@ -601,7 +601,7 @@ ONE_ATTACK_RESULT one_attack(struct char_data *ch, struct char_data *victim, int
  ***************************************************************************/
 bool one_hit(struct char_data *ch, struct char_data *victim, int dt, struct gameobject *wield)
 {
-    SKILL *attack;
+    struct dynamic_skill *attack;
     long victim_ac;
     int thac0;
     int thac0_00;
@@ -815,7 +815,7 @@ bool one_hit(struct char_data *ch, struct char_data *victim, int dt, struct game
 		level = poison->level;
 
 	    if (!saves_spell(level / 2, victim, DAM_POISON)) {
-		SKILL *skill_poison;
+		struct dynamic_skill *skill_poison;
 
 		if ((skill_poison = gsp_poison) != NULL) {
 		    send_to_char("You feel poison coursing through your veins.", victim);
@@ -2139,7 +2139,7 @@ void dam_message(struct char_data *ch, struct char_data *victim, int dam, int dt
 	    sprintf(buf3, "`A$n`` %s `Ayou%c `8(```4%d```8)``", vp, punct, dam);
 	}
     } else {
-	SKILL *skill;
+	struct dynamic_skill *skill;
 
 	if ((skill = resolve_skill_sn(dt)) != NULL) {
 	    attack = skill->dam_noun;
@@ -2219,7 +2219,7 @@ int max_damage(struct char_data *ch, struct char_data *victim, int dt, int dam)
      * 0 means to ignore the max_damage rule
      */
     const struct modifier {
-	SKILL * gsp;
+	struct dynamic_skill * gsp;
 	int	mod;
     } dam_modifier[] =
     {

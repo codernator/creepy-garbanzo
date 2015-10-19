@@ -172,7 +172,7 @@ void cold_effect(void *vo, int level, int dam, int target)
 
 	if (target == TARGET_CHAR) { /* whack a character */
 		struct char_data *victim = (struct char_data *)vo;
-		SKILL *skill;
+		struct dynamic_skill *skill;
 
 		skill = skill_lookup("chill touch");
 		/* chill touch effect */
@@ -274,7 +274,7 @@ void fire_effect(void *vo, int level, int dam, int target)
 
 	if (target == TARGET_CHAR) {     /* do the effect on a victim */
 		struct char_data *victim = (struct char_data *)vo;
-		SKILL *skill;
+		struct dynamic_skill *skill;
 
 		skill = skill_lookup("fire breath");
 
@@ -413,7 +413,7 @@ void poison_effect(void *vo, int level, int dam, int target)
 
 	if (target == TARGET_CHAR) { /* do the effect on a victim */
 		struct char_data *victim = (struct char_data *)vo;
-		SKILL *skill;
+		struct dynamic_skill *skill;
 		/* chance of poisoning */
 		skill = skill_lookup("poison");
 

@@ -29,9 +29,9 @@
 #define __MAGIC_H
 
 
-bool check_dispel(int dis_level, struct char_data * victim, SKILL * skill);
+bool check_dispel(int dis_level, struct char_data * victim, struct dynamic_skill * skill);
 bool saves_dispel(int dis_level, int spell_level, int duration);
-void cast_spell(struct char_data * ch, SKILL * skill, int level, void *vo, int target, const char *argument);
+void cast_spell(struct char_data * ch, struct dynamic_skill * skill, int level, void *vo, int target, const char *argument);
 
 /***************************************************************************
 *	spell functions

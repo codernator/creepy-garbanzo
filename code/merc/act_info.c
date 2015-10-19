@@ -601,7 +601,7 @@ void do_nosummon(struct char_data *ch, const char *argument)
 void do_lore(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     char arg[MAX_INPUT_LENGTH];
     int percent;
 
@@ -1141,7 +1141,7 @@ void do_affects(struct char_data *ch, const char *argument)
 {
     struct affect_data *paf;
     struct affect_data *paf_last = NULL;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     char buf[MAX_STRING_LENGTH];
 
     if (ch->affected != NULL) {

@@ -772,7 +772,7 @@ EDIT(redit_show){
 
     if (room->affected != NULL) {
         struct affect_data *paf;
-        SKILL *skill;
+        struct dynamic_skill *skill;
         int iter = 0;
 
         send_to_char("\n\r`&Number Level  Spell          ``\n\r", ch);
@@ -1169,7 +1169,7 @@ EDIT(redit_sector){
 EDIT(redit_addaffect){
     struct room_index_data *room;
     struct affect_data af;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     char arg[MAX_STRING_LENGTH];
 
     EDIT_ROOM(ch, room);

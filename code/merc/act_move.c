@@ -11,13 +11,13 @@ extern bool mp_percent_trigger(struct char_data * mob, struct char_data * ch, co
 extern bool mp_exit_trigger(struct char_data * ch, int dir);
 extern void mp_greet_trigger(struct char_data * ch);
 
-extern SKILL *gsp_faerie_fog;
-extern SKILL *gsp_invisibility;
-extern SKILL *gsp_mass_invisibility;
-extern SKILL *gsp_sneak;
-extern SKILL *gsp_hide;
-extern SKILL *gsp_darkness;
-extern SKILL *gsp_web;
+extern struct dynamic_skill *gsp_faerie_fog;
+extern struct dynamic_skill *gsp_invisibility;
+extern struct dynamic_skill *gsp_mass_invisibility;
+extern struct dynamic_skill *gsp_sneak;
+extern struct dynamic_skill *gsp_hide;
+extern struct dynamic_skill *gsp_darkness;
+extern struct dynamic_skill *gsp_web;
 
 /***************************************************************************
  *	direction constants
@@ -1465,7 +1465,7 @@ void do_pick(struct char_data *ch, const char *argument)
 {
     struct char_data *gch;
     struct gameobject *obj;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     char arg[MAX_INPUT_LENGTH];
     int door;
     int percent;
@@ -1601,7 +1601,7 @@ void do_pick(struct char_data *ch, const char *argument)
  ***************************************************************************/
 void do_sneak(struct char_data *ch, const char *argument)
 {
-    SKILL *skill;
+    struct dynamic_skill *skill;
     struct affect_data af;
 
     if ((skill = gsp_sneak) == NULL) {
@@ -1636,7 +1636,7 @@ void do_sneak(struct char_data *ch, const char *argument)
  ***************************************************************************/
 void do_hide(struct char_data *ch, const char *argument)
 {
-    SKILL *skill;
+    struct dynamic_skill *skill;
 
     if ((skill = gsp_hide) == NULL) {
 	send_to_char("Huh?", ch);

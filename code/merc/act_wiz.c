@@ -747,7 +747,7 @@ void do_tick(struct char_data *ch, const char *argument)
 void do_grant(struct char_data *ch, const char *argument)
 {
     struct char_data *victim;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     struct learned_info *learned;
     struct learned_info *learned_found;
     char arg[MAX_INPUT_LENGTH];
@@ -2217,7 +2217,7 @@ void do_affstrip(struct char_data *ch, const char *argument)
         remove_all_affects(victim);
         send_to_char("You feel your being stripped of all magical affects.\n\r", victim);
     } else {
-        SKILL *skill;
+        struct dynamic_skill *skill;
 
         if ((skill = skill_lookup(affect)) != NULL) {
             if (is_affected(victim, skill)) {
@@ -2386,7 +2386,7 @@ void do_mode(struct char_data *ch, const char *argument)
 
 void do_slot(struct char_data *ch, const char *argument)
 {
-    SKILL *skill;
+    struct dynamic_skill *skill;
     char arg[MAX_INPUT_LENGTH];
 
     DENY_NPC(ch);

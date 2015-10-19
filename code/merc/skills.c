@@ -25,66 +25,66 @@
  * unmanagable.
  */
 
-SKILL *gsp_aggressive_parry;
-SKILL *gsp_axe;
-SKILL *gsp_banzai;
-SKILL *gsp_bless;
-SKILL *gsp_blindness;
-SKILL *gsp_burning_flames;
-SKILL *gsp_curse;
-SKILL *gsp_dagger;
-SKILL *gsp_darkness;
-SKILL *gsp_dash;
-SKILL *gsp_deft;
-SKILL *gsp_detect_magic;
-SKILL *gsp_dodge;
-SKILL *gsp_enhanced_damage;
-SKILL *gsp_evade;
-SKILL *gsp_faerie_fog;
-SKILL *gsp_fast_healing;
-SKILL *gsp_fifth_attack;
-SKILL *gsp_flail;
-SKILL *gsp_flanking;
-SKILL *gsp_fourth_attack;
-SKILL *gsp_frenzy;
-SKILL *gsp_gate;
-SKILL *gsp_haggle;
-SKILL *gsp_hand_to_hand;
-SKILL *gsp_haste;
-SKILL *gsp_haven;
-SKILL *gsp_hide;
-SKILL *gsp_invisibility;
-SKILL *gsp_mace;
-SKILL *gsp_mana_vortex;
-SKILL *gsp_mass_invisibility;
-SKILL *gsp_meditation;
-SKILL *gsp_nexus;
-SKILL *gsp_parry;
-SKILL *gsp_peek;
-SKILL *gsp_poison;
-SKILL *gsp_polearm;
-SKILL *gsp_portal;
-SKILL *gsp_second_attack;
-SKILL *gsp_shield_block;
-SKILL *gsp_sleep;
-SKILL *gsp_sneak;
-SKILL *gsp_spear;
-SKILL *gsp_sword;
-SKILL *gsp_third_attack;
-SKILL *gsp_web;
-SKILL *gsp_whip;
+struct dynamic_skill *gsp_aggressive_parry;
+struct dynamic_skill *gsp_axe;
+struct dynamic_skill *gsp_banzai;
+struct dynamic_skill *gsp_bless;
+struct dynamic_skill *gsp_blindness;
+struct dynamic_skill *gsp_burning_flames;
+struct dynamic_skill *gsp_curse;
+struct dynamic_skill *gsp_dagger;
+struct dynamic_skill *gsp_darkness;
+struct dynamic_skill *gsp_dash;
+struct dynamic_skill *gsp_deft;
+struct dynamic_skill *gsp_detect_magic;
+struct dynamic_skill *gsp_dodge;
+struct dynamic_skill *gsp_enhanced_damage;
+struct dynamic_skill *gsp_evade;
+struct dynamic_skill *gsp_faerie_fog;
+struct dynamic_skill *gsp_fast_healing;
+struct dynamic_skill *gsp_fifth_attack;
+struct dynamic_skill *gsp_flail;
+struct dynamic_skill *gsp_flanking;
+struct dynamic_skill *gsp_fourth_attack;
+struct dynamic_skill *gsp_frenzy;
+struct dynamic_skill *gsp_gate;
+struct dynamic_skill *gsp_haggle;
+struct dynamic_skill *gsp_hand_to_hand;
+struct dynamic_skill *gsp_haste;
+struct dynamic_skill *gsp_haven;
+struct dynamic_skill *gsp_hide;
+struct dynamic_skill *gsp_invisibility;
+struct dynamic_skill *gsp_mace;
+struct dynamic_skill *gsp_mana_vortex;
+struct dynamic_skill *gsp_mass_invisibility;
+struct dynamic_skill *gsp_meditation;
+struct dynamic_skill *gsp_nexus;
+struct dynamic_skill *gsp_parry;
+struct dynamic_skill *gsp_peek;
+struct dynamic_skill *gsp_poison;
+struct dynamic_skill *gsp_polearm;
+struct dynamic_skill *gsp_portal;
+struct dynamic_skill *gsp_second_attack;
+struct dynamic_skill *gsp_shield_block;
+struct dynamic_skill *gsp_sleep;
+struct dynamic_skill *gsp_sneak;
+struct dynamic_skill *gsp_spear;
+struct dynamic_skill *gsp_sword;
+struct dynamic_skill *gsp_third_attack;
+struct dynamic_skill *gsp_web;
+struct dynamic_skill *gsp_whip;
 
 
 int gn_max_skill_sn;
 int gn_max_group_sn;
-static SKILL **gsp_skill_hash;
+static struct dynamic_skill **gsp_skill_hash;
 
 /**
  * match a name to a skill pointer
  */
 static const struct skill_resolve_type {
     char *    name;
-    SKILL **skill;
+    struct dynamic_skill **skill;
 } skill_resolve_table[] =
 {
     { "axe", &gsp_axe },
@@ -163,8 +163,8 @@ void resolve_global_skills()
  */
 void resolve_global_hash()
 {
-    SKILL *skill;
-    SKILL **skill_idx;
+    struct dynamic_skill *skill;
+    struct dynamic_skill **skill_idx;
 
     if (gn_max_skill_sn > 0) {
         size_t size;
@@ -172,9 +172,9 @@ void resolve_global_hash()
         if (gsp_skill_hash != NULL)
             free(gsp_skill_hash);
 
-        size = sizeof(SKILL) * (gn_max_skill_sn + 1);
+        size = sizeof(struct dynamic_skill) * (gn_max_skill_sn + 1);
 
-        gsp_skill_hash = malloc(sizeof(SKILL) * (gn_max_skill_sn + 1));
+        gsp_skill_hash = malloc(sizeof(struct dynamic_skill) * (gn_max_skill_sn + 1));
         memset(gsp_skill_hash, 0, size);
 
         skill_idx = gsp_skill_hash;
@@ -257,10 +257,10 @@ void free_learned(struct learned_info *learned)
 /**
  * create a new skill list structure
  */
-SKILL_LIST *new_skill_list(void)
+struct dynamic_skill_list *new_skill_list(void)
 {
-    static SKILL_LIST list_zero;
-    SKILL_LIST *list;
+    static struct dynamic_skill_list list_zero;
+    struct dynamic_skill_list *list;
 
     if (skill_list_free == NULL) {
         list = alloc_perm((unsigned int)sizeof(*list));
@@ -278,7 +278,7 @@ SKILL_LIST *new_skill_list(void)
 /**
  * free the skill list structure
  */
-void free_skill_list(SKILL_LIST *list)
+void free_skill_list(struct dynamic_skill_list *list)
 {
     if (!IS_VALID(list))
         return;
@@ -331,10 +331,10 @@ void free_group(GROUP *group)
 /**
  * create a new skill structure
  */
-SKILL *new_skill(void)
+struct dynamic_skill *new_skill(void)
 {
-    static SKILL skill_zero;
-    SKILL *skill;
+    static struct dynamic_skill skill_zero;
+    struct dynamic_skill *skill;
 
     if (skill_free == NULL) {
         skill = alloc_perm((unsigned int)sizeof(*skill));
@@ -352,7 +352,7 @@ SKILL *new_skill(void)
 /**
  * free the skill structure
  */
-void free_skill(SKILL *skill)
+void free_skill(struct dynamic_skill *skill)
 {
     if (!IS_VALID(skill))
         return;
@@ -486,7 +486,7 @@ void free_argument(ARGUMENT *argument)
 /**
  * add a spell to a spell list for a skill
  */
-void add_spell(SKILL *skill, SPELL_FUN *spell)
+void add_spell(struct dynamic_skill *skill, SPELL_FUN *spell)
 {
     SPELL_LIST *spells;
 
@@ -516,7 +516,7 @@ void add_spell(SKILL *skill, SPELL_FUN *spell)
 /**
  * add a affect to an affect list for a skill
  */
-void add_affect(SKILL *skill, AFFECT_FUN *affect)
+void add_affect(struct dynamic_skill *skill, AFFECT_FUN *affect)
 {
     AFFECT_LIST *affects;
 
@@ -546,7 +546,7 @@ void add_affect(SKILL *skill, AFFECT_FUN *affect)
 /**
  * add an argument to the list
  */
-void add_argument(SKILL *skill, ARGUMENT *arg)
+void add_argument(struct dynamic_skill *skill, ARGUMENT *arg)
 {
     if (arg != NULL) {
         if (skill->args == NULL) {
@@ -759,10 +759,10 @@ char *affect_fn_name(AFFECT_FUN *fn)
 }
 
 /** lookup a dynamic skill - try to get a skill that is as accurate as possible */
-SKILL *skill_lookup(const char *name)
+struct dynamic_skill *skill_lookup(const char *name)
 {
-    SKILL *skill;
-    SKILL *skill_tmp;
+    struct dynamic_skill *skill;
+    struct dynamic_skill *skill_tmp;
 
     if (name[0] == '\0')
         return NULL;
@@ -809,9 +809,9 @@ GROUP *group_lookup(const char *name)
 /**
  * lookup a dynamic skill
  */
-SKILL *resolve_skill_sn(int sn)
+struct dynamic_skill *resolve_skill_sn(int sn)
 {
-    SKILL *skill;
+    struct dynamic_skill *skill;
 
     if (sn > 0
         && sn <= gn_max_skill_sn
@@ -830,7 +830,7 @@ SKILL *resolve_skill_sn(int sn)
  * resolve a skill from an affect - skills are cached on the
  * affect structure so we dont always have to look it up
  */
-SKILL *resolve_skill_affect(struct affect_data *paf)
+struct dynamic_skill *resolve_skill_affect(struct affect_data *paf)
 {
     if (paf->skill == NULL)
         paf->skill = resolve_skill_sn(paf->type);
@@ -841,7 +841,7 @@ SKILL *resolve_skill_affect(struct affect_data *paf)
 /**
  * get the level of a skill for a given class
  */
-struct level_info *get_skill_level(struct char_data *ch, SKILL *skill)
+struct level_info *get_skill_level(struct char_data *ch, struct dynamic_skill *skill)
 {
     struct level_info *levels;
 
@@ -891,7 +891,7 @@ struct learned_info *get_learned_group(struct char_data *ch, GROUP *group)
 /**
  * get a learned skill
  */
-struct learned_info *get_learned_skill(struct char_data *ch, SKILL *skill)
+struct learned_info *get_learned_skill(struct char_data *ch, struct dynamic_skill *skill)
 {
     struct learned_info *learned;
 
@@ -1060,7 +1060,7 @@ void add_learned_group(struct char_data *ch, struct learned_info *learned)
 {
     struct learned_info *learned_idx;
     struct learned_info *learned_new;
-    SKILL_LIST *list;
+    struct dynamic_skill_list *list;
 
 
     if (learned->group != NULL
@@ -1142,7 +1142,7 @@ void remove_learned(struct char_data *ch, struct learned_info *learned)
     /* if we have a group, we need to drop all of the
      * individual spells/skills */
     if (learned->group != NULL && learned->type == LEARNED_TYPE_GROUP) {
-        SKILL_LIST *skills;
+        struct dynamic_skill_list *skills;
 
         for (skills = learned->group->skills;
              skills != NULL;
@@ -1187,7 +1187,7 @@ struct learned_info *create_learned_group(char *name)
  */
 struct learned_info *create_learned_skill(char *name, int percent)
 {
-    SKILL *skill;
+    struct dynamic_skill *skill;
     struct learned_info *learned;
 
     skill = skill_lookup(name);
@@ -1208,7 +1208,7 @@ struct learned_info *create_learned_skill(char *name, int percent)
  */
 bool check_affected(struct char_data *ch, char *name)
 {
-    SKILL *skill;
+    struct dynamic_skill *skill;
     struct affect_data *af;
     bool is_affected;
 
@@ -1227,7 +1227,7 @@ bool check_affected(struct char_data *ch, char *name)
 /**
  * get the percentage which the character knows a skill
  */
-int get_learned_percent(struct char_data *ch, SKILL *skill)
+int get_learned_percent(struct char_data *ch, struct dynamic_skill *skill)
 {
     struct learned_info *learned;
     struct level_info *level;
@@ -1261,7 +1261,7 @@ int get_learned_percent(struct char_data *ch, SKILL *skill)
  */
 int get_skill_number(char *name)
 {
-    SKILL *skill;
+    struct dynamic_skill *skill;
 
     if ((skill = skill_lookup(name)) != NULL)
         return skill->sn;
@@ -1272,16 +1272,16 @@ int get_skill_number(char *name)
 /**
  * add a skill to a group
  */
-void add_group_skill(GROUP *group, SKILL *skill)
+void add_group_skill(GROUP *group, struct dynamic_skill *skill)
 {
-    SKILL_LIST *list;
+    struct dynamic_skill_list *list;
 
 
     list = new_skill_list();
     list->skill = skill;
 
     if (group->skills != NULL) {
-        SKILL_LIST *list_ex;
+        struct dynamic_skill_list *list_ex;
 
         list_ex = group->skills;
         list_ex->prev = list;
@@ -1294,7 +1294,7 @@ void add_group_skill(GROUP *group, SKILL *skill)
 /**
  * add a level information structure to a skill
  */
-void add_skill_level(SKILL *skill, struct level_info *level)
+void add_skill_level(struct dynamic_skill *skill, struct level_info *level)
 {
     struct level_info *level_idx;
     struct level_info *level_prev;
@@ -1357,7 +1357,7 @@ static void gain_convert(struct char_data * ch, struct char_data * trainer);
 static void gain_study(struct char_data * ch, struct char_data * trainer);
 static void gain_points(struct char_data * ch, struct char_data * trainer);
 static void gain_group(struct char_data * ch, struct char_data * trainer, GROUP * group);
-static void gain_skill(struct char_data * ch, struct char_data * trainer, SKILL * skill);
+static void gain_skill(struct char_data * ch, struct char_data * trainer, struct dynamic_skill * skill);
 
 
 /**
@@ -1366,7 +1366,7 @@ static void gain_skill(struct char_data * ch, struct char_data * trainer, SKILL 
 static void gain_list(struct char_data *ch, struct char_data *trainer)
 {
     GROUP *group;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     struct level_info *level;
     struct learned_info *learned;
     int col;
@@ -1515,7 +1515,7 @@ static void gain_group(struct char_data *ch, struct char_data *trainer, GROUP *g
 /**
  *    gain a skill
  */
-static void gain_skill(struct char_data *ch, struct char_data *trainer, SKILL *skill)
+static void gain_skill(struct char_data *ch, struct char_data *trainer, struct dynamic_skill *skill)
 {
     struct level_info *level;
     struct learned_info *learned;
@@ -1567,7 +1567,7 @@ void do_gain(struct char_data *ch, const char *argument)
 {
     struct char_data *trainer;
     GROUP *group;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     char arg[MAX_INPUT_LENGTH];
 
     if (IS_NPC(ch))
@@ -1632,7 +1632,7 @@ void do_gain(struct char_data *ch, const char *argument)
 /**
  * show information for a skill
  */
-static void skill_info(struct char_data *ch, SKILL *skill)
+static void skill_info(struct char_data *ch, struct dynamic_skill *skill)
 {
     struct level_info *level;
     char buf[MAX_STRING_LENGTH];
@@ -1705,7 +1705,7 @@ void do_skills(struct char_data *ch, const char *argument)
 {
     struct buf_type *buf;
     struct learned_info *learned;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     struct level_info *level;
     int min_level;
     int max_level;
@@ -1779,7 +1779,7 @@ void do_spells(struct char_data *ch, const char *argument)
 {
     struct buf_type *buf;
     struct learned_info *learned;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     struct level_info *level;
     int min_level;
     int max_level;
@@ -1855,7 +1855,7 @@ void do_spells(struct char_data *ch, const char *argument)
 void list_group_costs(struct char_data *ch)
 {
     GROUP *group;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     struct level_info *level;
     struct learned_info *learned;
     int col;
@@ -2010,7 +2010,7 @@ int exp_per_level(struct char_data *ch, int points)
 bool parse_gen_groups(struct char_data *ch, const char *argument)
 {
     GROUP *group;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     struct learned_info *learned;
     struct level_info *level;
     char arg[MAX_INPUT_LENGTH];
@@ -2168,7 +2168,7 @@ bool parse_gen_groups(struct char_data *ch, const char *argument)
 void do_groups(struct char_data *ch, const char *argument)
 {
     GROUP *group;
-    SKILL_LIST *skill_idx;
+    struct dynamic_skill_list *skill_idx;
     struct learned_info *learned;
     struct level_info *level;
     int col;
@@ -2235,7 +2235,7 @@ void do_groups(struct char_data *ch, const char *argument)
 /**
  *    check to see if a character has improved at a skill
  */
-void check_improve(struct char_data *ch, SKILL *skill, bool success, int multiplier)
+void check_improve(struct char_data *ch, struct dynamic_skill *skill, bool success, int multiplier)
 {
     struct learned_info *learned;
     struct level_info *level;
@@ -2381,7 +2381,7 @@ void do_practice(struct char_data *ch, const char *argument)
         struct char_data *mob;
         struct learned_info *learned;
         struct level_info *level;
-        SKILL *skill;
+        struct dynamic_skill *skill;
 
         if (!IS_AWAKE(ch)) {
             send_to_char("You must be awake to practice...\n\r", ch);

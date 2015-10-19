@@ -33,7 +33,7 @@ void do_heal(struct char_data *ch, const char *argument)
 {
 	struct char_data *mob;
 	struct gameobject *acid;
-	SKILL *skill;
+	struct dynamic_skill *skill;
 	char arg[MAX_INPUT_LENGTH];
 	unsigned int cost;
 	char *words;

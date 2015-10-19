@@ -9,15 +9,15 @@
 
 
 
-extern SKILL *gsp_deft;
-extern SKILL *gsp_dash;
-extern SKILL *gsp_mana_vortex;
+extern struct dynamic_skill *gsp_deft;
+extern struct dynamic_skill *gsp_dash;
+extern struct dynamic_skill *gsp_mana_vortex;
 
 
 /***************************************************************************
  *	local functions
  ***************************************************************************/
-static void say_spell(struct char_data * ch, SKILL * skill);
+static void say_spell(struct char_data * ch, struct dynamic_skill * skill);
 
 
 /***************************************************************************
@@ -36,7 +36,7 @@ extern void dam_message(struct char_data * ch, struct char_data * victim, int da
  ***************************************************************************/
 int find_spell(struct char_data *ch, const char *name)
 {
-    SKILL *skill;
+    struct dynamic_skill *skill;
     struct learned_info *learned;
     struct level_info *level;
     int found = -1;
@@ -60,10 +60,10 @@ int find_spell(struct char_data *ch, const char *name)
  *
  *	lookup a dynamic skill
  ***************************************************************************/
-static SKILL *spell_lookup(struct char_data *ch, char *name)
+static struct dynamic_skill *spell_lookup(struct char_data *ch, char *name)
 {
-    SKILL *skill;
-    SKILL *skill_tmp;
+    struct dynamic_skill *skill;
+    struct dynamic_skill *skill_tmp;
     int percent;
 
     skill_tmp = NULL;
@@ -94,7 +94,7 @@ static SKILL *spell_lookup(struct char_data *ch, char *name)
  *
  *	say gibberish incantation of a spell
  ***************************************************************************/
-static void say_spell(struct char_data *ch, SKILL *skill)
+static void say_spell(struct char_data *ch, struct dynamic_skill *skill)
 {
     struct char_data *rch;
     char buf[MAX_STRING_LENGTH];
@@ -259,7 +259,7 @@ bool saves_dispel(int dis_level, int spell_level, int duration)
  *
  *	co-routine for dispel magic and cancellation
  ***************************************************************************/
-bool check_dispel(int dis_level, struct char_data *victim, SKILL *skill)
+bool check_dispel(int dis_level, struct char_data *victim, struct dynamic_skill *skill)
 {
     struct affect_data *af;
 
@@ -299,7 +299,7 @@ bool check_dispel(int dis_level, struct char_data *victim, SKILL *skill)
 void remove_all_affects(struct char_data *victim)
 {
     struct affect_data *af;
-    SKILL *skill;
+    struct dynamic_skill *skill;
 
     while ((af = victim->affected) != NULL) {
 	if ((skill = resolve_skill_affect(af)) != NULL) {
@@ -326,7 +326,7 @@ void do_cast(struct char_data *ch, const char *argument)
     struct gameobject *obj;
     struct learned_info *learned;
     struct level_info *level_info;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     char spell[MAX_INPUT_LENGTH];
     char arg[MAX_INPUT_LENGTH];
     void *vo;
@@ -644,7 +644,7 @@ void do_cast(struct char_data *ch, const char *argument)
  ***************************************************************************/
 void obj_cast_spell(int	sn, int	level, struct char_data * ch, struct char_data * victim, struct gameobject *	obj)
 {
-    SKILL *skill;
+    struct dynamic_skill *skill;
     void *vo;
     int target = TARGET_NONE;
 
@@ -819,7 +819,7 @@ void do_recite(struct char_data *ch, const char *argument)
     struct char_data *victim;
     struct gameobject *scroll;
     struct gameobject *obj;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
 
@@ -884,8 +884,8 @@ void do_brandish(struct char_data *ch, const char *argument)
     struct char_data *vch;
     struct char_data *vch_next;
     struct gameobject *staff;
-    SKILL *skill;
-    SKILL *cast;
+    struct dynamic_skill *skill;
+    struct dynamic_skill *cast;
 
     if ((skill = skill_lookup("staves")) == NULL) {
 	send_to_char("Huh?\n\r", ch);
@@ -969,7 +969,7 @@ void do_zap(struct char_data *ch, const char *argument)
     struct char_data *victim;
     struct gameobject *wand;
     struct gameobject *obj;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     char arg[MAX_INPUT_LENGTH];
 
 
@@ -1044,7 +1044,7 @@ void do_zap(struct char_data *ch, const char *argument)
  *
  *	cast a spell - should be able to be tweaked for spell-chaining
  ***************************************************************************/
-void cast_spell(struct char_data *ch, SKILL *skill, int level, void *vo, int target, const char *argument)
+void cast_spell(struct char_data *ch, struct dynamic_skill *skill, int level, void *vo, int target, const char *argument)
 {
     SPELL_LIST *spells;
 
@@ -1061,7 +1061,7 @@ void cast_spell(struct char_data *ch, SKILL *skill, int level, void *vo, int tar
 void do_deft(struct char_data *ch, const char *argument)
 {
     struct affect_data af;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     int percent;
 
     if ((skill = gsp_deft) == NULL) {
@@ -1106,7 +1106,7 @@ void do_deft(struct char_data *ch, const char *argument)
 void do_dash(struct char_data *ch, const char *argument)
 {
     struct affect_data af;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     int percent;
 
     if ((skill = gsp_dash) == NULL) {

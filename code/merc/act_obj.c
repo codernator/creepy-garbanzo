@@ -18,9 +18,9 @@
 extern void mp_bribe_trigger(struct char_data * mob, struct char_data * ch, long amount);
 extern void mp_give_trigger(struct char_data * mob, struct char_data * ch, struct gameobject * obj);
 
-extern SKILL *gsp_poison;
-extern SKILL *gsp_hand_to_hand;
-extern SKILL *gsp_haggle;
+extern struct dynamic_skill *gsp_poison;
+extern struct dynamic_skill *gsp_hand_to_hand;
+extern struct dynamic_skill *gsp_haggle;
 
 /*
  * Local functions.
@@ -940,7 +940,7 @@ void do_drink(struct char_data *ch, const char *argument)
     if (obj->value[3] != 0) {
         /* The drink was poisoned ! */
         struct affect_data af;
-        SKILL *skill_poison;
+        struct dynamic_skill *skill_poison;
 
         if ((skill_poison = gsp_poison) != NULL) {
             act("$n chokes and gags.", ch, NULL, NULL, TO_ROOM);
@@ -1026,7 +1026,7 @@ void do_eat(struct char_data *ch, const char *argument)
 
           if (obj->value[3] != 0) {
               struct affect_data af;
-              SKILL *skill_poison;
+              struct dynamic_skill *skill_poison;
 
               if ((skill_poison = gsp_poison) != NULL) {
                   act("$n chokes and gags.", ch, 0, 0, TO_ROOM);
@@ -1341,7 +1341,7 @@ void wear_obj(struct char_data *ch, struct gameobject *obj, bool fReplace)
     }
 
     if (CAN_WEAR(obj, ITEM_WIELD)) {
-        SKILL *skill_h2h;
+        struct dynamic_skill *skill_h2h;
         int sn;
         int skill;
 
@@ -1788,7 +1788,7 @@ void do_steal(struct char_data *ch, const char *argument)
 {
     struct char_data *victim;
     struct gameobject *obj;
-    SKILL *skill_steal;
+    struct dynamic_skill *skill_steal;
     char buf[MAX_STRING_LENGTH];
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
@@ -2107,7 +2107,7 @@ unsigned int get_cost(struct char_data *keeper, struct gameobject *obj, bool fBu
  ***************************************************************************/
 void do_buy(struct char_data *ch, const char *argument)
 {
-    SKILL *skill;
+    struct dynamic_skill *skill;
     char buf[MAX_STRING_LENGTH];
     unsigned int cost;
     int roll;
@@ -2430,7 +2430,7 @@ void do_sell(struct char_data *ch, const char *argument)
 {
     struct char_data *keeper;
     struct gameobject *obj;
-    SKILL *skill_haggle;
+    struct dynamic_skill *skill_haggle;
     char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
     unsigned int cost;
@@ -2627,8 +2627,8 @@ void do_envenom(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
     struct affect_data af;
-    SKILL *skill_envenom;
-    SKILL *skill_poison;
+    struct dynamic_skill *skill_envenom;
+    struct dynamic_skill *skill_poison;
     int percent;
     int skill;
 

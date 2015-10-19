@@ -79,8 +79,8 @@ char *print_flags(long flag)
  ***************************************************************************/
 void save_char_obj(struct char_data *ch)
 {
-    extern SKILL *gsp_deft;
-    extern SKILL *gsp_dash;
+    extern struct dynamic_skill *gsp_deft;
+    extern struct dynamic_skill *gsp_dash;
     char strsave[MAX_INPUT_LENGTH];
     FILE *fp;
 
@@ -350,7 +350,7 @@ static void fwrite_char(struct char_data *ch, FILE *fp)
 
 
     for (paf = ch->affected; paf != NULL; paf = paf->next) {
-        SKILL *skill;
+        struct dynamic_skill *skill;
 
         if (paf->type == -1) {
             fprintf(fp, "Affc 'reserved' %3d %3d %3d %3ld %3d %10ld\n",
@@ -455,7 +455,7 @@ static void fwrite_pet(struct char_data *pet, FILE *fp)
             pet->mod_stat[STAT_CON], pet->mod_stat[STAT_LUCK]);
 
     for (paf = pet->affected; paf != NULL; paf = paf->next) {
-        SKILL *skill;
+        struct dynamic_skill *skill;
 
         if (paf->type == -1) {
             fprintf(fp, "Affc 'reserved' %3d %3d %3d %3ld %3d %10ld\n",
@@ -488,7 +488,7 @@ static void fwrite_obj(struct char_data *ch, struct gameobject *obj, FILE *fp, i
 {
     struct extra_descr_data *ed;
     struct affect_data *paf;
-    SKILL *skill;
+    struct dynamic_skill *skill;
 
 
     if (obj->next_content != NULL)
@@ -905,7 +905,7 @@ void fread_char(struct char_data *ch, FILE *fp)
 
               if (!str_cmp(word, "AffD")) {
                   struct affect_data *paf;
-                  SKILL *skill;
+                  struct dynamic_skill *skill;
                   char *affd;
 
                   paf = new_affect();
@@ -934,7 +934,7 @@ void fread_char(struct char_data *ch, FILE *fp)
 
               if (!str_cmp(word, "Affc")) {
                   struct affect_data *paf;
-                  SKILL *skill;
+                  struct dynamic_skill *skill;
                   char *affc;
 
                   paf = new_affect();
@@ -1234,7 +1234,7 @@ void fread_char(struct char_data *ch, FILE *fp)
 
 
               if (!str_cmp(word, "Skill") || !str_cmp(word, "Sk")) {
-                  SKILL *skill;
+                  struct dynamic_skill *skill;
                   struct learned_info *learned;
                   char *temp;
                   int value;
@@ -1358,7 +1358,7 @@ static void fread_pet(struct char_data *ch, FILE *fp)
 
               if (!str_cmp(word, "AffD")) {
                   struct affect_data *paf;
-                  SKILL *skill;
+                  struct dynamic_skill *skill;
                   char *affd;
 
                   paf = new_affect();
@@ -1386,7 +1386,7 @@ static void fread_pet(struct char_data *ch, FILE *fp)
 
               if (!str_cmp(word, "Affc")) {
                   struct affect_data *paf;
-                  SKILL *skill;
+                  struct dynamic_skill *skill;
                   char *affc;
 
                   affc = fread_word(fp);
@@ -1560,7 +1560,7 @@ static void fread_obj(struct char_data *ch, FILE *fp)
           case 'A':
               if (!str_cmp(word, "AffD")) {
                   struct affect_data *paf;
-                  SKILL *skill;
+                  struct dynamic_skill *skill;
                   char *affd;
 
                   paf = new_affect();
@@ -1586,7 +1586,7 @@ static void fread_obj(struct char_data *ch, FILE *fp)
               }
               if (!str_cmp(word, "Affc")) {
                   struct affect_data *paf;
-                  SKILL *skill;
+                  struct dynamic_skill *skill;
                   char *affc;
 
                   paf = new_affect();
@@ -1699,7 +1699,7 @@ static void fread_obj(struct char_data *ch, FILE *fp)
               KEY("ShD", obj->short_descr, fread_string(fp));
 
               if (!str_cmp(word, "Spell")) {
-                  SKILL *skill;
+                  struct dynamic_skill *skill;
                   int value;
 
                   value = fread_number(fp);

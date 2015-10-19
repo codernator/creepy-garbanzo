@@ -8,16 +8,16 @@
 #include "olc.h"
 #include "interp.h"
 
-extern SKILL *gsp_sword;
-extern SKILL *gsp_dagger;
-extern SKILL *gsp_spear;
-extern SKILL *gsp_mace;
-extern SKILL *gsp_axe;
-extern SKILL *gsp_flail;
-extern SKILL *gsp_whip;
-extern SKILL *gsp_polearm;
-extern SKILL *gsp_hand_to_hand;
-extern SKILL *gsp_darkness;
+extern struct dynamic_skill *gsp_sword;
+extern struct dynamic_skill *gsp_dagger;
+extern struct dynamic_skill *gsp_spear;
+extern struct dynamic_skill *gsp_mace;
+extern struct dynamic_skill *gsp_axe;
+extern struct dynamic_skill *gsp_flail;
+extern struct dynamic_skill *gsp_whip;
+extern struct dynamic_skill *gsp_polearm;
+extern struct dynamic_skill *gsp_hand_to_hand;
+extern struct dynamic_skill *gsp_darkness;
 
 
 extern char *flag_string(const struct flag_type *flag_table, long bits);
@@ -322,7 +322,7 @@ struct room_index_data *find_location(struct char_data *ch, const char *arg)
 
 int get_weapon_sn(struct char_data *ch, struct gameobject *wield)
 {
-    SKILL *skill;
+    struct dynamic_skill *skill;
 
     // If no wield passed in, assume we want to use the character's primary weapon.
     if (wield == NULL) {
@@ -2212,7 +2212,7 @@ void identify_item(struct char_data *ch, struct gameobject *obj)
 {
     struct affect_data *paf;
     int iter;
-    SKILL *skill;
+    struct dynamic_skill *skill;
 
 
     printf_to_char(ch, "Object '%s' is type %s\n\rExtra flags %s.\n\r",

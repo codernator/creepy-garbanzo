@@ -84,7 +84,7 @@ void show_room_stats(struct char_data *ch, const char *argument)
     struct gameobject *obj;
     struct char_data *rch;
     struct affect_data *paf;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
     int door;
@@ -189,7 +189,7 @@ void show_object_stats(struct char_data *ch, const char *argument)
 {
     struct affect_data *paf;
     struct gameobject *obj;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     char arg[MAX_INPUT_LENGTH];
     int idx;
 
@@ -427,7 +427,7 @@ void show_mob_stats(struct char_data *ch, const char *argument)
 {
     struct affect_data *paf;
     struct char_data *victim;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     char arg[MAX_INPUT_LENGTH];
 
     one_argument(argument, arg);

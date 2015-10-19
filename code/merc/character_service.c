@@ -6,10 +6,10 @@
 #include <stdio.h>
 
 
-extern SKILL *gsp_detect_magic;
-extern SKILL *gsp_faerie_fog;
-extern SKILL *gsp_web;
-extern SKILL *gsp_peek;
+extern struct dynamic_skill *gsp_detect_magic;
+extern struct dynamic_skill *gsp_faerie_fog;
+extern struct dynamic_skill *gsp_web;
+extern struct dynamic_skill *gsp_peek;
 
 
 
@@ -921,7 +921,7 @@ void show_char_to_char_1(struct char_data *victim, struct char_data *ch)
 void show_char_to_char_2(struct char_data *victim, struct char_data *ch)
 {
     struct gameobject *obj;
-    SKILL *skill_peek;
+    struct dynamic_skill *skill_peek;
     int iWear;
     bool found;
 

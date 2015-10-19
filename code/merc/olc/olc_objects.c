@@ -18,7 +18,7 @@ extern void string_append(struct char_data * ch, char **string);
  *****************************************************************************/
 static void show_obj_values(struct char_data *ch, struct objectprototype *obj)
 {
-    SKILL *skill;
+    struct dynamic_skill *skill;
     int idx;
 
     switch (obj->item_type) {
@@ -178,7 +178,7 @@ static void show_obj_values(struct char_data *ch, struct objectprototype *obj)
  *****************************************************************************/
 static bool set_obj_values(struct char_data *ch, struct objectprototype *pObj, int value_num, const char *argument)
 {
-    SKILL *skill;
+    struct dynamic_skill *skill;
     int value;
 
     switch (pObj->item_type) {

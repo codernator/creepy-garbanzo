@@ -6,9 +6,9 @@
 #include <string.h>
 
 
-extern SKILL *gsp_fast_healing;
-extern SKILL *gsp_meditation;
-extern SKILL *gsp_burning_flames;
+extern struct dynamic_skill *gsp_fast_healing;
+extern struct dynamic_skill *gsp_meditation;
+extern struct dynamic_skill *gsp_burning_flames;
 
 extern DECLARE_DO_FUN(do_quit);
 extern DECLARE_DO_FUN(do_echo);
@@ -369,7 +369,7 @@ void restore_char(struct char_data *ch)
  ***************************************************************************/
 void strip_negative_affects(struct char_data *ch)
 {
-    SKILL *skill_idx;
+    struct dynamic_skill *skill_idx;
 
     for (skill_idx = skill_list; skill_idx != NULL; skill_idx = skill_idx->next)
 	if (IS_SET(skill_idx->flags, SPELL_AFFSTRIP))
@@ -994,7 +994,7 @@ static void room_update(void)
 	    if (room->affected != NULL) {
 		struct affect_data *paf;
 		struct affect_data *paf_next;
-		SKILL *skill;
+		struct dynamic_skill *skill;
 
 		for (paf = room->affected; paf != NULL; paf = paf_next) {
 		    paf_next = paf->next;
@@ -1167,7 +1167,7 @@ static void char_update(void)
 	}
 
 	for (paf = ch->affected; paf != NULL; paf = paf_next) {
-	    SKILL *skill;
+	    struct dynamic_skill *skill;
 
 	    skill = NULL;
 	    paf_next = paf->next;
@@ -1280,7 +1280,7 @@ static void obj_update(void)
 		    paf->level--;   /* spell strength fades with time */
 	    } else if (paf->duration < 0) {
 	    } else {
-		SKILL *skill;
+		struct dynamic_skill *skill;
 		if (paf_next == NULL
 			|| paf_next->type != paf->type
 			|| paf_next->duration > 0) {

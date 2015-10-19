@@ -664,7 +664,7 @@ void load_rooms(FILE *fp)
                 room_idx->owner = fread_string(fp);
             } else if (letter == 'A') {
                 struct affect_data af;
-                SKILL *skill;
+                struct dynamic_skill *skill;
 
                 if ((skill = skill_lookup(fread_word(fp))) != NULL) {
                     af.where = TO_AFFECTS;
@@ -923,7 +923,7 @@ void load_mobiles(FILE *fp)
 void load_objects(FILE *fp)
 {
     struct objectprototype *objprototype;
-    SKILL *skill;
+    struct dynamic_skill *skill;
 
     if (g_area_loading == NULL) {
         log_bug("%s", "Loading objects with no area.");
@@ -1696,7 +1696,7 @@ void reset_area(struct area_data *area)
 struct char_data *create_mobile(struct mob_index_data *mob_idx)
 {
     struct char_data *mob;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     int idx;
     struct affect_data af;
 

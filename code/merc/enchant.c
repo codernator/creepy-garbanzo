@@ -339,7 +339,7 @@ void do_repair(struct char_data *ch, const char *argument)
 	struct char_data *mob;
 	struct gameobject *obj;
 	struct affect_data *paf;
-	SKILL *skill_haggle;
+	struct dynamic_skill *skill_haggle;
 	char cmd[MAX_STRING_LENGTH];
 	char stat[MAX_STRING_LENGTH];
 	int idx;

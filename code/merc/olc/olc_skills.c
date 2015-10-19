@@ -104,7 +104,7 @@ void skedit(struct char_data *ch, const char *argument)
  ***************************************************************************/
 void do_skedit(struct char_data *ch, const char *argument)
 {
-    SKILL *skill;
+    struct dynamic_skill *skill;
     char arg[MAX_STRING_LENGTH];
 
     if (IS_NPC(ch))
@@ -138,9 +138,9 @@ void do_skedit(struct char_data *ch, const char *argument)
  *	edit the levels of the skill
  ***************************************************************************/
 EDIT(skedit_delete){
-    SKILL *skill;
-    SKILL *skill_idx;
-    SKILL *skill_prev = NULL;
+    struct dynamic_skill *skill;
+    struct dynamic_skill *skill_idx;
+    struct dynamic_skill *skill_prev = NULL;
 
     EDIT_SKILL(ch, skill);
 
@@ -175,7 +175,7 @@ EDIT(skedit_delete){
  *	create a new skill
  ***************************************************************************/
 EDIT(skedit_new){
-    SKILL *skill;
+    struct dynamic_skill *skill;
 
     if (is_help(argument)) {
         send_to_char("Syntax   : new [name]\n\r", ch);
@@ -196,7 +196,7 @@ EDIT(skedit_new){
 
     resolve_global_hash();
 
-    ch->desc->ed_data = (SKILL *)skill;
+    ch->desc->ed_data = (struct dynamic_skill *)skill;
     ch->desc->editor = ED_SKILL;
 
     send_to_char("Ok.\n\r", ch);
@@ -210,8 +210,8 @@ EDIT(skedit_new){
  *	show the list of helps
  ***************************************************************************/
 EDIT(skedit_list){
-    SKILL *skill;
-    SKILL *list;
+    struct dynamic_skill *skill;
+    struct dynamic_skill *list;
     struct buf_type *buffer;
     int cnt = 0;
 
@@ -243,7 +243,7 @@ EDIT(skedit_list){
  *	show the properties for the skill
  ***************************************************************************/
 EDIT(skedit_show){
-    SKILL *skill;
+    struct dynamic_skill *skill;
     char buf[MAX_STRING_LENGTH];
 
     EDIT_SKILL(ch, skill);
@@ -355,7 +355,7 @@ EDIT(skedit_show){
  *	edit the levels of the skill
  ***************************************************************************/
 EDIT(skedit_level){
-    SKILL *skill;
+    struct dynamic_skill *skill;
     struct level_info *level_info;
     struct level_info *level_idx;
     char arg[MAX_STRING_LENGTH];
@@ -467,7 +467,7 @@ EDIT(skedit_level){
  *	edit the min_mana of the skill
  ***************************************************************************/
 EDIT(skedit_min_mana){
-    SKILL *skill;
+    struct dynamic_skill *skill;
 
     EDIT_SKILL(ch, skill);
 
@@ -490,7 +490,7 @@ EDIT(skedit_min_mana){
  *	edit the wait of the skill
  ***************************************************************************/
 EDIT(skedit_wait){
-    SKILL *skill;
+    struct dynamic_skill *skill;
 
     EDIT_SKILL(ch, skill);
 
@@ -511,7 +511,7 @@ EDIT(skedit_wait){
  *	edit the wait of the skill
  ***************************************************************************/
 EDIT(skedit_min_pos){
-    SKILL *skill;
+    struct dynamic_skill *skill;
     int value;
 
     EDIT_SKILL(ch, skill);
@@ -537,7 +537,7 @@ EDIT(skedit_min_pos){
  *	edit the wait of the skill
  ***************************************************************************/
 EDIT(skedit_target){
-    SKILL *skill;
+    struct dynamic_skill *skill;
     int value;
 
     EDIT_SKILL(ch, skill);
@@ -562,7 +562,7 @@ EDIT(skedit_target){
  *	edit the wait of the skill
  ***************************************************************************/
 EDIT(skedit_damage_msg){
-    SKILL *skill;
+    struct dynamic_skill *skill;
 
     EDIT_SKILL(ch, skill);
 
@@ -586,7 +586,7 @@ EDIT(skedit_damage_msg){
  *	edit the wear-off message of the skill
  ***************************************************************************/
 EDIT(skedit_message){
-    SKILL *skill;
+    struct dynamic_skill *skill;
 
     EDIT_SKILL(ch, skill);
 
@@ -610,7 +610,7 @@ EDIT(skedit_message){
  *	edit the wear-off message of the skill
  ***************************************************************************/
 EDIT(skedit_obj_message){
-    SKILL *skill;
+    struct dynamic_skill *skill;
 
     EDIT_SKILL(ch, skill);
 
@@ -636,7 +636,7 @@ EDIT(skedit_obj_message){
  *	of the skill
  ***************************************************************************/
 EDIT(skedit_others_message){
-    SKILL *skill;
+    struct dynamic_skill *skill;
 
     EDIT_SKILL(ch, skill);
 
@@ -660,7 +660,7 @@ EDIT(skedit_others_message){
  *	edit the spell list for the skill
  ***************************************************************************/
 EDIT(skedit_spell){
-    SKILL *skill;
+    struct dynamic_skill *skill;
     SPELL_FUN *spell;
     SPELL_LIST *spells;
     char cmd[MAX_INPUT_LENGTH];
@@ -760,7 +760,7 @@ EDIT(skedit_spell){
  *	edit the affect list for the skill
  ***************************************************************************/
 EDIT(skedit_affect){
-    SKILL *skill;
+    struct dynamic_skill *skill;
     AFFECT_FUN *affect;
     AFFECT_LIST *affects;
     char cmd[MAX_INPUT_LENGTH];
@@ -862,7 +862,7 @@ EDIT(skedit_affect){
  *	edit the argument list for the skill
  ***************************************************************************/
 EDIT(skedit_argument){
-    SKILL *skill;
+    struct dynamic_skill *skill;
     ARGUMENT *arg;
     char cmd[MAX_INPUT_LENGTH];
 
@@ -952,7 +952,7 @@ EDIT(skedit_argument){
  *	edit the help file for the skill
  ***************************************************************************/
 EDIT(skedit_help){
-    SKILL *skill;
+    struct dynamic_skill *skill;
     HELP_DATA *help;
 
     EDIT_SKILL(ch, skill);
@@ -986,7 +986,7 @@ EDIT(skedit_help){
  *	nobrew and noscribe but it could be used for a lot more
  ***************************************************************************/
 EDIT(skedit_flags){
-    SKILL *skill;
+    struct dynamic_skill *skill;
     int value;
 
     EDIT_SKILL(ch, skill);
@@ -1012,7 +1012,7 @@ EDIT(skedit_flags){
  *	other places
  ***************************************************************************/
 EDIT(skedit_difficulty){
-    SKILL *skill;
+    struct dynamic_skill *skill;
     int value;
 
     EDIT_SKILL(ch, skill);
@@ -1045,7 +1045,7 @@ EDIT(skedit_difficulty){
  *	sets the mob's base percentage for using a skill
  ***************************************************************************/
 EDIT(skedit_percent){
-    SKILL *skill;
+    struct dynamic_skill *skill;
 
     EDIT_SKILL(ch, skill);
 
@@ -1068,7 +1068,7 @@ EDIT(skedit_percent){
  *	set the act flag necessary for a mob to use a skill
  ***************************************************************************/
 EDIT(skedit_act_flag){
-    SKILL *skill;
+    struct dynamic_skill *skill;
     int value;
 
     EDIT_SKILL(ch, skill);
@@ -1094,7 +1094,7 @@ EDIT(skedit_act_flag){
  *	set the off flag necessary for a mob to use a skill
  ***************************************************************************/
 EDIT(skedit_off_flag){
-    SKILL *skill;
+    struct dynamic_skill *skill;
     int value;
 
     EDIT_SKILL(ch, skill);
@@ -1143,7 +1143,7 @@ EDIT(skedit_off_flag){
 void load_skills()
 {
     FILE *fp;
-    SKILL *skill = NULL;
+    struct dynamic_skill *skill = NULL;
     char *word;
     int sn;
     bool found;
@@ -1267,7 +1267,7 @@ void load_skills()
 void save_skills()
 {
     FILE *fp;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     char *tmp;
 
     if ((fp = fopen(SKILL_FILE, "w")) == NULL) {

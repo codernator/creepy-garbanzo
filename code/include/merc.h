@@ -322,7 +322,7 @@ struct weapon_type {
     char * name;
     long vnum;
     int type;
-    SKILL **gsp;
+    struct dynamic_skill **gsp;
 };
 
 struct wiznet_type {
@@ -414,7 +414,7 @@ extern const struct message_types message_type_table[];
 struct affect_data {
     struct affect_data * next;
     bool valid;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     int where;
     int type;
     int level;
@@ -2038,7 +2038,7 @@ ONE_ATTACK_RESULT one_attack(struct char_data *ch, struct char_data *victim, int
 
 /* handler.c */
 void cancel_snoops(struct descriptor_data *snooper);
-struct affect_data *affect_find(struct affect_data * paf, SKILL * skill);
+struct affect_data *affect_find(struct affect_data * paf, struct dynamic_skill * skill);
 void affect_check(struct char_data * ch, int where, long vector);
 int count_users(struct gameobject * obj);
 void deduct_cost(struct char_data * ch, unsigned int cost);
@@ -2134,11 +2134,11 @@ void affect_to_room(struct room_index_data * room, struct affect_data * paf);
 void affect_remove(struct char_data * ch, struct affect_data * paf);
 void affect_remove_obj(struct gameobject * obj, struct affect_data * paf);
 void affect_remove_room(struct room_index_data * room, struct affect_data * paf);
-void affect_strip(struct char_data * ch, SKILL * skill);
+void affect_strip(struct char_data * ch, struct dynamic_skill * skill);
 void affect_strip_room(struct room_index_data * room, int sn);
 void affect_join(struct char_data * ch, struct affect_data * paf);
-bool is_affected(struct char_data * ch, SKILL * skill);
-bool is_affected_room(struct room_index_data * room, SKILL * skill);
+bool is_affected(struct char_data * ch, struct dynamic_skill * skill);
+bool is_affected_room(struct room_index_data * room, struct dynamic_skill * skill);
 
 /* rooms.c */
 char *room_affect(struct affect_data * paf);
@@ -2169,7 +2169,7 @@ bool parse_gen_groups(struct char_data * ch, const char *argument);
 void list_group_costs(struct char_data * ch);
 void list_group_known(struct char_data * ch);
 int exp_per_level(struct char_data * ch, int points);
-void check_improve(struct char_data * ch, SKILL * skill, bool success, int multiplier);
+void check_improve(struct char_data * ch, struct dynamic_skill * skill, bool success, int multiplier);
 
 /* teleport.c */
 struct room_index_data *room_by_name(char *target, int level, bool error);

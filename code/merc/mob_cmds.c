@@ -940,7 +940,7 @@ void do_mpcast(struct char_data *ch, const char *argument)
 {
     struct char_data *vch;
     struct gameobject *obj;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     void *victim = NULL;
     char spell[MAX_INPUT_LENGTH];
     char target[MAX_INPUT_LENGTH];

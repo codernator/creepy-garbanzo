@@ -1783,7 +1783,7 @@ static bool set_room_light(struct char_data *ch, struct room_index_data *room, c
 static void set_skill(struct char_data *ch, const char *argument)
 {
     struct char_data *vch;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     struct learned_info *learned;
     char arg[MAX_INPUT_LENGTH];
     int percent;
@@ -2039,7 +2039,7 @@ static bool set_long_arg(long *value, const char *argument)
  *****************************************************************************/
 static bool set_obj_value_idx(struct gameobject *obj, int idx, const char *argument)
 {
-    SKILL *skill;
+    struct dynamic_skill *skill;
     int value;
 
     if (is_number(argument)) {

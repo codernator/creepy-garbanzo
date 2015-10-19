@@ -167,7 +167,7 @@ EDIT(gredit_show){
 
     /* spell/affects */
     if (group->skills != NULL && group->skills->skill != NULL) {
-        SKILL_LIST *skills;
+        struct dynamic_skill_list *skills;
         bool first;
 
         first = true;
@@ -272,8 +272,8 @@ EDIT(gredit_help){
  ***************************************************************************/
 EDIT(gredit_skills){
     GROUP *group;
-    SKILL *skill;
-    SKILL_LIST *list;
+    struct dynamic_skill *skill;
+    struct dynamic_skill_list *list;
     char cmd[MAX_INPUT_LENGTH];
 
     EDIT_GROUP(ch, group);
@@ -300,7 +300,7 @@ EDIT(gredit_skills){
         }
 
         if (!str_prefix(argument, "all")) {
-            SKILL_LIST *list_next;
+            struct dynamic_skill_list *list_next;
 
             for (list = group->skills; list != NULL; list = list_next) {
                 list_next = list->next;
@@ -318,7 +318,7 @@ EDIT(gredit_skills){
                 group->skills = list->next;
                 free_skill_list(list);
             } else {
-                SKILL_LIST *list_prev = NULL;
+                struct dynamic_skill_list *list_prev = NULL;
 
                 for (list = group->skills; list != NULL; list = list->next) {
                     if (list->skill == skill)
@@ -485,7 +485,7 @@ void load_groups()
 {
     FILE *fp;
     GROUP *group = NULL;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     char *word;
     int gn;
     bool found;
@@ -576,7 +576,7 @@ void save_groups()
 {
     FILE *fp;
     GROUP *group;
-    SKILL_LIST *skills;
+    struct dynamic_skill_list *skills;
     struct level_info *level;
 
     if ((fp = fopen(GROUP_FILE, "w")) == NULL) {

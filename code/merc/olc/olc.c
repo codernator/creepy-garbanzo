@@ -299,7 +299,7 @@ char *olc_ed_vnum(struct char_data *ch)
     struct mob_index_data *pMob;
     struct mprog_code *pMprog;
     HELP_DATA *pHelp;
-    SKILL *pSkill;
+    struct dynamic_skill *pSkill;
     GROUP *pGroup;
     static char buf[MAX_INPUT_LENGTH];
 
@@ -330,7 +330,7 @@ char *olc_ed_vnum(struct char_data *ch)
           sprintf(buf, "%s", pHelp ? pHelp->keyword : "");
           break;
       case ED_SKILL:
-          pSkill = (SKILL *)ch->desc->ed_data;
+          pSkill = (struct dynamic_skill *)ch->desc->ed_data;
           sprintf(buf, "%s", pSkill ? pSkill->name : "");
           break;
       case ED_GROUP:
@@ -1294,7 +1294,7 @@ static void show_flag_cmds(struct char_data *ch, const struct flag_type *flag_ta
 void show_skill_cmds(struct char_data *ch, int tar)
 {
     struct buf_type *buf;
-    SKILL *skill;
+    struct dynamic_skill *skill;
     int col;
 
     buf = new_buf();

@@ -2,14 +2,14 @@
 #include "magic.h"
 #include "interp.h"
 
-extern SKILL *gsp_sword;
-extern SKILL *gsp_mace;
-extern SKILL *gsp_dagger;
-extern SKILL *gsp_axe;
-extern SKILL *gsp_spear;
-extern SKILL *gsp_flail;
-extern SKILL *gsp_whip;
-extern SKILL *gsp_polearm;
+extern struct dynamic_skill *gsp_sword;
+extern struct dynamic_skill *gsp_mace;
+extern struct dynamic_skill *gsp_dagger;
+extern struct dynamic_skill *gsp_axe;
+extern struct dynamic_skill *gsp_spear;
+extern struct dynamic_skill *gsp_flail;
+extern struct dynamic_skill *gsp_whip;
+extern struct dynamic_skill *gsp_polearm;
 
 /* item type list */
 const struct item_type item_table[] =

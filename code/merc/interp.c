@@ -9,7 +9,7 @@
 #endif
 
 
-extern SKILL *gsp_hide;
+extern struct dynamic_skill *gsp_hide;
 
 
 char *repeater(char *s, int i);
