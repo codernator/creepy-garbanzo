@@ -11,7 +11,7 @@ const OBJECT_ITERATOR_FILTER object_empty_filter;
 
 
 /** imports */
-extern void free_affect(AFFECT_DATA *af);
+extern void free_affect(struct affect_data *af);
 extern void free_extra_descr(struct extra_descr_data *ed);
 
 
@@ -104,7 +104,7 @@ struct gameobject *object_clone(struct gameobject *parent)
 
     /* affects */
     {
-	AFFECT_DATA *paf;
+	struct affect_data *paf;
 	clone->enchanted = parent->enchanted;
 	for (paf = parent->affected; paf != NULL; paf = paf->next) {
 	    affect_to_obj(clone, paf);
@@ -157,8 +157,8 @@ void object_free(struct gameobject *obj)
     /** Clean up affects. */
     if (obj->affected != NULL) {
 	//TODO - affect management.
-	/*@dependent@*/AFFECT_DATA *paf;
-	/*@dependent@*/AFFECT_DATA *paf_next;
+	/*@dependent@*/struct affect_data *paf;
+	/*@dependent@*/struct affect_data *paf_next;
 	for (paf = obj->affected; paf != NULL; paf = paf_next) {
 	    paf_next = paf->next;
 	    free_affect(paf);

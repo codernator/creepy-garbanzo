@@ -10,7 +10,7 @@
 /***************************************************************************
 * Repair code - 08-09-2002
 ***************************************************************************/
-static bool is_negative_affect(AFFECT_DATA * paf);
+static bool is_negative_affect(struct affect_data * paf);
 static unsigned int repair_cost(struct gameobject * obj, char *stat);
 static void enchant_item(struct gameobject * obj);
 
@@ -52,7 +52,7 @@ item_affect_stats[] =
 void do_enchant(struct char_data *ch, const char *argument)
 {
 	struct gameobject *obj;
-	AFFECT_DATA af;
+	struct affect_data af;
 	char item[MAX_INPUT_LENGTH];
 	char affect[MAX_INPUT_LENGTH];
 	char mod[MAX_INPUT_LENGTH];
@@ -177,8 +177,8 @@ void do_enchant(struct char_data *ch, const char *argument)
 void do_disenchant(struct char_data *ch, const char *argument)
 {
 	struct gameobject *obj;
-	AFFECT_DATA *paf;
-	AFFECT_DATA *paf_next;
+	struct affect_data *paf;
+	struct affect_data *paf_next;
 	char item[MAX_INPUT_LENGTH];
 	char affect[MAX_INPUT_LENGTH];
 	int number;
@@ -311,7 +311,7 @@ void do_disenchant(struct char_data *ch, const char *argument)
 *	check to see if the affect we are looking at is a good
 *	affect or a bad affect
 ***************************************************************************/
-bool is_negative_affect(AFFECT_DATA *paf)
+bool is_negative_affect(struct affect_data *paf)
 {
 	int idx;
 
@@ -338,7 +338,7 @@ void do_repair(struct char_data *ch, const char *argument)
 {
 	struct char_data *mob;
 	struct gameobject *obj;
-	AFFECT_DATA *paf;
+	struct affect_data *paf;
 	SKILL *skill_haggle;
 	char cmd[MAX_STRING_LENGTH];
 	char stat[MAX_STRING_LENGTH];
@@ -491,7 +491,7 @@ void do_repair(struct char_data *ch, const char *argument)
 ***************************************************************************/
 unsigned int repair_cost(struct gameobject *obj, char *stat)
 {
-	AFFECT_DATA *paf;
+	struct affect_data *paf;
 	unsigned int cost = 0;
 	int idx;
 	bool found = false;
@@ -557,9 +557,9 @@ unsigned int repair_cost(struct gameobject *obj, char *stat)
 ***************************************************************************/
 void enchant_item(struct gameobject *obj)
 {
-	AFFECT_DATA *copy;
-	AFFECT_DATA *copy_next;
-	AFFECT_DATA *new_af;
+	struct affect_data *copy;
+	struct affect_data *copy_next;
+	struct affect_data *new_af;
 
 	if (!obj->enchanted) {
 		for (copy = obj->objprototype->affected; copy != NULL; copy = copy_next) {

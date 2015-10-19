@@ -18,8 +18,8 @@ struct note_data * new_note(void);
 void free_note(struct note_data * note);
 
 /* ban data recycling */
-BAN_DATA * new_ban(void);
-void free_ban(BAN_DATA * ban);
+struct ban_data * new_ban(void);
+void free_ban(struct ban_data * ban);
 
 
 /* extra descr recycling */
@@ -27,8 +27,8 @@ struct extra_descr_data * new_extra_descr(void);
 void free_extra_descr(struct extra_descr_data * ed);
 
 /* affect recycling */
-AFFECT_DATA * new_affect(void);
-void free_affect(AFFECT_DATA * af);
+struct affect_data * new_affect(void);
+void free_affect(struct affect_data * af);
 
 
 /* character recyling */

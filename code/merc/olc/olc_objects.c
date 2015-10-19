@@ -649,7 +649,7 @@ void do_oedit(struct char_data *ch, const char *argument)
  *****************************************************************************/
 EDIT(oedit_show){
     struct objectprototype *pObj;
-    AFFECT_DATA *paf;
+    struct affect_data *paf;
     int cnt;
 
     EDIT_OBJ(ch, pObj);
@@ -781,8 +781,8 @@ EDIT(oedit_create){
 EDIT(oedit_clone){
     struct objectprototype *pObj;
     struct objectprototype *pClone;
-    AFFECT_DATA *pAff;
-    AFFECT_DATA *pNew;
+    struct affect_data *pAff;
+    struct affect_data *pNew;
     int value;
     int iter;
 
@@ -844,7 +844,7 @@ EDIT(oedit_clone){
  *****************************************************************************/
 EDIT(oedit_addaffect){
     struct objectprototype *pObj;
-    AFFECT_DATA *pAff;
+    struct affect_data *pAff;
     char loc[MAX_STRING_LENGTH];
     char mod[MAX_STRING_LENGTH];
     int value;
@@ -892,7 +892,7 @@ EDIT(oedit_addaffect){
  *****************************************************************************/
 EDIT(oedit_addapply){
     struct objectprototype *pObj;
-    AFFECT_DATA *pAff;
+    struct affect_data *pAff;
     char loc[MAX_STRING_LENGTH];
     char mod[MAX_STRING_LENGTH];
     char type[MAX_STRING_LENGTH];
@@ -963,8 +963,8 @@ EDIT(oedit_addapply){
  *****************************************************************************/
 EDIT(oedit_delaffect){
     struct objectprototype *pObj;
-    AFFECT_DATA *pAff;
-    AFFECT_DATA *pAff_next;
+    struct affect_data *pAff;
+    struct affect_data *pAff_next;
     char affect[MAX_STRING_LENGTH];
     int value;
     int cnt = 0;

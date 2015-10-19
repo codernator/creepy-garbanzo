@@ -29,7 +29,7 @@ typedef struct affect_list AFFECT_LIST;
 typedef struct argument_type ARGUMENT;
 
 typedef void SPELL_FUN(SKILL * skill, int level, CHAR_DATA * ch, void *vo, int target, const char *argument);
-typedef void AFFECT_FUN(SKILL * skill, void *target, int type, AFFECT_DATA * paf);
+typedef void AFFECT_FUN(SKILL * skill, void *target, int type, AFFECT_DATA *paf);
 
 
 /***************************************************************************
@@ -235,7 +235,7 @@ void assign_skill_helps(void);
 GROUP *group_lookup(const char *name);
 
 SKILL *resolve_skill_sn(int sn);
-SKILL *resolve_skill_affect(AFFECT_DATA * paf);
+SKILL *resolve_skill_affect(AFFECT_DATA *paf);
 int get_skill_number(char *name);
 
 void add_learned(CHAR_DATA * ch, LEARNED * learned);

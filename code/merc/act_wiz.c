@@ -22,7 +22,7 @@ void sick_harvey_proctor(struct char_data *ch, enum e_harvey_proctor_is, const c
 
 extern long top_mob_index;
 extern bool copyover();
-extern AFFECT_DATA *affect_free;
+extern struct affect_data *affect_free;
 extern bool is_auction_participant(struct char_data *ch);
 extern struct gameobject *get_auction_item();
 extern void reset_area(struct area_data * pArea);

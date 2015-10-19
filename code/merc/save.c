@@ -128,7 +128,7 @@ void save_char_obj(struct char_data *ch)
  ***************************************************************************/
 static void fwrite_char(struct char_data *ch, FILE *fp)
 {
-    AFFECT_DATA *paf;
+    struct affect_data *paf;
     LEARNED *learned;
     int pos;
     int idx;
@@ -382,7 +382,7 @@ static void fwrite_char(struct char_data *ch, FILE *fp)
  ***************************************************************************/
 static void fwrite_pet(struct char_data *pet, FILE *fp)
 {
-    AFFECT_DATA *paf;
+    struct affect_data *paf;
 
     if (!IS_NPC(pet))
         return;
@@ -487,7 +487,7 @@ static void fwrite_pet(struct char_data *pet, FILE *fp)
 static void fwrite_obj(struct char_data *ch, struct gameobject *obj, FILE *fp, int iNest)
 {
     struct extra_descr_data *ed;
-    AFFECT_DATA *paf;
+    struct affect_data *paf;
     SKILL *skill;
 
 
@@ -904,7 +904,7 @@ void fread_char(struct char_data *ch, FILE *fp)
               }
 
               if (!str_cmp(word, "AffD")) {
-                  AFFECT_DATA *paf;
+                  struct affect_data *paf;
                   SKILL *skill;
                   char *affd;
 
@@ -933,7 +933,7 @@ void fread_char(struct char_data *ch, FILE *fp)
               }
 
               if (!str_cmp(word, "Affc")) {
-                  AFFECT_DATA *paf;
+                  struct affect_data *paf;
                   SKILL *skill;
                   char *affc;
 
@@ -1357,7 +1357,7 @@ static void fread_pet(struct char_data *ch, FILE *fp)
               }
 
               if (!str_cmp(word, "AffD")) {
-                  AFFECT_DATA *paf;
+                  struct affect_data *paf;
                   SKILL *skill;
                   char *affd;
 
@@ -1385,7 +1385,7 @@ static void fread_pet(struct char_data *ch, FILE *fp)
               }
 
               if (!str_cmp(word, "Affc")) {
-                  AFFECT_DATA *paf;
+                  struct affect_data *paf;
                   SKILL *skill;
                   char *affc;
 
@@ -1559,7 +1559,7 @@ static void fread_obj(struct char_data *ch, FILE *fp)
 
           case 'A':
               if (!str_cmp(word, "AffD")) {
-                  AFFECT_DATA *paf;
+                  struct affect_data *paf;
                   SKILL *skill;
                   char *affd;
 
@@ -1585,7 +1585,7 @@ static void fread_obj(struct char_data *ch, FILE *fp)
                   break;
               }
               if (!str_cmp(word, "Affc")) {
-                  AFFECT_DATA *paf;
+                  struct affect_data *paf;
                   SKILL *skill;
                   char *affc;
 

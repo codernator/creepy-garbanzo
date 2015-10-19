@@ -53,17 +53,17 @@ void free_note(struct note_data *note)
 /***************************************************************************
  *	bans
  ***************************************************************************/
-static BAN_DATA *ban_free;
+static struct ban_data *ban_free;
 
 /***************************************************************************
  *	new_ban
  *
  *	create a new ban structure
  ***************************************************************************/
-BAN_DATA *new_ban(void)
+struct ban_data *new_ban(void)
 {
-    static BAN_DATA ban_zero;
-    BAN_DATA *ban;
+    static struct ban_data ban_zero;
+    struct ban_data *ban;
 
     if (ban_free == NULL) {
         ban = alloc_perm((unsigned int)sizeof(*ban));
@@ -82,7 +82,7 @@ BAN_DATA *new_ban(void)
  *
  *	free a ban structure
  ***************************************************************************/
-void free_ban(BAN_DATA *ban)
+void free_ban(struct ban_data *ban)
 {
     if (!IS_VALID(ban))
         return;
@@ -145,17 +145,17 @@ void free_extra_descr(struct extra_descr_data *ed)
 /***************************************************************************
  *	affects
  ***************************************************************************/
-AFFECT_DATA *affect_free;
+struct affect_data *affect_free;
 
 /***************************************************************************
  *	new_affect
  *
  *	create a new affect
  ***************************************************************************/
-AFFECT_DATA *new_affect(void)
+struct affect_data *new_affect(void)
 {
-    static AFFECT_DATA af_zero;
-    AFFECT_DATA *af;
+    static struct affect_data af_zero;
+    struct affect_data *af;
 
     if (affect_free == NULL) {
         af = alloc_perm((unsigned int)sizeof(*af));
@@ -176,7 +176,7 @@ AFFECT_DATA *new_affect(void)
  *
  *	free the affect memory
  ***************************************************************************/
-void free_affect(AFFECT_DATA *af)
+void free_affect(struct affect_data *af)
 {
     if (!IS_VALID(af))
         return;
@@ -249,8 +249,8 @@ void free_char(struct char_data *ch)
 {
     struct gameobject *obj;
     struct gameobject *obj_next;
-    AFFECT_DATA *paf;
-    AFFECT_DATA *paf_next;
+    struct affect_data *paf;
+    struct affect_data *paf_next;
 
     if (!IS_VALID(ch))
         return;

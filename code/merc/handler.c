@@ -21,8 +21,8 @@ extern SKILL *gsp_darkness;
 
 
 extern char *flag_string(const struct flag_type *flag_table, long bits);
-extern void affect_modify(struct char_data * ch, AFFECT_DATA * paf, bool fAdd);
-extern void affect_join_obj(struct gameobject * obj, AFFECT_DATA * paf);
+extern void affect_modify(struct char_data * ch, struct affect_data * paf, bool fAdd);
+extern void affect_join_obj(struct gameobject * obj, struct affect_data * paf);
 
 
 
@@ -393,7 +393,7 @@ int get_weapon_skill(struct char_data *ch, int sn)
 void reset_char(struct char_data *ch)
 {
     struct gameobject *obj;
-    AFFECT_DATA *af;
+    struct affect_data *af;
     int loc;
     long mod;
     int stat;
@@ -1045,7 +1045,7 @@ struct gameobject *get_eq_char(struct char_data *ch, int iWear)
  */
 void equip_char(struct char_data *ch, struct gameobject *obj, int iWear)
 {
-    AFFECT_DATA *paf;
+    struct affect_data *paf;
     int i;
 
     if (get_eq_char(ch, iWear) != NULL) {
@@ -1081,9 +1081,9 @@ void equip_char(struct char_data *ch, struct gameobject *obj, int iWear)
  */
 void unequip_char(struct char_data *ch, struct gameobject *obj)
 {
-    AFFECT_DATA *paf = NULL;
-    AFFECT_DATA *lpaf = NULL;
-    AFFECT_DATA *lpaf_next = NULL;
+    struct affect_data *paf = NULL;
+    struct affect_data *lpaf = NULL;
+    struct affect_data *lpaf_next = NULL;
     int i;
 
     if (obj == NULL) {
@@ -2210,7 +2210,7 @@ char *uncolor_str(char *txt)
  ***************************************************************************/
 void identify_item(struct char_data *ch, struct gameobject *obj)
 {
-    AFFECT_DATA *paf;
+    struct affect_data *paf;
     int iter;
     SKILL *skill;
 

@@ -17,7 +17,7 @@
 /** exports */
 struct extra_descr_data *extra_descr_free;
 void free_extra_descr(struct extra_descr_data * extra);
-void free_affect(AFFECT_DATA * af);
+void free_affect(struct affect_data * af);
 void free_mprog(MPROG_LIST * mp);
 
 
@@ -175,7 +175,7 @@ void free_room_index(struct room_index_data *room)
     return;
 }
 
-extern AFFECT_DATA *affect_free;
+extern struct affect_data *affect_free;
 
 
 struct shop_data *new_shop(void)

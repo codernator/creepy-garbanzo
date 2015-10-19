@@ -42,7 +42,7 @@ void spell_acid_blast(SKILL *skill, int level, struct char_data *ch, void *vo, i
 void spell_armor(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (is_affected(victim, skill)) {
 	if (victim == ch)
@@ -71,7 +71,7 @@ void spell_armor(SKILL *skill, int level, struct char_data *ch, void *vo, int ta
 void spell_blindness(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (IS_AFFECTED(victim, AFF_BLIND)
 	    || saves_spell(level, victim, DAM_OTHER)
@@ -167,7 +167,7 @@ void spell_call_lightning(SKILL *skill, int level, struct char_data *ch, void *v
 void spell_calm(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *vch;
-    AFFECT_DATA af;
+    struct affect_data af;
     int mlevel = 0;
     int count = 0;
     int high_level = 0;
@@ -397,7 +397,7 @@ void spell_chain_lightning(SKILL *skill, int level, struct char_data *ch, void *
 void spell_charm_person(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (is_safe(ch, victim))
 	return;
@@ -450,7 +450,7 @@ void spell_charm_person(SKILL *skill, int level, struct char_data *ch, void *vo,
 void spell_chill_touch(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
     int dam;
     static const int dam_each[] =
     {
@@ -667,7 +667,7 @@ void spell_cure_serious(SKILL *skill, int level, struct char_data *ch, void *vo,
 
 void spell_darkness(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (ch->class != class_lookup("witch")) {
 	send_to_char("Yeah right.  Get a life dipshit.\n\r", ch);
@@ -721,7 +721,7 @@ void spell_demonfire(SKILL *skill, int level, struct char_data *ch, void *vo, in
 void spell_detect_invis(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (IS_AFFECTED(victim, AFF_DETECT_INVIS)) {
 	if (victim == ch)
@@ -753,7 +753,7 @@ void spell_detect_invis(SKILL *skill, int level, struct char_data *ch, void *vo,
 void spell_detect_magic(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (IS_AFFECTED(victim, AFF_DETECT_MAGIC)) {
 	if (victim == ch)
@@ -908,7 +908,7 @@ void spell_earthquake(SKILL *skill, int level, struct char_data *ch, void *vo, i
 void spell_enchant_armor(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct gameobject *obj = (struct gameobject *)vo;
-    AFFECT_DATA *paf;
+    struct affect_data *paf;
     int result;
     int fail;
     int ac_bonus;
@@ -978,7 +978,7 @@ void spell_enchant_armor(SKILL *skill, int level, struct char_data *ch, void *vo
     }
 
     if (result < (fail / 3)) { /* item disenchanted */
-	AFFECT_DATA *paf_next;
+	struct affect_data *paf_next;
 
 	act("$p glows `1bri`#ght`1ly``, then fades...`1FUCK``!.", ch, obj, NULL, TO_CHAR);
 	act("$p glows `1bri`#ght`1ly``, then fades.", ch, obj, NULL, TO_ROOM);
@@ -1003,7 +1003,7 @@ void spell_enchant_armor(SKILL *skill, int level, struct char_data *ch, void *vo
 
     /* okay, move all the old flags into new vectors if we have to */
     if (!obj->enchanted) {
-	AFFECT_DATA *af_new;
+	struct affect_data *af_new;
 
 	obj->enchanted = true;
 
@@ -1070,7 +1070,7 @@ void spell_enchant_armor(SKILL *skill, int level, struct char_data *ch, void *vo
 void spell_enchant_weapon(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct gameobject *obj = (struct gameobject *)vo;
-    AFFECT_DATA *paf;
+    struct affect_data *paf;
     int result;
     int fail;
     int hit_bonus;
@@ -1146,7 +1146,7 @@ void spell_enchant_weapon(SKILL *skill, int level, struct char_data *ch, void *v
     }
 
     if (result < (fail / 2)) { /* item disenchanted */
-	AFFECT_DATA *paf_next;
+	struct affect_data *paf_next;
 
 	act("$p glows `1bri`#ght`1ly``, then fades...`1FUCK``!.", ch, obj, NULL, TO_CHAR);
 	act("$p glows `1bri`#ght`1ly``, then fades.", ch, obj, NULL, TO_ROOM);
@@ -1171,7 +1171,7 @@ void spell_enchant_weapon(SKILL *skill, int level, struct char_data *ch, void *v
 
     /* okay, move all the old flags into new vectors if we have to */
     if (!obj->enchanted) {
-	AFFECT_DATA *af_new;
+	struct affect_data *af_new;
 
 	obj->enchanted = true;
 
@@ -1293,7 +1293,7 @@ void spell_energy_drain(SKILL *skill, int level, struct char_data *ch, void *vo,
 void spell_fireball(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
     int type;
 
 
@@ -1428,7 +1428,7 @@ void spell_fireproof(SKILL *skill, int level, struct char_data *ch, void *vo, in
 {
     struct char_data *victim;
     struct gameobject *obj;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     /* deal with the object case first */
     if (target == TARGET_OBJ) {
@@ -1494,10 +1494,10 @@ void spell_flamestrike(SKILL *skill, int level, struct char_data *ch, void *vo, 
 void spell_faerie_fire(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (is_affected(victim, skill)) {
-	AFFECT_DATA *paf;
+	struct affect_data *paf;
 
 	for (paf = victim->affected; paf != NULL; paf = paf->next) {
 	    if (paf->type == skill->sn
@@ -1561,7 +1561,7 @@ void spell_faerie_fog(SKILL *skill, int level, struct char_data *ch, void *vo, i
 {
     struct room_index_data *room;
     struct char_data *ich;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (!(room = ch->in_room))
 	return;
@@ -1627,7 +1627,7 @@ void spell_floating_disc(SKILL *skill, int level, struct char_data *ch, void *vo
 void spell_fly(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (IS_AFFECTED(victim, AFF_FLYING)) {
 	if (victim == ch)
@@ -1658,7 +1658,7 @@ void spell_fly(SKILL *skill, int level, struct char_data *ch, void *vo, int targ
 void spell_frenzy(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (is_affected(victim, skill) || IS_AFFECTED(victim, AFF_BERSERK)) {
 	if (victim == ch)
@@ -1752,7 +1752,7 @@ void spell_gate(SKILL *skill, int level, struct char_data *ch, void *vo, int tar
 void spell_giant_strength(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (is_affected(victim, skill)) {
 	if (victim == ch)
@@ -1799,7 +1799,7 @@ void spell_harm(SKILL *skill, int level, struct char_data *ch, void *vo, int tar
 void spell_haste(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (is_affected(victim, skill)
 	    || IS_AFFECTED(victim, AFF_HASTE)
@@ -1885,7 +1885,7 @@ void spell_identify(SKILL *skill, int level, struct char_data *ch, void *vo, int
 void spell_infravision(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (IS_AFFECTED(victim, AFF_INFRARED)) {
 	if (victim == ch)
@@ -1915,7 +1915,7 @@ void spell_infravision(SKILL *skill, int level, struct char_data *ch, void *vo, 
 void spell_invis(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     /* object invisibility */
     if (target == TARGET_OBJ) {
@@ -2140,7 +2140,7 @@ void spell_mass_healing(SKILL *skill, int level, struct char_data *ch, void *vo,
 
 void spell_mass_invis(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
-    AFFECT_DATA af;
+    struct affect_data af;
     struct char_data *gch;
 
     for (gch = ch->in_room->people; gch != NULL; gch = gch->next_in_room) {
@@ -2176,7 +2176,7 @@ void spell_null(SKILL *skill, int level, struct char_data *ch, void *vo, int tar
 void spell_pass_door(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (IS_AFFECTED(victim, AFF_PASS_DOOR)) {
 	if (victim == ch)
@@ -2229,7 +2229,7 @@ void spell_extinguish_flames(SKILL *skill, int level, struct char_data *ch, void
 void spell_burning_flames(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (saves_spell(level, victim, DAM_FIRE)) {
 	act("$n resists the flames.", victim, NULL, NULL, TO_ROOM);
@@ -2260,7 +2260,7 @@ void spell_poison(SKILL *skill, int level, struct char_data *ch, void *vo, int t
 {
     struct char_data *victim;
     struct gameobject *obj;
-    AFFECT_DATA af;
+    struct affect_data af;
 
 
     if (target == TARGET_OBJ) {
@@ -2526,7 +2526,7 @@ void spell_revive(SKILL *skill, int level, struct char_data *ch, void *vo, int t
 void spell_sanctuary(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (IS_AFFECTED(victim, AFF_SANCTUARY)) {
 	if (victim == ch)
@@ -2555,7 +2555,7 @@ void spell_sanctuary(SKILL *skill, int level, struct char_data *ch, void *vo, in
 void spell_druid_call(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (IS_AFFECTED(victim, AFF_DRUID_CALL)) {
 	if (victim == ch)
@@ -2584,7 +2584,7 @@ void spell_druid_call(SKILL *skill, int level, struct char_data *ch, void *vo, i
 void spell_shield(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (is_affected(victim, skill)) {
 	if (victim == ch)
@@ -2641,7 +2641,7 @@ void spell_shocking_grasp(SKILL *skill, int level, struct char_data *ch, void *v
 void spell_sleep(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (IS_AFFECTED(victim, AFF_SLEEP)
 	    || (IS_NPC(victim) && IS_SET(victim->act, ACT_UNDEAD))
@@ -2675,7 +2675,7 @@ void spell_sleep(SKILL *skill, int level, struct char_data *ch, void *vo, int ta
 void spell_slow(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (is_affected(victim, skill) || IS_AFFECTED(victim, AFF_SLOW)) {
 	if (victim == ch)
@@ -2730,7 +2730,7 @@ void spell_slow(SKILL *skill, int level, struct char_data *ch, void *vo, int tar
 void spell_stone_skin(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (is_affected(victim, skill)) {
 	if (victim == ch)
@@ -2784,7 +2784,7 @@ void spell_ventriloquate(SKILL *skill, int level, struct char_data *ch, void *vo
 void spell_weaken(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (is_affected(victim, skill)) {
 	send_to_char("They already look weak.\n\r", ch);
@@ -3202,7 +3202,7 @@ void spell_winds(SKILL *skill, int level, struct char_data *ch, void *vo, int ta
 void spell_web(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (is_affected(victim, skill)) {
 	act("$N is already webbed.", ch, NULL, victim, TO_CHAR);
@@ -3244,7 +3244,7 @@ void spell_web(SKILL *skill, int level, struct char_data *ch, void *vo, int targ
 void spell_displacement(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct room_index_data *room;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if ((room = ch->in_room) == NULL)
 	return;
@@ -3279,7 +3279,7 @@ void spell_displacement(SKILL *skill, int level, struct char_data *ch, void *vo,
 void spell_haven(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct room_index_data *room;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if ((room = ch->in_room) == NULL)
 	return;
@@ -3312,7 +3312,7 @@ void spell_haven(SKILL *skill, int level, struct char_data *ch, void *vo, int ta
 void spell_mana_vortex(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct room_index_data *room;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if ((room = ch->in_room) == NULL)
 	return;
@@ -3345,7 +3345,7 @@ void spell_mana_vortex(SKILL *skill, int level, struct char_data *ch, void *vo, 
 void spell_parasitic_cloud(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct room_index_data *room;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if ((room = ch->in_room) == NULL)
 	return;
@@ -3378,7 +3378,7 @@ void spell_parasitic_cloud(SKILL *skill, int level, struct char_data *ch, void *
  ***************************************************************************/
 void spell_grandeur(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
-    AFFECT_DATA af;
+    struct affect_data af;
     int hp_mod;
     int mv_mod;
     int mana_cost;
@@ -3426,7 +3426,7 @@ void spell_grandeur(SKILL *skill, int level, struct char_data *ch, void *vo, int
  ***************************************************************************/
 void spell_farsight(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (IS_AFFECTED(ch, AFF_BLIND)) {
 	send_to_char("Maybe it would help if you could `&s`#e`&e``?\n\r", ch);
@@ -3530,7 +3530,7 @@ void spell_nexus(SKILL *skill, int level, struct char_data *ch, void *vo, int ta
 void spell_pollenburst(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (is_affected(victim, skill)) {
 	send_to_char("Your victim is already blinded by `#pollen``.\n\r", ch);
@@ -3797,7 +3797,7 @@ void spell_ring_of_fire(SKILL *skill, int level, struct char_data *ch, void *vo,
 void spell_ice_shield(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
     SKILL *skill_dispel;
 
     if (is_affected(victim, skill)) {
@@ -3854,7 +3854,7 @@ void spell_ice_shield(SKILL *skill, int level, struct char_data *ch, void *vo, i
 void spell_fire_shield(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
     SKILL *skill_dispel;
 
     if (is_affected(victim, skill)) {
@@ -3910,7 +3910,7 @@ void spell_fire_shield(SKILL *skill, int level, struct char_data *ch, void *vo, 
 void spell_acidic_shield(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
     SKILL *skill_dispel;
 
     if (is_affected(victim, skill)) {
@@ -3970,7 +3970,7 @@ void spell_acidic_shield(SKILL *skill, int level, struct char_data *ch, void *vo
 void spell_water_shield(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
     SKILL *skill_dispel;
 
     if (is_affected(victim, skill)) {
@@ -4028,7 +4028,7 @@ void spell_water_shield(SKILL *skill, int level, struct char_data *ch, void *vo,
 void spell_holy_shield(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
     SKILL *skill_dispel;
 
     if (is_affected(victim, skill)) {
@@ -4085,7 +4085,7 @@ void spell_holy_shield(SKILL *skill, int level, struct char_data *ch, void *vo, 
 void spell_negative_shield(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
     SKILL *skill_dispel;
 
     if (is_affected(victim, skill)) {
@@ -4263,7 +4263,7 @@ void spell_acidic_rain(SKILL *skill, int level, struct char_data *ch, void *vo, 
 void spell_super_speed(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct char_data *victim = (struct char_data *)vo;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if (is_affected(ch, skill)) {
 	send_to_char("You are already moving as fast as you can!\n\r", victim);

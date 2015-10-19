@@ -261,7 +261,7 @@ bool saves_dispel(int dis_level, int spell_level, int duration)
  ***************************************************************************/
 bool check_dispel(int dis_level, struct char_data *victim, SKILL *skill)
 {
-    AFFECT_DATA *af;
+    struct affect_data *af;
 
     if (skill == NULL)
 	return false;
@@ -298,7 +298,7 @@ bool check_dispel(int dis_level, struct char_data *victim, SKILL *skill)
  ***************************************************************************/
 void remove_all_affects(struct char_data *victim)
 {
-    AFFECT_DATA *af;
+    struct affect_data *af;
     SKILL *skill;
 
     while ((af = victim->affected) != NULL) {
@@ -1060,7 +1060,7 @@ void cast_spell(struct char_data *ch, SKILL *skill, int level, void *vo, int tar
  ***************************************************************************/
 void do_deft(struct char_data *ch, const char *argument)
 {
-    AFFECT_DATA af;
+    struct affect_data af;
     SKILL *skill;
     int percent;
 
@@ -1105,7 +1105,7 @@ void do_deft(struct char_data *ch, const char *argument)
  ***************************************************************************/
 void do_dash(struct char_data *ch, const char *argument)
 {
-    AFFECT_DATA af;
+    struct affect_data af;
     SKILL *skill;
     int percent;
 

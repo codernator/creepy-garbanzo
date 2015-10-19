@@ -1139,8 +1139,8 @@ void do_score(struct char_data *ch, const char *argument)
 
 void do_affects(struct char_data *ch, const char *argument)
 {
-    AFFECT_DATA *paf;
-    AFFECT_DATA *paf_last = NULL;
+    struct affect_data *paf;
+    struct affect_data *paf_last = NULL;
     SKILL *skill;
     char buf[MAX_STRING_LENGTH];
 

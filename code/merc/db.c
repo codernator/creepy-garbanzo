@@ -55,7 +55,7 @@ extern long fread_long(FILE *fp);
 extern struct gameobject *obj_free;
 extern struct char_data *char_free;
 extern struct pc_data *pcdata_free;
-extern AFFECT_DATA *affect_free;
+extern struct affect_data *affect_free;
 
 
 /** locals */
@@ -663,7 +663,7 @@ void load_rooms(FILE *fp)
 
                 room_idx->owner = fread_string(fp);
             } else if (letter == 'A') {
-                AFFECT_DATA af;
+                struct affect_data af;
                 SKILL *skill;
 
                 if ((skill = skill_lookup(fread_word(fp))) != NULL) {
@@ -1039,7 +1039,7 @@ void load_objects(FILE *fp)
             letter = fread_letter(fp);
 
             if (letter == 'A') {
-                AFFECT_DATA *paf;
+                struct affect_data *paf;
 
                 paf = new_affect();
                 paf->where = TO_OBJECT;
@@ -1053,7 +1053,7 @@ void load_objects(FILE *fp)
                 objprototype->affected = paf;
                 top_affect++;
             } else if (letter == 'F') {
-                AFFECT_DATA *paf;
+                struct affect_data *paf;
 
                 paf = new_affect();
                 letter = fread_letter(fp);
@@ -1698,7 +1698,7 @@ struct char_data *create_mobile(struct mob_index_data *mob_idx)
     struct char_data *mob;
     SKILL *skill;
     int idx;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     mobile_count++;
 
@@ -1877,7 +1877,7 @@ struct char_data *create_mobile(struct mob_index_data *mob_idx)
 void clone_mobile(struct char_data *parent, struct char_data *clone)
 {
     int i;
-    AFFECT_DATA *paf;
+    struct affect_data *paf;
 
     if (parent == NULL || clone == NULL || !IS_NPC(parent))
         return;
@@ -1951,7 +1951,7 @@ void clone_mobile(struct char_data *parent, struct char_data *clone)
  */
 struct gameobject *create_object(struct objectprototype *objprototype, int level)
 {
-    AFFECT_DATA *paf;
+    struct affect_data *paf;
     struct gameobject *obj;
 
     if (objprototype == NULL) {
@@ -2522,7 +2522,7 @@ void do_dump(struct char_data *ch, const char *argument)
     struct pc_data *pc;
     struct gameobject *obj;
     struct descriptor_data *d;
-    AFFECT_DATA *af;
+    struct affect_data *af;
     FILE *fp;
     long count;
     long count_free;

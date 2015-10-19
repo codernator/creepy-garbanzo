@@ -54,14 +54,12 @@ typedef enum e_one_attack_result {
 
 
 /*Structure types. */
-typedef struct affect_data AFFECT_DATA;
-typedef struct ban_data BAN_DATA;
-
 typedef struct mprog_list MPROG_LIST;
 typedef struct mprog_code MPROG_CODE;
 
 
 /* required for new skill system */
+typedef struct affect_data AFFECT_DATA;
 typedef struct char_data CHAR_DATA;
 #include "skills.h"
 
@@ -150,7 +148,7 @@ struct game_state {
 #define BAN_PERMANENT   (int)F
 
 struct ban_data {
-    BAN_DATA * next;
+    struct ban_data * next;
     bool  valid;
     int  ban_flags;
     int  level;
@@ -418,7 +416,7 @@ extern const struct message_types message_type_table[];
 
 
 struct affect_data {
-    AFFECT_DATA * next;
+    struct affect_data * next;
     bool valid;
     SKILL *skill;
     int where;
@@ -1301,7 +1299,7 @@ struct char_data {
     struct char_data *mprog_target;
     /*@null@*/struct mob_index_data *mob_idx;
     struct descriptor_data *desc;
-    AFFECT_DATA *affected;
+    struct affect_data *affected;
     struct note_data *pnote;
     struct gameobject *carrying;
     struct gameobject *on;
@@ -1471,7 +1469,7 @@ struct extra_descr_data {
 
     long vnum;
     /*@owned@*//*@null@*/struct extra_descr_data *extra_descr;
-    /*@dependent@*//*@null@*/AFFECT_DATA *affected;
+    /*@dependent@*//*@null@*/struct affect_data *affected;
     /*@dependent@*//*@null@*/struct area_data *area;
     /*@shared@*/char *name;
     /*@shared@*//*@null@*/char *short_descr;
@@ -1505,7 +1503,7 @@ struct extra_descr_data {
     /*@dependent@*//*@null@*/struct char_data *carried_by;
     /*@dependent@*//*@null@*/struct char_data *target;
     /*@owned@*//*@null@*/struct extra_descr_data *extra_descr;
-    /*@dependent@*//*@null@*/AFFECT_DATA *affected;
+    /*@dependent@*//*@null@*/struct affect_data *affected;
     /*@dependent@*/struct objectprototype *objprototype;
     /*@dependent@*//*@null@*/struct room_index_data *in_room;
     bool enchanted;
@@ -1609,7 +1607,7 @@ struct room_index_data {
     struct exit_data *  exit[6];
     struct reset_data *  reset_first;
     struct reset_data *  reset_last;
-    AFFECT_DATA *  affected;
+    struct affect_data *  affected;
     char *   name;
     char *   description;
     char *   owner;
@@ -2044,7 +2042,7 @@ ONE_ATTACK_RESULT one_attack(struct char_data *ch, struct char_data *victim, int
 
 /* handler.c */
 void cancel_snoops(struct descriptor_data *snooper);
-AFFECT_DATA *affect_find(AFFECT_DATA * paf, SKILL * skill);
+struct affect_data *affect_find(struct affect_data * paf, SKILL * skill);
 void affect_check(struct char_data * ch, int where, long vector);
 int count_users(struct gameobject * obj);
 void deduct_cost(struct char_data * ch, unsigned int cost);
@@ -2134,20 +2132,20 @@ struct room_index_data *find_location(struct char_data * ch, const char *arg);
 struct room_index_data *get_death_room(struct char_data * ch);
 
 /* affects.c */
-void affect_to_char(struct char_data * ch, /*@partial@*/AFFECT_DATA * paf);
-void affect_to_obj(struct gameobject * obj, AFFECT_DATA * paf);
-void affect_to_room(struct room_index_data * room, AFFECT_DATA * paf);
-void affect_remove(struct char_data * ch, AFFECT_DATA * paf);
-void affect_remove_obj(struct gameobject * obj, AFFECT_DATA * paf);
-void affect_remove_room(struct room_index_data * room, AFFECT_DATA * paf);
+void affect_to_char(struct char_data * ch, /*@partial@*/struct affect_data * paf);
+void affect_to_obj(struct gameobject * obj, struct affect_data * paf);
+void affect_to_room(struct room_index_data * room, struct affect_data * paf);
+void affect_remove(struct char_data * ch, struct affect_data * paf);
+void affect_remove_obj(struct gameobject * obj, struct affect_data * paf);
+void affect_remove_room(struct room_index_data * room, struct affect_data * paf);
 void affect_strip(struct char_data * ch, SKILL * skill);
 void affect_strip_room(struct room_index_data * room, int sn);
-void affect_join(struct char_data * ch, AFFECT_DATA * paf);
+void affect_join(struct char_data * ch, struct affect_data * paf);
 bool is_affected(struct char_data * ch, SKILL * skill);
 bool is_affected_room(struct room_index_data * room, SKILL * skill);
 
 /* rooms.c */
-char *room_affect(AFFECT_DATA * paf);
+char *room_affect(struct affect_data * paf);
 
 /* interp.c */
 void interpret(struct char_data * ch, const char *argument);

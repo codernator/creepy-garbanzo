@@ -313,8 +313,8 @@ void free_reset_data(struct reset_data * pReset);
 struct exit_data *new_exit(void);
 void free_exit(struct exit_data * pExit);
 /* affect data */
-extern AFFECT_DATA *new_affect(void);
-extern void free_affect(AFFECT_DATA * pAf);
+extern struct affect_data *new_affect(void);
+extern void free_affect(struct affect_data * pAf);
 /* shop data */
 struct shop_data *new_shop(void);
 void free_shop(struct shop_data * pShop);

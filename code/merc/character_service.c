@@ -334,7 +334,7 @@ void look_room(struct char_data *ch, struct room_index_data *in_room) {
     send_to_char("\n\r", ch);
 
     if ((is_affected(ch, gsp_detect_magic) || IS_SET(ch->act, PLR_HOLYLIGHT))) {
-	AFFECT_DATA *paf;
+	struct affect_data *paf;
 	for (paf = in_room->affected; paf != NULL; paf = paf->next) {
 	    send_to_char(room_affect(paf), ch);
 	}

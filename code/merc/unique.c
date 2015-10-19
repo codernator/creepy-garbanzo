@@ -298,8 +298,8 @@ void do_untally(struct char_data *ch, const char *argument)
  ***************************************************************************/
 void apply_random_affect(struct gameobject *obj, bool positive)
 {
-    AFFECT_DATA *paf;
-    AFFECT_DATA *paf_find;
+    struct affect_data *paf;
+    struct affect_data *paf_find;
     int location;
     int mult;
     int value;

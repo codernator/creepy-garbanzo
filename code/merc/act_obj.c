@@ -71,9 +71,9 @@ bool can_loot(struct char_data *ch, struct gameobject *obj)
 }
 
 
-void affect_join_obj(struct gameobject *obj, AFFECT_DATA *paf)
+void affect_join_obj(struct gameobject *obj, struct affect_data *paf)
 {
-    AFFECT_DATA *paf_old;
+    struct affect_data *paf_old;
 
     for (paf_old = obj->affected; paf_old != NULL; paf_old = paf_old->next) {
         if (paf_old->type == paf->type) {
@@ -939,7 +939,7 @@ void do_drink(struct char_data *ch, const char *argument)
 
     if (obj->value[3] != 0) {
         /* The drink was poisoned ! */
-        AFFECT_DATA af;
+        struct affect_data af;
         SKILL *skill_poison;
 
         if ((skill_poison = gsp_poison) != NULL) {
@@ -1025,7 +1025,7 @@ void do_eat(struct char_data *ch, const char *argument)
           }
 
           if (obj->value[3] != 0) {
-              AFFECT_DATA af;
+              struct affect_data af;
               SKILL *skill_poison;
 
               if ((skill_poison = gsp_poison) != NULL) {
@@ -2626,7 +2626,7 @@ void do_second(struct char_data *ch, const char *argument)
 void do_envenom(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
-    AFFECT_DATA af;
+    struct affect_data af;
     SKILL *skill_envenom;
     SKILL *skill_poison;
     int percent;

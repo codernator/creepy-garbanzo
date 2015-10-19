@@ -17,7 +17,7 @@ const OBJECTPROTOTYPE_FILTER objectprototype_empty_filter;
 
 
 /** imports */
-extern void free_affect(AFFECT_DATA *af);
+extern void free_affect(struct affect_data *af);
 extern void free_extra_descr(struct extra_descr_data *ed);
 
 
@@ -153,7 +153,7 @@ KEYVALUEPAIR_ARRAY *objectprototype_serialize(const struct objectprototype *obj)
 
     /** append affects */
     {
-        AFFECT_DATA *affect = obj->affected;
+        struct affect_data *affect = obj->affected;
         while (affect != NULL) {
             keyvaluepairarray_appendf(answer, 256, "affect",
                                       "%d,%d,%d,%d,%d,%ld,%ld",
@@ -207,8 +207,8 @@ void objectprototype_free(struct objectprototype *prototypedata)
     /** Clean up affects */
     if (prototypedata->affected != NULL) {
         //TODO - affects management.
-        /*@dependent@*/AFFECT_DATA *paf;
-        /*@dependent@*/AFFECT_DATA *paf_next;
+        /*@dependent@*/struct affect_data *paf;
+        /*@dependent@*/struct affect_data *paf_next;
         for (paf = prototypedata->affected; paf != NULL; paf = paf_next) {
             paf_next = paf->next;
             free_affect(paf);
@@ -341,7 +341,7 @@ size_t count_extras(const struct objectprototype *obj)
 size_t count_affects(const struct objectprototype *obj)
 {
     size_t keys = 0;
-    AFFECT_DATA *affect = obj->affected;
+    struct affect_data *affect = obj->affected;
     while (affect != NULL) {
         keys++;
         affect = affect->next;

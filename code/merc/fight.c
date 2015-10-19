@@ -805,8 +805,8 @@ bool one_hit(struct char_data *ch, struct char_data *victim, int dt, struct game
 	int dam;
 
 	if (ch->fighting == victim && IS_WEAPON_STAT(wield, WEAPON_POISON)) {
-	    AFFECT_DATA *poison;
-	    AFFECT_DATA af;
+	    struct affect_data *poison;
+	    struct affect_data af;
 	    int level;
 
 	    if ((poison = affect_find(wield->affected, gsp_poison)) == NULL)

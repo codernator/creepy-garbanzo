@@ -771,7 +771,7 @@ EDIT(redit_show){
     printf_to_char(ch, "`&Description``:\n\r%s", room->description);
 
     if (room->affected != NULL) {
-        AFFECT_DATA *paf;
+        struct affect_data *paf;
         SKILL *skill;
         int iter = 0;
 
@@ -1168,7 +1168,7 @@ EDIT(redit_sector){
  ***************************************************************************/
 EDIT(redit_addaffect){
     struct room_index_data *room;
-    AFFECT_DATA af;
+    struct affect_data af;
     SKILL *skill;
     char arg[MAX_STRING_LENGTH];
 
@@ -1206,8 +1206,8 @@ EDIT(redit_addaffect){
  ***************************************************************************/
 EDIT(redit_delaffect){
     struct room_index_data *room;
-    AFFECT_DATA *paf;
-    AFFECT_DATA *paf_next;
+    struct affect_data *paf;
+    struct affect_data *paf_next;
     char arg[MAX_STRING_LENGTH];
     int number;
     int count;

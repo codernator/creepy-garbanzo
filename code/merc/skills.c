@@ -830,7 +830,7 @@ SKILL *resolve_skill_sn(int sn)
  * resolve a skill from an affect - skills are cached on the
  * affect structure so we dont always have to look it up
  */
-SKILL *resolve_skill_affect(AFFECT_DATA *paf)
+SKILL *resolve_skill_affect(struct affect_data *paf)
 {
     if (paf->skill == NULL)
         paf->skill = resolve_skill_sn(paf->type);
@@ -1209,7 +1209,7 @@ LEARNED *create_learned_skill(char *name, int percent)
 bool check_affected(struct char_data *ch, char *name)
 {
     SKILL *skill;
-    AFFECT_DATA *af;
+    struct affect_data *af;
     bool is_affected;
 
     is_affected = false;

@@ -11,7 +11,7 @@ bool check_ban(const char *site, int type);
 
 
 /** locals */
-static BAN_DATA *ban_list;
+static struct ban_data *ban_list;
 static void save_bans(void);
 static void ban_site(struct char_data *ch, const char *argument, bool fPerm);
 
@@ -31,8 +31,8 @@ void do_allow(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
     char buf[MAX_STRING_LENGTH];
-    BAN_DATA *prev;
-    BAN_DATA *curr;
+    struct ban_data *prev;
+    struct ban_data *curr;
 
     one_argument(argument, arg);
 
@@ -69,7 +69,7 @@ void do_allow(struct char_data *ch, const char *argument)
 
 void save_bans(void)
 {
-    BAN_DATA *pban;
+    struct ban_data *pban;
     FILE *fp;
     bool found = false;
 
@@ -93,14 +93,14 @@ void save_bans(void)
 void load_bans(void)
 {
     FILE *fp;
-    BAN_DATA *ban_last;
+    struct ban_data *ban_last;
 
     if ((fp = fopen(BAN_FILE, "r")) == NULL)
 	return;
 
     ban_last = NULL;
     for (;; ) {
-	BAN_DATA *pban;
+	struct ban_data *pban;
 
 	if (feof(fp)) {
 	    fclose(fp);
@@ -124,7 +124,7 @@ void load_bans(void)
 
 bool check_ban(const char *site, int type)
 {
-    BAN_DATA *pban;
+    struct ban_data *pban;
     char host[MAX_STRING_LENGTH];
 
     strcpy(host, capitalize(site));
@@ -157,7 +157,7 @@ void ban_site(struct char_data *ch, const char *argument, bool fPerm)
     char arg1[MAX_INPUT_LENGTH], arg2[MAX_INPUT_LENGTH];
     char *name;
     struct buf_type *buffer;
-    BAN_DATA *pban, *prev;
+    struct ban_data *pban, *prev;
     bool prefix = false, suffix = false;
     int type;
 

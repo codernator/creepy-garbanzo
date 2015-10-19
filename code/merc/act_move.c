@@ -1602,7 +1602,7 @@ void do_pick(struct char_data *ch, const char *argument)
 void do_sneak(struct char_data *ch, const char *argument)
 {
     SKILL *skill;
-    AFFECT_DATA af;
+    struct affect_data af;
 
     if ((skill = gsp_sneak) == NULL) {
 	send_to_char("Huh?", ch);

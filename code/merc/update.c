@@ -19,7 +19,7 @@ extern DECLARE_DO_FUN(do_reboot);
 extern DECLARE_DO_FUN(do_copyover);
 extern bool mp_percent_trigger(struct char_data * mob, struct char_data * ch, const void *arg1, const void *arg2, int type);
 extern void random_drop(void);
-extern AFFECT_DATA *new_affect(void);
+extern struct affect_data *new_affect(void);
 extern void auction_update(void);
 
 
@@ -112,7 +112,7 @@ static void advance_level_object(struct char_data *ch, struct gameobject *obj)
  ***************************************************************************/
 static void add_cache_affect(struct gameobject *obj, int bit, int sn, int level, int mod)
 {
-    AFFECT_DATA *paf;
+    struct affect_data *paf;
     bool found = false;
 
     for (paf = obj->affected; paf != NULL; paf = paf->next) {
@@ -992,8 +992,8 @@ static void room_update(void)
     for (index = 0; index < MAX_KEY_HASH; index++) {
 	for (room = room_index_hash[index]; room != NULL; room = room->next) {
 	    if (room->affected != NULL) {
-		AFFECT_DATA *paf;
-		AFFECT_DATA *paf_next;
+		struct affect_data *paf;
+		struct affect_data *paf_next;
 		SKILL *skill;
 
 		for (paf = room->affected; paf != NULL; paf = paf_next) {
@@ -1047,8 +1047,8 @@ static void char_update(void)
 	save_number = 0;
 
     for (ch = char_list; ch != NULL; ch = ch_next) {
-	AFFECT_DATA *paf;
-	AFFECT_DATA *paf_next;
+	struct affect_data *paf;
+	struct affect_data *paf_next;
 
 	ch_next = ch->next;
 
@@ -1260,8 +1260,8 @@ static void char_update(void)
 static void obj_update(void)
 {
     struct gameobject *obj, *opending;
-    AFFECT_DATA *paf;
-    AFFECT_DATA *paf_next;
+    struct affect_data *paf;
+    struct affect_data *paf_next;
 
     opending = object_iterator_start(&object_empty_filter);
     while ((obj = opending) != NULL) {
