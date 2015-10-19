@@ -18,7 +18,7 @@ void do_teleport(struct char_data *ch, const char *argument)
     struct gameobject *in_obj;
     struct room_index_data *location;
     char arg[MAX_INPUT_LENGTH];
-    BUFFER *buf;
+    struct buf_type *buf;
     int count;
     int temp;
 

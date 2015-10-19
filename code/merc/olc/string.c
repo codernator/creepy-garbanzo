@@ -266,7 +266,7 @@ void string_add(struct char_data *ch, const char *argument)
  ***************************************************************************/
 char *format_string(char *orig)
 {
-    BUFFER *buf;
+    struct buf_type *buf;
     char *ptr;
     char *tmp;
     int tmp_ln;
@@ -583,7 +583,7 @@ static const char *getlinefrombuf(const char *str, char *buf)
  ***************************************************************************/
 char *number_lines(const char *string)
 {
-    BUFFER *buf;
+    struct buf_type *buf;
     static char out[MAX_STRING_LENGTH];
     int cnt = 1;
     char tmp[MAX_STRING_LENGTH];

@@ -56,7 +56,6 @@ typedef enum e_one_attack_result {
 /*Structure types. */
 typedef struct affect_data AFFECT_DATA;
 typedef struct ban_data BAN_DATA;
-typedef struct buf_type BUFFER;
 typedef struct weather_data WEATHER_DATA;
 
 typedef struct mprog_list MPROG_LIST;
@@ -160,7 +159,7 @@ struct ban_data {
 };
 
 struct buf_type {
-    BUFFER *next;
+    struct buf_type *next;
     bool valid;
     int state;                  /* error state of the buffer */
     long size;                   /* size in k */
@@ -1383,7 +1382,7 @@ struct char_data {
  ***************************************************************************/
 struct pc_data {
     /*@null@*/struct pc_data *next;
-    BUFFER *buffer;
+    struct buf_type *buffer;
     bool valid;
     char *pwd;
     char *bamfin;
@@ -2239,13 +2238,13 @@ int objectprototype_list_count();
 /* ~objectprototype.c */
 
 /* recycle.c */
-BUFFER * new_buf(void);
-BUFFER *new_buf_size(int size);
-void free_buf(/*@owned@*/BUFFER * buffer);
-void clear_buf(BUFFER * buffer);
-bool add_buf(BUFFER *buffer, const char *string);
-/*@observer@*/char *buf_string(/*@observer@*/BUFFER * buffer);
-void printf_buf(BUFFER * buffer, char *fmt, ...);
+struct buf_type * new_buf(void);
+struct buf_type *new_buf_size(int size);
+void free_buf(/*@owned@*/struct buf_type * buffer);
+void clear_buf(struct buf_type * buffer);
+bool add_buf(struct buf_type *buffer, const char *string);
+/*@observer@*/char *buf_string(/*@observer@*/struct buf_type * buffer);
+void printf_buf(struct buf_type * buffer, char *fmt, ...);
 /* ~recycle.c */
 
 /* area.c */

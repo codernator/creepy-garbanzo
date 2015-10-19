@@ -156,7 +156,7 @@ void ban_site(struct char_data *ch, const char *argument, bool fPerm)
     char buf[MAX_STRING_LENGTH], buf2[MAX_STRING_LENGTH];
     char arg1[MAX_INPUT_LENGTH], arg2[MAX_INPUT_LENGTH];
     char *name;
-    BUFFER *buffer;
+    struct buf_type *buffer;
     BAN_DATA *pban, *prev;
     bool prefix = false, suffix = false;
     int type;

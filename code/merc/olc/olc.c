@@ -353,7 +353,7 @@ char *olc_ed_vnum(struct char_data *ch)
  ****************************************************************************/
 static void show_olc_cmds(struct char_data *ch, const struct olc_cmd_type *olc_table)
 {
-    BUFFER *out;
+    struct buf_type *out;
     char buf[MAX_STRING_LENGTH];
     int cmd;
     int col;
@@ -761,7 +761,7 @@ static void display_resets(struct char_data *ch)
     struct room_index_data *pRoom;
     struct reset_data *pReset;
     struct mob_index_data *pMob = NULL;
-    BUFFER *final;
+    struct buf_type *final;
     char *uncolor;
     char *uncolor2;
     long num = 0;
@@ -1157,7 +1157,7 @@ void do_alist(struct char_data *ch, const char *argument)
 {
     struct area_data *pArea;
     struct area_iterator *iterator;
-    BUFFER *buf;
+    struct buf_type *buf;
 
     DENY_NPC(ch);
 
@@ -1293,7 +1293,7 @@ static void show_flag_cmds(struct char_data *ch, const struct flag_type *flag_ta
  ****************************************************************************/
 void show_skill_cmds(struct char_data *ch, int tar)
 {
-    BUFFER *buf;
+    struct buf_type *buf;
     SKILL *skill;
     int col;
 

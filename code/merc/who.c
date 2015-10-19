@@ -107,7 +107,7 @@ void do_whois(struct char_data *ch, const char *argument)
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	struct descriptor_data *d;
     struct descriptor_data *dpending;
-	BUFFER *output;
+	struct buf_type *output;
 	char arg[MAX_INPUT_LENGTH];
 	bool found = false;
 
@@ -159,7 +159,7 @@ void do_who(struct char_data *ch, const char *argument)
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	struct descriptor_data *d;
     struct descriptor_data *dpending;
-	BUFFER *output;
+	struct buf_type *output;
 	char buf[2 * MAX_STRING_LENGTH];
 	int iClass;
 	int iRace;
@@ -319,7 +319,7 @@ void do_ewho(struct char_data *ch, const char *argument)
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
 	struct descriptor_data *d;
     struct descriptor_data *dpending;
-	BUFFER *output;
+	struct buf_type *output;
 	char buf[MAX_STRING_LENGTH];
 	int iClass;
 	int iRace;

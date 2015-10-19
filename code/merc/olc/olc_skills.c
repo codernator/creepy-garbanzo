@@ -212,7 +212,7 @@ EDIT(skedit_new){
 EDIT(skedit_list){
     SKILL *skill;
     SKILL *list;
-    BUFFER *buffer;
+    struct buf_type *buffer;
     int cnt = 0;
 
     EDIT_SKILL(ch, skill);

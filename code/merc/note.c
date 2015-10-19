@@ -804,7 +804,7 @@ static void message_edit(struct char_data *ch, const char *argument, int type)
  ***************************************************************************/
 static void message_add(struct char_data *ch, const char *argument, int type)
 {
-    BUFFER *buf;
+    struct buf_type *buf;
 
     attach_message(ch, type);
     if (ch->pnote == NULL) {
@@ -1086,7 +1086,7 @@ static void message_reply(struct char_data *ch, const char *argument, int type)
 {
     struct note_data *note;
     struct note_data *clone_msg;
-    BUFFER *buf;
+    struct buf_type *buf;
     int msg_num;
 
     if (ch->pnote != NULL) {
@@ -1152,7 +1152,7 @@ static void message_forward(struct char_data *ch, const char *argument, int type
 {
     struct note_data *note;
     struct note_data *clone_msg;
-    BUFFER *buf;
+    struct buf_type *buf;
     int msg_num;
 
     if (ch->pnote != NULL) {
@@ -1215,7 +1215,7 @@ static void list_thread(struct char_data *ch, int type, const char *argument, bo
 {
     struct note_data **list;
     struct note_data *note;
-    BUFFER *buf;
+    struct buf_type *buf;
     char *txt;
     int msg_idx;
     bool found;

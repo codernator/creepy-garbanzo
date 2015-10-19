@@ -197,7 +197,7 @@ EDIT(hedit_delete){
 
 EDIT(hedit_list){
     static char buf[MAX_INPUT_LENGTH];
-    BUFFER *buffer;
+    struct buf_type *buffer;
     int cnt = 0;
     struct helpdata_iterator *iterator;
     HELP_DATA *help;

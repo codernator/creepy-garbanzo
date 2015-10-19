@@ -11,7 +11,7 @@
 
 void do_raceinfo(struct char_data *ch, const char *argument)
 {
-	BUFFER *buf;
+	struct buf_type *buf;
 	int race_idx;
 	int skill_idx;
 	int race = 0;

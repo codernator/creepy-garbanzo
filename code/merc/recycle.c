@@ -415,7 +415,7 @@ long get_mob_id(void)
  *	memory data
  ***************************************************************************/
 static struct mem_data *mem_data_free;
-static BUFFER *buf_free;
+static struct buf_type *buf_free;
 
 /***************************************************************************
  *	new_mem_data
@@ -491,9 +491,9 @@ static long get_size(long val)
  *
  *	create a new buffer
  ***************************************************************************/
-BUFFER *new_buf()
+struct buf_type *new_buf()
 {
-    BUFFER *buffer;
+    struct buf_type *buffer;
 
     if (buf_free == NULL) {
         buffer = alloc_perm((unsigned int)sizeof(*buffer));
@@ -519,9 +519,9 @@ BUFFER *new_buf()
  *
  *	allocate a new buffer and set the size
  ***************************************************************************/
-BUFFER *new_buf_size(int size)
+struct buf_type *new_buf_size(int size)
 {
-    BUFFER *buffer;
+    struct buf_type *buffer;
 
     if (buf_free == NULL) {
         buffer = alloc_perm((unsigned int)sizeof(*buffer));
@@ -552,7 +552,7 @@ BUFFER *new_buf_size(int size)
  *
  *	free the buffer
  ***************************************************************************/
-void free_buf(BUFFER *buffer)
+void free_buf(struct buf_type *buffer)
 {
     if (!IS_VALID(buffer))
         return;
@@ -567,7 +567,7 @@ void free_buf(BUFFER *buffer)
     buf_free = buffer;
 }
 
-bool add_buf(BUFFER *buffer, const char *string)
+bool add_buf(struct buf_type *buffer, const char *string)
 {
     char *oldstr;
     long len;
@@ -607,7 +607,7 @@ bool add_buf(BUFFER *buffer, const char *string)
  *
  *	printf to the buffer
  ***************************************************************************/
-void printf_buf(BUFFER *buffer, char *fmt, ...)
+void printf_buf(struct buf_type *buffer, char *fmt, ...)
 {
     char buf[MAX_STRING_LENGTH];
     va_list args;
@@ -625,7 +625,7 @@ void printf_buf(BUFFER *buffer, char *fmt, ...)
  *
  *	clear the buffer
  ***************************************************************************/
-void clear_buf(BUFFER *buffer)
+void clear_buf(struct buf_type *buffer)
 {
     buffer->string[0] = '\0';
     buffer->state = BUFFER_SAFE;
@@ -637,7 +637,7 @@ void clear_buf(BUFFER *buffer)
  *
  *	return the string
  ***************************************************************************/
-char *buf_string(BUFFER *buffer)
+char *buf_string(struct buf_type *buffer)
 {
     return buffer->string;
 }

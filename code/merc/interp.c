@@ -646,7 +646,7 @@ void do_commands(struct char_data *ch, const char *argument)
  */
 void do_wizcommands(struct char_data *ch, const char *argument)
 {
-    BUFFER *buf;
+    struct buf_type *buf;
     int cmd;
     int level;
     int col;

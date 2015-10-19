@@ -465,7 +465,7 @@ EDIT(redit_clone){
 EDIT(redit_rlist){
     struct room_index_data *room;
     struct area_data *area;
-    BUFFER *buf;
+    struct buf_type *buf;
     char *unclr;
     char arg[MAX_INPUT_LENGTH];
     bool found;
@@ -513,7 +513,7 @@ EDIT(redit_rlist){
 EDIT(redit_mlist){
     struct mob_index_data *mob;
     struct area_data *area;
-    BUFFER *buf;
+    struct buf_type *buf;
     char arg[MAX_INPUT_LENGTH];
     char *unclr;
     bool all;
@@ -574,7 +574,7 @@ EDIT(redit_mlist){
 EDIT(redit_olist){
     struct objectprototype *obj;
     struct area_data *area;
-    BUFFER *buf;
+    struct buf_type *buf;
     char arg[MAX_INPUT_LENGTH];
     char *unclr;
     bool all;
@@ -1504,7 +1504,7 @@ EDIT(redit_oreset){
 EDIT(redit_flagall){
     struct room_index_data *room;                          /* individual room to edit */
     struct area_data *area;                                /* area being edited */
-    BUFFER *buf;                                    /* text to return to ch */
+    struct buf_type *buf;                                    /* text to return to ch */
     char *unclr;                                    /* uncolored room name */
     char rFlag[MAX_INPUT_LENGTH];                                /* name of room flag to set */
     int iFlag;                                      /* int value of room flag */
@@ -1576,7 +1576,7 @@ EDIT(redit_flagall){
 EDIT(redit_showrooms){
     struct room_index_data *room;                          /* individual room to edit */
     struct area_data *area;                                /* area being edited */
-    BUFFER *buf;                                    /* text to return to ch */
+    struct buf_type *buf;                                    /* text to return to ch */
     char *unclr;                                    /* uncolored room name */
     char rFlag[MAX_INPUT_LENGTH];                                /* name of room flag to see */
     int iFlag;                                      /* int value of room flag */

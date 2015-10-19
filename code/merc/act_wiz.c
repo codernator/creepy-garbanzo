@@ -515,7 +515,7 @@ void do_save(struct char_data *ch, /*@unused@*/ const char *argument)
 
 void do_wiznet(struct char_data *ch, const char *argument)
 {
-    BUFFER *buf;
+    struct buf_type *buf;
     long flag;
 
     DENY_NPC(ch)
@@ -628,7 +628,7 @@ void wiznet(char *string, /*@null@*/ struct char_data *ch, /*@null@*/ struct gam
 
 void do_impnet(struct char_data *ch, const char *argument)
 {
-    BUFFER *buf;
+    struct buf_type *buf;
     long flag;
 
     DENY_NPC(ch)
@@ -2410,7 +2410,7 @@ void do_slot(struct char_data *ch, const char *argument)
 void do_sockets(struct char_data *ch, const char *argument)
 {
     struct descriptor_data *d, *dpending;
-    BUFFER *buf;
+    struct buf_type *buf;
     char *state;
     char arg[MAX_INPUT_LENGTH];
     char sock[MAX_STRING_LENGTH];
@@ -2968,7 +2968,7 @@ void do_omnistat(struct char_data *ch, const char *argument)
     struct descriptor_iterator_filter playing_filter = { .must_playing = true };
     struct descriptor_data *d;
     struct descriptor_data *dpending;
-    BUFFER *output;
+    struct buf_type *output;
     char buf[MAX_STRING_LENGTH];
     int immmatch;
     int mortmatch;
@@ -3069,7 +3069,7 @@ void do_olevel(struct char_data *ch, const char *argument)
 {
     char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
-    BUFFER *buffer;
+    struct buf_type *buffer;
     long level;
     bool found;
 
@@ -3118,7 +3118,7 @@ void do_mlevel(struct char_data *ch, const char *argument)
 {
     char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
-    BUFFER *buffer;
+    struct buf_type *buffer;
     struct mob_index_data *pMobIndex;
     long vnum, level;
     long nMatch;

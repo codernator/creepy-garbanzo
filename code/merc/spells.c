@@ -1989,7 +1989,7 @@ void spell_lightning_bolt(SKILL *skill, int level, struct char_data *ch, void *v
 
 void spell_locate_object(SKILL *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
-    BUFFER *buffer;
+    struct buf_type *buffer;
     struct gameobject *obj, *opending;
     struct gameobject *in_obj;
     bool found;

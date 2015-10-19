@@ -1703,7 +1703,7 @@ static bool parse_levels(const char *argument, int *min_level, int *max_level)
  */
 void do_skills(struct char_data *ch, const char *argument)
 {
-    BUFFER *buf;
+    struct buf_type *buf;
     LEARNED *learned;
     SKILL *skill;
     LEVEL_INFO *level;
@@ -1777,7 +1777,7 @@ void do_skills(struct char_data *ch, const char *argument)
  */
 void do_spells(struct char_data *ch, const char *argument)
 {
-    BUFFER *buf;
+    struct buf_type *buf;
     LEARNED *learned;
     SKILL *skill;
     LEVEL_INFO *level;
@@ -2306,7 +2306,7 @@ void do_practice(struct char_data *ch, const char *argument)
 
     one_argument(argument, arg);
     if (arg[0] == '\0' || !str_prefix(arg, "list")) {
-        BUFFER *buf;
+        struct buf_type *buf;
         LEARNED *learned;
         LEVEL_INFO *level;
         int col;

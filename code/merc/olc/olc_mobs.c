@@ -1360,7 +1360,7 @@ EDIT(medit_hitroll){
 EDIT(medit_group){
     struct mob_index_data *mob_idx;
     struct mob_index_data *pMTemp;
-    BUFFER *buffer;
+    struct buf_type *buffer;
     char arg[MAX_STRING_LENGTH];
     char buf[MAX_STRING_LENGTH];
     int temp;

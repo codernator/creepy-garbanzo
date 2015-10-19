@@ -215,7 +215,7 @@ const struct help_table_entry *findcustom(const char *topic)
 void handle_help_keyfind(struct char_data *ch, int trust, const char *argument)
 {
     HELP_DATA *help;
-    BUFFER *buf;
+    struct buf_type *buf;
     int index = 0;
 
     buf = new_buf();
@@ -240,7 +240,7 @@ void handle_help_keyfind(struct char_data *ch, int trust, const char *argument)
 void handle_help_fullsearch(struct char_data *ch, int trust, const char *argument)
 {
     HELP_DATA *help;
-    BUFFER *buf;
+    struct buf_type *buf;
     char *txt;
     int index = 0;
 
