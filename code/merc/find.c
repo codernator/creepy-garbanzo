@@ -1079,7 +1079,7 @@ void do_mvnum(CHAR_DATA *ch, const char *argument)
                 (*cmp_fn)(get_mob_index(MOB_VNUM_PIG), argument, buffer);
                 page_to_char(buf_string(buffer), ch);
             } else {
-                MOB_INDEX_DATA *mob;
+                struct mob_index_data *mob;
                 char *clr1;
                 int number = 0;
                 long count = 0;
@@ -1122,28 +1122,28 @@ void do_mvnum(CHAR_DATA *ch, const char *argument)
     }
 }
 
-bool mob_idx_cmp_name(const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf)
+bool mob_idx_cmp_name(const struct mob_index_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by a mob's name.\n\r");
     return cmp_fn_string(vch->player_name, arg);
 }
 
-bool mob_idx_cmp_short(const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf)
+bool mob_idx_cmp_short(const struct mob_index_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by a mob's short description.\n\r");
     return cmp_fn_string(vch->short_descr, arg);
 }
 
-bool mob_idx_cmp_long(const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf)
+bool mob_idx_cmp_long(const struct mob_index_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by a mob's long description.\n\r");
     return cmp_fn_string(vch->long_descr, arg);
 }
 
-bool mob_idx_cmp_race(const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf)
+bool mob_idx_cmp_race(const struct mob_index_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
         char flag[MAX_STRING_LENGTH];
@@ -1175,7 +1175,7 @@ bool mob_idx_cmp_race(const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	mob_idx_cmp_sex
  ***************************************************************************/
-bool mob_idx_cmp_sex(const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf)
+bool mob_idx_cmp_sex(const struct mob_index_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
         char flag[MAX_STRING_LENGTH];
@@ -1209,7 +1209,7 @@ bool mob_idx_cmp_sex(const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	mob_idx_cmp_level
  ***************************************************************************/
-bool mob_idx_cmp_level(const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf)
+bool mob_idx_cmp_level(const struct mob_index_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by a mob's level.\n\r");
@@ -1220,7 +1220,7 @@ bool mob_idx_cmp_level(const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	mob_idx_cmp_gold
  ***************************************************************************/
-bool mob_idx_cmp_wealth(const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf)
+bool mob_idx_cmp_wealth(const struct mob_index_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by a mob's wealth.\n\r");
@@ -1231,7 +1231,7 @@ bool mob_idx_cmp_wealth(const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	mob_idx_cmp_off_flags
  ***************************************************************************/
-bool mob_idx_cmp_offense(const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf)
+bool mob_idx_cmp_offense(const struct mob_index_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
         add_buf(buf, "search by a mob's offense flags.\n\r");
@@ -1243,7 +1243,7 @@ bool mob_idx_cmp_offense(const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf
 /***************************************************************************
  *	mob_idx_cmp_form
  ***************************************************************************/
-bool mob_idx_cmp_form(const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf)
+bool mob_idx_cmp_form(const struct mob_index_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
         add_buf(buf, "search by a mob's form flags.\n\r");
@@ -1255,7 +1255,7 @@ bool mob_idx_cmp_form(const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf)
 /***************************************************************************
  *	mob_idx_cmp_act
  ***************************************************************************/
-bool mob_idx_cmp_act(const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf)
+bool mob_idx_cmp_act(const struct mob_index_data *vch, const char *arg, BUFFER *buf)
 {
     if (buf != NULL) {
         add_buf(buf, "search by a mob's act flags.\n\r");

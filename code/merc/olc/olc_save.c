@@ -15,7 +15,7 @@ static char *fwrite_flag(long flags, char buf[]);
 static void save_area_list();
 static void save_area(struct area_data * area);
 static void save_mobprogs(FILE *fp, struct area_data *area);
-static void save_mobile(FILE *fp, MOB_INDEX_DATA *mob_idx);
+static void save_mobile(FILE *fp, struct mob_index_data *mob_idx);
 static void save_mobiles(FILE *fp, struct area_data *area);
 static void save_object(FILE *fp, struct objectprototype *pObjIndex);
 static void save_objects(FILE *fp, struct area_data *area);
@@ -163,7 +163,7 @@ void do_asave(CHAR_DATA *ch, const char *argument)
               area = ((struct objectprototype *)ch->desc->ed_data)->area;
               break;
           case ED_MOBILE:
-              area = ((MOB_INDEX_DATA *)ch->desc->ed_data)->area;
+              area = ((struct mob_index_data *)ch->desc->ed_data)->area;
               break;
           case ED_HELP:
               send_to_char("Saving helps.", ch);
@@ -288,7 +288,7 @@ void save_mobprogs(FILE *fp, struct area_data *area)
     return;
 }
 
-void save_mobile(FILE *fp, MOB_INDEX_DATA *mob_idx)
+void save_mobile(FILE *fp, struct mob_index_data *mob_idx)
 {
     MPROG_LIST *mprog;
     int race = mob_idx->race;
@@ -371,7 +371,7 @@ void save_mobile(FILE *fp, MOB_INDEX_DATA *mob_idx)
 
 void save_mobiles(FILE *fp, struct area_data *area)
 {
-    MOB_INDEX_DATA *pMob;
+    struct mob_index_data *pMob;
     long iter;
 
     fprintf(fp, "#MOBILES\n");
@@ -678,7 +678,7 @@ void save_door_resets(FILE *fp, struct area_data *area)
 void save_resets(FILE *fp, struct area_data *area)
 {
     struct reset_data *pReset;
-    MOB_INDEX_DATA *pLastMob = NULL;
+    struct mob_index_data *pLastMob = NULL;
     struct room_index_data *pRoom;
     int hash_idx;
 
@@ -754,7 +754,7 @@ void save_resets(FILE *fp, struct area_data *area)
 void save_shops(FILE *fp, struct area_data *area)
 {
     struct shop_data *shopIndex;
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     int iTrade;
     int hash_idx;
 

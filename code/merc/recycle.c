@@ -414,7 +414,7 @@ long get_mob_id(void)
 /***************************************************************************
  *	memory data
  ***************************************************************************/
-static MEM_DATA *mem_data_free;
+static struct mem_data *mem_data_free;
 static BUFFER *buf_free;
 
 /***************************************************************************
@@ -422,9 +422,9 @@ static BUFFER *buf_free;
  *
  *	create a new memory data structure
  ***************************************************************************/
-MEM_DATA *new_mem_data(void)
+struct mem_data *new_mem_data(void)
 {
-    MEM_DATA *memory;
+    struct mem_data *memory;
 
     if (mem_data_free == NULL) {
         memory = alloc_mem((unsigned int)sizeof(*memory));
@@ -447,7 +447,7 @@ MEM_DATA *new_mem_data(void)
  *
  *	delete the memory data
  ***************************************************************************/
-void free_mem_data(MEM_DATA *memory)
+void free_mem_data(struct mem_data *memory)
 {
     if (!IS_VALID(memory))
         return;

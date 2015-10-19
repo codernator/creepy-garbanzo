@@ -636,7 +636,7 @@ void do_intimidate(CHAR_DATA *ch, const char *argument)
  * ******************************************************************** */
 void do_familiar(/*@dependent@*/CHAR_DATA *ch, /*@unused@*/const char *argument)
 {
-    MOB_INDEX_DATA *pMobIndex;
+    struct mob_index_data *pMobIndex;
     CHAR_DATA *mount;
     SKILL *skill;
     int i, chance;

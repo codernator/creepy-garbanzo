@@ -41,9 +41,9 @@ void free_pcdata(struct pc_data * pcdata);
 /* mob id and memory procedures */
 long get_pc_id(void);
 long get_mob_id(void);
-MEM_DATA *new_mem_data(void);
-void free_mem_data(MEM_DATA * memory);
-MEM_DATA *find_memory(MEM_DATA * memory, long id);
+struct mem_data *new_mem_data(void);
+void free_mem_data(struct mem_data * memory);
+struct mem_data *find_memory(struct mem_data * memory, long id);
 
 /* buffer procedures */
 

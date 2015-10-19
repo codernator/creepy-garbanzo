@@ -212,7 +212,7 @@ void string_add(CHAR_DATA *ch, const char *argument)
          * with the new string - kind of a pain in the ass if
          * you ask me */
         if (ch->desc->editor == ED_MPCODE) {
-            MOB_INDEX_DATA *mob;
+            struct mob_index_data *mob;
             int hash;
             MPROG_LIST *mpl;
             MPROG_CODE *mpc;

@@ -30,7 +30,7 @@ struct shop_data *shop_first;
 struct shop_data *shop_last;
 struct note_data *note_free;
 /*@observer@*/const char *help_greeting;
-MOB_INDEX_DATA *mob_index_hash[MAX_KEY_HASH];
+struct mob_index_data *mob_index_hash[MAX_KEY_HASH];
 struct room_index_data *room_index_hash[MAX_KEY_HASH];
 int top_affect;
 int top_ed;
@@ -714,7 +714,7 @@ void load_shops(FILE *fp)
     struct shop_data *shop;
 
     for (;; ) {
-        MOB_INDEX_DATA *mob_idx;
+        struct mob_index_data *mob_idx;
         int iTrade;
 
         shop = new_shop();
@@ -751,7 +751,7 @@ void load_shops(FILE *fp)
  */
 void load_mobiles(FILE *fp)
 {
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
 
     if (g_area_loading == NULL) {
         bug(fp, "Load_mobiles: no #AREA seen yet.");
@@ -1359,7 +1359,7 @@ void load_mobprogs_new(FILE *fp)
  */
 void fix_mobprogs(void)
 {
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     MPROG_LIST *list;
     MPROG_CODE *prog;
     int hash_idx;
@@ -1462,7 +1462,7 @@ void reset_room(struct room_index_data *room)
     }
 
     for (reset = room->reset_first; reset != NULL; reset = reset->next) {
-        MOB_INDEX_DATA *mob_idx;
+        struct mob_index_data *mob_idx;
         struct objectprototype *objprototype;
         struct objectprototype *obj_to_idx;
         struct room_index_data *room_idx;
@@ -1693,7 +1693,7 @@ void reset_area(struct area_data *area)
 /*
  * Create an instance of a mobile.
  */
-CHAR_DATA *create_mobile(MOB_INDEX_DATA *mob_idx)
+CHAR_DATA *create_mobile(struct mob_index_data *mob_idx)
 {
     CHAR_DATA *mob;
     SKILL *skill;
@@ -2100,9 +2100,9 @@ char *get_extra_descr(const char *name, EXTRA_DESCR_DATA *ed)
  * Translates mob virtual number to its mob index struct.
  * Hash table lookup.
  */
-MOB_INDEX_DATA *get_mob_index(long vnum)
+struct mob_index_data *get_mob_index(long vnum)
 {
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
 
     for (mob_idx = mob_index_hash[vnum % MAX_KEY_HASH];
          mob_idx != NULL;
@@ -2518,7 +2518,7 @@ void do_memory(CHAR_DATA *ch, const char *argument)
 void do_dump(CHAR_DATA *ch, const char *argument)
 {
     CHAR_DATA *fch;
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     struct pc_data *pc;
     struct gameobject *obj;
     struct descriptor_data *d;

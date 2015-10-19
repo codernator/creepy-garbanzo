@@ -96,20 +96,20 @@ bool objprototype_cmp_level(struct objectprototype * obj, const char *arg, BUFFE
 /***************************************************************************
  *	mobs
  ***************************************************************************/
-typedef bool MOB_IDX_CMP_FN (const MOB_INDEX_DATA *vch, const char *arg, BUFFER *buf);
+typedef bool MOB_IDX_CMP_FN (const struct mob_index_data *vch, const char *arg, BUFFER *buf);
 
 struct cmp_vars_mob_index_data {
     char *		var;
     MOB_IDX_CMP_FN *fn;
 };
 
-bool mob_idx_cmp_name(const MOB_INDEX_DATA * vch, const char *arg, BUFFER * buf);
-bool mob_idx_cmp_short(const MOB_INDEX_DATA * vch, const char *arg, BUFFER * buf);
-bool mob_idx_cmp_long(const MOB_INDEX_DATA * vch, const char *arg, BUFFER * buf);
-bool mob_idx_cmp_race(const MOB_INDEX_DATA * vch, const char *arg, BUFFER * buf);
-bool mob_idx_cmp_level(const MOB_INDEX_DATA * vch, const char *arg, BUFFER * buf);
-bool mob_idx_cmp_sex(const MOB_INDEX_DATA * vch, const char *arg, BUFFER * buf);
-bool mob_idx_cmp_wealth(const MOB_INDEX_DATA * vch, const char *arg, BUFFER * buf);
-bool mob_idx_cmp_offense(const MOB_INDEX_DATA * vch, const char *arg, BUFFER * buf);
-bool mob_idx_cmp_form(const MOB_INDEX_DATA * vch, const char *arg, BUFFER * buf);
-bool mob_idx_cmp_act(const MOB_INDEX_DATA * vch, const char *arg, BUFFER * buf);
+bool mob_idx_cmp_name(const struct mob_index_data * vch, const char *arg, BUFFER * buf);
+bool mob_idx_cmp_short(const struct mob_index_data * vch, const char *arg, BUFFER * buf);
+bool mob_idx_cmp_long(const struct mob_index_data * vch, const char *arg, BUFFER * buf);
+bool mob_idx_cmp_race(const struct mob_index_data * vch, const char *arg, BUFFER * buf);
+bool mob_idx_cmp_level(const struct mob_index_data * vch, const char *arg, BUFFER * buf);
+bool mob_idx_cmp_sex(const struct mob_index_data * vch, const char *arg, BUFFER * buf);
+bool mob_idx_cmp_wealth(const struct mob_index_data * vch, const char *arg, BUFFER * buf);
+bool mob_idx_cmp_offense(const struct mob_index_data * vch, const char *arg, BUFFER * buf);
+bool mob_idx_cmp_form(const struct mob_index_data * vch, const char *arg, BUFFER * buf);
+bool mob_idx_cmp_act(const struct mob_index_data * vch, const char *arg, BUFFER * buf);

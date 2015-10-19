@@ -296,7 +296,7 @@ char *olc_ed_vnum(CHAR_DATA *ch)
     struct area_data *pArea;
     struct room_index_data *pRoom;
     struct objectprototype *pObj;
-    MOB_INDEX_DATA *pMob;
+    struct mob_index_data *pMob;
     MPROG_CODE *pMprog;
     HELP_DATA *pHelp;
     SKILL *pSkill;
@@ -318,7 +318,7 @@ char *olc_ed_vnum(CHAR_DATA *ch)
           sprintf(buf, "%ld", pObj ? pObj->vnum : 0);
           break;
       case ED_MOBILE:
-          pMob = (MOB_INDEX_DATA *)ch->desc->ed_data;
+          pMob = (struct mob_index_data *)ch->desc->ed_data;
           sprintf(buf, "%ld", pMob ? pMob->vnum : 0);
           break;
       case ED_MPCODE:
@@ -609,7 +609,7 @@ void oedit(CHAR_DATA *ch, const char *argument)
 void medit(CHAR_DATA *ch, const char *argument)
 {
     struct area_data *pArea;
-    MOB_INDEX_DATA *pMob;
+    struct mob_index_data *pMob;
     char command[MAX_INPUT_LENGTH];
     char arg[MAX_STRING_LENGTH];
     const char *parg;
@@ -760,7 +760,7 @@ static void display_resets(CHAR_DATA *ch)
 {
     struct room_index_data *pRoom;
     struct reset_data *pReset;
-    MOB_INDEX_DATA *pMob = NULL;
+    struct mob_index_data *pMob = NULL;
     BUFFER *final;
     char *uncolor;
     char *uncolor2;
@@ -774,7 +774,7 @@ static void display_resets(CHAR_DATA *ch)
 
     for (pReset = pRoom->reset_first; pReset; pReset = pReset->next) {
         struct objectprototype *pObj;
-        MOB_INDEX_DATA *pMobIndex;
+        struct mob_index_data *pMobIndex;
         struct objectprototype *pObjIndex;
         struct objectprototype *pObjToIndex;
         struct room_index_data *pRoomIndex;

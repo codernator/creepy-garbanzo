@@ -511,7 +511,7 @@ EDIT(redit_rlist){
  *	list all of the mobs in an area
  ***************************************************************************/
 EDIT(redit_mlist){
-    MOB_INDEX_DATA *mob;
+    struct mob_index_data *mob;
     struct area_data *area;
     BUFFER *buf;
     char arg[MAX_INPUT_LENGTH];
@@ -629,7 +629,7 @@ EDIT(redit_olist){
  *	show a mob in the area
  ***************************************************************************/
 EDIT(redit_mshow){
-    MOB_INDEX_DATA *mob;
+    struct mob_index_data *mob;
     int value;
 
     if (argument[0] == '\0') {
@@ -1259,7 +1259,7 @@ EDIT(redit_format){
  ***************************************************************************/
 EDIT(redit_mreset){
     struct room_index_data *room;
-    MOB_INDEX_DATA *mob;
+    struct mob_index_data *mob;
     CHAR_DATA *newmob;
     struct reset_data *pReset;
     char arg[MAX_INPUT_LENGTH];

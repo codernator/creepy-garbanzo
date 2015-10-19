@@ -1886,7 +1886,7 @@ void do_load(CHAR_DATA *ch, const char *argument)
 
 void do_mload(CHAR_DATA *ch, const char *argument)
 {
-    MOB_INDEX_DATA *pMobIndex;
+    struct mob_index_data *pMobIndex;
     CHAR_DATA *victim;
     char arg[MAX_INPUT_LENGTH];
     char buf[MAX_STRING_LENGTH];
@@ -3119,7 +3119,7 @@ void do_mlevel(CHAR_DATA *ch, const char *argument)
     char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
     BUFFER *buffer;
-    MOB_INDEX_DATA *pMobIndex;
+    struct mob_index_data *pMobIndex;
     long vnum, level;
     long nMatch;
     bool found;

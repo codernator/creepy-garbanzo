@@ -26,7 +26,7 @@
 /***************************************************************************
  * IMPORTS
  ***************************************************************************/
-extern void mob_auto_hit_dice(MOB_INDEX_DATA *mix, enum medit_auto_config_type auto_config_type);
+extern void mob_auto_hit_dice(struct mob_index_data *mix, enum medit_auto_config_type auto_config_type);
 extern void string_append(CHAR_DATA * ch, char **string);
 
 
@@ -38,7 +38,7 @@ extern void string_append(CHAR_DATA * ch, char **string);
  *****************************************************************************/
 void do_medit(CHAR_DATA *ch, const char *argument)
 {
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     struct area_data *area;
     long value;
     char arg[MAX_STRING_LENGTH];
@@ -130,7 +130,7 @@ void do_medit(CHAR_DATA *ch, const char *argument)
  *	show the properties of a mobile
  *****************************************************************************/
 EDIT(medit_show){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     MPROG_LIST *list;
 
     EDIT_MOB(ch, mob_idx);
@@ -271,7 +271,7 @@ EDIT(medit_show){
  *	create a new mobile
  *****************************************************************************/
 EDIT(medit_create){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     struct area_data *area;
     long value;
     long hash_idx;
@@ -322,8 +322,8 @@ EDIT(medit_create){
  *	create a new mobile and clone its properties from another
  *****************************************************************************/
 EDIT(medit_clone){
-    MOB_INDEX_DATA *mob_idx;
-    MOB_INDEX_DATA *pClone;
+    struct mob_index_data *mob_idx;
+    struct mob_index_data *pClone;
     int value;
     int iter;
 
@@ -394,7 +394,7 @@ EDIT(medit_clone){
  *	set the default damage type of the mob
  *****************************************************************************/
 EDIT(medit_damtype){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
 
     EDIT_MOB(ch, mob_idx);
     if (argument[0] == '\0') {
@@ -412,7 +412,7 @@ EDIT(medit_damtype){
  *	set the level of the mobil
  *****************************************************************************/
 EDIT(medit_level){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
 
     EDIT_MOB(ch, mob_idx);
 
@@ -431,7 +431,7 @@ EDIT(medit_level){
  *	set the description of the mobile
  *****************************************************************************/
 EDIT(medit_desc){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
 
     EDIT_MOB(ch, mob_idx);
     if (argument[0] == '\0') {
@@ -450,7 +450,7 @@ EDIT(medit_desc){
  *	set the long description of a mobile
  *****************************************************************************/
 EDIT(medit_long){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     static char buf[MAX_STRING_LENGTH];
 
     EDIT_MOB(ch, mob_idx);
@@ -478,7 +478,7 @@ EDIT(medit_long){
  *	edit the short description
  *****************************************************************************/
 EDIT(medit_short){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
 
     EDIT_MOB(ch, mob_idx);
     if (argument[0] == '\0') {
@@ -501,7 +501,7 @@ EDIT(medit_short){
  *	set the name of the mobile
  *****************************************************************************/
 EDIT(medit_name){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
 
     EDIT_MOB(ch, mob_idx);
     if (argument[0] == '\0') {
@@ -522,7 +522,7 @@ EDIT(medit_name){
  *	set the shop data for a mobile
  *****************************************************************************/
 EDIT(medit_shop){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     char command[MAX_INPUT_LENGTH];
     char arg[MAX_INPUT_LENGTH];
 
@@ -679,7 +679,7 @@ EDIT(medit_shop){
  *	set the sex of the mobile
  ***************************************************************************/
 EDIT(medit_sex){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     int value;
 
     EDIT_MOB(ch, mob_idx);
@@ -702,7 +702,7 @@ EDIT(medit_sex){
  *	set the act flags for a mobile
  ***************************************************************************/
 EDIT(medit_act){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     long value;
 
     EDIT_MOB(ch, mob_idx);
@@ -727,7 +727,7 @@ EDIT(medit_act){
  *	set the affects for the mobile
  ***************************************************************************/
 EDIT(medit_affect){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     int value;
 
     EDIT_MOB(ch, mob_idx);
@@ -752,7 +752,7 @@ EDIT(medit_affect){
  *	set the description of the room
  ***************************************************************************/
 EDIT(medit_ac){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     char arg[MAX_INPUT_LENGTH];
     long pierce;
     long bash;
@@ -818,7 +818,7 @@ EDIT(medit_ac){
  *	set the form flags for the mob
  ***************************************************************************/
 EDIT(medit_form){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     int value;
 
     EDIT_MOB(ch, mob_idx);
@@ -842,7 +842,7 @@ EDIT(medit_form){
  *	set the parts for the mobile
  ***************************************************************************/
 EDIT(medit_part){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     int value;
 
     EDIT_MOB(ch, mob_idx);
@@ -866,7 +866,7 @@ EDIT(medit_part){
  *	set the immunites for the mobile
  ***************************************************************************/
 EDIT(medit_imm){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     int value;
 
     EDIT_MOB(ch, mob_idx);
@@ -890,7 +890,7 @@ EDIT(medit_imm){
  *	set the resistances for the mobile
  ***************************************************************************/
 EDIT(medit_res){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     int value;
 
     EDIT_MOB(ch, mob_idx);
@@ -914,7 +914,7 @@ EDIT(medit_res){
  *	set the vulnerabilities for the mobile
  ***************************************************************************/
 EDIT(medit_vuln){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     int value;
 
     EDIT_MOB(ch, mob_idx);
@@ -938,7 +938,7 @@ EDIT(medit_vuln){
  *	set the material for the mobile
  ***************************************************************************/
 EDIT(medit_material){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
 
     EDIT_MOB(ch, mob_idx);
     if (argument[0] == '\0') {
@@ -959,7 +959,7 @@ EDIT(medit_material){
  *	set the offense flags for the mobile
  ***************************************************************************/
 EDIT(medit_off){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     int value;
 
     EDIT_MOB(ch, mob_idx);
@@ -983,7 +983,7 @@ EDIT(medit_off){
  *	set the size of the mobile
  ***************************************************************************/
 EDIT(medit_size){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     int value;
 
     EDIT_MOB(ch, mob_idx);
@@ -1013,7 +1013,7 @@ static bool ShowMEditHitdiceSyntax(CHAR_DATA *ch)
  *	set the hit dice for determining number of hp a mobile has
  ***************************************************************************/
 EDIT(medit_hitdice){
-    MOB_INDEX_DATA *mob_idx = NULL;
+    struct mob_index_data *mob_idx = NULL;
 
     EDIT_MOB(ch, mob_idx);
 
@@ -1102,7 +1102,7 @@ EDIT(medit_hitdice){
  *	of mana it gets when it loads
  ***************************************************************************/
 EDIT(medit_manadice){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     static char buf[MAX_INPUT_LENGTH];
     const char *num;
     const char *type;
@@ -1166,7 +1166,7 @@ EDIT(medit_manadice){
  *	loaded mobile will hit
  ***************************************************************************/
 EDIT(medit_damdice){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     static char buf[MAX_INPUT_LENGTH];
     const char *num;
     const char *type;
@@ -1229,7 +1229,7 @@ EDIT(medit_damdice){
  *	set the race of the mobile
  ***************************************************************************/
 EDIT(medit_race){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     int race;
 
     EDIT_MOB(ch, mob_idx);
@@ -1272,7 +1272,7 @@ EDIT(medit_race){
  *	set the description of the room
  ***************************************************************************/
 EDIT(medit_position){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     char arg[MAX_INPUT_LENGTH];
     int value;
 
@@ -1318,7 +1318,7 @@ EDIT(medit_position){
  *	set the amount of gold for a mobile
  ***************************************************************************/
 EDIT(medit_gold){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
 
     EDIT_MOB(ch, mob_idx);
     if (argument[0] == '\0' || !is_number(argument)) {
@@ -1338,7 +1338,7 @@ EDIT(medit_gold){
  *	set the hitroll of the mobile
  ***************************************************************************/
 EDIT(medit_hitroll){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
 
     EDIT_MOB(ch, mob_idx);
     if (argument[0] == '\0' || !is_number(argument)) {
@@ -1358,8 +1358,8 @@ EDIT(medit_hitroll){
  *	set the group for the mobile
  ***************************************************************************/
 EDIT(medit_group){
-    MOB_INDEX_DATA *mob_idx;
-    MOB_INDEX_DATA *pMTemp;
+    struct mob_index_data *mob_idx;
+    struct mob_index_data *pMTemp;
     BUFFER *buffer;
     char arg[MAX_STRING_LENGTH];
     char buf[MAX_STRING_LENGTH];
@@ -1416,7 +1416,7 @@ EDIT(medit_group){
  *	add a mob program for a mobile
  ***************************************************************************/
 EDIT(medit_addmprog){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     MPROG_LIST *list;
     MPROG_CODE *code;
     char trigger[MAX_STRING_LENGTH];
@@ -1466,7 +1466,7 @@ EDIT(medit_addmprog){
  *	delete a mob program from a mobile
  ***************************************************************************/
 EDIT(medit_delmprog){
-    MOB_INDEX_DATA *mob_idx;
+    struct mob_index_data *mob_idx;
     MPROG_LIST *list;
     MPROG_LIST *list_next;
     char mprog[MAX_STRING_LENGTH];

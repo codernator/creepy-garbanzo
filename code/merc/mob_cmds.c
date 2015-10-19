@@ -469,7 +469,7 @@ void do_mpjunk(CHAR_DATA *ch, const char *argument)
  */
 void do_mpmload(CHAR_DATA *ch, const char *argument)
 {
-    MOB_INDEX_DATA *pMobIndex;
+    struct mob_index_data *pMobIndex;
     CHAR_DATA *victim;
     char arg[MAX_INPUT_LENGTH];
     int vnum;

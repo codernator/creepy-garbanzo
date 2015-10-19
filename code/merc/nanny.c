@@ -702,8 +702,8 @@ void nanny(struct descriptor_data *d, const char *argument)
  ***************************************************************************/
 bool check_parse_name(const char *name)
 {
-    extern MOB_INDEX_DATA *mob_index_hash[MAX_KEY_HASH];
-    MOB_INDEX_DATA *pMobIndex;
+    extern struct mob_index_data *mob_index_hash[MAX_KEY_HASH];
+    struct mob_index_data *pMobIndex;
     int hash;
     const char *pc;
 

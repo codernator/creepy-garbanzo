@@ -6,14 +6,14 @@
 /***************************************************************************
 * PUBLIC INTERFACE
 ***************************************************************************/
-void mob_auto_hit_dice(MOB_INDEX_DATA *mix, enum medit_auto_config_type auto_config_type);
+void mob_auto_hit_dice(struct mob_index_data *mix, enum medit_auto_config_type auto_config_type);
 
 
 
 /***************************************************************************
 * IMPLEMENTATION
 ***************************************************************************/
-void mob_auto_hit_dice(MOB_INDEX_DATA *mix, enum medit_auto_config_type auto_config_type)
+void mob_auto_hit_dice(struct mob_index_data *mix, enum medit_auto_config_type auto_config_type)
 {
 	switch (auto_config_type) {
 	case mact_easy:

@@ -287,7 +287,7 @@ DECLARE_OLC_FUN(muedit_text);
 
 
 /* Return pointers to what is being edited. */
-#define EDIT_MOB(ch, mob)       (mob = (MOB_INDEX_DATA *)ch->desc->ed_data)
+#define EDIT_MOB(ch, mob)       (mob = (struct mob_index_data *)ch->desc->ed_data)
 #define EDIT_OBJ(ch, obj)       (obj = (struct objectprototype *)ch->desc->ed_data)
 #define EDIT_ROOM(ch, room)     (room = ch->in_room)
 #define EDIT_AREA(ch, area)     (area = (struct area_data *)ch->desc->ed_data)
@@ -301,8 +301,8 @@ DECLARE_OLC_FUN(muedit_text);
 struct room_index_data * new_room_index(void);
 void free_room_index(struct room_index_data * pRoom);
 /* mob indexes */
-MOB_INDEX_DATA *new_mob_index(void);
-void free_mob_index(MOB_INDEX_DATA * pMob);
+struct mob_index_data *new_mob_index(void);
+void free_mob_index(struct mob_index_data * pMob);
 /* extra descriptions */
 extern EXTRA_DESCR_DATA *new_extra_descr(void);
 extern void free_extra_descr(EXTRA_DESCR_DATA * pExtra);

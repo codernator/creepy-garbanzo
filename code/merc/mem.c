@@ -35,7 +35,7 @@ extern int top_mprog_index;
 static EXIT_DATA *exit_free;
 static struct room_index_data *room_index_free;
 static struct shop_data *shop_free;
-static MOB_INDEX_DATA *mob_index_free;
+static struct mob_index_data *mob_index_free;
 static struct reset_data *reset_free;
 
 
@@ -216,9 +216,9 @@ void free_shop(struct shop_data *shop)
 
 
 
-MOB_INDEX_DATA *new_mob_index(void)
+struct mob_index_data *new_mob_index(void)
 {
-    MOB_INDEX_DATA *mob;
+    struct mob_index_data *mob;
 
     if (!mob_index_free) {
         mob = alloc_perm((unsigned int)sizeof(*mob));
@@ -276,7 +276,7 @@ MOB_INDEX_DATA *new_mob_index(void)
 
 
 
-void free_mob_index(MOB_INDEX_DATA *mob)
+void free_mob_index(struct mob_index_data *mob)
 {
     free_string(mob->player_name);
     free_string(mob->short_descr);

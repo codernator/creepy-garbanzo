@@ -67,8 +67,6 @@ typedef struct char_data CHAR_DATA;
 typedef struct exit_data EXIT_DATA;
 typedef struct extra_descr_data EXTRA_DESCR_DATA;
 typedef struct kill_data KILL_DATA;
-typedef struct mem_data MEM_DATA;
-typedef struct mob_index_data MOB_INDEX_DATA;
 typedef struct weather_data WEATHER_DATA;
 
 typedef struct mprog_list MPROG_LIST;
@@ -1235,7 +1233,7 @@ struct liq_type {
  * the database prototype for a mob
  ***************************************************************************/
 struct mob_index_data {
-    MOB_INDEX_DATA *next;
+    struct mob_index_data *next;
     struct shop_data *shop;
     MPROG_LIST *mprogs;
     struct area_data *area;
@@ -1286,7 +1284,7 @@ struct mob_index_data {
  * mem_data
  ***************************************************************************/
 struct mem_data {
-    MEM_DATA * next;
+    struct mem_data * next;
     bool  valid;
     int  id;
     int  reaction;
@@ -1312,7 +1310,7 @@ struct char_data {
     CHAR_DATA *mob_wuss;
     CHAR_DATA *mobmem;
     CHAR_DATA *mprog_target;
-    /*@null@*/MOB_INDEX_DATA *mob_idx;
+    /*@null@*/struct mob_index_data *mob_idx;
     struct descriptor_data *desc;
     AFFECT_DATA *affected;
     struct note_data *pnote;
@@ -1893,7 +1891,7 @@ extern int top_shop;
 extern long top_vnum_mob;
 extern long top_vnum_obj;
 extern long top_vnum_room;
-extern MOB_INDEX_DATA *mob_index_hash  [MAX_KEY_HASH];
+extern struct mob_index_data *mob_index_hash  [MAX_KEY_HASH];
 extern struct room_index_data *room_index_hash [MAX_KEY_HASH];
 
 
@@ -2001,14 +1999,14 @@ void boot_db(void);
 void area_update(void);
 
 /* creation/cloning */
-CHAR_DATA *create_mobile(MOB_INDEX_DATA * mob_idx);
+CHAR_DATA *create_mobile(struct mob_index_data * mob_idx);
 void clone_mobile(CHAR_DATA * parent, CHAR_DATA * clone);
 struct gameobject *create_object(struct objectprototype * objprototype, int level);
 void clear_char(CHAR_DATA * ch);
 
 /* find functions  */
 char *get_extra_descr(const char *name, EXTRA_DESCR_DATA * ed);
-MOB_INDEX_DATA *get_mob_index(long vnum);
+struct mob_index_data *get_mob_index(long vnum);
 struct room_index_data *get_room_index(long vnum);
 
 
