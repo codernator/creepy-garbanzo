@@ -285,7 +285,7 @@ void do_flee(/*@dependent@*/CHAR_DATA *ch, /*@unused@*/const char *argument)
 
     was_in = ch->in_room;
     for (attempt = 0; attempt < 6; attempt++) {
-	EXIT_DATA *pexit;
+	struct exit_data *pexit;
 	int door;
 
 	door = number_door();

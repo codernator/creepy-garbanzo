@@ -117,7 +117,7 @@ static bool change_exit(CHAR_DATA *ch, const char *argument, int door)
     }
 
     if (!str_cmp(command, "link")) {
-        EXIT_DATA *pExit;
+        struct exit_data *pExit;
         struct room_index_data *toRoom;
 
         if (arg[0] == '\0' || !is_number(arg)) {
@@ -790,7 +790,7 @@ EDIT(redit_show){
 
     send_to_char("\n\r`&EXITS:\n\r", ch);
     for (door = 0; door < MAX_DIR; door++) {
-        EXIT_DATA *pexit;
+        struct exit_data *pexit;
 
         if ((pexit = room->exit[door])) {
             char word[MAX_INPUT_LENGTH];

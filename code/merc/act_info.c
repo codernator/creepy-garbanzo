@@ -815,7 +815,7 @@ void do_examine(CHAR_DATA *ch, const char *argument)
 void do_exits(CHAR_DATA *ch, const char *argument)
 {
     extern char *const dir_name[];
-    EXIT_DATA *pexit;
+    struct exit_data *pexit;
     char buf[MAX_STRING_LENGTH];
     bool found;
     bool fAuto;

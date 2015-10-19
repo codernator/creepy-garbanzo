@@ -79,6 +79,10 @@
  *********************************************************/
     /* Dalamar - Save our last commands file.. */
 
+/*
+ * Short scalar types.
+ * Diavolo reports AIX compiler has bugs with short types.
+ */
 
 
 # spells

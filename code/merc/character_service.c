@@ -166,7 +166,7 @@ void look_equipment(CHAR_DATA *ch) {
 }
 
 void look_direction(CHAR_DATA *ch, const int door) {
-    EXIT_DATA *pexit;
+    struct exit_data *pexit;
 
     if (!validate_look(ch)) {
 	return;

@@ -148,7 +148,7 @@ struct room_index_data *get_scan_room(struct room_index_data *room,
 			       int		distance)
 {
 	struct room_index_data *scan_room;
-	EXIT_DATA *exit;
+	struct exit_data *exit;
 	int depth;
 
 	scan_room = room;

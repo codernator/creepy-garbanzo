@@ -32,7 +32,7 @@ extern int top_mprog_index;
 
 
 /** locals */
-static EXIT_DATA *exit_free;
+static struct exit_data *exit_free;
 static struct room_index_data *room_index_free;
 static struct shop_data *shop_free;
 static struct mob_index_data *mob_index_free;
@@ -75,9 +75,9 @@ void free_reset_data(struct reset_data *reset)
 
 
 
-EXIT_DATA *new_exit(void)
+struct exit_data *new_exit(void)
 {
-    EXIT_DATA *exit;
+    struct exit_data *exit;
 
     if (!exit_free) {
         exit = alloc_perm((unsigned int)sizeof(*exit));
@@ -101,7 +101,7 @@ EXIT_DATA *new_exit(void)
 
 
 
-void free_exit(EXIT_DATA *exit)
+void free_exit(struct exit_data *exit)
 {
     free_string(exit->keyword);
     free_string(exit->description);

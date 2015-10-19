@@ -3688,7 +3688,7 @@ void spell_ring_of_fire(SKILL *skill, int level, CHAR_DATA *ch, void *vo, int ta
     CHAR_DATA *tmp_vict;
     CHAR_DATA *last_vict;
     CHAR_DATA *next_vict;
-    EXIT_DATA *pexit;
+    struct exit_data *pexit;
     struct room_index_data *curr_room;
     int dam;
     int door;

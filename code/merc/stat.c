@@ -163,7 +163,7 @@ void show_room_stats(CHAR_DATA *ch, const char *argument)
 
     send_to_char("\n\r", ch);
     for (door = 0; door <= 5; door++) {
-        EXIT_DATA *pexit;
+        struct exit_data *pexit;
 
         if ((pexit = location->exit[door]) != NULL) {
             printf_to_char(ch, "Door: %d.  To: %d.  Key: %d.  Exit flags: %s.\n\rKeyword: '%s'.  Description: %s",

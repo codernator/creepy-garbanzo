@@ -308,7 +308,7 @@ bool process_output(struct descriptor_data *d, bool fPrompt)
  */
 void bust_a_prompt(CHAR_DATA *ch)
 {
-    EXIT_DATA *pexit;
+    struct exit_data *pexit;
     const char *str;
     const char *i;
     char buf[MAX_STRING_LENGTH];

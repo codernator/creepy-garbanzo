@@ -298,7 +298,7 @@ void do_mpasound(CHAR_DATA *ch, const char *argument)
 
     was_in_room = ch->in_room;
     for (door = 0; door < 6; door++) {
-	EXIT_DATA *pexit;
+	struct exit_data *pexit;
 
 	if ((pexit = was_in_room->exit[door]) != NULL && pexit->u1.to_room != NULL && pexit->u1.to_room != was_in_room) {
 	    ch->in_room = pexit->u1.to_room;
@@ -1163,7 +1163,7 @@ void do_mpcall(CHAR_DATA *ch, const char *argument)
 void do_mpflee(CHAR_DATA *ch, const char *argument)
 {
     struct room_index_data *was_in;
-    EXIT_DATA *pexit;
+    struct exit_data *pexit;
     int door, attempt, dir;
 
     if (ch->fighting == NULL)

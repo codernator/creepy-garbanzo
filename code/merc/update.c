@@ -636,7 +636,7 @@ static void mobile_update(void)
 {
     CHAR_DATA *ch;
     CHAR_DATA *ch_next;
-    EXIT_DATA *pexit;
+    struct exit_data *pexit;
     int door;
 
     /* Examine all mobs. */
@@ -769,7 +769,7 @@ static void mobile_update(void)
 			    NULL, NULL, ch->mob_wuss, TO_CHAR);
 		    was_in = ch->in_room;
 		    for (attempt = 0; attempt < 6; attempt++) {
-			EXIT_DATA *pexit;
+			struct exit_data *pexit;
 			int door;
 
 			door = number_door();

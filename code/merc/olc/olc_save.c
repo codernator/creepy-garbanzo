@@ -550,7 +550,7 @@ void save_rooms(FILE *fp, struct area_data *area)
 {
     struct room_index_data *room;
     struct extra_descr_data *extra;
-    EXIT_DATA *exit;
+    struct exit_data *exit;
     AFFECT_DATA *paf;
     SKILL *skill;
     int hash_idx;
@@ -651,7 +651,7 @@ void save_rooms(FILE *fp, struct area_data *area)
 void save_door_resets(FILE *fp, struct area_data *area)
 {
     struct room_index_data *room;
-    EXIT_DATA *exit;
+    struct exit_data *exit;
     int hash_idx;
     int door;
 

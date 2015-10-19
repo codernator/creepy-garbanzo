@@ -34,10 +34,8 @@ int unlink();
 int system();
 
 typedef int SOCKET;
-/*
- * Short scalar types.
- * Diavolo reports AIX compiler has bugs with short types.
- */
+typedef int sh_int;
+
 #if !defined(false)
 #define false    0
 #endif
@@ -45,10 +43,6 @@ typedef int SOCKET;
 #if !defined(true)
 #define true     (!false)
 #endif
-
-
-
-typedef int sh_int;
 
 typedef enum e_one_attack_result {
     oar_error = -1,
@@ -64,7 +58,6 @@ typedef struct affect_data AFFECT_DATA;
 typedef struct ban_data BAN_DATA;
 typedef struct buf_type BUFFER;
 typedef struct char_data CHAR_DATA;
-typedef struct exit_data EXIT_DATA;
 typedef struct weather_data WEATHER_DATA;
 
 typedef struct mprog_list MPROG_LIST;
@@ -1553,7 +1546,7 @@ struct exit_data {
     long  key;
     char *  keyword;
     char *  description;
-    EXIT_DATA * next;
+    struct exit_data * next;
     int  rs_flags;
     int  orig_door;
 };
@@ -1615,7 +1608,7 @@ struct room_index_data {
     struct gameobject *  contents;
     struct extra_descr_data * extra_descr;
     struct area_data *  area;
-    EXIT_DATA *  exit[6];
+    struct exit_data *  exit[6];
     struct reset_data *  reset_first;
     struct reset_data *  reset_last;
     AFFECT_DATA *  affected;

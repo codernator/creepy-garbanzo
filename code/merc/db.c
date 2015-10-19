@@ -440,7 +440,7 @@ static void new_reset(struct room_index_data *pR, struct reset_data *reset)
 void load_resets(FILE *fp)
 {
     struct reset_data *reset;
-    EXIT_DATA *pexit;
+    struct exit_data *pexit;
     struct room_index_data *room_idx;
     long rVnum = -1;
 
@@ -453,7 +453,7 @@ void load_resets(FILE *fp)
         /*
          *      OLC
          *              struct room_index_data *	room_idx;
-         *              EXIT_DATA *			pexit;
+         *              struct exit_data *			pexit;
          *              struct objectprototype *	temp_index;
          */
         char letter;
@@ -605,7 +605,7 @@ void load_rooms(FILE *fp)
             } else if (letter == 'M') { /* mana room */
                 room_idx->mana_rate = fread_number(fp);
             } else if (letter == 'D') {
-                EXIT_DATA *pexit;
+                struct exit_data *pexit;
                 int locks;
 
                 door = fread_number(fp);
@@ -1124,8 +1124,8 @@ void fix_exits(void)
     extern const int rev_dir[];
     struct room_index_data *room_idx;
     struct room_index_data *to_room;
-    EXIT_DATA *pexit;
-    EXIT_DATA *pexit_rev;
+    struct exit_data *pexit;
+    struct exit_data *pexit_rev;
     struct reset_data *reset;
     struct room_index_data *iLastRoom;
     struct room_index_data *ilast_obj;
@@ -1451,7 +1451,7 @@ void reset_room(struct room_index_data *room)
     mob = NULL;
     last = false;
     for (exit_dir = 0; exit_dir < MAX_DIR; exit_dir++) {
-        EXIT_DATA *exit;
+        struct exit_data *exit;
         if ((exit = room->exit[exit_dir])) {
             exit->exit_info = (int)exit->rs_flags;
 
@@ -1656,7 +1656,7 @@ void reset_room(struct room_index_data *room)
               }
 
               {
-                  EXIT_DATA *exit;
+                  struct exit_data *exit;
                   int d0;
                   int d1;
 
@@ -2597,7 +2597,7 @@ void do_dump(CHAR_DATA *ch, const char *argument)
     fprintf(fp, "Rooms	%10ld(%12ld bytes)\n", top_room, top_room * (long)(sizeof(struct room_index_data *)));
 
     /* exits */
-    fprintf(fp, "Exits	%10ld(%12ld bytes)\n", top_exit, top_exit * (long)(sizeof(EXIT_DATA *)));
+    fprintf(fp, "Exits	%10ld(%12ld bytes)\n", top_exit, top_exit * (long)(sizeof(struct exit_data *)));
 
     fclose(fp);
     /* end memory dump */

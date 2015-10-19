@@ -310,8 +310,8 @@ extern void free_extra_descr(struct extra_descr_data * pExtra);
 struct reset_data *new_reset_data(void);
 void free_reset_data(struct reset_data * pReset);
 /* exit data */
-EXIT_DATA *new_exit(void);
-void free_exit(EXIT_DATA * pExit);
+struct exit_data *new_exit(void);
+void free_exit(struct exit_data * pExit);
 /* affect data */
 extern AFFECT_DATA *new_affect(void);
 extern void free_affect(AFFECT_DATA * pAf);
