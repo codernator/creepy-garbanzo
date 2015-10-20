@@ -28,7 +28,7 @@ int object_list_count();
 void object_ownername_set(struct gameobject *object, const struct char_data *owner);
 
 /** Encapsulation of object name. */
-/*@dependent@*/const char *object_name_get(const struct gameobject *object);
+/*@observer@*/const char *object_name_get(const struct gameobject *object);
 void object_name_set(struct gameobject *object, /*@shared@*//*@null@*/const char *name);
 
 

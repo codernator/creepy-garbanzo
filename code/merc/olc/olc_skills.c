@@ -953,7 +953,7 @@ EDIT(skedit_argument){
  ***************************************************************************/
 EDIT(skedit_help){
     struct dynamic_skill *skill;
-    HELP_DATA *help;
+    struct help_data *help;
 
     EDIT_SKILL(ch, skill);
 

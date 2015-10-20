@@ -6,9 +6,13 @@
     entry = keyvaluepairarray_find((data), (name)); \
     (field) = (entry != NULL) ? parse_unsigned_int(entry) : 0;
 
-#define ASSIGN_STRING_KEY(data, field, name) \
+#define ASSIGN_INT_KEY(data, field, name) \
     entry = keyvaluepairarray_find((data), (name)); \
-    (field) = (entry != NULL) ? string_copy(entry) : 0;
+    (field) = (entry != NULL) ? parse_int(entry) : 0;
+
+#define ASSIGN_STRING_KEY(data, field, name, defaultValue) \
+    entry = keyvaluepairarray_find((data), (name)); \
+    (field) = (entry != NULL) ? string_copy(entry) : ((defaultValue) == NULL ? NULL : string_copy(defaultValue));
 
 #define ASSIGN_FLAG_KEY(data, field, name) \
     entry = keyvaluepairarray_find((data), (name)); \

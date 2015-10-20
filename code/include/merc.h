@@ -1314,7 +1314,7 @@ struct char_data {
     int race;
     int class;
     int level;
-    int trust;
+    unsigned int trust;
     int played;
     int lines;                          /* for the pager */
     time_t logon;
@@ -1462,18 +1462,18 @@ struct extra_descr_data {
     /*@owned@*//*@null@*//*@partial@*/struct objectprototype *next;
     /*@dependent@*//*@null@*//*@partial@*/struct objectprototype *prev;
 
-    long vnum;
+    unsigned long vnum;
     /*@owned@*//*@null@*/struct extra_descr_data *extra_descr;
     /*@dependent@*//*@null@*/struct affect_data *affected;
     /*@dependent@*//*@null@*/struct area_data *area;
-    /*@shared@*/char *name;
-    /*@shared@*//*@null@*/char *short_descr;
-    /*@shared@*//*@null@*/char *description;
-    /*@shared@*//*@null@*/char *material;
-    int item_type;
-    long extra_flags;
-    long extra2_flags;
-    long wear_flags;
+    /*@only@*/char *name;
+    /*@only@*/char *short_descr;
+    /*@only@*/char *description;
+    /*@only@*/char *material;
+    unsigned int item_type;
+    unsigned long extra_flags;
+    unsigned long extra2_flags;
+    unsigned long wear_flags;
     int level;
     int init_timer;
     int condition;
@@ -2055,7 +2055,7 @@ int get_weapon_sn(struct char_data * ch, /*@null@*/struct gameobject * wield);
 int get_weapon_skill(struct char_data * ch, int sn);
 int get_age(struct char_data * ch);
 void reset_char(struct char_data * ch);
-int get_trust(struct char_data * ch);
+unsigned int get_trust(struct char_data * ch);
 int get_hours_played(struct char_data * ch);
 int get_minutes_played(struct char_data * ch);
 int get_seconds_played(struct char_data * ch);
@@ -2219,12 +2219,12 @@ struct objectprototype_filter {
 };
 extern const OBJECTPROTOTYPE_FILTER objectprototype_empty_filter;
 
-/*@dependent@*/struct objectprototype *objectprototype_new(long vnum);
+/*@dependent@*/struct objectprototype *objectprototype_new(unsigned long vnum);
 void objectprototype_free(/*@owned@*/struct objectprototype *templatedata);
 int objectprototype_list_count();
 /*@dependent@*//*@null@*/struct objectprototype *objectprototype_iterator_start(const OBJECTPROTOTYPE_FILTER *filter);
 /*@dependent@*//*@null@*/struct objectprototype *objectprototype_iterator(struct objectprototype *current, const OBJECTPROTOTYPE_FILTER *filter);
-/*@dependent@*//*@null@*/struct objectprototype *objectprototype_getbyvnum(long vnum);
+/*@dependent@*//*@null@*/struct objectprototype *objectprototype_getbyvnum(unsigned long vnum);
 /*@only@*/KEYVALUEPAIR_ARRAY *objectprototype_serialize(const struct objectprototype *obj);
 /*@dependent@*/struct objectprototype *objectprototype_deserialize(const KEYVALUEPAIR_ARRAY *data);
 /* ~objectprototype.c */

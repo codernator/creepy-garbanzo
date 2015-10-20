@@ -298,7 +298,7 @@ char *olc_ed_vnum(struct char_data *ch)
     struct objectprototype *pObj;
     struct mob_index_data *pMob;
     struct mprog_code *pMprog;
-    HELP_DATA *pHelp;
+    struct help_data *pHelp;
     struct dynamic_skill *pSkill;
     struct dynamic_group *pGroup;
     static char buf[MAX_INPUT_LENGTH];
@@ -326,7 +326,7 @@ char *olc_ed_vnum(struct char_data *ch)
           sprintf(buf, "%ld", pMprog ? pMprog->vnum : 0);
           break;
       case ED_HELP:
-          pHelp = (HELP_DATA *)ch->desc->ed_data;
+          pHelp = (struct help_data *)ch->desc->ed_data;
           sprintf(buf, "%s", pHelp ? pHelp->keyword : "");
           break;
       case ED_SKILL:

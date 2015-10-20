@@ -3,11 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include "entityload.h"
 
 #ifndef OBJPROTO_MAX_KEY_HASH
 // Consult http://www.planetmath.org/goodhashtableprimes for a nice writeup on numbers to use.
 // Bear in mind that whatever value is used here translates to an array containing this number of elements.
-#define OBJPROTO_MAX_KEY_HASH 3079 
+#define OBJPROTO_MAX_KEY_HASH (unsigned long)3079 
 #endif
 
 #define HASH_KEY(vnum) (vnum) % OBJPROTO_MAX_KEY_HASH
@@ -22,9 +23,8 @@ extern void free_extra_descr(struct extra_descr_data *ed);
 
 
 /** locals */
-typedef struct hash_entry HASH_ENTRY;
 struct hash_entry {
-    /*@only@*/HASH_ENTRY *next;
+    /*@only@*/struct hash_entry *next;
     /*@dependent@*/struct objectprototype *entry;
 };
 
@@ -32,9 +32,9 @@ static struct objectprototype head_node;
 static bool passes(struct objectprototype *testee, const OBJECTPROTOTYPE_FILTER *filter);
 static void headlist_add(/*@owned@*/struct objectprototype *entry);
 /* an array of linked lists, with an empty head node. */
-static HASH_ENTRY lookup[OBJPROTO_MAX_KEY_HASH];
-static void lookup_add(long entrykey, /*@dependent@*/struct objectprototype *entry);
-static void lookup_remove(long entrykey, /*@dependent@*/struct objectprototype *entry);
+static struct hash_entry lookup[OBJPROTO_MAX_KEY_HASH];
+static void lookup_add(unsigned long entrykey, /*@dependent@*/struct objectprototype *entry);
+static void lookup_remove(unsigned long entrykey, /*@dependent@*/struct objectprototype *entry);
 static size_t count_extras(const struct objectprototype *obj);
 static size_t count_affects(const struct objectprototype *obj);
 
@@ -42,10 +42,10 @@ static size_t count_affects(const struct objectprototype *obj);
  * Translates object virtual number to its obj index struct.
  * Hash table lookup.
  */
-struct objectprototype *objectprototype_getbyvnum(long vnum)
+struct objectprototype *objectprototype_getbyvnum(unsigned long vnum)
 {
-    HASH_ENTRY *hashentry;
-    long hashkey = HASH_KEY(vnum);
+    struct hash_entry *hashentry;
+    unsigned long hashkey = HASH_KEY(vnum);
 
     for (hashentry = lookup[hashkey].next; 
          hashentry != NULL && hashentry->entry->vnum != vnum;
@@ -56,7 +56,7 @@ struct objectprototype *objectprototype_getbyvnum(long vnum)
         : hashentry->entry;
 }
 
-struct objectprototype *objectprototype_new(long vnum)
+struct objectprototype *objectprototype_new(unsigned long vnum)
 {
     struct objectprototype *prototypedata;
 
@@ -67,12 +67,14 @@ struct objectprototype *objectprototype_new(long vnum)
     {
         memset(prototypedata, 0, sizeof(struct objectprototype));
         prototypedata->vnum = vnum;
-        prototypedata->name = str_dup("no name");
-        prototypedata->short_descr = str_dup("(no short description)");
-        prototypedata->description = str_dup("(no description)");
+        /*@-mustfreeonly@*/
+        prototypedata->name = string_copy("no name");
+        prototypedata->short_descr = string_copy("(no short description)");
+        prototypedata->description = string_copy("(no description)");
+        prototypedata->material = string_copy("unknown");
+        /*@+mustfreeonly@*/
         prototypedata->item_type = ITEM_TRASH;
-        prototypedata->material = str_dup("unknown");             /* ROM */
-        prototypedata->condition = 100;                           /* ROM */
+        prototypedata->condition = 100;
     }
 
     /** Place on list. */
@@ -87,21 +89,35 @@ struct objectprototype *objectprototype_new(long vnum)
 struct objectprototype *objectprototype_deserialize(const KEYVALUEPAIR_ARRAY *data)
 {
     struct objectprototype *prototypedata;
-    long vnum;
-    const char *vnumentry;
+    const char *entry;
+    
 
     prototypedata = malloc(sizeof(struct objectprototype));
     assert(prototypedata != NULL);
     memset(prototypedata, 0, sizeof(struct objectprototype));
 
-    vnumentry = keyvaluepairarray_find(data, "vnum");
-    vnum = (vnumentry != NULL) ? parse_long(vnumentry) : 0;
+    ASSIGN_ULONG_KEY(data, prototypedata->vnum, "vnum");
+    /*@-mustfreeonly@*/
+    ASSIGN_STRING_KEY(data, prototypedata->name, "name", "no name");
+    ASSIGN_STRING_KEY(data, prototypedata->short_descr, "short", "(no short description)");
+    ASSIGN_STRING_KEY(data, prototypedata->description, "long", "(no description)");
+    ASSIGN_STRING_KEY(data, prototypedata->material, "material", "(unknown)");
+    /*@+mustfreeonly@*/
+
+    ASSIGN_INT_KEY(data, prototypedata->condition, "condition");
+    ASSIGN_ULONG_KEY(data, prototypedata->extra2_flags, "extra2");
+    ASSIGN_ULONG_KEY(data, prototypedata->extra_flags, "extra");
+    ASSIGN_ULONG_KEY(data, prototypedata->wear_flags, "wear");
+    ASSIGN_UINT_KEY(data, prototypedata->item_type, "item_type");
+
 
     /** Place on list. */
     headlist_add(prototypedata);
 
     /** Store in hash table. */
-    lookup_add(vnum, prototypedata);
+    if (prototypedata->vnum != 0) {
+        lookup_add(prototypedata->vnum, prototypedata);
+    }
 
     return prototypedata;
 }
@@ -125,10 +141,10 @@ KEYVALUEPAIR_ARRAY *objectprototype_serialize(const struct objectprototype *obj)
         keyvaluepairarray_append(answer, "long", obj->description);
     if (obj->material != NULL)
         keyvaluepairarray_append(answer, "material", obj->material);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "extra2", "%ld", obj->extra2_flags);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "item_type", "%d", obj->item_type);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "extra", "%ld", obj->extra_flags);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "wear", "%ld", obj->wear_flags);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "extra2", "%lu", obj->extra2_flags);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "extra", "%lu", obj->extra_flags);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "wear", "%lu", obj->wear_flags);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "item_type", "%u", obj->item_type);
 
     //TODO - look at olc_save.save_object for more logic
     keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value1", "%u", obj->value[0]);
@@ -147,8 +163,6 @@ KEYVALUEPAIR_ARRAY *objectprototype_serialize(const struct objectprototype *obj)
     keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "condition", "%d", obj->condition);
     //~TODO
     
-    // count is a runtime value only used to track number of struct gameobject *instances from this prototype.
-    //keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "count", "%d", obj->count);
     keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "tnl", "%d", obj->xp_tolevel);
 
     /** append affects */
@@ -227,11 +241,10 @@ void objectprototype_free(struct objectprototype *prototypedata)
     }
 
     /** Clean up strings */
-    {
-        if (prototypedata->name != NULL) free_string(prototypedata->name);
-        if (prototypedata->description != NULL) free_string(prototypedata->description);
-        if (prototypedata->short_descr != NULL) free_string(prototypedata->short_descr);
-    }
+    if (prototypedata->name != NULL) free(prototypedata->name);
+    if (prototypedata->description != NULL) free(prototypedata->description);
+    if (prototypedata->short_descr != NULL) free(prototypedata->short_descr);
+    if (prototypedata->material != NULL) free(prototypedata->material);
 
     free(prototypedata);
 }
@@ -292,25 +305,25 @@ void headlist_add(/*@owned@*/struct objectprototype *entry)
     head_node.next = entry;
 }
 
-void lookup_add(long entrykey, struct objectprototype *entry)
+void lookup_add(unsigned long entrykey, struct objectprototype *entry)
 {
-    HASH_ENTRY *node;
-    long hashkey;
+    struct hash_entry *node;
+    unsigned long hashkey;
 
     hashkey = HASH_KEY(entrykey);
-    node = malloc(sizeof(HASH_ENTRY));
+    node = malloc(sizeof(struct hash_entry));
     assert(node != NULL);
     node->entry = entry;
     node->next = lookup[hashkey].next;
     lookup[hashkey].next = node;
 }
 
-void lookup_remove(long entrykey, struct objectprototype *entry)
+void lookup_remove(unsigned long entrykey, struct objectprototype *entry)
 {
-    HASH_ENTRY *head;
-    HASH_ENTRY *prev;
-    HASH_ENTRY *next;
-    long hashkey;
+    struct hash_entry *head;
+    struct hash_entry *prev;
+    struct hash_entry *next;
+    unsigned long hashkey;
 
     hashkey = HASH_KEY(entrykey);
     prev = &lookup[hashkey];

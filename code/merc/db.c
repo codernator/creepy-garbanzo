@@ -386,7 +386,7 @@ void load_helps(const char const *filepath)
     }
 
     while (true) {
-        HELP_DATA *snarfed;
+        struct help_data *snarfed;
         data = database_read(db);
         if (!keyvaluepairarray_any(data)) {
             keyvaluepairarray_free(data);

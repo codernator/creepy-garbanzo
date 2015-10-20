@@ -1655,7 +1655,7 @@ static void skill_info(struct char_data *ch, struct dynamic_skill *skill)
 
     /* we need to put help info in here */
     if (skill->help_keyword != NULL) {
-        HELP_DATA *help;
+        struct help_data *help;
 
         help = help_lookup(skill->help_keyword);
         if (help != NULL) { send_to_char("\n\r`8=`7=`&=`7==================================================================`&=`7=`8=``\n\r\n\r", ch);

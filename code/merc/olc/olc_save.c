@@ -777,7 +777,7 @@ void save_shops(FILE *fp, struct area_data *area)
 void save_helps(const char const *filename)
 {
     struct database_controller *db;
-    HELP_DATA *current;
+    struct help_data *current;
 
     db = database_open(filename);
     if (db == NULL) {

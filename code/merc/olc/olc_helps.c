@@ -70,7 +70,7 @@ void hedit(struct char_data *ch, const char *argument)
 
 void do_hedit(struct char_data *ch, const char *argument)
 {
-    HELP_DATA *help;
+    struct help_data *help;
     char cmd[MAX_INPUT_LENGTH];
 
     if (IS_NPC(ch))
@@ -93,7 +93,7 @@ void do_hedit(struct char_data *ch, const char *argument)
 }
 
 EDIT(hedit_show){
-    HELP_DATA *help;
+    struct help_data *help;
 
     EDIT_HELP(ch, help);
 
@@ -103,7 +103,7 @@ EDIT(hedit_show){
 }
 
 EDIT(hedit_level){
-    HELP_DATA *help;
+    struct help_data *help;
     int lev;
 
     EDIT_HELP(ch, help);
@@ -124,7 +124,7 @@ EDIT(hedit_level){
 }
 
 EDIT(hedit_keyword){
-    HELP_DATA *help;
+    struct help_data *help;
 
     EDIT_HELP(ch, help);
     if (IS_NULLSTR(argument)) {
@@ -140,7 +140,7 @@ EDIT(hedit_keyword){
 }
 
 EDIT(hedit_new){
-    HELP_DATA *help;
+    struct help_data *help;
     char name[MAX_INPUT_LENGTH];
 
     if (is_help(argument)) {
@@ -159,7 +159,7 @@ EDIT(hedit_new){
     help->keyword = str_dup(name);
     help->text = str_dup("");
 
-    ch->desc->ed_data = (HELP_DATA *)help;
+    ch->desc->ed_data = (struct help_data *)help;
     ch->desc->editor = ED_HELP;
 
     send_to_char("Ok.\n\r", ch);
@@ -167,7 +167,7 @@ EDIT(hedit_new){
 }
 
 EDIT(hedit_text){
-    HELP_DATA *help;
+    struct help_data *help;
 
     EDIT_HELP(ch, help);
 
@@ -176,7 +176,7 @@ EDIT(hedit_text){
 }
 
 EDIT(hedit_delete){
-    HELP_DATA *help;
+    struct help_data *help;
     struct descriptor_data *d;
     struct descriptor_iterator_filter playing_filter = { .all = true, .must_playing = true };
     struct descriptor_data *dpending;
@@ -186,7 +186,7 @@ EDIT(hedit_delete){
     dpending = descriptor_iterator_start(&playing_filter);
     while ((d = dpending) != NULL) {
         dpending = descriptor_iterator(d, &playing_filter);
-        if (d->editor == ED_HELP && help == (HELP_DATA *)d->ed_data)
+        if (d->editor == ED_HELP && help == (struct help_data *)d->ed_data)
             edit_done(d->character);
     }
 
@@ -199,7 +199,7 @@ EDIT(hedit_list){
     static char buf[MAX_INPUT_LENGTH];
     struct buf_type *buffer;
     int cnt = 0;
-    HELP_DATA *help;
+    struct help_data *help;
 
     EDIT_HELP(ch, help);
 

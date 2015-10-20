@@ -292,7 +292,7 @@ DECLARE_OLC_FUN(muedit_text);
 #define EDIT_ROOM(ch, room)     (room = ch->in_room)
 #define EDIT_AREA(ch, area)     (area = (struct area_data *)ch->desc->ed_data)
 #define EDIT_MPCODE(ch, code)   (code = (struct mprog_code *)ch->desc->ed_data)
-#define EDIT_HELP(ch, help)     (help = (HELP_DATA *)ch->desc->ed_data)
+#define EDIT_HELP(ch, help)     (help = (struct help_data *)ch->desc->ed_data)
 #define EDIT_SKILL(ch, skill)   (skill = (struct dynamic_skill *)ch->desc->ed_data)
 #define EDIT_GROUP(ch, group)   (group = (struct dynamic_group *)ch->desc->ed_data)
 

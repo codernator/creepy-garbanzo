@@ -241,7 +241,7 @@ EDIT(gredit_new){
  ***************************************************************************/
 EDIT(gredit_help){
     struct dynamic_group *group;
-    HELP_DATA *help;
+    struct help_data *help;
 
     EDIT_GROUP(ch, group);
 

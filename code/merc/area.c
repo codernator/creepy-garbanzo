@@ -137,10 +137,10 @@ struct area_data *area_deserialize(const KEYVALUEPAIR_ARRAY *data, const char *f
     /*@-mustfreeonly@*/
     ASSIGN_ULONG_KEY(data, areadata->vnum, "vnum");
     areadata->file_name = string_copy(filename);
-    ASSIGN_STRING_KEY(data, areadata->name, "name");
-    ASSIGN_STRING_KEY(data, areadata->description, "description");
-    ASSIGN_STRING_KEY(data, areadata->credits, "credits");
-    ASSIGN_STRING_KEY(data, areadata->builders, "builders");
+    ASSIGN_STRING_KEY(data, areadata->name, "name", "no name");
+    ASSIGN_STRING_KEY(data, areadata->description, "description", "(no description)");
+    ASSIGN_STRING_KEY(data, areadata->credits, "credits", "");
+    ASSIGN_STRING_KEY(data, areadata->builders, "builders", "");
     ASSIGN_ULONG_KEY(data, areadata->min_vnum, "min_vnum");
     ASSIGN_ULONG_KEY(data, areadata->max_vnum, "max_vnum");
     ASSIGN_FLAG_KEY(data, areadata->area_flags, "flags");

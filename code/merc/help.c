@@ -4,23 +4,24 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include "entityload.h"
 
 
-typedef void HELP_HANDLER(/*@partial@*/struct char_data *, int trust, /*@observer@*/const char *argument);
+typedef void HELP_HANDLER(/*@partial@*/struct char_data *, unsigned int trust, /*@observer@*/const char *argument);
 struct help_table_entry {
     const char const *key;
     HELP_HANDLER *handler;
 };
 
 
-static HELP_DATA head_node;
+static struct help_data head_node;
 static int help_count = 0;
 
 static /*@observer@*/const struct help_table_entry *findcustom(/*@observer@*/const char *topic);
-static void handle_help_keyfind(struct char_data *ch, int trust, /*@observer@*/const char *argument);
-static void handle_help_fullsearch(struct char_data *ch, int trust, /*@observer@*/const char *argument);
-static void handle_help_other(struct char_data *ch, int trust, /*@observer@*/const char *argument);
-static void headlist_add(/*@owned@*/HELP_DATA *entry);
+static void handle_help_keyfind(struct char_data *ch, unsigned int trust, /*@observer@*/const char *argument);
+static void handle_help_fullsearch(struct char_data *ch, unsigned int trust, /*@observer@*/const char *argument);
+static void handle_help_other(struct char_data *ch, unsigned int trust, /*@observer@*/const char *argument);
+static void headlist_add(/*@owned@*/struct help_data *entry);
 
 
 static const struct help_table_entry help_table[] = {
@@ -35,19 +36,19 @@ inline int count_helps()
     return help_count;
 }
 
-HELP_DATA *helpdata_new()
+struct help_data *helpdata_new()
 {
-    HELP_DATA *helpdata;
-    helpdata = malloc(sizeof(HELP_DATA));
+    struct help_data *helpdata;
+    helpdata = malloc(sizeof(struct help_data));
     assert(helpdata != NULL);
     
-    memset(helpdata, 0, sizeof(HELP_DATA));
+    memset(helpdata, 0, sizeof(struct help_data));
 
     headlist_add(helpdata);
     return helpdata;
 }
 
-KEYVALUEPAIR_ARRAY *helpdata_serialize(const HELP_DATA *helpdata)
+KEYVALUEPAIR_ARRAY *helpdata_serialize(const struct help_data *helpdata)
 {
     KEYVALUEPAIR_ARRAY *answer;
 
@@ -56,10 +57,10 @@ KEYVALUEPAIR_ARRAY *helpdata_serialize(const HELP_DATA *helpdata)
     keyvaluepairarray_append(answer, "keyword", helpdata->keyword);
     keyvaluepairarray_append(answer, "text", helpdata->text);
     if (helpdata->trust != 0) {
-        keyvaluepairarray_appendf(answer, 32, "trust", "%d", helpdata->trust);
+        keyvaluepairarray_appendf(answer, 32, "trust", "%u", helpdata->trust);
     }
     if (helpdata->level != 0) {
-        keyvaluepairarray_appendf(answer, 32, "level", "%d", helpdata->level);
+        keyvaluepairarray_appendf(answer, 32, "level", "%u", helpdata->level);
     }
     if (helpdata->category != NULL) {
         keyvaluepairarray_append(answer, "cateogry", helpdata->category);
@@ -68,40 +69,38 @@ KEYVALUEPAIR_ARRAY *helpdata_serialize(const HELP_DATA *helpdata)
     return answer;
 }
 
-HELP_DATA *helpdata_deserialize(const KEYVALUEPAIR_ARRAY *data)
+struct help_data *helpdata_deserialize(const KEYVALUEPAIR_ARRAY *data)
 {
-    HELP_DATA *helpdata;
-    const char *value;
+    struct help_data *helpdata;
+    const char *entry;
 
-    helpdata = malloc(sizeof(HELP_DATA));
+    helpdata = malloc(sizeof(struct help_data));
     assert(helpdata != NULL);
     
-    value = keyvaluepairarray_find(data, "keyword");
-    assert(value != NULL);
-    helpdata->keyword = string_copy(value);
-
-    value = keyvaluepairarray_find(data, "text");
-    assert(value != NULL);
-    helpdata->text = string_copy(value);
+    ASSIGN_STRING_KEY(data, helpdata->keyword, "keyword", NULL);
+    if (helpdata->keyword == NULL) {
+        helpdata->keyword = string_copy("BORKED");
+        log_bug("Missing keyword in helpdata.");
+    }
+    ASSIGN_STRING_KEY(data, helpdata->text, "text", NULL);
+    if (helpdata->text == NULL) {
+        helpdata->text = string_copy("BORKED");
+        log_bug("Missing text in helpdata.");
+    }
 
     /** optional fields */
-    value = keyvaluepairarray_find(data, "trust");
-    helpdata->trust = (value != NULL) ? parse_int(value) : 0;
-
-    value = keyvaluepairarray_find(data, "level");
-    helpdata->level = (value != NULL) ? parse_int(value) : 0;
-
-    value = keyvaluepairarray_find(data, "category");
-    helpdata->category = (value != NULL) ? string_copy(value) : NULL;
+    ASSIGN_STRING_KEY(data, helpdata->category, "category", NULL);
+    ASSIGN_UINT_KEY(data, helpdata->trust, "trust");
+    ASSIGN_UINT_KEY(data, helpdata->level, "level");
 
     headlist_add(helpdata);
     return helpdata;
 }
 
-void helpdata_free(HELP_DATA *helpdata)
+void helpdata_free(struct help_data *helpdata)
 {
-    HELP_DATA *prev = helpdata->prev;
-    HELP_DATA *next = helpdata->next;
+    struct help_data *prev = helpdata->prev;
+    struct help_data *next = helpdata->next;
 
     assert(helpdata != NULL);
     assert(helpdata != &head_node);
@@ -147,9 +146,9 @@ inline bool is_help(const char *argument)
     }
 }
 
-HELP_DATA *help_lookup(const char *keyword)
+struct help_data *help_lookup(const char *keyword)
 {
-    HELP_DATA *help;
+    struct help_data *help;
 
     for (help = head_node.next; help != NULL; help = help->next) {
         if (!str_infix(keyword, help->keyword)
@@ -173,7 +172,7 @@ struct help_data *helpdata_iteratornext(struct help_data *current)
 void show_help(struct descriptor_data *descriptor, const char *topic, const char *argument)
 {
     /*@observer@*/const struct help_table_entry *custom;
-    int trust;
+    unsigned int trust;
     struct char_data *actual;
 
     actual = CH(descriptor);
@@ -197,9 +196,9 @@ const struct help_table_entry *findcustom(const char *topic)
     return custom;
 }
 
-void handle_help_keyfind(struct char_data *ch, int trust, const char *argument)
+void handle_help_keyfind(struct char_data *ch, unsigned int trust, const char *argument)
 {
-    HELP_DATA *help;
+    struct help_data *help;
     struct buf_type *buf;
     int index = 0;
 
@@ -222,9 +221,9 @@ void handle_help_keyfind(struct char_data *ch, int trust, const char *argument)
     free_buf(buf);
 }
 
-void handle_help_fullsearch(struct char_data *ch, int trust, const char *argument)
+void handle_help_fullsearch(struct char_data *ch, unsigned int trust, const char *argument)
 {
-    HELP_DATA *help;
+    struct help_data *help;
     struct buf_type *buf;
     char *txt;
     int index = 0;
@@ -250,9 +249,9 @@ void handle_help_fullsearch(struct char_data *ch, int trust, const char *argumen
     free_buf(buf);
 }
 
-void handle_help_other(struct char_data *ch, int trust, const char *topic)
+void handle_help_other(struct char_data *ch, unsigned int trust, const char *topic)
 {
-    HELP_DATA *help;
+    struct help_data *help;
 
     for (help = head_node.next; help != NULL; help = help->next) {
         if (help->level <= trust) {
@@ -273,9 +272,9 @@ void handle_help_other(struct char_data *ch, int trust, const char *topic)
     printf_to_char(ch, "No help on '%s'.\n\r", topic);
 }
 
-void headlist_add(HELP_DATA *entry)
+void headlist_add(struct help_data *entry)
 {
-    HELP_DATA *headnext;
+    struct help_data *headnext;
 
     entry->prev = &head_node;
     headnext = head_node.next;

@@ -1,12 +1,10 @@
-typedef struct help_data HELP_DATA;
-
 /* Help table types. */
 struct help_data {
-    /*@owned@*//*@null@*//*@partial@*/HELP_DATA *next;
-    /*@dependent@*//*@null@*//*@partial@*/HELP_DATA *prev;
+    /*@owned@*//*@null@*//*@partial@*/struct help_data *next;
+    /*@dependent@*//*@null@*//*@partial@*/struct help_data *prev;
 
-    int level;
-    int trust;
+    unsigned int level;
+    unsigned int trust;
     /*@only@*/char *keyword;
     /*@only@*/char *text;
     /*@only@*/char *category;
@@ -18,11 +16,11 @@ struct help_data {
 void show_help(/*@observer@*/struct descriptor_data *descriptor, /*@observer@*/const char *topic, /*@observer@*/const char *argument);
 bool is_help(/*@observer@*/const char *argument);
 int count_helps();
-/*@dependent@*/HELP_DATA *helpdata_new();
-void helpdata_free(/*@owned@*/HELP_DATA *helpdata);
-KEYVALUEPAIR_ARRAY *helpdata_serialize(const HELP_DATA *helpdata);
-/*@dependent@*/HELP_DATA *helpdata_deserialize(const KEYVALUEPAIR_ARRAY *data);
-/*@observer@*//*@null@*/HELP_DATA *help_lookup(const char *keyword);
+/*@dependent@*/struct help_data *helpdata_new();
+void helpdata_free(/*@owned@*/struct help_data *helpdata);
+KEYVALUEPAIR_ARRAY *helpdata_serialize(const struct help_data *helpdata);
+/*@dependent@*/struct help_data *helpdata_deserialize(const KEYVALUEPAIR_ARRAY *data);
+/*@observer@*//*@null@*/struct help_data *help_lookup(const char *keyword);
 
 /*@dependent@*//*@null@*/struct help_data *helpdata_iteratorstart();
 /*@dependent@*//*@null@*/struct help_data *helpdata_iteratornext(struct help_data *);

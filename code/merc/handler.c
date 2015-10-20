@@ -694,7 +694,7 @@ void reset_char(struct char_data *ch)
  * 	if ch->trust > 0 then return ch->trust
  * 	otherwise return ch->level
  */
-int get_trust(struct char_data *ch)
+unsigned int get_trust(struct char_data *ch)
 {
     if (!ch)
         return MAX_LEVEL + 1;
