@@ -57,10 +57,10 @@ KEYVALUEPAIR_ARRAY *helpdata_serialize(const struct help_data *helpdata)
     keyvaluepairarray_append(answer, "keyword", helpdata->keyword);
     keyvaluepairarray_append(answer, "text", helpdata->text);
     if (helpdata->trust != 0) {
-        keyvaluepairarray_appendf(answer, 32, "trust", "%u", helpdata->trust);
+        keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "trust", "%u", helpdata->trust);
     }
     if (helpdata->level != 0) {
-        keyvaluepairarray_appendf(answer, 32, "level", "%u", helpdata->level);
+        keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "level", "%u", helpdata->level);
     }
     if (helpdata->category != NULL) {
         keyvaluepairarray_append(answer, "cateogry", helpdata->category);

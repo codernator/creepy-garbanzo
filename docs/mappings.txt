@@ -1,0 +1,73 @@
+# OBJECT PROTOTYPE
+field         data type                  mapped name         special
+-----         ---------                  -----------         -------
+vnum          unsigned long              vnum
+extra_descr   struct extra_descr_data *  extras              nested: OBJECT PROTOTYPE > EXTRAS
+affected      struct affect_data *       affect              nested: OBJECT PROTOTOTYPE > AFFECTS
+area          struct area_data *         --
+name          char *                     name
+short_descr   char *                     short
+description   char *                     long
+material      char *                     material
+item_type     unsigned int               type
+extra_flags   unsigned long              extra              <flags>
+extra2_flags  unsigned long              extra2             <flags>
+wear_flags    unsigned long              wear               <flags>
+level         int                        level
+init_timer    int                        inittimer
+condition     int                        condition          !!!! olc_save.save_object
+weight        int                        weight
+xp_to_level   int                        tnl
+cost          unsigned int               cost
+value         long[5]                    valueN             N = 1,2,3,4,5
+count         int                        --
+
+# OBJECT PROTOTYPE > EXTRAS
+field         data type                  mapped name         special
+-----         ---------                  -----------         -------
+keyword       char *                     key
+description   char *                     text
+
+# OBJECT PROTOTYPE > AFFECTS
+field         data type                  mapped name         special
+-----         ---------                  -----------         -------
+skill         struct dynamic_skill *
+where         int
+type          int
+level         int
+duration      int
+location      int
+modifier      long
+bitvector     long
+
+
+# AREA DATA
+field         data type                  mapped name         special
+-----         ---------                  -----------         -------
+vnum          unsigned long              vnum
+file_name     char *
+name          char *
+description   char *
+credits       char *
+builders      char *
+area_flags    unsigned long
+min_vnum      unsigned long
+max_vnum      unsigned long
+llevel        unsigned int
+ulevel        unsigned int
+security      unsigned int
+reset_first   struct reset_data *
+reset_last    struct reset_last *
+age           int
+nplayer       int
+empty         bool
+
+# HELP DATA
+field         data type                  mapped name         special
+-----         ---------                  -----------         -------
+level         unsigned int
+trust         unsigned int
+keyword       char *
+text          char *
+category      char *
+

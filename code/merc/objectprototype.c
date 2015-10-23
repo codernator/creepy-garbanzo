@@ -105,9 +105,9 @@ struct objectprototype *objectprototype_deserialize(const KEYVALUEPAIR_ARRAY *da
     /*@+mustfreeonly@*/
 
     ASSIGN_INT_KEY(data, prototypedata->condition, "condition");
-    ASSIGN_ULONG_KEY(data, prototypedata->extra2_flags, "extra2");
-    ASSIGN_ULONG_KEY(data, prototypedata->extra_flags, "extra");
-    ASSIGN_ULONG_KEY(data, prototypedata->wear_flags, "wear");
+    ASSIGN_FLAG_KEY(data, prototypedata->extra2_flags, "extra2");
+    ASSIGN_FLAG_KEY(data, prototypedata->extra_flags, "extra");
+    ASSIGN_FLAG_KEY(data, prototypedata->wear_flags, "wear");
     ASSIGN_UINT_KEY(data, prototypedata->item_type, "item_type");
 
 
@@ -122,7 +122,6 @@ struct objectprototype *objectprototype_deserialize(const KEYVALUEPAIR_ARRAY *da
     return prototypedata;
 }
 
-#define SERIALIZED_NUMBER_SIZE 32
 KEYVALUEPAIR_ARRAY *objectprototype_serialize(const struct objectprototype *obj)
 {
     KEYVALUEPAIR_ARRAY *answer;
@@ -141,17 +140,19 @@ KEYVALUEPAIR_ARRAY *objectprototype_serialize(const struct objectprototype *obj)
         keyvaluepairarray_append(answer, "long", obj->description);
     if (obj->material != NULL)
         keyvaluepairarray_append(answer, "material", obj->material);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "extra2", "%lu", obj->extra2_flags);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "extra", "%lu", obj->extra_flags);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "wear", "%lu", obj->wear_flags);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "item_type", "%u", obj->item_type);
+
+    SERIALIZE_FLAGS(obj->extra2_flags, "extra2", answer);
+    SERIALIZE_FLAGS(obj->extra_flags, "extra", answer);
+    SERIALIZE_FLAGS(obj->wear_flags, "wear", answer);
+
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "type", "%u", obj->item_type);
 
     //TODO - look at olc_save.save_object for more logic
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value1", "%u", obj->value[0]);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value2", "%u", obj->value[1]);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value3", "%u", obj->value[2]);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value4", "%u", obj->value[3]);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value5", "%u", obj->value[4]);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value1", "%ld", obj->value[0]);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value2", "%ld", obj->value[1]);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value3", "%ld", obj->value[2]);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value4", "%ld", obj->value[3]);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value5", "%ld", obj->value[4]);
     // ~TODO
 
     keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "level", "%d", obj->level);

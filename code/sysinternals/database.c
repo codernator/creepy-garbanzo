@@ -93,7 +93,7 @@ void database_write(const struct database_controller *db, const struct keyvaluep
     /** for each key-value pair... */
     for (i = 0; i < data->top; i++) {
         /**
-         * Write the key part of a key-value pair to a file, beginning on a new linei,
+         * Write the key part of a key-value pair to a file, beginning on a new line,
          * and terminated by a new line. Preceding spaces in a key will simply be skipped.
          */
         {

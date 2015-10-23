@@ -98,7 +98,7 @@ KEYVALUEPAIR_ARRAY *area_serialize(const struct area_data *areadata)
 
     answer = keyvaluepairarray_create(20);
 
-    keyvaluepairarray_appendf(answer, 64, "vnum", "%lu", areadata->vnum);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "vnum", "%lu", areadata->vnum);
     keyvaluepairarray_append(answer, "name", areadata->name);
     if (areadata->description[0] != '\0') {
         keyvaluepairarray_append(answer, "description", areadata->description);
@@ -108,17 +108,17 @@ KEYVALUEPAIR_ARRAY *area_serialize(const struct area_data *areadata)
         keyvaluepairarray_append(answer, "flags", flags);
         free(flags);
     }
-    keyvaluepairarray_appendf(answer, 64, "security", "%u", areadata->security);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "security", "%u", areadata->security);
     if (areadata->builders[0] != '\0') {
         keyvaluepairarray_append(answer, "builders", areadata->builders);
     }
     if (areadata->credits[0] != '\0') {
         keyvaluepairarray_append(answer, "credits", areadata->credits);
     }
-    keyvaluepairarray_appendf(answer, 64, "min_vnum", "%lu", areadata->min_vnum);
-    keyvaluepairarray_appendf(answer, 64, "max_vnum", "%lu", areadata->max_vnum);
-    keyvaluepairarray_appendf(answer, 64, "llevel", "%u", areadata->llevel);
-    keyvaluepairarray_appendf(answer, 64, "ulevel", "%u", areadata->ulevel);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "min_vnum", "%lu", areadata->min_vnum);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "max_vnum", "%lu", areadata->max_vnum);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "llevel", "%u", areadata->llevel);
+    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "ulevel", "%u", areadata->ulevel);
 
     return answer;
 }

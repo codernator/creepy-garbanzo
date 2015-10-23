@@ -1,3 +1,13 @@
+#define SERIALIZED_NUMBER_SIZE 32
+
+
+#define SERIALIZE_FLAGS(flags, key, kvpa) \
+{ \
+    char *flags = flag_to_string(flags); \
+    keyvaluepairarray_append((kvpa), (key), flags); \
+    free(flags); \
+}
+
 #define ASSIGN_ULONG_KEY(data, field, name) \
     entry = keyvaluepairarray_find((data), (name)); \
     (field) = (entry != NULL) ? parse_unsigned_long(entry) : 0;
