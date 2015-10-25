@@ -151,12 +151,11 @@ struct database_controller {
     /*@shared@*/FILE *_cfptr;
 };
 
+/*@only@*/struct keyvaluepair_array *database_parse_stream(/*@observer@*/const char *dbstream);
 /*@only@*/char *database_create_stream(/*@observer@*/const struct keyvaluepair_array *data);
-void database_write_stream(/*@observer@*/const struct database_controller *db, /*@observer@*/const char *data);
+/*@only@*//*@null@*/struct database_controller *database_open(const char *const file_path, bool forreading);
 /*@only@*/char *database_read_stream(/*@observer@*/const struct database_controller *db);
-/*@only@*/const struct keyvaluepair_array *database_parse_stream(/*@observer@*/const char *dbstream);
-/*@only@*//*@notnull@*/struct keyvaluepair_array *database_read(/*@observer@*/const struct database_controller *db);
-/*@only@*//*@null@*/struct database_controller *database_open(const char *const file_path);
+void database_write_stream(/*@observer@*/const struct database_controller *db, /*@observer@*/const char *data);
 void database_close(/*@only@*/struct database_controller *db);
 /** ~database.c */
 

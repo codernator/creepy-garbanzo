@@ -66,7 +66,7 @@ void test_database_write()
     dbstream = database_create_stream(subject);
     keyvaluepairarray_free(subject);
 
-    db = database_open(TEST_DB_FILE);
+    db = database_open(TEST_DB_FILE, false);
     assert(db != NULL);
     database_write_stream(db, dbstream);
     database_close(db);
@@ -89,7 +89,7 @@ void test_database_read()
     dbstream = database_create_stream(subject);
     keyvaluepairarray_free(subject);
 
-    db = database_open(TEST_DB_FILE);
+    db = database_open(TEST_DB_FILE, false);
     assert(db != NULL);
     database_write_stream(db, dbstream);
     database_close(db);
@@ -97,10 +97,13 @@ void test_database_read()
     printf("%s.\n", "Test data created");
 
 
-    printf("%s.\n", "Reading data");
-    db = database_open(TEST_DB_FILE);
+    db = database_open(TEST_DB_FILE, true);
     assert(db != NULL);
-    subject = database_read(db);
+    printf("%s.\n", "Reading data");
+    dbstream = database_read_stream(db);
+    printf("%s.\n", "Parsing data");
+    subject = database_parse_stream(dbstream);
+    free(dbstream);
     database_close(db);
     printf("%s.\n", "Printing data");
     dump_kvp(subject);
@@ -131,15 +134,19 @@ void test_database_read()
         keyvaluepairarray_free(subject);
 
         /* Write to test file. */
-        db = database_open(TEST_DB_FILE);
+        db = database_open(TEST_DB_FILE, false);
         assert(db != NULL);
         database_write_stream(db, dbstream);
         free(dbstream);
         database_close(db);
         /* Read from test file. */
-        db = database_open(TEST_DB_FILE);
+        db = database_open(TEST_DB_FILE, true);
         assert(db != NULL);
-        subject = database_read(db);
+        printf("%s.\n", "Reading data");
+        dbstream = database_read_stream(db);
+        printf("%s.\n", "Parsing data");
+        subject = database_parse_stream(dbstream);
+        free(dbstream);
         database_close(db);
         key= subject->items[0].key;
         val= subject->items[0].value;
@@ -149,7 +156,7 @@ void test_database_read()
 
     printf("%s.\n", "Try multi-record");
     {
-        db = database_open(TEST_DB_FILE);
+        db = database_open(TEST_DB_FILE, false);
         assert(db != NULL);
         subject = keyvaluepairarray_create(3);
         keyvaluepairarray_appendf(subject, 50, "key1", "%s", "value1-1\nvalue1-1a");
@@ -167,12 +174,20 @@ void test_database_read()
         free(dbstream);
         database_close(db);
 
-        db = database_open(TEST_DB_FILE);
+        db = database_open(TEST_DB_FILE, true);
         assert(db != NULL);
-        subject = database_read(db);
+        printf("%s.\n", "Reading data");
+        dbstream = database_read_stream(db);
+        printf("%s.\n", "Parsing data");
+        subject = database_parse_stream(dbstream);
+        free(dbstream);
         dump_kvp(subject);
         keyvaluepairarray_free(subject);
-        subject = database_read(db);
+        printf("%s.\n", "Reading data");
+        dbstream = database_read_stream(db);
+        printf("%s.\n", "Parsing data");
+        subject = database_parse_stream(dbstream);
+        free(dbstream);
         dump_kvp(subject);
         keyvaluepairarray_free(subject);
         database_close(db);

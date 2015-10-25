@@ -2,9 +2,10 @@ IDIR=../include
 ODIR=../obj
 BDIR=../bin
 CC= /usr/bin/gcc
-PROF= -DLINUX
-C_FLAGS= -O2 -g2 -Wall -pedantic -std=gnu99 -I$(IDIR)
-L_FLAGS=  $(PROF)
+C_FLAGS_DEBUG= -g2 -Wall -pedantic
+C_FLAGS_RELEASE= -Ofast
+C_FLAGS= $(C_FLAGS_DEBUG) -std=gnu99 -I$(IDIR)
+L_FLAGS= -DLINUX
 SYSLIBS=-lm
 
 _DEPS=sysinternals.h
