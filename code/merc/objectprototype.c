@@ -68,10 +68,10 @@ struct objectprototype *objectprototype_new(unsigned long vnum)
         memset(prototypedata, 0, sizeof(struct objectprototype));
         prototypedata->vnum = vnum;
         /*@-mustfreeonly@*/
-        prototypedata->name = string_copy("no name");
-        prototypedata->short_descr = string_copy("(no short description)");
-        prototypedata->description = string_copy("(no description)");
-        prototypedata->material = string_copy("unknown");
+        prototypedata->name = strdup("no name");
+        prototypedata->short_descr = strdup("(no short description)");
+        prototypedata->description = strdup("(no description)");
+        prototypedata->material = strdup("unknown");
         /*@+mustfreeonly@*/
         prototypedata->item_type = ITEM_TRASH;
         prototypedata->condition = 100;
@@ -98,10 +98,10 @@ struct objectprototype *objectprototype_deserialize(const KEYVALUEPAIR_ARRAY *da
 
     ASSIGN_ULONG_KEY(data, prototypedata->vnum, "vnum");
     /*@-mustfreeonly@*/
-    ASSIGN_STRING_KEY(data, prototypedata->name, "name", "no name");
-    ASSIGN_STRING_KEY(data, prototypedata->short_descr, "short", "(no short description)");
-    ASSIGN_STRING_KEY(data, prototypedata->description, "long", "(no description)");
-    ASSIGN_STRING_KEY(data, prototypedata->material, "material", "(unknown)");
+    ASSIGN_STRING_KEY_DEFAULT(data, prototypedata->name, "name", "no name");
+    ASSIGN_STRING_KEY_DEFAULT(data, prototypedata->short_descr, "short", "(no short description)");
+    ASSIGN_STRING_KEY_DEFAULT(data, prototypedata->description, "long", "(no description)");
+    ASSIGN_STRING_KEY_DEFAULT(data, prototypedata->material, "material", "(unknown)");
     /*@+mustfreeonly@*/
 
     ASSIGN_INT_KEY(data, prototypedata->condition, "condition");

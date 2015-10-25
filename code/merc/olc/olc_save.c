@@ -382,10 +382,13 @@ void save_mobiles(FILE *fp, struct area_data *area)
 //void save_object(FILE *fp, struct objectprototype *pObjIndex)
 //{
 //    struct keyvaluepair_array *serialized;
+//    char *dbstream;
 //
 //    serialized = objectprototype_serialize(pObjIndex);
-//    database_write(fp, serialized);
-//    free(serialized);
+//    dbstream = database_create_stream(serialized);
+//    keyvaluepair_free(serialized);
+//    database_write_stream(db, dbstream);
+//    free(dbstream);
 //}
 
 void save_object(FILE *fp, struct objectprototype *pObjIndex)
@@ -789,8 +792,10 @@ void save_helps(const char const *filename)
     current = helpdata_iteratorstart();
     while (current != NULL) {
         KEYVALUEPAIR_ARRAY *data = helpdata_serialize(current);
-        database_write(db, data);
-        free(data);
+        char *dbstream = database_create_stream(data);
+        keyvaluepairarray_free(data);
+        database_write_stream(db, dbstream);
+        free(dbstream);
         current = helpdata_iteratornext(current);
     }
 
@@ -800,7 +805,6 @@ void save_helps(const char const *filename)
 void save_area(struct area_data *area)
 {
     FILE *fp;
-    KEYVALUEPAIR_ARRAY *serialized;
     char haf[MAX_INPUT_LENGTH];
     struct database_controller *db;
 
@@ -814,9 +818,13 @@ void save_area(struct area_data *area)
     }
 
     fprintf(db->_cfptr, "#AREADATA\n");
-    serialized = area_serialize(area);
-    database_write(db, serialized);
-    keyvaluepairarray_free(serialized);
+    {
+        KEYVALUEPAIR_ARRAY *serialized = area_serialize(area);
+        char *dbstream = database_create_stream(serialized);
+        keyvaluepairarray_free(serialized);
+        database_write_stream(db, dbstream);
+        free(dbstream);
+    }
 
     save_mobiles(db->_cfptr, area);
     save_objects(db->_cfptr, area);

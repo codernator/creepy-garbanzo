@@ -71,18 +71,18 @@ struct area_data *area_new(unsigned long vnum)
         memset(areadata, 0, sizeof(struct area_data));
         /*@-mustfreeonly@*/
         areadata->vnum = vnum;
-        areadata->name = string_copy("New area");
-        areadata->description = string_copy("");
+        areadata->name = strdup("New area");
+        areadata->description = strdup("");
         areadata->area_flags = AREA_ADDED;
         areadata->security = 1;
-        areadata->builders = string_copy("");
-        areadata->credits = string_copy("");
+        areadata->builders = strdup("");
+        areadata->credits = strdup("");
         areadata->empty = true;
         
         {
             char filename[MAX_INPUT_LENGTH];
             (void)snprintf(filename, MAX_INPUT_LENGTH, "area%lu.are", areadata->vnum);
-            areadata->file_name = string_copy(filename);
+            areadata->file_name = strdup(filename);
         }
         /*@+mustfreeonly@*/
     }
@@ -136,11 +136,11 @@ struct area_data *area_deserialize(const KEYVALUEPAIR_ARRAY *data, const char *f
 
     /*@-mustfreeonly@*/
     ASSIGN_ULONG_KEY(data, areadata->vnum, "vnum");
-    areadata->file_name = string_copy(filename);
-    ASSIGN_STRING_KEY(data, areadata->name, "name", "no name");
-    ASSIGN_STRING_KEY(data, areadata->description, "description", "(no description)");
-    ASSIGN_STRING_KEY(data, areadata->credits, "credits", "");
-    ASSIGN_STRING_KEY(data, areadata->builders, "builders", "");
+    areadata->file_name = strdup(filename);
+    ASSIGN_STRING_KEY_DEFAULT(data, areadata->name, "name", "no name");
+    ASSIGN_STRING_KEY_DEFAULT(data, areadata->description, "description", "(no description)");
+    ASSIGN_STRING_KEY_DEFAULT(data, areadata->credits, "credits", "");
+    ASSIGN_STRING_KEY_DEFAULT(data, areadata->builders, "builders", "");
     ASSIGN_ULONG_KEY(data, areadata->min_vnum, "min_vnum");
     ASSIGN_ULONG_KEY(data, areadata->max_vnum, "max_vnum");
     ASSIGN_FLAG_KEY(data, areadata->area_flags, "flags");

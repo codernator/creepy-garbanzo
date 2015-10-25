@@ -77,19 +77,19 @@ struct help_data *helpdata_deserialize(const KEYVALUEPAIR_ARRAY *data)
     helpdata = malloc(sizeof(struct help_data));
     assert(helpdata != NULL);
     
-    ASSIGN_STRING_KEY(data, helpdata->keyword, "keyword", NULL);
+    ASSIGN_STRING_KEY(data, helpdata->keyword, "keyword");
     if (helpdata->keyword == NULL) {
-        helpdata->keyword = string_copy("BORKED");
+        helpdata->keyword = strdup("BORKED");
         log_bug("Missing keyword in helpdata.");
     }
-    ASSIGN_STRING_KEY(data, helpdata->text, "text", NULL);
+    ASSIGN_STRING_KEY(data, helpdata->text, "text");
     if (helpdata->text == NULL) {
-        helpdata->text = string_copy("BORKED");
+        helpdata->text = strdup("BORKED");
         log_bug("Missing text in helpdata.");
     }
 
     /** optional fields */
-    ASSIGN_STRING_KEY(data, helpdata->category, "category", NULL);
+    ASSIGN_STRING_KEY(data, helpdata->category, "category");
     ASSIGN_UINT_KEY(data, helpdata->trust, "trust");
     ASSIGN_UINT_KEY(data, helpdata->level, "level");
 

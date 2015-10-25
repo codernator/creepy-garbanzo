@@ -60,6 +60,119 @@ void database_close(struct database_controller *db)
     free(db);
 }
 
+#define STRPTR_PUTC(dbstream, dbsindex, streamsize, chr) \
+    dbstream[dbsindex] = chr; \
+    dbsindex++; \
+    if (dbsindex == streamsize) { \
+        size_t newsize = streamsize << 2; \
+        char *newstream = grow_buffer(dbstream, streamsize, newsize); \
+        assert(newstream != NULL); \
+        free(dbstream); \
+        dbstream = newstream; \
+        streamsize = newsize; \
+    }
+
+char *database_create_stream(const struct keyvaluepair_array *data)
+{
+    char *dbstream;
+    size_t dbsindex = 0;
+    size_t streamsize = DATABASE_INIT_VALUELEN;
+    size_t i;
+
+    dbstream = calloc(sizeof(char), streamsize);
+    assert(dbstream != NULL);
+
+    /** for each key-value pair... */
+    for (i = 0; i < data->top; i++) {
+        /**
+         * Write the key part of a key-value pair to a file, beginning on a new line,
+         * and terminated by a new line. Preceding spaces in a key will simply be skipped.
+         */
+        {
+            const char *key = data->items[i].key;
+            size_t len;
+
+            // no key = no write.
+            if (key == NULL || key[0] == '\0') continue;
+
+            // can't abide preceding spaces in key.
+            while (isspace(key[0]) && key[0] != '\0') { key++; }
+
+            // blank key = no write.
+            if (key[0] == '\0') continue;
+
+            len = strlen(key);
+            if (dbsindex + len >= streamsize) { 
+                size_t newsize = streamsize << 2; 
+                char *newstream = grow_buffer(dbstream, streamsize, newsize); 
+                assert(newstream != NULL);
+                free(dbstream); 
+                dbstream = newstream; 
+                streamsize = newsize;
+            }
+            memcpy(dbstream + dbsindex, key, len);
+            dbsindex += len;
+            STRPTR_PUTC(dbstream, dbsindex, streamsize, '\n');
+        }
+
+        /**
+         * Write a string value to a file, block-indented by a tab.
+         * Strip \n\r  \n\r  \r  \n from each line and write \n instead.
+         * Preserve line-breaks and line lengths. (Empty lines will be written).
+         * Follow the string with a new line \n, the terminator character, and
+         * another new line \n.
+         */
+        {
+            const char *value = data->items[i].value;
+            const char *p;
+            char c;
+
+            p = value;
+
+            STRPTR_PUTC(dbstream, dbsindex, streamsize, '\t');
+            c = *p;
+            while (c != '\0') {
+                if (c == '\n' || c == '\r') {
+                    char t;
+                    STRPTR_PUTC(dbstream, dbsindex, streamsize, '\n');
+                    STRPTR_PUTC(dbstream, dbsindex, streamsize, '\t');
+                    // skip past second part of \n\r or \r\n but not \r\r or \n\n.
+                    t = *(p + 1);
+                    if ((t == '\n' || t == '\r') && t != c) {
+                        c = *(++p);
+                    }
+                } else {
+                    STRPTR_PUTC(dbstream, dbsindex, streamsize, c);
+                }
+
+                c = *(++p);
+            }
+            STRPTR_PUTC(dbstream, dbsindex, streamsize, '\n');
+        }
+    }
+
+    STRPTR_PUTC(dbstream, dbsindex, streamsize, DATABASE_RECORD_TERMINATOR);
+    STRPTR_PUTC(dbstream, dbsindex, streamsize, '\n');
+    dbstream[dbsindex] = '\0';
+
+    return dbstream;
+}
+
+void database_write_stream(const struct database_controller *db, const char *data)
+{
+    size_t none;
+    size_t len;
+    FILE *fp = db->_cfptr;
+
+    len = strlen(data);
+    none = fwrite(data, sizeof(char), len, fp);
+    if (none < len) {
+        perror("Write failed.");
+    }
+}
+
+char *database_read_stream(const struct database_controller *db);
+const struct keyvaluepair_array *database_parse_stream(const char *dbstream);
 
 /** 
  * write a collection of key-value (string,string) pairs to a file in the format:

@@ -3,9 +3,9 @@
 
 #define SERIALIZE_FLAGS(flags, key, kvpa) \
 { \
-    char *flags = flag_to_string(flags); \
-    keyvaluepairarray_append((kvpa), (key), flags); \
-    free(flags); \
+    char *flagstring = flag_to_string(flags); \
+    keyvaluepairarray_append((kvpa), (key), flagstring); \
+    free(flagstring); \
 }
 
 #define ASSIGN_ULONG_KEY(data, field, name) \
@@ -20,9 +20,13 @@
     entry = keyvaluepairarray_find((data), (name)); \
     (field) = (entry != NULL) ? parse_int(entry) : 0;
 
-#define ASSIGN_STRING_KEY(data, field, name, defaultValue) \
+#define ASSIGN_STRING_KEY(data, field, name) \
     entry = keyvaluepairarray_find((data), (name)); \
-    (field) = (entry != NULL) ? string_copy(entry) : ((defaultValue) == NULL ? NULL : string_copy(defaultValue));
+    (field) = (entry != NULL) ? strdup(entry) : NULL;
+
+#define ASSIGN_STRING_KEY_DEFAULT(data, field, name, defaultValue) \
+    entry = keyvaluepairarray_find((data), (name)); \
+    (field) = (entry != NULL) ? strdup(entry) : strdup(defaultValue);
 
 #define ASSIGN_FLAG_KEY(data, field, name) \
     entry = keyvaluepairarray_find((data), (name)); \

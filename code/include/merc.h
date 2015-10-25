@@ -2208,7 +2208,7 @@ void descriptor_free(/*@owned@*/struct descriptor_data * d);
 int descriptor_list_count();
 /*@dependent@*//*@null@*/struct descriptor_data *descriptor_iterator_start(const DESCRIPTOR_ITERATOR_FILTER *filter);
 /*@dependent@*//*@null@*/struct descriptor_data *descriptor_iterator(struct descriptor_data *current, const DESCRIPTOR_ITERATOR_FILTER *filter);
-void descriptor_host_set(struct descriptor_data *d, const char *value);
+void descriptor_host_set(struct descriptor_data *d, /*@observer@*/const char *value);
 /* ~descriptor.c */
 
 
@@ -2251,7 +2251,7 @@ void printf_buf(struct buf_type * buffer, char *fmt, ...);
 /*@observer@*//*@null@*/struct area_data *area_getbycontainingvnum(unsigned long vnum);
 /*@dependent@*//*@null@*/struct area_data *area_new(unsigned long vnum);
 /*@only@*/KEYVALUEPAIR_ARRAY *area_serialize(const struct area_data *areadata);
-/*@dependent@*/struct area_data *area_deserialize(const KEYVALUEPAIR_ARRAY *data, const char *filename);
+/*@dependent@*/struct area_data *area_deserialize(/*@observer@*/const KEYVALUEPAIR_ARRAY *data, /*@observer@*/const char *filename);
 void area_free(/*@owned@*/struct area_data *areadata);
 /* ~area.c */
 

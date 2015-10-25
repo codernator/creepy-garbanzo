@@ -58,7 +58,7 @@ void descriptor_host_set(struct descriptor_data *d, const char *value)
 {
     if (d->host != NULL)
         free(d->host);
-    d->host = string_copy(value);
+    d->host = strdup(value);
 }
 
 /** free a descriptor */

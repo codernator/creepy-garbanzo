@@ -6,6 +6,7 @@
 #define _Exit exit
 typedef int pid_t;
 long long atoll(const char *nptr);
+/*@only@*/char *strdup(/*@observer@*/const char *s);
 #endif
 
 // TODO - sysinternals should not have such specific data.
@@ -112,7 +113,6 @@ void i_bubble_sort(int *iarray, int array_size);
 /*@only@*/char *grow_buffer(/*@observer@*/const char *existing, size_t old_size, size_t new_size);
 
 void string_lower(const char *source, /*@out@*/char *target, size_t maxLength);
-/*@only@*/char *string_copy(const char *source);
 void smash_tilde(char *str);
 bool str_cmp(const char *astr, const char *bstr);
 bool str_prefix(const char *astr, const char *bstr);
@@ -151,7 +151,10 @@ struct database_controller {
     /*@shared@*/FILE *_cfptr;
 };
 
-void database_write(/*@observer@*/const struct database_controller *db, /*@observer@*/const struct keyvaluepair_array *data);
+/*@only@*/char *database_create_stream(/*@observer@*/const struct keyvaluepair_array *data);
+void database_write_stream(/*@observer@*/const struct database_controller *db, /*@observer@*/const char *data);
+/*@only@*/char *database_read_stream(/*@observer@*/const struct database_controller *db);
+/*@only@*/const struct keyvaluepair_array *database_parse_stream(/*@observer@*/const char *dbstream);
 /*@only@*//*@notnull@*/struct keyvaluepair_array *database_read(/*@observer@*/const struct database_controller *db);
 /*@only@*//*@null@*/struct database_controller *database_open(const char *const file_path);
 void database_close(/*@only@*/struct database_controller *db);
