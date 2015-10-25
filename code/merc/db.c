@@ -195,7 +195,7 @@ static void init_areas()
         (void)snprintf(area_file_path, MAX_INPUT_LENGTH, "%s%s", AREA_FOLDER, word);
         (void)snprintf(area_file_name, MAX_INPUT_LENGTH, "%s", word);
 
-        db = database_open(area_file_path);
+        db = database_open(area_file_path, true);
         if (db == NULL) {
             perror(area_file_path);
             log_bug("Unable to open area file (%s)", area_file_path);
@@ -345,9 +345,12 @@ void boot_db()
 struct area_data *load_area(const struct database_controller *db, const char *filename)
 {
     KEYVALUEPAIR_ARRAY *data;
+    char *dbstream;
     struct area_data *area;
 
-    data = database_read(db);
+    dbstream = database_read_stream(db);
+    data = database_parse_stream(dbstream);
+    free(dbstream);
     area = area_deserialize(data, filename);
     keyvaluepairarray_free(data);
 
@@ -377,7 +380,7 @@ void load_helps(const char const *filepath)
     KEYVALUEPAIR_ARRAY *data;
     struct database_controller *db;
 
-    db = database_open(filepath);
+    db = database_open(filepath, true);
 
     if (db == NULL) {
         log_bug("Unable to open database at %s.", filepath);
@@ -387,7 +390,11 @@ void load_helps(const char const *filepath)
 
     while (true) {
         struct help_data *snarfed;
-        data = database_read(db);
+        char *dbstream;
+
+        dbstream = database_read_stream(db);
+        data = database_parse_stream(dbstream);
+        free (dbstream);
         if (!keyvaluepairarray_any(data)) {
             keyvaluepairarray_free(data);
             break;

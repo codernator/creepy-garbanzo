@@ -782,7 +782,7 @@ void save_helps(const char const *filename)
     struct database_controller *db;
     struct help_data *current;
 
-    db = database_open(filename);
+    db = database_open(filename, false);
     if (db == NULL) {
         log_bug("Unable to open help file %s", filename);
         perror(filename);
@@ -804,12 +804,11 @@ void save_helps(const char const *filename)
 
 void save_area(struct area_data *area)
 {
-    FILE *fp;
     char haf[MAX_INPUT_LENGTH];
     struct database_controller *db;
 
     snprintf(haf, MAX_INPUT_LENGTH, "%s%s", AREA_FOLDER, area->file_name);
-    db = database_open(haf);
+    db = database_open(haf, false);
 
     if (db == NULL) {
         log_bug("Open_area: fopen");
@@ -833,7 +832,7 @@ void save_area(struct area_data *area)
     save_resets(db->_cfptr, area);
     save_shops(db->_cfptr, area);
 
-    fprintf(fp, "#$\n");
+    fprintf(db->_cfptr, "#$\n");
 
     database_close(db);
 }
