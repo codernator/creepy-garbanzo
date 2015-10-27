@@ -12,7 +12,7 @@ static void test_database_read(void);
 static void test_flags(void);
 static void test_database_create_stream(void);
 
-static void dump_kvp(const struct keyvaluepair_array *subject);
+static void dump_kvp(const struct array_list *subject);
 
 int main(/*@unused@*/int argc, /*@unused@*/char **argv)
 {
@@ -29,7 +29,7 @@ int main(/*@unused@*/int argc, /*@unused@*/char **argv)
 
 void test_database_create_stream()
 {
-    struct keyvaluepair_array *subject;
+    struct array_list *subject;
     char *dbstream;
 
     printf("%s\n", "test_database_create_stream");
@@ -55,7 +55,7 @@ void test_database_create_stream()
 
 void test_database_write()
 {
-    struct keyvaluepair_array *subject;
+    struct array_list *subject;
     struct database_controller *db;
     char *dbstream;
 
@@ -77,7 +77,7 @@ void test_database_write()
 
 void test_database_read()
 {
-    struct keyvaluepair_array *subject;
+    struct array_list *subject;
     struct database_controller *db;
     char *dbstream;
 
@@ -148,8 +148,9 @@ void test_database_read()
         subject = database_parse_stream(dbstream);
         free(dbstream);
         database_close(db);
-        key= subject->items[0].key;
-        val= subject->items[0].value;
+        printf("%s\n", "First item?");
+        key = ((struct keyvaluepair *)subject->items)[0].key;
+        val = ((struct keyvaluepair *)subject->items)[0].value;
         printf("%d (%c %c), %d (%c %c)", (int)strlen(key), key[0], key[198], (int)strlen(val), val[0], val[2998]);
         keyvaluepairarray_free(subject);
     }
@@ -197,7 +198,7 @@ void test_database_read()
 
 void test_keyvaluepairarray()
 {
-    struct keyvaluepair_array *subject;
+    struct array_list *subject;
 
     printf("%s\n", "KVP array test - assert no error.");
     subject = keyvaluepairarray_create(2);
@@ -210,8 +211,8 @@ void test_keyvaluepairarray()
 #define NUMELEMENTS 537
 void test_keyvaluepairhash()
 {
-    KEYVALUEPAIR_HASH *subject;
-    struct keyvaluepair_array *testdata;
+    struct keyvaluepairhash *subject;
+    struct array_list *testdata;
     const char *answer;
     char keybuf[20];
     int idx;
@@ -245,7 +246,7 @@ void test_keyvaluepairhash()
     {
         size_t max = 0;
         for (idx = 0; idx < subject->numhashbuckets; idx++) {
-            KEYVALUEPAIR_HASHNODE *node = &subject->lookup[idx];
+            struct keyvaluepairhashnode *node = &subject->lookup[idx];
             if (node->top > 0) {
                 if (node->top > max) max = node->top;
                 printf("%d, %d, %d\n", idx, (int)node->size, (int)node->top);
@@ -259,12 +260,12 @@ void test_keyvaluepairhash()
     printf("%s\n", "complete");
 }
 
-void dump_kvp(const struct keyvaluepair_array *data)
+void dump_kvp(const struct array_list *data)
 {
     size_t i;
     for (i = 0; i < data->top; i++) {
-        printf("%s\n", data->items[i].key);
-        printf("%s\n", data->items[i].value);
+        printf("%s\n", ((struct keyvaluepair *)data->items)[i].key);
+        printf("%s\n", ((struct keyvaluepair *)data->items)[i].value);
     }
 }
 

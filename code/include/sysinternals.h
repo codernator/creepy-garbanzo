@@ -26,12 +26,55 @@ long long atoll(const char *nptr);
 #define UMAX(a, b)               ((a) > (b) ? (a) : (b))
 #define URANGE(a, b, c)          ((b) < (a) ? (a) : ((b) > (c) ? (c) : (b)))
 #define UCEILING(a, b)           ((a)/(b) + (((a)%(b)) != 0 ? 1 : 0))
-#define CALC_HASH_BUCKET(key, numhashbuckets) ((HASHBUCKETTYPE)(calchashvalue((key)) % (HASHVALUETYPE)(numhashbuckets)))
 
+
+struct array_list
+{
+    size_t size;
+    size_t top;
+    /*@only@*/void *items;
+};
+
+#define array_list_create(array, node_type, num_elements) \
+    array = malloc(sizeof(struct array_list)); \
+    assert(array != NULL); \
+    array->size = num_elements; \
+    array->top = 0; \
+    array->items = calloc(sizeof(node_type), num_elements); \
+    assert(array->items != NULL); \
+
+#define array_list_grow(array, node_type, new_size) \
+    if (new_size > array->size) { \
+        node_type *new_items; \
+        new_items = calloc(sizeof(node_type), new_size); \
+        assert(new_items != NULL); \
+        memcpy(new_items, array->items, sizeof(node_type)*new_size); \
+        array->size = new_size; \
+        free(array->items); \
+        array->items = new_items; \
+    }
+
+#define array_list_any(array) ((array)->top > 0)
+
+#define array_list_for_each(node_type, i, pos, array) \
+    for (i = 0, pos = &((node_type *)array->items)[i]; i < array->top; i++)
+
+#define array_list_free(array, node_type, free_node) \
+    if (array != NULL) { \
+        node_type *node; \
+        size_t i; \
+        for (i = 0; i < array->top; i++) { \
+            node = &((node_type *)array->items)[i]; \
+            free_node(node); \
+        } \
+        free(array->items); \
+        free(array); \
+    }
 
 typedef unsigned long long HASHVALUETYPE;
 typedef unsigned int HASHBUCKETTYPE;
 typedef unsigned char byte;
+
 
 
 struct keyvaluepair
@@ -40,12 +83,6 @@ struct keyvaluepair
     /*@owned@*/const char *value;
 };
 
-struct keyvaluepair_array
-{
-    size_t size;
-    size_t top;
-    /*@only@*/struct keyvaluepair *items;
-};
 
 typedef /*@observer@*/struct keyvaluepair *keyvaluepair_P;
 struct keyvaluepairhashnode
@@ -68,15 +105,15 @@ HASHVALUETYPE calchashvalue(const char *key);
 
 
 /** keyvaluepair.c */
-/*@only@*/struct keyvaluepair_array *keyvaluepairarray_create(size_t numelements);
-void keyvaluepairarray_append(struct keyvaluepair_array *array, const char *key, const char *value);
-void keyvaluepairarray_appendf(struct keyvaluepair_array *array, size_t maxlength, const char *key, const char *valueformat, ...);
-void keyvaluepairarray_grow(struct keyvaluepair_array *array, size_t newSize);
-/*@observer@*//*@null@*/const char *keyvaluepairarray_find(const struct keyvaluepair_array *array, const char *key);
-void keyvaluepairarray_free(/*@only@*//*@null@*/struct keyvaluepair_array *array);
-bool keyvaluepairarray_any(/*@observer@*/const struct keyvaluepair_array *array);
+/*@only@*/struct array_list *keyvaluepairarray_create(size_t numelements);
+void keyvaluepairarray_append(struct array_list *array, const char *key, const char *value);
+void keyvaluepairarray_appendf(struct array_list *array, size_t maxlength, const char *key, const char *valueformat, ...);
+void keyvaluepairarray_grow(struct array_list *array, size_t newSize);
+/*@observer@*//*@null@*/const char *keyvaluepairarray_find(const struct array_list *array, const char *key);
+void keyvaluepairarray_free(/*@only@*//*@null@*/struct array_list *array);
+bool keyvaluepairarray_any(/*@observer@*/const struct array_list *array);
 
-/*@only@*/struct keyvaluepairhash *keyvaluepairhash_create(/*@observer@*/struct keyvaluepair_array *array, size_t numelements, size_t numbuckets);
+/*@only@*/struct keyvaluepairhash *keyvaluepairhash_create(/*@observer@*/struct array_list *array, size_t numelements, size_t numbuckets);
 /*@observer@*//*@null@*/const char *keyvaluepairhash_get(struct keyvaluepairhash *hash, const char * const key);
 void keyvaluepairhash_free(/*@only@*//*@null@*/struct keyvaluepairhash *hash);
 /** ~keyvaluepair.c */
@@ -147,8 +184,8 @@ struct database_controller {
     /*@shared@*/FILE *_cfptr;
 };
 
-/*@only@*/struct keyvaluepair_array *database_parse_stream(/*@observer@*/const char *dbstream);
-/*@only@*/char *database_create_stream(/*@observer@*/const struct keyvaluepair_array *data);
+/*@only@*/struct array_list *database_parse_stream(/*@observer@*/const char *dbstream);
+/*@only@*/char *database_create_stream(/*@observer@*/const struct array_list *data);
 /*@only@*//*@null@*/struct database_controller *database_open(const char *const file_path, bool forreading);
 /*@only@*/char *database_read_stream(/*@observer@*/const struct database_controller *db);
 void database_write_stream(/*@observer@*/const struct database_controller *db, /*@observer@*/const char *data);

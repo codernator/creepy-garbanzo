@@ -109,7 +109,7 @@ void database_close(struct database_controller *db)
  *   non-whitespace character.
  * - White-space in values will be preserved.
  */
-char *database_create_stream(const struct keyvaluepair_array *data)
+char *database_create_stream(const struct array_list *data)
 {
     char *dbstream;
     size_t dbsindex = 0;
@@ -126,7 +126,7 @@ char *database_create_stream(const struct keyvaluepair_array *data)
          * and terminated by a new line. Preceding spaces in a key will simply be skipped.
          */
         {
-            const char *key = data->items[i].key;
+            const char *key = ((struct keyvaluepair *)data->items)[i].key;
             size_t len;
 
             // no key = no write.
@@ -155,7 +155,7 @@ char *database_create_stream(const struct keyvaluepair_array *data)
          * another new line \n.
          */
         {
-            const char *value = data->items[i].value;
+            const char *value = ((struct keyvaluepair *)data->items)[i].value;
             const char *p;
             char c;
 
@@ -241,7 +241,7 @@ char *database_read_stream(const struct database_controller *db)
 }
 
 
-struct keyvaluepair_array *database_parse_stream(const char *dbstream)
+struct array_list *database_parse_stream(const char *dbstream)
 {
     const char EOL = '\n';
     const char TAB = '\t';
@@ -250,7 +250,7 @@ struct keyvaluepair_array *database_parse_stream(const char *dbstream)
     size_t numkeys = DATABASE_INIT_KEYCOUNT;
     size_t keylen = DATABASE_INIT_KEYLEN;
     size_t valuelen = DATABASE_INIT_VALUELEN;
-    struct keyvaluepair_array *data;
+    struct array_list *data;
     char *keybuf;
     char *valuebuf;
     size_t dbsindex;
