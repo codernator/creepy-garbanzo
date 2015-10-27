@@ -92,9 +92,9 @@ struct area_data *area_new(unsigned long vnum)
     return areadata;
 }
 
-KEYVALUEPAIR_ARRAY *area_serialize(const struct area_data *areadata)
+struct keyvaluepair_array *area_serialize(const struct area_data *areadata)
 {
-    KEYVALUEPAIR_ARRAY *answer;
+    struct keyvaluepair_array *answer;
 
     answer = keyvaluepairarray_create(20);
 
@@ -125,7 +125,7 @@ KEYVALUEPAIR_ARRAY *area_serialize(const struct area_data *areadata)
 
 
 
-struct area_data *area_deserialize(const KEYVALUEPAIR_ARRAY *data, const char *filename)
+struct area_data *area_deserialize(const struct keyvaluepair_array *data, const char *filename)
 {
     struct area_data *areadata;
     const char *entry;

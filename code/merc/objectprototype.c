@@ -86,7 +86,7 @@ struct objectprototype *objectprototype_new(unsigned long vnum)
     return prototypedata;
 }
 
-struct objectprototype *objectprototype_deserialize(const KEYVALUEPAIR_ARRAY *data)
+struct objectprototype *objectprototype_deserialize(const struct keyvaluepair_array *data)
 {
     struct objectprototype *prototypedata;
     const char *entry;
@@ -122,9 +122,9 @@ struct objectprototype *objectprototype_deserialize(const KEYVALUEPAIR_ARRAY *da
     return prototypedata;
 }
 
-KEYVALUEPAIR_ARRAY *objectprototype_serialize(const struct objectprototype *obj)
+struct keyvaluepair_array *objectprototype_serialize(const struct objectprototype *obj)
 {
-    KEYVALUEPAIR_ARRAY *answer;
+    struct keyvaluepair_array *answer;
     size_t keys = 25;
 
     keys += count_extras(obj);

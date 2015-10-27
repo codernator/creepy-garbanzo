@@ -18,8 +18,8 @@ bool is_help(/*@observer@*/const char *argument);
 int count_helps();
 /*@dependent@*/struct help_data *helpdata_new();
 void helpdata_free(/*@owned@*/struct help_data *helpdata);
-KEYVALUEPAIR_ARRAY *helpdata_serialize(const struct help_data *helpdata);
-/*@dependent@*/struct help_data *helpdata_deserialize(const KEYVALUEPAIR_ARRAY *data);
+struct keyvaluepair_array *helpdata_serialize(const struct help_data *helpdata);
+/*@dependent@*/struct help_data *helpdata_deserialize(const struct keyvaluepair_array *data);
 /*@observer@*//*@null@*/struct help_data *help_lookup(const char *keyword);
 
 /*@dependent@*//*@null@*/struct help_data *helpdata_iteratorstart();

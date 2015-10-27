@@ -344,7 +344,7 @@ void boot_db()
 
 struct area_data *load_area(const struct database_controller *db, const char *filename)
 {
-    KEYVALUEPAIR_ARRAY *data;
+    struct keyvaluepair_array *data;
     char *dbstream;
     struct area_data *area;
 
@@ -377,7 +377,7 @@ void assign_area_vnum(long vnum)
 
 void load_helps(const char const *filepath)
 {
-    KEYVALUEPAIR_ARRAY *data;
+    struct keyvaluepair_array *data;
     struct database_controller *db;
 
     db = database_open(filepath, true);

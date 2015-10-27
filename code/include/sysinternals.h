@@ -33,11 +33,6 @@ typedef unsigned long long HASHVALUETYPE;
 typedef unsigned int HASHBUCKETTYPE;
 typedef unsigned char byte;
 
-typedef struct keyvaluepair KEYVALUEPAIR;
-typedef struct keyvaluepair_array KEYVALUEPAIR_ARRAY;
-typedef struct keyvaluepairhashnode KEYVALUEPAIR_HASHNODE;
-typedef struct keyvaluepairhash KEYVALUEPAIR_HASH;
-typedef struct keyvaluepairhashitem KEYVALUEPAIR_HASHITEM;
 
 struct keyvaluepair
 {
@@ -49,21 +44,21 @@ struct keyvaluepair_array
 {
     size_t size;
     size_t top;
-    /*@only@*/KEYVALUEPAIR *items;
+    /*@only@*/struct keyvaluepair *items;
 };
 
-typedef /*@observer@*/struct keyvaluepair *KEYVALUEPAIR_P;
+typedef /*@observer@*/struct keyvaluepair *keyvaluepair_P;
 struct keyvaluepairhashnode
 {
     size_t size;
     size_t top;
-    /*@dependent@*/KEYVALUEPAIR_P *items;
+    /*@dependent@*/keyvaluepair_P *items;
 };
 
 struct keyvaluepairhash {
     int numhashbuckets;
-    /*@only@*/KEYVALUEPAIR_HASHNODE *lookup;
-    /*@owned@*/KEYVALUEPAIR_P *masterlist;
+    /*@only@*/struct keyvaluepairhashnode *lookup;
+    /*@owned@*/keyvaluepair_P *masterlist;
 };
 
 
@@ -73,16 +68,17 @@ HASHVALUETYPE calchashvalue(const char *key);
 
 
 /** keyvaluepair.c */
-/*@only@*/KEYVALUEPAIR_ARRAY *keyvaluepairarray_create(size_t numelements);
-void keyvaluepairarray_append(KEYVALUEPAIR_ARRAY *array, const char *key, const char *value);
-void keyvaluepairarray_appendf(KEYVALUEPAIR_ARRAY *array, size_t maxlength, const char *key, const char *valueformat, ...);
-void keyvaluepairarray_grow(KEYVALUEPAIR_ARRAY *array, size_t newSize);
-/*@observer@*//*@null@*/const char *keyvaluepairarray_find(const KEYVALUEPAIR_ARRAY *array, const char *key);
-void keyvaluepairarray_free(/*@only@*//*@null@*/KEYVALUEPAIR_ARRAY *array);
-bool keyvaluepairarray_any(/*@observer@*/const KEYVALUEPAIR_ARRAY *array);
-/*@only@*/KEYVALUEPAIR_HASH *keyvaluepairhash_create(/*@observer@*/KEYVALUEPAIR_ARRAY *array, size_t numelements, size_t numbuckets);
-/*@observer@*//*@null@*/const char *keyvaluepairhash_get(KEYVALUEPAIR_HASH *hash, const char * const key);
-void keyvaluepairhash_free(/*@only@*//*@null@*/KEYVALUEPAIR_HASH *hash);
+/*@only@*/struct keyvaluepair_array *keyvaluepairarray_create(size_t numelements);
+void keyvaluepairarray_append(struct keyvaluepair_array *array, const char *key, const char *value);
+void keyvaluepairarray_appendf(struct keyvaluepair_array *array, size_t maxlength, const char *key, const char *valueformat, ...);
+void keyvaluepairarray_grow(struct keyvaluepair_array *array, size_t newSize);
+/*@observer@*//*@null@*/const char *keyvaluepairarray_find(const struct keyvaluepair_array *array, const char *key);
+void keyvaluepairarray_free(/*@only@*//*@null@*/struct keyvaluepair_array *array);
+bool keyvaluepairarray_any(/*@observer@*/const struct keyvaluepair_array *array);
+
+/*@only@*/struct keyvaluepairhash *keyvaluepairhash_create(/*@observer@*/struct keyvaluepair_array *array, size_t numelements, size_t numbuckets);
+/*@observer@*//*@null@*/const char *keyvaluepairhash_get(struct keyvaluepairhash *hash, const char * const key);
+void keyvaluepairhash_free(/*@only@*//*@null@*/struct keyvaluepairhash *hash);
 /** ~keyvaluepair.c */
 
 

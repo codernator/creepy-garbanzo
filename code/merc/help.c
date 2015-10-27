@@ -48,9 +48,9 @@ struct help_data *helpdata_new()
     return helpdata;
 }
 
-KEYVALUEPAIR_ARRAY *helpdata_serialize(const struct help_data *helpdata)
+struct keyvaluepair_array *helpdata_serialize(const struct help_data *helpdata)
 {
-    KEYVALUEPAIR_ARRAY *answer;
+    struct keyvaluepair_array *answer;
 
     answer = keyvaluepairarray_create(5);
 
@@ -69,7 +69,7 @@ KEYVALUEPAIR_ARRAY *helpdata_serialize(const struct help_data *helpdata)
     return answer;
 }
 
-struct help_data *helpdata_deserialize(const KEYVALUEPAIR_ARRAY *data)
+struct help_data *helpdata_deserialize(const struct keyvaluepair_array *data)
 {
     struct help_data *helpdata;
     const char *entry;

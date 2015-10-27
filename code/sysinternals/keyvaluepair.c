@@ -12,32 +12,32 @@
 
 
 
-KEYVALUEPAIR_ARRAY *keyvaluepairarray_create(size_t numelements)
+struct keyvaluepair_array *keyvaluepairarray_create(size_t numelements)
 {
-    KEYVALUEPAIR_ARRAY *head = malloc(sizeof(KEYVALUEPAIR_ARRAY));
+    struct keyvaluepair_array *head = malloc(sizeof(struct keyvaluepair_array));
     assert(head != NULL);
 
     head->size = numelements;
     head->top = 0;
-    head->items = calloc(sizeof(KEYVALUEPAIR), numelements);
+    head->items = calloc(sizeof(struct keyvaluepair), numelements);
     assert(head->items != NULL);
     return head;
 }
 
-void keyvaluepairarray_grow(KEYVALUEPAIR_ARRAY *array, size_t newSize)
+void keyvaluepairarray_grow(struct keyvaluepair_array *array, size_t newSize)
 {
-    KEYVALUEPAIR *newitems;
+    struct keyvaluepair *newitems;
 
     assert(newSize > array->size);
-    newitems = calloc(sizeof(KEYVALUEPAIR), newSize);
+    newitems = calloc(sizeof(struct keyvaluepair), newSize);
     assert(newitems != NULL);
-    memcpy(newitems, array->items, sizeof(KEYVALUEPAIR)*array->size);
+    memcpy(newitems, array->items, sizeof(struct keyvaluepair)*array->size);
     array->size = newSize;
     free(array->items);
     array->items = newitems;
 }
 
-void keyvaluepairarray_append(KEYVALUEPAIR_ARRAY *array, const char *key, const char *value)
+void keyvaluepairarray_append(struct keyvaluepair_array *array, const char *key, const char *value)
 {
     size_t keylength = strlen(key);
     size_t vallength = strlen(value);
@@ -65,7 +65,7 @@ void keyvaluepairarray_append(KEYVALUEPAIR_ARRAY *array, const char *key, const 
     array->top += 1;
 }
 
-void keyvaluepairarray_appendf(KEYVALUEPAIR_ARRAY *array, size_t maxlength, const char *key, const char *valueformat, ...)
+void keyvaluepairarray_appendf(struct keyvaluepair_array *array, size_t maxlength, const char *key, const char *valueformat, ...)
 {
     char buf[maxlength];
     va_list args;
@@ -77,25 +77,25 @@ void keyvaluepairarray_appendf(KEYVALUEPAIR_ARRAY *array, size_t maxlength, cons
     keyvaluepairarray_append(array, key, buf);
 }
 
-const char *keyvaluepairarray_find(const KEYVALUEPAIR_ARRAY *array, const char *key)
+const char *keyvaluepairarray_find(const struct keyvaluepair_array *array, const char *key)
 {
     size_t idx;
     size_t keylen = strlen(key);
 
     for(idx = 0; idx < array->top; idx++) {
 	if (strncmp(key, array->items[idx].key, keylen+1) == 0)
-	    return array->items[idx].value;
+	    return ((struct keyvaluepair *)array->items)[idx].value;
     }
 
     return NULL;
 }
 
-inline bool keyvaluepairarray_any(/*@observer@*/const KEYVALUEPAIR_ARRAY *array)
+inline bool keyvaluepairarray_any(/*@observer@*/const struct keyvaluepair_array *array)
 {
     return array->top > 0;
 }
 
-void keyvaluepairarray_free(KEYVALUEPAIR_ARRAY *array)
+void keyvaluepairarray_free(struct keyvaluepair_array *array)
 {
     size_t i;
 
@@ -114,22 +114,22 @@ void keyvaluepairarray_free(KEYVALUEPAIR_ARRAY *array)
 
 
 #define DEFAULT_NUMHASHBUCKETS 53
-KEYVALUEPAIR_HASH *keyvaluepairhash_create(KEYVALUEPAIR_ARRAY *array, size_t numelements, size_t numbuckets)
+struct keyvaluepairhash *keyvaluepairhash_create(struct keyvaluepair_array *array, size_t numelements, size_t numbuckets)
 {
     int idx;
-    KEYVALUEPAIR_HASH *hash;
+    struct keyvaluepairhash *hash;
     size_t bucketsize = (size_t)UCEILING((unsigned int)numelements, (unsigned int)numbuckets) + UCEILING((unsigned int)numelements, 10);
 
-    hash = malloc(sizeof(KEYVALUEPAIR_HASH));
+    hash = malloc(sizeof(struct keyvaluepairhash));
     assert(hash != NULL);
     hash->numhashbuckets = (numbuckets == 0 ? DEFAULT_NUMHASHBUCKETS : numbuckets);
-    hash->lookup = calloc(sizeof(KEYVALUEPAIR_HASHNODE), (size_t)hash->numhashbuckets);
+    hash->lookup = calloc(sizeof(struct keyvaluepairhashnode), (size_t)hash->numhashbuckets);
     assert(hash->lookup != NULL);
-    hash->masterlist = calloc(sizeof(KEYVALUEPAIR_P), bucketsize * hash->numhashbuckets);
+    hash->masterlist = calloc(sizeof(keyvaluepair_P), bucketsize * hash->numhashbuckets);
     assert(hash->masterlist != NULL);
 
     for (idx = 0; idx < hash->numhashbuckets; idx++) {
-	KEYVALUEPAIR_HASHNODE *hashnode = &hash->lookup[idx];
+	struct keyvaluepairhashnode *hashnode = &hash->lookup[idx];
 	// perfect world means numelements/numbuckets per bucket, but allow for margin of error.
 	hashnode->size = bucketsize;
 	hashnode->top = 0;
@@ -139,7 +139,7 @@ KEYVALUEPAIR_HASH *keyvaluepairhash_create(KEYVALUEPAIR_ARRAY *array, size_t num
 
     for(idx = 0; idx < (int)numelements; idx++) {
 	HASHBUCKETTYPE hashbucket = CALC_HASH_BUCKET(array->items[idx].key, hash->numhashbuckets);
-	KEYVALUEPAIR_HASHNODE *hashnode = &hash->lookup[hashbucket];
+	struct keyvaluepairhashnode *hashnode = &hash->lookup[hashbucket];
 	if (hashnode->top == hashnode->size)
 	{
 	    if (raise(SIGABRT) != 0) {
@@ -154,11 +154,11 @@ KEYVALUEPAIR_HASH *keyvaluepairhash_create(KEYVALUEPAIR_ARRAY *array, size_t num
     return hash;
 }
 
-const char *keyvaluepairhash_get(KEYVALUEPAIR_HASH *hash, const char * const key)
+const char *keyvaluepairhash_get(struct keyvaluepairhash *hash, const char * const key)
 {
     HASHBUCKETTYPE hashbucket = CALC_HASH_BUCKET(key, hash->numhashbuckets);
     size_t keylen = strlen(key);
-    KEYVALUEPAIR_HASHNODE *hashnode = &hash->lookup[hashbucket];
+    struct keyvaluepairhashnode *hashnode = &hash->lookup[hashbucket];
     size_t idx;
 
     for (idx = 0; idx < hashnode->top; idx++) {
@@ -170,7 +170,7 @@ const char *keyvaluepairhash_get(KEYVALUEPAIR_HASH *hash, const char * const key
     return NULL;
 }
 
-void keyvaluepairhash_free(KEYVALUEPAIR_HASH *hash)
+void keyvaluepairhash_free(struct keyvaluepairhash *hash)
 {
     if (hash == NULL) return;
 

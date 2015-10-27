@@ -12,7 +12,7 @@ static void test_database_read(void);
 static void test_flags(void);
 static void test_database_create_stream(void);
 
-static void dump_kvp(const KEYVALUEPAIR_ARRAY *subject);
+static void dump_kvp(const struct keyvaluepair_array *subject);
 
 int main(/*@unused@*/int argc, /*@unused@*/char **argv)
 {
@@ -29,7 +29,7 @@ int main(/*@unused@*/int argc, /*@unused@*/char **argv)
 
 void test_database_create_stream()
 {
-    KEYVALUEPAIR_ARRAY *subject;
+    struct keyvaluepair_array *subject;
     char *dbstream;
 
     printf("%s\n", "test_database_create_stream");
@@ -55,7 +55,7 @@ void test_database_create_stream()
 
 void test_database_write()
 {
-    KEYVALUEPAIR_ARRAY *subject;
+    struct keyvaluepair_array *subject;
     struct database_controller *db;
     char *dbstream;
 
@@ -77,7 +77,7 @@ void test_database_write()
 
 void test_database_read()
 {
-    KEYVALUEPAIR_ARRAY *subject;
+    struct keyvaluepair_array *subject;
     struct database_controller *db;
     char *dbstream;
 
@@ -197,7 +197,7 @@ void test_database_read()
 
 void test_keyvaluepairarray()
 {
-    KEYVALUEPAIR_ARRAY *subject;
+    struct keyvaluepair_array *subject;
 
     printf("%s\n", "KVP array test - assert no error.");
     subject = keyvaluepairarray_create(2);
@@ -211,7 +211,7 @@ void test_keyvaluepairarray()
 void test_keyvaluepairhash()
 {
     KEYVALUEPAIR_HASH *subject;
-    KEYVALUEPAIR_ARRAY *testdata;
+    struct keyvaluepair_array *testdata;
     const char *answer;
     char keybuf[20];
     int idx;
@@ -259,7 +259,7 @@ void test_keyvaluepairhash()
     printf("%s\n", "complete");
 }
 
-void dump_kvp(const KEYVALUEPAIR_ARRAY *data)
+void dump_kvp(const struct keyvaluepair_array *data)
 {
     size_t i;
     for (i = 0; i < data->top; i++) {
