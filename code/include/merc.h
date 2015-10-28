@@ -2225,8 +2225,8 @@ int objectprototype_list_count();
 /*@dependent@*//*@null@*/struct objectprototype *objectprototype_iterator_start(const OBJECTPROTOTYPE_FILTER *filter);
 /*@dependent@*//*@null@*/struct objectprototype *objectprototype_iterator(struct objectprototype *current, const OBJECTPROTOTYPE_FILTER *filter);
 /*@dependent@*//*@null@*/struct objectprototype *objectprototype_getbyvnum(unsigned long vnum);
-/*@only@*/struct keyvaluepair_array *objectprototype_serialize(const struct objectprototype *obj);
-/*@dependent@*/struct objectprototype *objectprototype_deserialize(const struct keyvaluepair_array *data);
+/*@only@*/struct array_list *objectprototype_serialize(const struct objectprototype *obj);
+/*@dependent@*/struct objectprototype *objectprototype_deserialize(const struct array_list *data);
 /* ~objectprototype.c */
 
 /* recycle.c */
@@ -2250,8 +2250,8 @@ void printf_buf(struct buf_type * buffer, char *fmt, ...);
 /*@observer@*//*@null@*/struct area_data *area_getbyvnum(unsigned long vnum);
 /*@observer@*//*@null@*/struct area_data *area_getbycontainingvnum(unsigned long vnum);
 /*@dependent@*//*@null@*/struct area_data *area_new(unsigned long vnum);
-/*@only@*/struct keyvaluepair_array *area_serialize(const struct area_data *areadata);
-/*@dependent@*/struct area_data *area_deserialize(/*@observer@*/const struct keyvaluepair_array *data, /*@observer@*/const char *filename);
+/*@only@*/struct array_list *area_serialize(const struct area_data *areadata);
+/*@dependent@*/struct area_data *area_deserialize(/*@observer@*/const struct array_list *data, /*@observer@*/const char *filename);
 void area_free(/*@owned@*/struct area_data *areadata);
 /* ~area.c */
 

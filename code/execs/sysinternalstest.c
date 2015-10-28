@@ -33,22 +33,22 @@ void test_database_create_stream()
     char *dbstream;
 
     printf("%s\n", "test_database_create_stream");
-    subject = keyvaluepairarray_create(3);
-    keyvaluepairarray_append(subject, "verb", "hello");
-    keyvaluepairarray_appendf(subject, 20, "noun", "%s\n%s?\n", "world", "how goes");
-    keyvaluepairarray_appendf(subject, 10, "number", "%d", 123);
+    subject = kvp_create_array(3);
+    kvp_array_append_copy(subject, "verb", "hello");
+    kvp_array_append_copyf(subject, 20, "noun", "%s\n%s?\n", "world", "how goes");
+    kvp_array_append_copyf(subject, 10, "number", "%d", 123);
 
     dbstream = database_create_stream(subject);
-    keyvaluepairarray_free(subject);
+    kvp_free_array(subject);
 
-    subject = keyvaluepairarray_create(2);
-    keyvaluepairarray_append(subject, "keyword", "hello");
-    keyvaluepairarray_append(subject, "text", dbstream);
+    subject = kvp_create_array(2);
+    kvp_array_append_copy(subject, "keyword", "hello");
+    kvp_array_append_copy(subject, "text", dbstream);
 
     free(dbstream);
 
     dump_kvp(subject);
-    keyvaluepairarray_free(subject);
+    kvp_free_array(subject);
     printf("%s\n", "complete");
 }
 
@@ -59,12 +59,12 @@ void test_database_write()
     struct database_controller *db;
     char *dbstream;
 
-    subject = keyvaluepairarray_create(3);
-    keyvaluepairarray_append(subject, "verb", "hello");
-    keyvaluepairarray_appendf(subject, 20, "noun", "%s\n%s?\n", "world", "how goes");
-    keyvaluepairarray_appendf(subject, 10, "number", "%d", 123);
+    subject = kvp_create_array(3);
+    kvp_array_append_copy(subject, "verb", "hello");
+    kvp_array_append_copyf(subject, 20, "noun", "%s\n%s?\n", "world", "how goes");
+    kvp_array_append_copyf(subject, 10, "number", "%d", 123);
     dbstream = database_create_stream(subject);
-    keyvaluepairarray_free(subject);
+    kvp_free_array(subject);
 
     db = database_open(TEST_DB_FILE, false);
     assert(db != NULL);
@@ -82,12 +82,12 @@ void test_database_read()
     char *dbstream;
 
     printf("%s.\n", "Creating test data");
-    subject = keyvaluepairarray_create(3);
-    keyvaluepairarray_append(subject, "verb", "hello");
-    keyvaluepairarray_appendf(subject, 20, "noun", "%s\n%s?\n", "world", "how goes");
-    keyvaluepairarray_appendf(subject, 10, "number", "%d", 123);
+    subject = kvp_create_array(3);
+    kvp_array_append_copy(subject, "verb", "hello");
+    kvp_array_append_copyf(subject, 20, "noun", "%s\n%s?\n", "world", "how goes");
+    kvp_array_append_copyf(subject, 10, "number", "%d", 123);
     dbstream = database_create_stream(subject);
-    keyvaluepairarray_free(subject);
+    kvp_free_array(subject);
 
     db = database_open(TEST_DB_FILE, false);
     assert(db != NULL);
@@ -108,7 +108,7 @@ void test_database_read()
     printf("%s.\n", "Printing data");
     dump_kvp(subject);
     printf("%s.\n", "Clean up");
-    keyvaluepairarray_free(subject);
+    kvp_free_array(subject);
 
 
     printf("%s.\n", "Try extra large key and value.");
@@ -122,16 +122,16 @@ void test_database_read()
         assert(keybuf != NULL);
         valbuf = calloc(sizeof(char), 3000);
         assert(valbuf != NULL);
-        subject = keyvaluepairarray_create(3);
+        subject = kvp_create_array(3);
         memset(keybuf, (int)'k', 200*sizeof(char));
         keybuf[199] = '\0';
         memset(valbuf, (int)'v', 3000*sizeof(char));
         valbuf[2999] = '\0';
-        keyvaluepairarray_append(subject, keybuf, valbuf);
+        kvp_array_append_copy(subject, keybuf, valbuf);
         free(keybuf);
         free(valbuf);
         dbstream = database_create_stream(subject);
-        keyvaluepairarray_free(subject);
+        kvp_free_array(subject);
 
         /* Write to test file. */
         db = database_open(TEST_DB_FILE, false);
@@ -152,25 +152,25 @@ void test_database_read()
         key = ((struct keyvaluepair *)subject->items)[0].key;
         val = ((struct keyvaluepair *)subject->items)[0].value;
         printf("%d (%c %c), %d (%c %c)", (int)strlen(key), key[0], key[198], (int)strlen(val), val[0], val[2998]);
-        keyvaluepairarray_free(subject);
+        kvp_free_array(subject);
     }
 
     printf("%s.\n", "Try multi-record");
     {
         db = database_open(TEST_DB_FILE, false);
         assert(db != NULL);
-        subject = keyvaluepairarray_create(3);
-        keyvaluepairarray_appendf(subject, 50, "key1", "%s", "value1-1\nvalue1-1a");
-        keyvaluepairarray_appendf(subject, 50, "key2", "%s", "value1-2");
+        subject = kvp_create_array(3);
+        kvp_array_append_copyf(subject, 50, "key1", "%s", "value1-1\nvalue1-1a");
+        kvp_array_append_copyf(subject, 50, "key2", "%s", "value1-2");
         dbstream = database_create_stream(subject);
-        keyvaluepairarray_free(subject);
+        kvp_free_array(subject);
         database_write_stream(db, dbstream);
         free(dbstream);
-        subject = keyvaluepairarray_create(3);
-        keyvaluepairarray_appendf(subject, 50, "key1", "%s", "value2-1\n\nvalue2-1a\nvalue2-1b");
-        keyvaluepairarray_appendf(subject, 50, "key2", "%s", "value2-2");
+        subject = kvp_create_array(3);
+        kvp_array_append_copyf(subject, 50, "key1", "%s", "value2-1\n\nvalue2-1a\nvalue2-1b");
+        kvp_array_append_copyf(subject, 50, "key2", "%s", "value2-2");
         dbstream = database_create_stream(subject);
-        keyvaluepairarray_free(subject);
+        kvp_free_array(subject);
         database_write_stream(db, dbstream);
         free(dbstream);
         database_close(db);
@@ -183,14 +183,14 @@ void test_database_read()
         subject = database_parse_stream(dbstream);
         free(dbstream);
         dump_kvp(subject);
-        keyvaluepairarray_free(subject);
+        kvp_free_array(subject);
         printf("%s.\n", "Reading data");
         dbstream = database_read_stream(db);
         printf("%s.\n", "Parsing data");
         subject = database_parse_stream(dbstream);
         free(dbstream);
         dump_kvp(subject);
-        keyvaluepairarray_free(subject);
+        kvp_free_array(subject);
         database_close(db);
     }
     printf("%s.\n", "Fin");
@@ -201,10 +201,10 @@ void test_keyvaluepairarray()
     struct array_list *subject;
 
     printf("%s\n", "KVP array test - assert no error.");
-    subject = keyvaluepairarray_create(2);
-    keyvaluepairarray_append(subject, "verb", "hello");
-    keyvaluepairarray_appendf(subject, 10, "noun", "%s", "world");
-    keyvaluepairarray_free(subject);
+    subject = kvp_create_array(2);
+    kvp_array_append_copy(subject, "verb", "hello");
+    kvp_array_append_copyf(subject, 10, "noun", "%s", "world");
+    kvp_free_array(subject);
     printf("%s\n", "complete");
 }
 
@@ -219,10 +219,10 @@ void test_keyvaluepairhash()
 
     printf("%s\n", "KVP hash test - assert no error.");
 
-    testdata = keyvaluepairarray_create(NUMELEMENTS);
+    testdata = kvp_create_array(NUMELEMENTS);
     for (idx = 0; idx < NUMELEMENTS; idx++) {
         (void)snprintf(keybuf, 20, "key%d", idx+1);
-        keyvaluepairarray_appendf(testdata, 20, keybuf, "value %d", idx+1);
+        kvp_array_append_copyf(testdata, 20, keybuf, "value %d", idx+1);
     }
 
     printf("%s\n", "Create");
@@ -256,7 +256,7 @@ void test_keyvaluepairhash()
     }
 
     keyvaluepairhash_free(subject);
-    keyvaluepairarray_free(testdata);
+    kvp_free_array(testdata);
     printf("%s\n", "complete");
 }
 

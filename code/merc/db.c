@@ -344,7 +344,7 @@ void boot_db()
 
 struct area_data *load_area(const struct database_controller *db, const char *filename)
 {
-    struct keyvaluepair_array *data;
+    struct array_list *data;
     char *dbstream;
     struct area_data *area;
 
@@ -352,7 +352,7 @@ struct area_data *load_area(const struct database_controller *db, const char *fi
     data = database_parse_stream(dbstream);
     free(dbstream);
     area = area_deserialize(data, filename);
-    keyvaluepairarray_free(data);
+    kvp_free_array(data);
 
     return area;
 }
@@ -377,7 +377,7 @@ void assign_area_vnum(long vnum)
 
 void load_helps(const char const *filepath)
 {
-    struct keyvaluepair_array *data;
+    struct array_list *data;
     struct database_controller *db;
 
     db = database_open(filepath, true);
@@ -395,13 +395,13 @@ void load_helps(const char const *filepath)
         dbstream = database_read_stream(db);
         data = database_parse_stream(dbstream);
         free (dbstream);
-        if (!keyvaluepairarray_any(data)) {
-            keyvaluepairarray_free(data);
+        if (!array_list_any(data)) {
+            kvp_free_array(data);
             break;
         }
 
         snarfed = helpdata_deserialize(data);
-        keyvaluepairarray_free(data);
+        kvp_free_array(data);
 
         if (!str_cmp(snarfed->keyword, "greeting")) {
             help_greeting = snarfed->text;
@@ -1413,8 +1413,7 @@ void area_update(void)
              * Check age and reset.
              * Note: Mud School resets every 3 minutes(not 15).
              */
-            if ((!area->empty && (area->nplayer == 0 || area->age >= 15))
-                || area->age >= 31) {
+            if ((!area->empty && (area->nplayer == 0 || area->age >= 15)) || area->age >= 31) {
                 struct room_index_data *room_idx;
 
                 reset_area(area);

@@ -92,40 +92,40 @@ struct area_data *area_new(unsigned long vnum)
     return areadata;
 }
 
-struct keyvaluepair_array *area_serialize(const struct area_data *areadata)
+struct array_list *area_serialize(const struct area_data *areadata)
 {
-    struct keyvaluepair_array *answer;
+    struct array_list *answer;
 
-    answer = keyvaluepairarray_create(20);
+    answer = kvp_create_array(20);
 
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "vnum", "%lu", areadata->vnum);
-    keyvaluepairarray_append(answer, "name", areadata->name);
+    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "vnum", "%lu", areadata->vnum);
+    kvp_array_append_copy(answer, "name", areadata->name);
     if (areadata->description[0] != '\0') {
-        keyvaluepairarray_append(answer, "description", areadata->description);
+        kvp_array_append_copy(answer, "description", areadata->description);
     }
     {
         char *flags = flag_to_string(areadata->area_flags);
-        keyvaluepairarray_append(answer, "flags", flags);
+        kvp_array_append_copy(answer, "flags", flags);
         free(flags);
     }
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "security", "%u", areadata->security);
+    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "security", "%u", areadata->security);
     if (areadata->builders[0] != '\0') {
-        keyvaluepairarray_append(answer, "builders", areadata->builders);
+        kvp_array_append_copy(answer, "builders", areadata->builders);
     }
     if (areadata->credits[0] != '\0') {
-        keyvaluepairarray_append(answer, "credits", areadata->credits);
+        kvp_array_append_copy(answer, "credits", areadata->credits);
     }
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "min_vnum", "%lu", areadata->min_vnum);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "max_vnum", "%lu", areadata->max_vnum);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "llevel", "%u", areadata->llevel);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "ulevel", "%u", areadata->ulevel);
+    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "min_vnum", "%lu", areadata->min_vnum);
+    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "max_vnum", "%lu", areadata->max_vnum);
+    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "llevel", "%u", areadata->llevel);
+    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "ulevel", "%u", areadata->ulevel);
 
     return answer;
 }
 
 
 
-struct area_data *area_deserialize(const struct keyvaluepair_array *data, const char *filename)
+struct area_data *area_deserialize(const struct array_list *data, const char *filename)
 {
     struct area_data *areadata;
     const char *entry;

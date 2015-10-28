@@ -12,7 +12,7 @@
 
 
 
-struct array_list *keyvaluepairarray_create(size_t numelements)
+struct array_list *kvp_create_array(size_t numelements)
 {
     struct array_list *array;
 
@@ -21,12 +21,7 @@ struct array_list *keyvaluepairarray_create(size_t numelements)
     return array;
 }
 
-void keyvaluepairarray_grow(struct array_list *array, size_t newSize)
-{
-    array_list_grow(array, struct keyvaluepair, newSize);
-}
-
-void keyvaluepairarray_append(struct array_list *array, const char *key, const char *value)
+void kvp_array_append_copy(struct array_list *array, const char *key, const char *value)
 {
     size_t keylength = strlen(key);
     size_t vallength = strlen(value);
@@ -55,7 +50,7 @@ void keyvaluepairarray_append(struct array_list *array, const char *key, const c
     array->top += 1;
 }
 
-void keyvaluepairarray_appendf(struct array_list *array, size_t maxlength, const char *key, const char *valueformat, ...)
+void kvp_array_append_copyf(struct array_list *array, size_t maxlength, const char *key, const char *valueformat, ...)
 {
     char buf[maxlength];
     va_list args;
@@ -64,10 +59,10 @@ void keyvaluepairarray_appendf(struct array_list *array, size_t maxlength, const
     (void)vsnprintf(buf, maxlength, valueformat, args);
     va_end(args);
 
-    keyvaluepairarray_append(array, key, buf);
+    kvp_array_append_copy(array, key, buf);
 }
 
-const char *keyvaluepairarray_find(const struct array_list *array, const char *key)
+const char *kvp_array_find(const struct array_list *array, const char *key)
 {
     size_t idx;
     size_t keylen = strlen(key);
@@ -80,17 +75,19 @@ const char *keyvaluepairarray_find(const struct array_list *array, const char *k
     return NULL;
 }
 
-inline bool keyvaluepairarray_any(/*@observer@*/const struct array_list *array)
+void kvp_free_array(struct array_list *array)
 {
-    return array_list_any(array);
-}
+    struct keyvaluepair *node; 
+    size_t i; 
 
-#define kvp_free(kvp) \
-    free((char *)kvp->key); \
-free((char *)kvp->value);
+    if (array == NULL)
+        return;
 
-void keyvaluepairarray_free(struct array_list *array)
-{
+    array_list_each(array, i) {
+        node = array_list_node_at(array, struct keyvaluepair, i);
+        free((char *)node->key); 
+        free((char *)node->value);
+    } 
     array_list_free(array, struct keyvaluepair, kvp_free);
 }
 

@@ -48,28 +48,28 @@ struct help_data *helpdata_new()
     return helpdata;
 }
 
-struct keyvaluepair_array *helpdata_serialize(const struct help_data *helpdata)
+struct array_list *helpdata_serialize(const struct help_data *helpdata)
 {
-    struct keyvaluepair_array *answer;
+    struct array_list *answer;
 
-    answer = keyvaluepairarray_create(5);
+    answer = kvp_create_array(5);
 
-    keyvaluepairarray_append(answer, "keyword", helpdata->keyword);
-    keyvaluepairarray_append(answer, "text", helpdata->text);
+    kvp_array_append_copy(answer, "keyword", helpdata->keyword);
+    kvp_array_append_copy(answer, "text", helpdata->text);
     if (helpdata->trust != 0) {
-        keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "trust", "%u", helpdata->trust);
+        kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "trust", "%u", helpdata->trust);
     }
     if (helpdata->level != 0) {
-        keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "level", "%u", helpdata->level);
+        kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "level", "%u", helpdata->level);
     }
     if (helpdata->category != NULL) {
-        keyvaluepairarray_append(answer, "cateogry", helpdata->category);
+        kvp_array_append_copy(answer, "cateogry", helpdata->category);
     }
 
     return answer;
 }
 
-struct help_data *helpdata_deserialize(const struct keyvaluepair_array *data)
+struct help_data *helpdata_deserialize(const struct array_list *data)
 {
     struct help_data *helpdata;
     const char *entry;

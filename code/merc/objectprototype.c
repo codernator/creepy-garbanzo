@@ -86,7 +86,7 @@ struct objectprototype *objectprototype_new(unsigned long vnum)
     return prototypedata;
 }
 
-struct objectprototype *objectprototype_deserialize(const struct keyvaluepair_array *data)
+struct objectprototype *objectprototype_deserialize(const struct array_list *data)
 {
     struct objectprototype *prototypedata;
     const char *entry;
@@ -122,55 +122,55 @@ struct objectprototype *objectprototype_deserialize(const struct keyvaluepair_ar
     return prototypedata;
 }
 
-struct keyvaluepair_array *objectprototype_serialize(const struct objectprototype *obj)
+struct array_list *objectprototype_serialize(const struct objectprototype *obj)
 {
-    struct keyvaluepair_array *answer;
+    struct array_list *answer;
     size_t keys = 25;
 
     keys += count_extras(obj);
     keys += count_affects(obj);
 
-    answer = keyvaluepairarray_create(keys);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "vnum", "%ld", obj->vnum);
+    answer = kvp_create_array(keys);
+    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "vnum", "%ld", obj->vnum);
 
-    keyvaluepairarray_append(answer, "name", obj->name);
+    kvp_array_append_copy(answer, "name", obj->name);
     if (obj->short_descr != NULL)
-        keyvaluepairarray_append(answer, "short", obj->short_descr);
+        kvp_array_append_copy(answer, "short", obj->short_descr);
     if (obj->description != NULL)
-        keyvaluepairarray_append(answer, "long", obj->description);
+        kvp_array_append_copy(answer, "long", obj->description);
     if (obj->material != NULL)
-        keyvaluepairarray_append(answer, "material", obj->material);
+        kvp_array_append_copy(answer, "material", obj->material);
 
     SERIALIZE_FLAGS(obj->extra2_flags, "extra2", answer);
     SERIALIZE_FLAGS(obj->extra_flags, "extra", answer);
     SERIALIZE_FLAGS(obj->wear_flags, "wear", answer);
 
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "type", "%u", obj->item_type);
+    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "type", "%u", obj->item_type);
 
     //TODO - look at olc_save.save_object for more logic
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value1", "%ld", obj->value[0]);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value2", "%ld", obj->value[1]);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value3", "%ld", obj->value[2]);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value4", "%ld", obj->value[3]);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "value5", "%ld", obj->value[4]);
+    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "value1", "%ld", obj->value[0]);
+    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "value2", "%ld", obj->value[1]);
+    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "value3", "%ld", obj->value[2]);
+    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "value4", "%ld", obj->value[3]);
+    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "value5", "%ld", obj->value[4]);
     // ~TODO
 
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "level", "%d", obj->level);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "weight", "%d", obj->weight);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "cost", "%u", obj->cost);
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "inittimer", "%d", obj->init_timer);
+    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "level", "%d", obj->level);
+    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "weight", "%d", obj->weight);
+    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "cost", "%u", obj->cost);
+    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "inittimer", "%d", obj->init_timer);
 
     //TODO - look at olc_save.save_object for more logic
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "condition", "%d", obj->condition);
+    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "condition", "%d", obj->condition);
     //~TODO
     
-    keyvaluepairarray_appendf(answer, SERIALIZED_NUMBER_SIZE, "tnl", "%d", obj->xp_tolevel);
+    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "tnl", "%d", obj->xp_tolevel);
 
     /** append affects */
     {
         struct affect_data *affect = obj->affected;
         while (affect != NULL) {
-            keyvaluepairarray_appendf(answer, 256, "affect",
+            kvp_array_append_copyf(answer, 256, "affect",
                                       "%d,%d,%d,%d,%d,%ld,%ld",
                                       affect->where,
                                       affect->type,
@@ -190,7 +190,7 @@ struct keyvaluepair_array *objectprototype_serialize(const struct objectprototyp
         struct extra_descr_data *desc = obj->extra_descr;
         while (desc != NULL) {
             (void)snprintf(keybuf, MAX_INPUT_LENGTH, "extra-%s", desc->keyword);
-            keyvaluepairarray_append(answer, keybuf, desc->description);
+            kvp_array_append_copy(answer, keybuf, desc->description);
             desc = desc->next;
         }
     }

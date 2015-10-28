@@ -56,17 +56,14 @@ struct array_list
 
 #define array_list_any(array) ((array)->top > 0)
 
-#define array_list_for_each(node_type, i, pos, array) \
-    for (i = 0, pos = &((node_type *)array->items)[i]; i < array->top; i++)
+#define array_list_each(array, index) \
+    for (index = 0; index < array->top; index++)
+
+#define array_list_node_at(array, node_type, index) \
+    &((node_type *)array->items)[index]
 
 #define array_list_free(array, node_type, free_node) \
     if (array != NULL) { \
-        node_type *node; \
-        size_t i; \
-        for (i = 0; i < array->top; i++) { \
-            node = &((node_type *)array->items)[i]; \
-            free_node(node); \
-        } \
         free(array->items); \
         free(array); \
     }
@@ -105,13 +102,11 @@ HASHVALUETYPE calchashvalue(const char *key);
 
 
 /** keyvaluepair.c */
-/*@only@*/struct array_list *keyvaluepairarray_create(size_t numelements);
-void keyvaluepairarray_append(struct array_list *array, const char *key, const char *value);
-void keyvaluepairarray_appendf(struct array_list *array, size_t maxlength, const char *key, const char *valueformat, ...);
-void keyvaluepairarray_grow(struct array_list *array, size_t newSize);
-/*@observer@*//*@null@*/const char *keyvaluepairarray_find(const struct array_list *array, const char *key);
-void keyvaluepairarray_free(/*@only@*//*@null@*/struct array_list *array);
-bool keyvaluepairarray_any(/*@observer@*/const struct array_list *array);
+/*@only@*/struct array_list *kvp_create_array(size_t numelements);
+void kvp_array_append_copy(struct array_list *array, const char *key, const char *value);
+void kvp_array_append_copyf(struct array_list *array, size_t maxlength, const char *key, const char *valueformat, ...);
+/*@observer@*//*@null@*/const char *kvp_array_find(const struct array_list *array, const char *key);
+void kvp_free_array(/*@only@*//*@null@*/struct array_list *array);
 
 /*@only@*/struct keyvaluepairhash *keyvaluepairhash_create(/*@observer@*/struct array_list *array, size_t numelements, size_t numbuckets);
 /*@observer@*//*@null@*/const char *keyvaluepairhash_get(struct keyvaluepairhash *hash, const char * const key);

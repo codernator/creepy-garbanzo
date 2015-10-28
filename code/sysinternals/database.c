@@ -260,7 +260,7 @@ struct array_list *database_parse_stream(const char *dbstream)
     valuebuf = (char *)calloc(sizeof(char), valuelen);
     assert(valuebuf != NULL);
 
-    data = keyvaluepairarray_create(numkeys);
+    data = kvp_create_array(numkeys);
 
     /** TODO - this is unbrushed hair. */
     dbsindex = 0;
@@ -351,7 +351,7 @@ struct array_list *database_parse_stream(const char *dbstream)
             }
             valuebuf[i] = '\0';
 
-            keyvaluepairarray_append(data, keybuf, valuebuf);
+            kvp_array_append_copy(data, keybuf, valuebuf);
         }
     }
 
