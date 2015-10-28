@@ -32,6 +32,7 @@ void keyvaluepairarray_append(struct array_list *array, const char *key, const c
     size_t vallength = strlen(value);
     char *akey;
     char *avalue;
+    struct keyvaluepair *kvp;
 
     if (array->top == array->size)
     {
@@ -48,9 +49,9 @@ void keyvaluepairarray_append(struct array_list *array, const char *key, const c
 
     strncpy(akey, key, keylength);
     strncpy(avalue, value, vallength);
-
-    ((struct keyvaluepair *)array->items)[array->top].key = akey;
-    ((struct keyvaluepair *)array->items)[array->top].value = avalue;
+    kvp = &((struct keyvaluepair *)array->items)[array->top];
+    kvp->key = akey;
+    kvp->value = avalue;
     array->top += 1;
 }
 

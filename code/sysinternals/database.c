@@ -275,6 +275,9 @@ struct array_list *database_parse_stream(const char *dbstream)
 
             i = 0;
             c = dbstream[dbsindex++];
+            if (c == DATABASE_RECORD_TERMINATOR) {
+                break;
+            }
             while (c != EOFC && c != EOL) {
                 keybuf[i++] = (char)c;
                 if (i == keylen) {
@@ -282,6 +285,9 @@ struct array_list *database_parse_stream(const char *dbstream)
                     GROW_BUFFER(keybuf, keylen);
                 }
                 c = dbstream[dbsindex++];
+            }
+            if (i >= keylen) {
+                ABORT;
             }
             keybuf[i] = '\0';
 
@@ -303,7 +309,6 @@ struct array_list *database_parse_stream(const char *dbstream)
 
             /** valid key, but EOF anyway? seems like a premature file closure. */
             if (c == EOFC) {
-                fprintf(stderr, "Premature end of file reading key %s.", keybuf);
                 ABORT;
                 break;
             }
@@ -326,6 +331,7 @@ struct array_list *database_parse_stream(const char *dbstream)
                          * so, put it back!
                          */
                         dbsindex--;
+                        c = pc;
                         /* The previous EOL was appended but is not part of the value. */
                         valuebuf[i-1] = '\0';
                         break;
