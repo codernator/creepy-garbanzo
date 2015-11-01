@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
-static void kvp_copy_string(struct array_list *kvp_array, const char *const key, const char *value)
-static void kvp_take_string(struct array_list *kvp_array, const char *const key, char *value)
+static void kvp_copy_string(struct array_list *kvp_array, /*@dependent@*/const char *const key, /*@observer@*/const char *value);
+static void kvp_take_string(struct array_list *kvp_array, /*@dependent@*/const char *const key, /*@only@*/char *value);
 
 static void test_keyvaluepairarray(void);
 static void test_keyvaluepairhash(void);
@@ -224,7 +224,7 @@ void test_keyvaluepairhash()
     testdata = kvp_create_array(NUMELEMENTS);
     for (idx = 0; idx < NUMELEMENTS; idx++) {
         (void)snprintf(keybuf, 20, "key%d", idx+1);
-        (void)snprintf(valuebuf, 20, "value%d", idx+1);
+        (void)snprintf(valuebuf, 20, "value %d", idx+1);
         kvp_copy_string(testdata, keybuf, valuebuf);
     }
 
@@ -240,7 +240,6 @@ void test_keyvaluepairhash()
     answer = keyvaluepairhash_get(subject, keybuf);
     assert(answer != NULL);
     {
-        char valuebuf[20];
         (void)snprintf(valuebuf, 20, "value %d", NUMELEMENTS);
         assert(strncmp(answer, valuebuf, 20) == 0);
     }
@@ -296,14 +295,18 @@ void kvp_copy_string(struct array_list *kvp_array, const char *const key, const 
 {
     struct key_string_pair *kvp; 
     array_list_append(kvp, kvp_array, struct key_string_pair); 
+    /*@-mustfreeonly@*/
     kvp->key = strdup(key); 
     kvp->value = strdup(value); 
+    /*@+mustfreeonly@*/
 }
 
 void kvp_take_string(struct array_list *kvp_array, const char *const key, char *value)
 {
     struct key_string_pair *kvp; 
     array_list_append(kvp, kvp_array, struct key_string_pair); 
+    /*@-mustfreeonly@*/
     kvp->key = strdup(key); 
     kvp->value = value; 
+    /*@+mustfreeonly@*/
 }
