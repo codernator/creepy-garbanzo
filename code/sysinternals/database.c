@@ -126,7 +126,7 @@ char *database_create_stream(const struct array_list *data)
          * and terminated by a new line. Preceding spaces in a key will simply be skipped.
          */
         {
-            const char *key = ((struct keyvaluepair *)data->items)[i].key;
+            const char *key = ((struct key_string_pair *)data->items)[i].key;
             size_t len;
 
             // no key = no write.
@@ -155,7 +155,7 @@ char *database_create_stream(const struct array_list *data)
          * another new line \n.
          */
         {
-            const char *value = ((struct keyvaluepair *)data->items)[i].value;
+            const char *value = ((struct key_string_pair *)data->items)[i].value;
             const char *p;
             char c;
 
@@ -248,25 +248,25 @@ struct array_list *database_parse_stream(const char *dbstream)
     const char TERM = DATABASE_RECORD_TERMINATOR;
     const char EOFC = (char)EOF;
     size_t numkeys = DATABASE_INIT_KEYCOUNT;
-    size_t keylen = DATABASE_INIT_KEYLEN;
-    size_t valuelen = DATABASE_INIT_VALUELEN;
     struct array_list *data;
-    char *keybuf;
-    char *valuebuf;
     size_t dbsindex;
 
-    keybuf = (char *)calloc(sizeof(char), keylen);
-    assert(keybuf != NULL);
-    valuebuf = (char *)calloc(sizeof(char), valuelen);
-    assert(valuebuf != NULL);
 
     data = kvp_create_array(numkeys);
 
     /** TODO - this is unbrushed hair. */
     dbsindex = 0;
     while (true) {
-        memset(keybuf, 0, sizeof(char) * keylen);
-        memset(valuebuf, 0, sizeof(char) * keylen);
+        char *keybuf;
+        char *valuebuf;
+        struct key_string_pair *kvp; 
+        size_t keylen = DATABASE_INIT_KEYLEN;
+        size_t valuelen = DATABASE_INIT_VALUELEN;
+
+        keybuf = (char *)calloc(sizeof(char), keylen);
+        assert(keybuf != NULL);
+        valuebuf = (char *)calloc(sizeof(char), valuelen);
+        assert(valuebuf != NULL);
 
         /** input a key. */
         {
@@ -351,12 +351,15 @@ struct array_list *database_parse_stream(const char *dbstream)
             }
             valuebuf[i] = '\0';
 
-            kvp_array_append_copy(data, keybuf, valuebuf);
+            array_list_append(kvp, data, struct key_string_pair); 
+            // assert every entry is fresh.
+            /*@-mustfreeonly@*/
+            kvp->key = keybuf; 
+            kvp->value = valuebuf; 
+            /*@+mustfreeonly@*/
         }
     }
 
-    free(keybuf);
-    free(valuebuf);
     return data;
 }
 

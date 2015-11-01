@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
+static void kvp_copy_string(struct array_list *kvp_array, const char *const key, const char *value)
+static void kvp_take_string(struct array_list *kvp_array, const char *const key, char *value)
 
 static void test_keyvaluepairarray(void);
 static void test_keyvaluepairhash(void);
@@ -34,16 +36,16 @@ void test_database_create_stream()
 
     printf("%s\n", "test_database_create_stream");
     subject = kvp_create_array(3);
-    kvp_array_append_copy(subject, "verb", "hello");
-    kvp_array_append_copyf(subject, 20, "noun", "%s\n%s?\n", "world", "how goes");
-    kvp_array_append_copyf(subject, 10, "number", "%d", 123);
+    kvp_copy_string(subject, "verb", "hello");
+    kvp_copy_string(subject, "noun", "world\nhow goes?\n");
+    kvp_take_string(subject, "number",int_to_string(123));
 
     dbstream = database_create_stream(subject);
     kvp_free_array(subject);
 
     subject = kvp_create_array(2);
-    kvp_array_append_copy(subject, "keyword", "hello");
-    kvp_array_append_copy(subject, "text", dbstream);
+    kvp_copy_string(subject, "keyword", "hello");
+    kvp_copy_string(subject, "text", dbstream);
 
     free(dbstream);
 
@@ -60,9 +62,9 @@ void test_database_write()
     char *dbstream;
 
     subject = kvp_create_array(3);
-    kvp_array_append_copy(subject, "verb", "hello");
-    kvp_array_append_copyf(subject, 20, "noun", "%s\n%s?\n", "world", "how goes");
-    kvp_array_append_copyf(subject, 10, "number", "%d", 123);
+    kvp_copy_string(subject, "verb", "hello");
+    kvp_copy_string(subject, "noun", "world\nhow goes?\n");
+    kvp_take_string(subject, "number", int_to_string(123));
     dbstream = database_create_stream(subject);
     kvp_free_array(subject);
 
@@ -83,9 +85,9 @@ void test_database_read()
 
     printf("%s.\n", "Creating test data");
     subject = kvp_create_array(3);
-    kvp_array_append_copy(subject, "verb", "hello");
-    kvp_array_append_copyf(subject, 20, "noun", "%s\n%s?\n", "world", "how goes");
-    kvp_array_append_copyf(subject, 10, "number", "%d", 123);
+    kvp_copy_string(subject, "verb", "hello");
+    kvp_copy_string(subject, "noun", "world\nhow goes?\n");
+    kvp_take_string(subject, "number", int_to_string(123));
     dbstream = database_create_stream(subject);
     kvp_free_array(subject);
 
@@ -127,9 +129,8 @@ void test_database_read()
         keybuf[199] = '\0';
         memset(valbuf, (int)'v', 3000*sizeof(char));
         valbuf[2999] = '\0';
-        kvp_array_append_copy(subject, keybuf, valbuf);
+        kvp_take_string(subject, keybuf, valbuf);
         free(keybuf);
-        free(valbuf);
         dbstream = database_create_stream(subject);
         kvp_free_array(subject);
 
@@ -149,8 +150,8 @@ void test_database_read()
         free(dbstream);
         database_close(db);
         printf("%s\n", "First item?");
-        key = ((struct keyvaluepair *)subject->items)[0].key;
-        val = ((struct keyvaluepair *)subject->items)[0].value;
+        key = ((struct key_string_pair *)subject->items)[0].key;
+        val = ((struct key_string_pair *)subject->items)[0].value;
         printf("%d (%c %c), %d (%c %c)", (int)strlen(key), key[0], key[198], (int)strlen(val), val[0], val[2998]);
         kvp_free_array(subject);
     }
@@ -160,15 +161,15 @@ void test_database_read()
         db = database_open(TEST_DB_FILE, false);
         assert(db != NULL);
         subject = kvp_create_array(3);
-        kvp_array_append_copyf(subject, 50, "key1", "%s", "value1-1\nvalue1-1a");
-        kvp_array_append_copyf(subject, 50, "key2", "%s", "value1-2");
+        kvp_copy_string(subject, "key1", "value1-1\nvalue1-1a");
+        kvp_copy_string(subject, "key2", "value1-2");
         dbstream = database_create_stream(subject);
         kvp_free_array(subject);
         database_write_stream(db, dbstream);
         free(dbstream);
         subject = kvp_create_array(3);
-        kvp_array_append_copyf(subject, 50, "key1", "%s", "value2-1\n\nvalue2-1a\nvalue2-1b");
-        kvp_array_append_copyf(subject, 50, "key2", "%s", "value2-2");
+        kvp_copy_string(subject, "key1", "value2-1\n\nvalue2-1a\nvalue2-1b");
+        kvp_copy_string(subject, "key2", "value2-2");
         dbstream = database_create_stream(subject);
         kvp_free_array(subject);
         database_write_stream(db, dbstream);
@@ -202,8 +203,8 @@ void test_keyvaluepairarray()
 
     printf("%s\n", "KVP array test - assert no error.");
     subject = kvp_create_array(2);
-    kvp_array_append_copy(subject, "verb", "hello");
-    kvp_array_append_copyf(subject, 10, "noun", "%s", "world");
+    kvp_copy_string(subject, "verb", "hello");
+    kvp_copy_string(subject, "noun", "world");
     kvp_free_array(subject);
     printf("%s\n", "complete");
 }
@@ -215,6 +216,7 @@ void test_keyvaluepairhash()
     struct array_list *testdata;
     const char *answer;
     char keybuf[20];
+    char valuebuf[20];
     int idx;
 
     printf("%s\n", "KVP hash test - assert no error.");
@@ -222,7 +224,8 @@ void test_keyvaluepairhash()
     testdata = kvp_create_array(NUMELEMENTS);
     for (idx = 0; idx < NUMELEMENTS; idx++) {
         (void)snprintf(keybuf, 20, "key%d", idx+1);
-        kvp_array_append_copyf(testdata, 20, keybuf, "value %d", idx+1);
+        (void)snprintf(valuebuf, 20, "value%d", idx+1);
+        kvp_copy_string(testdata, keybuf, valuebuf);
     }
 
     printf("%s\n", "Create");
@@ -264,8 +267,8 @@ void dump_kvp(const struct array_list *data)
 {
     size_t i;
     for (i = 0; i < data->top; i++) {
-        printf("%s\n", ((struct keyvaluepair *)data->items)[i].key);
-        printf("%s\n", ((struct keyvaluepair *)data->items)[i].value);
+        printf("%s\n", ((struct key_string_pair *)data->items)[i].key);
+        printf("%s\n", ((struct key_string_pair *)data->items)[i].value);
     }
 }
 
@@ -285,4 +288,22 @@ void test_flags()
     flag = flag_from_string(flags);
     printf("Flags: %lu %s\n", flag, flags);
     free(flags);
+}
+
+
+
+void kvp_copy_string(struct array_list *kvp_array, const char *const key, const char *value)
+{
+    struct key_string_pair *kvp; 
+    array_list_append(kvp, kvp_array, struct key_string_pair); 
+    kvp->key = strdup(key); 
+    kvp->value = strdup(value); 
+}
+
+void kvp_take_string(struct array_list *kvp_array, const char *const key, char *value)
+{
+    struct key_string_pair *kvp; 
+    array_list_append(kvp, kvp_array, struct key_string_pair); 
+    kvp->key = strdup(key); 
+    kvp->value = value; 
 }

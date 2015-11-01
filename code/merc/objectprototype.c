@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "entityload.h"
+#include "serialize.h"
 
 #ifndef OBJPROTO_MAX_KEY_HASH
 // Consult http://www.planetmath.org/goodhashtableprimes for a nice writeup on numbers to use.
@@ -35,8 +35,6 @@ static void headlist_add(/*@owned@*/struct objectprototype *entry);
 static struct hash_entry lookup[OBJPROTO_MAX_KEY_HASH];
 static void lookup_add(unsigned long entrykey, /*@dependent@*/struct objectprototype *entry);
 static void lookup_remove(unsigned long entrykey, /*@dependent@*/struct objectprototype *entry);
-static size_t count_extras(const struct objectprototype *obj);
-static size_t count_affects(const struct objectprototype *obj);
 
 /*
  * Translates object virtual number to its obj index struct.
@@ -90,25 +88,25 @@ struct objectprototype *objectprototype_deserialize(const struct array_list *dat
 {
     struct objectprototype *prototypedata;
     const char *entry;
-    
+
 
     prototypedata = malloc(sizeof(struct objectprototype));
     assert(prototypedata != NULL);
     memset(prototypedata, 0, sizeof(struct objectprototype));
 
-    ASSIGN_ULONG_KEY(data, prototypedata->vnum, "vnum");
+    deserialize_assign_ulong(data, prototypedata->vnum, "vnum");
     /*@-mustfreeonly@*/
-    ASSIGN_STRING_KEY_DEFAULT(data, prototypedata->name, "name", "no name");
-    ASSIGN_STRING_KEY_DEFAULT(data, prototypedata->short_descr, "short", "(no short description)");
-    ASSIGN_STRING_KEY_DEFAULT(data, prototypedata->description, "long", "(no description)");
-    ASSIGN_STRING_KEY_DEFAULT(data, prototypedata->material, "material", "(unknown)");
+    deserialize_assign_string_default(data, prototypedata->name, "name", "no name");
+    deserialize_assign_string_default(data, prototypedata->short_descr, "short", "(no short description)");
+    deserialize_assign_string_default(data, prototypedata->description, "long", "(no description)");
+    deserialize_assign_string_default(data, prototypedata->material, "material", "(unknown)");
     /*@+mustfreeonly@*/
 
-    ASSIGN_INT_KEY(data, prototypedata->condition, "condition");
-    ASSIGN_FLAG_KEY(data, prototypedata->extra2_flags, "extra2");
-    ASSIGN_FLAG_KEY(data, prototypedata->extra_flags, "extra");
-    ASSIGN_FLAG_KEY(data, prototypedata->wear_flags, "wear");
-    ASSIGN_UINT_KEY(data, prototypedata->item_type, "item_type");
+    deserialize_assign_int(data, prototypedata->condition, "condition");
+    deserialize_assign_flag(data, prototypedata->extra2_flags, "extra2");
+    deserialize_assign_flag(data, prototypedata->extra_flags, "extra");
+    deserialize_assign_flag(data, prototypedata->wear_flags, "wear");
+    deserialize_assign_uint(data, prototypedata->item_type, "item_type");
 
 
     /** Place on list. */
@@ -125,60 +123,122 @@ struct objectprototype *objectprototype_deserialize(const struct array_list *dat
 struct array_list *objectprototype_serialize(const struct objectprototype *obj)
 {
     struct array_list *answer;
-    size_t keys = 25;
 
-    keys += count_extras(obj);
-    keys += count_affects(obj);
+    answer = kvp_create_array(20);
 
-    answer = kvp_create_array(keys);
-    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "vnum", "%ld", obj->vnum);
+    serialize_take_string(answer, "vnum", ulong_to_string(obj->vnum));
+    serialize_copy_string(answer, "name", obj->name);
 
-    kvp_array_append_copy(answer, "name", obj->name);
     if (obj->short_descr != NULL)
-        kvp_array_append_copy(answer, "short", obj->short_descr);
+        serialize_copy_string(answer, "short", obj->short_descr);
     if (obj->description != NULL)
-        kvp_array_append_copy(answer, "long", obj->description);
+        serialize_copy_string(answer, "long", obj->description);
     if (obj->material != NULL)
-        kvp_array_append_copy(answer, "material", obj->material);
+        serialize_copy_string(answer, "material", obj->material);
 
-    SERIALIZE_FLAGS(obj->extra2_flags, "extra2", answer);
-    SERIALIZE_FLAGS(obj->extra_flags, "extra", answer);
-    SERIALIZE_FLAGS(obj->wear_flags, "wear", answer);
+    serialize_take_string(answer, "extra", flag_to_string(obj->extra_flags));
+    serialize_take_string(answer, "extra2", flag_to_string(obj->extra2_flags));
+    serialize_take_string(answer, "wear", flag_to_string(obj->wear_flags));
 
-    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "type", "%u", obj->item_type);
+    serialize_copy_string(answer, "type", item_name_by_type(obj->item_type));
+    switch (obj->item_type) {
+      default:
+          serialize_take_string(answer, "value1", flag_to_string((unsigned long)obj->value[0]));
+          serialize_take_string(answer, "value2", flag_to_string((unsigned long)obj->value[1]));
+          serialize_take_string(answer, "value3", flag_to_string((unsigned long)obj->value[2]));
+          serialize_take_string(answer, "value4", flag_to_string((unsigned long)obj->value[3]));
+          serialize_take_string(answer, "value5", flag_to_string((unsigned long)obj->value[4]));
+          break;
 
-    //TODO - look at olc_save.save_object for more logic
-    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "value1", "%ld", obj->value[0]);
-    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "value2", "%ld", obj->value[1]);
-    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "value3", "%ld", obj->value[2]);
-    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "value4", "%ld", obj->value[3]);
-    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "value5", "%ld", obj->value[4]);
-    // ~TODO
+      case ITEM_DRINK_CON:
+      case ITEM_FOUNTAIN:
+          serialize_take_string(answer, "value1", long_to_string(obj->value[0]));
+          serialize_take_string(answer, "value2", long_to_string(obj->value[1]));
+          serialize_copy_string(answer, "value3", liq_table[obj->value[2]].liq_name);
+          serialize_take_string(answer, "value4", long_to_string(obj->value[3]));
+          serialize_take_string(answer, "value5", long_to_string(obj->value[4]));
+          break;
 
-    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "level", "%d", obj->level);
-    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "weight", "%d", obj->weight);
-    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "cost", "%u", obj->cost);
-    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "inittimer", "%d", obj->init_timer);
+      case ITEM_CONTAINER:
+          serialize_take_string(answer, "value1", long_to_string(obj->value[0]));
+          serialize_take_string(answer, "value2", flag_to_string((unsigned long)obj->value[1]));
+          serialize_take_string(answer, "value3", long_to_string(obj->value[2]));
+          serialize_take_string(answer, "value4", long_to_string(obj->value[3]));
+          serialize_take_string(answer, "value5", long_to_string(obj->value[4]));
+          break;
 
-    //TODO - look at olc_save.save_object for more logic
-    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "condition", "%d", obj->condition);
-    //~TODO
-    
-    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "tnl", "%d", obj->xp_tolevel);
+      case ITEM_WEAPON:
+          serialize_copy_string(answer, "value1", weapon_name((int)obj->value[2]));
+          serialize_take_string(answer, "value2", long_to_string(obj->value[1]));
+          serialize_take_string(answer, "value3", long_to_string(obj->value[2]));
+          serialize_copy_string(answer, "value4", attack_table[obj->value[3]].name);
+          serialize_take_string(answer, "value5", flag_to_string((unsigned long)obj->value[4]));
+          break;
+
+      case ITEM_PILL:
+      case ITEM_POTION:
+      case ITEM_SCROLL:
+          {
+              struct dynamic_skill *skills[4];
+              int idx;
+
+              for (idx = 1; idx <= 4; idx++)
+                  skills[idx - 1] = resolve_skill_sn((int)obj->value[idx]);
+
+              serialize_take_string(answer, "value1", long_to_string(obj->value[0]));
+              if (skills[0] != NULL)
+                  serialize_copy_string(answer, "value2", skills[0]->name);
+              if (skills[1] != NULL)
+                  serialize_copy_string(answer, "value3", skills[1]->name);
+              if (skills[2] != NULL)
+                  serialize_copy_string(answer, "value4", skills[2]->name);
+              if (skills[3] != NULL)
+                  serialize_copy_string(answer, "value5", skills[3]->name);
+              break;
+          }
+
+      case ITEM_STAFF:
+      case ITEM_WAND:
+          {
+              struct dynamic_skill *skill;
+
+              skill = resolve_skill_sn((int)obj->value[3]);
+              serialize_take_string(answer, "value1", long_to_string(obj->value[0]));
+              serialize_take_string(answer, "value2", long_to_string(obj->value[1]));
+              serialize_take_string(answer, "value3", long_to_string(obj->value[2]));
+              if (skill != NULL)
+                  serialize_copy_string(answer, "value4", skill->name);
+              serialize_take_string(answer, "value5", long_to_string(obj->value[4]));
+              break;
+          }
+    }
+
+    serialize_take_string(answer, "level", int_to_string(obj->level));
+    serialize_take_string(answer, "weight", int_to_string(obj->weight));
+    serialize_take_string(answer, "cost", uint_to_string(obj->cost));
+    serialize_take_string(answer, "inittimer", int_to_string(obj->init_timer));
+    serialize_take_string(answer, "condition", int_to_string(obj->condition));
+    serialize_take_string(answer, "tnl", int_to_string(obj->xp_tolevel));
 
     /** append affects */
     {
         struct affect_data *affect = obj->affected;
+
+        affect = obj->affected;
         while (affect != NULL) {
-            kvp_array_append_copyf(answer, 256, "affect",
-                                      "%d,%d,%d,%d,%d,%ld,%ld",
-                                      affect->where,
-                                      affect->type,
-                                      affect->level,
-                                      affect->duration,
-                                      affect->location,
-                                      affect->modifier,
-                                      affect->bitvector);
+            struct array_list *serialized_affect;
+            array_list_create(serialized_affect, struct key_string_pair, 8);
+
+            serialize_take_string(serialized_affect, "where", int_to_string(affect->where));
+            serialize_take_string(serialized_affect, "type", int_to_string(affect->type));
+            serialize_take_string(serialized_affect, "level", int_to_string(affect->level));
+            serialize_take_string(serialized_affect, "duration", int_to_string(affect->duration));
+            serialize_take_string(serialized_affect, "location", int_to_string(affect->location));
+            serialize_take_string(serialized_affect, "modifier", long_to_string(affect->modifier));
+            serialize_take_string(serialized_affect, "bitvector", long_to_string(affect->bitvector));
+
+            serialize_take_string(answer, "affect", database_create_stream(serialized_affect));
+            kvp_free_array(serialized_affect);
 
             affect = affect->next;
         }
@@ -186,11 +246,17 @@ struct array_list *objectprototype_serialize(const struct objectprototype *obj)
 
     /** append extras */
     {
-        static char keybuf[MAX_INPUT_LENGTH];
         struct extra_descr_data *desc = obj->extra_descr;
         while (desc != NULL) {
-            (void)snprintf(keybuf, MAX_INPUT_LENGTH, "extra-%s", desc->keyword);
-            kvp_array_append_copy(answer, keybuf, desc->description);
+            struct array_list *serialized_extra;
+            array_list_create(serialized_extra, struct key_string_pair, 32);
+
+            serialize_copy_string(serialized_extra, "keyword", desc->keyword);
+            serialize_copy_string(serialized_extra, "description", desc->description);
+
+            serialize_take_string(answer, "extra", database_create_stream(serialized_extra));
+            kvp_free_array(serialized_extra);
+
             desc = desc->next;
         }
     }
@@ -339,27 +405,5 @@ void lookup_remove(unsigned long entrykey, struct objectprototype *entry)
     free(head);
 
     prev->next = next;
-}
-
-size_t count_extras(const struct objectprototype *obj)
-{
-    size_t keys = 0;
-    struct extra_descr_data *extra = obj->extra_descr;
-    while (extra != NULL) {
-        keys++;
-        extra = extra->next;
-    }
-    return keys;
-}
-
-size_t count_affects(const struct objectprototype *obj)
-{
-    size_t keys = 0;
-    struct affect_data *affect = obj->affected;
-    while (affect != NULL) {
-        keys++;
-        affect = affect->next;
-    }
-    return keys;
 }
 

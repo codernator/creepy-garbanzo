@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "entityload.h"
+#include "serialize.h"
 
 const struct area_filter area_empty_filter;
 
@@ -96,29 +96,26 @@ struct array_list *area_serialize(const struct area_data *areadata)
 {
     struct array_list *answer;
 
-    answer = kvp_create_array(20);
+    answer = kvp_create_array(12);
 
-    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "vnum", "%lu", areadata->vnum);
-    kvp_array_append_copy(answer, "name", areadata->name);
+    serialize_take_string(answer, "vnum", ulong_to_string(areadata->vnum));
+    serialize_copy_string(answer, "name", areadata->name);
     if (areadata->description[0] != '\0') {
-        kvp_array_append_copy(answer, "description", areadata->description);
+        serialize_copy_string(answer, "description", areadata->description);
     }
-    {
-        char *flags = flag_to_string(areadata->area_flags);
-        kvp_array_append_copy(answer, "flags", flags);
-        free(flags);
-    }
-    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "security", "%u", areadata->security);
+    serialize_take_string(answer, "flags", flag_to_string(areadata->area_flags));
+    serialize_take_string(answer, "security", uint_to_string(areadata->security));
+
     if (areadata->builders[0] != '\0') {
-        kvp_array_append_copy(answer, "builders", areadata->builders);
+        serialize_copy_string(answer, "builders", areadata->builders);
     }
     if (areadata->credits[0] != '\0') {
-        kvp_array_append_copy(answer, "credits", areadata->credits);
+        serialize_copy_string(answer, "credits", areadata->credits);
     }
-    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "min_vnum", "%lu", areadata->min_vnum);
-    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "max_vnum", "%lu", areadata->max_vnum);
-    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "llevel", "%u", areadata->llevel);
-    kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "ulevel", "%u", areadata->ulevel);
+    serialize_take_string(answer, "min_vnum", ulong_to_string(areadata->min_vnum));
+    serialize_take_string(answer, "max_vnum", ulong_to_string(areadata->max_vnum));
+    serialize_take_string(answer, "llevel", uint_to_string(areadata->llevel));
+    serialize_take_string(answer, "ulevel", uint_to_string(areadata->ulevel));
 
     return answer;
 }
@@ -135,18 +132,18 @@ struct area_data *area_deserialize(const struct array_list *data, const char *fi
     memset(areadata, 0, sizeof(struct area_data));
 
     /*@-mustfreeonly@*/
-    ASSIGN_ULONG_KEY(data, areadata->vnum, "vnum");
     areadata->file_name = strdup(filename);
-    ASSIGN_STRING_KEY_DEFAULT(data, areadata->name, "name", "no name");
-    ASSIGN_STRING_KEY_DEFAULT(data, areadata->description, "description", "(no description)");
-    ASSIGN_STRING_KEY_DEFAULT(data, areadata->credits, "credits", "");
-    ASSIGN_STRING_KEY_DEFAULT(data, areadata->builders, "builders", "");
-    ASSIGN_ULONG_KEY(data, areadata->min_vnum, "min_vnum");
-    ASSIGN_ULONG_KEY(data, areadata->max_vnum, "max_vnum");
-    ASSIGN_FLAG_KEY(data, areadata->area_flags, "flags");
-    ASSIGN_UINT_KEY(data, areadata->security, "security");
-    ASSIGN_UINT_KEY(data, areadata->llevel, "llevel");
-    ASSIGN_UINT_KEY(data, areadata->ulevel, "ulevel");
+    deserialize_assign_ulong(data, areadata->vnum, "vnum");
+    deserialize_assign_string_default(data, areadata->name, "name", "no name");
+    deserialize_assign_string_default(data, areadata->description, "description", "(no description)");
+    deserialize_assign_flag(data, areadata->area_flags, "flags");
+    deserialize_assign_uint(data, areadata->security, "security");
+    deserialize_assign_string_default(data, areadata->builders, "builders", "");
+    deserialize_assign_string_default(data, areadata->credits, "credits", "");
+    deserialize_assign_ulong(data, areadata->min_vnum, "min_vnum");
+    deserialize_assign_ulong(data, areadata->max_vnum, "max_vnum");
+    deserialize_assign_uint(data, areadata->llevel, "llevel");
+    deserialize_assign_uint(data, areadata->ulevel, "ulevel");
     /*@+mustfreeonly@*/
 
     headlist_add(areadata);

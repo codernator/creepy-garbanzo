@@ -312,7 +312,7 @@ struct class_type {
 };
 
 struct item_type {
-    int type;
+    unsigned int type;
     char * name;
     char * help_keyword;
 };
@@ -2045,8 +2045,8 @@ void affect_enchant(struct gameobject * obj);
 int check_immune(struct char_data * ch, int dam_type);
 int weapon_lookup(const char *name);
 int weapon_type(const char *name);
-char *weapon_name(int weapon_Type);
-char *item_name(int item_type);
+/*@observer@*/const char *weapon_name(int weapon_type);
+/*@observer@*/const char *item_name_by_type(unsigned int item_type);
 int attack_lookup(const char *name);
 long wiznet_lookup(const char *name);
 long impnet_lookup(const char *name);

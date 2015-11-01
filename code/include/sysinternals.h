@@ -1,6 +1,11 @@
+#ifndef __SYSINTERNALS_H__
+#define __SYSINTERNALS_H__
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdlib.h>
+#include <assert.h>
 
 #ifdef S_SPLINT_S
 #define _Exit exit
@@ -68,31 +73,41 @@ struct array_list
         free(array); \
     }
 
+#define array_list_append(out_node, array, node_type) \
+    if (array->top == array->size) { \
+        size_t new_size = array->size << 2; \
+        array_list_grow(array, node_type, new_size); \
+    } \
+    out_node = &((node_type *)array->items)[array->top]; \
+    array->top++;
+
+
+
 typedef unsigned long long HASHVALUETYPE;
 typedef unsigned int HASHBUCKETTYPE;
 typedef unsigned char byte;
 
 
 
-struct keyvaluepair
+struct key_string_pair
 {
     /*@owned@*/const char *key;
     /*@owned@*/const char *value;
 };
 
 
-typedef /*@observer@*/struct keyvaluepair *keyvaluepair_P;
+typedef /*@observer@*/struct key_string_pair *key_string_pair_ptr;
 struct keyvaluepairhashnode
 {
     size_t size;
     size_t top;
-    /*@dependent@*/keyvaluepair_P *items;
+    /*@dependent@*/key_string_pair_ptr *items;
 };
 
 struct keyvaluepairhash {
     int numhashbuckets;
     /*@only@*/struct keyvaluepairhashnode *lookup;
-    /*@owned@*/keyvaluepair_P *masterlist;
+    /*@owned@*/key_string_pair_ptr *masterlist;
 };
 
 
@@ -101,17 +116,15 @@ HASHVALUETYPE calchashvalue(const char *key);
 /** ~hashing.c */
 
 
-/** keyvaluepair.c */
+/** key_string_pair.c */
 /*@only@*/struct array_list *kvp_create_array(size_t numelements);
-void kvp_array_append_copy(struct array_list *array, const char *key, const char *value);
-void kvp_array_append_copyf(struct array_list *array, size_t maxlength, const char *key, const char *valueformat, ...);
 /*@observer@*//*@null@*/const char *kvp_array_find(const struct array_list *array, const char *key);
 void kvp_free_array(/*@only@*//*@null@*/struct array_list *array);
 
 /*@only@*/struct keyvaluepairhash *keyvaluepairhash_create(/*@observer@*/struct array_list *array, size_t numelements, size_t numbuckets);
 /*@observer@*//*@null@*/const char *keyvaluepairhash_get(struct keyvaluepairhash *hash, const char * const key);
 void keyvaluepairhash_free(/*@only@*//*@null@*/struct keyvaluepairhash *hash);
-/** ~keyvaluepair.c */
+/** ~key_string_pair.c */
 
 
 /** librandom.c */
@@ -155,9 +168,13 @@ int parse_int(const char *string);
 long parse_long(const char *string);
 unsigned int parse_unsigned_int(const char *string);
 unsigned long parse_unsigned_long(const char *string);
-
-/*@only@*/char *flag_to_string(unsigned long flag);
 unsigned long flag_from_string(const char *flagstring);
+
+/*@only@*/char *int_to_string(int value);
+/*@only@*/char *uint_to_string(unsigned int value);
+/*@only@*/char *long_to_string(long value);
+/*@only@*/char *ulong_to_string(unsigned long value);
+/*@only@*/char *flag_to_string(unsigned long flag);
 /** ~libstrings.c */
 
 /** logging.c */
@@ -186,4 +203,6 @@ struct database_controller {
 void database_write_stream(/*@observer@*/const struct database_controller *db, /*@observer@*/const char *data);
 void database_close(/*@only@*/struct database_controller *db);
 /** ~database.c */
+
+#endif // __SYSINTERNALS_H__
 

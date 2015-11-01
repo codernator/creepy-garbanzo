@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
-#include "entityload.h"
+#include "serialize.h"
 
 
 typedef void HELP_HANDLER(/*@partial@*/struct char_data *, unsigned int trust, /*@observer@*/const char *argument);
@@ -54,16 +54,16 @@ struct array_list *helpdata_serialize(const struct help_data *helpdata)
 
     answer = kvp_create_array(5);
 
-    kvp_array_append_copy(answer, "keyword", helpdata->keyword);
-    kvp_array_append_copy(answer, "text", helpdata->text);
+    serialize_copy_string(answer, "keyword", helpdata->keyword);
+    serialize_copy_string(answer, "text", helpdata->text);
     if (helpdata->trust != 0) {
-        kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "trust", "%u", helpdata->trust);
+        serialize_take_string(answer, "true", uint_to_string(helpdata->trust));
     }
     if (helpdata->level != 0) {
-        kvp_array_append_copyf(answer, SERIALIZED_NUMBER_SIZE, "level", "%u", helpdata->level);
+        serialize_take_string(answer, "level", uint_to_string(helpdata->level));
     }
     if (helpdata->category != NULL) {
-        kvp_array_append_copy(answer, "cateogry", helpdata->category);
+        serialize_copy_string(answer, "category", helpdata->category);
     }
 
     return answer;
@@ -77,21 +77,21 @@ struct help_data *helpdata_deserialize(const struct array_list *data)
     helpdata = malloc(sizeof(struct help_data));
     assert(helpdata != NULL);
     
-    ASSIGN_STRING_KEY(data, helpdata->keyword, "keyword");
+    deserialize_assign_string(data, helpdata->keyword, "keyword");
     if (helpdata->keyword == NULL) {
         helpdata->keyword = strdup("BORKED");
         log_bug("Missing keyword in helpdata.");
     }
-    ASSIGN_STRING_KEY(data, helpdata->text, "text");
+    deserialize_assign_string(data, helpdata->text, "text");
     if (helpdata->text == NULL) {
         helpdata->text = strdup("BORKED");
         log_bug("Missing text in helpdata.");
     }
 
     /** optional fields */
-    ASSIGN_STRING_KEY(data, helpdata->category, "category");
-    ASSIGN_UINT_KEY(data, helpdata->trust, "trust");
-    ASSIGN_UINT_KEY(data, helpdata->level, "level");
+    deserialize_assign_string(data, helpdata->category, "category");
+    deserialize_assign_uint(data, helpdata->trust, "trust");
+    deserialize_assign_uint(data, helpdata->level, "level");
 
     headlist_add(helpdata);
     return helpdata;

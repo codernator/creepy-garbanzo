@@ -62,7 +62,7 @@ int weapon_type(const char *name)
     return WEAPON_EXOTIC;
 }
 
-char *item_name(int item_type)
+const char *item_name_by_type(unsigned int item_type)
 {
     int type;
 
@@ -73,7 +73,7 @@ char *item_name(int item_type)
     return "none";
 }
 
-char *weapon_name(int weapon_type)
+const char *weapon_name(int weapon_type)
 {
     int type;
 

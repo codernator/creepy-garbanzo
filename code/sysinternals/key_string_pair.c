@@ -16,7 +16,7 @@ struct array_list *kvp_create_array(size_t numelements)
 {
     struct array_list *array;
 
-    array_list_create(array, struct keyvaluepair, numelements);
+    array_list_create(array, struct key_string_pair, numelements);
 
     return array;
 }
@@ -27,7 +27,7 @@ void kvp_array_append_copy(struct array_list *array, const char *key, const char
     size_t vallength = strlen(value);
     char *akey;
     char *avalue;
-    struct keyvaluepair *kvp;
+    struct key_string_pair *kvp;
 
     if (array->top == array->size)
     {
@@ -44,22 +44,10 @@ void kvp_array_append_copy(struct array_list *array, const char *key, const char
 
     strncpy(akey, key, keylength);
     strncpy(avalue, value, vallength);
-    kvp = &((struct keyvaluepair *)array->items)[array->top];
+    kvp = &((struct key_string_pair *)array->items)[array->top];
     kvp->key = akey;
     kvp->value = avalue;
     array->top += 1;
-}
-
-void kvp_array_append_copyf(struct array_list *array, size_t maxlength, const char *key, const char *valueformat, ...)
-{
-    char buf[maxlength];
-    va_list args;
-
-    va_start(args, valueformat);
-    (void)vsnprintf(buf, maxlength, valueformat, args);
-    va_end(args);
-
-    kvp_array_append_copy(array, key, buf);
 }
 
 const char *kvp_array_find(const struct array_list *array, const char *key)
@@ -68,8 +56,8 @@ const char *kvp_array_find(const struct array_list *array, const char *key)
     size_t keylen = strlen(key);
 
     for(idx = 0; idx < array->top; idx++) {
-        if (strncmp(key, ((struct keyvaluepair *)array->items)[idx].key, keylen+1) == 0)
-            return ((struct keyvaluepair *)array->items)[idx].value;
+        if (strncmp(key, ((struct key_string_pair *)array->items)[idx].key, keylen+1) == 0)
+            return ((struct key_string_pair *)array->items)[idx].value;
     }
 
     return NULL;
@@ -77,18 +65,18 @@ const char *kvp_array_find(const struct array_list *array, const char *key)
 
 void kvp_free_array(struct array_list *array)
 {
-    struct keyvaluepair *node; 
+    struct key_string_pair *node; 
     size_t i; 
 
     if (array == NULL)
         return;
 
     array_list_each(array, i) {
-        node = array_list_node_at(array, struct keyvaluepair, i);
+        node = array_list_node_at(array, struct key_string_pair, i);
         free((char *)node->key); 
         free((char *)node->value);
     } 
-    array_list_free(array, struct keyvaluepair, kvp_free);
+    array_list_free(array, struct key_string_pair, kvp_free);
 }
 
 
@@ -105,7 +93,7 @@ struct keyvaluepairhash *keyvaluepairhash_create(struct array_list *array, size_
     hash->numhashbuckets = (numbuckets == 0 ? DEFAULT_NUMHASHBUCKETS : numbuckets);
     hash->lookup = calloc(sizeof(struct keyvaluepairhashnode), (size_t)hash->numhashbuckets);
     assert(hash->lookup != NULL);
-    hash->masterlist = calloc(sizeof(keyvaluepair_P), bucketsize * hash->numhashbuckets);
+    hash->masterlist = calloc(sizeof(key_string_pair_ptr), bucketsize * hash->numhashbuckets);
     assert(hash->masterlist != NULL);
 
     for (idx = 0; idx < hash->numhashbuckets; idx++) {
@@ -118,7 +106,7 @@ struct keyvaluepairhash *keyvaluepairhash_create(struct array_list *array, size_
     }
 
     for(idx = 0; idx < (int)numelements; idx++) {
-        HASHBUCKETTYPE hashbucket = CALC_HASH_BUCKET(((struct keyvaluepair *)array->items)[idx].key, hash->numhashbuckets);
+        HASHBUCKETTYPE hashbucket = CALC_HASH_BUCKET(((struct key_string_pair *)array->items)[idx].key, hash->numhashbuckets);
         struct keyvaluepairhashnode *hashnode = &hash->lookup[hashbucket];
         if (hashnode->top == hashnode->size)
         {
@@ -127,7 +115,7 @@ struct keyvaluepairhash *keyvaluepairhash_create(struct array_list *array, size_
             }
         }
 
-        ((keyvaluepair_P *)hashnode->items)[hashnode->top] = &((struct keyvaluepair *)array->items)[idx];
+        ((key_string_pair_ptr *)hashnode->items)[hashnode->top] = &((struct key_string_pair *)array->items)[idx];
         hashnode->top++;
     }
 

@@ -205,6 +205,35 @@ unsigned long parse_unsigned_long(const char *string)
     return UMAX(0, (unsigned long)atoll(string));
 }
 
+#define SERIALIZED_NUMBER_SIZE 32
+char *int_to_string(int value)
+{ 
+    static char buf[SERIALIZED_NUMBER_SIZE]; 
+    (void)snprintf(buf, SERIALIZED_NUMBER_SIZE - 1, "%d", value); 
+    return strdup(buf);
+}
+
+char *uint_to_string(unsigned int value)
+{ 
+    static char buf[SERIALIZED_NUMBER_SIZE]; 
+    (void)snprintf(buf, SERIALIZED_NUMBER_SIZE - 1, "%u", value); 
+    return strdup(buf);
+}
+
+char *long_to_string(long value)
+{ 
+    static char buf[SERIALIZED_NUMBER_SIZE]; 
+    (void)snprintf(buf, SERIALIZED_NUMBER_SIZE - 1, "%ld", value); 
+    return strdup(buf);
+}
+
+char *ulong_to_string(unsigned long value)
+{ 
+    static char buf[SERIALIZED_NUMBER_SIZE]; 
+    (void)snprintf(buf, SERIALIZED_NUMBER_SIZE - 1, "%lu", value); 
+    return strdup(buf);
+}
+
 #define ZminusA  ((unsigned long)('Z' - 'A'))
 /*@only@*/char *flag_to_string(unsigned long flag)
 {
