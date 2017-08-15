@@ -412,25 +412,23 @@ void reset_char(struct char_data *ch)
             if (obj == NULL)
                 continue;
 
-            if (!obj->enchanted) {
-                for (af = obj->objprototype->affected; af != NULL; af = af->next) {
-                    mod = af->modifier;
-                    switch (af->location) {
-                      case APPLY_SEX:
-                          ch->sex -= mod;
-                          if (ch->sex < 0 || ch->sex > 2)
-                              ch->sex = IS_NPC(ch) ? 0 : ch->pcdata->true_sex;
-                          break;
-                      case APPLY_MANA:
-                          ch->max_mana -= mod;
-                          break;
-                      case APPLY_HIT:
-                          ch->max_hit -= mod;
-                          break;
-                      case APPLY_MOVE:
-                          ch->max_move -= mod;
-                          break;
-                    }
+            for (af = obj->objprototype->affected; af != NULL; af = af->next) {
+                mod = af->modifier;
+                switch (af->location) {
+                    case APPLY_SEX:
+                        ch->sex -= mod;
+                        if (ch->sex < 0 || ch->sex > 2)
+                            ch->sex = IS_NPC(ch) ? 0 : ch->pcdata->true_sex;
+                        break;
+                    case APPLY_MANA:
+                        ch->max_mana -= mod;
+                        break;
+                    case APPLY_HIT:
+                        ch->max_hit -= mod;
+                        break;
+                    case APPLY_MOVE:
+                        ch->max_move -= mod;
+                        break;
                 }
             }
 
@@ -494,66 +492,64 @@ void reset_char(struct char_data *ch)
         for (i = 0; i < 4; i++)
             ch->armor[i] -= apply_ac(obj, loc, i);
 
-        if (!obj->enchanted) {
-            for (af = obj->objprototype->affected; af != NULL; af = af->next) {
-                mod = af->modifier;
-                switch (af->location) {
-                  case APPLY_STR:
-                      ch->mod_stat[STAT_STR] += mod;
-                      break;
-                  case APPLY_DEX:
-                      ch->mod_stat[STAT_DEX] += mod;
-                      break;
-                  case APPLY_INT:
-                      ch->mod_stat[STAT_INT] += mod;
-                      break;
-                  case APPLY_WIS:
-                      ch->mod_stat[STAT_WIS] += mod;
-                      break;
-                  case APPLY_CON:
-                      ch->mod_stat[STAT_CON] += mod;
-                      break;
-                  case APPLY_LUCK:
-                      ch->mod_stat[STAT_LUCK] += mod;
-                      break;
-                  case APPLY_SEX:
-                      ch->sex += mod;
-                      break;
-                  case APPLY_MANA:
-                      ch->max_mana += mod;
-                      break;
-                  case APPLY_HIT:
-                      ch->max_hit += mod;
-                      break;
-                  case APPLY_MOVE:
-                      ch->max_move += mod;
-                      break;
-                  case APPLY_AC:
-                      for (i = 0; i < 4; i++)
-                          ch->armor[i] += mod;
-                      break;
-                  case APPLY_HITROLL:
-                      ch->hitroll += mod;
-                      break;
-                  case APPLY_DAMROLL:
-                      ch->damroll += mod;
-                      break;
-                  case APPLY_SAVES:
-                      ch->saving_throw += mod;
-                      break;
-                  case APPLY_SAVING_ROD:
-                      ch->saving_throw += mod;
-                      break;
-                  case APPLY_SAVING_PETRI:
-                      ch->saving_throw += mod;
-                      break;
-                  case APPLY_SAVING_BREATH:
-                      ch->saving_throw += mod;
-                      break;
-                  case APPLY_SAVING_SPELL:
-                      ch->saving_throw += mod;
-                      break;
-                }
+        for (af = obj->objprototype->affected; af != NULL; af = af->next) {
+            mod = af->modifier;
+            switch (af->location) {
+                case APPLY_STR:
+                    ch->mod_stat[STAT_STR] += mod;
+                    break;
+                case APPLY_DEX:
+                    ch->mod_stat[STAT_DEX] += mod;
+                    break;
+                case APPLY_INT:
+                    ch->mod_stat[STAT_INT] += mod;
+                    break;
+                case APPLY_WIS:
+                    ch->mod_stat[STAT_WIS] += mod;
+                    break;
+                case APPLY_CON:
+                    ch->mod_stat[STAT_CON] += mod;
+                    break;
+                case APPLY_LUCK:
+                    ch->mod_stat[STAT_LUCK] += mod;
+                    break;
+                case APPLY_SEX:
+                    ch->sex += mod;
+                    break;
+                case APPLY_MANA:
+                    ch->max_mana += mod;
+                    break;
+                case APPLY_HIT:
+                    ch->max_hit += mod;
+                    break;
+                case APPLY_MOVE:
+                    ch->max_move += mod;
+                    break;
+                case APPLY_AC:
+                    for (i = 0; i < 4; i++)
+                        ch->armor[i] += mod;
+                    break;
+                case APPLY_HITROLL:
+                    ch->hitroll += mod;
+                    break;
+                case APPLY_DAMROLL:
+                    ch->damroll += mod;
+                    break;
+                case APPLY_SAVES:
+                    ch->saving_throw += mod;
+                    break;
+                case APPLY_SAVING_ROD:
+                    ch->saving_throw += mod;
+                    break;
+                case APPLY_SAVING_PETRI:
+                    ch->saving_throw += mod;
+                    break;
+                case APPLY_SAVING_BREATH:
+                    ch->saving_throw += mod;
+                    break;
+                case APPLY_SAVING_SPELL:
+                    ch->saving_throw += mod;
+                    break;
             }
         }
 
@@ -1062,10 +1058,9 @@ void equip_char(struct char_data *ch, struct gameobject *obj, int iWear)
         ch->armor[i] -= apply_ac(obj, iWear, i);
     obj->wear_loc = iWear;
 
-    if (!obj->enchanted)
-        for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next)
-            if (paf->location != APPLY_SPELL_AFFECT)
-                affect_modify(ch, paf, true);
+    for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next)
+        if (paf->location != APPLY_SPELL_AFFECT)
+            affect_modify(ch, paf, true);
     for (paf = obj->affected; paf != NULL; paf = paf->next)
         if (paf->location == APPLY_SPELL_AFFECT)
             affect_to_char(ch, paf);
@@ -1100,24 +1095,23 @@ void unequip_char(struct char_data *ch, struct gameobject *obj)
         ch->armor[i] += apply_ac(obj, obj->wear_loc, i);
     obj->wear_loc = -1;
 
-    if (!obj->enchanted) {
-        for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
-            if (paf->location == APPLY_SPELL_AFFECT) {
-                for (lpaf = ch->affected; lpaf != NULL; lpaf = lpaf_next) {
-                    lpaf_next = lpaf->next;
-                    if ((lpaf->type == paf->type) &&
-                        (lpaf->level == paf->level) &&
-                        (lpaf->location == APPLY_SPELL_AFFECT)) {
-                        affect_remove(ch, lpaf);
-                        lpaf_next = NULL;
-                    }
+    for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
+        if (paf->location == APPLY_SPELL_AFFECT) {
+            for (lpaf = ch->affected; lpaf != NULL; lpaf = lpaf_next) {
+                lpaf_next = lpaf->next;
+                if ((lpaf->type == paf->type) &&
+                    (lpaf->level == paf->level) &&
+                    (lpaf->location == APPLY_SPELL_AFFECT)) {
+                    affect_remove(ch, lpaf);
+                    lpaf_next = NULL;
                 }
-            } else {
-                affect_modify(ch, paf, false);
-                affect_check(ch, paf->where, paf->bitvector);
             }
+        } else {
+            affect_modify(ch, paf, false);
+            affect_check(ch, paf->where, paf->bitvector);
         }
     }
+
     for (paf = obj->affected; paf != NULL; paf = paf->next)
         if (paf->location == APPLY_SPELL_AFFECT) {
             log_bug("Norm-Apply: %d", 0);
@@ -1624,7 +1618,7 @@ void deduct_cost(struct char_data *ch, unsigned int cost)
  ***************************************************************************/
 struct gameobject *create_money(unsigned int gold, unsigned int silver)
 {
-    char buf[MAX_STRING_LENGTH];
+    //char buf[MAX_STRING_LENGTH];
     struct gameobject *obj;
 
     if ((gold == 0 && silver == 0)) {
@@ -1641,28 +1635,28 @@ struct gameobject *create_money(unsigned int gold, unsigned int silver)
     } else if (silver == 0) {
         obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_GOLD_SOME), 0);
 
-        sprintf(buf, obj->short_descr, gold);
-        free_string(obj->short_descr);
+        //sprintf(buf, OBJECT_SHORT(obj), gold);
+        //free_string(obj->short_descr);
+        //obj->short_descr = str_dup(buf);
 
-        obj->short_descr = str_dup(buf);
         obj->value[1] = (long)gold;
         obj->cost = gold;
     } else if (gold == 0) {
         obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_SILVER_SOME), 0);
 
-        sprintf(buf, obj->short_descr, silver);
-        free_string(obj->short_descr);
+        //sprintf(buf, obj->short_descr, silver);
+        //free_string(obj->short_descr);
+        //obj->short_descr = str_dup(buf);
 
-        obj->short_descr = str_dup(buf);
         obj->value[0] = (long)silver;
         obj->cost = silver;
     } else {
         obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_COINS), 0);
 
-        sprintf(buf, obj->short_descr, silver, gold);
-        free_string(obj->short_descr);
+        //sprintf(buf, obj->short_descr, silver, gold);
+        //free_string(obj->short_descr);
+        //obj->short_descr = str_dup(buf);
 
-        obj->short_descr = str_dup(buf);
         obj->value[0] = (long)silver;
         obj->value[1] = (long)gold;
         obj->cost = (unsigned int)(100 * gold + silver);
@@ -2348,44 +2342,42 @@ void identify_item(struct char_data *ch, struct gameobject *obj)
           break;
     }
 
-    if (!obj->enchanted) {
-        for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
-            if (paf->location != APPLY_NONE && paf->modifier != 0) {
-                printf_to_char(ch, "Affects %s by %d",
-                               affect_loc_name((long)paf->location),
-                               paf->modifier);
-                if ((paf->location == APPLY_MLAG) || (paf->location == APPLY_TLAG))
-                    send_to_char("%", ch);
-                send_to_char(".\n\r", ch);
-            }
+    for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
+        if (paf->location != APPLY_NONE && paf->modifier != 0) {
+            printf_to_char(ch, "Affects %s by %d",
+                            affect_loc_name((long)paf->location),
+                            paf->modifier);
+            if ((paf->location == APPLY_MLAG) || (paf->location == APPLY_TLAG))
+                send_to_char("%", ch);
+            send_to_char(".\n\r", ch);
+        }
 
-            if (paf->bitvector) {
-                switch (paf->where) {
-                  case TO_AFFECTS:
-                      printf_to_char(ch, "Adds %s affect.\n\r",
-                                     affect_bit_name(paf->bitvector));
-                      break;
-                  case TO_OBJECT:
-                      printf_to_char(ch, "Adds %s object flag.\n\r",
-                                     extra_bit_name(paf->bitvector));
-                      break;
-                  case TO_IMMUNE:
-                      printf_to_char(ch, "Adds immunity to %s.\n\r",
-                                     imm_bit_name(paf->bitvector));
-                      break;
-                  case TO_RESIST:
-                      printf_to_char(ch, "Adds resistance to %s.\n\r",
-                                     imm_bit_name(paf->bitvector));
-                      break;
-                  case TO_VULN:
-                      printf_to_char(ch, "Adds vulnerability to %s.\n\r",
-                                     imm_bit_name(paf->bitvector));
-                      break;
-                  default:
-                      printf_to_char(ch, "Unknown bit %d: %d\n\r",
-                                     paf->where, paf->bitvector);
-                      break;
-                }
+        if (paf->bitvector) {
+            switch (paf->where) {
+                case TO_AFFECTS:
+                    printf_to_char(ch, "Adds %s affect.\n\r",
+                                    affect_bit_name(paf->bitvector));
+                    break;
+                case TO_OBJECT:
+                    printf_to_char(ch, "Adds %s object flag.\n\r",
+                                    extra_bit_name(paf->bitvector));
+                    break;
+                case TO_IMMUNE:
+                    printf_to_char(ch, "Adds immunity to %s.\n\r",
+                                    imm_bit_name(paf->bitvector));
+                    break;
+                case TO_RESIST:
+                    printf_to_char(ch, "Adds resistance to %s.\n\r",
+                                    imm_bit_name(paf->bitvector));
+                    break;
+                case TO_VULN:
+                    printf_to_char(ch, "Adds vulnerability to %s.\n\r",
+                                    imm_bit_name(paf->bitvector));
+                    break;
+                default:
+                    printf_to_char(ch, "Unknown bit %d: %d\n\r",
+                                    paf->where, paf->bitvector);
+                    break;
             }
         }
     }

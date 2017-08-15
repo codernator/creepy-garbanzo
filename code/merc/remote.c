@@ -173,17 +173,21 @@ void remote_cnxn_init(int control, new_cnxn_handler *new_connection_handler)
     size = sizeof(sock);
     if (getpeername(descriptor, (struct sockaddr *)&sock, &size) < 0) {
 	perror("descriptor_new: getpeername");
-	new_connection_handler(descriptor, 0, "unknown"); 
+	new_connection_handler(descriptor, 0, "unknown");
     } else {
 	/*
 	 * Would be nice to use inet_ntoa here but it takes a struct arg,
 	 * which ain't very compatible between gcc and system libraries.
 	 */
 	int addr;
+	const char *hostname = NULL;
 
 	addr = ntohl(sock.sin_addr.s_addr);
+	// from might be NULL on a simple local network.
 	from = gethostbyaddr((char *)&sock.sin_addr, sizeof(sock.sin_addr), AF_INET);
-	new_connection_handler(descriptor, addr, from->h_name); 
+	if (from != NULL)
+		hostname = from->h_name;
+	new_connection_handler(descriptor, addr, hostname);
     }
 
 }

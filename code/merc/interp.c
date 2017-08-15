@@ -57,7 +57,6 @@ const struct cmd_type cmd_table[] =
     { "order",	      do_order,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
     { "practice",	  do_practice,     POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
     { "rest",	      do_rest,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
-    { "repair",	      do_repair,       POS_STANDING, 0,	 LOG_NORMAL, 1 },
     { "raceinfo",	  do_raceinfo,     POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
     { "sit",	      do_sit,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
     { "sockets",	  do_sockets,      POS_DEAD,     L2, LOG_NORMAL, 1 },
@@ -224,8 +223,6 @@ const struct cmd_type cmd_table[] =
     { "split",	      do_split,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
     { "steal",	      do_steal,	       POS_STANDING, 0,	 LOG_NORMAL, 1 },
     { "train",	      do_train,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
-    { "tally",	      do_tally,	       POS_RESTING,  1,	 LOG_NORMAL, 1 },
-    { "untally",	  do_untally,      POS_RESTING,  L1, LOG_NORMAL, 1 },
     { "visible",	  do_visible,      POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
     { "wake",	      do_wake,	       POS_SLEEPING, 0,	 LOG_NORMAL, 1 },
     { "where",	      do_where,	       POS_RESTING,  0,	 LOG_NORMAL, 1 },
@@ -233,17 +230,7 @@ const struct cmd_type cmd_table[] =
     { "push",	      do_push,	       POS_STANDING, 0,	 LOG_NORMAL, 1 },
     { "drag",	      do_drag,	       POS_STANDING, 0,	 LOG_NORMAL, 1 },
     { "color",	      do_color,	       POS_DEAD,     0,	 LOG_NORMAL, 1 },
-    { "scribe",	      do_scribe,       POS_STANDING, 0,	 LOG_NORMAL, 1 },
-    { "brew",	      do_brew,	       POS_STANDING, 0,	 LOG_NORMAL, 1 },
 
-    /*  Blacksmith commands  */
-
-    { "estimate",	  do_estimate,     POS_STANDING, 0,	 LOG_NORMAL, 1 },
-    { "engulf",	      do_engulf,       POS_STANDING, 0,	 LOG_NORMAL, 1 },
-    { "electrify",	  do_electrify,    POS_STANDING, 0,	 LOG_NORMAL, 1 },
-    { "poison",	      do_poison,       POS_STANDING, 0,	 LOG_NORMAL, 1 },
-    { "energize",	  do_energize,     POS_STANDING, 0,	 LOG_NORMAL, 1 },
-    { "chill",	      do_chill,	       POS_STANDING, 0,	 LOG_NORMAL, 1 },
 
     /*  Immortal commands  */
 
@@ -253,9 +240,6 @@ const struct cmd_type cmd_table[] =
     { "trust",	      do_trust,	       POS_DEAD,     ML, LOG_ALWAYS, 1 },
     { "extend",	      do_extend,       POS_DEAD,     IM, LOG_ALWAYS, 1 },
     { "violate",	  do_violate,      POS_DEAD,     L7, LOG_ALWAYS, 1 },
-    { "enchant",	  do_enchant,      POS_DEAD,     L4, LOG_ALWAYS, 1 },
-    { "disenchant",	  do_disenchant,   POS_DEAD,     L4, LOG_ALWAYS, 1 },
-    { "cuo",	      do_cuo,	       POS_DEAD,     L4, LOG_NORMAL, 1 },
     { "allow",	      do_allow,	       POS_DEAD,     L2, LOG_ALWAYS, 1 },
     { "ban",	      do_ban,	       POS_DEAD,     L2, LOG_ALWAYS, 1 },
     { "deny",	      do_deny,	       POS_DEAD,     L2, LOG_ALWAYS, 1 },

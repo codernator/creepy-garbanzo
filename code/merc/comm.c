@@ -1020,9 +1020,29 @@ void process_all_output()
     }
 }
 
+const size_t IPStringLength = 24;
 void on_new_connection(int descriptor, int ipaddress, const char *hostname)
 {
     struct descriptor_data *dnew;
+    char ipstring[IPStringLength];
+    const char *resolved;
+
+    if (ipaddress <= 0)
+    {
+        (void)remote_write(descriptor, "Invalid credentials.\n\r", 0);
+        remote_disconnect(descriptor);
+        return;
+    }
+
+    /*@-shiftimplementation@*/
+    (void)snprintf(ipstring, IPStringLength, "%d.%d.%d.%d",
+                    (ipaddress >> 24) & 0xFF,
+                    (ipaddress >> 16) & 0xFF,
+                    (ipaddress >> 8) & 0xFF,
+                    (ipaddress) & 0xFF);
+    /*@+shiftimplementation@*/
+
+    resolved = hostname == NULL ? ipstring : hostname;
 
     /*
      * Swiftest: I added the following to ban sites.  I don't
@@ -1032,19 +1052,15 @@ void on_new_connection(int descriptor, int ipaddress, const char *hostname)
      *
      * Furey: added suffix check by request of Nickel of HiddenWorlds.
      */
-    if (check_ban(hostname, BAN_ALL)) {
+    if (check_ban(resolved, BAN_ALL)) {
         remote_write(descriptor, "Your site has been banned from this mud.\n\r", 0);
         remote_disconnect(descriptor);
         return;
     }
 
     dnew = descriptor_new(descriptor);
-    descriptor_host_set(dnew, hostname);
-    log_string("Sock.sinaddr: %d.%d.%d.%d", 
-               (ipaddress >> 24) & 0xFF, 
-               (ipaddress >> 16) & 0xFF, 
-               (ipaddress >> 8) & 0xFF, 
-               (ipaddress) & 0xFF);
+    descriptor_host_set(dnew, resolved);
+    log_string("Sock.sinaddr: %s", ipstring);
 
     /** Init descriptor data. */
     remote_write(dnew->descriptor, "Ansi intro screen?(y/n) \n\r", 0);

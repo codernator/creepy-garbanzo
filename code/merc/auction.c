@@ -120,7 +120,7 @@ void do_auction(struct char_data *ch, const char *argument)
                 send_to_char("There is no auction going on you can stop.\n\r", ch);
                 return;
             } else {
-                sprintf(buf, "Sale of %s has been stopped by %s.\n\r", currentAuction.item->short_descr, ch->name);
+                sprintf(buf, "Sale of %s has been stopped by %s.\n\r", OBJECT_SHORT(currentAuction.item), ch->name);
                 broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), NULL, buf);
                 obj_to_char(currentAuction.item, ch);
                 currentAuction.item = NULL;
@@ -160,7 +160,7 @@ void do_auction(struct char_data *ch, const char *argument)
             auction_idx = auction_type_lookup(currentAuction.type);
 
             if (arg2[0] == '\0') {
-                sprintf(buf, "How much do you want to bid on %s?\n\r", currentAuction.item->short_descr);
+                sprintf(buf, "How much do you want to bid on %s?\n\r", OBJECT_SHORT(currentAuction.item));
                 send_to_char(buf, ch);
                 return;
             }
@@ -219,7 +219,7 @@ void do_auction(struct char_data *ch, const char *argument)
                     bid,
                     auction_type_table[auction_idx].display,
                     (bid > 1 && !auction_type_table[auction_idx].is_coins) ? "s" : "",
-                    currentAuction.item->short_descr);
+                    OBJECT_SHORT(currentAuction.item));
             broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), NULL, buf);
             return;
         } else {
@@ -295,7 +295,7 @@ void do_auction(struct char_data *ch, const char *argument)
               /*  this needs to be fixed */
               currentAuction.reserve = auction_reserve;
 
-              sprintf(buf, "A new item has been received: %s.", obj->short_descr);
+              sprintf(buf, "A new item has been received: %s.", OBJECT_SHORT(obj));
               broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), NULL, buf);
               sprintf(buf, "Bidding will start at `#%u`` %s%s``.",
                       currentAuction.reserve,
@@ -329,12 +329,12 @@ void auction_update(void)
               case 2:                         /* going twice */
                   if (currentAuction.bet > 0) {
                       sprintf(buf, "%s going %s for `#%u`` %s%s``.",
-                              currentAuction.item->short_descr,
+                              OBJECT_SHORT(currentAuction.item),
                               ((currentAuction.going == 1) ? "once" : "twice"),
                               currentAuction.bet, auction_type_table[auction_idx].display,
                               (currentAuction.bet > 1 && !auction_type_table[auction_idx].is_coins) ? "s" : "");
                   } else {
-                      sprintf(buf, "%s going %s `!(`7no bet received yet`!)``.", currentAuction.item->short_descr, ((currentAuction.going == 1) ? "once" : "twice"));
+                      sprintf(buf, "%s going %s `!(`7no bet received yet`!)``.", OBJECT_SHORT(currentAuction.item), ((currentAuction.going == 1) ? "once" : "twice"));
                   }
                   broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), NULL, buf);
                   break;
@@ -342,7 +342,7 @@ void auction_update(void)
               case 3: /* SOLD! */
                   if (currentAuction.bet > 0) {
                       sprintf(buf, "%s sold to %s for `#%u`7 %s%s``.",
-                              currentAuction.item->short_descr,
+                              OBJECT_SHORT(currentAuction.item),
                               IS_NPC(currentAuction.buyer) ? currentAuction.buyer->short_descr : currentAuction.buyer->name,
                               currentAuction.bet, auction_type_table[auction_idx].display,
                               (currentAuction.bet > 1 && !auction_type_table[auction_idx].is_coins) ? "s" : "");
@@ -355,7 +355,7 @@ void auction_update(void)
                       credit_player_bid(currentAuction.seller, (long)currentAuction.bet, currentAuction.type);
                       currentAuction.item = NULL;                   /* reset item */
                   } else {
-                      sprintf(buf, "No bets received for %s - object has been `!removed`7.", currentAuction.item->short_descr);
+                      sprintf(buf, "No bets received for %s - object has been `!removed`7.", OBJECT_SHORT(currentAuction.item));
                       broadcast_channel(NULL, channels_find(CHANNEL_AUCTION), NULL, buf);
                       act("The auctioneer appears before you to return $p to you.", currentAuction.seller, currentAuction.item, NULL, TO_CHAR);
                       act("The auctioneer appears before $n to return $p to $m.", currentAuction.seller, currentAuction.item, NULL, TO_ROOM);

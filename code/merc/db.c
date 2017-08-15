@@ -1965,7 +1965,6 @@ struct gameobject *create_object(struct objectprototype *objprototype, int level
     obj = object_new(objprototype);
 
     obj->in_room = NULL;
-    obj->enchanted = false;
 
     if (level == -1) {
         obj->level = objprototype->level;
@@ -1976,8 +1975,6 @@ struct gameobject *create_object(struct objectprototype *objprototype, int level
     obj->wear_loc = -1;
 
     object_name_set(obj, str_dup(objprototype->name));
-    obj->short_descr = str_dup(objprototype->short_descr);
-    obj->description = str_dup(objprototype->description);
     obj->material = str_dup(objprototype->material);
     obj->timer = objprototype->init_timer;
     obj->item_type = objprototype->item_type;

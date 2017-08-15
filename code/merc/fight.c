@@ -1625,54 +1625,54 @@ void stop_fighting(struct char_data *ch, bool fBoth)
  */
 void make_corpse(struct char_data *ch)
 {
-    char buf[MAX_STRING_LENGTH];
+    //char buf[MAX_STRING_LENGTH];
     struct gameobject *corpse;
     struct gameobject *obj;
     struct gameobject *obj_next;
-    char *name;
+    //char *name;
 
 
     if (IS_NPC(ch)) {
-	name = ch->short_descr;
-	corpse = create_object(objectprototype_getbyvnum(OBJ_VNUM_CORPSE_NPC), 0);
-	corpse->timer = number_range(3, 6);
-	if (ch->gold > 0) {
-	    obj_to_obj(create_money(ch->gold, ch->silver), corpse);
-	    ch->gold = 0;
-	    ch->silver = 0;
-	}
-	corpse->cost = 0;
+        //name = ch->short_descr;
+        corpse = create_object(objectprototype_getbyvnum(OBJ_VNUM_CORPSE_NPC), 0);
+        corpse->timer = number_range(3, 6);
+        if (ch->gold > 0) {
+            obj_to_obj(create_money(ch->gold, ch->silver), corpse);
+            ch->gold = 0;
+            ch->silver = 0;
+        }
+        corpse->cost = 0;
     } else {
-	name = ch->name;
-	corpse = create_object(objectprototype_getbyvnum(OBJ_VNUM_CORPSE_PC), 0);
-	corpse->timer = number_range(25, 40);
-	object_ownername_set(corpse, ch);
-	corpse->value[0] = 0;
+        //name = ch->name;
+        corpse = create_object(objectprototype_getbyvnum(OBJ_VNUM_CORPSE_PC), 0);
+        corpse->timer = number_range(25, 40);
+        object_ownername_set(corpse, ch);
+        corpse->value[0] = 0;
 
-	if (ch->level < LEVEL_IMMORTAL) {
-	    if (ch->gold > 1 || ch->silver > 1) {
-		struct room_index_data *gold_room;
+        if (ch->level < LEVEL_IMMORTAL) {
+            if (ch->gold > 1 || ch->silver > 1) {
+            struct room_index_data *gold_room;
 
-		gold_room = get_random_room(ch, NULL);
-		obj_to_room(create_money(ch->gold / 5, ch->silver / 5), gold_room);
-		obj_to_obj(create_money(ch->gold / 5, ch->silver / 5), corpse);
-		ch->gold -= 3 * ch->gold / 5;
-		ch->silver -= 3 * ch->silver / 5;
-	    }
-	}
+            gold_room = get_random_room(ch, NULL);
+            obj_to_room(create_money(ch->gold / 5, ch->silver / 5), gold_room);
+            obj_to_obj(create_money(ch->gold / 5, ch->silver / 5), corpse);
+            ch->gold -= 3 * ch->gold / 5;
+            ch->silver -= 3 * ch->silver / 5;
+            }
+        }
 
-	corpse->cost = 0;
+        corpse->cost = 0;
     }
 
     corpse->level = ch->level;
 
-    sprintf(buf, corpse->short_descr, name);
-    free_string(corpse->short_descr);
-    corpse->short_descr = str_dup(buf);
+    //sprintf(buf, corpse->short_descr, name);
+    //free_string(corpse->short_descr);
+    //corpse->short_descr = str_dup(buf);
 
-    sprintf(buf, corpse->description, name);
-    free_string(corpse->description);
-    corpse->description = str_dup(buf);
+    //sprintf(buf, corpse->description, name);
+    //free_string(corpse->description);
+    //corpse->description = str_dup(buf);
 
     for (obj = ch->carrying; obj != NULL; obj = obj_next) {
 	bool floating = false;
@@ -1778,33 +1778,33 @@ void death_cry(struct char_data *ch, struct char_data *killer)
 	act(msg, ch, NULL, NULL, TO_ROOM);
 
     if (vnum != 0) {
-	char buf[MAX_STRING_LENGTH];
-	struct gameobject *obj;
-	char *name;
+        //char buf[MAX_STRING_LENGTH];
+        struct gameobject *obj;
+        //char *name;
 
-	name = IS_NPC(ch) ? ch->short_descr : ch->name;
-	obj = create_object(objectprototype_getbyvnum(vnum), 0);
-	obj->timer = number_range(4, 7);
+        //name = IS_NPC(ch) ? ch->short_descr : ch->name;
+        obj = create_object(objectprototype_getbyvnum(vnum), 0);
+        obj->timer = number_range(4, 7);
 
-	sprintf(buf, obj->short_descr, name);
-	free_string(obj->short_descr);
-	obj->short_descr = str_dup(buf);
+        //sprintf(buf, obj->short_descr, name);
+        //free_string(obj->short_descr);
+        //obj->short_descr = str_dup(buf);
 
-	sprintf(buf, obj->description, name);
-	free_string(obj->description);
-	obj->description = str_dup(buf);
+        //sprintf(buf, obj->description, name);
+        //free_string(obj->description);
+        //obj->description = str_dup(buf);
 
-	if (obj->item_type == ITEM_TREASURE && !IS_NPC(ch))
-	    obj->timer = -1;
+        if (obj->item_type == ITEM_TREASURE && !IS_NPC(ch))
+            obj->timer = -1;
 
-	if (obj->item_type == ITEM_FOOD) {
-	    if (IS_SET(ch->form, FORM_POISON))
-		obj->value[3] = 1;
-	    else if (!IS_SET(ch->form, FORM_EDIBLE))
-		obj->item_type = ITEM_TRASH;
-	}
+        if (obj->item_type == ITEM_FOOD) {
+            if (IS_SET(ch->form, FORM_POISON))
+                obj->value[3] = 1;
+            else if (!IS_SET(ch->form, FORM_EDIBLE))
+                obj->item_type = ITEM_TRASH;
+        }
 
-	obj_to_room(obj, ch->in_room);
+        obj_to_room(obj, ch->in_room);
     }
 
     return;

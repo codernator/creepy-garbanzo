@@ -56,7 +56,7 @@ void gain_object_exp(struct char_data *ch, struct gameobject *obj, int gain)
 	return;
 
     if (obj->plevel >= 30) return;
-    printf_to_char(ch, "%s has gained %d exp.\n\r", capitalize(obj->short_descr), gain);
+    printf_to_char(ch, "%s has gained %d exp.\n\r", capitalize(OBJECT_SHORT(obj)), gain);
     obj->exp += gain;
     obj->xp_tolevel -= gain;
 
@@ -65,7 +65,7 @@ void gain_object_exp(struct char_data *ch, struct gameobject *obj, int gain)
 	advance_level_object(ch, obj);
 	leftover = (obj->xp_tolevel * 1);
 	obj->plevel++;
-	printf_to_char(ch, "%s has raised to level %d. To see your objects stats lore or identify it.\n\r", capitalize(obj->short_descr), obj->plevel);
+	printf_to_char(ch, "%s has raised to level %d. To see your objects stats lore or identify it.\n\r", capitalize(OBJECT_SHORT(obj)), obj->plevel);
 	obj->xp_tolevel = 1500 + (obj->plevel * 500);
 	obj->xp_tolevel -= leftover;
 	return;

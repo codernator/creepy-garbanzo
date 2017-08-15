@@ -43,9 +43,6 @@ static void fread_rdesc(struct room_index_data * location, FILE * fp);
 
 
 
-/***************************************************************************
- *	print_flags
- ***************************************************************************/
 char *print_flags(long flag)
 {
     unsigned int count;
@@ -72,11 +69,6 @@ char *print_flags(long flag)
     return buf;
 }
 
-
-
-/***************************************************************************
- *	save_char_obj
- ***************************************************************************/
 void save_char_obj(struct char_data *ch)
 {
     extern struct dynamic_skill *gsp_deft;
@@ -84,8 +76,7 @@ void save_char_obj(struct char_data *ch)
     char strsave[MAX_INPUT_LENGTH];
     FILE *fp;
 
-    if (IS_NPC(ch))
-        return;
+    DENY_NPC(ch);
 
     if (ch->level == 1)
         return;
@@ -486,7 +477,6 @@ static void fwrite_pet(struct char_data *pet, FILE *fp)
  ***************************************************************************/
 static void fwrite_obj(struct char_data *ch, struct gameobject *obj, FILE *fp, int iNest)
 {
-    struct extra_descr_data *ed;
     struct affect_data *paf;
     struct dynamic_skill *skill;
 
@@ -496,20 +486,12 @@ static void fwrite_obj(struct char_data *ch, struct gameobject *obj, FILE *fp, i
 
     fprintf(fp, "#O\n");
     fprintf(fp, "Vnum %ld\n", obj->objprototype->vnum);
-    if (obj->enchanted)
-        fprintf(fp, "Enchanted\n");
 
     fprintf(fp, "Nest %d\n", iNest);
 
 
     if (obj->override_name != NULL)
         fprintf(fp, "Name %s~\n", obj->override_name);
-
-    if (obj->short_descr != obj->objprototype->short_descr)
-        fprintf(fp, "ShD  %s~\n", obj->short_descr);
-
-    if (obj->description != obj->objprototype->description)
-        fprintf(fp, "Desc %s~\n", obj->description);
 
     if (obj->extra_flags != obj->objprototype->extra_flags)
         fprintf(fp, "ExtF %ld\n", obj->extra_flags);
@@ -602,9 +584,6 @@ static void fwrite_obj(struct char_data *ch, struct gameobject *obj, FILE *fp, i
                     paf->bitvector);
         }
     }
-
-    for (ed = obj->extra_descr; ed != NULL; ed = ed->next)
-        fprintf(fp, "ExDe %s~ %s~\n", ed->keyword, ed->description);
 
     fprintf(fp, "End\n\n");
 
@@ -1618,35 +1597,12 @@ static void fread_obj(struct char_data *ch, FILE *fp)
               KEY("Cost", obj->cost, fread_uint(fp));
               break;
 
-          case 'D':
-              KEY("Description", obj->description, fread_string(fp));
-              KEY("Desc", obj->description, fread_string(fp));
-              break;
-
           case 'E':
-              if (!str_cmp(word, "Enchanted")) {
-                  obj->enchanted = true;
-                  fMatch = true;
-                  break;
-              }
-
               KEY("ExtraFlags", obj->extra_flags, fread_number(fp));
               KEY("Exp", obj->exp, fread_number(fp));
               KEY("ExtF", obj->extra_flags, fread_number(fp));
 
               KEY("Ex2F", obj->extra2_flags, fread_number(fp));
-
-              if (!str_cmp(word, "ExtraDescr") || !str_cmp(word, "ExDe")) {
-                  struct extra_descr_data *ed;
-
-                  ed = new_extra_descr();
-
-                  ed->keyword = fread_string(fp);
-                  ed->description = fread_string(fp);
-                  ed->next = obj->extra_descr;
-                  obj->extra_descr = ed;
-                  fMatch = true;
-              }
 
               if (!str_cmp(word, "End")) {
                   if (iNest == 0 || rgObjNest[iNest] == NULL) {
@@ -1695,9 +1651,6 @@ static void fread_obj(struct char_data *ch, FILE *fp)
 
 
           case 'S':
-              KEY("ShortDescr", obj->short_descr, fread_string(fp));
-              KEY("ShD", obj->short_descr, fread_string(fp));
-
               if (!str_cmp(word, "Spell")) {
                   struct dynamic_skill *skill;
                   int value;

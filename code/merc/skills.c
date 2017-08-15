@@ -611,8 +611,6 @@ const struct spell_lookup_type spell_lookup_table[] =
     { "detect poison", spell_detect_poison },
     { "dispel magic", spell_dispel_magic },
     { "earthquake", spell_earthquake },
-    { "enchant armor", spell_enchant_armor },
-    { "enchant weapon", spell_enchant_weapon },
     { "energy drain", spell_energy_drain },
     { "extinguish flames", spell_extinguish_flames },
     { "faerie fire", spell_faerie_fire },

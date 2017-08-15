@@ -130,10 +130,10 @@ void act_new(const char *format, struct char_data *ch, const void *arg1, const v
 			else log_bug("Act: bad code $S for 'vch'");
 			break;
 		    case 'p':
-			i = can_see_obj(to, obj1) ? obj1->short_descr : "something";
+			i = can_see_obj(to, obj1) ? OBJECT_SHORT(obj1) : "something";
 			break;
 		    case 'P':
-			i = can_see_obj(to, obj2) ? obj2->short_descr : "something";
+			i = can_see_obj(to, obj2) ? OBJECT_SHORT(obj2) : "something";
 			break;
 
 		    case 'd':

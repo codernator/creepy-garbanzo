@@ -214,7 +214,7 @@ void look_extras(struct char_data *ch, const char *name, const int number) {
 	if (can_see_obj(ch, obj)) {
 	    /* player can see object */
 
-	    pdesc = get_extra_descr(name, obj->extra_descr);
+	    pdesc = get_extra_descr(name, OBJECT_EXTRA(obj));
 	    if (pdesc != NULL) {
 		if (++count == number) {
 		    send_to_char(pdesc, ch);
@@ -235,7 +235,7 @@ void look_extras(struct char_data *ch, const char *name, const int number) {
 	    }
 	    if (is_name(name, object_name_get(obj))) {
 		if (++count == number) {
-		    send_to_char(obj->description, ch);
+		    send_to_char(OBJECT_LONG(obj), ch);
 		    send_to_char("\n\r", ch);
 		    return;
 		}
@@ -245,7 +245,7 @@ void look_extras(struct char_data *ch, const char *name, const int number) {
 
     for (obj = ch->in_room->contents; obj != NULL; obj = obj->next_content) {
 	if (can_see_obj(ch, obj)) {
-	    pdesc = get_extra_descr(name, obj->extra_descr);
+	    pdesc = get_extra_descr(name, OBJECT_EXTRA(obj));
 	    if (pdesc != NULL) {
 		if (++count == number) {
 		    send_to_char(pdesc, ch);
@@ -264,7 +264,7 @@ void look_extras(struct char_data *ch, const char *name, const int number) {
 
 	if (is_name(name, object_name_get(obj))) {
 	    if (++count == number) {
-		send_to_char(obj->description, ch);
+		send_to_char(OBJECT_LONG(obj), ch);
 		send_to_char("\n\r", ch);
 		return;
 	    }
@@ -810,13 +810,13 @@ void show_char_to_char_0(struct char_data *victim, struct char_data *ch)
 	case POS_SLEEPING:
 	    if (victim->on != NULL) {
 		if (IS_SET(victim->on->value[2], SLEEP_AT)) {
-		    sprintf(message, " is sleeping at %s.", victim->on->short_descr);
+		    sprintf(message, " is sleeping at %s.", OBJECT_SHORT(victim->on));
 		    strcat(buf, message);
 		} else if (IS_SET(victim->on->value[2], SLEEP_ON)) {
-		    sprintf(message, " is sleeping on %s.", victim->on->short_descr);
+		    sprintf(message, " is sleeping on %s.", OBJECT_SHORT(victim->on));
 		    strcat(buf, message);
 		} else {
-		    sprintf(message, " is sleeping in %s.", victim->on->short_descr);
+		    sprintf(message, " is sleeping in %s.", OBJECT_SHORT(victim->on));
 		    strcat(buf, message);
 		}
 	    } else {
@@ -827,13 +827,13 @@ void show_char_to_char_0(struct char_data *victim, struct char_data *ch)
 	case POS_RESTING:
 	    if (victim->on != NULL) {
 		if (IS_SET(victim->on->value[2], REST_AT)) {
-		    sprintf(message, " is resting at %s.", victim->on->short_descr);
+		    sprintf(message, " is resting at %s.", OBJECT_SHORT(victim->on));
 		    strcat(buf, message);
 		} else if (IS_SET(victim->on->value[2], REST_ON)) {
-		    sprintf(message, " is resting on %s.", victim->on->short_descr);
+		    sprintf(message, " is resting on %s.", OBJECT_SHORT(victim->on));
 		    strcat(buf, message);
 		} else {
-		    sprintf(message, " is resting in %s.", victim->on->short_descr);
+		    sprintf(message, " is resting in %s.", OBJECT_SHORT(victim->on));
 		    strcat(buf, message);
 		}
 	    } else {
@@ -844,13 +844,13 @@ void show_char_to_char_0(struct char_data *victim, struct char_data *ch)
 	case POS_SITTING:
 	    if (victim->on != NULL) {
 		if (IS_SET(victim->on->value[2], SIT_AT)) {
-		    sprintf(message, " is sitting at %s.", victim->on->short_descr);
+		    sprintf(message, " is sitting at %s.", OBJECT_SHORT(victim->on));
 		    strcat(buf, message);
 		} else if (IS_SET(victim->on->value[2], SIT_ON)) {
-		    sprintf(message, " is sitting on %s.", victim->on->short_descr);
+		    sprintf(message, " is sitting on %s.", OBJECT_SHORT(victim->on));
 		    strcat(buf, message);
 		} else {
-		    sprintf(message, " is sitting in %s.", victim->on->short_descr);
+		    sprintf(message, " is sitting in %s.", OBJECT_SHORT(victim->on));
 		    strcat(buf, message);
 		}
 	    } else {
@@ -861,13 +861,13 @@ void show_char_to_char_0(struct char_data *victim, struct char_data *ch)
 	case POS_STANDING:
 	    if (victim->on != NULL) {
 		if (IS_SET(victim->on->value[2], STAND_AT)) {
-		    sprintf(message, " is standing at %s.", victim->on->short_descr);
+		    sprintf(message, " is standing at %s.", OBJECT_SHORT(victim->on));
 		    strcat(buf, message);
 		} else if (IS_SET(victim->on->value[2], STAND_ON)) {
-		    sprintf(message, " is standing on %s.", victim->on->short_descr);
+		    sprintf(message, " is standing on %s.", OBJECT_SHORT(victim->on));
 		    strcat(buf, message);
 		} else {
-		    sprintf(message, " is standing in %s.", victim->on->short_descr);
+		    sprintf(message, " is standing in %s.", OBJECT_SHORT(victim->on));
 		    strcat(buf, message);
 		}
 	    } else {
@@ -1081,8 +1081,8 @@ char *format_obj_to_char(struct gameobject *obj, struct char_data *ch, bool fSho
 
     buf[0] = '\0';
 
-    if ((fShort && (obj->short_descr == NULL || obj->short_descr[0] == '\0'))
-	    || (obj->description == NULL || obj->description[0] == '\0'))
+    if ((fShort && (OBJECT_SHORT(obj) == NULL || OBJECT_SHORT(obj)[0] == '\0'))
+	    || (OBJECT_LONG(obj) == NULL || OBJECT_LONG(obj)[0] == '\0'))
 	return buf;
 
     if (IS_OBJ_STAT(obj, ITEM_INVIS) ||
@@ -1127,11 +1127,11 @@ char *format_obj_to_char(struct gameobject *obj, struct char_data *ch, bool fSho
 
 
     if (fShort) {
-	if (obj->short_descr != NULL)
-	    strcat(buf, obj->short_descr);
+	if (OBJECT_SHORT(obj) != NULL)
+	    strcat(buf, OBJECT_SHORT(obj));
     } else {
-	if (obj->description != NULL)
-	    strcat(buf, obj->description);
+	if (OBJECT_LONG(obj) != NULL)
+	    strcat(buf, OBJECT_LONG(obj));
     }
 
     return buf;

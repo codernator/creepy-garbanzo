@@ -70,8 +70,6 @@ DECLARE_SPELL_FUN(spell_detect_magic);
 DECLARE_SPELL_FUN(spell_detect_poison);
 DECLARE_SPELL_FUN(spell_dispel_magic);
 DECLARE_SPELL_FUN(spell_earthquake);
-DECLARE_SPELL_FUN(spell_enchant_armor);
-DECLARE_SPELL_FUN(spell_enchant_weapon);
 DECLARE_SPELL_FUN(spell_energy_drain);
 DECLARE_SPELL_FUN(spell_extinguish_flames);     /* Fizzy added 3/29/97 */
 DECLARE_SPELL_FUN(spell_faerie_fire);

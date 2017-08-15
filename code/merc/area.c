@@ -78,7 +78,7 @@ struct area_data *area_new(unsigned long vnum)
         areadata->builders = strdup("");
         areadata->credits = strdup("");
         areadata->empty = true;
-        
+
         {
             char filename[MAX_INPUT_LENGTH];
             (void)snprintf(filename, MAX_INPUT_LENGTH, "area%lu.are", areadata->vnum);

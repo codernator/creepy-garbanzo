@@ -210,7 +210,7 @@ void show_object_stats(struct char_data *ch, const char *argument)
         const char *ownername = object_ownername_get(obj);
         printf_to_char(ch, "Owner: %s\n\r", (ownername != NULL) ? ownername : "none");
     }
-    printf_to_char(ch, "Short description: %s\n\rLong description: %s\n\r", obj->short_descr, obj->description); 
+    printf_to_char(ch, "Short description: %s\n\rLong description: %s\n\r", OBJECT_SHORT(obj), OBJECT_LONG(obj));
     printf_to_char(ch, "Wear bits: %s\n\rExtra bits: %s\n\r", wear_bit_name(obj->wear_flags), extra_bit_name(obj->extra_flags));
     printf_to_char(ch, "Extra2 bits: %s\n\r", extra2_bit_name(obj->extra2_flags));
     printf_to_char(ch, "Number: %d/%d  Weight: %d/%d/%d(10th pounds)\n\r", 1, get_obj_number(obj), obj->weight, get_obj_weight(obj), get_true_weight(obj));
@@ -221,7 +221,7 @@ void show_object_stats(struct char_data *ch, const char *argument)
     }
     printf_to_char(ch, "In room: %d  In object: %s  Carried by: %s  Wear_loc: %d\n\r",
                    obj->in_room == NULL ? 0 : obj->in_room->vnum,
-                   obj->in_obj == NULL ? "(none)" : obj->in_obj->short_descr,
+                   obj->in_obj == NULL ? "(none)" : OBJECT_SHORT(obj->in_obj),
                    obj->carried_by == NULL ? "(none)" :
                    can_see(ch, obj->carried_by) ? obj->carried_by->name : "someone",
                    obj->wear_loc);
@@ -332,18 +332,12 @@ void show_object_stats(struct char_data *ch, const char *argument)
     }
 
 
-    if (obj->extra_descr != NULL || obj->objprototype->extra_descr != NULL) {
+    if (OBJECT_EXTRA(obj) != NULL) {
         struct extra_descr_data *ed;
 
         send_to_char("Extra description keywords: '", ch);
 
-        for (ed = obj->extra_descr; ed != NULL; ed = ed->next) {
-            send_to_char(ed->keyword, ch);
-            if (ed->next != NULL)
-                send_to_char(" ", ch);
-        }
-
-        for (ed = obj->objprototype->extra_descr; ed != NULL; ed = ed->next) {
+        for (ed = OBJECT_EXTRA(obj); ed != NULL; ed = ed->next) {
             send_to_char(ed->keyword, ch);
             if (ed->next != NULL)
                 send_to_char(" ", ch);
@@ -389,32 +383,30 @@ void show_object_stats(struct char_data *ch, const char *argument)
         }
     }
 
-    if (!obj->enchanted) {
-        for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
-            printf_to_char(ch, "Affects %s by %d, level %d.\n\r",
-                           affect_loc_name(paf->location),
-                           paf->modifier, paf->level);
-            if (paf->bitvector) {
-                switch (paf->where) {
-                  case TO_AFFECTS:
-                      printf_to_char(ch, "Adds %s affect.\n\r", affect_bit_name(paf->bitvector));
-                      break;
-                  case TO_OBJECT:
-                      printf_to_char(ch, "Adds %s object flag.\n\r", extra_bit_name(paf->bitvector));
-                      break;
-                  case TO_IMMUNE:
-                      printf_to_char(ch, "Adds immunity to %s.\n\r", imm_bit_name(paf->bitvector));
-                      break;
-                  case TO_RESIST:
-                      printf_to_char(ch, "Adds resistance to %s.\n\r", imm_bit_name(paf->bitvector));
-                      break;
-                  case TO_VULN:
-                      printf_to_char(ch, "Adds vulnerability to %s.\n\r", imm_bit_name(paf->bitvector));
-                      break;
-                  default:
-                      printf_to_char(ch, "Unknown bit %d: %d\n\r", paf->where, paf->bitvector);
-                      break;
-                }
+    for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
+        printf_to_char(ch, "Affects %s by %d, level %d.\n\r",
+                        affect_loc_name(paf->location),
+                        paf->modifier, paf->level);
+        if (paf->bitvector) {
+            switch (paf->where) {
+                case TO_AFFECTS:
+                    printf_to_char(ch, "Adds %s affect.\n\r", affect_bit_name(paf->bitvector));
+                    break;
+                case TO_OBJECT:
+                    printf_to_char(ch, "Adds %s object flag.\n\r", extra_bit_name(paf->bitvector));
+                    break;
+                case TO_IMMUNE:
+                    printf_to_char(ch, "Adds immunity to %s.\n\r", imm_bit_name(paf->bitvector));
+                    break;
+                case TO_RESIST:
+                    printf_to_char(ch, "Adds resistance to %s.\n\r", imm_bit_name(paf->bitvector));
+                    break;
+                case TO_VULN:
+                    printf_to_char(ch, "Adds vulnerability to %s.\n\r", imm_bit_name(paf->bitvector));
+                    break;
+                default:
+                    printf_to_char(ch, "Unknown bit %d: %d\n\r", paf->where, paf->bitvector);
+                    break;
             }
         }
     }

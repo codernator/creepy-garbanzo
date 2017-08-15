@@ -13,33 +13,6 @@
 ***************************************************************************/
 void dam_message(struct char_data * ch, struct char_data * victim, int dam, int dt, bool immune);
 
-/***************************************************************************
-*	affect_enchant
-***************************************************************************/
-void affect_enchant(struct gameobject *obj)
-{
-	if (!obj->enchanted) {
-		struct affect_data *paf;
-		struct affect_data *af_new;
-
-		obj->enchanted = true;
-
-		for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
-			af_new = new_affect();
-
-			af_new->next = obj->affected;
-			obj->affected = af_new;
-
-			af_new->where = paf->where;
-			af_new->type = UMAX(0, paf->type);
-			af_new->level = paf->level;
-			af_new->duration = paf->duration;
-			af_new->location = paf->location;
-			af_new->modifier = paf->modifier;
-			af_new->bitvector = paf->bitvector;
-		}
-	}
-}
 
 
 /***************************************************************************
@@ -289,9 +262,6 @@ void affect_check(struct char_data *ch, int where, long vector)
 				return;
 			}
 		}
-
-		if (obj->enchanted)
-			continue;
 
 		for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
 			if (paf->where == where && paf->bitvector == vector) {

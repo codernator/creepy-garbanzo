@@ -191,7 +191,7 @@ void give_receipt(struct char_data *ch, unsigned int amount, const char *action,
     sprintf(buf, "%s deposits some %s.", ch->name, tender);
     act(buf, ch, NULL, NULL, TO_ROOM);
 
-    sprintf(buf, "%s gives %s a receipt.", atm->short_descr, ch->name);
+    sprintf(buf, "%s gives %s a receipt.", OBJECT_SHORT(atm), ch->name);
     act(buf, ch, NULL, NULL, TO_ROOM);
 
     printf_to_char(ch, "``%s: `B%u %s  ``Balance: `#%ugp `&%usp``.", action, amount, tender, ch->pcdata->gold_in_bank, ch->pcdata->silver_in_bank);

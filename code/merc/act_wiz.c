@@ -457,7 +457,7 @@ void do_quit(struct char_data *ch, /*@unused@*/ const char *argument)
         if (item == NULL) {
             log_bug("%s reported as auction participant with no auction item.", ch->name);
         } else {
-            printf_to_char(ch, "Wait until the auctioning of %s is over.\n\r", item->short_descr);
+            printf_to_char(ch, "Wait until the auctioning of %s is over.\n\r", OBJECT_SHORT(item));
         }
         return;
     }
@@ -1964,7 +1964,7 @@ void do_oload(struct char_data *ch, const char *argument)
     act("$n has created $p!", ch, obj, NULL, TO_ROOM);
     wiznet("$N loads $p.", ch, obj, WIZ_LOAD, WIZ_SECURE, get_trust(ch));
 
-    snprintf(buf, MAX_STRING_LENGTH, "oload: Loaded object: %s\n\r", obj->short_descr);
+    snprintf(buf, MAX_STRING_LENGTH, "oload: Loaded object: %s\n\r", OBJECT_SHORT(obj));
     send_to_char(buf, ch);
 }
 

@@ -1390,9 +1390,9 @@ EDIT(redit_oreset){
 
         printf_to_char(ch, "%s(%d) has been loaded into "
                        "%s(%d) and added to resets.\n\r",
-                       capitalize(newobj->short_descr),
+                       capitalize(OBJECT_SHORT(newobj)),
                        newobj->objprototype->vnum,
-                       to_obj->short_descr,
+                       OBJECT_SHORT(to_obj),
                        to_obj->objprototype->vnum);
         act("$n has created $p!", ch, newobj, NULL, TO_ROOM);
         return true;

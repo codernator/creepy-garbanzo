@@ -222,7 +222,9 @@ char *database_read_stream(const struct database_controller *db)
     pc = 0;
     while (true) {
         c = fgetc(fp);
-        if (c == 0 && feof(fp) != 0) {
+        if (feof(fp) == 1)
+            break;
+        if (c == 0) {
             dbstream[dbsindex] = '\0';
             fprintf(stderr, "%s", "Premature end of file reading record.");
             break;
@@ -236,7 +238,7 @@ char *database_read_stream(const struct database_controller *db)
         }
         pc = c;
     }
-    
+
     return dbstream;
 }
 

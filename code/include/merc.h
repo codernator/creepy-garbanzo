@@ -1484,6 +1484,10 @@ struct extra_descr_data {
     long value[5];
 };
 
+#define OBJECT_SHORT(obj)       ((obj)->objprototype->short_descr)
+#define OBJECT_LONG(obj)        ((obj)->objprototype->description)
+#define OBJECT_EXTRA(obj)       ((obj)->objprototype->extra_descr)
+
 
 /***************************************************************************
  * object_data* a single instance of an object
@@ -1497,15 +1501,11 @@ struct extra_descr_data {
     /*@dependent@*//*@null@*/struct gameobject *on;
     /*@dependent@*//*@null@*/struct char_data *carried_by;
     /*@dependent@*//*@null@*/struct char_data *target;
-    /*@owned@*//*@null@*/struct extra_descr_data *extra_descr;
     /*@dependent@*//*@null@*/struct affect_data *affected;
     /*@dependent@*/struct objectprototype *objprototype;
     /*@dependent@*//*@null@*/struct room_index_data *in_room;
-    bool enchanted;
     /*@shared@*//*@null@*/char *owner_name;
     /*@shared@*//*@null@*/char *override_name;
-    /*@shared@*//*@null@*/char *short_descr;
-    /*@shared@*//*@null@*/char *description;
     int plevel;
     int xp_tolevel;
     int exp;
@@ -2041,7 +2041,6 @@ struct affect_data *affect_find(struct affect_data * paf, struct dynamic_skill *
 void affect_check(struct char_data * ch, int where, long vector);
 int count_users(struct gameobject * obj);
 void deduct_cost(struct char_data * ch, unsigned int cost);
-void affect_enchant(struct gameobject * obj);
 int check_immune(struct char_data * ch, int dam_type);
 int weapon_lookup(const char *name);
 int weapon_type(const char *name);

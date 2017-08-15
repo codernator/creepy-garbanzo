@@ -63,28 +63,26 @@ struct gameobject *object_clone(struct gameobject *parent)
 
     /** Default values */
     {
-	memset(clone, 0, sizeof(struct gameobject));
-	clone->objprototype = parent->objprototype;
+        memset(clone, 0, sizeof(struct gameobject));
+        clone->objprototype = parent->objprototype;
     }
 
     /** Place on list. */
     {
-	struct gameobject *headnext;
-	clone->prev = &head_node;
-	headnext = head_node.next;
-	if (headnext != NULL) {
-	    assert(headnext->prev == &head_node);
-	    headnext->prev = clone;
-	}
+        struct gameobject *headnext;
+        clone->prev = &head_node;
+        headnext = head_node.next;
+        if (headnext != NULL) {
+            assert(headnext->prev == &head_node);
+            headnext->prev = clone;
+        }
 
-	clone->next = headnext;
-	head_node.next = clone;
+        clone->next = headnext;
+        head_node.next = clone;
     }
 
     /* start fixing the object */
     if (parent->override_name != NULL) clone->override_name = str_dup(parent->override_name);
-    if (parent->short_descr != NULL) clone->short_descr = str_dup(parent->short_descr);
-    if (parent->description != NULL) clone->description = str_dup(parent->description);
     if (parent->material != NULL) clone->material = str_dup(parent->material);
     clone->item_type = parent->item_type;
     clone->extra_flags = parent->extra_flags;
@@ -96,33 +94,18 @@ struct gameobject *object_clone(struct gameobject *parent)
     clone->timer = parent->timer;
 
     {
-	int i;
-	for (i = 0; i < 5; i++) {
-	    clone->value[i] = parent->value[i];
-	}
+        int i;
+        for (i = 0; i < 5; i++) {
+            clone->value[i] = parent->value[i];
+        }
     }
 
     /* affects */
     {
-	struct affect_data *paf;
-	clone->enchanted = parent->enchanted;
-	for (paf = parent->affected; paf != NULL; paf = paf->next) {
-	    affect_to_obj(clone, paf);
-	}
-    }
-
-    /* extended desc */
-    {
-	struct extra_descr_data *ed, *ed_new;
-	for (ed = parent->extra_descr; ed != NULL; ed = ed->next) {
-	    ed_new = new_extra_descr();
-	    /*@-mustfreeonly@*/
-	    ed_new->keyword = str_dup(ed->keyword);
-	    ed_new->description = str_dup(ed->description);
-	    ed_new->next = clone->extra_descr;
-	    clone->extra_descr = ed_new;
-	    /*@+mustfreeonly@*/
-	}
+        struct affect_data *paf;
+        for (paf = parent->affected; paf != NULL; paf = paf->next) {
+            affect_to_obj(clone, paf);
+        }
     }
 
     return clone;
@@ -135,45 +118,32 @@ void object_free(struct gameobject *obj)
 
     /** Extract from list. */
     {
-	struct gameobject *prev = obj->prev;
-	struct gameobject *next = obj->next;
+        struct gameobject *prev = obj->prev;
+        struct gameobject *next = obj->next;
 
-	assert(prev != NULL); /** because only the head node has no previous. */
-	prev->next = next;
-	if (next != NULL) {
-	    next->prev = prev;
-	}
+        assert(prev != NULL); /** because only the head node has no previous. */
+        prev->next = next;
+        if (next != NULL) {
+            next->prev = prev;
+        }
     }
 
     /** Clean up strings */
     {
-	if (obj->override_name != NULL) free_string(obj->override_name);
-	if (obj->description != NULL) free_string(obj->description);
-	if (obj->short_descr != NULL) free_string(obj->short_descr);
-	if (obj->owner_name != NULL) free_string(obj->owner_name);
-	if (obj->material != NULL) free_string(obj->material);
+        if (obj->override_name != NULL) free_string(obj->override_name);
+        if (obj->owner_name != NULL) free_string(obj->owner_name);
+        if (obj->material != NULL) free_string(obj->material);
     }
 
     /** Clean up affects. */
     if (obj->affected != NULL) {
-	//TODO - affect management.
-	/*@dependent@*/struct affect_data *paf;
-	/*@dependent@*/struct affect_data *paf_next;
-	for (paf = obj->affected; paf != NULL; paf = paf_next) {
-	    paf_next = paf->next;
-	    free_affect(paf);
-	}
-    }
-
-    /** Clean up extra descriptions */
-    if (obj->extra_descr != NULL) {
-	//TODO - extras managment.
-	/*@dependent@*/struct extra_descr_data *ed;
-	/*@dependent@*/struct extra_descr_data *ed_next;
-	for (ed = obj->extra_descr; ed != NULL; ed = ed_next) {
-	    ed_next = ed->next;
-	    free_extra_descr(ed);
-	}
+        //TODO - affect management.
+        /*@dependent@*/struct affect_data *paf;
+        /*@dependent@*/struct affect_data *paf_next;
+        for (paf = obj->affected; paf != NULL; paf = paf_next) {
+            paf_next = paf->next;
+            free_affect(paf);
+        }
     }
 
     free(obj);

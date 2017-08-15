@@ -774,7 +774,7 @@ static void expand_arg(char *buf,
 		      break;
 	    case 'O':
 		      i = (obj1 != NULL && can_see_obj(mob, obj1))
-			  ? obj1->short_descr
+			  ? OBJECT_SHORT(obj1)
 			  : something;                                    
 		      break;
 	    case 'p':
@@ -786,7 +786,7 @@ static void expand_arg(char *buf,
 		      break;
 	    case 'P':
 		      i = (obj2 != NULL && can_see_obj(mob, obj2))
-			  ? obj2->short_descr
+			  ? OBJECT_SHORT(obj2)
 			  : something;                                    
 		      break;
 	}

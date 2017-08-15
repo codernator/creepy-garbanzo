@@ -1,0 +1,14 @@
+key1
+	value1-1
+	value1-1a
+key2
+	value1-2
+#
+key1
+	value2-1
+	
+	value2-1a
+	value2-1b
+key2
+	value2-2
+#

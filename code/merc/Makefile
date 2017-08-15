@@ -17,19 +17,19 @@ _OBJ=act_comm.o act_combat.o act_enter.o act_info.o act_move.o act_obj.o act_wiz
      ban.o bank.o bit.o \
      channels.o character.o character_service.o combat_roll.o comm.o const.o copyover.o \
      db.o descriptor.o \
-     effects.o enchant.o \
+     effects.o \
      fight.o find.o flags.o follower_service.o for.o \
      handler.o healer.o help.o \
-     imprint.o interp.o \
+     interp.o \
      libfile.o lookup.o \
      magic.o mem.o mob_cmds.o mob_prog.o mobs.o \
      nanny.o note.o \
      object.o objectprototype.o ovnum.o \
      password.o \
-     race.o recycle.o remote.o repair.o \
+     race.o recycle.o remote.o \
      save.o scan.o serialize.o set.o skills.o spells.o stat.o \
      tables.o teleport.o \
-     unique.o update.o variant.o who.o \
+     update.o variant.o who.o \
      olc/olc.o olc/olc_areas.o olc/olc_groups.o olc/olc_helps.o olc/olc_mobs.o \
      olc/olc_objects.o olc/olc_progs.o olc/olc_rooms.o olc/olc_save.o olc/olc_skills.o  \
      olc/string.o 

@@ -182,7 +182,7 @@ void do_owhere(struct char_data *ch, const char *argument)
                 if (in_obj->carried_by != NULL
                     && can_see(ch, in_obj->carried_by)
                     && in_obj->carried_by->in_room != NULL) {
-                    clr1 = uncolor_str(obj->short_descr);
+                    clr1 = uncolor_str(OBJECT_SHORT(obj));
                     clr2 = uncolor_str(PERS(in_obj->carried_by, ch));
                     sprintf(buf, "%-3d %-7ld  %-26.26s  %-25.25s  %-7ld\n\r",
                             number,
@@ -193,7 +193,7 @@ void do_owhere(struct char_data *ch, const char *argument)
                     free_string(clr1);
                     free_string(clr2);
                 } else if (in_obj->in_room != NULL && can_see_room(ch, in_obj->in_room)) {
-                    clr1 = uncolor_str(obj->short_descr);
+                    clr1 = uncolor_str(OBJECT_SHORT(obj));
                     clr2 = uncolor_str(in_obj->in_room->name);
 
                     sprintf(buf, "%-3d %-7ld  %-26.26s  %-25.25s  %-7ld\n\r",
@@ -205,7 +205,7 @@ void do_owhere(struct char_data *ch, const char *argument)
                     free_string(clr1);
                     free_string(clr2);
                 } else {
-                    clr1 = uncolor_str(obj->short_descr);
+                    clr1 = uncolor_str(OBJECT_SHORT(obj));
 
                     sprintf(buf, "%-3d %-7ld  %-26.26s\n\r",
                             number,
@@ -260,7 +260,7 @@ bool obj_cmp_short(struct gameobject *obj, const char *arg, struct buf_type *buf
 {
     if (buf != NULL)
         add_buf(buf, "search by an object's short description.\n\r");
-    return cmp_fn_string(obj->short_descr, arg);
+    return cmp_fn_string(OBJECT_SHORT(obj), arg);
 }
 
 /***************************************************************************
@@ -270,7 +270,7 @@ bool obj_cmp_long(struct gameobject *obj, const char *arg, struct buf_type *buf)
 {
     if (buf != NULL)
         add_buf(buf, "search by an object's long description.\n\r");
-    return cmp_fn_string(obj->description, arg);
+    return cmp_fn_string(OBJECT_LONG(obj), arg);
 }
 
 /***************************************************************************

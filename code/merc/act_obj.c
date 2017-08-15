@@ -669,7 +669,7 @@ void do_give(struct char_data *ch, const char *argument)
     obj_from_char(obj);
     obj_to_char(obj, victim);
     if (IS_IMMORTAL(ch)) {
-        log_string("%s gave %s to %s", ch->name, obj->short_descr, victim->name);
+        log_string("%s gave %s to %s", ch->name, OBJECT_SHORT(obj), victim->name);
     }
 
     act_new("$n gives $p to $N.", ch, obj, victim, TO_NOTVICT, POS_RESTING, true);
@@ -1692,7 +1692,7 @@ void donate_obj(struct char_data *ch, struct gameobject *obj)
         return;
 
     send_to_char("Your donation is greatly appreciated\n\r", ch);
-    sprintf(buf, "%s disappears in a puff of smoke\n\r", obj->short_descr);
+    sprintf(buf, "%s disappears in a puff of smoke\n\r", OBJECT_SHORT(obj));
     send_to_char(buf, ch);
 
     act(buf, ch, NULL, NULL, TO_ROOM);
@@ -1703,7 +1703,7 @@ void donate_obj(struct char_data *ch, struct gameobject *obj)
         if (ch->in_room == get_room_index(ROOM_VNUM_DONATION)) {
             char *temp;
 
-            temp = obj->short_descr;
+            temp = OBJECT_SHORT(obj);
             if (temp[0] > 'a' && temp[0] < 'z')
                 temp[0] = temp[0] - (char)32;
 
@@ -1995,7 +1995,7 @@ void obj_to_keeper(struct gameobject *obj, struct char_data *ch)
         t_obj_next = t_obj->next_content;
 
         if (obj->objprototype == t_obj->objprototype
-            && !str_cmp(obj->short_descr, t_obj->short_descr)) {
+            && !str_cmp(OBJECT_SHORT(obj), OBJECT_SHORT(t_obj))) {
             if (IS_OBJ_STAT(t_obj, ITEM_INVENTORY)) {
                 extract_obj(obj);
                 return;
@@ -2043,7 +2043,7 @@ struct gameobject *get_obj_keeper(struct char_data *ch, struct char_data *keeper
 
             while (obj->next_content != NULL &&
                    obj->objprototype == obj->next_content->objprototype &&
-                   !str_cmp(obj->short_descr, obj->next_content->short_descr))
+                   !str_cmp(OBJECT_SHORT(obj), OBJECT_SHORT(obj->next_content)))
                 obj = obj->next_content;
         }
     }
@@ -2081,7 +2081,7 @@ unsigned int get_cost(struct char_data *keeper, struct gameobject *obj, bool fBu
                  obj_inv != NULL;
                  obj_inv = obj_inv->next_content) {
                 if (obj->objprototype == obj_inv->objprototype
-                    && !str_cmp(obj->short_descr, obj_inv->short_descr)) {
+                    && !str_cmp(OBJECT_SHORT(obj), OBJECT_SHORT(obj_inv))) {
                     if (IS_OBJ_STAT(obj_inv, ITEM_INVENTORY))
                         cost /= 2;
                     else
@@ -2242,7 +2242,7 @@ void do_buy(struct char_data *ch, const char *argument)
                  count < number && t_obj != NULL;
                  t_obj = t_obj->next_content) {
                 if (t_obj->objprototype == obj->objprototype
-                    && !str_cmp(t_obj->short_descr, obj->short_descr))
+                    && !str_cmp(OBJECT_SHORT(t_obj), OBJECT_SHORT(obj)))
                     count++;
                 else
                     break;
@@ -2401,17 +2401,17 @@ void do_list(struct char_data *ch, const char *argument)
                 }
 
                 if (IS_OBJ_STAT(obj, ITEM_INVENTORY)) {
-                    printf_to_char(ch, "[%2d %10u -- ] %s\n\r", obj->level, cost, obj->short_descr);
+                    printf_to_char(ch, "[%2d %10u -- ] %s\n\r", obj->level, cost, OBJECT_SHORT(obj));
                 } else {
                     count = 1;
 
                     while (obj->next_content != NULL &&
                            obj->objprototype == obj->next_content->objprototype &&
-                           !str_cmp(obj->short_descr, obj->next_content->short_descr)) {
+                           !str_cmp(OBJECT_SHORT(obj), OBJECT_SHORT(obj->next_content))) {
                         obj = obj->next_content;
                         count++;
                     }
-                    printf_to_char(ch, "[%2d %10u %2d ] %s\n\r", obj->level, cost, count, obj->short_descr);
+                    printf_to_char(ch, "[%2d %10u %2d ] %s\n\r", obj->level, cost, count, OBJECT_SHORT(obj));
                 }
             }
         }
