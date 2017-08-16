@@ -542,7 +542,7 @@ void spell_create_water(struct dynamic_skill *skill, int level, struct char_data
 	return;
     }
 
-    if (obj->item_type != ITEM_DRINK_CON) {
+    if (OBJECT_TYPE(obj) != ITEM_DRINK_CON) {
 	send_to_char("It is unable to hold `Ow`^a`&t`^e`Or``.\n\r", ch);
 	return;
     }
@@ -788,7 +788,7 @@ void spell_detect_poison(struct dynamic_skill *skill, int level, struct char_dat
 {
     struct gameobject *obj = (struct gameobject *)vo;
 
-    if (obj->item_type == ITEM_DRINK_CON || obj->item_type == ITEM_FOOD) {
+    if (OBJECT_TYPE(obj) == ITEM_DRINK_CON || OBJECT_TYPE(obj) == ITEM_FOOD) {
 	if (obj->value[3] != 0)
 	    send_to_char("You smell poisonous fumes.\n\r", ch);
 	else
@@ -1914,8 +1914,8 @@ void spell_poison(struct dynamic_skill *skill, int level, struct char_data *ch, 
     if (target == TARGET_OBJ) {
 	obj = (struct gameobject *)vo;
 
-	if (obj->item_type == ITEM_FOOD
-		|| obj->item_type == ITEM_DRINK_CON) {
+	if (OBJECT_TYPE(obj) == ITEM_FOOD
+		|| OBJECT_TYPE(obj) == ITEM_DRINK_CON) {
 	    if (IS_OBJ_STAT(obj, ITEM_BLESS) || IS_OBJ_STAT(obj, ITEM_BURN_PROOF)) {
 		act("Your spell fails to `1co`!rru`1pt`` $p.", ch, obj, NULL, TO_CHAR);
 		return;
@@ -1926,7 +1926,7 @@ void spell_poison(struct dynamic_skill *skill, int level, struct char_data *ch, 
 	    return;
 	}
 
-	if (obj->item_type == ITEM_WEAPON) {
+	if (OBJECT_TYPE(obj) == ITEM_WEAPON) {
 	    if (IS_WEAPON_STAT(obj, WEAPON_FLAMING)
 		    || IS_WEAPON_STAT(obj, WEAPON_FROST)
 		    || IS_WEAPON_STAT(obj, WEAPON_VAMPIRIC)
@@ -1998,7 +1998,7 @@ void spell_recharge(struct dynamic_skill *skill, int level, struct char_data *ch
 	return;
     }
 
-    if (obj->item_type != ITEM_STAFF && obj->item_type != ITEM_WAND) {
+    if (OBJECT_TYPE(obj) != ITEM_STAFF && OBJECT_TYPE(obj) != ITEM_WAND) {
 	send_to_char("You can only `Orecharge `1wands ``and `!staves``.\n\r", ch);
 	return;
     }
@@ -2705,7 +2705,7 @@ void spell_equipment_invis(struct dynamic_skill *skill, int level, struct char_d
 {
     struct gameobject *obj = (struct gameobject *)vo;
 
-    if (obj->item_type == ITEM_WEAPON || obj->item_type == ITEM_ARMOR) {
+    if (OBJECT_TYPE(obj) == ITEM_WEAPON || OBJECT_TYPE(obj) == ITEM_ARMOR) {
 	if (!IS_OBJ_STAT(obj, ITEM_INVIS)) {
 	    SET_BIT(obj->extra_flags, ITEM_INVIS);
 	    act("$p `8f`7a`&d`7e`8s`` out of existence.", ch, obj, NULL, TO_ALL);
@@ -2724,7 +2724,7 @@ void spell_noremove(struct dynamic_skill *skill, int level, struct char_data *ch
 {
     struct gameobject *obj = (struct gameobject *)vo;
 
-    if (obj->item_type == ITEM_WEAPON || obj->item_type == ITEM_ARMOR) {
+    if (OBJECT_TYPE(obj) == ITEM_WEAPON || OBJECT_TYPE(obj) == ITEM_ARMOR) {
 	if (!IS_OBJ_STAT(obj, ITEM_NOREMOVE)) {
 	    SET_BIT(obj->extra_flags, ITEM_NOREMOVE);
 	    act("$p glows `1red``.", ch, obj, NULL, TO_ALL);

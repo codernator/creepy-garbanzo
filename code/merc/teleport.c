@@ -24,7 +24,7 @@ void do_teleport(struct char_data *ch, const char *argument)
 
     argument = one_argument(argument, arg);
     for (teleporter = ch->in_room->contents; teleporter != NULL; teleporter = teleporter->next_content)
-        if (teleporter->item_type == ITEM_TELEPORT && can_see_obj(ch, teleporter))
+        if (OBJECT_TYPE(teleporter) == ITEM_TELEPORT && can_see_obj(ch, teleporter))
             break;
 
     if (teleporter == NULL) {

@@ -52,7 +52,6 @@ static void flag_char_deathroom(struct char_data * ch, void *target, const char 
 static void flag_room_room(struct char_data * ch, void *target, const char *argument);
 
 /* object flag functions */
-static void flag_obj_type(struct char_data * ch, void *target, const char *argument);
 static void flag_obj_wear(struct char_data * ch, void *target, const char *argument);
 static void flag_obj_extra(struct char_data * ch, void *target, const char *argument);
 static void flag_obj_extra2(struct char_data * ch, void *target, const char *argument);
@@ -95,7 +94,6 @@ static const struct flag_cmd_map room_set_flags[] =
 
 static const struct flag_cmd_map obj_set_flags[] =
 {
-    { "type",	   type_flags,	     flag_obj_type	 },
     { "wear",	   wear_flags,	     flag_obj_wear	 },
     { "extra",	   extra_flags,	     flag_obj_extra	 },
     { "extra2",	   extra2_flags,     flag_obj_extra2	 },
@@ -108,13 +106,6 @@ static const struct flag_cmd_map obj_set_flags[] =
 /*	additionaly possible flags - socket_type, socket_flags,
  *      token_flags, furniture_flags */
 
-
-
-/***************************************************************************
- *	do_flag
- *
- *	entry point for the flag function
- ***************************************************************************/
 void do_flag(struct char_data *ch, const char *argument)
 {
     char type[MAX_INPUT_LENGTH];
@@ -151,15 +142,6 @@ void do_flag(struct char_data *ch, const char *argument)
 }
 
 
-
-/***************************************************************************
- *	base type processors
- ***************************************************************************/
-/***************************************************************************
- *	flag_set_char
- *
- *	flag affects on a character
- ***************************************************************************/
 void flag_set_char(struct char_data *ch, const char *argument)
 {
     struct char_data *vch;
@@ -179,12 +161,6 @@ void flag_set_char(struct char_data *ch, const char *argument)
     return;
 }
 
-
-/***************************************************************************
- *	flag_set_obj
- *
- *	flag affects on an object
- ***************************************************************************/
 void flag_set_obj(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
@@ -200,13 +176,6 @@ void flag_set_obj(struct char_data *ch, const char *argument)
     return;
 }
 
-
-
-/***************************************************************************
- *	flag_set_room
- *
- *	flag affects on a room
- ***************************************************************************/
 void flag_set_room(struct char_data *ch, const char *argument)
 {
     struct room_index_data *room;
@@ -231,19 +200,6 @@ void flag_set_room(struct char_data *ch, const char *argument)
     return;
 }
 
-
-/***************************************************************************
- *	flag set functions
- ***************************************************************************/
-
-/***************************************************************************
- *	shared set functions
- ***************************************************************************/
-/***************************************************************************
- *	flag_char_aff
- *
- *	flag affects on a character
- ***************************************************************************/
 void flag_char_aff(struct char_data *ch, void *target, const char *argument)
 {
     struct char_data *vch = (struct char_data *)target;
@@ -268,11 +224,6 @@ void flag_char_aff(struct char_data *ch, void *target, const char *argument)
     return;
 }
 
-/***************************************************************************
- *	flag_char_vuln
- *
- *	flag vulnerable flags on a character
- ***************************************************************************/
 void flag_char_vuln(struct char_data *ch, void *target, const char *argument)
 {
     struct char_data *vch = (struct char_data *)target;
@@ -297,11 +248,6 @@ void flag_char_vuln(struct char_data *ch, void *target, const char *argument)
     return;
 }
 
-/***************************************************************************
- *	flag_char_res
- *
- *	flag resistance flags on a character
- ***************************************************************************/
 void flag_char_res(struct char_data *ch, void *target, const char *argument)
 {
     struct char_data *vch = (struct char_data *)target;
@@ -326,11 +272,6 @@ void flag_char_res(struct char_data *ch, void *target, const char *argument)
     return;
 }
 
-/***************************************************************************
- *	flag_char_imm
- *
- *	flag immunity flags on a character
- ***************************************************************************/
 void flag_char_imm(struct char_data *ch, void *target, const char *argument)
 {
     struct char_data *vch = (struct char_data *)target;
@@ -355,15 +296,6 @@ void flag_char_imm(struct char_data *ch, void *target, const char *argument)
     return;
 }
 
-
-/***************************************************************************
- *	mob set flags
- ***************************************************************************/
-/***************************************************************************
- *	flag_char_part
- *
- *	flag part flags on a mob
- ***************************************************************************/
 void flag_char_part(struct char_data *ch, void *target, const char *argument)
 {
     struct char_data *vch = (struct char_data *)target;
@@ -393,11 +325,6 @@ void flag_char_part(struct char_data *ch, void *target, const char *argument)
     return;
 }
 
-/***************************************************************************
- *	flag_char_form
- *
- *	flag form flags on a mob
- ***************************************************************************/
 void flag_char_form(struct char_data *ch, void *target, const char *argument)
 {
     struct char_data *vch = (struct char_data *)target;
@@ -427,12 +354,6 @@ void flag_char_form(struct char_data *ch, void *target, const char *argument)
     return;
 }
 
-
-/***************************************************************************
- *	flag_char_off
- *
- *	flag offensive flags on a mob
- ***************************************************************************/
 void flag_char_off(struct char_data *ch, void *target, const char *argument)
 {
     struct char_data *vch = (struct char_data *)target;
@@ -462,11 +383,6 @@ void flag_char_off(struct char_data *ch, void *target, const char *argument)
     return;
 }
 
-/***************************************************************************
- *	flag_char_act
- *
- *	flag act flags on a mob
- ***************************************************************************/
 void flag_char_act(struct char_data *ch, void *target, const char *argument)
 {
     struct char_data *vch = (struct char_data *)target;
@@ -496,18 +412,6 @@ void flag_char_act(struct char_data *ch, void *target, const char *argument)
     return;
 }
 
-
-
-/***************************************************************************
- *	character set flags
- ***************************************************************************/
-
-
-/***************************************************************************
- *	flag_char_deathroom
- *
- *	flag the death room on a character
- ***************************************************************************/
 void flag_char_deathroom(struct char_data *ch, void *target, const char *argument)
 {
     struct char_data *vch = (struct char_data *)target;
@@ -541,11 +445,6 @@ void flag_char_deathroom(struct char_data *ch, void *target, const char *argumen
     return;
 }
 
-/***************************************************************************
- *	flag_char_comm
- *
- *	flag comm flags on a character
- ***************************************************************************/
 void flag_char_comm(struct char_data *ch, void *target, const char *argument)
 {
     struct char_data *vch = (struct char_data *)target;
@@ -576,12 +475,6 @@ void flag_char_comm(struct char_data *ch, void *target, const char *argument)
     return;
 }
 
-
-/***************************************************************************
- *	flag_char_plr
- *
- *	flag player flags on a character
- ***************************************************************************/
 void flag_char_plr(struct char_data *ch, void *target, const char *argument)
 {
     struct char_data *vch = (struct char_data *)target;
@@ -612,15 +505,6 @@ void flag_char_plr(struct char_data *ch, void *target, const char *argument)
     return;
 }
 
-
-/***************************************************************************
- *	room set flags
- ***************************************************************************/
-/***************************************************************************
- *	flag_room_room
- *
- *	flag room flags on a room
- ***************************************************************************/
 void flag_room_room(struct char_data *ch, void *target, const char *argument)
 {
     struct room_index_data *room = (struct room_index_data *)target;
@@ -645,36 +529,6 @@ void flag_room_room(struct char_data *ch, void *target, const char *argument)
     return;
 }
 
-
-
-/***************************************************************************
- *	object set flags
- ***************************************************************************/
-/***************************************************************************
- *	flag_obj_type
- *
- *	flag item type on an object
- ***************************************************************************/
-void flag_obj_type(struct char_data *ch, void *target, const char *argument)
-{
-    struct gameobject *obj = (struct gameobject *)target;
-    long value;
-
-    if ((value = flag_value(type_flags, argument)) != NO_FLAG) {
-        obj->item_type = (int)value;
-        send_to_char("Item type set.\n\r", ch);
-        return;
-    }
-
-    send_to_char("That item type does not exist.\n\r", ch);
-    return;
-}
-
-/***************************************************************************
- *	flag_obj_wear
- *
- *	flag wear flags on an object
- ***************************************************************************/
 void flag_obj_wear(struct char_data *ch, void *target, const char *argument)
 {
     struct gameobject *obj = (struct gameobject *)target;
@@ -699,11 +553,6 @@ void flag_obj_wear(struct char_data *ch, void *target, const char *argument)
     return;
 }
 
-/***************************************************************************
- *	flag_obj_extra
- *
- *	flag extra flags on an object
- ***************************************************************************/
 void flag_obj_extra(struct char_data *ch, void *target, const char *argument)
 {
     struct gameobject *obj = (struct gameobject *)target;
@@ -752,18 +601,13 @@ void flag_obj_extra2(struct char_data *ch, void *target, const char *argument)
     return;
 }
 
-/***************************************************************************
- *	flag_obj_wpn_class
- *
- *	flag weapon class flags on an object
- ***************************************************************************/
 void flag_obj_wpn_class(struct char_data *ch, void *target, const char *argument)
 {
     struct gameobject *obj = (struct gameobject *)target;
     long value;
 
 
-    if (obj->item_type != ITEM_WEAPON) {
+    if (OBJECT_TYPE(obj) != ITEM_WEAPON) {
         send_to_char("You can only set weapon type on weapons.\n\r", ch);
         return;
     }
@@ -778,19 +622,13 @@ void flag_obj_wpn_class(struct char_data *ch, void *target, const char *argument
     return;
 }
 
-
-/***************************************************************************
- *	flag_obj_wpn_flags
- *
- *	flag weapon flags on a weapon
- ***************************************************************************/
 void flag_obj_wpn_flags(struct char_data *ch, void *target, const char *argument)
 {
     struct gameobject *obj = (struct gameobject *)target;
     long value;
 
 
-    if (obj->item_type != ITEM_WEAPON) {
+    if (OBJECT_TYPE(obj) != ITEM_WEAPON) {
         send_to_char("You can only set weapon flags on weapons.\n\r", ch);
         return;
     }
@@ -814,20 +652,13 @@ void flag_obj_wpn_flags(struct char_data *ch, void *target, const char *argument
     return;
 }
 
-
-
-/***************************************************************************
- *	flag_obj_wpn_damage
- *
- *	flag damage on a weapon
- ***************************************************************************/
 void flag_obj_wpn_damage(struct char_data *ch, void *target, const char *argument)
 {
     struct gameobject *obj = (struct gameobject *)target;
     long value;
 
 
-    if (obj->item_type != ITEM_WEAPON) {
+    if (OBJECT_TYPE(obj) != ITEM_WEAPON) {
         send_to_char("You can only set damage type on weapons.\n\r", ch);
         return;
     }
@@ -842,14 +673,6 @@ void flag_obj_wpn_damage(struct char_data *ch, void *target, const char *argumen
     return;
 }
 
-/***************************************************************************
- *	utility functions
- ***************************************************************************/
-/***************************************************************************
- *	flag_set
- *
- *	finds and invokes the proper flag function
- ***************************************************************************/
 void flag_set(struct char_data *ch, void *target, char *title, const struct flag_cmd_map *table, const char *argument)
 {
     char flag[MAX_INPUT_LENGTH];
@@ -894,13 +717,6 @@ void flag_set(struct char_data *ch, void *target, char *title, const struct flag
     return;
 }
 
-
-
-/***************************************************************************
- *	flag_list
- *
- *	display a list of available flags for a type
- ***************************************************************************/
 void flag_list(struct char_data *ch, const struct flag_cmd_map *flag_table)
 {
     int idx;
@@ -915,12 +731,6 @@ void flag_list(struct char_data *ch, const struct flag_cmd_map *flag_table)
     return;
 }
 
-
-/***************************************************************************
- *	flag_list_value
- *
- *	display a list of available values for a given flag
- ***************************************************************************/
 void flag_list_value(struct char_data *ch, const struct flag_type *flag_table)
 {
     int idx;

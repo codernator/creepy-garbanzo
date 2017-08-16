@@ -170,7 +170,7 @@ void move_char(struct char_data *ch, int door, bool follow)
 		found = true;
 
 	    for (obj = ch->carrying; obj != NULL; obj = obj->next_content) {
-		if (obj->item_type == ITEM_BOAT) {
+		if (OBJECT_TYPE(obj) == ITEM_BOAT) {
 		    found = true;
 		    break;
 		}
@@ -1027,7 +1027,7 @@ void do_open(struct char_data *ch, const char *argument)
 
     if ((obj = get_obj_here(ch, arg)) != NULL) {
 	/* open portal */
-	if (obj->item_type == ITEM_PORTAL) {
+	if (OBJECT_TYPE(obj) == ITEM_PORTAL) {
 	    if (!IS_SET((int)obj->value[1], EX_ISDOOR)) {
 		send_to_char("You can't do that.\n\r", ch);
 		return;
@@ -1050,7 +1050,7 @@ void do_open(struct char_data *ch, const char *argument)
 	}
 
 	/* 'open object' */
-	if (obj->item_type != ITEM_CONTAINER) {
+	if (OBJECT_TYPE(obj) != ITEM_CONTAINER) {
 	    send_to_char("That's not a container.\n\r", ch);
 	    return;
 	}
@@ -1128,7 +1128,7 @@ void do_close(struct char_data *ch, const char *argument)
 
     if ((obj = get_obj_here(ch, arg)) != NULL) {
 	/* portal stuff */
-	if (obj->item_type == ITEM_PORTAL) {
+	if (OBJECT_TYPE(obj) == ITEM_PORTAL) {
 	    if (!IS_SET((int)obj->value[1], EX_ISDOOR)
 		    || IS_SET((int)obj->value[1], EX_NOCLOSE)) {
 		send_to_char("You can't do that.\n\r", ch);
@@ -1147,7 +1147,7 @@ void do_close(struct char_data *ch, const char *argument)
 	}
 
 	/* 'close object' */
-	if (obj->item_type != ITEM_CONTAINER) {
+	if (OBJECT_TYPE(obj) != ITEM_CONTAINER) {
 	    send_to_char("That's not a container.\n\r", ch);
 	    return;
 	}
@@ -1235,7 +1235,7 @@ void do_lock(struct char_data *ch, const char *argument)
 
     if ((obj = get_obj_here(ch, arg)) != NULL) {
 	/* portal stuff */
-	if (obj->item_type == ITEM_PORTAL) {
+	if (OBJECT_TYPE(obj) == ITEM_PORTAL) {
 	    if (!IS_SET((int)obj->value[1], EX_ISDOOR)
 		    || IS_SET((int)obj->value[1], EX_NOCLOSE)) {
 		send_to_char("You can't do that.\n\r", ch);
@@ -1268,7 +1268,7 @@ void do_lock(struct char_data *ch, const char *argument)
 	}
 
 	/* 'lock object' */
-	if (obj->item_type != ITEM_CONTAINER) {
+	if (OBJECT_TYPE(obj) != ITEM_CONTAINER) {
 	    send_to_char("That's not a container.\n\r", ch);
 	    return;
 	}
@@ -1357,7 +1357,7 @@ void do_unlock(struct char_data *ch, const char *argument)
 
     if ((obj = get_obj_here(ch, arg)) != NULL) {
 	/* portal stuff */
-	if (obj->item_type == ITEM_PORTAL) {
+	if (OBJECT_TYPE(obj) == ITEM_PORTAL) {
 	    if (IS_SET((int)obj->value[1], EX_ISDOOR)) {
 		send_to_char("You can't do that.\n\r", ch);
 		return;
@@ -1390,7 +1390,7 @@ void do_unlock(struct char_data *ch, const char *argument)
 	}
 
 	/* 'unlock object' */
-	if (obj->item_type != ITEM_CONTAINER) {
+	if (OBJECT_TYPE(obj) != ITEM_CONTAINER) {
 	    send_to_char("That's not a container.\n\r", ch);
 	    return;
 	}
@@ -1500,7 +1500,7 @@ void do_pick(struct char_data *ch, const char *argument)
 
     if ((obj = get_obj_here(ch, arg)) != NULL) {
 	/* portal stuff */
-	if (obj->item_type == ITEM_PORTAL) {
+	if (OBJECT_TYPE(obj) == ITEM_PORTAL) {
 	    if (!IS_SET((int)obj->value[1], EX_ISDOOR)) {
 		send_to_char("You can't do that.\n\r", ch);
 		return;
@@ -1529,7 +1529,7 @@ void do_pick(struct char_data *ch, const char *argument)
 	}
 
 	/* 'pick object' */
-	if (obj->item_type != ITEM_CONTAINER) {
+	if (OBJECT_TYPE(obj) != ITEM_CONTAINER) {
 	    send_to_char("That's not a container.\n\r", ch);
 	    return;
 	}
@@ -1764,7 +1764,7 @@ void do_rest(struct char_data *ch, const char *argument)
 
     if (argument[0] == '\0') {
 	for (obj_on = ch->carrying; obj_on != NULL; obj_on = obj_on->next_content) {
-	    if ((obj_on->item_type == ITEM_FURNITURE)
+	    if ((OBJECT_TYPE(obj_on) == ITEM_FURNITURE)
 		    && (IS_SET(obj_on->value[2], REST_ON)
 			|| IS_SET(obj_on->value[2], REST_IN)
 			|| IS_SET(obj_on->value[2], REST_AT))
@@ -1780,7 +1780,7 @@ void do_rest(struct char_data *ch, const char *argument)
 	}
     }
     if (obj != NULL) {
-	if (!IS_SET(obj->item_type, ITEM_FURNITURE)
+	if (!IS_SET(OBJECT_TYPE(obj), ITEM_FURNITURE)
 		|| (!IS_SET(obj->value[2], REST_ON)
 		    && !IS_SET(obj->value[2], REST_IN)
 		    && !IS_SET(obj->value[2], REST_AT))) {
@@ -1869,7 +1869,7 @@ void do_sleep(struct char_data *ch, const char *argument)
     struct gameobject *obj_on = NULL;
 
     for (obj = ch->carrying; obj; obj = obj->next_content) {
-	if ((obj->item_type == ITEM_FURNITURE)
+	if ((OBJECT_TYPE(obj) == ITEM_FURNITURE)
 		&& (IS_SET(obj->value[2], SLEEP_ON)
 		    || IS_SET(obj->value[2], SLEEP_IN))
 		&& can_see_obj(ch, obj)
@@ -1910,7 +1910,7 @@ void do_sleep(struct char_data *ch, const char *argument)
 		    return;
 		}
 
-		if (obj->item_type != ITEM_FURNITURE
+		if (OBJECT_TYPE(obj) != ITEM_FURNITURE
 			|| (!IS_SET(obj->value[2], SLEEP_ON)
 			    && !IS_SET(obj->value[2], SLEEP_IN)
 			    && !IS_SET(obj->value[2], SLEEP_AT))) {

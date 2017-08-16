@@ -772,7 +772,7 @@ void do_examine(struct char_data *ch, const char *argument)
     do_look(ch, arg);
 
     if ((obj = get_obj_here(ch, arg)) != NULL) {
-        switch (obj->item_type) {
+        switch (OBJECT_TYPE(obj)) {
           default:
               break;
 
@@ -1286,7 +1286,7 @@ void do_compare(struct char_data *ch, const char *argument)
         for (obj2 = ch->carrying; obj2 != NULL; obj2 = obj2->next_content) {
             if (obj2->wear_loc != WEAR_NONE
                 && can_see_obj(ch, obj2)
-                && obj1->item_type == obj2->item_type
+                && OBJECT_TYPE(obj1) == OBJECT_TYPE(obj2)
                 && (obj1->wear_flags & obj2->wear_flags & ~ITEM_TAKE) != 0)
                 break;
         }
@@ -1306,10 +1306,10 @@ void do_compare(struct char_data *ch, const char *argument)
 
     if (obj1 == obj2) {
         msg = "You compare $p to itself.  It looks about the same.";
-    } else if (obj1->item_type != obj2->item_type) {
+    } else if (OBJECT_TYPE(obj1) != OBJECT_TYPE(obj2)) {
         msg = "You can't compare $p and $P.";
     } else {
-        switch (obj1->item_type) {
+        switch (OBJECT_TYPE(obj1)) {
           default:
               msg = "You can't compare $p and $P.";
               break;

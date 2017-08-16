@@ -1485,6 +1485,7 @@ struct extra_descr_data {
 #define OBJECT_SHORT(obj)       ((obj)->objprototype->short_descr)
 #define OBJECT_LONG(obj)        ((obj)->objprototype->description)
 #define OBJECT_EXTRA(obj)       ((obj)->objprototype->extra_descr)
+#define OBJECT_TYPE(obj)        ((obj)->objprototype->item_type)
 
 
 /***************************************************************************
@@ -1500,11 +1501,11 @@ struct extra_descr_data {
     /*@dependent@*//*@null@*/struct char_data *carried_by;
     /*@dependent@*//*@null@*/struct char_data *target;
     /*@dependent@*//*@null@*/struct affect_data *affected;
+
     /*@dependent@*/struct objectprototype *objprototype;
     /*@dependent@*//*@null@*/struct room_index_data *in_room;
     /*@shared@*//*@null@*/char *owner_name;
     /*@shared@*//*@null@*/char *override_name;
-    int item_type;
     long extra_flags;
     long extra2_flags;
     long wear_flags;
@@ -1805,11 +1806,11 @@ if (IS_NPC(ch)) \
 #define IS_BUILDER(ch, area)    (!IS_NPC(ch) && !IS_SWITCHED(ch) && (ch->pcdata->security >= area->security || strstr(area->builders, ch->name) || strstr(area->builders, "All")))
 
 /** Object macros. */
-#define CAN_WEAR(obj, part)     (IS_SET((obj)->wear_flags, (part)))
+#define CAN_WEAR(obj, part)     (IS_SET((obj)->objprototype->wear_flags, (part)))
 #define IS_OBJ_STAT(obj, stat)  (IS_SET((obj)->extra_flags, (stat)))
 #define IS_OBJ_STAT2(obj, stat) (IS_SET((obj)->extra2_flags, (stat)))
 #define IS_WEAPON_STAT(obj, stat)(IS_SET((obj)->value[4], (stat)))
-#define WEIGHT_MULT(obj)        ((obj)->item_type == ITEM_CONTAINER ? (obj)->value[4] : 100)
+#define WEIGHT_MULT(obj)        ((obj)->objprototype->item_type == ITEM_CONTAINER ? (obj)->value[4] : 100)
 #define IS_OBJ2_STAT(obj, stat) (IS_SET((obj)->extra2_flags, (stat)))
 
 

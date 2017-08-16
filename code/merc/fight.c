@@ -412,7 +412,7 @@ static void validate_attack_type(int *dt, struct char_data *ch, struct gameobjec
      */
     if (*dt == TYPE_UNDEFINED) {
 	*dt = TYPE_HIT;
-	if (wield != NULL && wield->item_type == ITEM_WEAPON)
+	if (wield != NULL && OBJECT_TYPE(wield) == ITEM_WEAPON)
 	    *dt += wield->value[3];
 	else
 	    *dt += ch->dam_type;
@@ -1680,10 +1680,10 @@ void make_corpse(struct char_data *ch)
 	obj_next = obj->next_content;
 	obj_from_char(obj);
 
-	if (obj->item_type == ITEM_POTION)
+	if (OBJECT_TYPE(obj) == ITEM_POTION)
 	    obj->timer = number_range(500, 1000);
 
-	if (obj->item_type == ITEM_SCROLL)
+	if (OBJECT_TYPE(obj) == ITEM_SCROLL)
 	    obj->timer = number_range(1000, 2500);
 
 	if (IS_SET(obj->extra_flags, ITEM_ROT_DEATH) && !floating) {
@@ -1794,14 +1794,14 @@ void death_cry(struct char_data *ch, struct char_data *killer)
         //free_string(obj->description);
         //obj->description = str_dup(buf);
 
-        if (obj->item_type == ITEM_TREASURE && !IS_NPC(ch))
+        if (OBJECT_TYPE(obj) == ITEM_TREASURE && !IS_NPC(ch))
             obj->timer = -1;
 
-        if (obj->item_type == ITEM_FOOD) {
+        if (OBJECT_TYPE(obj) == ITEM_FOOD) {
             if (IS_SET(ch->form, FORM_POISON))
                 obj->value[3] = 1;
-            else if (!IS_SET(ch->form, FORM_EDIBLE))
-                obj->item_type = ITEM_TRASH;
+            //else if (!IS_SET(ch->form, FORM_EDIBLE))
+            //    obj->item_type = ITEM_TRASH;
         }
 
         obj_to_room(obj, ch->in_room);
@@ -2326,10 +2326,10 @@ void use_magical_item(struct char_data *ch)
     char buf[MAX_INPUT_LENGTH];
 
     for (obj = ch->carrying; obj; obj = obj->next_content) {
-	if ((obj->item_type == ITEM_SCROLL
-		    || obj->item_type == ITEM_WAND
-		    || obj->item_type == ITEM_STAFF
-		    || obj->item_type == ITEM_PILL)
+	if ((OBJECT_TYPE(obj) == ITEM_SCROLL
+		    || OBJECT_TYPE(obj) == ITEM_WAND
+		    || OBJECT_TYPE(obj) == ITEM_STAFF
+		    || OBJECT_TYPE(obj) == ITEM_PILL)
 		&& number_range(0, number) == 0) {
 	    cobj = obj;
 	    number++;
@@ -2339,7 +2339,7 @@ void use_magical_item(struct char_data *ch)
     if (!cobj)
 	return;
 
-    switch (cobj->item_type) {
+    switch (OBJECT_TYPE(cobj)) {
 	case ITEM_SCROLL:
 	    do_recite(ch, "scroll");
 	    break;

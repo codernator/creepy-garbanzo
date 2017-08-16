@@ -502,9 +502,6 @@ static void fwrite_obj(struct char_data *ch, struct gameobject *obj, FILE *fp, i
     if (obj->wear_flags != obj->objprototype->wear_flags)
         fprintf(fp, "WeaF %ld\n", obj->wear_flags);
 
-    if (obj->item_type != obj->objprototype->item_type)
-        fprintf(fp, "Ityp %d\n", obj->item_type);
-
     if (obj->weight != obj->objprototype->weight)
         fprintf(fp, "Wt   %d\n", obj->weight);
 
@@ -532,7 +529,7 @@ static void fwrite_obj(struct char_data *ch, struct gameobject *obj, FILE *fp, i
     }
 
 
-    switch (obj->item_type) {
+    switch (OBJECT_TYPE(obj)) {
       case ITEM_POTION:
       case ITEM_SCROLL:
           {
@@ -1613,11 +1610,6 @@ static void fread_obj(struct char_data *ch, FILE *fp)
               }
               break;
 
-          case 'I':
-              KEY("ItemType", obj->item_type, fread_number(fp));
-              KEY("Ityp", obj->item_type, fread_number(fp));
-              break;
-
           case 'L':
               KEY("Level", obj->level, fread_number(fp));
               KEY("Lev", obj->level, fread_number(fp));
@@ -1666,7 +1658,7 @@ static void fread_obj(struct char_data *ch, FILE *fp)
                   obj->value[1] = fread_number(fp);
                   obj->value[2] = fread_number(fp);
                   obj->value[3] = fread_number(fp);
-                  if (obj->item_type == ITEM_WEAPON && obj->value[0] == 0)
+                  if (OBJECT_TYPE(obj) == ITEM_WEAPON && obj->value[0] == 0)
                       obj->value[0] = obj->objprototype->value[0];
                   fMatch = true;
                   break;

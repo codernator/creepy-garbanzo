@@ -155,7 +155,7 @@ void do_get(struct char_data *ch, const char *argument)
             return;
         }
 
-        switch (container->item_type) {
+        switch (OBJECT_TYPE(container)) {
           default:
               send_to_char("That's not a container.\n\r", ch);
               return;
@@ -202,7 +202,7 @@ void do_get(struct char_data *ch, const char *argument)
                         return;
                     }
 
-                    if (container->item_type == ITEM_CORPSE_PC && (str_cmp(ownername, ch->name)) && ownername != NULL && !IS_IMMORTAL(ch)) {
+                    if (OBJECT_TYPE(container) == ITEM_CORPSE_PC && (str_cmp(ownername, ch->name)) && ownername != NULL && !IS_IMMORTAL(ch)) {
                         send_to_char("Don't be so greedy!\n\r", ch);
                         return;
                     }
@@ -258,7 +258,7 @@ void do_put(struct char_data *ch, const char *argument)
         return;
     }
 
-    if (container->item_type != ITEM_CONTAINER) {
+    if (OBJECT_TYPE(container) != ITEM_CONTAINER) {
         send_to_char("That's not a container.\n\r", ch);
         return;
     }
@@ -714,7 +714,7 @@ void do_fill(struct char_data *ch, const char *argument)
     for (fountain = ch->in_room->contents;
          fountain != NULL;
          fountain = fountain->next_content) {
-        if (fountain->item_type == ITEM_FOUNTAIN) {
+        if (OBJECT_TYPE(fountain) == ITEM_FOUNTAIN) {
             found = true;
             break;
         }
@@ -725,7 +725,7 @@ void do_fill(struct char_data *ch, const char *argument)
         return;
     }
 
-    if (obj->item_type != ITEM_DRINK_CON) {
+    if (OBJECT_TYPE(obj) != ITEM_DRINK_CON) {
         send_to_char("You can't fill that.\n\r", ch);
         return;
     }
@@ -774,7 +774,7 @@ void do_pour(struct char_data *ch, const char *argument)
         return;
     }
 
-    if (out->item_type != ITEM_DRINK_CON) {
+    if (OBJECT_TYPE(out) != ITEM_DRINK_CON) {
         send_to_char("That's not a drink container.\n\r", ch);
         return;
     }
@@ -809,7 +809,7 @@ void do_pour(struct char_data *ch, const char *argument)
         }
     }
 
-    if (in->item_type != ITEM_DRINK_CON) {
+    if (OBJECT_TYPE(in) != ITEM_DRINK_CON) {
         send_to_char("You can only pour into other drink containers.\n\r", ch);
         return;
     }
@@ -870,7 +870,7 @@ void do_drink(struct char_data *ch, const char *argument)
     (void)one_argument(argument, arg);
     if (arg[0] == '\0') {
         for (obj = ch->in_room->contents; obj; obj = obj->next_content)
-            if (obj->item_type == ITEM_FOUNTAIN)
+            if (OBJECT_TYPE(obj) == ITEM_FOUNTAIN)
                 break;
 
         if (obj == NULL) {
@@ -885,7 +885,7 @@ void do_drink(struct char_data *ch, const char *argument)
     }
 
 
-    switch (obj->item_type) {
+    switch (OBJECT_TYPE(obj)) {
       default:
           send_to_char("You can't drink from that.\n\r", ch);
           return;
@@ -986,7 +986,7 @@ void do_eat(struct char_data *ch, const char *argument)
     }
 
     if (!IS_IMMORTAL(ch)) {
-        if (obj->item_type != ITEM_FOOD && obj->item_type != ITEM_PILL) {
+        if (OBJECT_TYPE(obj) != ITEM_FOOD && OBJECT_TYPE(obj) != ITEM_PILL) {
             send_to_char("That's not edible.\n\r", ch);
             return;
         }
@@ -1005,7 +1005,7 @@ void do_eat(struct char_data *ch, const char *argument)
     act("$n eats $p.", ch, obj, NULL, TO_ROOM);
     act("You eat $p.", ch, obj, NULL, TO_CHAR);
 
-    switch (obj->item_type) {
+    switch (OBJECT_TYPE(obj)) {
       case ITEM_FOOD:
           if (!IS_NPC(ch)) {
               long condition;
@@ -1099,7 +1099,7 @@ void wear_obj(struct char_data *ch, struct gameobject *obj, bool fReplace)
         return;
     }
 
-    if (obj->item_type == ITEM_LIGHT) {
+    if (OBJECT_TYPE(obj) == ITEM_LIGHT) {
         if (!remove_obj(ch, WEAR_LIGHT, fReplace))
             return;
 
@@ -1543,7 +1543,7 @@ void do_sacrifice(struct char_data *ch, const char *argument)
             obj_next = obj->next_content;
 
             /* ignore PC corpses that are not empty */
-            if (obj->item_type == ITEM_CORPSE_PC
+            if (OBJECT_TYPE(obj) == ITEM_CORPSE_PC
                 && obj->contains)
                 continue;
 
@@ -1571,8 +1571,8 @@ void do_sacrifice(struct char_data *ch, const char *argument)
             }
 
             silver = (unsigned int)UMAX(1, obj->level * 3);
-            if (obj->item_type != ITEM_CORPSE_NPC
-                && obj->item_type != ITEM_CORPSE_PC)
+            if (OBJECT_TYPE(obj) != ITEM_CORPSE_NPC
+                && OBJECT_TYPE(obj) != ITEM_CORPSE_PC)
                 silver = UMIN(silver, obj->cost);
 
             extract_obj(obj);
@@ -1623,7 +1623,7 @@ void do_sacrifice(struct char_data *ch, const char *argument)
             return;
         }
 
-        if (obj->item_type == ITEM_CORPSE_PC && obj->contains) {
+        if (OBJECT_TYPE(obj) == ITEM_CORPSE_PC && obj->contains) {
             send_to_char("No one would like that.\n\r", ch);
             return;
         }
@@ -1644,8 +1644,8 @@ void do_sacrifice(struct char_data *ch, const char *argument)
         }
 
         silver = (unsigned int)UMAX(1, obj->level * 3);
-        if (obj->item_type != ITEM_CORPSE_NPC
-            && obj->item_type != ITEM_CORPSE_PC)
+        if (OBJECT_TYPE(obj) != ITEM_CORPSE_NPC
+            && OBJECT_TYPE(obj) != ITEM_CORPSE_PC)
             silver = UMIN(silver, obj->cost);
 
         if (silver == 1)
@@ -1681,7 +1681,7 @@ void donate_obj(struct char_data *ch, struct gameobject *obj)
     char buf[MAX_INPUT_LENGTH];
 
     if ((!CAN_WEAR(obj, ITEM_TAKE)
-         && obj->item_type != ITEM_CORPSE_PC)
+         && OBJECT_TYPE(obj) != ITEM_CORPSE_PC)
         || (IS_SET(obj->extra2_flags, ITEM2_NODONATE)
             && !IS_IMMORTAL(ch))) {
         send_to_char("You can't donate that!\n\r", ch);
@@ -2070,7 +2070,7 @@ unsigned int get_cost(struct char_data *keeper, struct gameobject *obj, bool fBu
 
         cost = 0;
         for (itype = 0; itype < MAX_TRADE; itype++) {
-            if (obj->item_type == keeper->mob_idx->shop->buy_type[itype]) {
+            if (OBJECT_TYPE(obj) == keeper->mob_idx->shop->buy_type[itype]) {
                 cost = (unsigned int)(obj->cost * keeper->mob_idx->shop->profit_sell / 100);
                 break;
             }
@@ -2091,7 +2091,7 @@ unsigned int get_cost(struct char_data *keeper, struct gameobject *obj, bool fBu
         }
     }
 
-    if (obj->item_type == ITEM_STAFF || obj->item_type == ITEM_WAND) {
+    if (OBJECT_TYPE(obj) == ITEM_STAFF || OBJECT_TYPE(obj) == ITEM_WAND) {
         if (obj->value[1] == 0)
             cost /= 4;
         else
@@ -2497,7 +2497,7 @@ void do_sell(struct char_data *ch, const char *argument)
     ch->gold += cost / 100;
     ch->silver += cost - (cost / 100) * 100;
 
-    if (obj->item_type == ITEM_TRASH
+    if (OBJECT_TYPE(obj) == ITEM_TRASH
         || IS_OBJ_STAT(obj, ITEM_SELL_EXTRACT)) {
         extract_obj(obj);
     } else {
@@ -2580,7 +2580,7 @@ void do_second(struct char_data *ch, const char *argument)
         return;
     }
 
-    if (obj->item_type != ITEM_WEAPON) {
+    if (OBJECT_TYPE(obj) != ITEM_WEAPON) {
         send_to_char("You can only wield a WEAPON .. Bonehead.\n\r", ch);
         return;
     }
@@ -2656,7 +2656,7 @@ void do_envenom(struct char_data *ch, const char *argument)
         return;
     }
 
-    if (obj->item_type == ITEM_FOOD || obj->item_type == ITEM_DRINK_CON) {
+    if (OBJECT_TYPE(obj) == ITEM_FOOD || OBJECT_TYPE(obj) == ITEM_DRINK_CON) {
         if (IS_OBJ_STAT(obj, ITEM_BLESS) || IS_OBJ_STAT(obj, ITEM_BURN_PROOF)) {
             act("You fail to poison $p.", ch, obj, NULL, TO_CHAR);
             return;
@@ -2682,7 +2682,7 @@ void do_envenom(struct char_data *ch, const char *argument)
         return;
     }
 
-    if (obj->item_type == ITEM_WEAPON) {
+    if (OBJECT_TYPE(obj) == ITEM_WEAPON) {
         if (obj->value[3] < 0
             || attack_table[obj->value[3]].damage == DAM_BASH) {
             send_to_char("You can only envenom edged weapons.\n\r", ch);
@@ -2750,7 +2750,7 @@ void do_dice(struct char_data *ch, const char *argument)
         return;
     }
 
-    if (obj->item_type != ITEM_DICE || obj->value[0] < 1) {
+    if (OBJECT_TYPE(obj) != ITEM_DICE || obj->value[0] < 1) {
         send_to_char("You can only roll dice.\n\r", ch);
         return;
     }

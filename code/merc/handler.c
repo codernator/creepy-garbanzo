@@ -330,7 +330,7 @@ int get_weapon_sn(struct char_data *ch, struct gameobject *wield)
     }
 
     skill = NULL;
-    if (wield != NULL && wield->item_type == ITEM_WEAPON) {
+    if (wield != NULL && OBJECT_TYPE(wield) == ITEM_WEAPON) {
         switch (wield->value[0]) {
           default:
               skill = NULL;
@@ -853,7 +853,7 @@ void char_from_room(struct char_data *ch)
         --ch->in_room->area->nplayer;
 
     if ((obj = get_eq_char(ch, WEAR_LIGHT)) != NULL
-        && obj->item_type == ITEM_LIGHT
+        && OBJECT_TYPE(obj) == ITEM_LIGHT
         && obj->value[2] != 0
         && ch->in_room->light > 0)
         --ch->in_room->light;
@@ -907,7 +907,7 @@ void char_to_room(struct char_data *ch, struct room_index_data *pRoomIndex)
         ++ch->in_room->area->nplayer;
     }
 
-    if ((obj = get_eq_char(ch, WEAR_LIGHT)) != NULL && obj->item_type == ITEM_LIGHT && obj->value[2] != 0)
+    if ((obj = get_eq_char(ch, WEAR_LIGHT)) != NULL && OBJECT_TYPE(obj) == ITEM_LIGHT && obj->value[2] != 0)
         ++ch->in_room->light;
 }
 
@@ -970,7 +970,7 @@ void obj_from_char(struct gameobject *obj)
  */
 long apply_ac(struct gameobject *obj, int iWear, int type)
 {
-    if (obj->item_type != ITEM_ARMOR)
+    if (OBJECT_TYPE(obj) != ITEM_ARMOR)
         return 0;
 
     switch (iWear) {
@@ -1067,7 +1067,7 @@ void equip_char(struct char_data *ch, struct gameobject *obj, int iWear)
         else
             affect_modify(ch, paf, true);
 
-    if (obj->item_type == ITEM_LIGHT && obj->value[2] != 0 && ch->in_room != NULL)
+    if (OBJECT_TYPE(obj) == ITEM_LIGHT && obj->value[2] != 0 && ch->in_room != NULL)
         ++ch->in_room->light;
 }
 
@@ -1131,7 +1131,7 @@ void unequip_char(struct char_data *ch, struct gameobject *obj)
             affect_check(ch, paf->where, paf->bitvector);
         }
 
-    if (obj->item_type == ITEM_LIGHT
+    if (OBJECT_TYPE(obj) == ITEM_LIGHT
         && obj->value[2] != 0
         && ch->in_room != NULL
         && ch->in_room->light > 0)
@@ -1679,13 +1679,13 @@ int get_obj_number(struct gameobject *obj)
     struct gameobject *objprototype;
     int number;
 
-    if (obj->item_type == ITEM_CONTAINER
-        || obj->item_type == ITEM_MONEY
-        || obj->item_type == ITEM_GEM
-        || obj->item_type == ITEM_JEWELRY
-        || obj->item_type == ITEM_POTION
-        || obj->item_type == ITEM_SCROLL
-        || obj->item_type == ITEM_PILL)
+    if (OBJECT_TYPE(obj) == ITEM_CONTAINER
+        || OBJECT_TYPE(obj) == ITEM_MONEY
+        || OBJECT_TYPE(obj) == ITEM_GEM
+        || OBJECT_TYPE(obj) == ITEM_JEWELRY
+        || OBJECT_TYPE(obj) == ITEM_POTION
+        || OBJECT_TYPE(obj) == ITEM_SCROLL
+        || OBJECT_TYPE(obj) == ITEM_PILL)
         number = 0;
     else
         number = 1;
@@ -1930,10 +1930,10 @@ bool can_see_obj(struct char_data *ch, struct gameobject *obj)
         return false;
 
     if (IS_AFFECTED(ch, AFF_BLIND)
-        && obj->item_type != ITEM_POTION)
+        && OBJECT_TYPE(obj) != ITEM_POTION)
         return false;
 
-    if (obj->item_type == ITEM_LIGHT
+    if (OBJECT_TYPE(obj) == ITEM_LIGHT
         && obj->value[2] != 0)
         return true;
 
@@ -1987,7 +1987,7 @@ char *room_flag_bit_name(struct room_index_data *room)
  ***************************************************************************/
 char *item_type_name(struct gameobject *obj)
 {
-    return flag_string(type_flags, (long)obj->item_type);
+    return flag_string(type_flags, (long)OBJECT_TYPE(obj));
 }
 
 /***************************************************************************
@@ -2220,7 +2220,7 @@ void identify_item(struct char_data *ch, struct gameobject *obj)
                    obj->cost,
                    obj->level);
 
-    switch (obj->item_type) {
+    switch (OBJECT_TYPE(obj)) {
       case ITEM_SCROLL:
       case ITEM_POTION:
       case ITEM_PILL:

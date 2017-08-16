@@ -84,7 +84,7 @@ struct gameobject *object_clone(struct gameobject *parent)
     /* start fixing the object */
     if (parent->override_name != NULL) clone->override_name = str_dup(parent->override_name);
     if (parent->material != NULL) clone->material = str_dup(parent->material);
-    clone->item_type = parent->item_type;
+
     clone->extra_flags = parent->extra_flags;
     clone->wear_flags = parent->wear_flags;
     clone->weight = parent->weight;
@@ -214,11 +214,11 @@ void object_name_set(struct gameobject *object, const char *name)
 
 
 inline bool is_situpon(struct gameobject *obj) {
-    return (obj->item_type == ITEM_FURNITURE) && (IS_SET(obj->value[2], SIT_ON) || IS_SET(obj->value[2], SIT_IN) || IS_SET(obj->value[2], SIT_AT));
+    return (OBJECT_TYPE(obj) == ITEM_FURNITURE) && (IS_SET(obj->value[2], SIT_ON) || IS_SET(obj->value[2], SIT_IN) || IS_SET(obj->value[2], SIT_AT));
 }
 
 inline bool is_standupon(struct gameobject *obj) {
-    return (obj->item_type == ITEM_FURNITURE && (IS_SET(obj->value[2], STAND_AT) || IS_SET(obj->value[2], STAND_ON) || IS_SET(obj->value[2], STAND_IN)));
+    return (OBJECT_TYPE(obj) == ITEM_FURNITURE && (IS_SET(obj->value[2], STAND_AT) || IS_SET(obj->value[2], STAND_ON) || IS_SET(obj->value[2], STAND_IN)));
 }
 
 

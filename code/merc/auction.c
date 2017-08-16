@@ -262,7 +262,7 @@ void do_auction(struct char_data *ch, const char *argument)
             return;
         }
 
-        switch (obj->item_type) {
+        switch (OBJECT_TYPE(obj)) {
           default:
               send_to_char("You cannot auction that.\n\r", ch);
               return;

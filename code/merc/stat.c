@@ -225,7 +225,7 @@ void show_object_stats(struct char_data *ch, const char *argument)
     printf_to_char(ch, "Values: %d %d %d %d %d\n\r", obj->value[0], obj->value[1], obj->value[2], obj->value[3], obj->value[4]);
 
     /* now give out vital statistics as per identify */
-    switch (obj->item_type) {
+    switch (OBJECT_TYPE(obj)) {
       case ITEM_SCROLL:
       case ITEM_POTION:
       case ITEM_PILL:

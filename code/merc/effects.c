@@ -56,7 +56,7 @@ void acid_effect(void *vo, int level, int dam, int target)
 		if (chance > 25)
 			chance = 25;
 
-		switch (obj->item_type) {
+		switch (OBJECT_TYPE(obj)) {
 		default:
 			return;
 		case ITEM_CONTAINER:
@@ -92,7 +92,7 @@ void acid_effect(void *vo, int level, int dam, int target)
 			act(msg, obj->in_room->people, obj, NULL, TO_ALL);
 
 
-		if (obj->item_type == ITEM_ARMOR) {      /* etch it */
+		if (OBJECT_TYPE(obj) == ITEM_ARMOR) {      /* etch it */
 			struct affect_data *paf;
 			bool af_found = false;
 			int idx;
@@ -225,7 +225,7 @@ void cold_effect(void *vo, int level, int dam, int target)
 
 		chance -= obj->level * 2;
 
-		switch (obj->item_type) {
+		switch (OBJECT_TYPE(obj)) {
 		default:
 			return;
 		case ITEM_POTION:
@@ -333,7 +333,7 @@ void fire_effect(void *vo, int level, int dam, int target)
 			chance -= 5;
 		chance -= obj->level * 2;
 
-		switch (obj->item_type) {
+		switch (OBJECT_TYPE(obj)) {
 		default:
 			return;
 		case ITEM_CONTAINER:
@@ -459,7 +459,7 @@ void poison_effect(void *vo, int level, int dam, int target)
 			chance = (chance - 50) / 2 + 50;
 		chance -= obj->level * 2;
 
-		switch (obj->item_type) {
+		switch (OBJECT_TYPE(obj)) {
 		default:
 			return;
 		case ITEM_FOOD:
@@ -528,7 +528,7 @@ void shock_effect(void *vo, int level, int dam, int target)
 			chance -= 5;
 		chance -= obj->level * 2;
 
-		switch (obj->item_type) {
+		switch (OBJECT_TYPE(obj)) {
 		default:
 			return;
 		case ITEM_WAND:

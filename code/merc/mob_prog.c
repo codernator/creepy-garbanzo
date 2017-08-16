@@ -526,7 +526,7 @@ static bool cmd_eval(long vnum, const char *line, int check, struct char_data *m
 	case CHK_CLASS:
 	    return lval_char != NULL && lval_char->class == class_lookup(buf);
 	case CHK_OBJTYPE:
-	    return lval_obj != NULL && lval_obj->item_type == item_lookup(buf);
+	    return lval_obj != NULL && OBJECT_TYPE(lval_obj) == item_lookup(buf);
 	default:;
     }
 

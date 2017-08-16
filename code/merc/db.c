@@ -1977,7 +1977,6 @@ struct gameobject *create_object(struct objectprototype *objprototype, int level
     object_name_set(obj, str_dup(objprototype->name));
     obj->material = str_dup(objprototype->material);
     obj->timer = objprototype->init_timer;
-    obj->item_type = objprototype->item_type;
     obj->extra_flags = objprototype->extra_flags;
     obj->wear_flags = objprototype->wear_flags;
     obj->value[0] = objprototype->value[0];
@@ -1994,7 +1993,7 @@ struct gameobject *create_object(struct objectprototype *objprototype, int level
     /*
      * Mess with object properties.
      */
-    switch (obj->item_type) {
+    switch (OBJECT_TYPE(obj)) {
       default:
           log_bug("Read_object: vnum %ld bad type.", objprototype->vnum);
           break;

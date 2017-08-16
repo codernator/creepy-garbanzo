@@ -337,7 +337,7 @@ void affect_to_obj(struct gameobject *obj, struct affect_data *paf)
 			SET_BIT(obj->extra_flags, paf->bitvector);
 			break;
 		case TO_WEAPON:
-			if (obj->item_type == ITEM_WEAPON)
+			if (OBJECT_TYPE(obj) == ITEM_WEAPON)
 				SET_BIT(obj->value[4], paf->bitvector);
 			break;
 		}
@@ -438,7 +438,7 @@ void affect_remove_obj(struct gameobject *obj, struct affect_data *paf)
 			REMOVE_BIT(obj->extra_flags, paf->bitvector);
 			break;
 		case TO_WEAPON:
-			if (obj->item_type == ITEM_WEAPON)
+			if (OBJECT_TYPE(obj) == ITEM_WEAPON)
 				REMOVE_BIT(obj->value[4], paf->bitvector);
 			break;
 		}

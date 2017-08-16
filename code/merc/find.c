@@ -75,7 +75,7 @@ struct gameobject *get_object_by_itemtype_and_room(int item_type, struct room_in
     struct gameobject *instance = NULL;
 
     for (instance = room->contents; instance != NULL; instance = instance->next_content)
-        if (instance->item_type == item_type && (ch == NULL || can_see_obj(ch, instance)))
+        if (OBJECT_TYPE(instance) == item_type && (ch == NULL || can_see_obj(ch, instance)))
             break;
 
     return instance;
@@ -282,7 +282,7 @@ bool obj_cmp_type(struct gameobject *obj, const char *arg, struct buf_type *buf)
         add_buf(buf, "search by an object's type.\n\r");
         add_buf(buf, "available type flags:\n\r");
     }
-    return cmp_fn_index((long)obj->item_type, arg, type_flags, buf);
+    return cmp_fn_index((long)OBJECT_TYPE(obj), arg, type_flags, buf);
 }
 
 /***************************************************************************

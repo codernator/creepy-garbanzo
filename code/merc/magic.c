@@ -402,7 +402,7 @@ void do_cast(struct char_data *ch, const char *argument)
 	    } else {
 		if ((victim = get_char_room(ch, argument)) == NULL) {
 		    if ((obj = get_eq_char(ch, WEAR_HOLD)) != NULL
-			    && obj->item_type == ITEM_DOLL
+			    && OBJECT_TYPE(obj) == ITEM_DOLL
 			    && obj->target != NULL
 			    && is_name(argument, obj->target->name)) {
 			victim = obj->target;
@@ -454,7 +454,7 @@ void do_cast(struct char_data *ch, const char *argument)
 	    } else {
 		if ((victim = get_char_room(ch, argument)) == NULL) {
 		    if ((obj = get_eq_char(ch, WEAR_HOLD)) != NULL
-			    && obj->item_type == ITEM_DOLL
+			    && OBJECT_TYPE(obj) == ITEM_DOLL
 			    && obj->target != NULL
 			    && is_name(argument, obj->target->name)) {
 			victim = obj->target;
@@ -507,7 +507,7 @@ void do_cast(struct char_data *ch, const char *argument)
 	    } else if ((victim = get_char_room(ch, argument)) != NULL) {
 		target = TARGET_CHAR;
 	    } else if ((obj = get_eq_char(ch, WEAR_HOLD)) != NULL
-		    && obj->item_type == ITEM_DOLL
+		    && OBJECT_TYPE(obj) == ITEM_DOLL
 		    && obj->target != NULL
 		    && is_name(argument, obj->target->name)) {
 		victim = obj->target;
@@ -779,23 +779,23 @@ void do_quaff(struct char_data *ch, const char *argument)
 
     one_argument(argument, arg);
     if (arg[0] == '\0') {
-	send_to_char("Quaff what?\n\r", ch);
-	return;
+        send_to_char("Quaff what?\n\r", ch);
+        return;
     }
 
     if ((obj = get_obj_carry(ch, arg)) == NULL) {
-	send_to_char("You do not have that potion.\n\r", ch);
-	return;
+        send_to_char("You do not have that potion.\n\r", ch);
+        return;
     }
 
-    if (obj->item_type != ITEM_POTION) {
-	send_to_char("You can quaff only potions.\n\r", ch);
-	return;
+    if (OBJECT_TYPE(obj) != ITEM_POTION) {
+        send_to_char("You can quaff only potions.\n\r", ch);
+        return;
     }
 
     if (ch->level < obj->level) {
-	send_to_char("This liquid is too powerful for you to drink.\n\r", ch);
-	return;
+        send_to_char("This liquid is too powerful for you to drink.\n\r", ch);
+        return;
     }
 
     act("$n quaffs $p.", ch, obj, NULL, TO_ROOM);
@@ -835,7 +835,7 @@ void do_recite(struct char_data *ch, const char *argument)
 	return;
     }
 
-    if (scroll->item_type != ITEM_SCROLL) {
+    if (OBJECT_TYPE(scroll) != ITEM_SCROLL) {
 	send_to_char("You can recite only scrolls.\n\r", ch);
 	return;
     }
@@ -897,7 +897,7 @@ void do_brandish(struct char_data *ch, const char *argument)
 	return;
     }
 
-    if (staff->item_type != ITEM_STAFF) {
+    if (OBJECT_TYPE(staff) != ITEM_STAFF) {
 	send_to_char("You can brandish only with a staff.\n\r", ch);
 	return;
     }
@@ -990,7 +990,7 @@ void do_zap(struct char_data *ch, const char *argument)
 	return;
     }
 
-    if (wand->item_type != ITEM_WAND) {
+    if (OBJECT_TYPE(wand) != ITEM_WAND) {
 	send_to_char("You can zap only with a wand.\n\r", ch);
 	return;
     }

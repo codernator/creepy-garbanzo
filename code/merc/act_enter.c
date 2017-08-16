@@ -49,7 +49,7 @@ void do_enter(struct char_data *ch, const char *argument)
 			return;
 		}
 
-		if (portal->item_type != ITEM_PORTAL
+		if (OBJECT_TYPE(portal) != ITEM_PORTAL
 		    || (IS_SET(portal->value[1], (long)EX_CLOSED) && !IS_TRUSTED(ch, ANGEL))) {
 			send_to_char("You can't seem to find a way in.\n\r", ch);
 			return;

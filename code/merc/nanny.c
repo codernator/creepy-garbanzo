@@ -827,7 +827,7 @@ bool check_reconnect(struct descriptor_data *d, const char *name, bool reconnect
                 act("$n has reconnected.", ch, NULL, NULL, TO_ROOM);
 
                 if ((obj = get_eq_char(ch, WEAR_LIGHT)) != NULL
-                    && obj->item_type == ITEM_LIGHT
+                    && OBJECT_TYPE(obj) == ITEM_LIGHT
                     && obj->value[2] != 0
                     && ch->in_room->light > 0)
                     --ch->in_room->light;

@@ -348,7 +348,7 @@ static int hit_gain(struct char_data *ch)
     }
 
     gain = gain * ch->in_room->heal_rate / 100;
-    if (ch->on != NULL && ch->on->item_type == ITEM_FURNITURE)
+    if (ch->on != NULL && OBJECT_TYPE(ch->on) == ITEM_FURNITURE)
 	gain = gain * (int)ch->on->value[3] / 100;
 
     if (IS_AFFECTED(ch, AFF_POISON))
@@ -430,7 +430,7 @@ static int mana_gain(struct char_data *ch)
     }
 
     gain = gain * ch->in_room->mana_rate / 100;
-    if (ch->on != NULL && ch->on->item_type == ITEM_FURNITURE)
+    if (ch->on != NULL && OBJECT_TYPE(ch->on) == ITEM_FURNITURE)
 	gain = gain * (int)ch->on->value[4] / 100;
 
     if (IS_AFFECTED(ch, AFF_POISON))
@@ -478,7 +478,7 @@ static int move_gain(struct char_data *ch)
 
     gain = gain * ch->in_room->heal_rate / 100;
 
-    if (ch->on != NULL && ch->on->item_type == ITEM_FURNITURE)
+    if (ch->on != NULL && OBJECT_TYPE(ch->on) == ITEM_FURNITURE)
 	gain = gain * (int)ch->on->value[3] / 100;
 
     if (IS_AFFECTED(ch, AFF_POISON))
@@ -1016,7 +1016,7 @@ static void char_update(void)
 	    struct gameobject *obj;
 
 	    if ((obj = get_eq_char(ch, WEAR_LIGHT)) != NULL
-		    && obj->item_type == ITEM_LIGHT
+		    && OBJECT_TYPE(obj) == ITEM_LIGHT
 		    && obj->value[2] > 0) {
 		if (--obj->value[2] == 0 && ch->in_room != NULL) {
 		    --ch->in_room->light;
@@ -1213,7 +1213,7 @@ static void obj_update(void)
 	if (obj->timer <= 0 || --obj->timer > 0)
 	    continue;
 
-	switch (obj->item_type) {
+	switch (OBJECT_TYPE(obj)) {
 	    case ITEM_FOUNTAIN:
 		message = "$p dries up.";
 		break;
@@ -1262,7 +1262,7 @@ static void obj_update(void)
 	    }
 	}
 
-	if ((obj->item_type == ITEM_CORPSE_PC || obj->wear_loc == WEAR_FLOAT) && obj->contains != NULL) {
+	if ((OBJECT_TYPE(obj) == ITEM_CORPSE_PC || obj->wear_loc == WEAR_FLOAT) && obj->contains != NULL) {
 	    struct gameobject *t_obj, *next_obj;
 
 	    for (t_obj = obj->contains; t_obj != NULL; t_obj = next_obj) {

@@ -1240,12 +1240,12 @@ static bool set_obj_v0(struct char_data *ch, struct gameobject *obj, const char 
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: v0 <value>\n\r\n\r", ch);
-        item_type_help(ch, obj->item_type);
+        item_type_help(ch, OBJECT_TYPE(obj));
         return false;
     }
 
     if (!set_obj_value_idx(obj, 0, argument)) {
-        item_type_help(ch, obj->item_type);
+        item_type_help(ch, OBJECT_TYPE(obj));
         return false;
     }
 
@@ -1262,12 +1262,12 @@ static bool set_obj_v1(struct char_data *ch, struct gameobject *obj, const char 
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: v1 <value>\n\r\n\r", ch);
-        item_type_help(ch, obj->item_type);
+        item_type_help(ch, OBJECT_TYPE(obj));
         return false;
     }
 
     if (!set_obj_value_idx(obj, 1, argument)) {
-        item_type_help(ch, obj->item_type);
+        item_type_help(ch, OBJECT_TYPE(obj));
         return false;
     }
     return true;
@@ -1283,12 +1283,12 @@ static bool set_obj_v2(struct char_data *ch, struct gameobject *obj, const char 
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: v2 <value>\n\r\n\r", ch);
-        item_type_help(ch, obj->item_type);
+        item_type_help(ch, OBJECT_TYPE(obj));
         return false;
     }
 
     if (!set_obj_value_idx(obj, 2, argument)) {
-        item_type_help(ch, obj->item_type);
+        item_type_help(ch, OBJECT_TYPE(obj));
         return false;
     }
 
@@ -1304,12 +1304,12 @@ static bool set_obj_v3(struct char_data *ch, struct gameobject *obj, const char 
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: v3 <value>\n\r\n\r", ch);
-        item_type_help(ch, obj->item_type);
+        item_type_help(ch, OBJECT_TYPE(obj));
         return false;
     }
 
     if (!set_obj_value_idx(obj, 3, argument)) {
-        item_type_help(ch, obj->item_type);
+        item_type_help(ch, OBJECT_TYPE(obj));
         return false;
     }
 
@@ -1326,12 +1326,12 @@ static bool set_obj_v4(struct char_data *ch, struct gameobject *obj, const char 
 {
     if (is_help(argument)) {
         send_to_char("`#SYNTAX``: v4 <value>\n\r\n\r", ch);
-        item_type_help(ch, obj->item_type);
+        item_type_help(ch, OBJECT_TYPE(obj));
         return false;
     }
 
     if (!set_obj_value_idx(obj, 4, argument)) {
-        item_type_help(ch, obj->item_type);
+        item_type_help(ch, OBJECT_TYPE(obj));
         return false;
     }
 
@@ -2046,7 +2046,7 @@ static bool set_obj_value_idx(struct gameobject *obj, int idx, const char *argum
         obj->value[idx] = parse_int(argument);
         return true;
     } else {
-        switch (obj->item_type) {
+        switch (OBJECT_TYPE(obj)) {
           default:
               break;
           case ITEM_WAND:

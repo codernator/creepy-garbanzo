@@ -360,7 +360,7 @@ void look_object(struct char_data *ch, struct gameobject *obj, const char *argum
 	return;
     }
 
-    switch (obj->item_type) {
+    switch (OBJECT_TYPE(obj)) {
 	default:
 	    send_to_char("That is not a container.\n\r", ch);
 	    break;
@@ -681,7 +681,7 @@ void get_obj(struct char_data *ch, struct gameobject *obj, struct gameobject *co
 	obj_from_room(obj);
     }
 
-    if (obj->item_type == ITEM_MONEY) {
+    if (OBJECT_TYPE(obj) == ITEM_MONEY) {
 	ch->silver += obj->value[0];
 	ch->gold += obj->value[1];
 
