@@ -1485,6 +1485,7 @@ struct extra_descr_data {
 #define OBJECT_LONG(obj)        ((obj)->objprototype->description)
 #define OBJECT_EXTRA(obj)       ((obj)->objprototype->extra_descr)
 #define OBJECT_TYPE(obj)        ((obj)->objprototype->item_type)
+#define OBJECT_WEARFLAGS(obj)   ((obj)->objprototype->wear_flags)
 
 
 /***************************************************************************
@@ -1507,7 +1508,6 @@ struct extra_descr_data {
     /*@shared@*//*@null@*/char *override_name;
     long extra_flags;
     long extra2_flags;
-    long wear_flags;
     int wear_loc;
     int weight;
     unsigned int cost;

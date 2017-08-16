@@ -499,9 +499,6 @@ static void fwrite_obj(struct char_data *ch, struct gameobject *obj, FILE *fp, i
     if (obj->extra2_flags != obj->objprototype->extra2_flags)
         fprintf(fp, "Ex2F %ld\n", obj->extra2_flags);
 
-    if (obj->wear_flags != obj->objprototype->wear_flags)
-        fprintf(fp, "WeaF %ld\n", obj->wear_flags);
-
     if (obj->weight != obj->objprototype->weight)
         fprintf(fp, "Wt   %d\n", obj->weight);
 
@@ -1676,8 +1673,6 @@ static void fread_obj(struct char_data *ch, FILE *fp)
               break;
 
           case 'W':
-              KEY("WearFlags", obj->wear_flags, fread_number(fp));
-              KEY("WeaF", obj->wear_flags, fread_number(fp));
               KEY("WearLoc", obj->wear_loc, fread_number(fp));
               KEY("Wear", obj->wear_loc, fread_number(fp));
               KEY("Weight", obj->weight, fread_number(fp));

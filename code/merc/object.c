@@ -85,7 +85,6 @@ struct gameobject *object_clone(struct gameobject *parent)
     if (parent->override_name != NULL) clone->override_name = str_dup(parent->override_name);
 
     clone->extra_flags = parent->extra_flags;
-    clone->wear_flags = parent->wear_flags;
     clone->weight = parent->weight;
     clone->cost = parent->cost;
     clone->level = parent->level;

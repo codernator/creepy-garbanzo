@@ -348,7 +348,7 @@ bool obj_cmp_wear(struct gameobject *obj, const char *arg, struct buf_type *buf)
         add_buf(buf, "search by an object's wear location.\n\r");
         add_buf(buf, "available wear flags:\n\r");
     }
-    return cmp_fn_flag((long)obj->wear_flags, arg, wear_flags, buf);
+    return cmp_fn_flag((long)OBJECT_WEARFLAGS(obj), arg, wear_flags, buf);
 }
 
 

@@ -1976,7 +1976,6 @@ struct gameobject *create_object(struct objectprototype *objprototype, int level
     object_name_set(obj, str_dup(objprototype->name));
     obj->timer = objprototype->init_timer;
     obj->extra_flags = objprototype->extra_flags;
-    obj->wear_flags = objprototype->wear_flags;
     obj->value[0] = objprototype->value[0];
     obj->value[1] = objprototype->value[1];
     obj->value[2] = objprototype->value[2];

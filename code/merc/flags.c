@@ -52,7 +52,6 @@ static void flag_char_deathroom(struct char_data * ch, void *target, const char 
 static void flag_room_room(struct char_data * ch, void *target, const char *argument);
 
 /* object flag functions */
-static void flag_obj_wear(struct char_data * ch, void *target, const char *argument);
 static void flag_obj_extra(struct char_data * ch, void *target, const char *argument);
 static void flag_obj_extra2(struct char_data * ch, void *target, const char *argument);
 static void flag_obj_wpn_class(struct char_data * ch, void *target, const char *argument);
@@ -94,7 +93,6 @@ static const struct flag_cmd_map room_set_flags[] =
 
 static const struct flag_cmd_map obj_set_flags[] =
 {
-    { "wear",	   wear_flags,	     flag_obj_wear	 },
     { "extra",	   extra_flags,	     flag_obj_extra	 },
     { "extra2",	   extra2_flags,     flag_obj_extra2	 },
     { "weapon_type",   weapon_class,     flag_obj_wpn_class	 },
@@ -520,30 +518,6 @@ void flag_room_room(struct char_data *ch, void *target, const char *argument)
         } else {
             TOGGLE_BIT(room->room_flags, value);
             send_to_char("Room flags toggled.\n\r", ch);
-        }
-
-        return;
-    }
-
-    send_to_char("Those flags do not exists or are not settable.\n\r", ch);
-    return;
-}
-
-void flag_obj_wear(struct char_data *ch, void *target, const char *argument)
-{
-    struct gameobject *obj = (struct gameobject *)target;
-    long value;
-
-    if ((value = flag_value(wear_flags, argument)) != NO_FLAG) {
-        if (*argument == '+') {
-            SET_BIT(obj->wear_flags, value);
-            send_to_char("Wear flags added.\n\r", ch);
-        } else if (*argument == '-') {
-            REMOVE_BIT(obj->wear_flags, value);
-            send_to_char("Wear flags removed.\n\r", ch);
-        } else {
-            TOGGLE_BIT(obj->wear_flags, value);
-            send_to_char("Wear flags toggled.\n\r", ch);
         }
 
         return;

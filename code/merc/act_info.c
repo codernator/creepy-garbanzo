@@ -1287,7 +1287,7 @@ void do_compare(struct char_data *ch, const char *argument)
             if (obj2->wear_loc != WEAR_NONE
                 && can_see_obj(ch, obj2)
                 && OBJECT_TYPE(obj1) == OBJECT_TYPE(obj2)
-                && (obj1->wear_flags & obj2->wear_flags & ~ITEM_TAKE) != 0)
+                && (OBJECT_WEARFLAGS(obj1) & OBJECT_WEARFLAGS(obj2) & ~ITEM_TAKE) != 0)
                 break;
         }
 

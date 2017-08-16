@@ -1139,7 +1139,6 @@ static SET_OBJ_FN set_obj_v3;
 static SET_OBJ_FN set_obj_v4;
 static SET_OBJ_FN set_obj_extra;
 static SET_OBJ_FN set_obj_extra2;
-static SET_OBJ_FN set_obj_wear;
 static SET_OBJ_FN set_obj_level;
 static SET_OBJ_FN set_obj_weight;
 static SET_OBJ_FN set_obj_cost;
@@ -1160,7 +1159,6 @@ set_obj_cmd_table[] =
     { "v4",	    set_obj_v4	   },
     { "extra",  set_obj_extra  },
     { "extra2", set_obj_extra2 },
-    { "wear",   set_obj_wear   },
     { "level",  set_obj_level  },
     { "weight", set_obj_weight },
     { "cost",   set_obj_cost   },
@@ -1426,52 +1424,6 @@ static bool set_obj_extra2(struct char_data *ch, struct gameobject *obj, const c
     return true;
 }
 
-/***************************************************************************
- *	set_obj_wear
- *
- *	set the wear flags property of an object
- ***************************************************************************/
-static bool set_obj_wear(struct char_data *ch, struct gameobject *obj, const char *argument)
-{
-    if (is_help(argument)) {
-        int idx;
-        int col;
-
-        send_to_char("`#SYNTAX``: wear <numeric value|flag value>\n\r", ch);
-        send_to_char("Available flag values:\n\r   ", ch);
-        col = 0;
-        for (idx = 0; wear_flags[idx].name != NULL; idx++) {
-            printf_to_char(ch, "%-15.15s", wear_flags[idx].name);
-            if (++col % 3 == 0)
-                send_to_char("\n\r   ", ch);
-        }
-
-        if (col % 3 != 0)
-            send_to_char("\n\r", ch);
-
-        return false;
-    }
-
-    if (is_number(argument)) {
-        obj->wear_flags = parse_long(argument);
-    } else {
-        long value;
-
-        if ((value = flag_value(wear_flags, argument)) == NO_FLAG) {
-            send_to_char("Those flags are not settable.\n\r", ch);
-            return false;
-        }
-
-        if (*argument == '+')
-            SET_BIT(obj->wear_flags, value);
-        else if (*argument == '-')
-            REMOVE_BIT(obj->wear_flags, value);
-        else
-            obj->wear_flags = value;
-
-    }
-    return true;
-}
 
 /***************************************************************************
  *	set_obj_level

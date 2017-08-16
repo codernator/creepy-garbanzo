@@ -2314,7 +2314,7 @@ void identify_item(struct char_data *ch, struct gameobject *obj)
           break;
 
       case ITEM_ARMOR:
-          printf_to_char(ch, "Worn on: %s\n\r", wear_bit_name((long)obj->wear_flags));
+          printf_to_char(ch, "Worn on: %s\n\r", wear_bit_name((long)OBJECT_WEARFLAGS(obj)));
           printf_to_char(ch, "Armor class is %ld pierce, %ld bash, %ld slash, and %ld vs. magic.\n\r",
                          obj->value[0], obj->value[1], obj->value[2], obj->value[3]);
 
@@ -2436,7 +2436,7 @@ void furniture_check(struct char_data *ch)
 {
     struct gameobject *obj_on;
 
-    if (ch->on != NULL && IS_SET(ch->on->wear_flags, ITEM_TAKE)) {
+    if (ch->on != NULL && IS_SET(OBJECT_WEARFLAGS(ch->on), ITEM_TAKE)) {
         obj_on = ch->on;
         ch->on = NULL;
 
