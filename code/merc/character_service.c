@@ -661,24 +661,20 @@ void get_obj(struct char_data *ch, struct gameobject *obj, struct gameobject *co
 
 
     if (container != NULL) {
-	if (container->objprototype->vnum == OBJ_VNUM_PIT
-		&& get_trust(ch) < obj->level) {
-	    send_to_char("You are not powerful enough to use it.\n\r", ch);
-	    return;
-	}
-
-	if (container->objprototype->vnum == OBJ_VNUM_PIT
-		&& !CAN_WEAR(container, ITEM_TAKE)
-		&& !IS_OBJ_STAT(obj, ITEM_HAD_TIMER))
-	    obj->timer = 0;
-	act_new("You get $p from $P.", ch, obj, container, TO_CHAR, POS_RESTING, true);
-	act_new("$n gets $p from $P.", ch, obj, container, TO_ROOM, POS_RESTING, true);
-	REMOVE_BIT(obj->extra_flags, ITEM_HAD_TIMER);
-	obj_from_obj(obj);
+        if (container->objprototype->vnum == OBJ_VNUM_PIT
+                && !CAN_WEAR(container, ITEM_TAKE)
+                && !IS_OBJ_STAT(obj, ITEM_HAD_TIMER))
+        {
+            obj->timer = 0;
+        }
+        act_new("You get $p from $P.", ch, obj, container, TO_CHAR, POS_RESTING, true);
+        act_new("$n gets $p from $P.", ch, obj, container, TO_ROOM, POS_RESTING, true);
+        REMOVE_BIT(obj->extra_flags, ITEM_HAD_TIMER);
+        obj_from_obj(obj);
     } else {
-	act_new("You get $p.", ch, obj, container, TO_CHAR, POS_RESTING, true);
-	act_new("$n gets $p.", ch, obj, container, TO_ROOM, POS_RESTING, true);
-	obj_from_room(obj);
+        act_new("You get $p.", ch, obj, container, TO_CHAR, POS_RESTING, true);
+        act_new("$n gets $p.", ch, obj, container, TO_ROOM, POS_RESTING, true);
+        obj_from_room(obj);
     }
 
     if (OBJECT_TYPE(obj) == ITEM_MONEY) {

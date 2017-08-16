@@ -209,7 +209,6 @@ struct array_list *objectprototype_serialize(const struct objectprototype *obj)
           }
     }
 
-    serialize_take_string(answer, "level", int_to_string(obj->level));
     serialize_take_string(answer, "weight", int_to_string(obj->weight));
     serialize_take_string(answer, "cost", uint_to_string(obj->cost));
     serialize_take_string(answer, "inittimer", int_to_string(obj->init_timer));
@@ -226,7 +225,6 @@ struct array_list *objectprototype_serialize(const struct objectprototype *obj)
 
             serialize_take_string(serialized_affect, "where", int_to_string(affect->where));
             serialize_take_string(serialized_affect, "type", int_to_string(affect->type));
-            serialize_take_string(serialized_affect, "level", int_to_string(affect->level));
             serialize_take_string(serialized_affect, "duration", int_to_string(affect->duration));
             serialize_take_string(serialized_affect, "location", int_to_string(affect->location));
             serialize_take_string(serialized_affect, "modifier", long_to_string(affect->modifier));

@@ -810,7 +810,7 @@ bool one_hit(struct char_data *ch, struct char_data *victim, int dt, struct game
 	    int level;
 
 	    if ((poison = affect_find(wield->affected, gsp_poison)) == NULL)
-		level = wield->level;
+		level = ch->level;
 	    else
 		level = poison->level;
 
@@ -844,7 +844,7 @@ bool one_hit(struct char_data *ch, struct char_data *victim, int dt, struct game
 	}
 
 	if (ch->fighting == victim && IS_WEAPON_STAT(wield, WEAPON_ACIDIC)) {
-	    dam = number_range(1, (wield->level / 50) * 5);
+	    dam = number_range(1, (ch->level / 50) * 5);
 
 	    /*
 	     * act("$p's coat of acid sears $n's flesh.", victim, wield, NULL, TO_ROOM);
@@ -856,7 +856,7 @@ bool one_hit(struct char_data *ch, struct char_data *victim, int dt, struct game
 	}
 
 	if (ch->fighting == victim && IS_WEAPON_STAT(wield, WEAPON_VAMPIRIC)) {
-	    dam = number_range(1, wield->level / 5 + 1);
+	    dam = number_range(1, ch->level / 5 + 1);
 
 	    /*
 	     * act("$p draws life from $n.", victim, wield, NULL, TO_ROOM);
@@ -868,38 +868,38 @@ bool one_hit(struct char_data *ch, struct char_data *victim, int dt, struct game
 	}
 
 	if (ch->fighting == victim && IS_WEAPON_STAT(wield, WEAPON_FLAMING)) {
-	    dam = number_range(1, wield->level / 4 + 1);
+	    dam = number_range(1, ch->level / 4 + 1);
 
 	    /*
 	     * act("$n is burned by $p.", victim, wield, NULL, TO_ROOM);
 	     * act("$p sears your flesh.", victim, wield, NULL, TO_CHAR);
 	     */
 
-	    fire_effect((void *)victim, (int)(wield->level / 2), dam, TARGET_CHAR);
+	    fire_effect((void *)victim, (int)(ch->level / 2), dam, TARGET_CHAR);
 	    damage(ch, victim, dam, 0, DAM_FIRE, false);
 	}
 
 	if (ch->fighting == victim && IS_WEAPON_STAT(wield, WEAPON_FROST)) {
-	    dam = number_range(1, wield->level / 6 + 2);
+	    dam = number_range(1, ch->level / 6 + 2);
 
 	    /*
 	     * act("$p freezes $n.", victim, wield, NULL, TO_ROOM);
 	     * act("The cold touch of $p surrounds you with ice.", victim, wield, NULL, TO_CHAR);
 	     */
 
-	    cold_effect(victim, (int)(wield->level / 2), dam, TARGET_CHAR);
+	    cold_effect(victim, (int)(ch->level / 2), dam, TARGET_CHAR);
 	    damage(ch, victim, dam, 0, DAM_COLD, false);
 	}
 
 	if (ch->fighting == victim && IS_WEAPON_STAT(wield, WEAPON_SHOCKING)) {
-	    dam = number_range(1, wield->level / 5 + 2);
+	    dam = number_range(1, ch->level / 5 + 2);
 
 	    /*
 	     * act("$n is struck by lightning from $p.", victim, wield, NULL, TO_ROOM);
 	     * act("You are shocked by $p.", victim, wield, NULL, TO_CHAR);
 	     */
 
-	    shock_effect(victim, (int)(wield->level / 2), dam, TARGET_CHAR);
+	    shock_effect(victim, (int)(ch->level / 2), dam, TARGET_CHAR);
 	    damage(ch, victim, dam, 0, DAM_LIGHTNING, false);
 	}
 
@@ -1634,7 +1634,7 @@ void make_corpse(struct char_data *ch)
 
     if (IS_NPC(ch)) {
         //name = ch->short_descr;
-        corpse = create_object(objectprototype_getbyvnum(OBJ_VNUM_CORPSE_NPC), 0);
+        corpse = create_object(objectprototype_getbyvnum(OBJ_VNUM_CORPSE_NPC));
         corpse->timer = number_range(3, 6);
         if (ch->gold > 0) {
             obj_to_obj(create_money(ch->gold, ch->silver), corpse);
@@ -1644,7 +1644,7 @@ void make_corpse(struct char_data *ch)
         corpse->cost = 0;
     } else {
         //name = ch->name;
-        corpse = create_object(objectprototype_getbyvnum(OBJ_VNUM_CORPSE_PC), 0);
+        corpse = create_object(objectprototype_getbyvnum(OBJ_VNUM_CORPSE_PC));
         corpse->timer = number_range(25, 40);
         object_ownername_set(corpse, ch);
         corpse->value[0] = 0;
@@ -1663,8 +1663,6 @@ void make_corpse(struct char_data *ch)
 
         corpse->cost = 0;
     }
-
-    corpse->level = ch->level;
 
     //sprintf(buf, corpse->short_descr, name);
     //free_string(corpse->short_descr);
@@ -1783,7 +1781,7 @@ void death_cry(struct char_data *ch, struct char_data *killer)
         //char *name;
 
         //name = IS_NPC(ch) ? ch->short_descr : ch->name;
-        obj = create_object(objectprototype_getbyvnum(vnum), 0);
+        obj = create_object(objectprototype_getbyvnum(vnum));
         obj->timer = number_range(4, 7);
 
         //sprintf(buf, obj->short_descr, name);

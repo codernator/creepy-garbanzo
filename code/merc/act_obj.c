@@ -1091,14 +1091,6 @@ bool remove_obj(struct char_data *ch, int iWear, bool fReplace)
  ***************************************************************************/
 void wear_obj(struct char_data *ch, struct gameobject *obj, bool fReplace)
 {
-    char buf[MAX_STRING_LENGTH];
-
-    if ((2 * (ch->level) + 30) < obj->level) {
-        sprintf(buf, "You must be level %d or that level, +1 to use this object.\n\r", (((obj->level) - 30) / 2));
-        send_to_char(buf, ch);
-        return;
-    }
-
     if (OBJECT_TYPE(obj) == ITEM_LIGHT) {
         if (!remove_obj(ch, WEAR_LIGHT, fReplace))
             return;
@@ -1570,7 +1562,7 @@ void do_sacrifice(struct char_data *ch, const char *argument)
                     continue;
             }
 
-            silver = (unsigned int)UMAX(1, obj->level * 3);
+            silver = (unsigned int)1;
             if (OBJECT_TYPE(obj) != ITEM_CORPSE_NPC
                 && OBJECT_TYPE(obj) != ITEM_CORPSE_PC)
                 silver = UMIN(silver, obj->cost);
@@ -1643,9 +1635,8 @@ void do_sacrifice(struct char_data *ch, const char *argument)
             }
         }
 
-        silver = (unsigned int)UMAX(1, obj->level * 3);
-        if (OBJECT_TYPE(obj) != ITEM_CORPSE_NPC
-            && OBJECT_TYPE(obj) != ITEM_CORPSE_PC)
+        silver = (unsigned int)1;
+        if (OBJECT_TYPE(obj) != ITEM_CORPSE_NPC && OBJECT_TYPE(obj) != ITEM_CORPSE_PC)
             silver = UMIN(silver, obj->cost);
 
         if (silver == 1)
@@ -1912,9 +1903,7 @@ void do_steal(struct char_data *ch, const char *argument)
         return;
     }
 
-    if (!can_drop_obj(ch, obj)
-        || IS_SET(obj->extra_flags, ITEM_INVENTORY)
-        || obj->level > ch->level) {
+    if (!can_drop_obj(ch, obj) || IS_SET(obj->extra_flags, ITEM_INVENTORY)) {
         send_to_char("You can't pry it away.\n\r", ch);
         return;
     }
@@ -2274,13 +2263,6 @@ void do_buy(struct char_data *ch, const char *argument)
             return;
         }
 
-        if (obj->level > ch->level) {
-            act("$n tells you 'You can't use $p yet'.",
-                keeper, obj, ch, TO_VICT);
-            ch->reply = keeper;
-            return;
-        }
-
         if (ch->carry_number + (number * get_obj_number(obj)) > can_carry_n(ch)) {
             send_to_char("You can't carry that many items.\n\r", ch);
             return;
@@ -2322,7 +2304,7 @@ void do_buy(struct char_data *ch, const char *argument)
 
         for (count = 0; count < number; count++) {
             if (IS_SET(obj->extra_flags, ITEM_INVENTORY)) {
-                t_obj = create_object(obj->objprototype, obj->level);
+                t_obj = create_object(obj->objprototype);
             } else {
                 t_obj = obj;
                 obj = obj->next_content;
@@ -2401,7 +2383,7 @@ void do_list(struct char_data *ch, const char *argument)
                 }
 
                 if (IS_OBJ_STAT(obj, ITEM_INVENTORY)) {
-                    printf_to_char(ch, "[%2d %10u -- ] %s\n\r", obj->level, cost, OBJECT_SHORT(obj));
+                    printf_to_char(ch, "[%10u -- ] %s\n\r", cost, OBJECT_SHORT(obj));
                 } else {
                     count = 1;
 
@@ -2411,7 +2393,7 @@ void do_list(struct char_data *ch, const char *argument)
                         obj = obj->next_content;
                         count++;
                     }
-                    printf_to_char(ch, "[%2d %10u %2d ] %s\n\r", obj->level, cost, count, OBJECT_SHORT(obj));
+                    printf_to_char(ch, "[%10u %2d ] %s\n\r", cost, count, OBJECT_SHORT(obj));
                 }
             }
         }
@@ -2567,7 +2549,6 @@ void do_value(struct char_data *ch, const char *argument)
 void do_second(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
-    char buf[MAX_STRING_LENGTH];
 
     if (argument[0] == '\0') {
         send_to_char("Wear which weapon in your off-hand?\n\r", ch);
@@ -2588,15 +2569,6 @@ void do_second(struct char_data *ch, const char *argument)
     if ((get_eq_char(ch, WEAR_SHIELD) != NULL) ||
         (get_eq_char(ch, WEAR_HOLD) != NULL)) {
         send_to_char("You cannot use a secondary weapon while using a shield or holding an item\n\r", ch);
-        return;
-    }
-
-
-    if (ch->level < obj->level) {
-        sprintf(buf, "You must be level %d to second wield this weapon.\n\r",
-                obj->level);
-        send_to_char(buf, ch);
-        act("$n tries to use $p, but is too inexperienced.", ch, obj, NULL, TO_ROOM);
         return;
     }
 

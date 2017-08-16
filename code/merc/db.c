@@ -1031,7 +1031,6 @@ void load_objects(FILE *fp)
               break;
         }
 
-        objprototype->level = (int)fread_number(fp);
         objprototype->weight = (int)fread_number(fp);
         objprototype->cost = (unsigned int)fread_number(fp);
         objprototype->init_timer = fread_number(fp);
@@ -1050,7 +1049,7 @@ void load_objects(FILE *fp)
                 paf = new_affect();
                 paf->where = TO_OBJECT;
                 paf->type = -1;
-                paf->level = objprototype->level;
+                paf->level = 1;
                 paf->duration = -1;
                 paf->location = (int)fread_number(fp);
                 paf->modifier = (int)fread_number(fp);
@@ -1084,7 +1083,7 @@ void load_objects(FILE *fp)
                       ABORT;
                 }
                 paf->type = -1;
-                paf->level = objprototype->level;
+                paf->level = 1;
                 paf->duration = -1;
                 paf->location = (int)fread_number(fp);
                 paf->modifier = fread_number(fp);
@@ -1556,7 +1555,7 @@ void reset_room(struct room_index_data *room)
                   break;
               }
 
-              obj = create_object(objprototype, -1);
+              obj = create_object(objprototype);
               obj->cost = 0;
               obj_to_room(obj, room);
               last = true;
@@ -1593,7 +1592,7 @@ void reset_room(struct room_index_data *room)
               }
 
               while (count < reset->arg4) {
-                  obj = create_object(objprototype, -1);
+                  obj = create_object(objprototype);
                   obj_to_obj(obj, last_obj);
                   count++;
                   if (objprototype->count >= (int)limit)
@@ -1622,7 +1621,7 @@ void reset_room(struct room_index_data *room)
               }
 
               if (IS_SHOPKEEPER(last_mob)) { /* Shop-keeper? */
-                  obj = create_object(objprototype, -1);
+                  obj = create_object(objprototype);
                   SET_BIT(obj->extra_flags, ITEM_INVENTORY);  /* ROM OLC */
               } else { /* ROM OLC else version */
                   int limit;
@@ -1634,7 +1633,7 @@ void reset_room(struct room_index_data *room)
                       limit = (int)reset->arg2;
 
                   if (objprototype->count < limit || number_range(0, 4) == 0)
-                      obj = create_object(objprototype, -1);
+                      obj = create_object(objprototype);
 
                   else
                       break;
@@ -1951,7 +1950,7 @@ void clone_mobile(struct char_data *parent, struct char_data *clone)
 /*
  * Create an instance of an object.
  */
-struct gameobject *create_object(struct objectprototype *objprototype, int level)
+struct gameobject *create_object(struct objectprototype *objprototype)
 {
     struct affect_data *paf;
     struct gameobject *obj;
@@ -1965,12 +1964,6 @@ struct gameobject *create_object(struct objectprototype *objprototype, int level
 
     obj->in_room = NULL;
 
-    if (level == -1) {
-        obj->level = objprototype->level;
-    } else {
-        obj->level = level;
-    }
-
     obj->wear_loc = -1;
 
     object_name_set(obj, str_dup(objprototype->name));
@@ -1982,11 +1975,8 @@ struct gameobject *create_object(struct objectprototype *objprototype, int level
     obj->value[3] = objprototype->value[3];
     obj->value[4] = objprototype->value[4];
     obj->weight = objprototype->weight;
+    obj->cost = objprototype->cost;
 
-    if (level == -1)
-        obj->cost = objprototype->cost;
-    else
-        obj->cost = (unsigned int)(number_fuzzy(10) * number_fuzzy(level) * number_fuzzy(level));
     /*
      * Mess with object properties.
      */

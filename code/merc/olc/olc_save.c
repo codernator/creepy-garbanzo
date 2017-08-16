@@ -485,7 +485,6 @@ void save_object(FILE *fp, struct objectprototype *pObjIndex)
           }
     }
 
-    fprintf(fp, "%d ", pObjIndex->level);
     fprintf(fp, "%d ", pObjIndex->weight);
     fprintf(fp, "%u ", pObjIndex->cost);
     fprintf(fp, "%d ", pObjIndex->init_timer);

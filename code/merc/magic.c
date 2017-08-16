@@ -793,11 +793,6 @@ void do_quaff(struct char_data *ch, const char *argument)
         return;
     }
 
-    if (ch->level < obj->level) {
-        send_to_char("This liquid is too powerful for you to drink.\n\r", ch);
-        return;
-    }
-
     act("$n quaffs $p.", ch, obj, NULL, TO_ROOM);
     act("You quaff $p.", ch, obj, NULL, TO_CHAR);
 
@@ -824,50 +819,44 @@ void do_recite(struct char_data *ch, const char *argument)
     char arg2[MAX_INPUT_LENGTH];
 
     if ((skill = skill_lookup("scrolls")) == NULL) {
-	send_to_char("Huh?\n\r", ch);
-	return;
+        send_to_char("Huh?\n\r", ch);
+        return;
     }
 
     argument = one_argument(argument, arg1);
     argument = one_argument(argument, arg2);
     if ((scroll = get_obj_carry(ch, arg1)) == NULL) {
-	send_to_char("You do not have that scroll.\n\r", ch);
-	return;
+        send_to_char("You do not have that scroll.\n\r", ch);
+        return;
     }
 
     if (OBJECT_TYPE(scroll) != ITEM_SCROLL) {
-	send_to_char("You can recite only scrolls.\n\r", ch);
-	return;
-    }
-
-    if (ch->level < scroll->level) {
-	send_to_char("This scroll is too complex for you to comprehend.\n\r", ch);
-	return;
+        send_to_char("You can recite only scrolls.\n\r", ch);
+        return;
     }
 
     obj = NULL;
     if (arg2[0] == '\0') {
-	victim = ch;
+        victim = ch;
     } else {
-	if ((victim = get_char_room(ch, arg2)) == NULL
-		&& (obj = get_obj_here(ch, arg2)) == NULL) {
-	    send_to_char("You can't find it.\n\r", ch);
-	    return;
-	}
+        if ((victim = get_char_room(ch, arg2)) == NULL && (obj = get_obj_here(ch, arg2)) == NULL) {
+            send_to_char("You can't find it.\n\r", ch);
+            return;
+        }
     }
 
     act("$n recites $p.", ch, scroll, NULL, TO_ROOM);
     act("You recite $p.", ch, scroll, NULL, TO_CHAR);
 
     if (number_percent() >= 20 + get_learned_percent(ch, skill) * 4 / 5) {
-	send_to_char("You mispronounce a syllable.\n\r", ch);
-	check_improve(ch, skill, false, 2);
+        send_to_char("You mispronounce a syllable.\n\r", ch);
+        check_improve(ch, skill, false, 2);
     } else {
-	obj_cast_spell((int)scroll->value[1], (int)scroll->value[0], ch, victim, obj);
-	obj_cast_spell((int)scroll->value[2], (int)scroll->value[0], ch, victim, obj);
-	obj_cast_spell((int)scroll->value[3], (int)scroll->value[0], ch, victim, obj);
-	obj_cast_spell((int)scroll->value[4], (int)scroll->value[0], ch, victim, obj);
-	check_improve(ch, skill, true, 2);
+        obj_cast_spell((int)scroll->value[1], (int)scroll->value[0], ch, victim, obj);
+        obj_cast_spell((int)scroll->value[2], (int)scroll->value[0], ch, victim, obj);
+        obj_cast_spell((int)scroll->value[3], (int)scroll->value[0], ch, victim, obj);
+        obj_cast_spell((int)scroll->value[4], (int)scroll->value[0], ch, victim, obj);
+        check_improve(ch, skill, true, 2);
     }
 
     extract_obj(scroll);
@@ -888,73 +877,65 @@ void do_brandish(struct char_data *ch, const char *argument)
     struct dynamic_skill *cast;
 
     if ((skill = skill_lookup("staves")) == NULL) {
-	send_to_char("Huh?\n\r", ch);
-	return;
+        send_to_char("Huh?\n\r", ch);
+        return;
     }
 
     if ((staff = get_eq_char(ch, WEAR_HOLD)) == NULL) {
-	send_to_char("You hold nothing in your hand.\n\r", ch);
-	return;
+        send_to_char("You hold nothing in your hand.\n\r", ch);
+        return;
     }
 
     if (OBJECT_TYPE(staff) != ITEM_STAFF) {
-	send_to_char("You can brandish only with a staff.\n\r", ch);
-	return;
+        send_to_char("You can brandish only with a staff.\n\r", ch);
+        return;
     }
 
-    if ((cast = resolve_skill_sn((int)staff->value[3])) == NULL
-	    || cast->spells == NULL) {
-	log_bug("Do_brandish: bad sn %d.", staff->value[3]);
-	return;
+    if ((cast = resolve_skill_sn((int)staff->value[3])) == NULL || cast->spells == NULL) {
+        log_bug("Do_brandish: bad sn %d.", staff->value[3]);
+        return;
     }
 
     WAIT_STATE(ch, PULSE_VIOLENCE);
     if (staff->value[2] > 0) {
-	act("$n brandishes $p.", ch, staff, NULL, TO_ROOM);
-	act("You brandish $p.", ch, staff, NULL, TO_CHAR);
-	if (ch->level < staff->level
-		|| number_percent() >= 20 + get_learned_percent(ch, skill) * 4 / 5) {
-	    act("You fail to invoke $p.", ch, staff, NULL, TO_CHAR);
-	    act("...and nothing happens.", ch, NULL, NULL, TO_ROOM);
-	    check_improve(ch, skill, false, 2);
-	} else {
-	    for (vch = ch->in_room->people; vch; vch = vch_next) {
-		vch_next = vch->next_in_room;
+        act("$n brandishes $p.", ch, staff, NULL, TO_ROOM);
+        act("You brandish $p.", ch, staff, NULL, TO_CHAR);
+        for (vch = ch->in_room->people; vch; vch = vch_next) {
+            vch_next = vch->next_in_room;
 
-		switch (cast->target) {
-		    default:
-			log_bug("Do_brandish: bad target for sn %d.", staff->value[3]);
-			return;
+            switch (cast->target) {
+                default:
+                log_bug("Do_brandish: bad target for sn %d.", staff->value[3]);
+                return;
 
-		    case TAR_IGNORE:
-			if (vch != ch)
-			    continue;
-			break;
-		    case TAR_CHAR_OFFENSIVE:
-			if (IS_NPC(ch) ? IS_NPC(vch) : !IS_NPC(vch))
-			    continue;
-			break;
+                case TAR_IGNORE:
+                    if (vch != ch)
+                        continue;
+                    break;
+                        case TAR_CHAR_OFFENSIVE:
+                    if (IS_NPC(ch) ? IS_NPC(vch) : !IS_NPC(vch))
+                        continue;
+                    break;
 
-		    case TAR_CHAR_DEFENSIVE:
-			if (IS_NPC(ch) ? !IS_NPC(vch) : IS_NPC(vch))
-			    continue;
-			break;
+                case TAR_CHAR_DEFENSIVE:
+                    if (IS_NPC(ch) ? !IS_NPC(vch) : IS_NPC(vch))
+                        continue;
+                    break;
 
-		    case TAR_CHAR_SELF:
-			if (vch != ch)
-			    continue;
-			break;
-		}
+                case TAR_CHAR_SELF:
+                    if (vch != ch)
+                        continue;
+                    break;
+            }
 
-		obj_cast_spell((int)staff->value[3], (int)staff->value[0], ch, vch, NULL);
-		check_improve(ch, skill, true, 2);
-	    }
-	}
+            obj_cast_spell((int)staff->value[3], (int)staff->value[0], ch, vch, NULL);
+            check_improve(ch, skill, true, 2);
+        }
     }
 
     if (--staff->value[2] <= 0) {
-	act("Your $p seems to be powerless!", ch, staff, NULL, TO_CHAR);
-	staff->value[2] = 0;
+        act("Your $p seems to be powerless!", ch, staff, NULL, TO_CHAR);
+        staff->value[2] = 0;
     }
 
     return;
@@ -972,68 +953,58 @@ void do_zap(struct char_data *ch, const char *argument)
     struct dynamic_skill *skill;
     char arg[MAX_INPUT_LENGTH];
 
-
     if ((skill = skill_lookup("wands")) == NULL) {
-	send_to_char("Huh?\n\r", ch);
-	return;
+        send_to_char("Huh?\n\r", ch);
+        return;
     }
-
 
     one_argument(argument, arg);
     if (arg[0] == '\0' && ch->fighting == NULL) {
-	send_to_char("Zap whom or what?\n\r", ch);
-	return;
+        send_to_char("Zap whom or what?\n\r", ch);
+        return;
     }
 
     if ((wand = get_eq_char(ch, WEAR_HOLD)) == NULL) {
-	send_to_char("You hold nothing in your hand.\n\r", ch);
-	return;
+        send_to_char("You hold nothing in your hand.\n\r", ch);
+        return;
     }
 
     if (OBJECT_TYPE(wand) != ITEM_WAND) {
-	send_to_char("You can zap only with a wand.\n\r", ch);
-	return;
+        send_to_char("You can zap only with a wand.\n\r", ch);
+        return;
     }
 
     obj = NULL;
     if (arg[0] == '\0') {
-	if (ch->fighting != NULL) {
-	    victim = ch->fighting;
-	} else {
-	    send_to_char("Zap whom or what?\n\r", ch);
-	    return;
-	}
+        if (ch->fighting != NULL) {
+            victim = ch->fighting;
+        } else {
+            send_to_char("Zap whom or what?\n\r", ch);
+            return;
+        }
     } else {
-	if ((victim = get_char_room(ch, arg)) == NULL
-		&& (obj = get_obj_here(ch, arg)) == NULL) {
-	    send_to_char("You can't find it.\n\r", ch);
-	    return;
-	}
+        if ((victim = get_char_room(ch, arg)) == NULL && (obj = get_obj_here(ch, arg)) == NULL) {
+            send_to_char("You can't find it.\n\r", ch);
+            return;
+        }
     }
 
     WAIT_STATE(ch, PULSE_VIOLENCE);
     if (wand->value[2] > 0) {
-	if (victim != NULL) {
-	    act("$n zaps $N with $p.", ch, wand, victim, TO_ROOM);
-	    act("You zap $N with $p.", ch, wand, victim, TO_CHAR);
-	} else {
-	    act("$n zaps $P with $p.", ch, wand, obj, TO_ROOM);
-	    act("You zap $P with $p.", ch, wand, obj, TO_CHAR);
-	}
+        if (victim != NULL) {
+            act("$n zaps $N with $p.", ch, wand, victim, TO_ROOM);
+            act("You zap $N with $p.", ch, wand, victim, TO_CHAR);
+        } else {
+            act("$n zaps $P with $p.", ch, wand, obj, TO_ROOM);
+            act("You zap $P with $p.", ch, wand, obj, TO_CHAR);
+        }
 
-	if (ch->level < wand->level
-		|| number_percent() >= 20 + get_learned_percent(ch, skill) * 4 / 5) {
-	    act("Your efforts with $p produce only smoke and sparks.", ch, wand, NULL, TO_CHAR);
-	    act("$n's efforts with $p produce only smoke and sparks.", ch, wand, NULL, TO_ROOM);
-	    check_improve(ch, skill, false, 2);
-	} else {
-	    obj_cast_spell((int)wand->value[3], (int)wand->value[0], ch, victim, obj);
-	    check_improve(ch, skill, true, 2);
-	}
+        obj_cast_spell((int)wand->value[3], (int)wand->value[0], ch, victim, obj);
+        check_improve(ch, skill, true, 2);
     }
 
     if (--wand->value[2] <= 0)
-	act("Your $p seems powerless.", ch, wand, NULL, TO_CHAR);
+        act("Your $p seems powerless.", ch, wand, NULL, TO_CHAR);
 
     return;
 }

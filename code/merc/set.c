@@ -1159,7 +1159,6 @@ set_obj_cmd_table[] =
     { "v4",	    set_obj_v4	   },
     { "extra",  set_obj_extra  },
     { "extra2", set_obj_extra2 },
-    { "level",  set_obj_level  },
     { "weight", set_obj_weight },
     { "cost",   set_obj_cost   },
     { "timer",  set_obj_timer  },
@@ -1421,24 +1420,6 @@ static bool set_obj_extra2(struct char_data *ch, struct gameobject *obj, const c
         else
             obj->extra2_flags = value;
     }
-    return true;
-}
-
-
-/***************************************************************************
- *	set_obj_level
- *
- *	set the level of an object
- ***************************************************************************/
-static bool set_obj_level(struct char_data *ch, struct gameobject *obj, const char *argument)
-{
-    if (is_help(argument)) {
-        send_to_char("`#SYNTAX``: level <level>\n\r", ch);
-        return false;
-    }
-
-    set_integer_arg(&obj->level, argument);
-    obj->level = UMAX(obj->level, 0);
     return true;
 }
 

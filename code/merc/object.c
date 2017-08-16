@@ -87,7 +87,6 @@ struct gameobject *object_clone(struct gameobject *parent)
     clone->extra_flags = parent->extra_flags;
     clone->weight = parent->weight;
     clone->cost = parent->cost;
-    clone->level = parent->level;
     clone->condition = parent->condition;
     clone->timer = parent->timer;
 

@@ -1673,19 +1673,6 @@ void do_return(struct char_data *ch, const char *argument)
     return;
 }
 
-/* trust levels for load and clone */
-bool obj_check(struct char_data *ch, struct gameobject *obj)
-{
-    if (IS_TRUSTED(ch, GOD)
-        || (IS_TRUSTED(ch, IMMORTAL) && obj->level <= 20 && obj->cost <= 1000)
-        || (IS_TRUSTED(ch, DEMI) && obj->level <= 10 && obj->cost <= 500)
-        || (IS_TRUSTED(ch, ANGEL) && obj->level <= 5 && obj->cost <= 250)
-        || (IS_TRUSTED(ch, AVATAR) && obj->level == 0 && obj->cost <= 100))
-        return true;
-    else
-        return false;
-}
-
 /* for clone, to insure that cloning goes many levels deep */
 void recursive_clone(struct char_data *ch, struct gameobject *obj, struct gameobject *clone)
 {
@@ -1693,11 +1680,9 @@ void recursive_clone(struct char_data *ch, struct gameobject *obj, struct gameob
     struct gameobject *t_obj;
 
     for (c_obj = obj->contains; c_obj != NULL; c_obj = c_obj->next_content) {
-        if (obj_check(ch, c_obj)) {
-            t_obj = object_clone(c_obj);
-            obj_to_obj(t_obj, clone);
-            recursive_clone(ch, c_obj, t_obj);
-        }
+        t_obj = object_clone(c_obj);
+        obj_to_obj(t_obj, clone);
+        recursive_clone(ch, c_obj, t_obj);
     }
 }
 
@@ -1765,36 +1750,31 @@ void do_clone(struct char_data *ch, const char *argument)
 
     /* clone an object */
     if (obj != NULL) {
-        if (!obj_check(ch, obj)) {
-            send_to_char("Your powers are not great enough for such a task.\n\r", ch);
-            return;
-        } else {
-            struct gameobject *clone = NULL;
+        struct gameobject *clone = NULL;
 
-            for (iter = 0; iter < count; iter++) {
-                clone = object_clone(obj);
+        for (iter = 0; iter < count; iter++) {
+            clone = object_clone(obj);
 
-                if (obj->carried_by != NULL)
-                    obj_to_char(clone, ch);
-                else
-                    obj_to_room(clone, ch->in_room);
-                recursive_clone(ch, obj, clone);
-            }
-
-            if (count > 1) {
-                sprintf(buf, "$n has created [%d] $p.", count);
-                act(buf, ch, clone, NULL, TO_ROOM);
-                sprintf(buf, "You clone [%d] $p.", count);
-                act(buf, ch, clone, NULL, TO_CHAR);
-                sprintf(buf, "$N clones [%d] $p.", count);
-                wiznet(buf, ch, clone, WIZ_LOAD, WIZ_SECURE, get_trust(ch));
-            } else {
-                act("$n has created $p.", ch, clone, NULL, TO_ROOM);
-                act("You clone $p.", ch, clone, NULL, TO_CHAR);
-                wiznet("$N clones $p.", ch, clone, WIZ_LOAD, WIZ_SECURE, get_trust(ch));
-            }
-            return;
+            if (obj->carried_by != NULL)
+                obj_to_char(clone, ch);
+            else
+                obj_to_room(clone, ch->in_room);
+            recursive_clone(ch, obj, clone);
         }
+
+        if (count > 1) {
+            sprintf(buf, "$n has created [%d] $p.", count);
+            act(buf, ch, clone, NULL, TO_ROOM);
+            sprintf(buf, "You clone [%d] $p.", count);
+            act(buf, ch, clone, NULL, TO_CHAR);
+            sprintf(buf, "$N clones [%d] $p.", count);
+            wiznet(buf, ch, clone, WIZ_LOAD, WIZ_SECURE, get_trust(ch));
+        } else {
+            act("$n has created $p.", ch, clone, NULL, TO_ROOM);
+            act("You clone $p.", ch, clone, NULL, TO_CHAR);
+            wiznet("$N clones $p.", ch, clone, WIZ_LOAD, WIZ_SECURE, get_trust(ch));
+        }
+        return;
     } else if (mob != NULL) {
         if (!IS_NPC(mob)) {
             send_to_char("You can only clone mobiles.\n\r", ch);
@@ -1816,12 +1796,10 @@ void do_clone(struct char_data *ch, const char *argument)
                     clone_mobile(mob, clone);
 
                     for (obj = mob->carrying; obj != NULL; obj = obj->next_content) {
-                        if (obj_check(ch, obj)) {
-                            struct gameobject *new_obj = object_clone(obj);
-                            recursive_clone(ch, obj, new_obj);
-                            obj_to_char(new_obj, clone);
-                            new_obj->wear_loc = obj->wear_loc;
-                        }
+                        struct gameobject *new_obj = object_clone(obj);
+                        recursive_clone(ch, obj, new_obj);
+                        obj_to_char(new_obj, clone);
+                        new_obj->wear_loc = obj->wear_loc;
                     }
                     char_to_room(clone, ch->in_room);
                 }
@@ -1922,31 +1900,13 @@ void do_oload(struct char_data *ch, const char *argument)
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
     char buf[MAX_STRING_LENGTH];
-    int level;
 
     argument = one_argument(argument, arg1);
     one_argument(argument, arg2);
 
     if (arg1[0] == '\0' || !is_number(arg1)) {
-        send_to_char("Syntax: load obj <vnum> <level>.\n\r", ch);
+        send_to_char("Syntax: load obj <vnum>.\n\r", ch);
         return;
-    }
-
-    level = -1;
-    if (arg2[0] != '\0') { /* load with a level */
-        if (!is_number(arg2)) {
-            send_to_char("Syntax: oload <vnum> <level>.\n\r", ch);
-            return;
-        }
-
-        level = parse_int(arg2);
-
-        if (level < 0
-            || (get_trust(ch) != MAX_LEVEL
-                && (level > get_trust(ch)))) {
-            send_to_char("Level must be be between 0 and your level.\n\r", ch);
-            return;
-        }
     }
 
     if ((pObjIndex = objectprototype_getbyvnum(parse_int(arg1))) == NULL) {
@@ -1954,7 +1914,7 @@ void do_oload(struct char_data *ch, const char *argument)
         return;
     }
 
-    obj = create_object(pObjIndex, level);
+    obj = create_object(pObjIndex);
 
     if (CAN_WEAR(obj, ITEM_TAKE))
         obj_to_char(obj, ch);
@@ -3063,55 +3023,6 @@ void do_omnistat(struct char_data *ch, const char *argument)
     page_to_char(buf_string(output), ch);
 
     free_buf(output);
-}
-
-void do_olevel(struct char_data *ch, const char *argument)
-{
-    char buf[MAX_STRING_LENGTH];
-    char arg[MAX_INPUT_LENGTH];
-    struct buf_type *buffer;
-    long level;
-    bool found;
-
-    argument = one_argument(argument, arg);
-
-    if (ch) {
-        if (IS_NPC(ch)) {
-            send_to_char("Mobs can't use this command.\n\r", ch);
-            return;
-        }
-    }
-
-    if (!is_number(arg)) {
-        send_to_char("Syntax: olevel [level]\n\r", ch);
-        return;
-    }
-    level = parse_int(arg);
-    buffer = new_buf();
-    found = false;
-
-    {
-        struct objectprototype *current;
-        struct objectprototype *pending;
-
-        pending = objectprototype_iterator_start(&objectprototype_empty_filter);
-        while ((current = pending) != NULL) {
-            pending = objectprototype_iterator(current, &objectprototype_empty_filter);
-
-            if (level == current->level) {
-                found = true;
-                sprintf(buf, "`7[`O%5ld`7] `&%s`7\n\r", current->vnum, current->short_descr);
-                add_buf(buffer, buf);
-            }
-        }
-    }
-
-    if (!found)
-        send_to_char("No objects by that level.\n\r", ch);
-    else
-        page_to_char(buf_string(buffer), ch);
-    free_buf(buffer);
-    return;
 }
 
 void do_mlevel(struct char_data *ch, const char *argument)

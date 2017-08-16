@@ -1,0 +1,19 @@
+FIXING COMBAT:
+==============
+Save/load affect level with object. (right now hard-coded to 1).
+Replace weapon flags that cause damage with effects (shock, flaming, etc). Also curse and other ITEM_ flags.
+
+
+Override descriptions for corpses and body parts (fight.c). D'OH!
+Override descriptions for money (handler.c). D'OH!
+Fact of prompt to be displayed is not saved (or maybe a copyover issue).
+
+?Weapon skills added to thief don't ever stick.
+?Weapon skills added to mage only stick if it is last add.
+
+Object constraints (things like min-level, race, class, etc).
+Randomize object cost during creation.
+Gods feature is incomplete.
+
+
+

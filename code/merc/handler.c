@@ -1629,11 +1629,11 @@ struct gameobject *create_money(unsigned int gold, unsigned int silver)
 
     /* create the object - assign short desc where applicable */
     if (gold == 0 && silver == 1) {
-        obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_SILVER_ONE), 0);
+        obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_SILVER_ONE));
     } else if (gold == 1 && silver == 0) {
-        obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_GOLD_ONE), 0);
+        obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_GOLD_ONE));
     } else if (silver == 0) {
-        obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_GOLD_SOME), 0);
+        obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_GOLD_SOME));
 
         //sprintf(buf, OBJECT_SHORT(obj), gold);
         //free_string(obj->short_descr);
@@ -1642,7 +1642,7 @@ struct gameobject *create_money(unsigned int gold, unsigned int silver)
         obj->value[1] = (long)gold;
         obj->cost = gold;
     } else if (gold == 0) {
-        obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_SILVER_SOME), 0);
+        obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_SILVER_SOME));
 
         //sprintf(buf, obj->short_descr, silver);
         //free_string(obj->short_descr);
@@ -1651,7 +1651,7 @@ struct gameobject *create_money(unsigned int gold, unsigned int silver)
         obj->value[0] = (long)silver;
         obj->cost = silver;
     } else {
-        obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_COINS), 0);
+        obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_COINS));
 
         //sprintf(buf, obj->short_descr, silver, gold);
         //free_string(obj->short_descr);
@@ -2214,11 +2214,10 @@ void identify_item(struct char_data *ch, struct gameobject *obj)
                    item_type_name(obj),
                    extra_bit_name((long)obj->extra_flags));
     printf_to_char(ch, "Extra2 flags %s\n\r"
-                   "Weight is %d, value is %d, level is %d.\n\r",
+                   "Weight is %d, value is %d.\n\r",
                    extra2_bit_name((long)obj->extra2_flags),
                    (obj->weight > 0) ? obj->weight / 10 : 0,
-                   obj->cost,
-                   obj->level);
+                   obj->cost);
 
     switch (OBJECT_TYPE(obj)) {
       case ITEM_SCROLL:

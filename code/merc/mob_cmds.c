@@ -499,7 +499,6 @@ void do_mpoload(struct char_data *ch, const char *argument)
     struct objectprototype *objprototype;
     struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
-    int level;
     long vnum;
     bool to_room;
     bool to_wear;
@@ -507,80 +506,61 @@ void do_mpoload(struct char_data *ch, const char *argument)
     argument = one_argument(argument, arg);
 
     if (!str_prefix(arg, "random")) {
-	char mm_buf[MAX_INPUT_LENGTH];
-	int min_vnum;
-	int max_vnum;
+        char mm_buf[MAX_INPUT_LENGTH];
+        int min_vnum;
+        int max_vnum;
 
-	argument = one_argument(argument, mm_buf);
-	min_vnum = 0;
-	max_vnum = 0;
-	if (is_number(mm_buf))
-	    min_vnum = parse_long(mm_buf);
+        argument = one_argument(argument, mm_buf);
+        min_vnum = 0;
+        max_vnum = 0;
+        if (is_number(mm_buf))
+            min_vnum = parse_long(mm_buf);
 
-	if (min_vnum <= 0) {
-	    log_bug("mpoload - bad minimum number for random range %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-	    return;
-	}
+        if (min_vnum <= 0) {
+            log_bug("mpoload - bad minimum number for random range %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+            return;
+        }
 
-	argument = one_argument(argument, mm_buf);
-	if (is_number(mm_buf))
-	    max_vnum = parse_long(mm_buf);
-	max_vnum = UMAX(min_vnum, max_vnum);
+        argument = one_argument(argument, mm_buf);
+        if (is_number(mm_buf))
+            max_vnum = parse_long(mm_buf);
+        max_vnum = UMAX(min_vnum, max_vnum);
 
-	vnum = number_range(min_vnum, max_vnum);
+        vnum = number_range(min_vnum, max_vnum);
     } else {
-	if (arg[0] == '\0' || !is_number(arg)) {
-	    log_bug("mpoload - bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-	    return;
-	}
+        if (arg[0] == '\0' || !is_number(arg)) {
+            log_bug("mpoload - bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+            return;
+        }
 
-	vnum = parse_long(arg);
-    }
-
-    argument = one_argument(argument, arg);
-    if (arg[0] == '\0') {
-	/*		level = get_trust(ch);  */
-	level = -1;
-    } else {
-	if (!is_number(arg)) {
-	    log_bug("mpoload - bad syntax from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-	    return;
-	}
-
-	level = parse_int(arg);
-	if (level < 0 || level > get_trust(ch)) {
-	    log_bug("mpoload - bad level from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-	    return;
-	}
+        vnum = parse_long(arg);
     }
 
     argument = one_argument(argument, arg);
     /*
-     * Added 3rd argument
-     * omitted - load to mobile's inventory
+     * 2nd argument
      * 'R'     - load to room
      * 'W'     - load to mobile and force wear
      */
     to_room = false;
     to_wear = false;
     if (arg[0] == 'R' || arg[0] == 'r')
-	to_room = true;
+        to_room = true;
     else if (arg[0] == 'W' || arg[0] == 'w')
-	to_wear = true;
+        to_wear = true;
 
     if ((objprototype = objectprototype_getbyvnum(vnum)) == NULL) {
-	log_bug("mpoload - bad vnum arg from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
-	return;
+        log_bug("mpoload - bad vnum arg from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
+        return;
     }
 
-    obj = create_object(objprototype, level);
-    if ((to_wear || !to_room)
-	    && CAN_WEAR(obj, ITEM_TAKE)) {
-	obj_to_char(obj, ch);
-	if (to_wear)
-	    wear_obj(ch, obj, true);
+    obj = create_object(objprototype);
+    if ((to_wear || !to_room) && CAN_WEAR(obj, ITEM_TAKE)) {
+        obj_to_char(obj, ch);
+        if (to_wear)
+            wear_obj(ch, obj, true);
     } else {
-	obj_to_room(obj, ch->in_room);
+        obj_to_room(obj, ch->in_room);
     }
 
     return;

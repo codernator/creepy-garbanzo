@@ -215,7 +215,6 @@ DECLARE_DO_FUN(do_north);
 DECLARE_DO_FUN(do_nosummon);
 DECLARE_DO_FUN(do_objident);
 DECLARE_DO_FUN(do_ofind);
-DECLARE_DO_FUN(do_olevel);
 DECLARE_DO_FUN(do_oload);
 DECLARE_DO_FUN(do_omnistat);
 DECLARE_DO_FUN(do_open);

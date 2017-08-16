@@ -30,7 +30,6 @@ static const struct cmp_vars_obj_index_data objprototype_flags[] =
     { "wear", &objprototype_cmp_wear },
     { "weight", &objprototype_cmp_weight },
     { "cost", &objprototype_cmp_cost },
-    { "level", &objprototype_cmp_level },
     { "", NULL }
 };
 
@@ -61,7 +60,6 @@ static const struct cmp_vars_gameobject obj_flags[] =
     { "location", &obj_cmp_location },
     { "weight", &obj_cmp_weight },
     { "cost", &obj_cmp_cost },
-    { "level", &obj_cmp_level },
     { "", NULL }
 };
 
@@ -315,16 +313,6 @@ bool obj_cmp_cost(struct gameobject *obj, const char *arg, struct buf_type *buf)
     if (buf != NULL)
         add_buf(buf, "search by an object's cost.\n\r");
     return cmp_fn_number((long)obj->cost, arg);
-}
-
-/***************************************************************************
- *	obj_cmp_level
- ***************************************************************************/
-bool obj_cmp_level(struct gameobject *obj, const char *arg, struct buf_type *buf)
-{
-    if (buf != NULL)
-        add_buf(buf, "search by an object's level.\n\r");
-    return cmp_fn_number(obj->level, arg);
 }
 
 /***************************************************************************
@@ -995,16 +983,6 @@ bool objprototype_cmp_cost(struct objectprototype *obj, const char *arg, struct 
     if (buf != NULL)
         add_buf(buf, "search by an object's cost.\n\r");
     return cmp_fn_number((long)obj->cost, arg);
-}
-
-/***************************************************************************
- *	objprototype_cmp_level
- ***************************************************************************/
-bool objprototype_cmp_level(struct objectprototype *obj, const char *arg, struct buf_type *buf)
-{
-    if (buf != NULL)
-        add_buf(buf, "search by an object's level.\n\r");
-    return cmp_fn_number(obj->level, arg);
 }
 
 /***************************************************************************

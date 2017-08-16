@@ -51,7 +51,6 @@ void acid_effect(void *vo, int level, int dam, int target)
 
 		if (IS_OBJ_STAT(obj, ITEM_BLESS))
 			chance -= 5;
-		chance -= obj->level * 2;
 
 		if (chance > 25)
 			chance = 25;
@@ -223,8 +222,6 @@ void cold_effect(void *vo, int level, int dam, int target)
 		if (IS_OBJ_STAT(obj, ITEM_BLESS))
 			chance -= 5;
 
-		chance -= obj->level * 2;
-
 		switch (OBJECT_TYPE(obj)) {
 		default:
 			return;
@@ -331,7 +328,6 @@ void fire_effect(void *vo, int level, int dam, int target)
 
 		if (IS_OBJ_STAT(obj, ITEM_BLESS))
 			chance -= 5;
-		chance -= obj->level * 2;
 
 		switch (OBJECT_TYPE(obj)) {
 		default:
@@ -457,7 +453,6 @@ void poison_effect(void *vo, int level, int dam, int target)
 
 		if (chance > 50)
 			chance = (chance - 50) / 2 + 50;
-		chance -= obj->level * 2;
 
 		switch (OBJECT_TYPE(obj)) {
 		default:
@@ -526,7 +521,6 @@ void shock_effect(void *vo, int level, int dam, int target)
 
 		if (IS_OBJ_STAT(obj, ITEM_BLESS))
 			chance -= 5;
-		chance -= obj->level * 2;
 
 		switch (OBJECT_TYPE(obj)) {
 		default:

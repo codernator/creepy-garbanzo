@@ -1259,7 +1259,7 @@ void spell_floating_disc(struct dynamic_skill *skill, int level, struct char_dat
 	return;
     }
 
-    disc = create_object(objectprototype_getbyvnum(OBJ_VNUM_DISC), 0);
+    disc = create_object(objectprototype_getbyvnum(OBJ_VNUM_DISC));
     disc->value[0] = ch->level * 10;        /* 10 pounds per level capacity */
     disc->value[3] = ch->level * 5;         /* 5 pounds per level max per item */
     disc->timer = ch->level * 2 - number_range(0, level / 2);
@@ -1654,7 +1654,7 @@ void spell_locate_object(struct dynamic_skill *skill, int level, struct char_dat
     opending = object_iterator_start(&object_empty_filter);
     while ((obj = opending) != NULL) {
 	opending = object_iterator(obj, &object_empty_filter);
-	if (!can_see_obj(ch, obj) || !is_name(argument, object_name_get(obj)) || IS_OBJ_STAT(obj, ITEM_NOLOCATE) || number_percent() > 2 * level || ch->level < obj->level)
+	if (!can_see_obj(ch, obj) || !is_name(argument, object_name_get(obj)) || IS_OBJ_STAT(obj, ITEM_NOLOCATE) || number_percent() > 2 * level)
 	    continue;
 
 	found = true;
@@ -2058,58 +2058,6 @@ void spell_refresh(struct dynamic_skill *skill, int level, struct char_data *ch,
 	send_to_char("`1O`!k``.\n\r", ch);
 
     return;
-}
-
-void spell_remove_curse(struct dynamic_skill *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
-{
-    struct char_data *victim;
-    struct gameobject *obj;
-
-    /* do object cases first */
-    if (target == TARGET_OBJ) {
-	obj = (struct gameobject *)vo;
-
-	if (IS_OBJ_STAT(obj, ITEM_NODROP)
-		|| IS_OBJ_STAT(obj, ITEM_NOREMOVE)) {
-	    if (!IS_OBJ_STAT(obj, ITEM_NOUNCURSE)
-		    && !saves_dispel(level + 2, obj->level, 0)) {
-		REMOVE_BIT(obj->extra_flags, ITEM_NODROP);
-		REMOVE_BIT(obj->extra_flags, ITEM_NOREMOVE);
-		act("$p `@glows `^b`6l`4u`Oe``.", ch, obj, NULL, TO_ALL);
-		return;
-	    }
-
-	    act("The `8curse`` on $p is beyond your po`#w``er.", ch, obj, NULL, TO_CHAR);
-	    return;
-	}
-
-	act("There doesn't seem to be a `8curse`` on $p.", ch, obj, NULL, TO_CHAR);
-	return;
-    }
-
-    /* characters */
-    victim = (struct char_data *)vo;
-
-    if (check_dispel(level, victim, gsp_curse)) {
-	send_to_char("You feel `#b`@e`#t`2t`#e`@r``.\n\r", victim);
-	act("$n looks more `Pre`5lax`Ped``.", victim, NULL, NULL, TO_ROOM);
-    }
-
-    for (obj = victim->carrying; obj != NULL; obj = obj->next_content) {
-	if ((IS_OBJ_STAT(obj, ITEM_NODROP)
-		    || IS_OBJ_STAT(obj, ITEM_NOREMOVE))
-		&& !IS_OBJ_STAT(obj, ITEM_NOUNCURSE)) {
-	    if (!saves_dispel(level, obj->level, 0)) {
-		REMOVE_BIT(obj->extra_flags, ITEM_NODROP);
-		REMOVE_BIT(obj->extra_flags, ITEM_NOREMOVE);
-
-		act("Your $p `@glows `6b`^l`Ou`4e``.", victim, obj, NULL, TO_CHAR);
-		act("$n's $p `@glows `6b`^l`Ou`4e``.", victim, obj, NULL, TO_ROOM);
-
-		break;
-	    }
-	}
-    }
 }
 
 /*
@@ -2743,45 +2691,6 @@ void spell_noremove(struct dynamic_skill *skill, int level, struct char_data *ch
     }
 }
 
-void spell_shatter_curse(struct dynamic_skill *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
-{
-    struct char_data *victim;
-    struct gameobject *obj;
-    bool found = false;
-
-    /* do object cases first */
-    if (target == TARGET_OBJ) {
-	obj = (struct gameobject *)vo;
-
-	if (IS_OBJ_STAT(obj, ITEM_NODROP) || IS_OBJ_STAT(obj, ITEM_NOREMOVE)) {
-	    if (!IS_OBJ_STAT(obj, ITEM_NOUNCURSE) && !saves_dispel(level + 2, obj->level, 0)) {
-		act("You convulse as you toss $p to the ground, destroying it.", ch, obj, NULL, TO_CHAR);
-		extract_obj(obj);
-		return;
-	    }
-
-	    act("You failed.", ch, NULL, NULL, TO_CHAR);
-	    return;
-	}
-	act("$p isn't cursed.", ch, obj, NULL, TO_CHAR);
-	return;
-    }
-
-    victim = (struct char_data *)vo;
-
-    for (obj = victim->carrying; (obj != NULL && !found); obj = obj->next_content) {
-	if ((IS_OBJ_STAT(obj, ITEM_NODROP) || IS_OBJ_STAT(obj, ITEM_NOREMOVE))
-		&& !IS_OBJ_STAT(obj, ITEM_NOUNCURSE)) {
-	    if (!saves_dispel(level, obj->level, 0)) {
-		found = true;
-		act("You convulse as you toss $p to the ground, destroying it.", victim, obj, NULL, TO_CHAR);
-		act("$n convulses as $e tosses $p to the ground, destroying it.", victim, obj, NULL, TO_ROOM);
-		extract_obj(obj);
-	    }
-	}
-    }
-}
-
 void spell_winds(struct dynamic_skill *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
     struct room_index_data *room;
@@ -3115,7 +3024,7 @@ void spell_portal(struct dynamic_skill *skill, int level, struct char_data *ch, 
     }
 
 
-    portal = create_object(objectprototype_getbyvnum(OBJ_VNUM_PORTAL), 0);
+    portal = create_object(objectprototype_getbyvnum(OBJ_VNUM_PORTAL));
     portal->timer = 2 + level / 25;
     portal->value[0] = 1;
     portal->value[3] = victim->in_room->vnum;
@@ -3149,7 +3058,7 @@ void spell_nexus(struct dynamic_skill *skill, int level, struct char_data *ch, v
     to_room = victim->in_room;
 
     /* portal one */
-    portal = create_object(objectprototype_getbyvnum(OBJ_VNUM_PORTAL), 0);
+    portal = create_object(objectprototype_getbyvnum(OBJ_VNUM_PORTAL));
     portal->timer = 1 + level / 10;
     portal->value[3] = victim->in_room->vnum;
 
@@ -3159,7 +3068,7 @@ void spell_nexus(struct dynamic_skill *skill, int level, struct char_data *ch, v
     act("$p `8s`&w`7ir`&l`8s`` into `@existence``.", ch, portal, NULL, TO_CHAR);
 
     /* portal two */
-    portal = create_object(objectprototype_getbyvnum(OBJ_VNUM_PORTAL), 0);
+    portal = create_object(objectprototype_getbyvnum(OBJ_VNUM_PORTAL));
     portal->timer = 1 + level / 10;
     portal->value[3] = ch->in_room->vnum;
 
@@ -3294,37 +3203,6 @@ void spell_monsoon(struct dynamic_skill *skill, int level, struct char_data *ch,
 		return;
 	}
     }
-}
-
-/***************************************************************************
- *	spell_fireblade
- ***************************************************************************/
-void spell_fireblade(struct dynamic_skill *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
-{
-    struct gameobject *old_weapon;
-    struct gameobject *weapon;
-
-    if ((old_weapon = get_eq_char(ch, WEAR_WIELD)) != NULL) {
-	if (old_weapon->objprototype != NULL
-		&& old_weapon->objprototype->vnum == OBJ_VNUM_FIREBLADE) {
-	    unequip_char(ch, old_weapon);
-	    extract_obj(old_weapon);
-	    act("The light in the room dims.", ch, NULL, NULL, TO_ROOM);
-	    send_to_char("You release the weave of your weapon.\n\r", ch);
-	    return;
-	}
-	unequip_char(ch, old_weapon);
-    }
-    weapon = create_object(objectprototype_getbyvnum(OBJ_VNUM_FIREBLADE), 0);
-
-    weapon->level = ch->level;
-    weapon->timer = ch->level / 4;
-
-    obj_to_char(weapon, ch);
-    equip_char(ch, weapon, WEAR_WIELD);
-    act("A blinding light shines from $n.", ch, NULL, NULL, TO_ROOM);
-    send_to_char("A blinding light stretches from your hand.\n\r", ch);
-    return;
 }
 
 /***************************************************************************

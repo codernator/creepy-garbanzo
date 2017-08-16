@@ -1472,7 +1472,6 @@ struct extra_descr_data {
     unsigned long extra_flags;
     unsigned long extra2_flags;
     unsigned long wear_flags;
-    int level;
     int init_timer;
     int condition;
     int count;
@@ -1511,7 +1510,6 @@ struct extra_descr_data {
     int wear_loc;
     int weight;
     unsigned int cost;
-    int level;
     int condition;
     int timer;
     long value[5];
@@ -1977,7 +1975,7 @@ void area_update(void);
 /* creation/cloning */
 struct char_data *create_mobile(struct mob_index_data * mob_idx);
 void clone_mobile(struct char_data * parent, struct char_data * clone);
-struct gameobject *create_object(struct objectprototype * objprototype, int level);
+struct gameobject *create_object(struct objectprototype * objprototype);
 void clear_char(struct char_data * ch);
 
 /* find functions  */

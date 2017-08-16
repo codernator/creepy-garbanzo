@@ -508,9 +508,6 @@ static void fwrite_obj(struct char_data *ch, struct gameobject *obj, FILE *fp, i
     /* variable data */
     fprintf(fp, "Wear %d\n", obj->wear_loc);
 
-    if (obj->level != obj->objprototype->level)
-        fprintf(fp, "Lev  %d\n", obj->level);
-
     if (obj->timer != 0)
         fprintf(fp, "Time %d\n", obj->timer);
 
@@ -1511,7 +1508,7 @@ static void fread_obj(struct char_data *ch, FILE *fp)
         return;
     }
 
-    obj = create_object(objectprototype_getbyvnum(vnum), -1);
+    obj = create_object(objectprototype_getbyvnum(vnum));
     assert(obj != NULL);
     for (;;) {
         word = feof(fp) ? "End" : fread_word(fp);
@@ -1605,11 +1602,6 @@ static void fread_obj(struct char_data *ch, FILE *fp)
 
                   return;
               }
-              break;
-
-          case 'L':
-              KEY("Level", obj->level, fread_number(fp));
-              KEY("Lev", obj->level, fread_number(fp));
               break;
 
           case 'N':

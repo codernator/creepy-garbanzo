@@ -34,7 +34,6 @@ bool obj_cmp_wear(struct gameobject * obj, const char *arg, struct buf_type * bu
 bool obj_cmp_location(struct gameobject * obj, const char *arg, struct buf_type * buf);
 bool obj_cmp_weight(struct gameobject * obj, const char *arg, struct buf_type * buf);
 bool obj_cmp_cost(struct gameobject * obj, const char *arg, struct buf_type * buf);
-bool obj_cmp_level(struct gameobject * obj, const char *arg, struct buf_type * buf);
 
 
 /***************************************************************************
@@ -90,7 +89,6 @@ bool objprototype_cmp_extra(struct objectprototype * obj, const char *arg, struc
 bool objprototype_cmp_wear(struct objectprototype * obj, const char *arg, struct buf_type * buf);
 bool objprototype_cmp_weight(struct objectprototype * obj, const char *arg, struct buf_type * buf);
 bool objprototype_cmp_cost(struct objectprototype * obj, const char *arg, struct buf_type * buf);
-bool objprototype_cmp_level(struct objectprototype * obj, const char *arg, struct buf_type * buf);
 
 
 /***************************************************************************

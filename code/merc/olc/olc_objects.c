@@ -658,7 +658,6 @@ EDIT(oedit_show){
 
     printf_to_char(ch, "`&Vnum``:         [%5d]\n\r`&Type``:        [%s]\n\r", pObj->vnum, flag_string(type_flags, pObj->item_type));
 
-    printf_to_char(ch, "`&Level``:        [%5d]\n\r", pObj->level);
     printf_to_char(ch, "`&Wear flags``:   [%s]\n\r", flag_string(wear_flags, pObj->wear_flags));
     printf_to_char(ch, "`&Extra flags``:  [%s]\n\r", flag_string(extra_flags, pObj->extra_flags));
     printf_to_char(ch, "`&Extra2 flags``: [%s]\n\r", flag_string(extra2_flags, pObj->extra2_flags));
@@ -802,7 +801,6 @@ EDIT(oedit_clone){
     pObj->name = str_dup(pClone->name);
     pObj->short_descr = str_dup(pClone->short_descr);
     pObj->description = str_dup(pClone->description);
-    pObj->level = pClone->level;
     pObj->item_type = pClone->item_type;
     pObj->extra_flags = pClone->extra_flags;
     pObj->extra2_flags = pClone->extra2_flags;
@@ -865,7 +863,6 @@ EDIT(oedit_addaffect){
     pAff->type = -1;
     pAff->duration = -1;
     pAff->bitvector = 0;
-    pAff->level = pObj->level;
     pAff->next = pObj->affected;
     pObj->affected = pAff;
 
@@ -941,7 +938,6 @@ EDIT(oedit_addapply){
     pAff->type = -1;
     pAff->duration = -1;
     pAff->bitvector = bitvector;
-    pAff->level = pObj->level;
     pAff->next = pObj->affected;
     pObj->affected = pAff;
 
@@ -1407,24 +1403,6 @@ EDIT(oedit_timer){
     return true;
 }
 
-/*****************************************************************************
- *	oedit_level
- *
- *	edit the level of the object
- *****************************************************************************/
-EDIT(oedit_level){
-    struct objectprototype *pObj;
-
-    EDIT_OBJ(ch, pObj);
-    if (argument[0] == '\0' || !is_number(argument)) {
-        send_to_char("Syntax:  level [number]\n\r", ch);
-        return false;
-    }
-
-    pObj->level = parse_int(argument);
-    send_to_char("Level set.\n\r", ch);
-    return true;
-}
 
 
 /*****************************************************************************

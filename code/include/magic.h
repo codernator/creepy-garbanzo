@@ -76,7 +76,6 @@ DECLARE_SPELL_FUN(spell_faerie_fire);
 DECLARE_SPELL_FUN(spell_faerie_fog);
 DECLARE_SPELL_FUN(spell_farsight);
 DECLARE_SPELL_FUN(spell_fireball);
-DECLARE_SPELL_FUN(spell_fireblade);     /* Added 9/24/96 Bors */
 DECLARE_SPELL_FUN(spell_fireproof);
 DECLARE_SPELL_FUN(spell_flamestrike);
 DECLARE_SPELL_FUN(spell_floating_disc);
@@ -109,7 +108,6 @@ DECLARE_SPELL_FUN(spell_poison);
 DECLARE_SPELL_FUN(spell_portal);
 DECLARE_SPELL_FUN(spell_recharge);
 DECLARE_SPELL_FUN(spell_refresh);
-DECLARE_SPELL_FUN(spell_remove_curse);
 DECLARE_SPELL_FUN(spell_revive);
 DECLARE_SPELL_FUN(spell_ring_of_fire);          /* added 9/23/96 Bors */
 DECLARE_SPELL_FUN(spell_sanctuary);
@@ -137,7 +135,6 @@ DECLARE_SPELL_FUN(spell_create_feast);
 DECLARE_SPELL_FUN(spell_make_bag);
 DECLARE_SPELL_FUN(spell_equipment_invis);
 DECLARE_SPELL_FUN(spell_noremove);
-DECLARE_SPELL_FUN(spell_shatter_curse);
 DECLARE_SPELL_FUN(spell_web);
 
 

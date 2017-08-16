@@ -214,7 +214,7 @@ void show_object_stats(struct char_data *ch, const char *argument)
     printf_to_char(ch, "Wear bits: %s\n\rExtra bits: %s\n\r", wear_bit_name(OBJECT_WEARFLAGS(obj)), extra_bit_name(obj->extra_flags));
     printf_to_char(ch, "Extra2 bits: %s\n\r", extra2_bit_name(obj->extra2_flags));
     printf_to_char(ch, "Number: %d/%d  Weight: %d/%d/%d(10th pounds)\n\r", 1, get_obj_number(obj), obj->weight, get_obj_weight(obj), get_true_weight(obj));
-    printf_to_char(ch, "Level: %d  Cost: %d  Condition: %d  Timer: %d\n\r", obj->level, obj->cost, obj->condition, obj->timer);
+    printf_to_char(ch, "Cost: %d  Condition: %d  Timer: %d\n\r", obj->cost, obj->condition, obj->timer);
     printf_to_char(ch, "In room: %d  In object: %s  Carried by: %s  Wear_loc: %d\n\r",
                    obj->in_room == NULL ? 0 : obj->in_room->vnum,
                    obj->in_obj == NULL ? "(none)" : OBJECT_SHORT(obj->in_obj),
