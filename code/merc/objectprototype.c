@@ -218,7 +218,6 @@ struct array_list *objectprototype_serialize(const struct objectprototype *obj)
     serialize_take_string(answer, "cost", uint_to_string(obj->cost));
     serialize_take_string(answer, "inittimer", int_to_string(obj->init_timer));
     serialize_take_string(answer, "condition", int_to_string(obj->condition));
-    serialize_take_string(answer, "tnl", int_to_string(obj->xp_tolevel));
 
     /** append affects */
     {

@@ -215,10 +215,6 @@ void show_object_stats(struct char_data *ch, const char *argument)
     printf_to_char(ch, "Extra2 bits: %s\n\r", extra2_bit_name(obj->extra2_flags));
     printf_to_char(ch, "Number: %d/%d  Weight: %d/%d/%d(10th pounds)\n\r", 1, get_obj_number(obj), obj->weight, get_obj_weight(obj), get_true_weight(obj));
     printf_to_char(ch, "Level: %d  Cost: %d  Condition: %d  Timer: %d\n\r", obj->level, obj->cost, obj->condition, obj->timer);
-    if (IS_OBJ_STAT2(obj, ITEM_RELIC)) {
-        printf_to_char(ch, "Exp TNL: %d\n\r", obj->xp_tolevel);
-        printf_to_char(ch, "Exp: %d\n\r", obj->exp);
-    }
     printf_to_char(ch, "In room: %d  In object: %s  Carried by: %s  Wear_loc: %d\n\r",
                    obj->in_room == NULL ? 0 : obj->in_room->vnum,
                    obj->in_obj == NULL ? "(none)" : OBJECT_SHORT(obj->in_obj),

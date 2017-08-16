@@ -190,7 +190,6 @@ DECLARE_OLC_FUN(oedit_affect);
 DECLARE_OLC_FUN(oedit_material);
 DECLARE_OLC_FUN(oedit_level);
 DECLARE_OLC_FUN(oedit_timer);
-DECLARE_OLC_FUN(oedit_xptolevel);
 DECLARE_OLC_FUN(oedit_condition);
 DECLARE_OLC_FUN(oedit_extra2);
 

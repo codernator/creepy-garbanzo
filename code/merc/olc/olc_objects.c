@@ -667,8 +667,6 @@ EDIT(oedit_show){
     printf_to_char(ch, "`&Timer``:        [%5d]\n\r", pObj->init_timer);
     printf_to_char(ch, "`&Weight``:       [%5d]\n\r`&Cost``:        [%5d]\n\r", pObj->weight, pObj->cost);
 
-    printf_to_char(ch, "`&Xp to level``:  [%5d]\n\r",            /* ROM */ pObj->xp_tolevel);
-
     if (pObj->extra_descr) {
         struct extra_descr_data *ed;
 
@@ -1474,27 +1472,3 @@ EDIT(oedit_condition){
     return false;
 }
 
-
-EDIT(oedit_xptolevel){
-    struct objectprototype *pObj;
-    int amount;
-
-    EDIT_OBJ(ch, pObj);
-
-    if (argument[0] == '\0' || !is_number(argument)) {
-        send_to_char("Syntax:  xptolevel [number]\n\r", ch);
-        return false;
-    }
-
-    amount = parse_int(argument);
-
-    if (amount < 0 || amount > 5000) {
-        send_to_char("Please choose an amount between 0 and 5000\n\r", ch);
-        return false;
-    }
-
-    pObj->xp_tolevel = parse_int(argument);
-
-    send_to_char("Exp to level set.\n\r", ch);
-    return true;
-}

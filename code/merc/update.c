@@ -33,14 +33,12 @@ char *who_string(struct char_data * ch);
  ***************************************************************************/
 static int save_number = 0;
 
-static void add_cache_affect(struct gameobject * obj, int bit, int sn, int level, int mod);
 static void mobile_update(void);
 static void weather_update(void);
 static int hit_gain(struct char_data * ch);
 static int mana_gain(struct char_data * ch);
 static int move_gain(struct char_data * ch);
 static void char_update(void);
-static void advance_level_object(struct char_data * ch, struct gameobject * obj);
 static void obj_update(void);
 static void aggr_update(void);
 static void room_update(void);
@@ -48,99 +46,6 @@ static void underwater_update(void);
 
 
 
-void gain_object_exp(struct char_data *ch, struct gameobject *obj, int gain)
-{
-    int leftover = 0;
-
-    if (IS_NPC(ch))
-	return;
-
-    if (obj->plevel >= 30) return;
-    printf_to_char(ch, "%s has gained %d exp.\n\r", capitalize(OBJECT_SHORT(obj)), gain);
-    obj->exp += gain;
-    obj->xp_tolevel -= gain;
-
-    if (obj->xp_tolevel <= 0) {
-	obj->exp += obj->xp_tolevel;
-	advance_level_object(ch, obj);
-	leftover = (obj->xp_tolevel * 1);
-	obj->plevel++;
-	printf_to_char(ch, "%s has raised to level %d. To see your objects stats lore or identify it.\n\r", capitalize(OBJECT_SHORT(obj)), obj->plevel);
-	obj->xp_tolevel = 1500 + (obj->plevel * 500);
-	obj->xp_tolevel -= leftover;
-	return;
-    }
-    return;
-}
-
-static void advance_level_object(struct char_data *ch, struct gameobject *obj)
-{
-    int pbonus = number_range(5, 10);
-    int bonus = number_range(4, 8);
-
-    pbonus = pbonus * 9 / 10;
-    bonus = bonus * 8 / 10;
-
-    pbonus = UMAX(6, pbonus);
-    bonus = UMAX(1, bonus);
-
-    add_cache_affect(obj, APPLY_DAMROLL, 0, obj->plevel * 5, number_range(1, 2));
-    add_cache_affect(obj, APPLY_HITROLL, 0, obj->plevel * 5, number_range(1, 2));
-    add_cache_affect(obj, APPLY_HIT, 0, obj->plevel * 5, number_range(1, 2));
-    add_cache_affect(obj, APPLY_MANA, 0, obj->plevel * 5, number_range(1, 2));
-    add_cache_affect(obj, APPLY_MOVE, 0, obj->plevel * 5, (number_range(10, 30)));
-
-    if (obj->item_type == ITEM_WEAPON) {
-	obj->value[1] += bonus / 4;
-	obj->value[2] += bonus / 5;
-    } else if (obj->item_type == ITEM_ARMOR) {
-	obj->value[0] += UMAX(1, obj->plevel);
-	obj->value[1] += UMAX(1, obj->plevel);
-	obj->value[2] += UMAX(1, obj->plevel);
-	obj->value[3] += (5 * UMAX(1, obj->plevel)) / 10;
-    }
-
-    return;
-}
-
-/***************************************************************************
- *	add_cache_affect
- *
- *	add a single affect for the style spell
- *	appends the affect to an existing affect if it already
- *	exists, otherwise it creates a new affect
- ***************************************************************************/
-static void add_cache_affect(struct gameobject *obj, int bit, int sn, int level, int mod)
-{
-    struct affect_data *paf;
-    bool found = false;
-
-    for (paf = obj->affected; paf != NULL; paf = paf->next) {
-	if (paf->location == bit) {
-	    found = true;
-	    paf->type = sn;
-	    paf->modifier += mod;
-	    paf->level = (int)UMAX(paf->level, (int)level);
-	    if (paf->modifier > 4)
-		SET_BIT(obj->extra_flags, ITEM_HUM);
-
-	}
-    }
-
-    if (!found) {
-	paf = new_affect();
-
-	paf->where = TO_OBJECT;
-	paf->type = sn;
-	paf->level = (int)level;
-	paf->duration = -1;
-	paf->location = bit;
-	paf->modifier = mod;
-	paf->bitvector = 0;
-	paf->next = obj->affected;
-	obj->affected = paf;
-    }
-}
 
 
 /***************************************************************************

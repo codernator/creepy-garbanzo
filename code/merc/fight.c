@@ -1867,7 +1867,7 @@ void group_gain(struct char_data *ch, struct char_data *victim)
      * Dying of mortal wounds or poison doesn't give xp to anyone!
      */
     if (victim == ch) {
-	return;
+        return;
     }
 
     members = 0;
@@ -1875,44 +1875,41 @@ void group_gain(struct char_data *ch, struct char_data *victim)
     check = false;
 
     for (gch = ch->in_room->people; gch != NULL; gch = gch->next_in_room) {
-	if (is_same_group(gch, ch)) {
-	    members++;
-	    group_levels += IS_NPC(gch) ? gch->level / 6 : gch->level;
-	    check = check || (((gch->level - ch->level) > 20) || ((ch->level - gch->level) > 20));
-	}
+        if (is_same_group(gch, ch)) {
+            members++;
+            group_levels += IS_NPC(gch) ? gch->level / 6 : gch->level;
+            check = check || (((gch->level - ch->level) > 20) || ((ch->level - gch->level) > 20));
+        }
     }
 
 
     if (members == 0) {
-	members = 1;
-	group_levels = ch->level;
+        members = 1;
+        group_levels = ch->level;
     }
 
     for (gch = ch->in_room->people; gch != NULL; gch = gch->next_in_room) {
-	struct gameobject *obj;
-	struct gameobject *obj_next;
+        struct gameobject *obj;
+        struct gameobject *obj_next;
 
-	if (!is_same_group(gch, ch) || IS_NPC(gch))
-	    continue;
+        if (!is_same_group(gch, ch) || IS_NPC(gch))
+            continue;
 
-	if (check == true || members >= 6)
-	    send_to_char("You are out of range or this group is too large, your experience gain is reduced.\n\r", gch);
-	else
-	    group_levels = gch->level * 4 / 3;
-	xp = xp_compute(gch, victim, group_levels);
+        if (check == true || members >= 6)
+            send_to_char("You are out of range or this group is too large, your experience gain is reduced.\n\r", gch);
+        else
+            group_levels = gch->level * 4 / 3;
+        xp = xp_compute(gch, victim, group_levels);
 
-	sprintf(buf, "You receive %d experience points.\n\r", xp);
-	send_to_char(buf, gch);
-	gain_exp(gch, xp);
+        sprintf(buf, "You receive %d experience points.\n\r", xp);
+        send_to_char(buf, gch);
+        gain_exp(gch, xp);
 
-	for (obj = ch->carrying; obj != NULL; obj = obj_next) {
-	    obj_next = obj->next_content;
-	    if (obj->wear_loc == WEAR_NONE)
-		continue;
-
-	    if (IS_OBJ_STAT2(obj, ITEM_RELIC) && obj->xp_tolevel > 0)
-		gain_object_exp(ch, obj, xp);
-	}
+        for (obj = ch->carrying; obj != NULL; obj = obj_next) {
+            obj_next = obj->next_content;
+            if (obj->wear_loc == WEAR_NONE)
+                continue;
+        }
     }
     save_char_obj(ch);
     return;

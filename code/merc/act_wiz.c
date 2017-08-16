@@ -3422,34 +3422,6 @@ void fry_char(struct char_data *ch, char *argument)
     return;
 }
 
-void do_mrelic(struct char_data *ch, const char *argument)
-{
-    struct gameobject *obj;
-    int i = 1500;
-
-    if (argument[0] == '\0') {
-        send_to_char("Make a relic item of what?\n\r", ch);
-        return;
-    }
-
-    if ((obj = get_obj_carry(ch, argument)) == NULL) {
-        send_to_char("You do not have that item.\n\r", ch);
-        return;
-    }
-
-    if (IS_OBJ_STAT2(obj, ITEM2_RELIC)) {
-        REMOVE_BIT(obj->extra2_flags, ITEM2_RELIC);
-        act("$p is no longer a relic item.", ch, obj, NULL, TO_CHAR);
-    } else {
-        SET_BIT(obj->extra2_flags, ITEM2_RELIC);
-        if (obj->xp_tolevel <= 0)
-            obj->xp_tolevel = i;
-        act("$p is now a relic item.", ch, obj, NULL, TO_CHAR);
-    }
-
-    return;
-}
-
 /*************************************************
  *  World Peace - stops all fighting in the game
  *  Added by Monrick, 1/2008

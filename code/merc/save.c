@@ -514,13 +514,6 @@ static void fwrite_obj(struct char_data *ch, struct gameobject *obj, FILE *fp, i
     /* variable data */
     fprintf(fp, "Wear %d\n", obj->wear_loc);
 
-    if (obj->plevel > 0)
-        fprintf(fp, "Plev %d\n", obj->plevel);
-    if (obj->exp > 0)
-        fprintf(fp, "Exp %d\n", obj->exp);
-    if (obj->xp_tolevel > 0)
-        fprintf(fp, "Xptolevel %d\n", obj->xp_tolevel);
-
     if (obj->level != obj->objprototype->level)
         fprintf(fp, "Lev  %d\n", obj->level);
 
@@ -1599,7 +1592,6 @@ static void fread_obj(struct char_data *ch, FILE *fp)
 
           case 'E':
               KEY("ExtraFlags", obj->extra_flags, fread_number(fp));
-              KEY("Exp", obj->exp, fread_number(fp));
               KEY("ExtF", obj->extra_flags, fread_number(fp));
 
               KEY("Ex2F", obj->extra2_flags, fread_number(fp));
@@ -1644,11 +1636,6 @@ static void fread_obj(struct char_data *ch, FILE *fp)
                   fMatch = true;
               }
               break;
-
-          case 'P':
-              KEY("Plevel", obj->plevel, fread_number(fp));
-              break;
-
 
           case 'S':
               if (!str_cmp(word, "Spell")) {
@@ -1703,10 +1690,6 @@ static void fread_obj(struct char_data *ch, FILE *fp)
               KEY("Wear", obj->wear_loc, fread_number(fp));
               KEY("Weight", obj->weight, fread_number(fp));
               KEY("Wt", obj->weight, fread_number(fp));
-              break;
-
-          case 'X':
-              KEY("Xptolevel", obj->xp_tolevel, fread_number(fp));
               break;
         }
 

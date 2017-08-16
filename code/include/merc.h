@@ -821,7 +821,6 @@ struct kill_data {
 #define ITEM_DOLL                       44
 #define ITEM_SOCKETS                    46
 #define ITEM_DICE                       47
-#define ITEM_RELIC                      48
 
 /* Values for socketing items (value[0]). * Used in #OBJECTS. */
 #define SOC_SAPPHIRE    1
@@ -1479,7 +1478,6 @@ struct extra_descr_data {
     int condition;
     int count;
     int weight;
-    int xp_tolevel;
     unsigned int cost;
     long value[5];
 };
@@ -1506,9 +1504,6 @@ struct extra_descr_data {
     /*@dependent@*//*@null@*/struct room_index_data *in_room;
     /*@shared@*//*@null@*/char *owner_name;
     /*@shared@*//*@null@*/char *override_name;
-    int plevel;
-    int xp_tolevel;
-    int exp;
     int item_type;
     long extra_flags;
     long extra2_flags;
@@ -2176,7 +2171,6 @@ struct room_index_data *room_by_name(char *target, int level, bool error);
 void advance_level(struct char_data * ch, int level);
 void advance_level2(struct char_data * ch);
 void gain_exp(struct char_data * ch, int gain);
-void gain_object_exp(struct char_data * ch, struct gameobject * obj, int gain);
 void gain_condition(struct char_data * ch, int condition, long value);
 void update_handler(void);
 void restore_char(struct char_data * ch);

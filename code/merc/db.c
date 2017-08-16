@@ -1986,8 +1986,6 @@ struct gameobject *create_object(struct objectprototype *objprototype, int level
     obj->value[3] = objprototype->value[3];
     obj->value[4] = objprototype->value[4];
     obj->weight = objprototype->weight;
-    if (IS_OBJ_STAT2(objprototype, ITEM_RELIC))
-        objprototype->xp_tolevel = 1500;
 
     if (level == -1)
         obj->cost = objprototype->cost;
