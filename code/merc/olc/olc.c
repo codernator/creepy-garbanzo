@@ -134,7 +134,6 @@ static const struct olc_cmd_type oedit_table[] =
     { "extra2",    oedit_extra2    },
     { "wear",      oedit_wear      },       /* ROM */
     { "type",      oedit_type      },       /* ROM */
-    { "material",  oedit_material  },       /* ROM */
     { "level",     oedit_level     },       /* ROM */
     { "condition", oedit_condition },       /* ROM */
     { "timer",     oedit_timer     },

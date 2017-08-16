@@ -69,7 +69,6 @@ struct objectprototype *objectprototype_new(unsigned long vnum)
         prototypedata->name = strdup("no name");
         prototypedata->short_descr = strdup("(no short description)");
         prototypedata->description = strdup("(no description)");
-        prototypedata->material = strdup("unknown");
         /*@+mustfreeonly@*/
         prototypedata->item_type = ITEM_TRASH;
         prototypedata->condition = 100;
@@ -99,7 +98,6 @@ struct objectprototype *objectprototype_deserialize(const struct array_list *dat
     deserialize_assign_string_default(data, prototypedata->name, "name", "no name");
     deserialize_assign_string_default(data, prototypedata->short_descr, "short", "(no short description)");
     deserialize_assign_string_default(data, prototypedata->description, "long", "(no description)");
-    deserialize_assign_string_default(data, prototypedata->material, "material", "(unknown)");
     /*@+mustfreeonly@*/
 
     deserialize_assign_int(data, prototypedata->condition, "condition");
@@ -133,8 +131,6 @@ struct array_list *objectprototype_serialize(const struct objectprototype *obj)
         serialize_copy_string(answer, "short", obj->short_descr);
     if (obj->description != NULL)
         serialize_copy_string(answer, "long", obj->description);
-    if (obj->material != NULL)
-        serialize_copy_string(answer, "material", obj->material);
 
     serialize_take_string(answer, "extra", flag_to_string(obj->extra_flags));
     serialize_take_string(answer, "extra2", flag_to_string(obj->extra2_flags));
@@ -310,7 +306,6 @@ void objectprototype_free(struct objectprototype *prototypedata)
     if (prototypedata->name != NULL) free(prototypedata->name);
     if (prototypedata->description != NULL) free(prototypedata->description);
     if (prototypedata->short_descr != NULL) free(prototypedata->short_descr);
-    if (prototypedata->material != NULL) free(prototypedata->material);
 
     free(prototypedata);
 }

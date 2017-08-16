@@ -963,7 +963,6 @@ void load_objects(FILE *fp)
         objprototype->name = fread_string(fp);
         objprototype->short_descr = fread_string(fp);
         objprototype->description = fread_string(fp);
-        objprototype->material = fread_string(fp);
         objprototype->extra2_flags = (int)fread_flag(fp);
 
         CHECK_POS(objprototype->item_type, (int)item_lookup(fread_word(fp)), "item_type");
@@ -1975,7 +1974,6 @@ struct gameobject *create_object(struct objectprototype *objprototype, int level
     obj->wear_loc = -1;
 
     object_name_set(obj, str_dup(objprototype->name));
-    obj->material = str_dup(objprototype->material);
     obj->timer = objprototype->init_timer;
     obj->extra_flags = objprototype->extra_flags;
     obj->wear_flags = objprototype->wear_flags;

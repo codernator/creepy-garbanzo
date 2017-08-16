@@ -83,7 +83,6 @@ struct gameobject *object_clone(struct gameobject *parent)
 
     /* start fixing the object */
     if (parent->override_name != NULL) clone->override_name = str_dup(parent->override_name);
-    if (parent->material != NULL) clone->material = str_dup(parent->material);
 
     clone->extra_flags = parent->extra_flags;
     clone->wear_flags = parent->wear_flags;
@@ -132,7 +131,6 @@ void object_free(struct gameobject *obj)
     {
         if (obj->override_name != NULL) free_string(obj->override_name);
         if (obj->owner_name != NULL) free_string(obj->owner_name);
-        if (obj->material != NULL) free_string(obj->material);
     }
 
     /** Clean up affects. */

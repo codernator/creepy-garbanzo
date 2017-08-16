@@ -401,7 +401,6 @@ void save_object(FILE *fp, struct objectprototype *pObjIndex)
     fprintf(fp, "%s~\n", pObjIndex->name);
     fprintf(fp, "%s~\n", pObjIndex->short_descr);
     fprintf(fp, "%s~\n", fix_string(pObjIndex->description));
-    fprintf(fp, "%s~\n", pObjIndex->material);
     fprintf(fp, "%s ", fwrite_flag(pObjIndex->extra2_flags, buf));
     fprintf(fp, "%s ", item_name_by_type(pObjIndex->item_type));
     fprintf(fp, "%s ", fwrite_flag(pObjIndex->extra_flags, buf));

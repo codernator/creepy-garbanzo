@@ -187,7 +187,6 @@ DECLARE_OLC_FUN(oedit_extra);
 DECLARE_OLC_FUN(oedit_wear);
 DECLARE_OLC_FUN(oedit_type);
 DECLARE_OLC_FUN(oedit_affect);
-DECLARE_OLC_FUN(oedit_material);
 DECLARE_OLC_FUN(oedit_level);
 DECLARE_OLC_FUN(oedit_timer);
 DECLARE_OLC_FUN(oedit_condition);

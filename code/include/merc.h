@@ -1468,7 +1468,6 @@ struct extra_descr_data {
     /*@only@*/char *name;
     /*@only@*/char *short_descr;
     /*@only@*/char *description;
-    /*@only@*/char *material;
     unsigned int item_type;
     unsigned long extra_flags;
     unsigned long extra2_flags;
@@ -1514,7 +1513,6 @@ struct extra_descr_data {
     unsigned int cost;
     int level;
     int condition;
-    /*@shared@*//*@null@*/char *material;
     int timer;
     long value[5];
 };

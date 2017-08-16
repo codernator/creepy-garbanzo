@@ -662,7 +662,6 @@ EDIT(oedit_show){
     printf_to_char(ch, "`&Wear flags``:   [%s]\n\r", flag_string(wear_flags, pObj->wear_flags));
     printf_to_char(ch, "`&Extra flags``:  [%s]\n\r", flag_string(extra_flags, pObj->extra_flags));
     printf_to_char(ch, "`&Extra2 flags``: [%s]\n\r", flag_string(extra2_flags, pObj->extra2_flags));
-    printf_to_char(ch, "`&Material``:     [%s]\n\r", pObj->material);
     printf_to_char(ch, "`&Condition``:    [%5d]\n\r", pObj->condition);
     printf_to_char(ch, "`&Timer``:        [%5d]\n\r", pObj->init_timer);
     printf_to_char(ch, "`&Weight``:       [%5d]\n\r`&Cost``:        [%5d]\n\r", pObj->weight, pObj->cost);
@@ -799,12 +798,10 @@ EDIT(oedit_clone){
     free_string(pObj->name);
     free_string(pObj->short_descr);
     free_string(pObj->description);
-    free_string(pObj->material);
 
     pObj->name = str_dup(pClone->name);
     pObj->short_descr = str_dup(pClone->short_descr);
     pObj->description = str_dup(pClone->description);
-    pObj->material = str_dup(pClone->material);
     pObj->level = pClone->level;
     pObj->item_type = pClone->item_type;
     pObj->extra_flags = pClone->extra_flags;
@@ -1394,25 +1391,6 @@ EDIT(oedit_type){
     return false;
 }
 
-/*****************************************************************************
- *	oedit_material
- *
- *	edit the material property of an object
- *****************************************************************************/
-EDIT(oedit_material){
-    struct objectprototype *pObj;
-
-    EDIT_OBJ(ch, pObj);
-    if (argument[0] == '\0') {
-        send_to_char("Syntax:  material [string]\n\r", ch);
-        return false;
-    }
-
-    free_string(pObj->material);
-    pObj->material = str_dup(argument);
-    send_to_char("Material set.\n\r", ch);
-    return true;
-}
 
 /** edit the timer property of an object (auto destroy)	Added by Monrick, 5/2008 */
 EDIT(oedit_timer){
