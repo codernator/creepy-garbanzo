@@ -89,8 +89,8 @@ struct objectprototype *objectprototype_clone(struct objectprototype *source, un
     struct objectprototype *clone;
     /*@observer@*/struct affect_data *affsource;
     struct affect_data *affclone;
-    //struct extra_descr_data *extrasource;
-    //struct extra_descr_data *extraclone;
+    /*@observer@*/struct extra_descr_data *extrasource;
+    struct extra_descr_data *extraclone;
     int i;
 
     clone = malloc(sizeof(struct objectprototype));
@@ -117,8 +117,12 @@ struct objectprototype *objectprototype_clone(struct objectprototype *source, un
         for (i = 0; i < 5; i++)
             clone->value[i] = source->value[i];
 
-
-        // TODO extra
+        for (extrasource = source->extra_descr; extrasource != NULL; extrasource = extrasource->next) {
+            extraclone = extradescrdata_clone(extrasource);
+            assert(extraclone->next == NULL);
+            extraclone->next = clone->extra_descr;
+            clone->extra_descr = extraclone;
+        }
 
         for (affsource = source->affected; affsource != NULL; affsource = affsource->next) {
             affclone = affectdata_clone(affsource);
@@ -140,6 +144,10 @@ struct objectprototype *objectprototype_deserialize(const struct array_list *dat
 {
     struct objectprototype *prototypedata;
     const char *entry;
+    const char *entrydata;
+    struct array_list *serialized;
+    struct extra_descr_data *extra;
+    struct affect_data *affect;
 
 
     prototypedata = malloc(sizeof(struct objectprototype));
@@ -160,6 +168,47 @@ struct objectprototype *objectprototype_deserialize(const struct array_list *dat
     deserialize_assign_uint(data, prototypedata->item_type, "item_type");
 
 
+    entry = kvp_array_find(data, "affects");
+    if (entry != NULL) {
+        struct array_list *affects = database_parse_stream(entry);
+        size_t i;
+
+        for (i = 0; i < affects->top; i++) {
+
+            entrydata = kvp_array_valueat(affects, i);
+            assert(entrydata != NULL);
+            serialized = database_parse_stream(entrydata);
+            affect = affectdata_deserialize(serialized);
+            kvp_free_array(serialized);
+            assert(affect->next == NULL);
+
+            affect->next = prototypedata->affected;
+            prototypedata->affected = affect;
+        }
+
+        kvp_free_array(affects);
+    }
+
+    entry = kvp_array_find(data, "extras");
+    if (entry != NULL) {
+        struct array_list *extras = database_parse_stream(entry);
+        size_t i;
+
+        for (i = 0; i < extras->top; i++) {
+            entrydata = kvp_array_valueat(extras, i);
+            assert(entrydata != NULL);
+            serialized = database_parse_stream(entrydata);
+            extra = extradescrdata_deserialize(serialized);
+            kvp_free_array(serialized);
+            assert(extra->next == NULL);
+
+            extra->next = prototypedata->extra_descr;
+            prototypedata->extra_descr = extra;
+        }
+
+        kvp_free_array(extras);
+    }
+
     /** Place on list. */
     headlist_add(prototypedata);
 
@@ -175,8 +224,7 @@ struct array_list *objectprototype_serialize(const struct objectprototype *obj)
 {
     struct array_list *answer;
 
-    // TODO consider counting the number of affects to tailor the size of this array.
-    answer = kvp_create_array(256);
+    answer = kvp_create_array(20);
 
     serialize_take_string(answer, "vnum", ulong_to_string(obj->vnum));
     serialize_copy_string(answer, "name", obj->name);
@@ -201,34 +249,40 @@ struct array_list *objectprototype_serialize(const struct objectprototype *obj)
     serialize_take_string(answer, "inittimer", int_to_string(obj->init_timer));
     serialize_take_string(answer, "condition", int_to_string(obj->condition));
 
-    /** append affects */
     {
         struct affect_data *affect = obj->affected;
+        // TODO consider counting the number of affects to tailor the size of this array.
+        struct array_list *affects = kvp_create_array(256);
 
         affect = obj->affected;
         while (affect != NULL) {
             struct array_list *serialized_affect;
             serialized_affect = affectdata_serialize(affect);
-            serialize_take_string(answer, "affect", database_create_stream(serialized_affect));
+            serialize_take_string(affects, "affect", database_create_stream(serialized_affect));
             kvp_free_array(serialized_affect);
 
             affect = affect->next;
         }
+
+        serialize_take_string(answer, "affects", database_create_stream(affects));
+        kvp_free_array(affects);
     }
 
-    /** append extras */
     {
         struct extra_descr_data *desc = obj->extra_descr;
+        struct array_list *extras = kvp_create_array(256);
         while (desc != NULL) {
             struct array_list *serialized_extra;
             serialized_extra = extradescrdata_serialize(desc);
-            serialize_take_string(answer, "extra", database_create_stream(serialized_extra));
+            serialize_take_string(extras, "extra", database_create_stream(serialized_extra));
             kvp_free_array(serialized_extra);
 
             desc = desc->next;
         }
-    }
 
+        serialize_take_string(answer, "extras", database_create_stream(extras));
+        kvp_free_array(extras);
+    }
 
     return answer;
 }

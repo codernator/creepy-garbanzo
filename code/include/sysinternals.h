@@ -120,6 +120,7 @@ HASHVALUETYPE calchashvalue(const char *key);
 /*@only@*/struct array_list *kvp_create_array(size_t numelements);
 /*@observer@*//*@null@*/const char *kvp_array_find(const struct array_list *array, const char *key);
 void kvp_free_array(/*@only@*//*@null@*/struct array_list *array);
+/*@observer@*//*@null@*/const char *kvp_array_valueat(const struct array_list *array, const size_t idx); 
 
 /*@only@*/struct keyvaluepairhash *keyvaluepairhash_create(/*@observer@*/struct array_list *array, size_t numelements, size_t numbuckets);
 /*@observer@*//*@null@*/const char *keyvaluepairhash_get(struct keyvaluepairhash *hash, const char * const key);

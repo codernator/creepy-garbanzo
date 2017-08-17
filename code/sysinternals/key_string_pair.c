@@ -63,6 +63,12 @@ const char *kvp_array_find(const struct array_list *array, const char *key)
     return NULL;
 }
 
+const char *kvp_array_valueat(const struct array_list *array, const size_t idx) {
+    assert(idx < array->top);
+    assert(idx > 0);
+    return ((struct key_string_pair *)array->items)[idx].value;
+}
+
 void kvp_free_array(struct array_list *array)
 {
     struct key_string_pair *node; 
