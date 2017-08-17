@@ -24,7 +24,6 @@ struct affect_data *affectdata_clone(struct affect_data *source)
     assert(target != NULL);
     memset(target, 0, sizeof(struct affect_data));
 
-
     target->location = source->location;
     target->modifier = source->modifier;
     target->where = source->where;
@@ -32,7 +31,6 @@ struct affect_data *affectdata_clone(struct affect_data *source)
     target->duration = source->duration;
     target->bitvector = source->bitvector;
     target->level = source->level;
-
 
     return target;
 }

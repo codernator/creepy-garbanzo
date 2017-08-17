@@ -1448,8 +1448,8 @@ struct pc_data {
 struct extra_descr_data {
     /*@owned@*//*@null@*/struct extra_descr_data *next;
     bool valid;
-    /*@shared@*/char *keyword;        /* Keyword in look/examine */
-    /*@shared@*/char *description;    /* What to see    */
+    /*@only@*/char *keyword;        /* Keyword in look/examine */
+    /*@only@*/char *description;    /* What to see    */
 };
 
 
@@ -2227,16 +2227,13 @@ void affectdata_free(/*@only@*/struct affect_data *data);
 /*@only@*/struct affect_data *affectdata_deserialize(const struct array_list *data);
 /* ~affect_data.c */
 
-
-/* recycle.c */
-struct buf_type * new_buf(void);
-struct buf_type *new_buf_size(int size);
-void free_buf(/*@owned@*/struct buf_type * buffer);
-void clear_buf(struct buf_type * buffer);
-bool add_buf(struct buf_type *buffer, const char *string);
-/*@observer@*/char *buf_string(/*@observer@*/struct buf_type * buffer);
-void printf_buf(struct buf_type * buffer, char *fmt, ...);
-/* ~recycle.c */
+/* extra_descr_data.c */
+/*@only@*/struct extra_descr_data *extradescrdata_new();
+/*@only@*/struct extra_descr_data *extradescrdata_clone(/*@observer@*/struct extra_descr_data *source);
+void extradescrdata_free(/*@only@*/struct extra_descr_data *data);
+/*@only@*/struct extra_descr_data *extradescrdata_deserialize(const struct array_list *data);
+/*@only@*/struct array_list *extradescrdata_serialize(const struct extra_descr_data *extra);
+/* ~extra_descr_data.c */
 
 /* area.c */
 /*@abstract@*/struct area_filter {
@@ -2253,5 +2250,17 @@ void printf_buf(struct buf_type * buffer, char *fmt, ...);
 /*@dependent@*/struct area_data *area_deserialize(/*@observer@*/const struct array_list *data, /*@observer@*/const char *filename);
 void area_free(/*@owned@*/struct area_data *areadata);
 /* ~area.c */
+
+
+
+/* recycle.c */
+struct buf_type * new_buf(void);
+struct buf_type *new_buf_size(int size);
+void free_buf(/*@owned@*/struct buf_type * buffer);
+void clear_buf(struct buf_type * buffer);
+bool add_buf(struct buf_type *buffer, const char *string);
+/*@observer@*/char *buf_string(/*@observer@*/struct buf_type * buffer);
+void printf_buf(struct buf_type * buffer, char *fmt, ...);
+/* ~recycle.c */
 
 #endif  /* __MERC_H */

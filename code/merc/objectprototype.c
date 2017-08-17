@@ -221,11 +221,7 @@ struct array_list *objectprototype_serialize(const struct objectprototype *obj)
         struct extra_descr_data *desc = obj->extra_descr;
         while (desc != NULL) {
             struct array_list *serialized_extra;
-            array_list_create(serialized_extra, struct key_string_pair, 32);
-
-            serialize_copy_string(serialized_extra, "keyword", desc->keyword);
-            serialize_copy_string(serialized_extra, "description", desc->description);
-
+            serialized_extra = extradescrdata_serialize(desc);
             serialize_take_string(answer, "extra", database_create_stream(serialized_extra));
             kvp_free_array(serialized_extra);
 
@@ -272,16 +268,21 @@ void objectprototype_free(struct objectprototype *prototypedata)
         prototypedata->affected = NULL;
     }
 
-    /** Clean up extra descriptions */
-    if (prototypedata->extra_descr != NULL) {
-        //TODO - extras managment.
-        /*@dependent@*/struct extra_descr_data *ed;
-        /*@dependent@*/struct extra_descr_data *ed_next;
-        for (ed = prototypedata->extra_descr; ed != NULL; ed = ed_next) {
-            ed_next = ed->next;
-            free_extra_descr(ed);
-        }
+    /** Clean up extras */
+    if (prototypedata->affected != NULL) {
+        /*@only@*/struct extra_descr_data *extra;
+        /*@only@*/struct extra_descr_data *extra_next;
+        extra_next = prototypedata->extra_descr;
+        while (extra_next != NULL)
+            {
+                extra = extra_next;
+                extra_next = extra_next->next;
+                extradescrdata_free(extra);
+            }
+        extra = NULL; // trixie on splint
+        prototypedata->extra_descr = NULL;
     }
+
 
     /** Clean up strings */
     if (prototypedata->name != NULL) free(prototypedata->name);
