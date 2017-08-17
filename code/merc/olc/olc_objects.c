@@ -212,56 +212,60 @@ EDIT(oedit_create)
 
 EDIT(oedit_clone)
 {
-    struct objectprototype *prototype;
-    struct objectprototype *pClone;
-    struct affect_data *pAff;
-    struct affect_data *pNew;
-    int value;
-    int iter;
+    struct objectprototype *source;
+    char arg1[MAX_STRING_LENGTH];
+    char arg2[MAX_STRING_LENGTH];
+    struct area_data *targetarea;
+    unsigned long targetvnum;
+    unsigned long sourcevnum;
 
-    EDIT_OBJ(ch, prototype);
-    value = parse_int(argument);
-    if (argument[0] == '\0' || value == 0) {
-        send_to_char("Syntax:  clone [existing vnum]\n\r", ch);
+    argument = one_argument(argument, arg1);
+    (void)one_argument(argument, arg2);
+
+    if (arg1[0] == '\0' || !is_number(arg1)) {
+        send_to_char("OEdit syntax:  clone [target vnum] <source vnum>\n\r", ch);
+        return false;
+    }
+    targetvnum = parse_int(arg1);
+    if (objectprototype_getbyvnum(targetvnum) != NULL) {
+        printf_to_char(ch, "OEdit:  Target vnum %lu already exists.\n\r", targetvnum);
+        return false;
+    }
+    targetarea = area_getbycontainingvnum(targetvnum);
+    if (!targetarea) {
+        printf_to_char(ch, "OEdit: Target vnum %lu is not assigned an area.\n\r", targetvnum);
         return false;
     }
 
-    if ((pClone = objectprototype_getbyvnum(value)) == NULL) {
-        send_to_char("OEdit:  The source object does not exist.\n\r", ch);
+    if (!IS_BUILDER(ch, targetarea)) {
+        printf_to_char(ch, "OEdit: Target vnum %lu is in an area you cannot build in.\n\r", targetvnum);
         return false;
     }
 
-    free_string(prototype->name);
-    free_string(prototype->short_descr);
-    free_string(prototype->description);
-
-    prototype->name = str_dup(pClone->name);
-    prototype->short_descr = str_dup(pClone->short_descr);
-    prototype->description = str_dup(pClone->description);
-    prototype->item_type = pClone->item_type;
-    prototype->extra_flags = pClone->extra_flags;
-    prototype->extra2_flags = pClone->extra2_flags;
-    prototype->wear_flags = pClone->wear_flags;
-    prototype->condition = pClone->condition;
-    prototype->weight = pClone->weight;
-
-    for (iter = 0; iter < 5; iter++)
-        prototype->value[iter] = pClone->value[iter];
-
-    for (pAff = pClone->affected; pAff != NULL; pAff = pAff->next) {
-        pNew = new_affect();
-        pNew->location = pAff->location;
-        pNew->modifier = pAff->modifier;
-        pNew->where = pAff->where;
-        pNew->type = pAff->type;
-        pNew->duration = pAff->duration;
-        pNew->bitvector = pAff->bitvector;
-        pNew->level = pAff->level;
-        pNew->next = prototype->affected;
-        prototype->affected = pNew;
+    if (arg2[0] != '\0')
+    {
+        if (!is_number(arg2))
+        {
+            send_to_char("OEdit:  The source vnum must be a number.\n\r", ch);
+            return false;
+        }
+        sourcevnum = parse_int(arg2);
+        source = objectprototype_getbyvnum(sourcevnum);
+        if (source == NULL)
+        {
+            printf_to_char(ch, "OEdit:  Source vnum %lu does not yet exist.\n\r", sourcevnum);
+            return false;
+        }
+    }
+    else
+    {
+        EDIT_OBJ(ch, source);
+        sourcevnum = source->vnum;
     }
 
-    send_to_char("Object Cloned.\n\r", ch);
+    ch->desc->ed_data = objectprototype_clone(source, targetvnum, targetarea);
+
+    printf_to_char(ch, "Object %lu cloned. You are now editing object %lu.\n\r", sourcevnum, targetvnum);
     return true;
 }
 

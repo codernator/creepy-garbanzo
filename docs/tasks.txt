@@ -1,6 +1,11 @@
 NEW OBJECT SAVE:
 ================
-Values array - save simple numeric values. Evaluate by item type right after loading. (see db.c load_objects and olc_save save_objects) 
+refactor: Values array - save simple numeric values. Evaluate by item type right after loading. (see db.c load_objects and olc_save save_objects) 
+refactor: affect_data object file (create, clone, serialize, etc).
+refactor: extra_descr_data object file 
+refactor: after affect_data and extra_descr, remove recycle.h from objectprototype
+missing: extra clone in objectprototype->clone
+bug: cloning an object to a new area might cause breakage when the new object is set in ch->desc->edit_data
 
 FIXING COMBAT:
 ==============

@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "serialize.h"
 
+
 #ifndef OBJPROTO_MAX_KEY_HASH
 // Consult http://www.planetmath.org/goodhashtableprimes for a nice writeup on numbers to use.
 // Bear in mind that whatever value is used here translates to an array containing this number of elements.
@@ -83,6 +84,58 @@ struct objectprototype *objectprototype_new(unsigned long vnum)
     return prototypedata;
 }
 
+struct objectprototype *objectprototype_clone(struct objectprototype *source, unsigned long vnum, struct area_data *area)
+{
+    struct objectprototype *clone;
+    /*@observer@*/struct affect_data *affsource;
+    struct affect_data *affclone;
+    //struct extra_descr_data *extrasource;
+    //struct extra_descr_data *extraclone;
+    int i;
+
+    clone = malloc(sizeof(struct objectprototype));
+    assert(clone != NULL);
+
+    {
+        memset(clone, 0, sizeof(struct objectprototype));
+        clone->vnum = vnum;
+        clone->area = area;
+        /*@-mustfreeonly@*/
+        clone->name = strdup(source->name);
+        clone->short_descr = strdup(source->short_descr);
+        clone->description = strdup(source->description);
+        /*@+mustfreeonly@*/
+        clone->item_type = source->item_type;
+        clone->extra_flags = source->extra_flags;
+        clone->extra2_flags = source->extra2_flags;
+        clone->wear_flags = source->wear_flags;
+        clone->init_timer = source->init_timer;
+        clone->condition = source->condition;
+        clone->weight = source->weight;
+        clone->cost = source->cost;
+
+        for (i = 0; i < 5; i++)
+            clone->value[i] = source->value[i];
+
+
+        // TODO extra
+
+        for (affsource = source->affected; affsource != NULL; affsource = affsource->next) {
+            affclone = affectdata_clone(affsource);
+            affclone->next = clone->affected;
+            clone->affected = affclone;
+        }
+    }
+
+    /** Place on list. */
+    headlist_add(clone);
+
+    /** Store in hash table. */
+    lookup_add(vnum, clone);
+
+    return clone;
+}
+
 struct objectprototype *objectprototype_deserialize(const struct array_list *data)
 {
     struct objectprototype *prototypedata;
@@ -155,15 +208,7 @@ struct array_list *objectprototype_serialize(const struct objectprototype *obj)
         affect = obj->affected;
         while (affect != NULL) {
             struct array_list *serialized_affect;
-            array_list_create(serialized_affect, struct key_string_pair, 8);
-
-            serialize_take_string(serialized_affect, "where", int_to_string(affect->where));
-            serialize_take_string(serialized_affect, "type", int_to_string(affect->type));
-            serialize_take_string(serialized_affect, "duration", int_to_string(affect->duration));
-            serialize_take_string(serialized_affect, "location", int_to_string(affect->location));
-            serialize_take_string(serialized_affect, "modifier", long_to_string(affect->modifier));
-            serialize_take_string(serialized_affect, "bitvector", long_to_string(affect->bitvector));
-
+            serialized_affect = affectdata_serialize(affect);
             serialize_take_string(answer, "affect", database_create_stream(serialized_affect));
             kvp_free_array(serialized_affect);
 
@@ -214,13 +259,17 @@ void objectprototype_free(struct objectprototype *prototypedata)
 
     /** Clean up affects */
     if (prototypedata->affected != NULL) {
-        //TODO - affects management.
-        /*@dependent@*/struct affect_data *paf;
-        /*@dependent@*/struct affect_data *paf_next;
-        for (paf = prototypedata->affected; paf != NULL; paf = paf_next) {
-            paf_next = paf->next;
-            free_affect(paf);
+        /*@only@*/struct affect_data *paf;
+        /*@only@*/struct affect_data *paf_next;
+        paf_next = prototypedata->affected;
+        while (paf_next != NULL)
+        {
+            paf = paf_next;
+            paf_next = paf_next->next;
+            affectdata_free(paf);
         }
+        paf = NULL; // trixie on splint
+        prototypedata->affected = NULL;
     }
 
     /** Clean up extra descriptions */

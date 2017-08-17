@@ -411,9 +411,9 @@ extern const struct message_types message_type_table[];
 
 
 struct affect_data {
-    struct affect_data * next;
+    /*@owned@*//*@null@*//*@partial@*/struct affect_data * next;
     bool valid;
-    struct dynamic_skill *skill;
+    /*@dependent@*/struct dynamic_skill *skill;
     int where;
     int type;
     int level;
@@ -1461,8 +1461,6 @@ struct extra_descr_data {
     /*@dependent@*//*@null@*//*@partial@*/struct objectprototype *prev;
 
     unsigned long vnum;
-    /*@owned@*//*@null@*/struct extra_descr_data *extra_descr;
-    /*@dependent@*//*@null@*/struct affect_data *affected;
     /*@dependent@*//*@null@*/struct area_data *area;
     /*@only@*/char *name;
     /*@only@*/char *short_descr;
@@ -1477,6 +1475,8 @@ struct extra_descr_data {
     int weight;
     unsigned int cost;
     long value[5];
+    /*@owned@*//*@null@*/struct extra_descr_data *extra_descr;
+    /*@only@*//*@null@*/struct affect_data *affected;
 };
 
 #define OBJECT_SHORT(obj)       ((obj)->objprototype->short_descr)
@@ -2208,6 +2208,7 @@ struct objectprototype_filter {
 extern const OBJECTPROTOTYPE_FILTER objectprototype_empty_filter;
 
 /*@dependent@*/struct objectprototype *objectprototype_new(unsigned long vnum);
+/*@dependent@*/struct objectprototype *objectprototype_clone(/*@observer@*/struct objectprototype *target, unsigned long vnum, /*@dependent@*/struct area_data *area);
 void objectprototype_free(/*@owned@*/struct objectprototype *templatedata);
 int objectprototype_list_count();
 /*@dependent@*//*@null@*/struct objectprototype *objectprototype_iterator_start(const OBJECTPROTOTYPE_FILTER *filter);
@@ -2216,6 +2217,16 @@ int objectprototype_list_count();
 /*@only@*/struct array_list *objectprototype_serialize(const struct objectprototype *obj);
 /*@dependent@*/struct objectprototype *objectprototype_deserialize(const struct array_list *data);
 /* ~objectprototype.c */
+
+
+/* affect_data.c */
+/*@only@*/struct affect_data *affectdata_new();
+/*@only@*/struct affect_data *affectdata_clone(/*@observer@*/struct affect_data *source);
+void affectdata_free(/*@only@*/struct affect_data *data);
+/*@only@*/struct array_list *affectdata_serialize(const struct affect_data *source);
+/*@only@*/struct affect_data *affectdata_deserialize(const struct array_list *data);
+/* ~affect_data.c */
+
 
 /* recycle.c */
 struct buf_type * new_buf(void);
