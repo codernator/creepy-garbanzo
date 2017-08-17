@@ -76,7 +76,6 @@ struct area_data *area_new(unsigned long vnum)
         areadata->area_flags = AREA_ADDED;
         areadata->security = 1;
         areadata->builders = strdup("");
-        areadata->credits = strdup("");
         areadata->empty = true;
 
         {
@@ -109,9 +108,6 @@ struct array_list *area_serialize(const struct area_data *areadata)
     if (areadata->builders[0] != '\0') {
         serialize_copy_string(answer, "builders", areadata->builders);
     }
-    if (areadata->credits[0] != '\0') {
-        serialize_copy_string(answer, "credits", areadata->credits);
-    }
     serialize_take_string(answer, "min_vnum", ulong_to_string(areadata->min_vnum));
     serialize_take_string(answer, "max_vnum", ulong_to_string(areadata->max_vnum));
     serialize_take_string(answer, "llevel", uint_to_string(areadata->llevel));
@@ -139,7 +135,6 @@ struct area_data *area_deserialize(const struct array_list *data, const char *fi
     deserialize_assign_flag(data, areadata->area_flags, "flags");
     deserialize_assign_uint(data, areadata->security, "security");
     deserialize_assign_string_default(data, areadata->builders, "builders", "");
-    deserialize_assign_string_default(data, areadata->credits, "credits", "");
     deserialize_assign_ulong(data, areadata->min_vnum, "min_vnum");
     deserialize_assign_ulong(data, areadata->max_vnum, "max_vnum");
     deserialize_assign_uint(data, areadata->llevel, "llevel");
@@ -164,7 +159,6 @@ void area_free(struct area_data *areadata)
 
     free(areadata->name);
     free(areadata->description);
-    free(areadata->credits);
     free(areadata->builders);
 
     free(areadata);

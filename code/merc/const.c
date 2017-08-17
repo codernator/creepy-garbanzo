@@ -46,7 +46,6 @@ const struct item_type item_table[] =
 	{ ITEM_SCARAB,	   "scarab",	    "ITEM_SCARAB"     },
 	{ ITEM_DOLL,	   "doll",	    "ITEM_DOLL"	      },
 	{ ITEM_INVITATION, "invitation",    "ITEM_INVITATION" },
-	{ ITEM_SOCKETS,	   "settable",	    "ITEM_SETTABLE"   },
 	{ ITEM_DICE,	   "dice",	    "ITEM_DICE"	      },
 	{ 0,		   NULL,	    ""		      }
 };

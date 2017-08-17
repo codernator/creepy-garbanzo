@@ -73,7 +73,7 @@ void test_database_write()
     database_write_stream(db, dbstream);
     database_close(db);
     free(dbstream);
-    
+
     printf("%s\n", "complete");
 }
 

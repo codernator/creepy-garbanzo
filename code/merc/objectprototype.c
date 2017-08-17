@@ -122,7 +122,8 @@ struct array_list *objectprototype_serialize(const struct objectprototype *obj)
 {
     struct array_list *answer;
 
-    answer = kvp_create_array(20);
+    // TODO consider counting the number of affects to tailor the size of this array.
+    answer = kvp_create_array(256);
 
     serialize_take_string(answer, "vnum", ulong_to_string(obj->vnum));
     serialize_copy_string(answer, "name", obj->name);
@@ -137,78 +138,11 @@ struct array_list *objectprototype_serialize(const struct objectprototype *obj)
     serialize_take_string(answer, "wear", flag_to_string(obj->wear_flags));
 
     serialize_copy_string(answer, "type", item_name_by_type(obj->item_type));
-    switch (obj->item_type) {
-      default:
-          serialize_take_string(answer, "value1", flag_to_string((unsigned long)obj->value[0]));
-          serialize_take_string(answer, "value2", flag_to_string((unsigned long)obj->value[1]));
-          serialize_take_string(answer, "value3", flag_to_string((unsigned long)obj->value[2]));
-          serialize_take_string(answer, "value4", flag_to_string((unsigned long)obj->value[3]));
-          serialize_take_string(answer, "value5", flag_to_string((unsigned long)obj->value[4]));
-          break;
-
-      case ITEM_DRINK_CON:
-      case ITEM_FOUNTAIN:
-          serialize_take_string(answer, "value1", long_to_string(obj->value[0]));
-          serialize_take_string(answer, "value2", long_to_string(obj->value[1]));
-          serialize_copy_string(answer, "value3", liq_table[obj->value[2]].liq_name);
-          serialize_take_string(answer, "value4", long_to_string(obj->value[3]));
-          serialize_take_string(answer, "value5", long_to_string(obj->value[4]));
-          break;
-
-      case ITEM_CONTAINER:
-          serialize_take_string(answer, "value1", long_to_string(obj->value[0]));
-          serialize_take_string(answer, "value2", flag_to_string((unsigned long)obj->value[1]));
-          serialize_take_string(answer, "value3", long_to_string(obj->value[2]));
-          serialize_take_string(answer, "value4", long_to_string(obj->value[3]));
-          serialize_take_string(answer, "value5", long_to_string(obj->value[4]));
-          break;
-
-      case ITEM_WEAPON:
-          serialize_copy_string(answer, "value1", weapon_name((int)obj->value[2]));
-          serialize_take_string(answer, "value2", long_to_string(obj->value[1]));
-          serialize_take_string(answer, "value3", long_to_string(obj->value[2]));
-          serialize_copy_string(answer, "value4", attack_table[obj->value[3]].name);
-          serialize_take_string(answer, "value5", flag_to_string((unsigned long)obj->value[4]));
-          break;
-
-      case ITEM_PILL:
-      case ITEM_POTION:
-      case ITEM_SCROLL:
-          {
-              struct dynamic_skill *skills[4];
-              int idx;
-
-              for (idx = 1; idx <= 4; idx++)
-                  skills[idx - 1] = resolve_skill_sn((int)obj->value[idx]);
-
-              serialize_take_string(answer, "value1", long_to_string(obj->value[0]));
-              if (skills[0] != NULL)
-                  serialize_copy_string(answer, "value2", skills[0]->name);
-              if (skills[1] != NULL)
-                  serialize_copy_string(answer, "value3", skills[1]->name);
-              if (skills[2] != NULL)
-                  serialize_copy_string(answer, "value4", skills[2]->name);
-              if (skills[3] != NULL)
-                  serialize_copy_string(answer, "value5", skills[3]->name);
-              break;
-          }
-
-      case ITEM_STAFF:
-      case ITEM_WAND:
-          {
-              struct dynamic_skill *skill;
-
-              skill = resolve_skill_sn((int)obj->value[3]);
-              serialize_take_string(answer, "value1", long_to_string(obj->value[0]));
-              serialize_take_string(answer, "value2", long_to_string(obj->value[1]));
-              serialize_take_string(answer, "value3", long_to_string(obj->value[2]));
-              if (skill != NULL)
-                  serialize_copy_string(answer, "value4", skill->name);
-              serialize_take_string(answer, "value5", long_to_string(obj->value[4]));
-              break;
-          }
-    }
-
+    serialize_take_string(answer, "value1", flag_to_string((unsigned long)obj->value[0]));
+    serialize_take_string(answer, "value2", flag_to_string((unsigned long)obj->value[1]));
+    serialize_take_string(answer, "value3", flag_to_string((unsigned long)obj->value[2]));
+    serialize_take_string(answer, "value4", flag_to_string((unsigned long)obj->value[3]));
+    serialize_take_string(answer, "value5", flag_to_string((unsigned long)obj->value[4]));
     serialize_take_string(answer, "weight", int_to_string(obj->weight));
     serialize_take_string(answer, "cost", uint_to_string(obj->cost));
     serialize_take_string(answer, "inittimer", int_to_string(obj->init_timer));

@@ -126,7 +126,6 @@ DECLARE_OLC_FUN(aedit_builder);
 DECLARE_OLC_FUN(aedit_vnum);
 DECLARE_OLC_FUN(aedit_lvnum);
 DECLARE_OLC_FUN(aedit_uvnum);
-DECLARE_OLC_FUN(aedit_credits);
 DECLARE_OLC_FUN(aedit_complete);
 DECLARE_OLC_FUN(aedit_llevel);
 DECLARE_OLC_FUN(aedit_ulevel);

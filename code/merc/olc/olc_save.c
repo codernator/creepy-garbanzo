@@ -13,18 +13,19 @@
 static char *fix_string(const char *str);
 static char *fwrite_flag(long flags, char buf[]);
 static void save_area_list();
-static void save_area(struct area_data * area);
+static void save_area(struct area_data *area);
 static void save_mobprogs(FILE *fp, struct area_data *area);
 static void save_mobile(FILE *fp, struct mob_index_data *mob_idx);
 static void save_mobiles(FILE *fp, struct area_data *area);
-static void save_object(FILE *fp, struct objectprototype *pObjIndex);
-static void save_objects(FILE *fp, struct area_data *area);
+static void save_objects(struct database_controller *db, struct area_data *area);
+static void save_object(struct database_controller *db, struct objectprototype *pObjIndex);
+//static void save_object(FILE *fp, struct objectprototype *pObjIndex);
+//static void save_objects(FILE *fp, struct area_data *area);
 static void save_rooms(FILE *fp, struct area_data *area);
 static void save_door_resets(FILE *fp, struct area_data *area);
 static void save_resets(FILE *fp, struct area_data *area);
 static void save_shops(FILE *fp, struct area_data *area);
 static void save_helps(const char const *filename);
-static void save_area(struct area_data *area);
 static void show_save_help(struct char_data *ch);
 
 
@@ -379,19 +380,7 @@ void save_mobiles(FILE *fp, struct area_data *area)
 
 
 
-//void save_object(FILE *fp, struct objectprototype *pObjIndex)
-//{
-//    struct struct array_list *serialized;
-//    char *dbstream;
-//
-//    serialized = objectprototype_serialize(pObjIndex);
-//    dbstream = database_create_stream(serialized);
-//    keyvaluepair_free(serialized);
-//    database_write_stream(db, dbstream);
-//    free(dbstream);
-//}
-
-void save_object(FILE *fp, struct objectprototype *pObjIndex)
+void save_object_old(FILE *fp, struct objectprototype *pObjIndex)
 {
     struct affect_data *pAf;
     struct extra_descr_data *extra;
@@ -524,18 +513,31 @@ void save_object(FILE *fp, struct objectprototype *pObjIndex)
     return;
 }
 
-void save_objects(FILE *fp, struct area_data *area)
+void save_object(struct database_controller *db, struct objectprototype *pObjIndex)
+{
+    struct array_list *serialized;
+    char *dbstream;
+
+    serialized = objectprototype_serialize(pObjIndex);
+    dbstream = database_create_stream(serialized);
+    kvp_free_array(serialized);
+    database_write_stream(db, dbstream);
+    free(dbstream);
+    return;
+}
+
+void save_objects(struct database_controller *db, struct area_data *area)
 {
     struct objectprototype *pObj;
     long iter;
 
-    fprintf(fp, "#OBJECTS\n");
+    fprintf(db->_cfptr, "#OBJECTS\n");
 
     for (iter = area->min_vnum; iter <= area->max_vnum; iter++)
         if ((pObj = objectprototype_getbyvnum(iter)))
-            save_object(fp, pObj);
+            save_object(db, pObj);
 
-    fprintf(fp, "#0\n\n\n\n");
+    fprintf(db->_cfptr, "#0\n\n\n\n");
     return;
 }
 
@@ -824,7 +826,7 @@ void save_area(struct area_data *area)
     }
 
     save_mobiles(db->_cfptr, area);
-    save_objects(db->_cfptr, area);
+    save_objects(db, area);
     save_rooms(db->_cfptr, area);
     save_mobprogs(db->_cfptr, area);
     save_resets(db->_cfptr, area);

@@ -2318,27 +2318,6 @@ void identify_item(struct char_data *ch, struct gameobject *obj)
                          obj->value[0], obj->value[1], obj->value[2], obj->value[3]);
 
           break;
-      case ITEM_SOCKETS:
-          send_to_char("Gem type is: ", ch);
-          switch (obj->value[0]) {
-            case 0: send_to_char("none.  Tell an immortal.\n\r", ch);    break;
-            case 1: send_to_char("sapphire.\n\r", ch);   break;
-            case 2: send_to_char("ruby.\n\r", ch);   break;
-            case 3: send_to_char("emerald.\n\r", ch);    break;
-            case 4: send_to_char("diamond.\n\r", ch);    break;
-            case 5: send_to_char("topaz.\n\r", ch);  break;
-            case 6: send_to_char("skull.\n\r", ch);  break;
-            default: send_to_char("Unknown.  Tell an immortal.\n\r", ch);    break;
-          }
-          send_to_char("Gem value is: ", ch);
-          switch (obj->value[1]) {
-            case 0: send_to_char("chip.\n\r", ch);    break;
-            case 1: send_to_char("flawed.\n\r", ch);   break;
-            case 2: send_to_char("flawless.\n\r", ch);   break;
-            case 3: send_to_char("perfect.\n\r", ch);    break;
-            default: send_to_char("Unknown.  Tell an immortal.\n\r", ch);   break;
-          }
-          break;
     }
 
     for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {

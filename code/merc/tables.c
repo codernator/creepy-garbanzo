@@ -472,7 +472,6 @@ const struct flag_type type_flags[] =
     { "faeriefog",        ITEM_FAERIE_FOG, false },
     { "dust",        ITEM_DUST,         false },
     { "doll",        ITEM_DOLL,         true  },
-    { "settable",        ITEM_SOCKETS,    true  },
     { "dice",        ITEM_DICE,         true  },
     { NULL,            0,             0       }
 };

@@ -29,37 +29,11 @@ extern char *string_unpad(char *argument);
 extern void string_append(struct char_data * ch, char **string);
 extern char *string_proper(char *argument);
 
+static bool check_range(long lower, long upper);
 
-/*****************************************************************************
- *      Name:		check_range(lower vnum, upper vnum)
- *      Purpose:	Ensures the range spans only one area.
- *      Called by:	aedit_vnum(olc_act.c).
- ****************************************************************************/
-static bool check_range(long lower, long upper)
+
+EDIT(aedit_show)
 {
-    struct area_data *pArea;
-    int cnt = 0;
-
-    pArea = area_iterator_start(NULL);
-    while (pArea != NULL) {
-        if ((lower <= pArea->min_vnum && pArea->min_vnum <= upper) 
-            || (lower <= pArea->max_vnum && pArea->max_vnum <= upper))
-            ++cnt;
-
-        // TODO - would love to short circuit this because I don't really
-        // care how many overlaps there are, but iterator needs to be freed
-        // first.
-        pArea = area_iterator(pArea, NULL);
-    }
-
-    return cnt == 0;
-}
-
-
-/***************************************************************************
- *	show the properties for an area
- ***************************************************************************/
-EDIT(aedit_show){
     struct area_data *pArea;
 
     EDIT_AREA(ch, pArea);
@@ -72,7 +46,6 @@ EDIT(aedit_show){
     printf_to_char(ch, "`&Players``:      [%d]\n\r", pArea->nplayer);
     printf_to_char(ch, "`&Security``:     [%d]\n\r", pArea->security);
     printf_to_char(ch, "`&Builders``:     [%s]\n\r", pArea->builders);
-    printf_to_char(ch, "`&Credits``:      [%s]\n\r", pArea->credits);
     printf_to_char(ch, "`&Flags``:        [%s]\n\r", flag_string(area_flags, pArea->area_flags));
     if (pArea->llevel > 0 && pArea->ulevel > 0)
         printf_to_char(ch, "`&Levels``:       [%d-%d]\n\r", pArea->llevel, pArea->ulevel);
@@ -83,13 +56,8 @@ EDIT(aedit_show){
     return false;
 }
 
-
-/***************************************************************************
- *	aedit_reset
- *
- *	reset an area
- ***************************************************************************/
-EDIT(aedit_reset){
+EDIT(aedit_reset)
+{
     struct area_data *pArea;
 
     EDIT_AREA(ch, pArea);
@@ -100,14 +68,8 @@ EDIT(aedit_reset){
     return false;
 }
 
-
-
-/***************************************************************************
- *	aedit_create
- *
- *	create a new area
- ***************************************************************************/
-EDIT(aedit_create){
+EDIT(aedit_create)
+{
     struct area_data *pArea;
 
     pArea = area_new(0);
@@ -118,13 +80,8 @@ EDIT(aedit_create){
     return false;
 }
 
-
-/***************************************************************************
- *	aedit_name
- *
- *	set the name of an area
- ***************************************************************************/
-EDIT(aedit_name){
+EDIT(aedit_name)
+{
     struct area_data *pArea;
 
     EDIT_AREA(ch, pArea);
@@ -140,36 +97,8 @@ EDIT(aedit_name){
     return true;
 }
 
-
-/***************************************************************************
- *	aedit_credits
- *
- *	edit the area credits
- ***************************************************************************/
-EDIT(aedit_credits){
-    struct area_data *pArea;
-
-    EDIT_AREA(ch, pArea);
-
-    if (argument[0] == '\0') {
-        send_to_char("Syntax:   credits [$credits]\n\r", ch);
-        return false;
-    }
-
-    free_string(pArea->credits);
-    pArea->credits = str_dup(argument);
-
-    send_to_char("Credits set.\n\r", ch);
-    return true;
-}
-
-
-/***************************************************************************
- *	aedit_file
- *
- *	set the filename for an area
- ***************************************************************************/
-EDIT(aedit_file){
+EDIT(aedit_file)
+{
     struct area_data *pArea;
     char file[MAX_STRING_LENGTH];
     int iter;
@@ -207,12 +136,8 @@ EDIT(aedit_file){
     return true;
 }
 
-/***************************************************************************
- *	aedit_age
- *
- *	set the age of an area
- ***************************************************************************/
-EDIT(aedit_age){
+EDIT(aedit_age)
+{
     struct area_data *pArea;
     char age[MAX_STRING_LENGTH];
 
@@ -230,12 +155,8 @@ EDIT(aedit_age){
     return true;
 }
 
-/***************************************************************************
- *	aedit_security
- *
- *	set the security for an area
- ***************************************************************************/
-EDIT(aedit_security){
+EDIT(aedit_security)
+{
     struct area_data *pArea;
     char sec[MAX_STRING_LENGTH];
     char buf[MAX_STRING_LENGTH];
@@ -265,13 +186,8 @@ EDIT(aedit_security){
     return true;
 }
 
-
-/***************************************************************************
- *	aedit_builder
- *
- *	set the builder for an area
- ***************************************************************************/
-EDIT(aedit_builder){
+EDIT(aedit_builder)
+{
     struct area_data *pArea;
     char name[MAX_STRING_LENGTH];
     char buf[MAX_STRING_LENGTH];
@@ -317,12 +233,8 @@ EDIT(aedit_builder){
     }
 }
 
-/***************************************************************************
- *	aedit_vnum
- *
- *	set the vnum range for an area
- ***************************************************************************/
-EDIT(aedit_vnum){
+EDIT(aedit_vnum)
+{
     struct area_data *pArea;
     char lower[MAX_STRING_LENGTH];
     char upper[MAX_STRING_LENGTH];
@@ -372,13 +284,8 @@ EDIT(aedit_vnum){
     return true;
 }
 
-
-/***************************************************************************
- *	aedit_lvnum
- *
- *	set the lower vnum for an area
- ***************************************************************************/
-EDIT(aedit_lvnum){
+EDIT(aedit_lvnum)
+{
     struct area_data *pArea;
     char lower[MAX_STRING_LENGTH];
     long ilower;
@@ -412,13 +319,8 @@ EDIT(aedit_lvnum){
     return true;
 }
 
-
-/***************************************************************************
- *	aedit_uvnum
- *
- *	set the upper vnum for an area
- ***************************************************************************/
-EDIT(aedit_uvnum){
+EDIT(aedit_uvnum)
+{
     struct area_data *pArea;
     char upper[MAX_STRING_LENGTH];
     long ilower;
@@ -453,13 +355,8 @@ EDIT(aedit_uvnum){
     return true;
 }
 
-
-/***************************************************************************
- *	aedit_llevel
- *
- *	set the lower level for an area
- ***************************************************************************/
-EDIT(aedit_llevel){
+EDIT(aedit_llevel)
+{
     struct area_data *pArea;
     char level[MAX_STRING_LENGTH];
 
@@ -476,13 +373,8 @@ EDIT(aedit_llevel){
     return true;
 }
 
-
-/***************************************************************************
- *	aedit_ulevel
- *
- *	set the lower level for an area
- ***************************************************************************/
-EDIT(aedit_ulevel){
+EDIT(aedit_ulevel)
+{
     struct area_data *pArea;
     char level[MAX_STRING_LENGTH];
 
@@ -499,13 +391,8 @@ EDIT(aedit_ulevel){
     return true;
 }
 
-
-/***************************************************************************
- *	aedit_desc
- *
- *	set the description for an area
- ***************************************************************************/
-EDIT(aedit_desc){
+EDIT(aedit_desc)
+{
     struct area_data *pArea;
 
     EDIT_AREA(ch, pArea);
@@ -516,4 +403,25 @@ EDIT(aedit_desc){
 
     send_to_char("Syntax:  desc\n\r", ch);
     return false;
+}
+
+
+static bool check_range(long lower, long upper)
+{
+    struct area_data *pArea;
+    int cnt = 0;
+
+    pArea = area_iterator_start(NULL);
+    while (pArea != NULL) {
+        if ((lower <= pArea->min_vnum && pArea->min_vnum <= upper)
+            || (lower <= pArea->max_vnum && pArea->max_vnum <= upper))
+            ++cnt;
+
+        // TODO - would love to short circuit this because I don't really
+        // care how many overlaps there are, but iterator needs to be freed
+        // first.
+        pArea = area_iterator(pArea, NULL);
+    }
+
+    return cnt == 0;
 }

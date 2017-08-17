@@ -1995,7 +1995,6 @@ struct gameobject *create_object(struct objectprototype *objprototype)
       case ITEM_CONTAINER:
       case ITEM_DRINK_CON:
       case ITEM_KEY:
-      case ITEM_SOCKETS:
       case ITEM_FOOD:
       case ITEM_BOAT:
       case ITEM_CORPSE_NPC:

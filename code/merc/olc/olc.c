@@ -51,7 +51,6 @@ static const struct olc_cmd_type aedit_table[] =
     { "vnum",	 aedit_vnum	},
     { "lvnum",	 aedit_lvnum	},
     { "uvnum",	 aedit_uvnum	},
-    { "credits",	 aedit_credits	},
     { "llevel",	 aedit_llevel	},
     { "ulevel",	 aedit_ulevel	},
     { "description", aedit_desc	},
@@ -195,14 +194,6 @@ static const struct olc_cmd_type medit_table[] =
  *****************************************************************************/
 
 
-
-
-/***************************************************************************
- *	run_olc_editor
- *
- *	send the descriptor to the proper editor interpreter
- *	based on their current edit state
- ***************************************************************************/
 bool run_olc_editor(struct descriptor_data *d)
 {
     bool success = true;
@@ -239,13 +230,6 @@ bool run_olc_editor(struct descriptor_data *d)
     return success;
 }
 
-
-
-/***************************************************************************
- *	olc_ed_name
- *
- *	get the name of the editor
- ***************************************************************************/
 char *olc_ed_name(struct char_data *ch)
 {
     static char buf[10];
@@ -284,10 +268,6 @@ char *olc_ed_name(struct char_data *ch)
     return buf;
 }
 
-
-/***************************************************************************
- *	olc_ed_vnum
- ***************************************************************************/
 char *olc_ed_vnum(struct char_data *ch)
 {
     struct area_data *pArea;
@@ -341,13 +321,6 @@ char *olc_ed_vnum(struct char_data *ch)
     return buf;
 }
 
-
-
-/*****************************************************************************
- * Name:		show_olc_cmds
- * Purpose:	Format up the commands from given table.
- * Called by:	show_commands(olc_act.c).
- ****************************************************************************/
 static void show_olc_cmds(struct char_data *ch, const struct olc_cmd_type *olc_table)
 {
     struct buf_type *out;
@@ -372,13 +345,6 @@ static void show_olc_cmds(struct char_data *ch, const struct olc_cmd_type *olc_t
     return;
 }
 
-
-
-/*****************************************************************************
- * Name:		show_commands
- * Purpose:	Display all olc commands.
- * Called by:	olc interpreters.
- ****************************************************************************/
 bool show_commands(struct char_data *ch, const char *argument)
 {
     switch (ch->desc->editor) {
@@ -411,12 +377,6 @@ bool show_commands(struct char_data *ch, const char *argument)
     return false;
 }
 
-
-/***************************************************************************
- * Name:		edit_done
- * Purpose:	Resets builder information on completion.
- * Called by:	aedit, redit, oedit, medit(olc.c)
- **************************************************************************/
 bool edit_done(struct char_data *ch)
 {
     ch->desc->ed_data = NULL;
@@ -427,11 +387,6 @@ bool edit_done(struct char_data *ch)
 
 /***************************************************************************
  *                              Interpreters.                               *
- ***************************************************************************/
-/***************************************************************************
- *	aedit
- *
- *	area editing interpreter
  ***************************************************************************/
 void aedit(struct char_data *ch, const char *argument)
 {
@@ -486,12 +441,6 @@ void aedit(struct char_data *ch, const char *argument)
     return;
 }
 
-
-/*****************************************************************************
- *	do_redit
- *
- *	room editing interpreter
- *****************************************************************************/
 void redit(struct char_data *ch, const char *argument)
 {
     struct area_data *pArea;
@@ -541,12 +490,6 @@ void redit(struct char_data *ch, const char *argument)
     return;
 }
 
-
-/*****************************************************************************
- *	do_oedit
- *
- *	object editing interpreter
- *****************************************************************************/
 void oedit(struct char_data *ch, const char *argument)
 {
     struct area_data *pArea;

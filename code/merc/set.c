@@ -1139,7 +1139,6 @@ static SET_OBJ_FN set_obj_v3;
 static SET_OBJ_FN set_obj_v4;
 static SET_OBJ_FN set_obj_extra;
 static SET_OBJ_FN set_obj_extra2;
-static SET_OBJ_FN set_obj_level;
 static SET_OBJ_FN set_obj_weight;
 static SET_OBJ_FN set_obj_cost;
 static SET_OBJ_FN set_obj_timer;
@@ -2085,25 +2084,6 @@ static bool set_obj_value_idx(struct gameobject *obj, int idx, const char *argum
                 case 2:
                     if ((value = liq_lookup(argument)) >= 0) {
                         obj->value[2] = value;
-                        return true;
-                    }
-                    break;
-              }
-              break;
-
-          case ITEM_SOCKETS:
-              switch (idx) {
-                default:
-                    break;
-                case 0:
-                    if ((value = flag_value(socket_flags, argument)) != NO_FLAG) {
-                        obj->value[0] = value;
-                        return true;
-                    }
-                    break;
-                case 1:
-                    if ((value = flag_value(socket_values, argument)) != NO_FLAG) {
-                        obj->value[1] = value;
                         return true;
                     }
                     break;

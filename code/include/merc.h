@@ -819,7 +819,6 @@ struct kill_data {
 #define ITEM_FAERIE_FOG                 42
 #define ITEM_DUST                       43
 #define ITEM_DOLL                       44
-#define ITEM_SOCKETS                    46
 #define ITEM_DICE                       47
 
 /* Values for socketing items (value[0]). * Used in #OBJECTS. */
@@ -1568,7 +1567,6 @@ struct area_data {
     /*@only@*/char *file_name;
     /*@only@*/char *name;
     /*@only@*/char *description;
-    /*@only@*/char *credits;
     /*@only@*/char *builders;
     unsigned long area_flags;
     unsigned long min_vnum;

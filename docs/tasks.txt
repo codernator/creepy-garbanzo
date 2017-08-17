@@ -1,3 +1,7 @@
+NEW OBJECT SAVE:
+================
+Values array - save simple numeric values. Evaluate by item type right after loading. (see db.c load_objects and olc_save save_objects) 
+
 FIXING COMBAT:
 ==============
 Save/load affect level with object. (right now hard-coded to 1).
