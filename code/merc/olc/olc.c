@@ -114,8 +114,6 @@ static const struct olc_cmd_type oedit_table[] =
     { "addapply",  oedit_addapply  },
     { "commands",  show_commands   },
     { "cost",      oedit_cost      },
-    { "create",    oedit_create    },
-    { "clone",     oedit_clone     },
     { "delaffect", oedit_delaffect },
     { "ed",	       oedit_ed	       },
     { "long",      oedit_long      },

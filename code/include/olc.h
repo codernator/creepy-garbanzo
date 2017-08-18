@@ -166,8 +166,6 @@ DECLARE_OLC_FUN(redit_delaffect);
 
 /* object editor */
 DECLARE_OLC_FUN(oedit_show);
-DECLARE_OLC_FUN(oedit_create);
-DECLARE_OLC_FUN(oedit_clone);
 DECLARE_OLC_FUN(oedit_name);
 DECLARE_OLC_FUN(oedit_short);
 DECLARE_OLC_FUN(oedit_long);

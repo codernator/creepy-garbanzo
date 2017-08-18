@@ -1475,8 +1475,8 @@ struct extra_descr_data {
     int weight;
     unsigned int cost;
     long value[5];
-    /*@owned@*//*@null@*/struct extra_descr_data *extra_descr;
-    /*@only@*//*@null@*/struct affect_data *affected;
+    /*@owned@*//*@notnull@*/struct extra_descr_data *extra_descr;
+    /*@owned@*//*@notnull@*/struct affect_data *affected;
 };
 
 #define OBJECT_SHORT(obj)       ((obj)->objprototype->short_descr)
@@ -2216,6 +2216,9 @@ int objectprototype_list_count();
 /*@dependent@*//*@null@*/struct objectprototype *objectprototype_getbyvnum(unsigned long vnum);
 /*@only@*/struct array_list *objectprototype_serialize(const struct objectprototype *obj);
 /*@dependent@*/struct objectprototype *objectprototype_deserialize(const struct array_list *data);
+
+void objectprototype_applyaffect(struct objectprototype *obj, /*@owned@*/struct affect_data *affect);
+bool objectprototype_removeaffect(struct objectprototype *obj, int index);
 /* ~objectprototype.c */
 
 

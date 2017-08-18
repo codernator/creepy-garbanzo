@@ -16,12 +16,13 @@ static bool set_value(struct char_data *ch, struct objectprototype *prototype, c
 static void show_obj_values(struct char_data *ch, struct objectprototype *obj);
 static bool set_obj_values(struct char_data *ch, struct objectprototype *prototype, int value_num, const char *argument);
 
+static void oedit_create(struct char_data *ch, const char *argument);
+static void oedit_clone(struct char_data *ch, const char *argument);
 
 
 void do_oedit(struct char_data *ch, const char *argument)
 {
     struct objectprototype *prototype;
-    struct area_data *pArea;
     char arg[MAX_STRING_LENGTH];
     int value;
 
@@ -45,56 +46,12 @@ void do_oedit(struct char_data *ch, const char *argument)
         return;
     } else {
         if (!str_cmp(arg, "create")) {
-            value = parse_int(argument);
-            if (argument[0] == '\0' || value == 0) {
-                send_to_char("Syntax:  edit object create [vnum]\n\r", ch);
-                return;
-            }
-
-            pArea = area_getbycontainingvnum(value);
-            if (!pArea) {
-                send_to_char("OEdit:  That vnum is not assigned an area.\n\r", ch);
-                return;
-            }
-
-            if (!IS_BUILDER(ch, pArea)) {
-                send_to_char("Insufficient security to edit objects.\n\r", ch);
-                return;
-            }
-
-            if (oedit_create(ch, argument)) {
-                SET_BIT(pArea->area_flags, AREA_CHANGED);
-                ch->desc->editor = ED_OBJECT;
-            }
-
+            oedit_create(ch, argument);
             return;
         }
 
         if (!str_cmp(arg, "clone")) {
-            value = parse_int(argument);
-            if (argument[0] == '\0' || value == 0) {
-                send_to_char("Syntax:  edit object create [vnum]\n\r", ch);
-                return;
-            }
-
-            pArea = area_getbycontainingvnum(value);
-            if (!pArea) {
-                send_to_char("OEdit:  That vnum is not assigned an area.\n\r", ch);
-                return;
-            }
-
-            if (!IS_BUILDER(ch, pArea)) {
-                send_to_char("Insufficient security to edit objects.\n\r", ch);
-                return;
-            }
-
-            if (oedit_create(ch, argument)) {
-                SET_BIT(pArea->area_flags, AREA_CHANGED);
-                ch->desc->editor = ED_OBJECT;
-                argument = one_argument(argument, arg);
-                oedit_clone(ch, argument);
-            }
-
+            oedit_clone(ch, argument);
             return;
         }
     }
@@ -170,109 +127,10 @@ EDIT(oedit_show)
     return false;
 }
 
-EDIT(oedit_create)
-{
-    struct objectprototype *prototype;
-    struct area_data *pArea;
-    long value;
-
-    value = parse_int(argument);
-    if (argument[0] == '\0' || value == 0) {
-        send_to_char("Syntax:  oedit create [vnum]\n\r", ch);
-        return false;
-    }
-
-    pArea = area_getbycontainingvnum(value);
-    if (!pArea) {
-        send_to_char("OEdit:  That vnum is not assigned an area.\n\r", ch);
-        return false;
-    }
-
-    if (!IS_BUILDER(ch, pArea)) {
-        send_to_char("OEdit:  Vnum in an area you cannot build in.\n\r", ch);
-        return false;
-    }
-
-    if (objectprototype_getbyvnum(value)) {
-        send_to_char("OEdit:  Object vnum already exists.\n\r", ch);
-        return false;
-    }
-
-    prototype = objectprototype_new(value);
-    prototype->area = pArea;
-
-    if (value > top_vnum_obj)
-        top_vnum_obj = value;
-
-    ch->desc->ed_data = (void *)prototype;
-
-    send_to_char("Object Created.\n\r", ch);
-    return true;
-}
-
-EDIT(oedit_clone)
-{
-    struct objectprototype *source;
-    char arg1[MAX_STRING_LENGTH];
-    char arg2[MAX_STRING_LENGTH];
-    struct area_data *targetarea;
-    unsigned long targetvnum;
-    unsigned long sourcevnum;
-
-    argument = one_argument(argument, arg1);
-    (void)one_argument(argument, arg2);
-
-    if (arg1[0] == '\0' || !is_number(arg1)) {
-        send_to_char("OEdit syntax:  clone [target vnum] <source vnum>\n\r", ch);
-        return false;
-    }
-    targetvnum = parse_int(arg1);
-    if (objectprototype_getbyvnum(targetvnum) != NULL) {
-        printf_to_char(ch, "OEdit:  Target vnum %lu already exists.\n\r", targetvnum);
-        return false;
-    }
-    targetarea = area_getbycontainingvnum(targetvnum);
-    if (!targetarea) {
-        printf_to_char(ch, "OEdit: Target vnum %lu is not assigned an area.\n\r", targetvnum);
-        return false;
-    }
-
-    if (!IS_BUILDER(ch, targetarea)) {
-        printf_to_char(ch, "OEdit: Target vnum %lu is in an area you cannot build in.\n\r", targetvnum);
-        return false;
-    }
-
-    if (arg2[0] != '\0')
-    {
-        if (!is_number(arg2))
-        {
-            send_to_char("OEdit:  The source vnum must be a number.\n\r", ch);
-            return false;
-        }
-        sourcevnum = parse_int(arg2);
-        source = objectprototype_getbyvnum(sourcevnum);
-        if (source == NULL)
-        {
-            printf_to_char(ch, "OEdit:  Source vnum %lu does not yet exist.\n\r", sourcevnum);
-            return false;
-        }
-    }
-    else
-    {
-        EDIT_OBJ(ch, source);
-        sourcevnum = source->vnum;
-    }
-
-    ch->desc->ed_data = objectprototype_clone(source, targetvnum, targetarea);
-
-    printf_to_char(ch, "Object %lu cloned. You are now editing object %lu.\n\r", sourcevnum, targetvnum);
-    return true;
-}
-
 EDIT(oedit_addaffect)
 {
     struct objectprototype *prototype;
-    struct affect_data *pAff;
+    struct affect_data *affect;
     char loc[MAX_STRING_LENGTH];
     char mod[MAX_STRING_LENGTH];
     int value;
@@ -291,15 +149,15 @@ EDIT(oedit_addaffect)
         return false;
     }
 
-    pAff = new_affect();
-    pAff->location = value;
-    pAff->modifier = parse_int(mod);
-    pAff->where = TO_OBJECT;
-    pAff->type = -1;
-    pAff->duration = -1;
-    pAff->bitvector = 0;
-    pAff->next = prototype->affected;
-    prototype->affected = pAff;
+    affect = new_affect();
+    affect->location = value;
+    affect->modifier = parse_int(mod);
+    affect->where = TO_OBJECT;
+    affect->type = -1;
+    affect->duration = -1;
+    affect->bitvector = 0;
+    affect->next = prototype->affected;
+    prototype->affected = affect;
 
     send_to_char("Affect added.\n\r", ch);
     return true;
@@ -320,7 +178,7 @@ EDIT(oedit_addaffect)
 EDIT(oedit_addapply)
 {
     struct objectprototype *prototype;
-    struct affect_data *pAff;
+    struct affect_data *affect;
     char loc[MAX_STRING_LENGTH];
     char mod[MAX_STRING_LENGTH];
     char type[MAX_STRING_LENGTH];
@@ -367,15 +225,15 @@ EDIT(oedit_addapply)
         return false;
     }
 
-    pAff = new_affect();
-    pAff->location = value;
-    pAff->modifier = parse_int(mod);
-    pAff->where = (int)apply_types[typ].bit;
-    pAff->type = -1;
-    pAff->duration = -1;
-    pAff->bitvector = bitvector;
-    pAff->next = prototype->affected;
-    prototype->affected = pAff;
+    affect = affectdata_new();
+    affect->location = value;
+    affect->modifier = parse_int(mod);
+    affect->where = (int)apply_types[typ].bit;
+    affect->type = -1;
+    affect->duration = -1;
+    affect->bitvector = bitvector;
+
+    objectprototype_applyaffect(prototype, affect);
 
     send_to_char("Apply added.\n\r", ch);
     return true;
@@ -384,47 +242,25 @@ EDIT(oedit_addapply)
 EDIT(oedit_delaffect)
 {
     struct objectprototype *prototype;
-    struct affect_data *pAff;
-    struct affect_data *pAff_next;
-    char affect[MAX_STRING_LENGTH];
-    int value;
-    int cnt = 0;
+    char arg1[MAX_STRING_LENGTH];
+    int index;
 
     EDIT_OBJ(ch, prototype);
-    one_argument(argument, affect);
-    if (!is_number(affect) || affect[0] == '\0') {
+    one_argument(argument, arg1);
+    if (!is_number(arg1) || arg1[0] == '\0') {
         send_to_char("Syntax:  delaffect [#xaffect]\n\r", ch);
         return false;
     }
 
-    value = parse_int(affect);
-    if (value < 0) {
+    index = parse_int(arg1);
+    if (index < 0) {
         send_to_char("Only non-negative affect-numbers allowed.\n\r", ch);
         return false;
     }
 
-    if (!(pAff = prototype->affected)) {
-        send_to_char("OEdit:  Non-existant affect.\n\r", ch);
+    if (!objectprototype_removeaffect(prototype, index)) {
+        send_to_char("No such affect.\n\r", ch);
         return false;
-    }
-
-    if (value == 0) {
-        /* remove the first affect */
-        pAff = prototype->affected;
-        prototype->affected = pAff->next;
-        free_affect(pAff);
-    } else {
-        /* find the affect */
-        while ((pAff_next = pAff->next) && (++cnt < value))
-            pAff = pAff_next;
-
-        if (pAff_next) {
-            pAff->next = pAff_next->next;
-            free_affect(pAff_next);
-        } else {
-            send_to_char("No such affect.\n\r", ch);
-            return false;
-        }
     }
 
     send_to_char("Affect removed.\n\r", ch);
@@ -1340,3 +1176,115 @@ bool set_obj_values(struct char_data *ch, struct objectprototype *prototype, int
     show_obj_values(ch, prototype);
     return true;
 }
+
+
+void oedit_create(struct char_data *ch, const char *argument)
+{
+    struct objectprototype *prototype;
+    struct area_data *area;
+    long vnum;
+
+    if (!is_number(argument)) {
+        send_to_char("Syntax:  oedit create [vnum]\n\r", ch);
+        return;
+    }
+
+    vnum = parse_long(argument);
+    if (argument[0] == '\0' || vnum == 0) {
+        send_to_char("Syntax:  oedit create [vnum]\n\r", ch);
+        return;
+    }
+
+    area = area_getbycontainingvnum(vnum);
+    if (!area) {
+        send_to_char("OEdit:  That vnum is not assigned an area.\n\r", ch);
+        return;
+    }
+
+    if (!IS_BUILDER(ch, area)) {
+        send_to_char("OEdit:  Vnum in an area you cannot build in.\n\r", ch);
+        return;
+    }
+
+    if (objectprototype_getbyvnum(vnum)) {
+        send_to_char("OEdit:  Object vnum already exists.\n\r", ch);
+        return;
+    }
+
+    prototype = objectprototype_new(vnum);
+    prototype->area = area;
+
+    if (vnum > top_vnum_obj)
+        top_vnum_obj = vnum;
+
+    SET_BIT(area->area_flags, AREA_CHANGED);
+    ch->desc->editor = ED_OBJECT;
+    ch->desc->ed_data = (void *)prototype;
+
+    send_to_char("Object Created.\n\r", ch);
+    return;
+}
+
+void oedit_clone(struct char_data *ch, const char *argument)
+{
+    struct objectprototype *source;
+    char arg1[MAX_STRING_LENGTH];
+    char arg2[MAX_STRING_LENGTH];
+    struct area_data *targetarea;
+    unsigned long targetvnum;
+    unsigned long sourcevnum;
+
+    argument = one_argument(argument, arg1);
+    (void)one_argument(argument, arg2);
+
+    if (arg1[0] == '\0' || !is_number(arg1)) {
+        send_to_char("OEdit syntax:  clone [target vnum] <source vnum>\n\r", ch);
+        return;
+    }
+    targetvnum = parse_int(arg1);
+    if (objectprototype_getbyvnum(targetvnum) != NULL) {
+        printf_to_char(ch, "OEdit:  Target vnum %lu already exists.\n\r", targetvnum);
+        return;
+    }
+    targetarea = area_getbycontainingvnum(targetvnum);
+    if (!targetarea) {
+        printf_to_char(ch, "OEdit: Target vnum %lu is not assigned an area.\n\r", targetvnum);
+        return;
+    }
+
+    if (!IS_BUILDER(ch, targetarea)) {
+        printf_to_char(ch, "OEdit: Target vnum %lu is in an area you cannot build in.\n\r", targetvnum);
+        return;
+    }
+
+    if (arg2[0] != '\0')
+    {
+        if (!is_number(arg2))
+        {
+            send_to_char("OEdit:  The source vnum must be a number.\n\r", ch);
+            return;
+        }
+        sourcevnum = parse_int(arg2);
+        source = objectprototype_getbyvnum(sourcevnum);
+        if (source == NULL)
+        {
+            printf_to_char(ch, "OEdit:  Source vnum %lu does not yet exist.\n\r", sourcevnum);
+            return;
+        }
+    }
+    else
+    {
+        EDIT_OBJ(ch, source);
+        sourcevnum = source->vnum;
+    }
+
+    ch->desc->ed_data = objectprototype_clone(source, targetvnum, targetarea);
+    if (targetvnum > top_vnum_obj)
+        top_vnum_obj = targetvnum;
+
+    SET_BIT(targetarea->area_flags, AREA_CHANGED);
+    ch->desc->editor = ED_OBJECT;
+    printf_to_char(ch, "Object %lu cloned. You are now editing object %lu.\n\r", sourcevnum, targetvnum);
+    return;
+}
+

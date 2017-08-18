@@ -70,9 +70,12 @@ struct objectprototype *objectprototype_new(unsigned long vnum)
         prototypedata->name = strdup("no name");
         prototypedata->short_descr = strdup("(no short description)");
         prototypedata->description = strdup("(no description)");
+        prototypedata->affected = affectdata_new();
+        prototypedata->extra_descr = extradescrdata_new();
         /*@+mustfreeonly@*/
         prototypedata->item_type = ITEM_TRASH;
         prototypedata->condition = 100;
+
     }
 
     /** Place on list. */
@@ -104,6 +107,8 @@ struct objectprototype *objectprototype_clone(struct objectprototype *source, un
         clone->name = strdup(source->name);
         clone->short_descr = strdup(source->short_descr);
         clone->description = strdup(source->description);
+        clone->extra_descr = extradescrdata_new();
+        clone->affected = affectdata_new();
         /*@+mustfreeonly@*/
         clone->item_type = source->item_type;
         clone->extra_flags = source->extra_flags;
@@ -117,17 +122,17 @@ struct objectprototype *objectprototype_clone(struct objectprototype *source, un
         for (i = 0; i < 5; i++)
             clone->value[i] = source->value[i];
 
-        for (extrasource = source->extra_descr; extrasource != NULL; extrasource = extrasource->next) {
+        for (extrasource = source->extra_descr->next; extrasource != NULL; extrasource = extrasource->next) {
             extraclone = extradescrdata_clone(extrasource);
             assert(extraclone->next == NULL);
-            extraclone->next = clone->extra_descr;
-            clone->extra_descr = extraclone;
+            extraclone->next = clone->extra_descr->next;
+            clone->extra_descr->next = extraclone;
         }
 
-        for (affsource = source->affected; affsource != NULL; affsource = affsource->next) {
+        for (affsource = source->affected->next; affsource != NULL; affsource = affsource->next) {
             affclone = affectdata_clone(affsource);
-            affclone->next = clone->affected;
-            clone->affected = affclone;
+            affclone->next = clone->affected->next;
+            clone->affected->next = affclone;
         }
     }
 
@@ -153,6 +158,11 @@ struct objectprototype *objectprototype_deserialize(const struct array_list *dat
     prototypedata = malloc(sizeof(struct objectprototype));
     assert(prototypedata != NULL);
     memset(prototypedata, 0, sizeof(struct objectprototype));
+    /*@-mustfreeonly@*/
+    prototypedata->affected = affectdata_new();
+    prototypedata->extra_descr = extradescrdata_new();
+    /*@+mustfreeonly@*/
+
 
     deserialize_assign_ulong(data, prototypedata->vnum, "vnum");
     /*@-mustfreeonly@*/
@@ -182,8 +192,8 @@ struct objectprototype *objectprototype_deserialize(const struct array_list *dat
             kvp_free_array(serialized);
             assert(affect->next == NULL);
 
-            affect->next = prototypedata->affected;
-            prototypedata->affected = affect;
+            affect->next = prototypedata->affected->next;
+            prototypedata->affected->next = affect;
         }
 
         kvp_free_array(affects);
@@ -202,8 +212,8 @@ struct objectprototype *objectprototype_deserialize(const struct array_list *dat
             kvp_free_array(serialized);
             assert(extra->next == NULL);
 
-            extra->next = prototypedata->extra_descr;
-            prototypedata->extra_descr = extra;
+            extra->next = prototypedata->extra_descr->next;
+            prototypedata->extra_descr->next = extra;
         }
 
         kvp_free_array(extras);
@@ -250,11 +260,11 @@ struct array_list *objectprototype_serialize(const struct objectprototype *obj)
     serialize_take_string(answer, "condition", int_to_string(obj->condition));
 
     {
-        struct affect_data *affect = obj->affected;
+        struct affect_data *affect;
         // TODO consider counting the number of affects to tailor the size of this array.
         struct array_list *affects = kvp_create_array(256);
 
-        affect = obj->affected;
+        affect = obj->affected->next;
         while (affect != NULL) {
             struct array_list *serialized_affect;
             serialized_affect = affectdata_serialize(affect);
@@ -269,7 +279,7 @@ struct array_list *objectprototype_serialize(const struct objectprototype *obj)
     }
 
     {
-        struct extra_descr_data *desc = obj->extra_descr;
+        struct extra_descr_data *desc = obj->extra_descr->next;
         struct array_list *extras = kvp_create_array(256);
         while (desc != NULL) {
             struct array_list *serialized_extra;
@@ -308,7 +318,7 @@ void objectprototype_free(struct objectprototype *prototypedata)
     }
 
     /** Clean up affects */
-    if (prototypedata->affected != NULL) {
+    {
         /*@only@*/struct affect_data *paf;
         /*@only@*/struct affect_data *paf_next;
         paf_next = prototypedata->affected;
@@ -323,7 +333,7 @@ void objectprototype_free(struct objectprototype *prototypedata)
     }
 
     /** Clean up extras */
-    if (prototypedata->affected != NULL) {
+    {
         /*@only@*/struct extra_descr_data *extra;
         /*@only@*/struct extra_descr_data *extra_next;
         extra_next = prototypedata->extra_descr;
@@ -344,6 +354,47 @@ void objectprototype_free(struct objectprototype *prototypedata)
     if (prototypedata->short_descr != NULL) free(prototypedata->short_descr);
 
     free(prototypedata);
+    return;
+}
+
+void objectprototype_applyaffect(struct objectprototype *prototype, struct affect_data *affect)
+{
+    // remember prototype->affected is a HEAD node that has no real data.
+    affect->next = prototype->affected->next;
+    prototype->affected->next = affect;
+    return;
+}
+
+
+bool objectprototype_removeaffect(struct objectprototype *prototype, int index)
+{
+    struct affect_data *prev = NULL;
+    struct affect_data *curr = NULL;
+    int cnt = 0;
+
+    assert(index >= 0);
+    if (prototype->affected->next == NULL)
+        return false;
+
+    prev = prototype->affected;
+    curr = prototype->affected->next;
+    for (cnt = 0; cnt < index; cnt++) {
+        prev = curr;
+        curr = curr->next;
+        if (curr == NULL)
+            return false;
+    }
+
+    prev->next = curr->next;
+
+    // TODO figure out how to properly annotate or rewrite the contents of this method.
+    /*@-dependenttrans@*/
+    /*@-usereleased@*/
+    curr->next = NULL;
+    affectdata_free(curr);
+    return true;
+    /*@+compdef@*/
+    /*@+usereleased@*/
 }
 
 int objectprototype_list_count()
