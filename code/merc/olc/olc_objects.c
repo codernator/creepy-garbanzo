@@ -20,6 +20,22 @@ static void oedit_create(struct char_data *ch, const char *argument);
 static void oedit_clone(struct char_data *ch, const char *argument);
 
 
+static void oedit_extradesc_add(struct char_data *ch, const char *argument);
+static void oedit_extradesc_edit(struct char_data *ch, const char *argument);
+static void oedit_extradesc_delete(struct char_data *ch, const char *argument);
+static void oedit_extradesc_format(struct char_data *ch, const char *argument);
+static void oedit_extradesc_help(struct char_data *ch, const char *argument);
+static const struct cmd_type extra_cmd_table[] =
+    {
+        { "add", oedit_extradesc_add, POS_DEAD, 0, 0, 0 },
+        { "edit", oedit_extradesc_edit, POS_DEAD, 0, 0, 0 },
+        { "remove", oedit_extradesc_delete, POS_DEAD, 0, 0, 0 },
+        { "format", oedit_extradesc_format, POS_DEAD, 0, 0, 0 },
+        { "?", oedit_extradesc_help, POS_DEAD, 0, 0, 0 },
+        { "", NULL, POS_DEAD, 0, 0, 0 }
+    };
+
+
 void do_oedit(struct char_data *ch, const char *argument)
 {
     struct objectprototype *prototype;
@@ -258,7 +274,7 @@ EDIT(oedit_delaffect)
         return false;
     }
 
-    if (!objectprototype_removeaffect(prototype, index)) {
+    if (!objectprototype_deleteaffect(prototype, index)) {
         send_to_char("No such affect.\n\r", ch);
         return false;
     }
@@ -314,21 +330,6 @@ EDIT(oedit_long)
 
 
 
-/*****************************************************************************
- *	oedit_values
- *
- *	edit the five values on an object
- *	single point of entry/failure for the oedit_valueN functions
- *****************************************************************************/
-static bool oedit_values(struct char_data *ch, const char *argument, int value)
-{
-    struct objectprototype *prototype;
-
-    EDIT_OBJ(ch, prototype);
-
-    return set_value(ch, prototype, argument, value);
-}
-
 
 /*****************************************************************************
  *	oedit_value0
@@ -336,7 +337,9 @@ static bool oedit_values(struct char_data *ch, const char *argument, int value)
  *	edit v0
  *****************************************************************************/
 EDIT(oedit_value0){
-    return oedit_values(ch, argument, 0);
+    struct objectprototype *prototype;
+    EDIT_OBJ(ch, prototype);
+    return set_value(ch, prototype, argument, 0);
 }
 
 /*****************************************************************************
@@ -345,7 +348,9 @@ EDIT(oedit_value0){
  *	edit v1
  *****************************************************************************/
 EDIT(oedit_value1){
-    return oedit_values(ch, argument, 1);
+    struct objectprototype *prototype;
+    EDIT_OBJ(ch, prototype);
+    return set_value(ch, prototype, argument, 1);
 }
 
 /*****************************************************************************
@@ -354,7 +359,9 @@ EDIT(oedit_value1){
  *	edit v2
  *****************************************************************************/
 EDIT(oedit_value2){
-    return oedit_values(ch, argument, 2);
+    struct objectprototype *prototype;
+    EDIT_OBJ(ch, prototype);
+    return set_value(ch, prototype, argument, 2);
 }
 
 /*****************************************************************************
@@ -363,7 +370,9 @@ EDIT(oedit_value2){
  *	edit v3
  *****************************************************************************/
 EDIT(oedit_value3){
-    return oedit_values(ch, argument, 3);
+    struct objectprototype *prototype;
+    EDIT_OBJ(ch, prototype);
+    return set_value(ch, prototype, argument, 3);
 }
 
 /*****************************************************************************
@@ -372,7 +381,9 @@ EDIT(oedit_value3){
  *	edit v4
  *****************************************************************************/
 EDIT(oedit_value4){
-    return oedit_values(ch, argument, 4);
+    struct objectprototype *prototype;
+    EDIT_OBJ(ch, prototype);
+    return set_value(ch, prototype, argument, 4);
 }
 
 
@@ -417,120 +428,38 @@ EDIT(oedit_cost){
 }
 
 
+
+
 /*****************************************************************************
  *	oedit_ed
  *
  *	edit the extra description of an object
  *****************************************************************************/
 EDIT(oedit_ed){
-    struct objectprototype *prototype;
-    struct extra_descr_data *ed;
     char command[MAX_INPUT_LENGTH];
-    char keyword[MAX_INPUT_LENGTH];
+    int cmdindex = 0;
+    int trust = 0;
 
-    EDIT_OBJ(ch, prototype);
     argument = one_argument(argument, command);
-    one_argument(argument, keyword);
 
     if (command[0] == '\0') {
-        send_to_char("Syntax:  ed add [keyword]\n\r", ch);
-        send_to_char("         ed delete [keyword]\n\r", ch);
-        send_to_char("         ed edit [keyword]\n\r", ch);
-        send_to_char("         ed format [keyword]\n\r", ch);
+        oedit_extradesc_help(ch, argument);
         return false;
     }
 
-    if (!str_cmp(command, "add")) {
-        if (keyword[0] == '\0') {
-            send_to_char("Syntax:  ed add [keyword]\n\r", ch);
-            return false;
+    trust = get_trust(ch);
+    for (cmdindex = 0; extra_cmd_table[cmdindex].name[0] != '\0'; cmdindex++) {
+        if (command[0] == extra_cmd_table[cmdindex].name[0]
+                && !str_cmp(command, extra_cmd_table[cmdindex].name)
+                && extra_cmd_table[cmdindex].level <= trust) {
+            (*cmd_table[cmdindex].do_fun)(ch, argument);
+            return true;
         }
-
-        ed = new_extra_descr();
-        ed->keyword = str_dup(keyword);
-        ed->next = prototype->extra_descr;
-        prototype->extra_descr = ed;
-
-        string_append(ch, &ed->description);
-        return true;
     }
 
-    if (!str_cmp(command, "edit")) {
-        if (keyword[0] == '\0') {
-            send_to_char("Syntax:  ed edit [keyword]\n\r", ch);
-            return false;
-        }
-
-        for (ed = prototype->extra_descr; ed; ed = ed->next)
-            if (is_name(keyword, ed->keyword))
-                break;
-
-        if (!ed) {
-            send_to_char("OEdit:  Extra description keyword not found.\n\r", ch);
-            return false;
-        }
-
-        string_append(ch, &ed->description);
-        return true;
-    }
-
-    if (!str_cmp(command, "delete")) {
-        struct extra_descr_data *ped = NULL;
-
-        if (keyword[0] == '\0') {
-            send_to_char("Syntax:  ed delete [keyword]\n\r", ch);
-            return false;
-        }
-
-        for (ed = prototype->extra_descr; ed; ed = ed->next) {
-            if (is_name(keyword, ed->keyword))
-                break;
-            ped = ed;
-        }
-
-        if (!ed) {
-            send_to_char("OEdit:  Extra description keyword not found.\n\r", ch);
-            return false;
-        }
-
-        if (!ped)
-            prototype->extra_descr = ed->next;
-        else
-            ped->next = ed->next;
-
-        free_extra_descr(ed);
-        send_to_char("Extra description deleted.\n\r", ch);
-        return true;
-    }
-
-
-    if (!str_cmp(command, "format")) {
-        if (keyword[0] == '\0') {
-            send_to_char("Syntax:  ed format [keyword]\n\r", ch);
-            return false;
-        }
-
-        for (ed = prototype->extra_descr; ed; ed = ed->next) {
-            if (is_name(keyword, ed->keyword))
-                break;
-        }
-
-        if (!ed) {
-            send_to_char("OEdit:  Extra description keyword not found.\n\r", ch);
-            return false;
-        }
-
-        ed->description = format_string(ed->description);
-        send_to_char("Extra description formatted.\n\r", ch);
-        return true;
-    }
-
-    oedit_ed(ch, "");
+    send_to_char("``COMMAND NOT FOUND``\n\r", ch);
     return false;
 }
-
-
-
 
 
 /*****************************************************************************
@@ -674,6 +603,7 @@ EDIT(oedit_condition){
                  "Where number can range from 0(ruined) to 100(perfect).\n\r", ch);
     return false;
 }
+
 
 
 
@@ -1282,6 +1212,105 @@ void oedit_clone(struct char_data *ch, const char *argument)
     SET_BIT(targetarea->area_flags, AREA_CHANGED);
     ch->desc->editor = ED_OBJECT;
     printf_to_char(ch, "Object %lu cloned. You are now editing object %lu.\n\r", sourcevnum, targetvnum);
+    return;
+}
+
+
+
+void oedit_extradesc_add(struct char_data *ch, const char *argument)
+{
+    char keyword[MAX_INPUT_LENGTH];
+    struct extra_descr_data *ed;
+    struct objectprototype *prototype;
+    EDIT_OBJ(ch, prototype);
+
+    one_argument(argument, keyword);
+    if (keyword[0] == '\0') {
+        send_to_char("Syntax:  ed add [keyword]\n\r", ch);
+        return;
+    }
+
+    ed = objectprototype_addextra(prototype, keyword, "");
+
+    // set description editor.
+    string_append(ch, &ed->description);
+    return;
+}
+
+void oedit_extradesc_edit(struct char_data *ch, const char *argument)
+{
+    struct extra_descr_data *ed;
+    char keyword[MAX_INPUT_LENGTH];
+    struct objectprototype *prototype;
+    EDIT_OBJ(ch, prototype);
+
+    one_argument(argument, keyword);
+    if (keyword[0] == '\0') {
+        send_to_char("Syntax:  ed edit [keyword]\n\r", ch);
+        return;
+    }
+
+    ed = objectprototype_findextra(prototype, keyword);
+    if (ed == NULL) {
+        send_to_char("OEdit:  Extra description keyword not found.\n\r", ch);
+        return;
+    }
+
+    string_append(ch, &ed->description);
+    return;
+}
+
+void oedit_extradesc_delete(struct char_data *ch, const char *argument)
+{
+    char keyword[MAX_INPUT_LENGTH];
+    struct objectprototype *prototype;
+    EDIT_OBJ(ch, prototype);
+
+    one_argument(argument, keyword);
+    if (keyword[0] == '\0') {
+        send_to_char("Syntax:  ed delete [keyword]\n\r", ch);
+        return;
+    }
+
+    if (!objectprototype_deleteextra(prototype, keyword)) {
+        send_to_char("OEdit:  Extra description keyword not found.\n\r", ch);
+        return;
+    }
+
+    send_to_char("Extra description deleted.\n\r", ch);
+    return;
+}
+
+void oedit_extradesc_format(struct char_data *ch, const char *argument)
+{
+    struct extra_descr_data *ed;
+    char keyword[MAX_INPUT_LENGTH];
+    struct objectprototype *prototype;
+    EDIT_OBJ(ch, prototype);
+
+    one_argument(argument, keyword);
+    if (keyword[0] == '\0') {
+        send_to_char("Syntax:  ed format [keyword]\n\r", ch);
+        return;
+    }
+
+    ed = objectprototype_findextra(prototype, keyword);
+
+    if (ed == NULL) {
+        send_to_char("OEdit:  Extra description keyword not found.\n\r", ch);
+        return;
+    }
+
+    ed->description = format_string(ed->description);
+    send_to_char("Extra description formatted.\n\r", ch);
+    return;
+}
+
+void oedit_extradesc_help(struct char_data *ch, const char *argument) {
+    send_to_char("Syntax:  ed add [keyword]\n\r", ch);
+    send_to_char("         ed delete [keyword]\n\r", ch);
+    send_to_char("         ed edit [keyword]\n\r", ch);
+    send_to_char("         ed format [keyword]\n\r", ch);
     return;
 }
 

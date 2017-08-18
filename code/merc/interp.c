@@ -440,7 +440,7 @@ void interpret(struct char_data *ch, const char *argument)
     }
 
     if (!found) {
-        send_to_char("```COMMAND NOT FOUND``\n\r", ch);
+        send_to_char("``COMMAND NOT FOUND``\n\r", ch);
         return;
     }
 

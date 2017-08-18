@@ -2218,10 +2218,13 @@ int objectprototype_list_count();
 /*@dependent@*/struct objectprototype *objectprototype_deserialize(const struct array_list *data);
 
 void objectprototype_applyaffect(struct objectprototype *obj, /*@owned@*/struct affect_data *affect);
-bool objectprototype_removeaffect(struct objectprototype *obj, int index);
+bool objectprototype_deleteaffect(struct objectprototype *obj, int index);
 void objectprototype_setname(struct objectprototype *obj, /*@observer@*/const char *name);
 void objectprototype_setshort(struct objectprototype *obj, /*@observer@*/const char *short_desc);
 void objectprototype_setlong(struct objectprototype *obj, /*@observer@*/const char *description);
+/*@dependent@*/struct extra_descr_data *objectprototype_addextra(struct objectprototype *obj, /*@observer@*/const char *keyword, /*@observer@*/const char *description);
+/*@dependent@*//*@null@*/struct extra_descr_data *objectprototype_findextra(struct objectprototype *obj, /*@observer@*/const char *keyword);
+bool objectprototype_deleteextra(struct objectprototype *obj, /*@observer@*/const char *keyword);
 /* ~objectprototype.c */
 
 

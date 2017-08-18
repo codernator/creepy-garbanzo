@@ -357,27 +357,27 @@ void objectprototype_free(struct objectprototype *prototypedata)
     return;
 }
 
-void objectprototype_applyaffect(struct objectprototype *prototype, struct affect_data *affect)
+void objectprototype_applyaffect(struct objectprototype *template, struct affect_data *affect)
 {
-    // remember prototype->affected is a HEAD node that has no real data.
-    affect->next = prototype->affected->next;
-    prototype->affected->next = affect;
+    // remember template->affected is a HEAD node that has no real data.
+    affect->next = template->affected->next;
+    template->affected->next = affect;
     return;
 }
 
 
-bool objectprototype_removeaffect(struct objectprototype *prototype, int index)
+bool objectprototype_deleteaffect(struct objectprototype *template, int index)
 {
     struct affect_data *prev = NULL;
     struct affect_data *curr = NULL;
     int cnt = 0;
 
     assert(index >= 0);
-    if (prototype->affected->next == NULL)
+    if (template->affected->next == NULL)
         return false;
 
-    prev = prototype->affected;
-    curr = prototype->affected->next;
+    prev = template->affected;
+    curr = template->affected->next;
     for (cnt = 0; cnt < index; cnt++) {
         prev = curr;
         curr = curr->next;
@@ -397,30 +397,88 @@ bool objectprototype_removeaffect(struct objectprototype *prototype, int index)
     /*@+usereleased@*/
 }
 
-void objectprototype_setname(struct objectprototype *prototype, const char *name)
+void objectprototype_setname(struct objectprototype *template, const char *name)
 {
-    if (prototype->name != NULL)
-        free(prototype->name);
-    prototype->name = strdup(name);
+    if (template->name != NULL)
+        free(template->name);
+    template->name = strdup(name);
     return;
 }
 
-void objectprototype_setshort(struct objectprototype *prototype, const char *short_descr)
+void objectprototype_setshort(struct objectprototype *template, const char *short_descr)
 {
-    if (prototype->short_descr != NULL)
-        free(prototype->short_descr);
-    prototype->short_descr = strdup(short_descr);
+    if (template->short_descr != NULL)
+        free(template->short_descr);
+    template->short_descr = strdup(short_descr);
     return;
 }
 
-void objectprototype_setlong(struct objectprototype *prototype, const char *description)
+void objectprototype_setlong(struct objectprototype *template, const char *description)
 {
-    if (prototype->description != NULL)
-        free(prototype->description);
-    prototype->description = strdup(description);
+    if (template->description != NULL)
+        free(template->description);
+    template->description = strdup(description);
     return;
 }
 
+struct extra_descr_data *objectprototype_addextra(struct objectprototype *template, const char *keyword, const char *description)
+{
+    struct extra_descr_data *extra;
+
+    extra = extradescrdata_new();
+    assert(extra->next == NULL);
+    assert(extra->keyword == NULL);
+    assert(extra->description == NULL);
+    extra->keyword = strdup(keyword);
+    extra->description = strdup(description);
+    extra->next = template->extra_descr->next;
+    template->extra_descr->next = extra;
+    return extra;
+}
+
+struct extra_descr_data *objectprototype_findextra(struct objectprototype *template, const char *keyword)
+{
+    struct extra_descr_data *extra;
+
+    for (extra = template->extra_descr->next; extra != NULL; extra = extra->next)
+        if (is_name(keyword, extra->keyword))
+            return extra;
+
+    return NULL;
+}
+
+bool objectprototype_deleteextra(struct objectprototype *template, const char *keyword)
+{
+    struct extra_descr_data *prev;
+    struct extra_descr_data *curr;
+
+    if (template->extra_descr->next == NULL)
+        return false;
+
+    prev = template->extra_descr;
+    curr = prev->next;
+    while (curr != NULL && !is_name(keyword, curr->keyword)) {
+        prev = curr;
+        curr = prev->next;
+    }
+
+    if (curr == NULL)
+        return false;
+
+    assert(prev->next == curr);
+    prev->next = curr->next;
+
+    // TODO figure out how to properly annotate or rewrite the contents of this method.
+    /*@-dependenttrans@*/
+    /*@-usereleased@*/
+    /*@-compdef@*/
+    curr->next = NULL;
+    extradescrdata_free(curr);
+    return true;
+    /*@+compdef@*/
+    /*@+usereleased@*/
+    /*@+compdef@*/
+}
 
 int objectprototype_list_count()
 {
