@@ -2219,6 +2219,9 @@ int objectprototype_list_count();
 
 void objectprototype_applyaffect(struct objectprototype *obj, /*@owned@*/struct affect_data *affect);
 bool objectprototype_removeaffect(struct objectprototype *obj, int index);
+void objectprototype_setname(struct objectprototype *obj, /*@observer@*/const char *name);
+void objectprototype_setshort(struct objectprototype *obj, /*@observer@*/const char *short_desc);
+void objectprototype_setlong(struct objectprototype *obj, /*@observer@*/const char *description);
 /* ~objectprototype.c */
 
 

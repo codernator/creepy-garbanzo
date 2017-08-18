@@ -83,7 +83,7 @@ EDIT(oedit_show)
         struct extra_descr_data *ed;
 
         send_to_char("`&Ex desc kwd``: [", ch);
-        for (ed = prototype->extra_descr; ed; ed = ed->next) {
+        for (ed = prototype->extra_descr->next; ed; ed = ed->next) {
             send_to_char(ed->keyword, ch);
             if (ed->next != NULL)
                 send_to_char(" ", ch);
@@ -93,7 +93,7 @@ EDIT(oedit_show)
 
     printf_to_char(ch, "`&Short desc``:  %s\n\r`&Long desc``:\n\r     %s\n\r", prototype->short_descr, prototype->description);
 
-    for (cnt = 0, paf = prototype->affected; paf; paf = paf->next) {
+    for (cnt = 0, paf = prototype->affected->next; paf; paf = paf->next) {
         if (cnt == 0) {
             send_to_char("`&Number Modifier Type    Affects``\n\r", ch);
             send_to_char("`1------ -------- ------- -------``\n\r", ch);
@@ -149,15 +149,15 @@ EDIT(oedit_addaffect)
         return false;
     }
 
-    affect = new_affect();
+    affect = affectdata_new();
     affect->location = value;
     affect->modifier = parse_int(mod);
     affect->where = TO_OBJECT;
     affect->type = -1;
     affect->duration = -1;
     affect->bitvector = 0;
-    affect->next = prototype->affected;
-    prototype->affected = affect;
+
+    objectprototype_applyaffect(prototype, affect);
 
     send_to_char("Affect added.\n\r", ch);
     return true;
@@ -277,8 +277,7 @@ EDIT(oedit_name)
         return false;
     }
 
-    free_string(prototype->name);
-    prototype->name = str_dup(argument);
+    objectprototype_setname(prototype, argument);
     send_to_char("Name set.\n\r", ch);
     return true;
 }
@@ -293,8 +292,7 @@ EDIT(oedit_short)
         return false;
     }
 
-    free_string(prototype->short_descr);
-    prototype->short_descr = str_dup(argument);
+    objectprototype_setshort(prototype, argument);
     send_to_char("Short description set.\n\r", ch);
     return true;
 }
@@ -309,8 +307,7 @@ EDIT(oedit_long)
         return false;
     }
 
-    free_string(prototype->description);
-    prototype->description = str_dup(argument);
+    objectprototype_setlong(prototype, argument);
     send_to_char("Long description set.\n\r", ch);
     return true;
 }

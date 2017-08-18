@@ -397,6 +397,31 @@ bool objectprototype_removeaffect(struct objectprototype *prototype, int index)
     /*@+usereleased@*/
 }
 
+void objectprototype_setname(struct objectprototype *prototype, const char *name)
+{
+    if (prototype->name != NULL)
+        free(prototype->name);
+    prototype->name = strdup(name);
+    return;
+}
+
+void objectprototype_setshort(struct objectprototype *prototype, const char *short_descr)
+{
+    if (prototype->short_descr != NULL)
+        free(prototype->short_descr);
+    prototype->short_descr = strdup(short_descr);
+    return;
+}
+
+void objectprototype_setlong(struct objectprototype *prototype, const char *description)
+{
+    if (prototype->description != NULL)
+        free(prototype->description);
+    prototype->description = strdup(description);
+    return;
+}
+
+
 int objectprototype_list_count()
 {
     struct objectprototype *o;
