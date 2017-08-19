@@ -197,7 +197,7 @@ void do_get(struct char_data *ch, const char *argument)
                 if ((arg1[3] == '\0' || is_name(&arg1[4], object_name_get(obj))) && can_see_obj(ch, obj)) {
                     found = true;
 
-                    if (container->objprototype->vnum == OBJ_VNUM_PIT && !IS_IMMORTAL(ch)) {
+                    if (container->objtemplate->vnum == OBJ_VNUM_PIT && !IS_IMMORTAL(ch)) {
                         send_to_char("Don't be so greedy!\n\r", ch);
                         return;
                     }
@@ -301,7 +301,7 @@ void do_put(struct char_data *ch, const char *argument)
         }
 
         item_ctr = 0;
-        if (container->objprototype->vnum == OBJ_VNUM_PIT
+        if (container->objtemplate->vnum == OBJ_VNUM_PIT
             && !CAN_WEAR(container, ITEM_TAKE)) {
             if (obj->timer)
                 SET_BIT(obj->extra_flags, ITEM_HAD_TIMER);
@@ -341,7 +341,7 @@ void do_put(struct char_data *ch, const char *argument)
                 && can_drop_obj(ch, obj)
                 && (long)(get_obj_weight(obj) + get_true_weight(container)) <= (container->value[0] * 10l)
                 && (long)(get_obj_weight(obj)) < (container->value[3] * 10l)) {
-                if (container->objprototype->vnum == OBJ_VNUM_PIT
+                if (container->objtemplate->vnum == OBJ_VNUM_PIT
                     && !CAN_WEAR(obj, ITEM_TAKE)) {
                     if (obj->timer)
                         SET_BIT(obj->extra_flags, ITEM_HAD_TIMER);
@@ -424,7 +424,7 @@ void do_drop(struct char_data *ch, const char *argument)
         for (obj = ch->in_room->contents; obj != NULL; obj = obj_next) {
             obj_next = obj->next_content;
 
-            switch (obj->objprototype->vnum) {
+            switch (obj->objtemplate->vnum) {
               case OBJ_VNUM_SILVER_ONE:
                   silver += 1;
                   extract_obj(obj);
@@ -991,7 +991,7 @@ void do_eat(struct char_data *ch, const char *argument)
             return;
         }
 
-        if (obj->objprototype->vnum == OBJ_VNUM_BLANK_PILL) {
+        if (obj->objtemplate->vnum == OBJ_VNUM_BLANK_PILL) {
             send_to_char("That has to be 'sprinkled', not eaten.\n\r", ch);
             return;
         }
@@ -1983,7 +1983,7 @@ void obj_to_keeper(struct gameobject *obj, struct char_data *ch)
     for (t_obj = ch->carrying; t_obj != NULL; t_obj = t_obj_next) {
         t_obj_next = t_obj->next_content;
 
-        if (obj->objprototype == t_obj->objprototype
+        if (obj->objtemplate == t_obj->objtemplate
             && !str_cmp(OBJECT_SHORT(obj), OBJECT_SHORT(t_obj))) {
             if (IS_OBJ_STAT(t_obj, ITEM_INVENTORY)) {
                 extract_obj(obj);
@@ -2031,7 +2031,7 @@ struct gameobject *get_obj_keeper(struct char_data *ch, struct char_data *keeper
                 return obj;
 
             while (obj->next_content != NULL &&
-                   obj->objprototype == obj->next_content->objprototype &&
+                   obj->objtemplate == obj->next_content->objtemplate &&
                    !str_cmp(OBJECT_SHORT(obj), OBJECT_SHORT(obj->next_content)))
                 obj = obj->next_content;
         }
@@ -2069,7 +2069,7 @@ unsigned int get_cost(struct char_data *keeper, struct gameobject *obj, bool fBu
             for (obj_inv = keeper->carrying;
                  obj_inv != NULL;
                  obj_inv = obj_inv->next_content) {
-                if (obj->objprototype == obj_inv->objprototype
+                if (obj->objtemplate == obj_inv->objtemplate
                     && !str_cmp(OBJECT_SHORT(obj), OBJECT_SHORT(obj_inv))) {
                     if (IS_OBJ_STAT(obj_inv, ITEM_INVENTORY))
                         cost /= 2;
@@ -2230,7 +2230,7 @@ void do_buy(struct char_data *ch, const char *argument)
             for (t_obj = obj->next_content;
                  count < number && t_obj != NULL;
                  t_obj = t_obj->next_content) {
-                if (t_obj->objprototype == obj->objprototype
+                if (t_obj->objtemplate == obj->objtemplate
                     && !str_cmp(OBJECT_SHORT(t_obj), OBJECT_SHORT(obj)))
                     count++;
                 else
@@ -2304,7 +2304,7 @@ void do_buy(struct char_data *ch, const char *argument)
 
         for (count = 0; count < number; count++) {
             if (IS_SET(obj->extra_flags, ITEM_INVENTORY)) {
-                t_obj = create_object(obj->objprototype);
+                t_obj = create_object(obj->objtemplate);
             } else {
                 t_obj = obj;
                 obj = obj->next_content;
@@ -2388,7 +2388,7 @@ void do_list(struct char_data *ch, const char *argument)
                     count = 1;
 
                     while (obj->next_content != NULL &&
-                           obj->objprototype == obj->next_content->objprototype &&
+                           obj->objtemplate == obj->next_content->objtemplate &&
                            !str_cmp(OBJECT_SHORT(obj), OBJECT_SHORT(obj->next_content))) {
                         obj = obj->next_content;
                         count++;

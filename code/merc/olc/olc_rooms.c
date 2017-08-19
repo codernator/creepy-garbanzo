@@ -197,7 +197,7 @@ static bool change_exit(struct char_data *ch, const char *argument, int door)
     }
 
     if (!str_cmp(command, "key")) {
-        struct objectprototype *key;
+        struct objecttemplate *key;
 
         if (arg[0] == '\0' || !is_number(arg)) {
             send_to_char("Syntax:  [direction] key [vnum]\n\r", ch);
@@ -211,7 +211,7 @@ static bool change_exit(struct char_data *ch, const char *argument, int door)
 
         value = parse_int(arg);
 
-        if (!(key = objectprototype_getbyvnum(value))) {
+        if (!(key = objecttemplate_getbyvnum(value))) {
             send_to_char("REdit:  Key doesn't exist.\n\r", ch);
             return false;
         }
@@ -572,7 +572,7 @@ EDIT(redit_mlist){
  *	list all the objects in an area
  ***************************************************************************/
 EDIT(redit_olist){
-    struct objectprototype *obj;
+    struct objecttemplate *obj;
     struct area_data *area;
     struct buf_type *buf;
     char arg[MAX_INPUT_LENGTH];
@@ -594,7 +594,7 @@ EDIT(redit_olist){
     found = false;
 
     for (vnum = area->min_vnum; vnum <= area->max_vnum; vnum++) {
-        if ((obj = objectprototype_getbyvnum(vnum))) {
+        if ((obj = objecttemplate_getbyvnum(vnum))) {
             if (all || is_name(arg, obj->name)
                 || flag_value(type_flags, arg) == obj->item_type) {
                 found = true;
@@ -665,7 +665,7 @@ EDIT(redit_mshow){
  *	show an object in an area
  ***************************************************************************/
 EDIT(redit_oshow){
-    struct objectprototype *obj;
+    struct objecttemplate *obj;
     int value;
 
     if (argument[0] == '\0') {
@@ -680,7 +680,7 @@ EDIT(redit_oshow){
 
     if (is_number(argument)) {
         value = parse_int(argument);
-        if (!(obj = objectprototype_getbyvnum(value))) {
+        if (!(obj = objecttemplate_getbyvnum(value))) {
             send_to_char("REdit:  That object does not exist.\n\r", ch);
             return false;
         }
@@ -1318,7 +1318,7 @@ EDIT(redit_mreset){
  ***************************************************************************/
 EDIT(redit_oreset){
     struct room_index_data *room;
-    struct objectprototype *obj;
+    struct objecttemplate *obj;
     struct gameobject *newobj;
     struct gameobject *to_obj;
     struct char_data *to_mob;
@@ -1339,7 +1339,7 @@ EDIT(redit_oreset){
         return false;
     }
 
-    if (!(obj = objectprototype_getbyvnum(parse_int(arg1)))) {
+    if (!(obj = objecttemplate_getbyvnum(parse_int(arg1)))) {
         send_to_char("REdit: No object has that vnum.\n\r", ch);
         return false;
     }
@@ -1380,7 +1380,7 @@ EDIT(redit_oreset){
         pReset->command = 'P';
         pReset->arg1 = obj->vnum;
         pReset->arg2 = 0;
-        pReset->arg3 = to_obj->objprototype->vnum;
+        pReset->arg3 = to_obj->objtemplate->vnum;
         pReset->arg4 = 1;
         add_reset(room, pReset, 0);
 
@@ -1391,9 +1391,9 @@ EDIT(redit_oreset){
         printf_to_char(ch, "%s(%d) has been loaded into "
                        "%s(%d) and added to resets.\n\r",
                        capitalize(OBJECT_SHORT(newobj)),
-                       newobj->objprototype->vnum,
+                       newobj->objtemplate->vnum,
                        OBJECT_SHORT(to_obj),
-                       to_obj->objprototype->vnum);
+                       to_obj->objtemplate->vnum);
         act("$n has created $p!", ch, newobj, NULL, TO_ROOM);
         return true;
     }

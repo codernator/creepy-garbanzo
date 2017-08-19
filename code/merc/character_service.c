@@ -224,7 +224,7 @@ void look_extras(struct char_data *ch, const char *name, const int number) {
 		}
 	    }
 
-	    pdesc = get_extra_descr(name, obj->objprototype->extra_descr);
+	    pdesc = get_extra_descr(name, obj->objtemplate->extra_descr);
 	    if (pdesc != NULL) {
 		if (++count == number) {
 		    send_to_char(pdesc, ch);
@@ -253,7 +253,7 @@ void look_extras(struct char_data *ch, const char *name, const int number) {
 		}
 	    }
 
-	    pdesc = get_extra_descr(name, obj->objprototype->extra_descr);
+	    pdesc = get_extra_descr(name, obj->objtemplate->extra_descr);
 	    if (pdesc != NULL) {
 		if (++count == number) {
 		    send_to_char(pdesc, ch);
@@ -661,7 +661,7 @@ void get_obj(struct char_data *ch, struct gameobject *obj, struct gameobject *co
 
 
     if (container != NULL) {
-        if (container->objprototype->vnum == OBJ_VNUM_PIT
+        if (container->objtemplate->vnum == OBJ_VNUM_PIT
                 && !CAN_WEAR(container, ITEM_TAKE)
                 && !IS_OBJ_STAT(obj, ITEM_HAD_TIMER))
         {

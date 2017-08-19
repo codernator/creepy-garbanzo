@@ -54,7 +54,7 @@ typedef bool CHECK_EXISTS_FN (long vnum);
 
 static bool check_exists_object(long vnum)
 {
-    return objectprototype_getbyvnum(vnum) != NULL;
+    return objecttemplate_getbyvnum(vnum) != NULL;
 }
 
 static bool check_exists_mob(long vnum)

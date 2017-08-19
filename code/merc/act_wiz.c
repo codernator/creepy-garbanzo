@@ -1895,7 +1895,7 @@ void do_mload(struct char_data *ch, const char *argument)
 
 void do_oload(struct char_data *ch, const char *argument)
 {
-    struct objectprototype *pObjIndex;
+    struct objecttemplate *pObjIndex;
     struct gameobject *obj;
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
@@ -1909,7 +1909,7 @@ void do_oload(struct char_data *ch, const char *argument)
         return;
     }
 
-    if ((pObjIndex = objectprototype_getbyvnum(parse_int(arg1))) == NULL) {
+    if ((pObjIndex = objecttemplate_getbyvnum(parse_int(arg1))) == NULL) {
         send_to_char("No object has that vnum.\n\r", ch);
         return;
     }

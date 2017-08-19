@@ -461,7 +461,7 @@ void load_resets(FILE *fp)
          *      OLC
          *              struct room_index_data *	room_idx;
          *              struct exit_data *			pexit;
-         *              struct objectprototype *	temp_index;
+         *              struct objecttemplate *	temp_index;
          */
         char letter;
 
@@ -929,7 +929,7 @@ void load_mobiles(FILE *fp)
 /** Snarf an obj section. */
 void load_objects(FILE *fp)
 {
-    struct objectprototype *objprototype;
+    struct objecttemplate *objtemplate;
     struct dynamic_skill *skill;
 
     if (g_area_loading == NULL) {
@@ -951,92 +951,92 @@ void load_objects(FILE *fp)
         if (vnum == 0)
             break;
 
-        if (objectprototype_getbyvnum(vnum) != NULL) {
+        if (objecttemplate_getbyvnum(vnum) != NULL) {
             log_bug("Load_objects: vnum %d duplicated.", vnum);
             ABORT;
         }
 
-        objprototype = objectprototype_new(vnum);
-        objprototype->area = g_area_loading;
+        objtemplate = objecttemplate_new(vnum);
+        objtemplate->area = g_area_loading;
 
 
-        objprototype->name = fread_string(fp);
-        objprototype->short_descr = fread_string(fp);
-        objprototype->description = fread_string(fp);
-        objprototype->extra2_flags = (int)fread_flag(fp);
+        objtemplate->name = fread_string(fp);
+        objtemplate->short_descr = fread_string(fp);
+        objtemplate->description = fread_string(fp);
+        objtemplate->extra2_flags = (int)fread_flag(fp);
 
-        CHECK_POS(objprototype->item_type, (int)item_lookup(fread_word(fp)), "item_type");
+        CHECK_POS(objtemplate->item_type, (int)item_lookup(fread_word(fp)), "item_type");
 
-        /* objprototype->item_type	= item_lookup(fread_word(fp)); */
-        objprototype->extra_flags = (int)fread_flag(fp);
-        objprototype->wear_flags = (int)fread_flag(fp);
+        /* objtemplate->item_type	= item_lookup(fread_word(fp)); */
+        objtemplate->extra_flags = (int)fread_flag(fp);
+        objtemplate->wear_flags = (int)fread_flag(fp);
 
-        switch (objprototype->item_type) {
+        switch (objtemplate->item_type) {
           case ITEM_WEAPON:
-              objprototype->value[0] = weapon_type(fread_word(fp));
-              objprototype->value[1] = fread_number(fp);
-              objprototype->value[2] = fread_number(fp);
-              objprototype->value[3] = attack_lookup(fread_word(fp));
-              objprototype->value[4] = fread_flag(fp);
+              objtemplate->value[0] = weapon_type(fread_word(fp));
+              objtemplate->value[1] = fread_number(fp);
+              objtemplate->value[2] = fread_number(fp);
+              objtemplate->value[3] = attack_lookup(fread_word(fp));
+              objtemplate->value[4] = fread_flag(fp);
               break;
           case ITEM_CONTAINER:
-              objprototype->value[0] = fread_number(fp);
-              objprototype->value[1] = fread_flag(fp);
-              objprototype->value[2] = fread_number(fp);
-              objprototype->value[3] = fread_number(fp);
-              objprototype->value[4] = fread_number(fp);
+              objtemplate->value[0] = fread_number(fp);
+              objtemplate->value[1] = fread_flag(fp);
+              objtemplate->value[2] = fread_number(fp);
+              objtemplate->value[3] = fread_number(fp);
+              objtemplate->value[4] = fread_number(fp);
               break;
           case ITEM_DRINK_CON:
           case ITEM_FOUNTAIN:
-              objprototype->value[0] = fread_number(fp);
-              objprototype->value[1] = fread_number(fp);
-              /*objprototype->value[2] = liq_lookup(fread_word(fp));*/
+              objtemplate->value[0] = fread_number(fp);
+              objtemplate->value[1] = fread_number(fp);
+              /*objtemplate->value[2] = liq_lookup(fread_word(fp));*/
 
-              CHECK_POS(objprototype->value[2], (int)liq_lookup(fread_word(fp)), "liq_lookup");
+              CHECK_POS(objtemplate->value[2], (int)liq_lookup(fread_word(fp)), "liq_lookup");
 
-              objprototype->value[3] = fread_number(fp);
-              objprototype->value[4] = fread_number(fp);
+              objtemplate->value[3] = fread_number(fp);
+              objtemplate->value[4] = fread_number(fp);
               break;
           case ITEM_WAND:
           case ITEM_STAFF:
 
-              objprototype->value[0] = fread_number(fp);
-              objprototype->value[1] = fread_number(fp);
-              objprototype->value[2] = fread_number(fp);
+              objtemplate->value[0] = fread_number(fp);
+              objtemplate->value[1] = fread_number(fp);
+              objtemplate->value[2] = fread_number(fp);
               if ((skill = skill_lookup(fread_word(fp))) != NULL)
-                  objprototype->value[3] = skill->sn;
+                  objtemplate->value[3] = skill->sn;
               else
-                  objprototype->value[3] = -1;
-              objprototype->value[4] = fread_number(fp);
+                  objtemplate->value[3] = -1;
+              objtemplate->value[4] = fread_number(fp);
               break;
           case ITEM_POTION:
           case ITEM_PILL:
           case ITEM_SCROLL:
-              objprototype->value[0] = fread_number(fp);
+              objtemplate->value[0] = fread_number(fp);
               if ((skill = skill_lookup(fread_word(fp))) != NULL)
-                  objprototype->value[1] = skill->sn;
+                  objtemplate->value[1] = skill->sn;
               if ((skill = skill_lookup(fread_word(fp))) != NULL)
-                  objprototype->value[2] = skill->sn;
+                  objtemplate->value[2] = skill->sn;
               if ((skill = skill_lookup(fread_word(fp))) != NULL)
-                  objprototype->value[3] = skill->sn;
+                  objtemplate->value[3] = skill->sn;
               if ((skill = skill_lookup(fread_word(fp))) != NULL)
-                  objprototype->value[4] = skill->sn;
+                  objtemplate->value[4] = skill->sn;
               break;
           default:
-              objprototype->value[0] = fread_flag(fp);
-              objprototype->value[1] = fread_flag(fp);
-              objprototype->value[2] = fread_flag(fp);
-              objprototype->value[3] = fread_flag(fp);
-              objprototype->value[4] = fread_flag(fp);
+              objtemplate->value[0] = fread_flag(fp);
+              objtemplate->value[1] = fread_flag(fp);
+              objtemplate->value[2] = fread_flag(fp);
+              objtemplate->value[3] = fread_flag(fp);
+              objtemplate->value[4] = fread_flag(fp);
               break;
         }
 
-        objprototype->weight = (int)fread_number(fp);
-        objprototype->cost = (unsigned int)fread_number(fp);
-        objprototype->init_timer = fread_number(fp);
+        objtemplate->weight = (int)fread_number(fp);
+        objtemplate->cost = (unsigned int)fread_number(fp);
+        objtemplate->init_timer = fread_number(fp);
 
         /* condition */
-        objprototype->condition = (int)fread_number(fp);
+        objtemplate->condition = (int)fread_number(fp);
 
         for (;; ) {
             char letter;
@@ -1054,8 +1054,8 @@ void load_objects(FILE *fp)
                 paf->location = (int)fread_number(fp);
                 paf->modifier = (int)fread_number(fp);
                 paf->bitvector = 0;
-                paf->next = objprototype->affected;
-                objprototype->affected = paf;
+                paf->next = objtemplate->affected;
+                objtemplate->affected = paf;
                 top_affect++;
             } else if (letter == 'F') {
                 struct affect_data *paf;
@@ -1088,8 +1088,8 @@ void load_objects(FILE *fp)
                 paf->location = (int)fread_number(fp);
                 paf->modifier = fread_number(fp);
                 paf->bitvector = fread_flag(fp);
-                paf->next = objprototype->affected;
-                objprototype->affected = paf;
+                paf->next = objtemplate->affected;
+                objtemplate->affected = paf;
                 top_affect++;
             } else if (letter == 'E') {
                 struct extra_descr_data *ed;
@@ -1097,8 +1097,8 @@ void load_objects(FILE *fp)
                 ed = new_extra_descr();
                 ed->keyword = fread_string(fp);
                 ed->description = fread_string(fp);
-                ed->next = objprototype->extra_descr;
-                objprototype->extra_descr = ed;
+                ed->next = objtemplate->extra_descr;
+                objtemplate->extra_descr = ed;
                 top_ed++;
             } else {
                 ungetc(letter, fp);
@@ -1158,14 +1158,14 @@ void fix_exits(void)
                       break;
 
                   case 'O':
-                      if (objectprototype_getbyvnum(reset->arg1) == NULL) {
+                      if (objecttemplate_getbyvnum(reset->arg1) == NULL) {
                           log_bug("Load room reset: bad vnum %ld.", reset->arg1);
                       }
                       ilast_obj = get_room_index(reset->arg3);
                       break;
 
                   case 'P':
-                      if (objectprototype_getbyvnum(reset->arg1) == NULL) {
+                      if (objecttemplate_getbyvnum(reset->arg1) == NULL) {
                           log_bug("Load room reset: bad vnum %ld.", reset->arg1);
                       }
                       if (ilast_obj == NULL) {
@@ -1176,7 +1176,7 @@ void fix_exits(void)
 
                   case 'G':
                   case 'E':
-                      if (objectprototype_getbyvnum(reset->arg1) == NULL) {
+                      if (objecttemplate_getbyvnum(reset->arg1) == NULL) {
                           log_bug("Load room reset: bad vnum %ld.", reset->arg1);
                       }
                       if (iLastRoom == NULL) {
@@ -1464,8 +1464,8 @@ void reset_room(struct room_index_data *room)
 
     for (reset = room->reset_first; reset != NULL; reset = reset->next) {
         struct mob_index_data *mob_idx;
-        struct objectprototype *objprototype;
-        struct objectprototype *obj_to_idx;
+        struct objecttemplate *objtemplate;
+        struct objecttemplate *obj_to_idx;
         struct room_index_data *room_idx;
         int count;
         int limit = 0;
@@ -1532,7 +1532,7 @@ void reset_room(struct room_index_data *room)
               break;
 
           case 'O':
-              if (!(objprototype = objectprototype_getbyvnum(reset->arg1))) {
+              if (!(objtemplate = objecttemplate_getbyvnum(reset->arg1))) {
                   log_bug("Reset_room: 'O' 1 : bad vnum %ld %d %ld %d", reset->arg1, reset->arg2, reset->arg3, reset->arg4);
                   continue;
               }
@@ -1549,25 +1549,25 @@ void reset_room(struct room_index_data *room)
                * in the area because i dont really care about that...
                */
               /*if(room->area->nplayer > 0
-                || count_obj_list(objprototype, room->contents) > 0)*/
-              if (count_obj_list(objprototype, room->contents) > 0) {
+                || count_obj_list(objtemplate, room->contents) > 0)*/
+              if (count_obj_list(objtemplate, room->contents) > 0) {
                   last = false;
                   break;
               }
 
-              obj = create_object(objprototype);
+              obj = create_object(objtemplate);
               obj->cost = 0;
               obj_to_room(obj, room);
               last = true;
               break;
 
           case 'P':
-              if (!(objprototype = objectprototype_getbyvnum(reset->arg1))) {
+              if (!(objtemplate = objecttemplate_getbyvnum(reset->arg1))) {
                   log_bug("Reset_room: 'P': bad vnum %ld.", reset->arg1);
                   continue;
               }
 
-              if (!(obj_to_idx = objectprototype_getbyvnum(reset->arg3))) {
+              if (!(obj_to_idx = objecttemplate_getbyvnum(reset->arg3))) {
                   log_bug("Reset_room: 'P': bad vnum %ld.", reset->arg3);
                   continue;
               }
@@ -1585,28 +1585,28 @@ void reset_room(struct room_index_data *room)
               if (room->area->nplayer > 0
                   || (last_obj = get_obj_type(obj_to_idx)) == NULL
                   || (last_obj->in_room == NULL && !last)
-                  || (objprototype->count >= limit && number_range(0, 2) != 0)
-                  || (count = count_obj_list(objprototype, last_obj->contains)) > reset->arg4) {
+                  || (objtemplate->count >= limit && number_range(0, 2) != 0)
+                  || (count = count_obj_list(objtemplate, last_obj->contains)) > reset->arg4) {
                   last = false;
                   break;
               }
 
               while (count < reset->arg4) {
-                  obj = create_object(objprototype);
+                  obj = create_object(objtemplate);
                   obj_to_obj(obj, last_obj);
                   count++;
-                  if (objprototype->count >= (int)limit)
+                  if (objtemplate->count >= (int)limit)
                       break;
               }
 
               /* fix object lock state! */
-              last_obj->value[1] = last_obj->objprototype->value[1];
+              last_obj->value[1] = last_obj->objtemplate->value[1];
               last = true;
               break;
 
           case 'G':
           case 'E':
-              if (!(objprototype = objectprototype_getbyvnum(reset->arg1))) {
+              if (!(objtemplate = objecttemplate_getbyvnum(reset->arg1))) {
                   log_bug("Reset_room: 'E' or 'G': bad vnum %ld.", reset->arg1);
                   continue;
               }
@@ -1621,7 +1621,7 @@ void reset_room(struct room_index_data *room)
               }
 
               if (IS_SHOPKEEPER(last_mob)) { /* Shop-keeper? */
-                  obj = create_object(objprototype);
+                  obj = create_object(objtemplate);
                   SET_BIT(obj->extra_flags, ITEM_INVENTORY);  /* ROM OLC */
               } else { /* ROM OLC else version */
                   int limit;
@@ -1632,8 +1632,8 @@ void reset_room(struct room_index_data *room)
                   else
                       limit = (int)reset->arg2;
 
-                  if (objprototype->count < limit || number_range(0, 4) == 0)
-                      obj = create_object(objprototype);
+                  if (objtemplate->count < limit || number_range(0, 4) == 0)
+                      obj = create_object(objtemplate);
 
                   else
                       break;
@@ -1732,7 +1732,7 @@ struct char_data *create_mobile(struct mob_index_data *mob_idx)
         mob->silver = (unsigned int)(wealth - (mob->gold * 100));
     }
 
-    /* read from prototype */
+    /* read from template */
     mob->group = mob_idx->group;
     mob->act = mob_idx->act;
 
@@ -1950,39 +1950,39 @@ void clone_mobile(struct char_data *parent, struct char_data *clone)
 /*
  * Create an instance of an object.
  */
-struct gameobject *create_object(struct objectprototype *objprototype)
+struct gameobject *create_object(struct objecttemplate *objtemplate)
 {
     struct affect_data *paf;
     struct gameobject *obj;
 
-    if (objprototype == NULL) {
-        log_bug("Create_object: NULL objprototype.");
+    if (objtemplate == NULL) {
+        log_bug("Create_object: NULL objtemplate.");
         RABORT(NULL);
     }
 
-    obj = object_new(objprototype);
+    obj = object_new(objtemplate);
 
     obj->in_room = NULL;
 
     obj->wear_loc = -1;
 
-    object_name_set(obj, str_dup(objprototype->name));
-    obj->timer = objprototype->init_timer;
-    obj->extra_flags = objprototype->extra_flags;
-    obj->value[0] = objprototype->value[0];
-    obj->value[1] = objprototype->value[1];
-    obj->value[2] = objprototype->value[2];
-    obj->value[3] = objprototype->value[3];
-    obj->value[4] = objprototype->value[4];
-    obj->weight = objprototype->weight;
-    obj->cost = objprototype->cost;
+    object_name_set(obj, str_dup(objtemplate->name));
+    obj->timer = objtemplate->init_timer;
+    obj->extra_flags = objtemplate->extra_flags;
+    obj->value[0] = objtemplate->value[0];
+    obj->value[1] = objtemplate->value[1];
+    obj->value[2] = objtemplate->value[2];
+    obj->value[3] = objtemplate->value[3];
+    obj->value[4] = objtemplate->value[4];
+    obj->weight = objtemplate->weight;
+    obj->cost = objtemplate->cost;
 
     /*
      * Mess with object properties.
      */
     switch (OBJECT_TYPE(obj)) {
       default:
-          log_bug("Read_object: vnum %ld bad type.", objprototype->vnum);
+          log_bug("Read_object: vnum %ld bad type.", objtemplate->vnum);
           break;
 
       case ITEM_LIGHT:
@@ -2022,11 +2022,11 @@ struct gameobject *create_object(struct objectprototype *objprototype)
           break;
     }
 
-    for (paf = objprototype->affected; paf != NULL; paf = paf->next)
+    for (paf = objtemplate->affected; paf != NULL; paf = paf->next)
         if (paf->location == APPLY_SPELL_AFFECT)
             affect_to_obj(obj, paf);
 
-    objprototype->count++;
+    objtemplate->count++;
 
     return obj;
 }
@@ -2489,7 +2489,7 @@ void do_memory(struct char_data *ch, const char *argument)
     printf_to_char(ch, "Helps   %5d\n\r", count_helps());
     printf_to_char(ch, "Mobs    %5d\n\r", top_mob_index);
     printf_to_char(ch, "(in use)%5d\n\r", mobile_count);
-    printf_to_char(ch, "Objs    %5d\n\r", objectprototype_list_count());
+    printf_to_char(ch, "Objs    %5d\n\r", objecttemplate_list_count());
     printf_to_char(ch, "Resets  %5d\n\r", top_reset);
     printf_to_char(ch, "Rooms   %5d\n\r", top_room);
     printf_to_char(ch, "Shops   %5d\n\r", top_shop);
@@ -2521,7 +2521,7 @@ void do_dump(struct char_data *ch, const char *argument)
     aff_count = 0;
     match = 0;
 
-    /* mobile prototypes */
+    /* mobile templates */
     fprintf(fp, "MobProt	%10ld(%12ld bytes)\n", top_mob_index, top_mob_index * (long)(sizeof(*mob_idx)));
 
     /* mobs */
@@ -2548,9 +2548,9 @@ void do_dump(struct char_data *ch, const char *argument)
     count = descriptor_list_count();
     fprintf(fp, "Descs	%10ld(%12ld bytes)\n", count, (long)count * (long)(sizeof(*d)));
 
-    /* objectprototypes */
-    count = objectprototype_list_count();
-    fprintf(fp, "ObjProt	%10ld(%12ld bytes)\n", count, count * (long)(sizeof(struct objectprototype)));
+    /* objecttemplates */
+    count = objecttemplate_list_count();
+    fprintf(fp, "ObjProt	%10ld(%12ld bytes)\n", count, count * (long)(sizeof(struct objecttemplate)));
 
     /* objects */
     count = object_list_count();
@@ -2561,14 +2561,14 @@ void do_dump(struct char_data *ch, const char *argument)
     for (af = affect_free; af != NULL; af = af->next)
         count++;
 
-    /* affects on object prototypes */
+    /* affects on object templates */
     {
-        struct objectprototype *current;
-        struct objectprototype *pending;
+        struct objecttemplate *current;
+        struct objecttemplate *pending;
 
-        pending = objectprototype_iterator_start(&objectprototype_empty_filter);
+        pending = objecttemplate_iterator_start(&objecttemplate_empty_filter);
         while ((current = pending) != NULL) {
-            pending = objectprototype_iterator(current, &objectprototype_empty_filter);
+            pending = objecttemplate_iterator(current, &objecttemplate_empty_filter);
             for (af = current->affected; af != NULL; af = af->next)
                 aff_count++;
         }
@@ -2601,16 +2601,16 @@ void do_dump(struct char_data *ch, const char *argument)
 
     /* start object dump */
     {
-        struct objectprototype *current;
-        struct objectprototype *pending;
+        struct objecttemplate *current;
+        struct objecttemplate *pending;
 
         fp = fopen("obj.dmp", "w");
         fprintf(fp, "\nObject Analysis\n");
         fprintf(fp, "---------------\n");
 
-        pending = objectprototype_iterator_start(&objectprototype_empty_filter);
+        pending = objecttemplate_iterator_start(&objecttemplate_empty_filter);
         while ((current = pending) != NULL) {
-            pending = objectprototype_iterator(current, &objectprototype_empty_filter);
+            pending = objecttemplate_iterator(current, &objecttemplate_empty_filter);
 
             fprintf(fp, "#%-10ld %3d active   %s\n", current->vnum, current->count, current->short_descr);
         }

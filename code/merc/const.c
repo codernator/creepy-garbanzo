@@ -67,7 +67,7 @@ const struct weapon_type weapon_table[] =
 
 
 
-/* wiznet table and prototype for future flag setting */
+/* wiznet table and template for future flag setting */
 const struct wiznet_type wiznet_table[] =
 {
 	{ "on",	       WIZ_ON,	      IM },
@@ -94,7 +94,7 @@ const struct wiznet_type wiznet_table[] =
 	{ NULL,	       0,	      0	 }
 };
 
-/* impnet table and prototype for future flag setting */
+/* impnet table and template for future flag setting */
 const struct impnet_type impnet_table[] =
 {
 	{ "on",		IMN_ON,	       L1 },

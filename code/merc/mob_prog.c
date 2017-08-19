@@ -276,8 +276,8 @@ static bool has_item(struct char_data *ch, long vnum, int item_type, bool fWear)
     struct gameobject *obj;
 
     for (obj = ch->carrying; obj; obj = obj->next_content)
-	if ((vnum < 0 || obj->objprototype->vnum == vnum)
-		&& (item_type < 0 || obj->objprototype->item_type == item_type)
+	if ((vnum < 0 || obj->objtemplate->vnum == vnum)
+		&& (item_type < 0 || obj->objtemplate->item_type == item_type)
 		&& (!fWear || obj->wear_loc != WEAR_NONE))
 	    return true;
     return false;
@@ -304,7 +304,7 @@ static bool get_obj_vnum_room(struct char_data *ch, long vnum)
     struct gameobject *obj;
 
     for (obj = ch->in_room->contents; obj; obj = obj->next_content)
-	if (obj->objprototype->vnum == vnum)
+	if (obj->objtemplate->vnum == vnum)
 	    return true;
     return false;
 }
@@ -557,7 +557,7 @@ static bool cmd_eval(long vnum, const char *line, int check, struct char_data *m
 		case 'o':
 		case 'p':
 		    if (lval_obj != NULL)
-			lval = lval_obj->objprototype->vnum;
+			lval = lval_obj->objtemplate->vnum;
 	    }
 	    break;
 	case CHK_HPCNT:
@@ -1101,7 +1101,7 @@ void mp_give_trigger(struct char_data *mob, struct char_data *ch, struct gameobj
 	     * Vnum argument
 	     */
 	    if (is_number(p)) {
-		if (obj->objprototype->vnum == parse_long(p)) {
+		if (obj->objtemplate->vnum == parse_long(p)) {
 		    program_flow(prg->vnum, prg->code, mob, ch, (void *)obj, NULL);
 		    return;
 		}

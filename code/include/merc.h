@@ -1210,7 +1210,7 @@ struct liq_type {
 /***************************************************************************
  * mob/character structures
  * mob_index_data
- * the database prototype for a mob
+ * the database template for a mob
  ***************************************************************************/
 struct mob_index_data {
     struct mob_index_data *next;
@@ -1456,9 +1456,9 @@ struct extra_descr_data {
 /***************************************************************************
  * object specific structures
  ***************************************************************************/
-/*@abstract@*/struct objectprototype {
-    /*@owned@*//*@null@*//*@partial@*/struct objectprototype *next;
-    /*@dependent@*//*@null@*//*@partial@*/struct objectprototype *prev;
+/*@abstract@*/struct objecttemplate {
+    /*@owned@*//*@null@*//*@partial@*/struct objecttemplate *next;
+    /*@dependent@*//*@null@*//*@partial@*/struct objecttemplate *prev;
 
     unsigned long vnum;
     /*@dependent@*//*@null@*/struct area_data *area;
@@ -1479,11 +1479,11 @@ struct extra_descr_data {
     /*@owned@*//*@notnull@*/struct affect_data *affected;
 };
 
-#define OBJECT_SHORT(obj)       ((obj)->objprototype->short_descr)
-#define OBJECT_LONG(obj)        ((obj)->objprototype->description)
-#define OBJECT_EXTRA(obj)       ((obj)->objprototype->extra_descr)
-#define OBJECT_TYPE(obj)        ((obj)->objprototype->item_type)
-#define OBJECT_WEARFLAGS(obj)   ((obj)->objprototype->wear_flags)
+#define OBJECT_SHORT(obj)       ((obj)->objtemplate->short_descr)
+#define OBJECT_LONG(obj)        ((obj)->objtemplate->description)
+#define OBJECT_EXTRA(obj)       ((obj)->objtemplate->extra_descr)
+#define OBJECT_TYPE(obj)        ((obj)->objtemplate->item_type)
+#define OBJECT_WEARFLAGS(obj)   ((obj)->objtemplate->wear_flags)
 
 
 /***************************************************************************
@@ -1500,7 +1500,7 @@ struct extra_descr_data {
     /*@dependent@*//*@null@*/struct char_data *target;
     /*@dependent@*//*@null@*/struct affect_data *affected;
 
-    /*@dependent@*/struct objectprototype *objprototype;
+    /*@dependent@*/struct objecttemplate *objtemplate;
     /*@dependent@*//*@null@*/struct room_index_data *in_room;
     /*@shared@*//*@null@*/char *owner_name;
     /*@shared@*//*@null@*/char *override_name;
@@ -1800,11 +1800,11 @@ if (IS_NPC(ch)) \
 #define IS_BUILDER(ch, area)    (!IS_NPC(ch) && !IS_SWITCHED(ch) && (ch->pcdata->security >= area->security || strstr(area->builders, ch->name) || strstr(area->builders, "All")))
 
 /** Object macros. */
-#define CAN_WEAR(obj, part)     (IS_SET((obj)->objprototype->wear_flags, (part)))
+#define CAN_WEAR(obj, part)     (IS_SET((obj)->objtemplate->wear_flags, (part)))
 #define IS_OBJ_STAT(obj, stat)  (IS_SET((obj)->extra_flags, (stat)))
 #define IS_OBJ_STAT2(obj, stat) (IS_SET((obj)->extra2_flags, (stat)))
 #define IS_WEAPON_STAT(obj, stat)(IS_SET((obj)->value[4], (stat)))
-#define WEIGHT_MULT(obj)        ((obj)->objprototype->item_type == ITEM_CONTAINER ? (obj)->value[4] : 100)
+#define WEIGHT_MULT(obj)        ((obj)->objtemplate->item_type == ITEM_CONTAINER ? (obj)->value[4] : 100)
 #define IS_OBJ2_STAT(obj, stat) (IS_SET((obj)->extra2_flags, (stat)))
 
 
@@ -1973,7 +1973,7 @@ void area_update(void);
 /* creation/cloning */
 struct char_data *create_mobile(struct mob_index_data * mob_idx);
 void clone_mobile(struct char_data * parent, struct char_data * clone);
-struct gameobject *create_object(struct objectprototype * objprototype);
+struct gameobject *create_object(struct objecttemplate * objtemplate);
 void clear_char(struct char_data * ch);
 
 /* find functions  */
@@ -2065,7 +2065,7 @@ long apply_ac(struct gameobject * obj, int iWear, int type);
 struct gameobject *get_eq_char(struct char_data * ch, int iWear);
 void equip_char(struct char_data * ch, struct gameobject * obj, int iWear);
 void unequip_char(struct char_data * ch, struct gameobject * obj);
-int count_obj_list(struct objectprototype * obj, struct gameobject * list);
+int count_obj_list(struct objecttemplate * obj, struct gameobject * list);
 void obj_from_room(struct gameobject * obj);
 void obj_to_room(struct gameobject * obj, struct room_index_data * pRoomIndex);
 void obj_to_obj(struct gameobject * obj, struct gameobject * obj_to);
@@ -2074,7 +2074,7 @@ void extract_obj(struct gameobject * obj);
 void extract_char(struct char_data * ch, bool fPull);
 struct char_data *get_char_room(struct char_data * ch, const char *argument);
 struct char_data *get_char_world(struct char_data * ch, const char *argument);
-struct gameobject *get_obj_type(struct objectprototype * objprototypeData);
+struct gameobject *get_obj_type(struct objecttemplate * objtemplateData);
 struct gameobject *get_obj_list(struct char_data * ch, const char *argument, struct gameobject * list);
 struct gameobject *get_obj_carry(struct char_data * ch, const char *argument);
 struct gameobject *get_obj_wear(struct char_data * ch, const char *argument);
@@ -2200,32 +2200,32 @@ void descriptor_host_set(struct descriptor_data *d, /*@observer@*/const char *va
 /* ~descriptor.c */
 
 
-/* objectprototype.c */
-typedef struct objectprototype_filter OBJECTPROTOTYPE_FILTER;
-struct objectprototype_filter {
+/* objecttemplate.c */
+typedef struct objecttemplate_filter objecttemplate_FILTER;
+struct objecttemplate_filter {
     /*@null@*/const char *name;
 };
-extern const OBJECTPROTOTYPE_FILTER objectprototype_empty_filter;
+extern const objecttemplate_FILTER objecttemplate_empty_filter;
 
-/*@dependent@*/struct objectprototype *objectprototype_new(unsigned long vnum);
-/*@dependent@*/struct objectprototype *objectprototype_clone(/*@observer@*/struct objectprototype *target, unsigned long vnum, /*@dependent@*/struct area_data *area);
-void objectprototype_free(/*@owned@*/struct objectprototype *templatedata);
-int objectprototype_list_count();
-/*@dependent@*//*@null@*/struct objectprototype *objectprototype_iterator_start(const OBJECTPROTOTYPE_FILTER *filter);
-/*@dependent@*//*@null@*/struct objectprototype *objectprototype_iterator(struct objectprototype *current, const OBJECTPROTOTYPE_FILTER *filter);
-/*@dependent@*//*@null@*/struct objectprototype *objectprototype_getbyvnum(unsigned long vnum);
-/*@only@*/struct array_list *objectprototype_serialize(const struct objectprototype *obj);
-/*@dependent@*/struct objectprototype *objectprototype_deserialize(const struct array_list *data);
+/*@dependent@*/struct objecttemplate *objecttemplate_new(unsigned long vnum);
+/*@dependent@*/struct objecttemplate *objecttemplate_clone(/*@observer@*/struct objecttemplate *target, unsigned long vnum, /*@dependent@*/struct area_data *area);
+void objecttemplate_free(/*@owned@*/struct objecttemplate *templatedata);
+int objecttemplate_list_count();
+/*@dependent@*//*@null@*/struct objecttemplate *objecttemplate_iterator_start(const objecttemplate_FILTER *filter);
+/*@dependent@*//*@null@*/struct objecttemplate *objecttemplate_iterator(struct objecttemplate *current, const objecttemplate_FILTER *filter);
+/*@dependent@*//*@null@*/struct objecttemplate *objecttemplate_getbyvnum(unsigned long vnum);
+/*@only@*/struct array_list *objecttemplate_serialize(const struct objecttemplate *obj);
+/*@dependent@*/struct objecttemplate *objecttemplate_deserialize(const struct array_list *data);
 
-void objectprototype_applyaffect(struct objectprototype *obj, /*@owned@*/struct affect_data *affect);
-bool objectprototype_deleteaffect(struct objectprototype *obj, int index);
-void objectprototype_setname(struct objectprototype *obj, /*@observer@*/const char *name);
-void objectprototype_setshort(struct objectprototype *obj, /*@observer@*/const char *short_desc);
-void objectprototype_setlong(struct objectprototype *obj, /*@observer@*/const char *description);
-/*@dependent@*/struct extra_descr_data *objectprototype_addextra(struct objectprototype *obj, /*@observer@*/const char *keyword, /*@observer@*/const char *description);
-/*@dependent@*//*@null@*/struct extra_descr_data *objectprototype_findextra(struct objectprototype *obj, /*@observer@*/const char *keyword);
-bool objectprototype_deleteextra(struct objectprototype *obj, /*@observer@*/const char *keyword);
-/* ~objectprototype.c */
+void objecttemplate_applyaffect(struct objecttemplate *obj, /*@owned@*/struct affect_data *affect);
+bool objecttemplate_deleteaffect(struct objecttemplate *obj, int index);
+void objecttemplate_setname(struct objecttemplate *obj, /*@observer@*/const char *name);
+void objecttemplate_setshort(struct objecttemplate *obj, /*@observer@*/const char *short_desc);
+void objecttemplate_setlong(struct objecttemplate *obj, /*@observer@*/const char *description);
+/*@dependent@*/struct extra_descr_data *objecttemplate_addextra(struct objecttemplate *obj, /*@observer@*/const char *keyword, /*@observer@*/const char *description);
+/*@dependent@*//*@null@*/struct extra_descr_data *objecttemplate_findextra(struct objecttemplate *obj, /*@observer@*/const char *keyword);
+bool objecttemplate_deleteextra(struct objecttemplate *obj, /*@observer@*/const char *keyword);
+/* ~objecttemplate.c */
 
 
 /* affect_data.c */

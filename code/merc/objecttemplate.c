@@ -15,7 +15,7 @@
 #define HASH_KEY(vnum) (vnum) % OBJPROTO_MAX_KEY_HASH
 
 /** exports */
-const OBJECTPROTOTYPE_FILTER objectprototype_empty_filter;
+const objecttemplate_FILTER objecttemplate_empty_filter;
 
 
 /** imports */
@@ -26,22 +26,22 @@ extern void free_extra_descr(struct extra_descr_data *ed);
 /** locals */
 struct hash_entry {
     /*@only@*/struct hash_entry *next;
-    /*@dependent@*/struct objectprototype *entry;
+    /*@dependent@*/struct objecttemplate *entry;
 };
 
-static struct objectprototype head_node;
-static bool passes(struct objectprototype *testee, const OBJECTPROTOTYPE_FILTER *filter);
-static void headlist_add(/*@owned@*/struct objectprototype *entry);
+static struct objecttemplate head_node;
+static bool passes(struct objecttemplate *testee, const objecttemplate_FILTER *filter);
+static void headlist_add(/*@owned@*/struct objecttemplate *entry);
 /* an array of linked lists, with an empty head node. */
 static struct hash_entry lookup[OBJPROTO_MAX_KEY_HASH];
-static void lookup_add(unsigned long entrykey, /*@dependent@*/struct objectprototype *entry);
-static void lookup_remove(unsigned long entrykey, /*@dependent@*/struct objectprototype *entry);
+static void lookup_add(unsigned long entrykey, /*@dependent@*/struct objecttemplate *entry);
+static void lookup_remove(unsigned long entrykey, /*@dependent@*/struct objecttemplate *entry);
 
 /*
  * Translates object virtual number to its obj index struct.
  * Hash table lookup.
  */
-struct objectprototype *objectprototype_getbyvnum(unsigned long vnum)
+struct objecttemplate *objecttemplate_getbyvnum(unsigned long vnum)
 {
     struct hash_entry *hashentry;
     unsigned long hashkey = HASH_KEY(vnum);
@@ -55,52 +55,52 @@ struct objectprototype *objectprototype_getbyvnum(unsigned long vnum)
         : hashentry->entry;
 }
 
-struct objectprototype *objectprototype_new(unsigned long vnum)
+struct objecttemplate *objecttemplate_new(unsigned long vnum)
 {
-    struct objectprototype *prototypedata;
+    struct objecttemplate *templatedata;
 
-    prototypedata = malloc(sizeof(struct objectprototype));
-    assert(prototypedata != NULL);
+    templatedata = malloc(sizeof(struct objecttemplate));
+    assert(templatedata != NULL);
 
     /** Default values */
     {
-        memset(prototypedata, 0, sizeof(struct objectprototype));
-        prototypedata->vnum = vnum;
+        memset(templatedata, 0, sizeof(struct objecttemplate));
+        templatedata->vnum = vnum;
         /*@-mustfreeonly@*/
-        prototypedata->name = strdup("no name");
-        prototypedata->short_descr = strdup("(no short description)");
-        prototypedata->description = strdup("(no description)");
-        prototypedata->affected = affectdata_new();
-        prototypedata->extra_descr = extradescrdata_new();
+        templatedata->name = strdup("no name");
+        templatedata->short_descr = strdup("(no short description)");
+        templatedata->description = strdup("(no description)");
+        templatedata->affected = affectdata_new();
+        templatedata->extra_descr = extradescrdata_new();
         /*@+mustfreeonly@*/
-        prototypedata->item_type = ITEM_TRASH;
-        prototypedata->condition = 100;
+        templatedata->item_type = ITEM_TRASH;
+        templatedata->condition = 100;
 
     }
 
     /** Place on list. */
-    headlist_add(prototypedata);
+    headlist_add(templatedata);
 
     /** Store in hash table. */
-    lookup_add(vnum, prototypedata);
+    lookup_add(vnum, templatedata);
 
-    return prototypedata;
+    return templatedata;
 }
 
-struct objectprototype *objectprototype_clone(struct objectprototype *source, unsigned long vnum, struct area_data *area)
+struct objecttemplate *objecttemplate_clone(struct objecttemplate *source, unsigned long vnum, struct area_data *area)
 {
-    struct objectprototype *clone;
+    struct objecttemplate *clone;
     /*@observer@*/struct affect_data *affsource;
     struct affect_data *affclone;
     /*@observer@*/struct extra_descr_data *extrasource;
     struct extra_descr_data *extraclone;
     int i;
 
-    clone = malloc(sizeof(struct objectprototype));
+    clone = malloc(sizeof(struct objecttemplate));
     assert(clone != NULL);
 
     {
-        memset(clone, 0, sizeof(struct objectprototype));
+        memset(clone, 0, sizeof(struct objecttemplate));
         clone->vnum = vnum;
         clone->area = area;
         /*@-mustfreeonly@*/
@@ -145,9 +145,9 @@ struct objectprototype *objectprototype_clone(struct objectprototype *source, un
     return clone;
 }
 
-struct objectprototype *objectprototype_deserialize(const struct array_list *data)
+struct objecttemplate *objecttemplate_deserialize(const struct array_list *data)
 {
-    struct objectprototype *prototypedata;
+    struct objecttemplate *templatedata;
     const char *entry;
     const char *entrydata;
     struct array_list *serialized;
@@ -155,27 +155,27 @@ struct objectprototype *objectprototype_deserialize(const struct array_list *dat
     struct affect_data *affect;
 
 
-    prototypedata = malloc(sizeof(struct objectprototype));
-    assert(prototypedata != NULL);
-    memset(prototypedata, 0, sizeof(struct objectprototype));
+    templatedata = malloc(sizeof(struct objecttemplate));
+    assert(templatedata != NULL);
+    memset(templatedata, 0, sizeof(struct objecttemplate));
     /*@-mustfreeonly@*/
-    prototypedata->affected = affectdata_new();
-    prototypedata->extra_descr = extradescrdata_new();
+    templatedata->affected = affectdata_new();
+    templatedata->extra_descr = extradescrdata_new();
     /*@+mustfreeonly@*/
 
 
-    deserialize_assign_ulong(data, prototypedata->vnum, "vnum");
+    deserialize_assign_ulong(data, templatedata->vnum, "vnum");
     /*@-mustfreeonly@*/
-    deserialize_assign_string_default(data, prototypedata->name, "name", "no name");
-    deserialize_assign_string_default(data, prototypedata->short_descr, "short", "(no short description)");
-    deserialize_assign_string_default(data, prototypedata->description, "long", "(no description)");
+    deserialize_assign_string_default(data, templatedata->name, "name", "no name");
+    deserialize_assign_string_default(data, templatedata->short_descr, "short", "(no short description)");
+    deserialize_assign_string_default(data, templatedata->description, "long", "(no description)");
     /*@+mustfreeonly@*/
 
-    deserialize_assign_int(data, prototypedata->condition, "condition");
-    deserialize_assign_flag(data, prototypedata->extra2_flags, "extra2");
-    deserialize_assign_flag(data, prototypedata->extra_flags, "extra");
-    deserialize_assign_flag(data, prototypedata->wear_flags, "wear");
-    deserialize_assign_uint(data, prototypedata->item_type, "item_type");
+    deserialize_assign_int(data, templatedata->condition, "condition");
+    deserialize_assign_flag(data, templatedata->extra2_flags, "extra2");
+    deserialize_assign_flag(data, templatedata->extra_flags, "extra");
+    deserialize_assign_flag(data, templatedata->wear_flags, "wear");
+    deserialize_assign_uint(data, templatedata->item_type, "item_type");
 
 
     entry = kvp_array_find(data, "affects");
@@ -192,8 +192,8 @@ struct objectprototype *objectprototype_deserialize(const struct array_list *dat
             kvp_free_array(serialized);
             assert(affect->next == NULL);
 
-            affect->next = prototypedata->affected->next;
-            prototypedata->affected->next = affect;
+            affect->next = templatedata->affected->next;
+            templatedata->affected->next = affect;
         }
 
         kvp_free_array(affects);
@@ -212,25 +212,25 @@ struct objectprototype *objectprototype_deserialize(const struct array_list *dat
             kvp_free_array(serialized);
             assert(extra->next == NULL);
 
-            extra->next = prototypedata->extra_descr->next;
-            prototypedata->extra_descr->next = extra;
+            extra->next = templatedata->extra_descr->next;
+            templatedata->extra_descr->next = extra;
         }
 
         kvp_free_array(extras);
     }
 
     /** Place on list. */
-    headlist_add(prototypedata);
+    headlist_add(templatedata);
 
     /** Store in hash table. */
-    if (prototypedata->vnum != 0) {
-        lookup_add(prototypedata->vnum, prototypedata);
+    if (templatedata->vnum != 0) {
+        lookup_add(templatedata->vnum, templatedata);
     }
 
-    return prototypedata;
+    return templatedata;
 }
 
-struct array_list *objectprototype_serialize(const struct objectprototype *obj)
+struct array_list *objecttemplate_serialize(const struct objecttemplate *obj)
 {
     struct array_list *answer;
 
@@ -297,18 +297,18 @@ struct array_list *objectprototype_serialize(const struct objectprototype *obj)
     return answer;
 }
 
-void objectprototype_free(struct objectprototype *prototypedata)
+void objecttemplate_free(struct objecttemplate *templatedata)
 {
-    assert(prototypedata != NULL);
-    assert(prototypedata != &head_node);
+    assert(templatedata != NULL);
+    assert(templatedata != &head_node);
 
     /** Remove from hash table. */
-    lookup_remove(prototypedata->vnum, prototypedata);
+    lookup_remove(templatedata->vnum, templatedata);
 
     /** Extract from list. */
     {
-        struct objectprototype *prev = prototypedata->prev;
-        struct objectprototype *next = prototypedata->next;
+        struct objecttemplate *prev = templatedata->prev;
+        struct objecttemplate *next = templatedata->next;
 
         assert(prev != NULL); /** because only the head node has no previous. */
         prev->next = next;
@@ -321,7 +321,7 @@ void objectprototype_free(struct objectprototype *prototypedata)
     {
         /*@only@*/struct affect_data *paf;
         /*@only@*/struct affect_data *paf_next;
-        paf_next = prototypedata->affected;
+        paf_next = templatedata->affected;
         while (paf_next != NULL)
         {
             paf = paf_next;
@@ -329,14 +329,14 @@ void objectprototype_free(struct objectprototype *prototypedata)
             affectdata_free(paf);
         }
         paf = NULL; // trixie on splint
-        prototypedata->affected = NULL;
+        templatedata->affected = NULL;
     }
 
     /** Clean up extras */
     {
         /*@only@*/struct extra_descr_data *extra;
         /*@only@*/struct extra_descr_data *extra_next;
-        extra_next = prototypedata->extra_descr;
+        extra_next = templatedata->extra_descr;
         while (extra_next != NULL)
             {
                 extra = extra_next;
@@ -344,20 +344,20 @@ void objectprototype_free(struct objectprototype *prototypedata)
                 extradescrdata_free(extra);
             }
         extra = NULL; // trixie on splint
-        prototypedata->extra_descr = NULL;
+        templatedata->extra_descr = NULL;
     }
 
 
     /** Clean up strings */
-    if (prototypedata->name != NULL) free(prototypedata->name);
-    if (prototypedata->description != NULL) free(prototypedata->description);
-    if (prototypedata->short_descr != NULL) free(prototypedata->short_descr);
+    if (templatedata->name != NULL) free(templatedata->name);
+    if (templatedata->description != NULL) free(templatedata->description);
+    if (templatedata->short_descr != NULL) free(templatedata->short_descr);
 
-    free(prototypedata);
+    free(templatedata);
     return;
 }
 
-void objectprototype_applyaffect(struct objectprototype *template, struct affect_data *affect)
+void objecttemplate_applyaffect(struct objecttemplate *template, struct affect_data *affect)
 {
     // remember template->affected is a HEAD node that has no real data.
     affect->next = template->affected->next;
@@ -366,7 +366,7 @@ void objectprototype_applyaffect(struct objectprototype *template, struct affect
 }
 
 
-bool objectprototype_deleteaffect(struct objectprototype *template, int index)
+bool objecttemplate_deleteaffect(struct objecttemplate *template, int index)
 {
     struct affect_data *prev = NULL;
     struct affect_data *curr = NULL;
@@ -397,7 +397,7 @@ bool objectprototype_deleteaffect(struct objectprototype *template, int index)
     /*@+usereleased@*/
 }
 
-void objectprototype_setname(struct objectprototype *template, const char *name)
+void objecttemplate_setname(struct objecttemplate *template, const char *name)
 {
     if (template->name != NULL)
         free(template->name);
@@ -405,7 +405,7 @@ void objectprototype_setname(struct objectprototype *template, const char *name)
     return;
 }
 
-void objectprototype_setshort(struct objectprototype *template, const char *short_descr)
+void objecttemplate_setshort(struct objecttemplate *template, const char *short_descr)
 {
     if (template->short_descr != NULL)
         free(template->short_descr);
@@ -413,7 +413,7 @@ void objectprototype_setshort(struct objectprototype *template, const char *shor
     return;
 }
 
-void objectprototype_setlong(struct objectprototype *template, const char *description)
+void objecttemplate_setlong(struct objecttemplate *template, const char *description)
 {
     if (template->description != NULL)
         free(template->description);
@@ -421,7 +421,7 @@ void objectprototype_setlong(struct objectprototype *template, const char *descr
     return;
 }
 
-struct extra_descr_data *objectprototype_addextra(struct objectprototype *template, const char *keyword, const char *description)
+struct extra_descr_data *objecttemplate_addextra(struct objecttemplate *template, const char *keyword, const char *description)
 {
     struct extra_descr_data *extra;
 
@@ -436,7 +436,7 @@ struct extra_descr_data *objectprototype_addextra(struct objectprototype *templa
     return extra;
 }
 
-struct extra_descr_data *objectprototype_findextra(struct objectprototype *template, const char *keyword)
+struct extra_descr_data *objecttemplate_findextra(struct objecttemplate *template, const char *keyword)
 {
     struct extra_descr_data *extra;
 
@@ -447,7 +447,7 @@ struct extra_descr_data *objectprototype_findextra(struct objectprototype *templ
     return NULL;
 }
 
-bool objectprototype_deleteextra(struct objectprototype *template, const char *keyword)
+bool objecttemplate_deleteextra(struct objecttemplate *template, const char *keyword)
 {
     struct extra_descr_data *prev;
     struct extra_descr_data *curr;
@@ -480,23 +480,23 @@ bool objectprototype_deleteextra(struct objectprototype *template, const char *k
     /*@+compdef@*/
 }
 
-int objectprototype_list_count()
+int objecttemplate_list_count()
 {
-    struct objectprototype *o;
+    struct objecttemplate *o;
     int counter = 0;
     for (o = head_node.next; o != NULL; o = o->next)
         counter++;
     return counter;
 }
 
-struct objectprototype *objectprototype_iterator_start(const OBJECTPROTOTYPE_FILTER *filter)
+struct objecttemplate *objecttemplate_iterator_start(const objecttemplate_FILTER *filter)
 {
-    return objectprototype_iterator(&head_node, filter);
+    return objecttemplate_iterator(&head_node, filter);
 }
 
-struct objectprototype *objectprototype_iterator(struct objectprototype *current, const OBJECTPROTOTYPE_FILTER *filter)
+struct objecttemplate *objecttemplate_iterator(struct objecttemplate *current, const objecttemplate_FILTER *filter)
 {
-    struct objectprototype *next;
+    struct objecttemplate *next;
 
     if (current == NULL) {
         return NULL;
@@ -511,7 +511,7 @@ struct objectprototype *objectprototype_iterator(struct objectprototype *current
 }
 
 
-bool passes(struct objectprototype *testee, const OBJECTPROTOTYPE_FILTER *filter)
+bool passes(struct objecttemplate *testee, const objecttemplate_FILTER *filter)
 {
     if (filter->name != NULL && filter->name[0] != '\0' && testee->name != NULL && str_cmp(filter->name, testee->name)) {
         /** name filter specified but does not match current object. */
@@ -521,9 +521,9 @@ bool passes(struct objectprototype *testee, const OBJECTPROTOTYPE_FILTER *filter
     return true;
 }
 
-void headlist_add(/*@owned@*/struct objectprototype *entry)
+void headlist_add(/*@owned@*/struct objecttemplate *entry)
 {
-    struct objectprototype *headnext;
+    struct objecttemplate *headnext;
 
     entry->prev = &head_node;
     headnext = head_node.next;
@@ -536,7 +536,7 @@ void headlist_add(/*@owned@*/struct objectprototype *entry)
     head_node.next = entry;
 }
 
-void lookup_add(unsigned long entrykey, struct objectprototype *entry)
+void lookup_add(unsigned long entrykey, struct objecttemplate *entry)
 {
     struct hash_entry *node;
     unsigned long hashkey;
@@ -549,7 +549,7 @@ void lookup_add(unsigned long entrykey, struct objectprototype *entry)
     lookup[hashkey].next = node;
 }
 
-void lookup_remove(unsigned long entrykey, struct objectprototype *entry)
+void lookup_remove(unsigned long entrykey, struct objecttemplate *entry)
 {
     struct hash_entry *head;
     struct hash_entry *prev;

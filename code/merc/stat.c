@@ -205,7 +205,7 @@ void show_object_stats(struct char_data *ch, const char *argument)
     }
 
     printf_to_char(ch, "Name(s): %s\n\r", object_name_get(obj));
-    printf_to_char(ch, "Vnum: %d  Format: %s\n\r", obj->objprototype->vnum, item_type_name(obj));
+    printf_to_char(ch, "Vnum: %d  Format: %s\n\r", obj->objtemplate->vnum, item_type_name(obj));
     {
         const char *ownername = object_ownername_get(obj);
         printf_to_char(ch, "Owner: %s\n\r", (ownername != NULL) ? ownername : "none");
@@ -358,7 +358,7 @@ void show_object_stats(struct char_data *ch, const char *argument)
         }
     }
 
-    for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
+    for (paf = obj->objtemplate->affected; paf != NULL; paf = paf->next) {
         printf_to_char(ch, "Affects %s by %d, level %d.\n\r",
                         affect_loc_name(paf->location),
                         paf->modifier, paf->level);

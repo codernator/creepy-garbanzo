@@ -22,7 +22,7 @@ static bool passes(struct gameobject *testee, const OBJECT_ITERATOR_FILTER *filt
 
 
 
-struct gameobject *object_new(struct objectprototype *prototypedata)
+struct gameobject *object_new(struct objecttemplate *templatedata)
 {
     struct gameobject *obj;
 
@@ -32,7 +32,7 @@ struct gameobject *object_new(struct objectprototype *prototypedata)
     /** Default values */
     {
 	memset(obj, 0, sizeof(struct gameobject));
-	obj->objprototype = prototypedata;
+	obj->objtemplate = templatedata;
     }
 
     /** Place on list. */
@@ -64,7 +64,7 @@ struct gameobject *object_clone(struct gameobject *parent)
     /** Default values */
     {
         memset(clone, 0, sizeof(struct gameobject));
-        clone->objprototype = parent->objprototype;
+        clone->objtemplate = parent->objtemplate;
     }
 
     /** Place on list. */
@@ -193,7 +193,7 @@ void object_ownername_set(struct gameobject *object, const struct char_data *own
 
 inline const char *object_name_get(const struct gameobject *object)
 {
-    return object->override_name == NULL ? object->objprototype->name : object->override_name;
+    return object->override_name == NULL ? object->objtemplate->name : object->override_name;
 }
 
 void object_name_set(struct gameobject *object, const char *name)
@@ -226,7 +226,7 @@ bool passes(struct gameobject *testee, const OBJECT_ITERATOR_FILTER *filter)
 	return false;
     }
 
-    if (filter->object_template != NULL && filter->object_template != testee->objprototype) {
+    if (filter->object_template != NULL && filter->object_template != testee->objtemplate) {
 	return false;
     }
 

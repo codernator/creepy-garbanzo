@@ -18,8 +18,8 @@ static void save_mobprogs(FILE *fp, struct area_data *area);
 static void save_mobile(FILE *fp, struct mob_index_data *mob_idx);
 static void save_mobiles(FILE *fp, struct area_data *area);
 static void save_objects(struct database_controller *db, struct area_data *area);
-static void save_object(struct database_controller *db, struct objectprototype *pObjIndex);
-//static void save_object(FILE *fp, struct objectprototype *pObjIndex);
+static void save_object(struct database_controller *db, struct objecttemplate *pObjIndex);
+//static void save_object(FILE *fp, struct objecttemplate *pObjIndex);
 //static void save_objects(FILE *fp, struct area_data *area);
 static void save_rooms(FILE *fp, struct area_data *area);
 static void save_door_resets(FILE *fp, struct area_data *area);
@@ -154,7 +154,7 @@ void do_asave(struct char_data *ch, const char *argument)
               area = ch->in_room->area;
               break;
           case ED_OBJECT:
-              area = ((struct objectprototype *)ch->desc->ed_data)->area;
+              area = ((struct objecttemplate *)ch->desc->ed_data)->area;
               break;
           case ED_MOBILE:
               area = ((struct mob_index_data *)ch->desc->ed_data)->area;
@@ -380,7 +380,7 @@ void save_mobiles(FILE *fp, struct area_data *area)
 
 
 
-void save_object_old(FILE *fp, struct objectprototype *pObjIndex)
+void save_object_old(FILE *fp, struct objecttemplate *pObjIndex)
 {
     struct affect_data *pAf;
     struct extra_descr_data *extra;
@@ -513,12 +513,12 @@ void save_object_old(FILE *fp, struct objectprototype *pObjIndex)
     return;
 }
 
-void save_object(struct database_controller *db, struct objectprototype *pObjIndex)
+void save_object(struct database_controller *db, struct objecttemplate *pObjIndex)
 {
     struct array_list *serialized;
     char *dbstream;
 
-    serialized = objectprototype_serialize(pObjIndex);
+    serialized = objecttemplate_serialize(pObjIndex);
     dbstream = database_create_stream(serialized);
     kvp_free_array(serialized);
     database_write_stream(db, dbstream);
@@ -528,13 +528,13 @@ void save_object(struct database_controller *db, struct objectprototype *pObjInd
 
 void save_objects(struct database_controller *db, struct area_data *area)
 {
-    struct objectprototype *pObj;
+    struct objecttemplate *pObj;
     long iter;
 
     fprintf(db->_cfptr, "#OBJECTS\n");
 
     for (iter = area->min_vnum; iter <= area->max_vnum; iter++)
-        if ((pObj = objectprototype_getbyvnum(iter)))
+        if ((pObj = objecttemplate_getbyvnum(iter)))
             save_object(db, pObj);
 
     fprintf(db->_cfptr, "#0\n\n\n\n");

@@ -485,7 +485,7 @@ static void fwrite_obj(struct char_data *ch, struct gameobject *obj, FILE *fp, i
         fwrite_obj(ch, obj->next_content, fp, iNest);
 
     fprintf(fp, "#O\n");
-    fprintf(fp, "Vnum %ld\n", obj->objprototype->vnum);
+    fprintf(fp, "Vnum %ld\n", obj->objtemplate->vnum);
 
     fprintf(fp, "Nest %d\n", iNest);
 
@@ -493,16 +493,16 @@ static void fwrite_obj(struct char_data *ch, struct gameobject *obj, FILE *fp, i
     if (obj->override_name != NULL)
         fprintf(fp, "Name %s~\n", obj->override_name);
 
-    if (obj->extra_flags != obj->objprototype->extra_flags)
+    if (obj->extra_flags != obj->objtemplate->extra_flags)
         fprintf(fp, "ExtF %ld\n", obj->extra_flags);
 
-    if (obj->extra2_flags != obj->objprototype->extra2_flags)
+    if (obj->extra2_flags != obj->objtemplate->extra2_flags)
         fprintf(fp, "Ex2F %ld\n", obj->extra2_flags);
 
-    if (obj->weight != obj->objprototype->weight)
+    if (obj->weight != obj->objtemplate->weight)
         fprintf(fp, "Wt   %d\n", obj->weight);
 
-    if (obj->condition != obj->objprototype->condition)
+    if (obj->condition != obj->objtemplate->condition)
         fprintf(fp, "Cond %d\n", obj->condition);
 
     /* variable data */
@@ -512,11 +512,11 @@ static void fwrite_obj(struct char_data *ch, struct gameobject *obj, FILE *fp, i
         fprintf(fp, "Time %d\n", obj->timer);
 
     fprintf(fp, "Cost %u\n", obj->cost);
-    if (obj->value[0] != obj->objprototype->value[0]
-        || obj->value[1] != obj->objprototype->value[1]
-        || obj->value[2] != obj->objprototype->value[2]
-        || obj->value[3] != obj->objprototype->value[3]
-        || obj->value[4] != obj->objprototype->value[4]) {
+    if (obj->value[0] != obj->objtemplate->value[0]
+        || obj->value[1] != obj->objtemplate->value[1]
+        || obj->value[2] != obj->objtemplate->value[2]
+        || obj->value[3] != obj->objtemplate->value[3]
+        || obj->value[4] != obj->objtemplate->value[4]) {
         fprintf(fp, "Val  %ld %ld %ld %ld %ld\n",
                 obj->value[0], obj->value[1], obj->value[2],
                 obj->value[3], obj->value[4]);
@@ -1495,7 +1495,7 @@ static void fread_obj(struct char_data *ch, FILE *fp)
     }
 
     vnum = fread_number(fp);
-    if (objectprototype_getbyvnum(vnum) == NULL) {
+    if (objecttemplate_getbyvnum(vnum) == NULL) {
         int lines_skipped;
 
         lines_skipped = 0;
@@ -1508,7 +1508,7 @@ static void fread_obj(struct char_data *ch, FILE *fp)
         return;
     }
 
-    obj = create_object(objectprototype_getbyvnum(vnum));
+    obj = create_object(objecttemplate_getbyvnum(vnum));
     assert(obj != NULL);
     for (;;) {
         word = feof(fp) ? "End" : fread_word(fp);
@@ -1648,7 +1648,7 @@ static void fread_obj(struct char_data *ch, FILE *fp)
                   obj->value[2] = fread_number(fp);
                   obj->value[3] = fread_number(fp);
                   if (OBJECT_TYPE(obj) == ITEM_WEAPON && obj->value[0] == 0)
-                      obj->value[0] = obj->objprototype->value[0];
+                      obj->value[0] = obj->objtemplate->value[0];
                   fMatch = true;
                   break;
               }

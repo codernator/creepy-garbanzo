@@ -1634,7 +1634,7 @@ void make_corpse(struct char_data *ch)
 
     if (IS_NPC(ch)) {
         //name = ch->short_descr;
-        corpse = create_object(objectprototype_getbyvnum(OBJ_VNUM_CORPSE_NPC));
+        corpse = create_object(objecttemplate_getbyvnum(OBJ_VNUM_CORPSE_NPC));
         corpse->timer = number_range(3, 6);
         if (ch->gold > 0) {
             obj_to_obj(create_money(ch->gold, ch->silver), corpse);
@@ -1644,7 +1644,7 @@ void make_corpse(struct char_data *ch)
         corpse->cost = 0;
     } else {
         //name = ch->name;
-        corpse = create_object(objectprototype_getbyvnum(OBJ_VNUM_CORPSE_PC));
+        corpse = create_object(objecttemplate_getbyvnum(OBJ_VNUM_CORPSE_PC));
         corpse->timer = number_range(25, 40);
         object_ownername_set(corpse, ch);
         corpse->value[0] = 0;
@@ -1781,7 +1781,7 @@ void death_cry(struct char_data *ch, struct char_data *killer)
         //char *name;
 
         //name = IS_NPC(ch) ? ch->short_descr : ch->name;
-        obj = create_object(objectprototype_getbyvnum(vnum));
+        obj = create_object(objecttemplate_getbyvnum(vnum));
         obj->timer = number_range(4, 7);
 
         //sprintf(buf, obj->short_descr, name);

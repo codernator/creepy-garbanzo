@@ -74,21 +74,21 @@ bool char_cmp_player(struct char_data * vch, const char *arg, struct buf_type * 
 /***************************************************************************
  *	objects
  ***************************************************************************/
-typedef bool OBJ_IDX_CMP_FN (struct objectprototype *obj, const char *arg, struct buf_type *buf);
+typedef bool OBJ_IDX_CMP_FN (struct objecttemplate *obj, const char *arg, struct buf_type *buf);
 
 struct cmp_vars_obj_index_data {
     char *		var;
     OBJ_IDX_CMP_FN *fn;
 };
 
-bool objprototype_cmp_name(struct objectprototype * obj, const char *arg, struct buf_type * buf);
-bool objprototype_cmp_short(struct objectprototype * obj, const char *arg, struct buf_type * buf);
-bool objprototype_cmp_long(struct objectprototype * obj, const char *arg, struct buf_type * buf);
-bool objprototype_cmp_type(struct objectprototype * obj, const char *arg, struct buf_type * buf);
-bool objprototype_cmp_extra(struct objectprototype * obj, const char *arg, struct buf_type * buf);
-bool objprototype_cmp_wear(struct objectprototype * obj, const char *arg, struct buf_type * buf);
-bool objprototype_cmp_weight(struct objectprototype * obj, const char *arg, struct buf_type * buf);
-bool objprototype_cmp_cost(struct objectprototype * obj, const char *arg, struct buf_type * buf);
+bool objtemplate_cmp_name(struct objecttemplate * obj, const char *arg, struct buf_type * buf);
+bool objtemplate_cmp_short(struct objecttemplate * obj, const char *arg, struct buf_type * buf);
+bool objtemplate_cmp_long(struct objecttemplate * obj, const char *arg, struct buf_type * buf);
+bool objtemplate_cmp_type(struct objecttemplate * obj, const char *arg, struct buf_type * buf);
+bool objtemplate_cmp_extra(struct objecttemplate * obj, const char *arg, struct buf_type * buf);
+bool objtemplate_cmp_wear(struct objecttemplate * obj, const char *arg, struct buf_type * buf);
+bool objtemplate_cmp_weight(struct objecttemplate * obj, const char *arg, struct buf_type * buf);
+bool objtemplate_cmp_cost(struct objecttemplate * obj, const char *arg, struct buf_type * buf);
 
 
 /***************************************************************************

@@ -1209,7 +1209,7 @@ bool has_key(struct char_data *ch, long key)
     struct gameobject *obj;
 
     for (obj = ch->carrying; obj != NULL; obj = obj->next_content)
-	if (obj->objprototype->vnum == key)
+	if (obj->objtemplate->vnum == key)
 	    return true;
 
     return false;

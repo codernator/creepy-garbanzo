@@ -496,7 +496,7 @@ void do_mpmload(struct char_data *ch, const char *argument)
  */
 void do_mpoload(struct char_data *ch, const char *argument)
 {
-    struct objectprototype *objprototype;
+    struct objecttemplate *objtemplate;
     struct gameobject *obj;
     char arg[MAX_INPUT_LENGTH];
     long vnum;
@@ -549,12 +549,12 @@ void do_mpoload(struct char_data *ch, const char *argument)
     else if (arg[0] == 'W' || arg[0] == 'w')
         to_wear = true;
 
-    if ((objprototype = objectprototype_getbyvnum(vnum)) == NULL) {
+    if ((objtemplate = objecttemplate_getbyvnum(vnum)) == NULL) {
         log_bug("mpoload - bad vnum arg from vnum %d.", IS_NPC(ch) ? ch->mob_idx->vnum : 0);
         return;
     }
 
-    obj = create_object(objprototype);
+    obj = create_object(objtemplate);
     if ((to_wear || !to_room) && CAN_WEAR(obj, ITEM_TAKE)) {
         obj_to_char(obj, ch);
         if (to_wear)
@@ -1244,7 +1244,7 @@ void do_mpremove(struct char_data *ch, const char *argument)
 
     for (obj = victim->carrying; obj; obj = obj_next) {
 	obj_next = obj->next_content;
-	if (fAll || obj->objprototype->vnum == vnum) {
+	if (fAll || obj->objtemplate->vnum == vnum) {
 	    unequip_char(ch, obj);
 	    obj_from_char(obj);
 	    extract_obj(obj);

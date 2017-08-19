@@ -270,7 +270,7 @@ char *olc_ed_vnum(struct char_data *ch)
 {
     struct area_data *pArea;
     struct room_index_data *pRoom;
-    struct objectprototype *pObj;
+    struct objecttemplate *pObj;
     struct mob_index_data *pMob;
     struct mprog_code *pMprog;
     struct help_data *pHelp;
@@ -289,7 +289,7 @@ char *olc_ed_vnum(struct char_data *ch)
           sprintf(buf, "%ld", pRoom ? pRoom->vnum : 0);
           break;
       case ED_OBJECT:
-          pObj = (struct objectprototype *)ch->desc->ed_data;
+          pObj = (struct objecttemplate *)ch->desc->ed_data;
           sprintf(buf, "%ld", pObj ? pObj->vnum : 0);
           break;
       case ED_MOBILE:
@@ -491,7 +491,7 @@ void redit(struct char_data *ch, const char *argument)
 void oedit(struct char_data *ch, const char *argument)
 {
     struct area_data *pArea;
-    struct objectprototype *pObj;
+    struct objecttemplate *pObj;
     char arg[MAX_STRING_LENGTH];
     const char *parg;
     char command[MAX_INPUT_LENGTH];
@@ -711,10 +711,10 @@ static void display_resets(struct char_data *ch)
                  "==== ======== ============= =================== ======== ===== ===========\n\r", ch);
 
     for (pReset = pRoom->reset_first; pReset; pReset = pReset->next) {
-        struct objectprototype *pObj;
+        struct objecttemplate *pObj;
         struct mob_index_data *pMobIndex;
-        struct objectprototype *pObjIndex;
-        struct objectprototype *pObjToIndex;
+        struct objecttemplate *pObjIndex;
+        struct objecttemplate *pObjToIndex;
         struct room_index_data *pRoomIndex;
         struct room_index_data *pRoomIndexPrev;
 
@@ -763,7 +763,7 @@ static void display_resets(struct char_data *ch)
               break;
 
           case 'O':
-              if (!(pObjIndex = objectprototype_getbyvnum(pReset->arg1))) {
+              if (!(pObjIndex = objecttemplate_getbyvnum(pReset->arg1))) {
                   printf_buf(final, "Load Object - Bad Object %d\n\r", pReset->arg1);
                   continue;
               }
@@ -786,13 +786,13 @@ static void display_resets(struct char_data *ch)
               break;
 
           case 'P':
-              if (!(pObjIndex = objectprototype_getbyvnum(pReset->arg1))) {
+              if (!(pObjIndex = objecttemplate_getbyvnum(pReset->arg1))) {
                   printf_buf(final, "Put Object - Bad Object %d\n\r", pReset->arg1);
                   continue;
               }
 
               pObj = pObjIndex;
-              if (!(pObjToIndex = objectprototype_getbyvnum(pReset->arg3))) {
+              if (!(pObjToIndex = objecttemplate_getbyvnum(pReset->arg3))) {
                   printf_buf(final, "Put Object - Bad To Object %d\n\r", pReset->arg3);
                   continue;
               }
@@ -810,7 +810,7 @@ static void display_resets(struct char_data *ch)
 
           case 'G':
           case 'E':
-              if (!(pObjIndex = objectprototype_getbyvnum(pReset->arg1))) {
+              if (!(pObjIndex = objecttemplate_getbyvnum(pReset->arg1))) {
                   printf_buf(final, "Give/Equip Object - Bad Object %d\n\r", pReset->arg1);
                   continue;
               }
@@ -1019,9 +1019,9 @@ void do_resets(struct char_data *ch, const char *argument)
                 pReset->arg1 = parse_int(arg3);
 
                 if (!str_prefix(arg4, "inside")) {
-                    struct objectprototype *temp;
+                    struct objecttemplate *temp;
 
-                    temp = objectprototype_getbyvnum(is_number(arg5) ? parse_int(arg5) : 1);
+                    temp = objecttemplate_getbyvnum(is_number(arg5) ? parse_int(arg5) : 1);
                     if (temp == NULL
                         || ((temp->item_type != ITEM_CONTAINER)
                             && (temp->item_type != ITEM_CORPSE_NPC))) {
@@ -1033,7 +1033,7 @@ void do_resets(struct char_data *ch, const char *argument)
                     pReset->arg3 = is_number(arg5) ? parse_int(arg5) : 1;
                     pReset->arg4 = is_number(arg7) ? parse_int(arg7) : 1;
                 } else if (!str_cmp(arg4, "room")) {
-                    if (objectprototype_getbyvnum(parse_int(arg3)) == NULL) {
+                    if (objecttemplate_getbyvnum(parse_int(arg3)) == NULL) {
                         send_to_char("Vnum doest not exist.\n\r", ch);
                         return;
                     }
@@ -1046,7 +1046,7 @@ void do_resets(struct char_data *ch, const char *argument)
                         send_to_char("Resets: '? wear-loc'\n\r", ch);
                         return;
                     }
-                    if (objectprototype_getbyvnum(parse_int(arg3)) == NULL) {
+                    if (objecttemplate_getbyvnum(parse_int(arg3)) == NULL) {
                         send_to_char("Vnum does not exist.\n\r", ch);
                         return;
                     }

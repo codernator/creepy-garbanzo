@@ -1259,7 +1259,7 @@ void spell_floating_disc(struct dynamic_skill *skill, int level, struct char_dat
 	return;
     }
 
-    disc = create_object(objectprototype_getbyvnum(OBJ_VNUM_DISC));
+    disc = create_object(objecttemplate_getbyvnum(OBJ_VNUM_DISC));
     disc->value[0] = ch->level * 10;        /* 10 pounds per level capacity */
     disc->value[3] = ch->level * 5;         /* 5 pounds per level max per item */
     disc->timer = ch->level * 2 - number_range(0, level / 2);
@@ -3024,7 +3024,7 @@ void spell_portal(struct dynamic_skill *skill, int level, struct char_data *ch, 
     }
 
 
-    portal = create_object(objectprototype_getbyvnum(OBJ_VNUM_PORTAL));
+    portal = create_object(objecttemplate_getbyvnum(OBJ_VNUM_PORTAL));
     portal->timer = 2 + level / 25;
     portal->value[0] = 1;
     portal->value[3] = victim->in_room->vnum;
@@ -3058,7 +3058,7 @@ void spell_nexus(struct dynamic_skill *skill, int level, struct char_data *ch, v
     to_room = victim->in_room;
 
     /* portal one */
-    portal = create_object(objectprototype_getbyvnum(OBJ_VNUM_PORTAL));
+    portal = create_object(objecttemplate_getbyvnum(OBJ_VNUM_PORTAL));
     portal->timer = 1 + level / 10;
     portal->value[3] = victim->in_room->vnum;
 
@@ -3068,7 +3068,7 @@ void spell_nexus(struct dynamic_skill *skill, int level, struct char_data *ch, v
     act("$p `8s`&w`7ir`&l`8s`` into `@existence``.", ch, portal, NULL, TO_CHAR);
 
     /* portal two */
-    portal = create_object(objectprototype_getbyvnum(OBJ_VNUM_PORTAL));
+    portal = create_object(objecttemplate_getbyvnum(OBJ_VNUM_PORTAL));
     portal->timer = 1 + level / 10;
     portal->value[3] = ch->in_room->vnum;
 

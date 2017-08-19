@@ -263,7 +263,7 @@ void affect_check(struct char_data *ch, int where, long vector)
 			}
 		}
 
-		for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
+		for (paf = obj->objtemplate->affected; paf != NULL; paf = paf->next) {
 			if (paf->where == where && paf->bitvector == vector) {
 				switch (where) {
 				case TO_AFFECTS:

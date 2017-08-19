@@ -12,9 +12,9 @@
 extern char *format_string(char *oldstring /*, bool fSpace */);
 extern void string_append(struct char_data * ch, char **string);
 
-static bool set_value(struct char_data *ch, struct objectprototype *prototype, const char *argument, int value);
-static void show_obj_values(struct char_data *ch, struct objectprototype *obj);
-static bool set_obj_values(struct char_data *ch, struct objectprototype *prototype, int value_num, const char *argument);
+static bool set_value(struct char_data *ch, struct objecttemplate *template, const char *argument, int value);
+static void show_obj_values(struct char_data *ch, struct objecttemplate *obj);
+static bool set_obj_values(struct char_data *ch, struct objecttemplate *template, int value_num, const char *argument);
 
 static void oedit_create(struct char_data *ch, const char *argument);
 static void oedit_clone(struct char_data *ch, const char *argument);
@@ -38,7 +38,7 @@ static const struct cmd_type extra_cmd_table[] =
 
 void do_oedit(struct char_data *ch, const char *argument)
 {
-    struct objectprototype *prototype;
+    struct objecttemplate *template;
     char arg[MAX_STRING_LENGTH];
     int value;
 
@@ -47,17 +47,17 @@ void do_oedit(struct char_data *ch, const char *argument)
     argument = one_argument(argument, arg);
     if (is_number(arg)) {
         value = parse_int(arg);
-        if (!(prototype = objectprototype_getbyvnum(value))) {
+        if (!(template = objecttemplate_getbyvnum(value))) {
             send_to_char("OEdit:  That vnum does not exist.\n\r", ch);
             return;
         }
 
-        if (!IS_BUILDER(ch, prototype->area)) {
+        if (!IS_BUILDER(ch, template->area)) {
             send_to_char("Insufficient security to edit objects.\n\r", ch);
             return;
         }
 
-        ch->desc->ed_data = (void *)prototype;
+        ch->desc->ed_data = (void *)template;
         ch->desc->editor = ED_OBJECT;
         return;
     } else {
@@ -78,28 +78,28 @@ void do_oedit(struct char_data *ch, const char *argument)
 
 EDIT(oedit_show)
 {
-    struct objectprototype *prototype;
+    struct objecttemplate *template;
     struct affect_data *paf;
     int cnt;
 
-    EDIT_OBJ(ch, prototype);
+    EDIT_OBJ(ch, template);
 
-    printf_to_char(ch, "`&Name``:         [%s]\n\r`&Area``:        [%5d] %s\n\r", prototype->name, (!prototype->area) ? -1 : prototype->area->vnum, (!prototype->area) ? "No Area" : prototype->area->name);
+    printf_to_char(ch, "`&Name``:         [%s]\n\r`&Area``:        [%5d] %s\n\r", template->name, (!template->area) ? -1 : template->area->vnum, (!template->area) ? "No Area" : template->area->name);
 
-    printf_to_char(ch, "`&Vnum``:         [%5d]\n\r`&Type``:        [%s]\n\r", prototype->vnum, flag_string(type_flags, prototype->item_type));
+    printf_to_char(ch, "`&Vnum``:         [%5d]\n\r`&Type``:        [%s]\n\r", template->vnum, flag_string(type_flags, template->item_type));
 
-    printf_to_char(ch, "`&Wear flags``:   [%s]\n\r", flag_string(wear_flags, prototype->wear_flags));
-    printf_to_char(ch, "`&Extra flags``:  [%s]\n\r", flag_string(extra_flags, prototype->extra_flags));
-    printf_to_char(ch, "`&Extra2 flags``: [%s]\n\r", flag_string(extra2_flags, prototype->extra2_flags));
-    printf_to_char(ch, "`&Condition``:    [%5d]\n\r", prototype->condition);
-    printf_to_char(ch, "`&Timer``:        [%5d]\n\r", prototype->init_timer);
-    printf_to_char(ch, "`&Weight``:       [%5d]\n\r`&Cost``:        [%5d]\n\r", prototype->weight, prototype->cost);
+    printf_to_char(ch, "`&Wear flags``:   [%s]\n\r", flag_string(wear_flags, template->wear_flags));
+    printf_to_char(ch, "`&Extra flags``:  [%s]\n\r", flag_string(extra_flags, template->extra_flags));
+    printf_to_char(ch, "`&Extra2 flags``: [%s]\n\r", flag_string(extra2_flags, template->extra2_flags));
+    printf_to_char(ch, "`&Condition``:    [%5d]\n\r", template->condition);
+    printf_to_char(ch, "`&Timer``:        [%5d]\n\r", template->init_timer);
+    printf_to_char(ch, "`&Weight``:       [%5d]\n\r`&Cost``:        [%5d]\n\r", template->weight, template->cost);
 
-    if (prototype->extra_descr) {
+    if (template->extra_descr) {
         struct extra_descr_data *ed;
 
         send_to_char("`&Ex desc kwd``: [", ch);
-        for (ed = prototype->extra_descr->next; ed; ed = ed->next) {
+        for (ed = template->extra_descr->next; ed; ed = ed->next) {
             send_to_char(ed->keyword, ch);
             if (ed->next != NULL)
                 send_to_char(" ", ch);
@@ -107,9 +107,9 @@ EDIT(oedit_show)
         send_to_char("]\n\r", ch);
     }
 
-    printf_to_char(ch, "`&Short desc``:  %s\n\r`&Long desc``:\n\r     %s\n\r", prototype->short_descr, prototype->description);
+    printf_to_char(ch, "`&Short desc``:  %s\n\r`&Long desc``:\n\r     %s\n\r", template->short_descr, template->description);
 
-    for (cnt = 0, paf = prototype->affected->next; paf; paf = paf->next) {
+    for (cnt = 0, paf = template->affected->next; paf; paf = paf->next) {
         if (cnt == 0) {
             send_to_char("`&Number Modifier Type    Affects``\n\r", ch);
             send_to_char("`1------ -------- ------- -------``\n\r", ch);
@@ -139,19 +139,19 @@ EDIT(oedit_show)
     }
 
     send_to_char("\n\r", ch);
-    show_obj_values(ch, prototype);
+    show_obj_values(ch, template);
     return false;
 }
 
 EDIT(oedit_addaffect)
 {
-    struct objectprototype *prototype;
+    struct objecttemplate *template;
     struct affect_data *affect;
     char loc[MAX_STRING_LENGTH];
     char mod[MAX_STRING_LENGTH];
     int value;
 
-    EDIT_OBJ(ch, prototype);
+    EDIT_OBJ(ch, template);
     argument = one_argument(argument, loc);
     one_argument(argument, mod);
     if (loc[0] == '\0' || mod[0] == '\0' || !is_number(mod)) {
@@ -173,7 +173,7 @@ EDIT(oedit_addaffect)
     affect->duration = -1;
     affect->bitvector = 0;
 
-    objectprototype_applyaffect(prototype, affect);
+    objecttemplate_applyaffect(template, affect);
 
     send_to_char("Affect added.\n\r", ch);
     return true;
@@ -193,7 +193,7 @@ EDIT(oedit_addaffect)
  *****************************************************************************/
 EDIT(oedit_addapply)
 {
-    struct objectprototype *prototype;
+    struct objecttemplate *template;
     struct affect_data *affect;
     char loc[MAX_STRING_LENGTH];
     char mod[MAX_STRING_LENGTH];
@@ -203,7 +203,7 @@ EDIT(oedit_addapply)
     int bitvector;
     int typ;
 
-    EDIT_OBJ(ch, prototype);
+    EDIT_OBJ(ch, template);
     if (argument[0] == '?' || argument[0] == '\0') {
         send_to_char("Syntax:  addapply [type] [where] [modifier] [bitvector]\n\r", ch);
         return false;
@@ -249,7 +249,7 @@ EDIT(oedit_addapply)
     affect->duration = -1;
     affect->bitvector = bitvector;
 
-    objectprototype_applyaffect(prototype, affect);
+    objecttemplate_applyaffect(template, affect);
 
     send_to_char("Apply added.\n\r", ch);
     return true;
@@ -257,11 +257,11 @@ EDIT(oedit_addapply)
 
 EDIT(oedit_delaffect)
 {
-    struct objectprototype *prototype;
+    struct objecttemplate *template;
     char arg1[MAX_STRING_LENGTH];
     int index;
 
-    EDIT_OBJ(ch, prototype);
+    EDIT_OBJ(ch, template);
     one_argument(argument, arg1);
     if (!is_number(arg1) || arg1[0] == '\0') {
         send_to_char("Syntax:  delaffect [#xaffect]\n\r", ch);
@@ -274,7 +274,7 @@ EDIT(oedit_delaffect)
         return false;
     }
 
-    if (!objectprototype_deleteaffect(prototype, index)) {
+    if (!objecttemplate_deleteaffect(template, index)) {
         send_to_char("No such affect.\n\r", ch);
         return false;
     }
@@ -285,45 +285,45 @@ EDIT(oedit_delaffect)
 
 EDIT(oedit_name)
 {
-    struct objectprototype *prototype;
+    struct objecttemplate *template;
 
-    EDIT_OBJ(ch, prototype);
+    EDIT_OBJ(ch, template);
     if (argument[0] == '\0') {
         send_to_char("Syntax:  name [string]\n\r", ch);
         return false;
     }
 
-    objectprototype_setname(prototype, argument);
+    objecttemplate_setname(template, argument);
     send_to_char("Name set.\n\r", ch);
     return true;
 }
 
 EDIT(oedit_short)
 {
-    struct objectprototype *prototype;
+    struct objecttemplate *template;
 
-    EDIT_OBJ(ch, prototype);
+    EDIT_OBJ(ch, template);
     if (argument[0] == '\0') {
         send_to_char("Syntax:  short [string]\n\r", ch);
         return false;
     }
 
-    objectprototype_setshort(prototype, argument);
+    objecttemplate_setshort(template, argument);
     send_to_char("Short description set.\n\r", ch);
     return true;
 }
 
 EDIT(oedit_long)
 {
-    struct objectprototype *prototype;
+    struct objecttemplate *template;
 
-    EDIT_OBJ(ch, prototype);
+    EDIT_OBJ(ch, template);
     if (argument[0] == '\0') {
         send_to_char("Syntax:  long [string]\n\r", ch);
         return false;
     }
 
-    objectprototype_setlong(prototype, argument);
+    objecttemplate_setlong(template, argument);
     send_to_char("Long description set.\n\r", ch);
     return true;
 }
@@ -337,9 +337,9 @@ EDIT(oedit_long)
  *	edit v0
  *****************************************************************************/
 EDIT(oedit_value0){
-    struct objectprototype *prototype;
-    EDIT_OBJ(ch, prototype);
-    return set_value(ch, prototype, argument, 0);
+    struct objecttemplate *template;
+    EDIT_OBJ(ch, template);
+    return set_value(ch, template, argument, 0);
 }
 
 /*****************************************************************************
@@ -348,9 +348,9 @@ EDIT(oedit_value0){
  *	edit v1
  *****************************************************************************/
 EDIT(oedit_value1){
-    struct objectprototype *prototype;
-    EDIT_OBJ(ch, prototype);
-    return set_value(ch, prototype, argument, 1);
+    struct objecttemplate *template;
+    EDIT_OBJ(ch, template);
+    return set_value(ch, template, argument, 1);
 }
 
 /*****************************************************************************
@@ -359,9 +359,9 @@ EDIT(oedit_value1){
  *	edit v2
  *****************************************************************************/
 EDIT(oedit_value2){
-    struct objectprototype *prototype;
-    EDIT_OBJ(ch, prototype);
-    return set_value(ch, prototype, argument, 2);
+    struct objecttemplate *template;
+    EDIT_OBJ(ch, template);
+    return set_value(ch, template, argument, 2);
 }
 
 /*****************************************************************************
@@ -370,9 +370,9 @@ EDIT(oedit_value2){
  *	edit v3
  *****************************************************************************/
 EDIT(oedit_value3){
-    struct objectprototype *prototype;
-    EDIT_OBJ(ch, prototype);
-    return set_value(ch, prototype, argument, 3);
+    struct objecttemplate *template;
+    EDIT_OBJ(ch, template);
+    return set_value(ch, template, argument, 3);
 }
 
 /*****************************************************************************
@@ -381,9 +381,9 @@ EDIT(oedit_value3){
  *	edit v4
  *****************************************************************************/
 EDIT(oedit_value4){
-    struct objectprototype *prototype;
-    EDIT_OBJ(ch, prototype);
-    return set_value(ch, prototype, argument, 4);
+    struct objecttemplate *template;
+    EDIT_OBJ(ch, template);
+    return set_value(ch, template, argument, 4);
 }
 
 
@@ -394,15 +394,15 @@ EDIT(oedit_value4){
  *	edit the weight property of the object
  *****************************************************************************/
 EDIT(oedit_weight){
-    struct objectprototype *prototype;
+    struct objecttemplate *template;
 
-    EDIT_OBJ(ch, prototype);
+    EDIT_OBJ(ch, template);
     if (argument[0] == '\0' || !is_number(argument)) {
         send_to_char("Syntax:  weight [number]\n\r", ch);
         return false;
     }
 
-    prototype->weight = parse_int(argument);
+    template->weight = parse_int(argument);
     send_to_char("Weight set.\n\r", ch);
     return true;
 }
@@ -414,15 +414,15 @@ EDIT(oedit_weight){
  *	edit the cost property of the object
  *****************************************************************************/
 EDIT(oedit_cost){
-    struct objectprototype *prototype;
+    struct objecttemplate *template;
 
-    EDIT_OBJ(ch, prototype);
+    EDIT_OBJ(ch, template);
     if (argument[0] == '\0' || !is_number(argument)) {
         send_to_char("Syntax:  cost [number]\n\r", ch);
         return false;
     }
 
-    prototype->cost = parse_unsigned_int(argument);
+    template->cost = parse_unsigned_int(argument);
     send_to_char("Cost set.\n\r", ch);
     return true;
 }
@@ -468,13 +468,13 @@ EDIT(oedit_ed){
  *	edit the extra flags for an object
  *****************************************************************************/
 EDIT(oedit_extra){
-    struct objectprototype *prototype;
+    struct objecttemplate *template;
     int value;
 
-    EDIT_OBJ(ch, prototype);
+    EDIT_OBJ(ch, template);
     if (argument[0] != '\0') {
         if ((value = flag_value(extra_flags, argument)) != NO_FLAG) {
-            TOGGLE_BIT(prototype->extra_flags, value);
+            TOGGLE_BIT(template->extra_flags, value);
             send_to_char("Extra flag toggled.\n\r", ch);
             return true;
         }
@@ -491,13 +491,13 @@ EDIT(oedit_extra){
  *       edit the extra2 flags for an object
  *****************************************************************************/
 EDIT(oedit_extra2){
-    struct objectprototype *prototype;
+    struct objecttemplate *template;
     int value;
 
-    EDIT_OBJ(ch, prototype);
+    EDIT_OBJ(ch, template);
     if (argument[0] != '\0') {
         if ((value = flag_value(extra2_flags, argument)) != NO_FLAG) {
-            TOGGLE_BIT(prototype->extra2_flags, value);
+            TOGGLE_BIT(template->extra2_flags, value);
             send_to_char("Extra flag toggled.\n\r", ch);
             return true;
         }
@@ -515,13 +515,13 @@ EDIT(oedit_extra2){
  *	edit the wear locations of an object
  *****************************************************************************/
 EDIT(oedit_wear){
-    struct objectprototype *prototype;
+    struct objecttemplate *template;
     int value;
 
-    EDIT_OBJ(ch, prototype);
+    EDIT_OBJ(ch, template);
     if (argument[0] != '\0') {
         if ((value = flag_value(wear_flags, argument)) != NO_FLAG) {
-            TOGGLE_BIT(prototype->wear_flags, value);
+            TOGGLE_BIT(template->wear_flags, value);
             send_to_char("Wear flag toggled.\n\r", ch);
             return true;
         }
@@ -539,21 +539,21 @@ EDIT(oedit_wear){
  *	set the object type
  *****************************************************************************/
 EDIT(oedit_type){
-    struct objectprototype *prototype;
+    struct objecttemplate *template;
     int value;
 
-    EDIT_OBJ(ch, prototype);
+    EDIT_OBJ(ch, template);
     if (argument[0] != '\0') {
         if ((value = flag_value(type_flags, argument)) != NO_FLAG) {
-            prototype->item_type = value;
+            template->item_type = value;
             send_to_char("Type set.\n\r", ch);
 
             /* clear the values */
-            prototype->value[0] = 0;
-            prototype->value[1] = 0;
-            prototype->value[2] = 0;
-            prototype->value[3] = 0;
-            prototype->value[4] = 0;
+            template->value[0] = 0;
+            template->value[1] = 0;
+            template->value[2] = 0;
+            template->value[3] = 0;
+            template->value[4] = 0;
             return true;
         }
     }
@@ -566,15 +566,15 @@ EDIT(oedit_type){
 
 /** edit the timer property of an object (auto destroy)	Added by Monrick, 5/2008 */
 EDIT(oedit_timer){
-    struct objectprototype *prototype;
+    struct objecttemplate *template;
 
-    EDIT_OBJ(ch, prototype);
+    EDIT_OBJ(ch, template);
     if (argument[0] == '\0') {
         send_to_char("Syntax:  timer [# of ticks]  (0 for infinite)\n\r", ch);
         return false;
     }
 
-    prototype->init_timer = parse_int(argument);
+    template->init_timer = parse_int(argument);
     send_to_char("Timer set.\n\r", ch);
     return true;
 }
@@ -587,14 +587,14 @@ EDIT(oedit_timer){
  *	edit the condition of the object
  *****************************************************************************/
 EDIT(oedit_condition){
-    struct objectprototype *prototype;
+    struct objecttemplate *template;
     int value;
 
-    EDIT_OBJ(ch, prototype);
+    EDIT_OBJ(ch, template);
     if (argument[0] != '\0'
         && (value = parse_int(argument)) >= 0
         && (value <= 100)) {
-        prototype->condition = value;
+        template->condition = value;
         send_to_char("Condition set.\n\r", ch);
         return true;
     }
@@ -612,20 +612,20 @@ EDIT(oedit_condition){
  *
  *	set one of the 4 value properties on the object
  *****************************************************************************/
-bool set_value(struct char_data *ch, struct objectprototype *prototype, const char *argument, int value)
+bool set_value(struct char_data *ch, struct objecttemplate *template, const char *argument, int value)
 {
     if (argument[0] == '\0') {
-        set_obj_values(ch, prototype, -1, "");
+        set_obj_values(ch, template, -1, "");
         return false;
     }
 
-    if (set_obj_values(ch, prototype, value, argument))
+    if (set_obj_values(ch, template, value, argument))
         return true;
 
     return false;
 }
 
-static void show_obj_values(struct char_data *ch, struct objectprototype *obj)
+static void show_obj_values(struct char_data *ch, struct objecttemplate *obj)
 {
     struct dynamic_skill *skill;
     int idx;
@@ -728,8 +728,8 @@ static void show_obj_values(struct char_data *ch, struct objectprototype *obj)
                          obj->value[0],
                          flag_string(container_flags, obj->value[1]),
                          obj->value[2],
-                         objectprototype_getbyvnum(obj->value[2]) ?
-                         objectprototype_getbyvnum(obj->value[2])->short_descr : "none",
+                         objecttemplate_getbyvnum(obj->value[2]) ?
+                         objecttemplate_getbyvnum(obj->value[2])->short_descr : "none",
                          obj->value[3],
                          obj->value[4]);
           break;
@@ -776,12 +776,12 @@ static void show_obj_values(struct char_data *ch, struct objectprototype *obj)
  *
  *	set the value properties of an item based on it's type
  *****************************************************************************/
-bool set_obj_values(struct char_data *ch, struct objectprototype *prototype, int value_num, const char *argument)
+bool set_obj_values(struct char_data *ch, struct objecttemplate *template, int value_num, const char *argument)
 {
     struct dynamic_skill *skill;
     int value;
 
-    switch (prototype->item_type) {
+    switch (template->item_type) {
       default:
           break;
 
@@ -792,7 +792,7 @@ bool set_obj_values(struct char_data *ch, struct objectprototype *prototype, int
                 return false;
             case 2:
                 send_to_char("Hours of Light set.\n\r\n\r", ch);
-                prototype->value[2] = parse_int(argument);
+                template->value[2] = parse_int(argument);
                 break;
           }
           break;
@@ -805,20 +805,20 @@ bool set_obj_values(struct char_data *ch, struct objectprototype *prototype, int
                 return false;
             case 0:
                 send_to_char("Spell level set.\n\r\n\r", ch);
-                prototype->value[0] = parse_int(argument);
+                template->value[0] = parse_int(argument);
                 break;
             case 1:
                 send_to_char("Total number of charges set.\n\r\n\r", ch);
-                prototype->value[1] = parse_int(argument);
+                template->value[1] = parse_int(argument);
                 break;
             case 2:
                 send_to_char("Current number of charges set.\n\r\n\r", ch);
-                prototype->value[2] = parse_int(argument);
+                template->value[2] = parse_int(argument);
                 break;
             case 3:
                 send_to_char("Spell type set.\n\r", ch);
                 if ((skill = skill_lookup(argument)) != NULL)
-                    prototype->value[3] = skill->sn;
+                    template->value[3] = skill->sn;
                 break;
           }
           break;
@@ -832,27 +832,27 @@ bool set_obj_values(struct char_data *ch, struct objectprototype *prototype, int
                 return false;
             case 0:
                 send_to_char("Spell level set.\n\r\n\r", ch);
-                prototype->value[0] = parse_int(argument);
+                template->value[0] = parse_int(argument);
                 break;
             case 1:
                 send_to_char("Spell type 1 set.\n\r\n\r", ch);
                 if ((skill = skill_lookup(argument)) != NULL)
-                    prototype->value[1] = skill->sn;
+                    template->value[1] = skill->sn;
                 break;
             case 2:
                 send_to_char("Spell type 2 set.\n\r\n\r", ch);
                 if ((skill = skill_lookup(argument)) != NULL)
-                    prototype->value[2] = skill->sn;
+                    template->value[2] = skill->sn;
                 break;
             case 3:
                 send_to_char("Spell type 3 set.\n\r\n\r", ch);
                 if ((skill = skill_lookup(argument)) != NULL)
-                    prototype->value[3] = skill->sn;
+                    template->value[3] = skill->sn;
                 break;
             case 4:
                 send_to_char("Spell type 4 set.\n\r\n\r", ch);
                 if ((skill = skill_lookup(argument)) != NULL)
-                    prototype->value[4] = skill->sn;
+                    template->value[4] = skill->sn;
                 break;
           }
           break;
@@ -864,19 +864,19 @@ bool set_obj_values(struct char_data *ch, struct objectprototype *prototype, int
                 return false;
             case 0:
                 send_to_char("AC pierce set.\n\r\n\r", ch);
-                prototype->value[0] = parse_int(argument);
+                template->value[0] = parse_int(argument);
                 break;
             case 1:
                 send_to_char("AC bash set.\n\r\n\r", ch);
-                prototype->value[1] = parse_int(argument);
+                template->value[1] = parse_int(argument);
                 break;
             case 2:
                 send_to_char("AC slash set.\n\r\n\r", ch);
-                prototype->value[2] = parse_int(argument);
+                template->value[2] = parse_int(argument);
                 break;
             case 3:
                 send_to_char("AC exotic set.\n\r\n\r", ch);
-                prototype->value[3] = parse_int(argument);
+                template->value[3] = parse_int(argument);
                 break;
           }
           break;
@@ -888,23 +888,23 @@ bool set_obj_values(struct char_data *ch, struct objectprototype *prototype, int
                 return false;
             case 0:
                 send_to_char("Weapon class set.\n\r\n\r", ch);
-                ALT_FLAGVALUE_SET(prototype->value[0], weapon_class, argument);
+                ALT_FLAGVALUE_SET(template->value[0], weapon_class, argument);
                 break;
             case 1:
                 send_to_char("Number of dice set.\n\r\n\r", ch);
-                prototype->value[1] = parse_int(argument);
+                template->value[1] = parse_int(argument);
                 break;
             case 2:
                 send_to_char("Type of dice set.\n\r\n\r", ch);
-                prototype->value[2] = parse_int(argument);
+                template->value[2] = parse_int(argument);
                 break;
             case 3:
                 send_to_char("Weapon type set.\n\r\n\r", ch);
-                prototype->value[3] = attack_lookup(argument);
+                template->value[3] = attack_lookup(argument);
                 break;
             case 4:
                 send_to_char("Special weapon type toggled.\n\r\n\r", ch);
-                ALT_FLAGVALUE_TOGGLE(prototype->value[4], weapon_flag_type, argument);
+                ALT_FLAGVALUE_TOGGLE(template->value[4], weapon_flag_type, argument);
                 break;
           }
           break;
@@ -916,19 +916,19 @@ bool set_obj_values(struct char_data *ch, struct objectprototype *prototype, int
                 return false;
             case 0:
                 send_to_char("Charges set.\n\r\n\r", ch);
-                prototype->value[0] = parse_int(argument);
+                template->value[0] = parse_int(argument);
                 break;
             case 1:
                 send_to_char("Exit flags set.\n\r\n\r", ch);
-                ALT_FLAGVALUE_SET(prototype->value[1], exit_flags, argument);
+                ALT_FLAGVALUE_SET(template->value[1], exit_flags, argument);
                 break;
             case 2:
                 send_to_char("Portal flags set.\n\r\n\r", ch);
-                ALT_FLAGVALUE_SET(prototype->value[2], portal_flags, argument);
+                ALT_FLAGVALUE_SET(template->value[2], portal_flags, argument);
                 break;
             case 3:
                 send_to_char("Exit vnum set.\n\r\n\r", ch);
-                prototype->value[3] = parse_int(argument);
+                template->value[3] = parse_int(argument);
                 break;
           }
           break;
@@ -940,23 +940,23 @@ bool set_obj_values(struct char_data *ch, struct objectprototype *prototype, int
                 return false;
             case 0:
                 send_to_char("Number of people set.\n\r\n\r", ch);
-                prototype->value[0] = parse_int(argument);
+                template->value[0] = parse_int(argument);
                 break;
             case 1:
                 send_to_char("Max weight set.\n\r\n\r", ch);
-                prototype->value[1] = parse_int(argument);
+                template->value[1] = parse_int(argument);
                 break;
             case 2:
                 send_to_char("Furniture flags toggled.\n\r\n\r", ch);
-                ALT_FLAGVALUE_TOGGLE(prototype->value[2], furniture_flags, argument);
+                ALT_FLAGVALUE_TOGGLE(template->value[2], furniture_flags, argument);
                 break;
             case 3:
                 send_to_char("Heal bonus set.\n\r\n\r", ch);
-                prototype->value[3] = parse_int(argument);
+                template->value[3] = parse_int(argument);
                 break;
             case 4:
                 send_to_char("Mana bonus set.\n\r\n\r", ch);
-                prototype->value[4] = parse_int(argument);
+                template->value[4] = parse_int(argument);
                 break;
           }
           break;
@@ -964,11 +964,11 @@ bool set_obj_values(struct char_data *ch, struct objectprototype *prototype, int
       case ITEM_DICE:
           switch (value_num) {
             case 0:
-                prototype->value[0] = parse_int(argument);
+                template->value[0] = parse_int(argument);
                 send_to_char("Number of dice set.\n\r\n\r", ch);
                 break;
             case 1:
-                prototype->value[1] = parse_int(argument);
+                template->value[1] = parse_int(argument);
                 send_to_char("Number of sides set.\n\r\n\r", ch);
                 break;
             default:
@@ -983,11 +983,11 @@ bool set_obj_values(struct char_data *ch, struct objectprototype *prototype, int
                 return false;
             case 0:
                 send_to_char("Weight capacity set.\n\r\n\r", ch);
-                prototype->value[0] = parse_int(argument);
+                template->value[0] = parse_int(argument);
                 break;
             case 1:
                 if ((value = flag_value(container_flags, argument)) != NO_FLAG) {
-                    TOGGLE_BIT(prototype->value[1], value);
+                    TOGGLE_BIT(template->value[1], value);
                 } else {
                     show_help(ch->desc, "ITEM_CONTAINER", NULL);
                     return false;
@@ -996,26 +996,26 @@ bool set_obj_values(struct char_data *ch, struct objectprototype *prototype, int
                 break;
             case 2:
                 if (parse_int(argument) != 0) {
-                    if (!objectprototype_getbyvnum(parse_int(argument))) {
+                    if (!objecttemplate_getbyvnum(parse_int(argument))) {
                         send_to_char("There is no such item.\n\r\n\r", ch);
                         return false;
                     }
 
-                    if (objectprototype_getbyvnum(parse_int(argument))->item_type != ITEM_KEY) {
+                    if (objecttemplate_getbyvnum(parse_int(argument))->item_type != ITEM_KEY) {
                         send_to_char("That item is not a key.\n\r\n\r", ch);
                         return false;
                     }
                 }
                 send_to_char("Container key set.\n\r\n\r", ch);
-                prototype->value[2] = parse_int(argument);
+                template->value[2] = parse_int(argument);
                 break;
             case 3:
                 send_to_char("Container max weight set.\n\r", ch);
-                prototype->value[3] = parse_int(argument);
+                template->value[3] = parse_int(argument);
                 break;
             case 4:
                 send_to_char("Weight multiplier set.\n\r\n\r", ch);
-                prototype->value[4] = parse_int(argument);
+                template->value[4] = parse_int(argument);
                 break;
           }
           break;
@@ -1027,19 +1027,19 @@ bool set_obj_values(struct char_data *ch, struct objectprototype *prototype, int
                 return false;
             case 0:
                 send_to_char("Maximum amount of liquid hours set.\n\r\n\r", ch);
-                prototype->value[0] = parse_int(argument);
+                template->value[0] = parse_int(argument);
                 break;
             case 1:
                 send_to_char("Current amount of liquid hours set.\n\r\n\r", ch);
-                prototype->value[1] = parse_int(argument);
+                template->value[1] = parse_int(argument);
                 break;
             case 2:
                 send_to_char("Liquid type set.\n\r\n\r", ch);
-                prototype->value[2] = (liq_lookup(argument) != -1 ? liq_lookup(argument) : 0);
+                template->value[2] = (liq_lookup(argument) != -1 ? liq_lookup(argument) : 0);
                 break;
             case 3:
                 send_to_char("Poison value toggled.\n\r\n\r", ch);
-                prototype->value[3] = (prototype->value[3] == 0) ? 1 : 0;
+                template->value[3] = (template->value[3] == 0) ? 1 : 0;
                 break;
           }
           break;
@@ -1051,15 +1051,15 @@ bool set_obj_values(struct char_data *ch, struct objectprototype *prototype, int
                 return false;
             case 0:
                 send_to_char("Maximum amount of liquid hours set.\n\r\n\r", ch);
-                prototype->value[0] = parse_int(argument);
+                template->value[0] = parse_int(argument);
                 break;
             case 1:
                 send_to_char("Current amount of liquid hours set.\n\r\n\r", ch);
-                prototype->value[1] = parse_int(argument);
+                template->value[1] = parse_int(argument);
                 break;
             case 2:
                 send_to_char("Liquid type set.\n\r\n\r", ch);
-                prototype->value[2] = (liq_lookup(argument) != -1 ? liq_lookup(argument) : 0);
+                template->value[2] = (liq_lookup(argument) != -1 ? liq_lookup(argument) : 0);
                 break;
           }
           break;
@@ -1071,15 +1071,15 @@ bool set_obj_values(struct char_data *ch, struct objectprototype *prototype, int
                 return false;
             case 0:
                 send_to_char("Hours of food set.\n\r\n\r", ch);
-                prototype->value[0] = parse_int(argument);
+                template->value[0] = parse_int(argument);
                 break;
             case 1:
                 send_to_char("Hours of full set.\n\r\n\r", ch);
-                prototype->value[1] = parse_int(argument);
+                template->value[1] = parse_int(argument);
                 break;
             case 3:
                 send_to_char("Poison value toggled.\n\r\n\r", ch);
-                prototype->value[3] = (prototype->value[3] == 0) ? 1 : 0;
+                template->value[3] = (template->value[3] == 0) ? 1 : 0;
                 break;
           }
           break;
@@ -1091,23 +1091,23 @@ bool set_obj_values(struct char_data *ch, struct objectprototype *prototype, int
                 return false;
             case 0:
                 send_to_char("Gold amount set.\n\r\n\r", ch);
-                prototype->value[0] = parse_int(argument);
+                template->value[0] = parse_int(argument);
                 break;
             case 1:
                 send_to_char("Silver amount set.\n\r\n\r", ch);
-                prototype->value[1] = parse_int(argument);
+                template->value[1] = parse_int(argument);
                 break;
           }
           break;
     }
-    show_obj_values(ch, prototype);
+    show_obj_values(ch, template);
     return true;
 }
 
 
 void oedit_create(struct char_data *ch, const char *argument)
 {
-    struct objectprototype *prototype;
+    struct objecttemplate *template;
     struct area_data *area;
     long vnum;
 
@@ -1133,20 +1133,20 @@ void oedit_create(struct char_data *ch, const char *argument)
         return;
     }
 
-    if (objectprototype_getbyvnum(vnum)) {
+    if (objecttemplate_getbyvnum(vnum)) {
         send_to_char("OEdit:  Object vnum already exists.\n\r", ch);
         return;
     }
 
-    prototype = objectprototype_new(vnum);
-    prototype->area = area;
+    template = objecttemplate_new(vnum);
+    template->area = area;
 
     if (vnum > top_vnum_obj)
         top_vnum_obj = vnum;
 
     SET_BIT(area->area_flags, AREA_CHANGED);
     ch->desc->editor = ED_OBJECT;
-    ch->desc->ed_data = (void *)prototype;
+    ch->desc->ed_data = (void *)template;
 
     send_to_char("Object Created.\n\r", ch);
     return;
@@ -1154,7 +1154,7 @@ void oedit_create(struct char_data *ch, const char *argument)
 
 void oedit_clone(struct char_data *ch, const char *argument)
 {
-    struct objectprototype *source;
+    struct objecttemplate *source;
     char arg1[MAX_STRING_LENGTH];
     char arg2[MAX_STRING_LENGTH];
     struct area_data *targetarea;
@@ -1169,7 +1169,7 @@ void oedit_clone(struct char_data *ch, const char *argument)
         return;
     }
     targetvnum = parse_int(arg1);
-    if (objectprototype_getbyvnum(targetvnum) != NULL) {
+    if (objecttemplate_getbyvnum(targetvnum) != NULL) {
         printf_to_char(ch, "OEdit:  Target vnum %lu already exists.\n\r", targetvnum);
         return;
     }
@@ -1192,7 +1192,7 @@ void oedit_clone(struct char_data *ch, const char *argument)
             return;
         }
         sourcevnum = parse_int(arg2);
-        source = objectprototype_getbyvnum(sourcevnum);
+        source = objecttemplate_getbyvnum(sourcevnum);
         if (source == NULL)
         {
             printf_to_char(ch, "OEdit:  Source vnum %lu does not yet exist.\n\r", sourcevnum);
@@ -1205,7 +1205,7 @@ void oedit_clone(struct char_data *ch, const char *argument)
         sourcevnum = source->vnum;
     }
 
-    ch->desc->ed_data = objectprototype_clone(source, targetvnum, targetarea);
+    ch->desc->ed_data = objecttemplate_clone(source, targetvnum, targetarea);
     if (targetvnum > top_vnum_obj)
         top_vnum_obj = targetvnum;
 
@@ -1221,8 +1221,8 @@ void oedit_extradesc_add(struct char_data *ch, const char *argument)
 {
     char keyword[MAX_INPUT_LENGTH];
     struct extra_descr_data *ed;
-    struct objectprototype *prototype;
-    EDIT_OBJ(ch, prototype);
+    struct objecttemplate *template;
+    EDIT_OBJ(ch, template);
 
     one_argument(argument, keyword);
     if (keyword[0] == '\0') {
@@ -1230,7 +1230,7 @@ void oedit_extradesc_add(struct char_data *ch, const char *argument)
         return;
     }
 
-    ed = objectprototype_addextra(prototype, keyword, "");
+    ed = objecttemplate_addextra(template, keyword, "");
 
     // set description editor.
     string_append(ch, &ed->description);
@@ -1241,8 +1241,8 @@ void oedit_extradesc_edit(struct char_data *ch, const char *argument)
 {
     struct extra_descr_data *ed;
     char keyword[MAX_INPUT_LENGTH];
-    struct objectprototype *prototype;
-    EDIT_OBJ(ch, prototype);
+    struct objecttemplate *template;
+    EDIT_OBJ(ch, template);
 
     one_argument(argument, keyword);
     if (keyword[0] == '\0') {
@@ -1250,7 +1250,7 @@ void oedit_extradesc_edit(struct char_data *ch, const char *argument)
         return;
     }
 
-    ed = objectprototype_findextra(prototype, keyword);
+    ed = objecttemplate_findextra(template, keyword);
     if (ed == NULL) {
         send_to_char("OEdit:  Extra description keyword not found.\n\r", ch);
         return;
@@ -1263,8 +1263,8 @@ void oedit_extradesc_edit(struct char_data *ch, const char *argument)
 void oedit_extradesc_delete(struct char_data *ch, const char *argument)
 {
     char keyword[MAX_INPUT_LENGTH];
-    struct objectprototype *prototype;
-    EDIT_OBJ(ch, prototype);
+    struct objecttemplate *template;
+    EDIT_OBJ(ch, template);
 
     one_argument(argument, keyword);
     if (keyword[0] == '\0') {
@@ -1272,7 +1272,7 @@ void oedit_extradesc_delete(struct char_data *ch, const char *argument)
         return;
     }
 
-    if (!objectprototype_deleteextra(prototype, keyword)) {
+    if (!objecttemplate_deleteextra(template, keyword)) {
         send_to_char("OEdit:  Extra description keyword not found.\n\r", ch);
         return;
     }
@@ -1285,8 +1285,8 @@ void oedit_extradesc_format(struct char_data *ch, const char *argument)
 {
     struct extra_descr_data *ed;
     char keyword[MAX_INPUT_LENGTH];
-    struct objectprototype *prototype;
-    EDIT_OBJ(ch, prototype);
+    struct objecttemplate *template;
+    EDIT_OBJ(ch, template);
 
     one_argument(argument, keyword);
     if (keyword[0] == '\0') {
@@ -1294,7 +1294,7 @@ void oedit_extradesc_format(struct char_data *ch, const char *argument)
         return;
     }
 
-    ed = objectprototype_findextra(prototype, keyword);
+    ed = objecttemplate_findextra(template, keyword);
 
     if (ed == NULL) {
         send_to_char("OEdit:  Extra description keyword not found.\n\r", ch);

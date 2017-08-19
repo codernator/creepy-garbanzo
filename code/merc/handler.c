@@ -412,7 +412,7 @@ void reset_char(struct char_data *ch)
             if (obj == NULL)
                 continue;
 
-            for (af = obj->objprototype->affected; af != NULL; af = af->next) {
+            for (af = obj->objtemplate->affected; af != NULL; af = af->next) {
                 mod = af->modifier;
                 switch (af->location) {
                     case APPLY_SEX:
@@ -492,7 +492,7 @@ void reset_char(struct char_data *ch)
         for (i = 0; i < 4; i++)
             ch->armor[i] -= apply_ac(obj, loc, i);
 
-        for (af = obj->objprototype->affected; af != NULL; af = af->next) {
+        for (af = obj->objtemplate->affected; af != NULL; af = af->next) {
             mod = af->modifier;
             switch (af->location) {
                 case APPLY_STR:
@@ -1049,7 +1049,7 @@ void equip_char(struct char_data *ch, struct gameobject *obj, int iWear)
                 (ch->in_room != NULL && ch->in_room->area != NULL) ? ch->in_room->area->file_name : 0,
                 ch->name,
                 (ch->in_room != NULL) ? ch->in_room->vnum : 0,
-                obj->objprototype->vnum);
+                obj->objtemplate->vnum);
 
         return;
     }
@@ -1058,7 +1058,7 @@ void equip_char(struct char_data *ch, struct gameobject *obj, int iWear)
         ch->armor[i] -= apply_ac(obj, iWear, i);
     obj->wear_loc = iWear;
 
-    for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next)
+    for (paf = obj->objtemplate->affected; paf != NULL; paf = paf->next)
         if (paf->location != APPLY_SPELL_AFFECT)
             affect_modify(ch, paf, true);
     for (paf = obj->affected; paf != NULL; paf = paf->next)
@@ -1095,7 +1095,7 @@ void unequip_char(struct char_data *ch, struct gameobject *obj)
         ch->armor[i] += apply_ac(obj, obj->wear_loc, i);
     obj->wear_loc = -1;
 
-    for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
+    for (paf = obj->objtemplate->affected; paf != NULL; paf = paf->next) {
         if (paf->location == APPLY_SPELL_AFFECT) {
             for (lpaf = ch->affected; lpaf != NULL; lpaf = lpaf_next) {
                 lpaf_next = lpaf->next;
@@ -1143,14 +1143,14 @@ void unequip_char(struct char_data *ch, struct gameobject *obj)
 /**
  * Count occurrences of an obj in a list.
  */
-int count_obj_list(struct objectprototype *pObjIndex, struct gameobject *list)
+int count_obj_list(struct objecttemplate *pObjIndex, struct gameobject *list)
 {
     struct gameobject *obj;
     int nMatch;
 
     nMatch = 0;
     for (obj = list; obj != NULL; obj = obj->next_content)
-        if (obj->objprototype == pObjIndex)
+        if (obj->objtemplate == pObjIndex)
             nMatch++;
 
     return nMatch;
@@ -1236,7 +1236,7 @@ void obj_to_obj(struct gameobject *obj, struct gameobject *obj_to)
     obj->in_room = NULL;
     obj->carried_by = NULL;
 
-    if (obj_to->objprototype->vnum == OBJ_VNUM_PIT)
+    if (obj_to->objtemplate->vnum == OBJ_VNUM_PIT)
         obj->cost = 0;
 
     for (; obj_to != NULL; obj_to = obj_to->in_obj) {
@@ -1312,7 +1312,7 @@ void extract_obj(struct gameobject *obj)
         extract_obj(obj_content);
     }
 
-    --obj->objprototype->count;
+    --obj->objtemplate->count;
     object_free(obj);
 }
 
@@ -1443,9 +1443,9 @@ struct char_data *get_char_world(struct char_data *ch, const char *argument)
  *
  * find an object with a given index data
  ***************************************************************************/
-struct gameobject *get_obj_type(struct objectprototype *objprototype)
+struct gameobject *get_obj_type(struct objecttemplate *objtemplate)
 {
-    const struct object_iterator_filter filter = { .object_template = objprototype };
+    const struct object_iterator_filter filter = { .object_template = objtemplate };
     return object_iterator_start(&filter);
 }
 
@@ -1629,11 +1629,11 @@ struct gameobject *create_money(unsigned int gold, unsigned int silver)
 
     /* create the object - assign short desc where applicable */
     if (gold == 0 && silver == 1) {
-        obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_SILVER_ONE));
+        obj = create_object(objecttemplate_getbyvnum(OBJ_VNUM_SILVER_ONE));
     } else if (gold == 1 && silver == 0) {
-        obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_GOLD_ONE));
+        obj = create_object(objecttemplate_getbyvnum(OBJ_VNUM_GOLD_ONE));
     } else if (silver == 0) {
-        obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_GOLD_SOME));
+        obj = create_object(objecttemplate_getbyvnum(OBJ_VNUM_GOLD_SOME));
 
         //sprintf(buf, OBJECT_SHORT(obj), gold);
         //free_string(obj->short_descr);
@@ -1642,7 +1642,7 @@ struct gameobject *create_money(unsigned int gold, unsigned int silver)
         obj->value[1] = (long)gold;
         obj->cost = gold;
     } else if (gold == 0) {
-        obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_SILVER_SOME));
+        obj = create_object(objecttemplate_getbyvnum(OBJ_VNUM_SILVER_SOME));
 
         //sprintf(buf, obj->short_descr, silver);
         //free_string(obj->short_descr);
@@ -1651,7 +1651,7 @@ struct gameobject *create_money(unsigned int gold, unsigned int silver)
         obj->value[0] = (long)silver;
         obj->cost = silver;
     } else {
-        obj = create_object(objectprototype_getbyvnum(OBJ_VNUM_COINS));
+        obj = create_object(objecttemplate_getbyvnum(OBJ_VNUM_COINS));
 
         //sprintf(buf, obj->short_descr, silver, gold);
         //free_string(obj->short_descr);
@@ -1676,7 +1676,7 @@ struct gameobject *create_money(unsigned int gold, unsigned int silver)
  ***************************************************************************/
 int get_obj_number(struct gameobject *obj)
 {
-    struct gameobject *objprototype;
+    struct gameobject *objtemplate;
     int number;
 
     if (OBJECT_TYPE(obj) == ITEM_CONTAINER
@@ -1690,10 +1690,10 @@ int get_obj_number(struct gameobject *obj)
     else
         number = 1;
 
-    for (objprototype = obj->contains;
-         objprototype != NULL;
-         objprototype = objprototype->next_content)
-        number += get_obj_number(objprototype);
+    for (objtemplate = obj->contains;
+         objtemplate != NULL;
+         objtemplate = objtemplate->next_content)
+        number += get_obj_number(objtemplate);
 
     return number;
 }
@@ -1706,14 +1706,14 @@ int get_obj_number(struct gameobject *obj)
  ***************************************************************************/
 int get_obj_weight(struct gameobject *obj)
 {
-    struct gameobject *objprototype;
+    struct gameobject *objtemplate;
     int weight;
 
     weight = obj->weight;
-    for (objprototype = obj->contains;
-         objprototype != NULL;
-         objprototype = objprototype->next_content)
-        weight += get_obj_weight(objprototype) * WEIGHT_MULT(obj) / 100;
+    for (objtemplate = obj->contains;
+         objtemplate != NULL;
+         objtemplate = objtemplate->next_content)
+        weight += get_obj_weight(objtemplate) * WEIGHT_MULT(obj) / 100;
 
     return weight;
 }
@@ -1726,14 +1726,14 @@ int get_obj_weight(struct gameobject *obj)
  ***************************************************************************/
 int get_true_weight(struct gameobject *obj)
 {
-    struct gameobject *objprototype;
+    struct gameobject *objtemplate;
     int weight;
 
     weight = obj->weight;
-    for (objprototype = obj->contains;
-         objprototype != NULL;
-         objprototype = objprototype->next_content)
-        weight += get_obj_weight(objprototype);
+    for (objtemplate = obj->contains;
+         objtemplate != NULL;
+         objtemplate = objtemplate->next_content)
+        weight += get_obj_weight(objtemplate);
 
     return weight;
 }
@@ -2320,7 +2320,7 @@ void identify_item(struct char_data *ch, struct gameobject *obj)
           break;
     }
 
-    for (paf = obj->objprototype->affected; paf != NULL; paf = paf->next) {
+    for (paf = obj->objtemplate->affected; paf != NULL; paf = paf->next) {
         if (paf->location != APPLY_NONE && paf->modifier != 0) {
             printf_to_char(ch, "Affects %s by %d",
                             affect_loc_name((long)paf->location),
