@@ -71,3 +71,16 @@ struct array_list *extradescrdata_serialize(const struct extra_descr_data *extra
     return answer;
 }
 
+struct extra_descr_data *extradescrdata_match(struct extra_descr_data *head, const char *partialkey)
+{
+    struct extra_descr_data *target;
+
+    target = head->next;
+    while (target != NULL) {
+        if (is_name(partialkey, target->keyword))
+            break;
+        target = target->next;
+    }
+
+    return target;
+}

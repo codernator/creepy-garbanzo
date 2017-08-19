@@ -200,99 +200,73 @@ void look_direction(struct char_data *ch, const int door) {
     return;
 }
 
-void look_extras(struct char_data *ch, const char *name, const int number) {
+static bool try_look_object(struct char_data *ch, struct gameobject *list, const char *name, const int number, int *count)
+{
     struct gameobject *obj;
+    struct extra_descr_data *pdesc;
+
+    for (obj = list; obj != NULL; obj = obj->next_content) {
+        if (can_see_obj(ch, obj)) {
+            pdesc = extradescrdata_match(OBJECT_EXTRA(obj), name);
+            if (pdesc != NULL) {
+                if (++(*count) == number) {
+                    send_to_char(pdesc->description, ch);
+                    return true;
+                } else {
+                    continue;
+                }
+            }
+
+            if (is_name(name, object_name_get(obj))) {
+                if (++(*count) == number) {
+                    send_to_char(OBJECT_LONG(obj), ch);
+                    send_to_char("\n\r", ch);
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+void look_extras(struct char_data *ch, const char *name, const int number)
+{
     int count;
-    char *pdesc;
 
     if (!validate_look(ch)) {
-	return;
+        return;
     }
 
     count = 0;
-    for (obj = ch->carrying; obj != NULL; obj = obj->next_content) {
-	if (can_see_obj(ch, obj)) {
-	    /* player can see object */
+    if (try_look_object(ch, ch->carrying, name, number, &count))
+        return;
+    if (try_look_object(ch, ch->in_room->contents, name, number, &count))
+        return;
 
-	    pdesc = get_extra_descr(name, OBJECT_EXTRA(obj));
-	    if (pdesc != NULL) {
-		if (++count == number) {
-		    send_to_char(pdesc, ch);
-		    return;
-		} else {
-		    continue;
-		}
-	    }
 
-	    pdesc = get_extra_descr(name, obj->objtemplate->extra_descr);
-	    if (pdesc != NULL) {
-		if (++count == number) {
-		    send_to_char(pdesc, ch);
-		    return;
-		} else {
-		    continue;
-		}
-	    }
-	    if (is_name(name, object_name_get(obj))) {
-		if (++count == number) {
-		    send_to_char(OBJECT_LONG(obj), ch);
-		    send_to_char("\n\r", ch);
-		    return;
-		}
-	    }
-	}
-    }
-
-    for (obj = ch->in_room->contents; obj != NULL; obj = obj->next_content) {
-	if (can_see_obj(ch, obj)) {
-	    pdesc = get_extra_descr(name, OBJECT_EXTRA(obj));
-	    if (pdesc != NULL) {
-		if (++count == number) {
-		    send_to_char(pdesc, ch);
-		    return;
-		}
-	    }
-
-	    pdesc = get_extra_descr(name, obj->objtemplate->extra_descr);
-	    if (pdesc != NULL) {
-		if (++count == number) {
-		    send_to_char(pdesc, ch);
-		    return;
-		}
-	    }
-	}
-
-	if (is_name(name, object_name_get(obj))) {
-	    if (++count == number) {
-		send_to_char(OBJECT_LONG(obj), ch);
-		send_to_char("\n\r", ch);
-		return;
-	    }
-	}
-    }
-
-    pdesc = get_extra_descr(name, ch->in_room->extra_descr);
-    if (pdesc != NULL) {
-	if (++count == number) {
-	    send_to_char(pdesc, ch);
-	    return;
-	}
-    }
+    // TODO put this back after room->extra_descr is properly a HEAD list.
+    //pdesc = extradescrdata_match(ch->in_room->extra_descr, name);
+    //if (pdesc != NULL) {
+    //    if (++count == number) {
+    //        send_to_char(pdesc, ch);
+    //        return;
+    //    }
+    //}
 
     if (count == 0) {
-	send_to_char("You don't see that here.", ch);
-	return;
+        send_to_char("You don't see that here.", ch);
+        return;
     }
 
     if (count > 0 && count != number) {
-	if (count == 1)
-	    printf_to_char(ch, "You only see one %s here.\n\r", name);
-	else
-	    printf_to_char(ch, "You only see %d of those here.\n\r", count);
-
-	return;
+        if (count == 1)
+            printf_to_char(ch, "You only see one %s here.\n\r", name);
+        else
+            printf_to_char(ch, "You only see %d of those here.\n\r", count);
+        return;
     }
 
+    return;
 }
 
 void look_character(struct char_data *ch, struct char_data *victim) {

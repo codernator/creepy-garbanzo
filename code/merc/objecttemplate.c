@@ -15,7 +15,7 @@
 #define HASH_KEY(vnum) (vnum) % OBJPROTO_MAX_KEY_HASH
 
 /** exports */
-const objecttemplate_FILTER objecttemplate_empty_filter;
+const struct objecttemplate_filter objecttemplate_empty_filter;
 
 
 /** imports */
@@ -30,7 +30,7 @@ struct hash_entry {
 };
 
 static struct objecttemplate head_node;
-static bool passes(struct objecttemplate *testee, const objecttemplate_FILTER *filter);
+static bool passes(struct objecttemplate *testee, const struct objecttemplate_filter *filter);
 static void headlist_add(/*@owned@*/struct objecttemplate *entry);
 /* an array of linked lists, with an empty head node. */
 static struct hash_entry lookup[OBJPROTO_MAX_KEY_HASH];
@@ -224,7 +224,15 @@ struct objecttemplate *objecttemplate_deserialize(const struct array_list *data)
 
     /** Store in hash table. */
     if (templatedata->vnum != 0) {
-        lookup_add(templatedata->vnum, templatedata);
+        if (objecttemplate_getbyvnum(templatedata->vnum) != NULL)
+        {
+            log_bug("Deserialize Template: vnum %d duplicated.", templatedata->vnum);
+            RABORT(templatedata);
+        }
+        else
+        {
+            lookup_add(templatedata->vnum, templatedata);
+        }
     }
 
     return templatedata;
@@ -489,12 +497,12 @@ int objecttemplate_list_count()
     return counter;
 }
 
-struct objecttemplate *objecttemplate_iterator_start(const objecttemplate_FILTER *filter)
+struct objecttemplate *objecttemplate_iterator_start(const struct objecttemplate_filter *filter)
 {
     return objecttemplate_iterator(&head_node, filter);
 }
 
-struct objecttemplate *objecttemplate_iterator(struct objecttemplate *current, const objecttemplate_FILTER *filter)
+struct objecttemplate *objecttemplate_iterator(struct objecttemplate *current, const struct objecttemplate_filter *filter)
 {
     struct objecttemplate *next;
 
@@ -511,7 +519,7 @@ struct objecttemplate *objecttemplate_iterator(struct objecttemplate *current, c
 }
 
 
-bool passes(struct objecttemplate *testee, const objecttemplate_FILTER *filter)
+bool passes(struct objecttemplate *testee, const struct objecttemplate_filter *filter)
 {
     if (filter->name != NULL && filter->name[0] != '\0' && testee->name != NULL && str_cmp(filter->name, testee->name)) {
         /** name filter specified but does not match current object. */

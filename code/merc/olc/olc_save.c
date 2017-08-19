@@ -18,9 +18,6 @@ static void save_mobprogs(FILE *fp, struct area_data *area);
 static void save_mobile(FILE *fp, struct mob_index_data *mob_idx);
 static void save_mobiles(FILE *fp, struct area_data *area);
 static void save_objects(struct database_controller *db, struct area_data *area);
-static void save_object(struct database_controller *db, struct objecttemplate *pObjIndex);
-//static void save_object(FILE *fp, struct objecttemplate *pObjIndex);
-//static void save_objects(FILE *fp, struct area_data *area);
 static void save_rooms(FILE *fp, struct area_data *area);
 static void save_door_resets(FILE *fp, struct area_data *area);
 static void save_resets(FILE *fp, struct area_data *area);
@@ -379,165 +376,24 @@ void save_mobiles(FILE *fp, struct area_data *area)
 }
 
 
-
-void save_object_old(FILE *fp, struct objecttemplate *pObjIndex)
+void save_objects(struct database_controller *db, struct area_data *area)
 {
-    struct affect_data *pAf;
-    struct extra_descr_data *extra;
-    char buf[MAX_STRING_LENGTH];
-
-    fprintf(fp, "#%ld\n", pObjIndex->vnum);
-    fprintf(fp, "%s~\n", pObjIndex->name);
-    fprintf(fp, "%s~\n", pObjIndex->short_descr);
-    fprintf(fp, "%s~\n", fix_string(pObjIndex->description));
-    fprintf(fp, "%s ", fwrite_flag(pObjIndex->extra2_flags, buf));
-    fprintf(fp, "%s ", item_name_by_type(pObjIndex->item_type));
-    fprintf(fp, "%s ", fwrite_flag(pObjIndex->extra_flags, buf));
-    fprintf(fp, "%s\n", fwrite_flag(pObjIndex->wear_flags, buf));
-
-    /*
-     *  Using fwrite_flag to write most values gives a strange
-     *  looking area file, consider making a case for each
-     *  item type later.
-     */
-
-    switch (pObjIndex->item_type) {
-      default:
-          fprintf(fp, "%s ", fwrite_flag(pObjIndex->value[0], buf));
-          fprintf(fp, "%s ", fwrite_flag(pObjIndex->value[1], buf));
-          fprintf(fp, "%s ", fwrite_flag(pObjIndex->value[2], buf));
-          fprintf(fp, "%s ", fwrite_flag(pObjIndex->value[3], buf));
-          fprintf(fp, "%s\n", fwrite_flag(pObjIndex->value[4], buf));
-          break;
-
-      case ITEM_DRINK_CON:
-      case ITEM_FOUNTAIN:
-          fprintf(fp, "%ld %ld '%s' %ld %ld\n",
-                  pObjIndex->value[0],
-                  pObjIndex->value[1],
-                  liq_table[pObjIndex->value[2]].liq_name,
-                  pObjIndex->value[3],
-                  pObjIndex->value[4]);
-          break;
-
-      case ITEM_CONTAINER:
-          fprintf(fp, "%ld %s %ld %ld %ld\n",
-                  pObjIndex->value[0],
-                  fwrite_flag(pObjIndex->value[1], buf),
-                  pObjIndex->value[2],
-                  pObjIndex->value[3],
-                  pObjIndex->value[4]);
-          break;
-
-      case ITEM_WEAPON:
-          fprintf(fp, "%s %ld %ld '%s' %s\n",
-                  weapon_name((int)pObjIndex->value[0]),
-                  pObjIndex->value[1],
-                  pObjIndex->value[2],
-                  attack_table[pObjIndex->value[3]].name,
-                  fwrite_flag(pObjIndex->value[4], buf));
-          break;
-
-      case ITEM_PILL:
-      case ITEM_POTION:
-      case ITEM_SCROLL:
-          {
-              struct dynamic_skill *skills[4];
-              int idx;
-
-              for (idx = 1; idx <= 4; idx++)
-                  skills[idx - 1] = resolve_skill_sn((int)pObjIndex->value[idx]);
-
-              fprintf(fp, "%ld '%s' '%s' '%s' '%s'\n",
-                      pObjIndex->value[0],
-                      (skills[0] != NULL) ? skills[0]->name : "",
-                      (skills[1] != NULL) ? skills[1]->name : "",
-                      (skills[2] != NULL) ? skills[2]->name : "",
-                      (skills[3] != NULL) ? skills[3]->name : "");
-              break;
-          }
-
-      case ITEM_STAFF:
-      case ITEM_WAND:
-          {
-              struct dynamic_skill *skill;
-
-              skill = resolve_skill_sn((int)pObjIndex->value[3]);
-
-              fprintf(fp, "%ld %ld %ld '%s' %ld\n",
-                      pObjIndex->value[0],
-                      pObjIndex->value[1],
-                      pObjIndex->value[2],
-                      (skill != NULL) ? skill->name : "",
-                      pObjIndex->value[4]);
-              break;
-          }
-    }
-
-    fprintf(fp, "%d ", pObjIndex->weight);
-    fprintf(fp, "%u ", pObjIndex->cost);
-    fprintf(fp, "%d ", pObjIndex->init_timer);
-    fprintf(fp, "%d ", pObjIndex->condition);
-
-    for (pAf = pObjIndex->affected; pAf; pAf = pAf->next) {
-        if (pAf->where == TO_OBJECT || pAf->bitvector == 0) {
-            fprintf(fp, "A\n%d %ld\n", pAf->location, pAf->modifier);
-        } else {
-            fprintf(fp, "F\n");
-
-            switch (pAf->where) {
-              case TO_AFFECTS:
-                  fprintf(fp, "A ");
-                  break;
-              case TO_IMMUNE:
-                  fprintf(fp, "I ");
-                  break;
-              case TO_RESIST:
-                  fprintf(fp, "R ");
-                  break;
-              case TO_VULN:
-                  fprintf(fp, "V ");
-                  break;
-              default:
-                  log_bug("olc_save: Invalid Affect->where");
-                  break;
-            }
-
-            fprintf(fp, "%d %ld %s\n", pAf->location, pAf->modifier,
-                    fwrite_flag(pAf->bitvector, buf));
-        }
-    }
-
-    for (extra = pObjIndex->extra_descr; extra; extra = extra->next)
-        fprintf(fp, "E\n%s~\n%s~\n", extra->keyword, fix_string(extra->description));
-    return;
-}
-
-void save_object(struct database_controller *db, struct objecttemplate *pObjIndex)
-{
+    long iter;
+    struct objecttemplate *template;
     struct array_list *serialized;
     char *dbstream;
 
-    serialized = objecttemplate_serialize(pObjIndex);
-    dbstream = database_create_stream(serialized);
-    kvp_free_array(serialized);
-    database_write_stream(db, dbstream);
-    free(dbstream);
-    return;
-}
-
-void save_objects(struct database_controller *db, struct area_data *area)
-{
-    struct objecttemplate *pObj;
-    long iter;
-
-    fprintf(db->_cfptr, "#OBJECTS\n");
-
     for (iter = area->min_vnum; iter <= area->max_vnum; iter++)
-        if ((pObj = objecttemplate_getbyvnum(iter)))
-            save_object(db, pObj);
+        if ((template = objecttemplate_getbyvnum(iter))) {
+            fprintf(db->_cfptr, "#OBJECT\n");
 
-    fprintf(db->_cfptr, "#0\n\n\n\n");
+            serialized = objecttemplate_serialize(template);
+            dbstream = database_create_stream(serialized);
+            kvp_free_array(serialized);
+            database_write_stream(db, dbstream);
+            free(dbstream);
+        }
+
     return;
 }
 

@@ -93,9 +93,10 @@ static struct area_data *g_area_loading;
  *	local functions used in boot process
  ***************************************************************************/
 static /*@shared@*/struct area_data *load_area(/*@observer@*/const struct database_controller *db, const char *filename);
+static void load_template(/*@observer@*/const struct database_controller *db, /*@shared@*/struct area_data *area);
+
 static void load_helps(const char const *filepath);
 static void load_mobiles(FILE * fp);
-static void load_objects(FILE * fp);
 static void load_resets(FILE * fp);
 static void load_rooms(FILE * fp);
 static void load_shops(FILE * fp);
@@ -226,8 +227,8 @@ static void init_areas()
                 load_mobprogs(db->_cfptr);
             } else if (!str_cmp(word, "PROGRAMS")) {
                 load_mobprogs_new(db->_cfptr);
-            } else if (!str_cmp(word, "OBJECTS")) {
-                load_objects(db->_cfptr);
+            } else if (!str_cmp(word, "OBJECT")) {
+                load_template(db, current_area);
             } else if (!str_cmp(word, "RESETS")) {
                 load_resets(db->_cfptr);
             } else if (!str_cmp(word, "ROOMS")) {
@@ -356,6 +357,27 @@ struct area_data *load_area(const struct database_controller *db, const char *fi
 
     return area;
 }
+
+void load_template(const struct database_controller *db, struct area_data *area)
+{
+    struct array_list *data;
+    char *dbstream;
+    struct objecttemplate *template;
+    long vnum;
+
+    dbstream = database_read_stream(db);
+    data = database_parse_stream(dbstream);
+    free(dbstream);
+    template = objecttemplate_deserialize(data);
+    kvp_free_array(data);
+
+    template->area = area;
+
+    vnum = template->vnum;
+    top_vnum_obj = top_vnum_obj < vnum ? vnum : top_vnum_obj;
+    assign_area_vnum(vnum);
+}
+
 
 /*
  * Sets vnum range for area using OLC protection features.
@@ -925,198 +947,6 @@ void load_mobiles(FILE *fp)
 
     return;
 }
-
-/** Snarf an obj section. */
-void load_objects(FILE *fp)
-{
-    struct objecttemplate *objtemplate;
-    struct dynamic_skill *skill;
-
-    if (g_area_loading == NULL) {
-        log_bug("%s", "Loading objects with no area.");
-        ABORT;
-    }
-
-    for (;; ) {
-        long vnum;
-        char letter;
-
-        letter = fread_letter(fp);
-        if (letter != '#') {
-            log_bug("%s", "Load_objects: # not found.");
-            ABORT;
-        }
-
-        vnum = fread_number(fp);
-        if (vnum == 0)
-            break;
-
-        if (objecttemplate_getbyvnum(vnum) != NULL) {
-            log_bug("Load_objects: vnum %d duplicated.", vnum);
-            ABORT;
-        }
-
-        objtemplate = objecttemplate_new(vnum);
-        objtemplate->area = g_area_loading;
-
-
-        objtemplate->name = fread_string(fp);
-        objtemplate->short_descr = fread_string(fp);
-        objtemplate->description = fread_string(fp);
-        objtemplate->extra2_flags = (int)fread_flag(fp);
-
-        CHECK_POS(objtemplate->item_type, (int)item_lookup(fread_word(fp)), "item_type");
-
-        /* objtemplate->item_type	= item_lookup(fread_word(fp)); */
-        objtemplate->extra_flags = (int)fread_flag(fp);
-        objtemplate->wear_flags = (int)fread_flag(fp);
-
-        switch (objtemplate->item_type) {
-          case ITEM_WEAPON:
-              objtemplate->value[0] = weapon_type(fread_word(fp));
-              objtemplate->value[1] = fread_number(fp);
-              objtemplate->value[2] = fread_number(fp);
-              objtemplate->value[3] = attack_lookup(fread_word(fp));
-              objtemplate->value[4] = fread_flag(fp);
-              break;
-          case ITEM_CONTAINER:
-              objtemplate->value[0] = fread_number(fp);
-              objtemplate->value[1] = fread_flag(fp);
-              objtemplate->value[2] = fread_number(fp);
-              objtemplate->value[3] = fread_number(fp);
-              objtemplate->value[4] = fread_number(fp);
-              break;
-          case ITEM_DRINK_CON:
-          case ITEM_FOUNTAIN:
-              objtemplate->value[0] = fread_number(fp);
-              objtemplate->value[1] = fread_number(fp);
-              /*objtemplate->value[2] = liq_lookup(fread_word(fp));*/
-
-              CHECK_POS(objtemplate->value[2], (int)liq_lookup(fread_word(fp)), "liq_lookup");
-
-              objtemplate->value[3] = fread_number(fp);
-              objtemplate->value[4] = fread_number(fp);
-              break;
-          case ITEM_WAND:
-          case ITEM_STAFF:
-
-              objtemplate->value[0] = fread_number(fp);
-              objtemplate->value[1] = fread_number(fp);
-              objtemplate->value[2] = fread_number(fp);
-              if ((skill = skill_lookup(fread_word(fp))) != NULL)
-                  objtemplate->value[3] = skill->sn;
-              else
-                  objtemplate->value[3] = -1;
-              objtemplate->value[4] = fread_number(fp);
-              break;
-          case ITEM_POTION:
-          case ITEM_PILL:
-          case ITEM_SCROLL:
-              objtemplate->value[0] = fread_number(fp);
-              if ((skill = skill_lookup(fread_word(fp))) != NULL)
-                  objtemplate->value[1] = skill->sn;
-              if ((skill = skill_lookup(fread_word(fp))) != NULL)
-                  objtemplate->value[2] = skill->sn;
-              if ((skill = skill_lookup(fread_word(fp))) != NULL)
-                  objtemplate->value[3] = skill->sn;
-              if ((skill = skill_lookup(fread_word(fp))) != NULL)
-                  objtemplate->value[4] = skill->sn;
-              break;
-          default:
-              objtemplate->value[0] = fread_flag(fp);
-              objtemplate->value[1] = fread_flag(fp);
-              objtemplate->value[2] = fread_flag(fp);
-              objtemplate->value[3] = fread_flag(fp);
-              objtemplate->value[4] = fread_flag(fp);
-              break;
-        }
-
-        objtemplate->weight = (int)fread_number(fp);
-        objtemplate->cost = (unsigned int)fread_number(fp);
-        objtemplate->init_timer = fread_number(fp);
-
-        /* condition */
-        objtemplate->condition = (int)fread_number(fp);
-
-        for (;; ) {
-            char letter;
-
-            letter = fread_letter(fp);
-
-            if (letter == 'A') {
-                struct affect_data *paf;
-
-                paf = new_affect();
-                paf->where = TO_OBJECT;
-                paf->type = -1;
-                paf->level = 1;
-                paf->duration = -1;
-                paf->location = (int)fread_number(fp);
-                paf->modifier = (int)fread_number(fp);
-                paf->bitvector = 0;
-                paf->next = objtemplate->affected;
-                objtemplate->affected = paf;
-                top_affect++;
-            } else if (letter == 'F') {
-                struct affect_data *paf;
-
-                paf = new_affect();
-                letter = fread_letter(fp);
-                switch (letter) {
-                  case 'A':
-                      paf->where = TO_AFFECTS;
-                      break;
-                  case 'C':
-                      paf->where = TO_ACT_FLAG;
-                      break;
-                  case 'I':
-                      paf->where = TO_IMMUNE;
-                      break;
-                  case 'R':
-                      paf->where = TO_RESIST;
-                      break;
-                  case 'V':
-                      paf->where = TO_VULN;
-                      break;
-                  default:
-                      bug(fp, "Load_objects: Bad where on flag set.");
-                      ABORT;
-                }
-                paf->type = -1;
-                paf->level = 1;
-                paf->duration = -1;
-                paf->location = (int)fread_number(fp);
-                paf->modifier = fread_number(fp);
-                paf->bitvector = fread_flag(fp);
-                paf->next = objtemplate->affected;
-                objtemplate->affected = paf;
-                top_affect++;
-            } else if (letter == 'E') {
-                struct extra_descr_data *ed;
-
-                ed = new_extra_descr();
-                ed->keyword = fread_string(fp);
-                ed->description = fread_string(fp);
-                ed->next = objtemplate->extra_descr;
-                objtemplate->extra_descr = ed;
-                top_ed++;
-            } else {
-                ungetc(letter, fp);
-                break;
-            }
-        }
-
-        top_vnum_obj = top_vnum_obj < vnum ? vnum : top_vnum_obj;
-        assign_area_vnum(vnum);
-    }
-
-    return;
-}
-
-
-
-
-
 
 
 /*
@@ -2065,19 +1895,6 @@ void clear_char(struct char_data *ch)
     }
     return;
 }
-
-/*
- * Get an extra description from a list.
- */
-char *get_extra_descr(const char *name, struct extra_descr_data *ed)
-{
-    for (; ed != NULL; ed = ed->next)
-        if (is_name((char *)name, ed->keyword))
-            return ed->description;
-    return NULL;
-}
-
-
 
 /*
  * Translates mob virtual number to its mob index struct.

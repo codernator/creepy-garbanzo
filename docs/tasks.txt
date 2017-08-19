@@ -6,6 +6,8 @@ refactor: extra_descr_data object file
 refactor: after affect_data and extra_descr, remove recycle.h from objectprototype
 missing: extra clone in objectprototype->clone
 bug: cloning an object to a new area might cause breakage when the new object is set in ch->desc->edit_data
+refeature: character_service.c:look_extras  re-enable looking at room extras.
+refeature: order of precedence in look_extras seems to suck.
 
 FIXING COMBAT:
 ==============

@@ -1977,7 +1977,6 @@ struct gameobject *create_object(struct objecttemplate * objtemplate);
 void clear_char(struct char_data * ch);
 
 /* find functions  */
-char *get_extra_descr(const char *name, struct extra_descr_data * ed);
 struct mob_index_data *get_mob_index(long vnum);
 struct room_index_data *get_room_index(long vnum);
 
@@ -2201,18 +2200,17 @@ void descriptor_host_set(struct descriptor_data *d, /*@observer@*/const char *va
 
 
 /* objecttemplate.c */
-typedef struct objecttemplate_filter objecttemplate_FILTER;
 struct objecttemplate_filter {
     /*@null@*/const char *name;
 };
-extern const objecttemplate_FILTER objecttemplate_empty_filter;
+extern const struct objecttemplate_filter objecttemplate_empty_filter;
 
 /*@dependent@*/struct objecttemplate *objecttemplate_new(unsigned long vnum);
 /*@dependent@*/struct objecttemplate *objecttemplate_clone(/*@observer@*/struct objecttemplate *target, unsigned long vnum, /*@dependent@*/struct area_data *area);
 void objecttemplate_free(/*@owned@*/struct objecttemplate *templatedata);
 int objecttemplate_list_count();
-/*@dependent@*//*@null@*/struct objecttemplate *objecttemplate_iterator_start(const objecttemplate_FILTER *filter);
-/*@dependent@*//*@null@*/struct objecttemplate *objecttemplate_iterator(struct objecttemplate *current, const objecttemplate_FILTER *filter);
+/*@dependent@*//*@null@*/struct objecttemplate *objecttemplate_iterator_start(const struct objecttemplate_filter *filter);
+/*@dependent@*//*@null@*/struct objecttemplate *objecttemplate_iterator(struct objecttemplate *current, const struct objecttemplate_filter *filter);
 /*@dependent@*//*@null@*/struct objecttemplate *objecttemplate_getbyvnum(unsigned long vnum);
 /*@only@*/struct array_list *objecttemplate_serialize(const struct objecttemplate *obj);
 /*@dependent@*/struct objecttemplate *objecttemplate_deserialize(const struct array_list *data);
@@ -2242,6 +2240,8 @@ void affectdata_free(/*@only@*/struct affect_data *data);
 void extradescrdata_free(/*@only@*/struct extra_descr_data *data);
 /*@only@*/struct extra_descr_data *extradescrdata_deserialize(const struct array_list *data);
 /*@only@*/struct array_list *extradescrdata_serialize(const struct extra_descr_data *extra);
+
+/*@null@*//*@observer@*/struct extra_descr_data *extradescrdata_match(/*@observer@*/struct extra_descr_data *head, /*@observer@*/const char *partialkey);
 /* ~extra_descr_data.c */
 
 /* area.c */
