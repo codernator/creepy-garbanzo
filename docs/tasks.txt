@@ -1,3 +1,4 @@
+
 NEW OBJECT SAVE:
 ================
 refactor: Values array - save simple numeric values. Evaluate by item type right after loading. (see db.c load_objects and olc_save save_objects) 
@@ -26,5 +27,9 @@ Object constraints (things like min-level, race, class, etc).
 Randomize object cost during creation.
 Gods feature is incomplete.
 
+
+REFACTOR ISSUES
+===============
+bug: extra description string editor is borken because extras are no longer shared strings.
 
 

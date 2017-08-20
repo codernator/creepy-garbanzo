@@ -7,6 +7,71 @@
 #include <assert.h>
 
 
+char *replace_one(const char *original, const char *find, const char *replace, size_t max_length)
+{
+    /*@only@*/char *buf = NULL;
+    const char *pmatch;
+    size_t origlen;
+    size_t findlen;
+    size_t replacelen;
+    size_t matchlen;
+    size_t prefixlen;
+    size_t suffixlen;
+    size_t finallen;
+    size_t i, t;
+
+    assert(original != NULL);
+    assert(find != NULL);
+    assert(replace != NULL);
+
+    pmatch = strstr(original, find);
+    if (pmatch == NULL) {
+        buf = strdup(original);
+        return buf;
+    }
+
+    origlen = strlen(original);
+    findlen = strlen(find);
+    replacelen = strlen(replace);
+
+    matchlen = strlen(pmatch); //pmatch points somewhere in buf, it is not its own string.
+    prefixlen = origlen - matchlen;
+    replacelen = strlen(replace);
+    suffixlen = matchlen - findlen;
+    finallen = prefixlen + replacelen + suffixlen;
+    if (finallen >= max_length) {
+        finallen = max_length - 1;
+    }
+
+
+    buf = calloc(finallen + 1, sizeof(char));
+    assert(buf != NULL);
+    i = 0;
+    while (i < finallen && i < prefixlen) {
+        buf[i] = original[i];
+        i++;
+    }
+    if (i < finallen) {
+        t = 0;
+        while (i < finallen && t < replacelen) {
+            buf[i] = replace[t];
+            t++;
+            i++;
+        }
+    }
+    if (i < finallen) {
+        t = 0;
+        while (i < finallen && t < suffixlen) {
+            buf[i] = original[t + prefixlen + findlen];
+            i++;
+            t++;
+        }
+    }
+
+    return buf;
+}
+
+
 void string_lower(const char *source, char *target, size_t max_length)
 {
     size_t bound = 0;
@@ -240,7 +305,7 @@ char *ulong_to_string(unsigned long value)
     unsigned long offset;
     char *cp;
     char *buf;
-    
+
     buf = calloc(sizeof(char), 33);
     assert(buf != NULL);
     memset(buf, 0, sizeof(char) * 33);

@@ -66,6 +66,7 @@ typedef unsigned int fd_set;
 #endif
 extern int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
 
+extern void olc_editstring_interpreter(struct char_data *ch, const char *argument);
 
 /** Game declarations. */
 extern char *color_table[];
@@ -258,7 +259,7 @@ bool process_output(struct descriptor_data *d, bool fPrompt)
     if (!globalSystemState.merc_down) {
         if (d->showstr_point) {
             write_to_buffer(d, "\n\r[Hit Return to continue]\n\r\n\r", 0);
-        } else if (fPrompt && d->ed_string && d->connected == CON_PLAYING) {
+        } else if (fPrompt && d->interpmode == INTERP_MODE_STRING_EDIT && d->connected == CON_PLAYING) {
             write_to_buffer(d, "> ", 2);
         } else if (fPrompt && !globalSystemState.merc_down && d->connected == CON_PLAYING) {
             struct char_data *ch;
@@ -983,8 +984,8 @@ void process_all_input()
             if (d->showstr_point) {
                 show_string(d, d->incomm);
             } else {
-                if (d->ed_string) {
-                    string_add(d->character, d->incomm);
+                if (d->interpmode == INTERP_MODE_STRING_EDIT) {
+                    olc_editstring_interpreter(d->character, d->incomm);
                 } else {
                     switch (d->connected) {
                       case CON_PLAYING:

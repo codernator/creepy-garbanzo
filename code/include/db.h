@@ -14,5 +14,3 @@ extern int top_ed;
 /* Magic number for memory allocation */
 #define MAGIC_NUM 52571214
 
-/* func from db.c */
-extern void assign_area_vnum(long vnum);                     /* OLC */

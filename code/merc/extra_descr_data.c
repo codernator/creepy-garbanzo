@@ -84,3 +84,15 @@ struct extra_descr_data *extradescrdata_match(struct extra_descr_data *head, con
 
     return target;
 }
+
+void extradescrdata_getdesription(struct extra_descr_data *owner, char *target, size_t maxsize)
+{
+    (void)strncpy(target, owner->description, maxsize);
+}
+void extradescrdata_setdescription(struct extra_descr_data *owner, const char *description)
+{
+    if (owner->description != NULL)
+        free (owner->description);
+    owner->description = strdup(description);
+    return;
+}

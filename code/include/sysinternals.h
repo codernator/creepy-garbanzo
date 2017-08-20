@@ -154,6 +154,7 @@ void i_bubble_sort(int *iarray, int array_size);
  */
 /*@only@*/char *grow_buffer(/*@observer@*/const char *existing, size_t old_size, size_t new_size);
 
+/*@only@*/char *replace_one(/*@observer@*/const char *original, /*@observer@*/const char *find, /*@observer@*/const char *replace, size_t max_length);
 void string_lower(const char *source, /*@out@*/char *target, size_t maxLength);
 void smash_tilde(char *str);
 bool str_cmp(const char *astr, const char *bstr);

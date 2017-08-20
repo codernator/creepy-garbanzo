@@ -207,6 +207,20 @@ struct weather_data {
 #define CON_BREAK_CONNECT       15
 #define CON_GET_ANSI            16
 #define CON_COPYOVER_RECOVER    17
+#define INTERP_MODE_STANDARD    0
+#define INTERP_MODE_STRING_EDIT 1
+
+
+typedef void DESC_GETTER(/*@observer@*/void *owner, char *target, size_t maxsize);
+typedef void DESC_SETTER(void *owner, /*@observer@*/const char *text);
+
+
+struct olc_string_editor_data {
+    /*@dependent@*//*@null@*/void *owner;
+    /*@dependent@*//*@null@*/DESC_GETTER *getter;
+    /*@dependent@*//*@null@*/DESC_SETTER *setter;
+    char text[MAX_STRING_LENGTH];
+};
 
 /* Descriptor (channel) structure. */
 struct descriptor_data {
@@ -234,10 +248,11 @@ struct descriptor_data {
     /*@owned@*//*@null@*/char *outbuf;
     size_t outsize;
     int outtop;
+    int interpmode;
     /*@shared@*//*@null@*/char *showstr_head;
     /*@shared@*//*@null@*/char *showstr_point;
     /*@shared@*//*@null@*/void *ed_data;
-    /*@shared@*//*@null@*/char **ed_string;
+    struct olc_string_editor_data olc_string_editor;
     int editor;
     int idle;
 };
@@ -2242,6 +2257,8 @@ void extradescrdata_free(/*@only@*/struct extra_descr_data *data);
 /*@only@*/struct array_list *extradescrdata_serialize(const struct extra_descr_data *extra);
 
 /*@null@*//*@observer@*/struct extra_descr_data *extradescrdata_match(/*@observer@*/struct extra_descr_data *head, /*@observer@*/const char *partialkey);
+void extradescrdata_getdescription(/*@dependent@*/struct extra_descr_data *owner, char *target, size_t maxsize);
+void extradescrdata_setdescription(/*@dependent@*/struct extra_descr_data *owner, /*@observer@*/const char *description);
 /* ~extra_descr_data.c */
 
 /* area.c */

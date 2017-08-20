@@ -57,10 +57,13 @@ extern struct char_data *char_free;
 extern struct pc_data *pcdata_free;
 extern struct affect_data *affect_free;
 
+extern void load_threads(void);
+extern void load_bans(void);
+extern void resolve_global_skills(void);
+
 
 /** locals */
 static char *string_hash[MAX_KEY_HASH];
-static struct area_data *current_area;
 static char *string_space;
 static char *top_string;
 static void bug(FILE *fparea, const char *fmt, ...);
@@ -87,7 +90,6 @@ static int sAllocPerm;
 
 bool db_loading;
 static char area_file_path[MAX_INPUT_LENGTH];
-static struct area_data *g_area_loading;
 
 /***************************************************************************
  *	local functions used in boot process
@@ -96,20 +98,17 @@ static /*@shared@*/struct area_data *load_area(/*@observer@*/const struct databa
 static void load_template(/*@observer@*/const struct database_controller *db, /*@shared@*/struct area_data *area);
 
 static void load_helps(const char const *filepath);
-static void load_mobiles(FILE * fp);
-static void load_resets(FILE * fp);
-static void load_rooms(FILE * fp);
-static void load_shops(FILE * fp);
-void load_threads(void);
-extern void load_bans(void);
-static void load_mobprogs(FILE * fp);
-static void load_mobprogs_new(FILE * fp);
-void resolve_global_skills(void);
+static void load_mobiles(FILE * fp, /*@shared@*/struct area_data *area);
+static void load_resets(FILE * fp, /*@shared@*/struct area_data *area);
+static void load_rooms(FILE * fp, /*@shared@*/struct area_data *area);
+static void load_shops(FILE * fp, /*@shared@*/struct area_data *area);
+static void load_mobprogs(FILE * fp, /*@shared@*/struct area_data *area);
+
 
 static void fix_exits(void);
 static void fix_mobprogs(void);
 static void reset_areas(void);
-void reset_area(struct area_data * area);
+static void assign_area_vnum(long vnum, struct area_data *area);
 
 
 /* RT max open files fix */
@@ -177,6 +176,7 @@ static void init_areas()
     char *word;
     char area_file_name[MAX_INPUT_LENGTH];
     struct database_controller *db;
+    struct area_data *area_loading;
 
     log_string("Opening area file.");
     fpList = fopen(AREA_LIST, "r");
@@ -203,8 +203,6 @@ static void init_areas()
             ABORT;
         }
 
-        current_area = NULL;
-
         for (;; ) {
             char token;
 
@@ -220,24 +218,29 @@ static void init_areas()
                 /** End of Area File definition. */
                 break;
             } else if (!str_cmp(word, "AREADATA")) {
-                g_area_loading = load_area(db, area_file_name);
-            } else if (!str_cmp(word, "MOBILES")) {
-                load_mobiles(db->_cfptr);
-            } else if (!str_cmp(word, "MOBPROGS")) {
-                load_mobprogs(db->_cfptr);
-            } else if (!str_cmp(word, "PROGRAMS")) {
-                load_mobprogs_new(db->_cfptr);
-            } else if (!str_cmp(word, "OBJECT")) {
-                load_template(db, current_area);
-            } else if (!str_cmp(word, "RESETS")) {
-                load_resets(db->_cfptr);
-            } else if (!str_cmp(word, "ROOMS")) {
-                load_rooms(db->_cfptr);
-            } else if (!str_cmp(word, "SHOPS")) {
-                load_shops(db->_cfptr);
+                area_loading = load_area(db, area_file_name);
             } else {
-                bug(db->_cfptr, "Boot_db: bad section name (%s)", word);
-                ABORT;
+                if (area_loading == NULL) {
+                    bug(db->_cfptr, "Load %s: no #AREADATA seen yet.", word);
+                    ABORT;
+                }
+
+                if (!str_cmp(word, "MOBILES")) {
+                    load_mobiles(db->_cfptr, area_loading);
+                } else if (!str_cmp(word, "PROGRAMS")) {
+                    load_mobprogs(db->_cfptr, area_loading);
+                } else if (!str_cmp(word, "OBJECT")) {
+                    load_template(db, area_loading);
+                } else if (!str_cmp(word, "RESETS")) {
+                    load_resets(db->_cfptr, area_loading);
+                } else if (!str_cmp(word, "ROOMS")) {
+                    load_rooms(db->_cfptr, area_loading);
+                } else if (!str_cmp(word, "SHOPS")) {
+                    load_shops(db->_cfptr, area_loading);
+                } else {
+                    bug(db->_cfptr, "Boot_db: bad section name (%s)", word);
+                    ABORT;
+                }
             }
         }
 
@@ -375,23 +378,23 @@ void load_template(const struct database_controller *db, struct area_data *area)
 
     vnum = template->vnum;
     top_vnum_obj = top_vnum_obj < vnum ? vnum : top_vnum_obj;
-    assign_area_vnum(vnum);
+    assign_area_vnum(vnum, area);
 }
 
 
 /*
  * Sets vnum range for area using OLC protection features.
  */
-void assign_area_vnum(long vnum)
+void assign_area_vnum(long vnum, struct area_data *area)
 {
-    if (g_area_loading->min_vnum == 0 || g_area_loading->max_vnum == 0)
-        g_area_loading->min_vnum = g_area_loading->max_vnum = vnum;
+    if (area->min_vnum == 0 || area->max_vnum == 0)
+        area->min_vnum = area->max_vnum = vnum;
 
-    if (vnum != URANGE(g_area_loading->min_vnum, vnum, g_area_loading->max_vnum)) {
-        if (vnum < g_area_loading->min_vnum)
-            g_area_loading->min_vnum = vnum;
+    if (vnum != URANGE(area->min_vnum, vnum, area->max_vnum)) {
+        if (vnum < area->min_vnum)
+            area->min_vnum = vnum;
         else
-            g_area_loading->max_vnum = vnum;
+            area->max_vnum = vnum;
     }
 
     return;
@@ -466,17 +469,12 @@ static void new_reset(struct room_index_data *pR, struct reset_data *reset)
 /*
  * Snarf a reset section.
  */
-void load_resets(FILE *fp)
+void load_resets(FILE *fp, struct area_data *area)
 {
     struct reset_data *reset;
     struct exit_data *pexit;
     struct room_index_data *room_idx;
     long rVnum = -1;
-
-    if (g_area_loading == NULL) {
-        log_bug("Load_resets: no #AREA seen yet.");
-        ABORT;
-    }
 
     for (;; ) {
         /*
@@ -570,14 +568,9 @@ void load_resets(FILE *fp)
 /*
  * Snarf a room section.
  */
-void load_rooms(FILE *fp)
+void load_rooms(FILE *fp, struct area_data *area)
 {
     struct room_index_data *room_idx;
-
-    if (g_area_loading == NULL) {
-        bug(fp, "Load_rooms: no #AREA seen yet.");
-        ABORT;
-    }
 
     for (;; ) {
         long vnum;
@@ -607,7 +600,7 @@ void load_rooms(FILE *fp)
         room_idx->people = NULL;
         room_idx->contents = NULL;
         room_idx->extra_descr = NULL;
-        room_idx->area = g_area_loading;
+        room_idx->area = area;
         room_idx->vnum = vnum;
         room_idx->name = fread_string(fp);
         room_idx->description = fread_string(fp);
@@ -717,7 +710,7 @@ void load_rooms(FILE *fp)
         room_index_hash[hash_idx] = room_idx;
         top_room++;
         top_vnum_room = top_vnum_room < vnum ? vnum : top_vnum_room;
-        assign_area_vnum(vnum);
+        assign_area_vnum(vnum, area);
     }
 
     return;
@@ -738,7 +731,7 @@ char *capitalize(const char *str)
 /*
  * Snarf a shop section.
  */
-void load_shops(FILE *fp)
+void load_shops(FILE *fp, struct area_data *area)
 {
     struct shop_data *shop;
 
@@ -778,14 +771,9 @@ void load_shops(FILE *fp)
 /*
  * Snarf a mob section.  new style
  */
-void load_mobiles(FILE *fp)
+void load_mobiles(FILE *fp, struct area_data *area)
 {
     struct mob_index_data *mob_idx;
-
-    if (g_area_loading == NULL) {
-        bug(fp, "Load_mobiles: no #AREA seen yet.");
-        ABORT;
-    }
 
     for (;; ) {
         long vnum;
@@ -811,7 +799,7 @@ void load_mobiles(FILE *fp)
 
         mob_idx = alloc_perm((unsigned int)sizeof(*mob_idx));
         mob_idx->vnum = vnum;
-        mob_idx->area = g_area_loading;
+        mob_idx->area = area;
 
         mob_idx->player_name = fread_string(fp);
         mob_idx->short_descr = fread_string(fp);
@@ -942,7 +930,7 @@ void load_mobiles(FILE *fp)
         top_mob_index++;
 
         top_vnum_mob = top_vnum_mob < vnum ? vnum : top_vnum_mob;
-        assign_area_vnum(vnum);
+        assign_area_vnum(vnum, area);
     }
 
     return;
@@ -1070,66 +1058,10 @@ void fix_exits(void)
 }
 
 
-/*
- * Load mobprogs section
- */
-void load_mobprogs(FILE *fp)
-{
-    struct mprog_code *pMprog;
 
-    if (g_area_loading == NULL) {
-        bug(fp, "Load_mobprogs: no #AREA seen yet.");
-        ABORT;
-    }
-
-    for (;; ) {
-        long vnum;
-        char letter;
-
-        letter = fread_letter(fp);
-        if (letter != '#') {
-            bug(fp, "Load_mobprogs: # not found.");
-            ABORT;
-        }
-
-        vnum = fread_number(fp);
-        if (vnum == 0)
-            break;
-
-        db_loading = false;
-        if (get_mprog_index(vnum) != NULL) {
-            bug(fp, "Load_mobprogs: vnum %ld duplicated.", vnum);
-            ABORT;
-        }
-        db_loading = true;
-
-        pMprog = alloc_perm((unsigned int)sizeof(*pMprog));
-        pMprog->vnum = vnum;
-        pMprog->code = fread_string(fp);
-        pMprog->comment = str_dup("");
-
-        if (mprog_list == NULL) {
-            mprog_list = pMprog;
-        } else {
-            pMprog->next = mprog_list;
-            mprog_list = pMprog;
-        }
-
-        top_mprog_index++;
-    }
-
-    return;
-}
-
-
-void load_mobprogs_new(FILE *fp)
+void load_mobprogs(FILE *fp, struct area_data *area)
 {
     struct mprog_code *mprog;
-
-    if (g_area_loading == NULL) {
-        bug(fp, "load_mobprogs: no #AREA seen yet.");
-        ABORT;
-    }
 
     mprog = NULL;
     for (;; ) {

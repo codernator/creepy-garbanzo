@@ -4,9 +4,11 @@
 #include <stdlib.h>
 #include <assert.h>
 
+
 static void kvp_copy_string(struct array_list *kvp_array, /*@dependent@*/const char *const key, /*@observer@*/const char *value);
 static void kvp_take_string(struct array_list *kvp_array, /*@dependent@*/const char *const key, /*@only@*/char *value);
 
+static void test_replace_one(void);
 static void test_keyvaluepairarray(void);
 static void test_keyvaluepairhash(void);
 static void test_database_write(void);
@@ -24,10 +26,36 @@ int main(/*@unused@*/int argc, /*@unused@*/char **argv)
     test_database_read();
     test_flags();
     test_database_create_stream();
+    test_replace_one();
     return EXIT_SUCCESS;
 }
 
 #define TEST_DB_FILE "database_read_test.db"
+
+void test_replace_one()
+{
+    char *final;
+    const char *target = "Hello stinky world!";
+    const char *find = "stinky";
+    const char *find2 = "not found";
+    const char *replace = "fancy";
+
+    final = replace_one(target, find, replace, 75);
+    printf("%s <%s> <%s> = %s\n\n", target, find, replace, final);
+    free(final);
+
+    final = replace_one(target, find, replace, 14);
+    printf("%s <%s> <%s> = %s\n\n", target, find, replace, final);
+    free(final);
+
+    final = replace_one(target, find, replace, 5);
+    printf("%s <%s> <%s> = %s\n\n", target, find, replace, final);
+    free(final);
+
+    final = replace_one(target, find2, replace, 75);
+    printf("%s <%s> <%s> = %s\n\n", target, find2, replace, final);
+    free(final);
+}
 
 void test_database_create_stream()
 {

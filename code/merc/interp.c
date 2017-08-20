@@ -580,6 +580,10 @@ const char *one_argument(const char *argument, char *arg_first)
     if (*argument == '\'' || *argument == '"') {
         cEnd = *argument++;
     }
+    if (*argument == '(') {
+        cEnd = ')';
+        argument++;
+    }
 
     while (*argument != '\0') {
         if (*argument == cEnd) {

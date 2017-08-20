@@ -51,6 +51,7 @@ void skedit(struct char_data * ch, const char *argument);
 void gredit(struct char_data * ch, const char *argument);
 void scedit(struct char_data * ch, const char *argument);
 void muedit(struct char_data * ch, const char *argument);
+void olc_start_string_editor(/*@dependent@*/struct char_data *ch, /*@dependent@*/void *owner, /*@dependent@*/DESC_GETTER *getter, /*@dependent@*/DESC_SETTER *setter);
 
 
 /*
@@ -68,7 +69,8 @@ struct olc_cmd_type {
  */
 struct  editor_cmd_type {
     const char *const name;
-    DO_FUN *do_fn;
+    /*@null@*/DO_FUN *do_fn;
+    const char *const lexicon;
 };
 
 enum medit_auto_config_type { mact_easy, mact_normal, mact_hard, mact_insane };

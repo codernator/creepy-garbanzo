@@ -9,7 +9,6 @@
 
 
 
-extern char *format_string(char *oldstring /*, bool fSpace */);
 extern void string_append(struct char_data * ch, char **string);
 
 static bool set_value(struct char_data *ch, struct objecttemplate *template, const char *argument, int value);
@@ -23,16 +22,14 @@ static void oedit_clone(struct char_data *ch, const char *argument);
 static void oedit_extradesc_add(struct char_data *ch, const char *argument);
 static void oedit_extradesc_edit(struct char_data *ch, const char *argument);
 static void oedit_extradesc_delete(struct char_data *ch, const char *argument);
-static void oedit_extradesc_format(struct char_data *ch, const char *argument);
 static void oedit_extradesc_help(struct char_data *ch, const char *argument);
-static const struct cmd_type extra_cmd_table[] =
+static const struct editor_cmd_type extra_cmd_table[] =
     {
-        { "add", oedit_extradesc_add, POS_DEAD, 0, 0, 0 },
-        { "edit", oedit_extradesc_edit, POS_DEAD, 0, 0, 0 },
-        { "remove", oedit_extradesc_delete, POS_DEAD, 0, 0, 0 },
-        { "format", oedit_extradesc_format, POS_DEAD, 0, 0, 0 },
-        { "?", oedit_extradesc_help, POS_DEAD, 0, 0, 0 },
-        { "", NULL, POS_DEAD, 0, 0, 0 }
+        { "add",    oedit_extradesc_add,    "add <key>    - add a new extra desc and enter string editor." },
+        { "edit",   oedit_extradesc_edit,   "edit <key>   - enter string editor for given key."},
+        { "remove", oedit_extradesc_delete, "remove <key> - remove extra desc by given key." },
+        { "?",      oedit_extradesc_help,   "?            - show this help."},
+        { "", NULL, "" }
     };
 
 
@@ -438,7 +435,6 @@ EDIT(oedit_cost){
 EDIT(oedit_ed){
     char command[MAX_INPUT_LENGTH];
     int cmdindex = 0;
-    int trust = 0;
 
     argument = one_argument(argument, command);
 
@@ -447,12 +443,10 @@ EDIT(oedit_ed){
         return false;
     }
 
-    trust = get_trust(ch);
-    for (cmdindex = 0; extra_cmd_table[cmdindex].name[0] != '\0'; cmdindex++) {
+    for (cmdindex = 0; extra_cmd_table[cmdindex].do_fn != NULL; cmdindex++) {
         if (command[0] == extra_cmd_table[cmdindex].name[0]
-                && !str_cmp(command, extra_cmd_table[cmdindex].name)
-                && extra_cmd_table[cmdindex].level <= trust) {
-            (*cmd_table[cmdindex].do_fun)(ch, argument);
+                && !str_cmp(command, extra_cmd_table[cmdindex].name)) {
+            (*extra_cmd_table[cmdindex].do_fn)(ch, argument);
             return true;
         }
     }
@@ -1237,6 +1231,17 @@ void oedit_extradesc_add(struct char_data *ch, const char *argument)
     return;
 }
 
+static void oedit_extradesc_getter(/*@dependent@*/void *owner, char *target, size_t maxsize)
+{
+    extradescrdata_getdescription((struct extra_descr_data *)owner, target, maxsize);
+}
+
+static void oedit_extradesc_setter(/*@dependent@*/void *owner, /*@observer@*/const char *text)
+{
+    extradescrdata_setdescription((struct extra_descr_data *)owner, text);
+    return;
+}
+
 void oedit_extradesc_edit(struct char_data *ch, const char *argument)
 {
     struct extra_descr_data *ed;
@@ -1256,7 +1261,7 @@ void oedit_extradesc_edit(struct char_data *ch, const char *argument)
         return;
     }
 
-    string_append(ch, &ed->description);
+    olc_start_string_editor(ch, ed, oedit_extradesc_getter, oedit_extradesc_setter);
     return;
 }
 
@@ -1281,36 +1286,12 @@ void oedit_extradesc_delete(struct char_data *ch, const char *argument)
     return;
 }
 
-void oedit_extradesc_format(struct char_data *ch, const char *argument)
-{
-    struct extra_descr_data *ed;
-    char keyword[MAX_INPUT_LENGTH];
-    struct objecttemplate *template;
-    EDIT_OBJ(ch, template);
-
-    one_argument(argument, keyword);
-    if (keyword[0] == '\0') {
-        send_to_char("Syntax:  ed format [keyword]\n\r", ch);
-        return;
-    }
-
-    ed = objecttemplate_findextra(template, keyword);
-
-    if (ed == NULL) {
-        send_to_char("OEdit:  Extra description keyword not found.\n\r", ch);
-        return;
-    }
-
-    ed->description = format_string(ed->description);
-    send_to_char("Extra description formatted.\n\r", ch);
-    return;
-}
-
 void oedit_extradesc_help(struct char_data *ch, const char *argument) {
-    send_to_char("Syntax:  ed add [keyword]\n\r", ch);
-    send_to_char("         ed delete [keyword]\n\r", ch);
-    send_to_char("         ed edit [keyword]\n\r", ch);
-    send_to_char("         ed format [keyword]\n\r", ch);
+    int cmdindex;
+    send_to_char("`3-`#========`3- `@OLC Extra Description Editor `3-`#=========`3-``\n\r", ch);
+    for (cmdindex = 0; extra_cmd_table[cmdindex].do_fn != NULL; cmdindex++) {
+        printf_to_char(ch, "%s\n\r", extra_cmd_table[cmdindex].lexicon);
+    }
     return;
 }
 
