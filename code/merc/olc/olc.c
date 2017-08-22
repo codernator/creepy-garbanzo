@@ -40,7 +40,6 @@ static const struct olc_cmd_type aedit_table[] =
 {
     /*  {   command			function		}, */
     { "age",	 aedit_age	},
-    { "builder",	 aedit_builder	},
     { "commands",	 show_commands	},
     { "create",	 aedit_create	},
     { "filename",	 aedit_file	},
@@ -70,7 +69,6 @@ static const struct olc_cmd_type redit_table[] =
     { "clone",     redit_clone     },
     { "desc",      redit_desc      },
     { "ed",	       redit_ed	       },
-    { "format",    redit_format    },
     { "name",      redit_name      },
     { "show",      redit_show      },
     { "heal",      redit_heal      },
@@ -1100,19 +1098,18 @@ void do_alist(struct char_data *ch, const char *argument)
 
     buf = new_buf();
     printf_buf(buf, "[%3s] [%-27s](%-5s-%5s) [%-10s] %3s [%-10s]\n\r",
-               "Num", "Area Name", "lvnum", "uvnum", "Filename", "Sec", "Builders");
+               "Num", "Area Name", "lvnum", "uvnum", "Filename", "Sec");
 
 
     pArea = area_iterator_start(NULL);
     while (pArea != NULL) {
-        printf_buf(buf, "[%3d] %-29.29s(%-5d-%5d) %-12.12s [%d] [%-10.10s]\n\r",
+        printf_buf(buf, "[%3d] %-29.29s(%-5d-%5d) %-12.12s [%d]\n\r",
                    pArea->vnum,
                    pArea->name,
                    pArea->min_vnum,
                    pArea->max_vnum,
                    pArea->file_name,
-                   pArea->security,
-                   pArea->builders);
+                   pArea->security);
         pArea = area_iterator(pArea, NULL);
     }
 

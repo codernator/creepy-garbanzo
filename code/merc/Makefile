@@ -26,7 +26,7 @@ _OBJ=act_comm.o act_combat.o act_enter.o act_info.o act_move.o act_obj.o act_wiz
      nanny.o note.o \
      object.o objecttemplate.o ovnum.o \
      password.o \
-     race.o recycle.o remote.o \
+     race.o recycle.o remote.o roomtemplate.o \
      save.o scan.o serialize.o set.o skills.o spells.o stat.o \
      tables.o teleport.o \
      update.o variant.o who.o \

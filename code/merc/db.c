@@ -669,13 +669,13 @@ void load_rooms(FILE *fp, struct area_data *area)
                 /*room_idx->old_exit[door] = pexit; */
                 top_exit++;
             } else if (letter == 'E') {
-                struct extra_descr_data *ed;
-
-                ed = new_extra_descr();
-                ed->keyword = fread_string(fp);
-                ed->description = fread_string(fp);
-                ed->next = room_idx->extra_descr;
-                room_idx->extra_descr = ed;
+                char *key;
+                char *desc;
+                key = fread_string(fp);
+                desc = fread_string(fp);
+                (void)roomtemplate_addextra(room_idx, key, desc);
+                free_string(key);
+                free_string(desc);
                 top_ed++;
             } else if (letter == 'O') {
                 if (room_idx->owner[0] != '\0') {

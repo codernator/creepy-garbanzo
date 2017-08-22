@@ -18,6 +18,12 @@ text
 	Greet all new-comers and offer assistance.
 #
 keyword
+	string editor
+category
+	olc
+text
+	TODO
+keyword
 	olc edit
 category
 	olc

@@ -579,3 +579,20 @@ void lookup_remove(unsigned long entrykey, struct objecttemplate *entry)
     prev->next = next;
 }
 
+void olc_objecttemplate_getdescription(void *owner, char *target, size_t maxlen)
+{
+    struct objecttemplate *template;
+    template = (struct objecttemplate *)owner;
+    (void)strncpy(target, template->description, maxlen);
+    return;
+}
+
+void olc_objecttemplate_setdescription(void *owner, const char *text)
+{
+    struct objecttemplate *template;
+    template = (struct objecttemplate *)owner;
+    if (template->description != NULL)
+        free(template->description);
+    template->description = strdup(text);
+    return;
+}

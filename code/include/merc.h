@@ -1460,8 +1460,8 @@ struct pc_data {
 };
 
 
-struct extra_descr_data {
-    /*@owned@*//*@null@*/struct extra_descr_data *next;
+/*@abstract@*/struct extra_descr_data {
+    /*@owned@*//*@null@*//*@partial@*/struct extra_descr_data *next;
     bool valid;
     /*@only@*/char *keyword;        /* Keyword in look/examine */
     /*@only@*/char *description;    /* What to see    */
@@ -1582,7 +1582,6 @@ struct area_data {
     /*@only@*/char *file_name;
     /*@only@*/char *name;
     /*@only@*/char *description;
-    /*@only@*/char *builders;
     unsigned long area_flags;
     unsigned long min_vnum;
     unsigned long max_vnum;
@@ -1812,7 +1811,7 @@ if (IS_NPC(ch)) \
 
 #define HAS_TRIGGER(ch, trig)    (IS_SET((ch)->mob_idx->mprog_flags, (trig)))
 #define IS_SWITCHED(ch)         (ch->desc && ch->desc->original)
-#define IS_BUILDER(ch, area)    (!IS_NPC(ch) && !IS_SWITCHED(ch) && (ch->pcdata->security >= area->security || strstr(area->builders, ch->name) || strstr(area->builders, "All")))
+#define IS_BUILDER(ch, area)    (!IS_NPC(ch) && !IS_SWITCHED(ch) && (ch->pcdata->security >= area->security))
 
 /** Object macros. */
 #define CAN_WEAR(obj, part)     (IS_SET((obj)->objtemplate->wear_flags, (part)))
@@ -2238,6 +2237,9 @@ void objecttemplate_setlong(struct objecttemplate *obj, /*@observer@*/const char
 /*@dependent@*/struct extra_descr_data *objecttemplate_addextra(struct objecttemplate *obj, /*@observer@*/const char *keyword, /*@observer@*/const char *description);
 /*@dependent@*//*@null@*/struct extra_descr_data *objecttemplate_findextra(struct objecttemplate *obj, /*@observer@*/const char *keyword);
 bool objecttemplate_deleteextra(struct objecttemplate *obj, /*@observer@*/const char *keyword);
+
+void olc_objecttemplate_getdescription(/*@dependent@*/void *owner, char *target, size_t maxlen);
+void olc_objecttemplate_setdescription(/*@dependent@*/void *owner, /*@observer@*/const char *text);
 /* ~objecttemplate.c */
 
 
@@ -2257,9 +2259,11 @@ void extradescrdata_free(/*@only@*/struct extra_descr_data *data);
 /*@only@*/struct array_list *extradescrdata_serialize(const struct extra_descr_data *extra);
 
 /*@null@*//*@observer@*/struct extra_descr_data *extradescrdata_match(/*@observer@*/struct extra_descr_data *head, /*@observer@*/const char *partialkey);
-void extradescrdata_getdescription(/*@dependent@*/struct extra_descr_data *owner, char *target, size_t maxsize);
-void extradescrdata_setdescription(/*@dependent@*/struct extra_descr_data *owner, /*@observer@*/const char *description);
+
+void olc_extradescrdata_getdescription(/*@dependent@*/void *owner, char *target, size_t maxsize);
+void olc_extradescrdata_setdescription(/*@dependent@*/void *owner, /*@observer@*/const char *text);
 /* ~extra_descr_data.c */
+
 
 /* area.c */
 /*@abstract@*/struct area_filter {
@@ -2275,7 +2279,25 @@ void extradescrdata_setdescription(/*@dependent@*/struct extra_descr_data *owner
 /*@only@*/struct array_list *area_serialize(const struct area_data *areadata);
 /*@dependent@*/struct area_data *area_deserialize(/*@observer@*/const struct array_list *data, /*@observer@*/const char *filename);
 void area_free(/*@owned@*/struct area_data *areadata);
+
+void olc_area_getdescription(/*@dependent@*/void *owner, char *target, size_t maxsize);
+void olc_area_setdescription(/*@dependent@*/void *owner, /*@observer@*/const char *text);
 /* ~area.c */
+
+/* character.c */
+void character_getdescription(struct char_data *owner, char *target, size_t maxlen);
+void character_setdescription(struct char_data *owner, const char *text);
+void olc_character_getdescription(void *owner, char *target, size_t maxlen);
+void olc_character_setdescription(void *owner, const char *text);
+/* ~character.c */
+
+/* roomtemplate.c */
+/*@dependent@*/struct extra_descr_data *roomtemplate_addextra(struct room_index_data *room, /*@observer@*/const char *keyword, /*@observer@*/const char *description);
+/*@dependent@*//*@null@*/struct extra_descr_data *roomtemplate_findextra(struct room_index_data *room, /*@observer@*/const char *keyword);
+bool roomtemplate_deleteextra(struct room_index_data *room, /*@observer@*/const char *keyword);
+void olc_roomtemplate_getdescription(void *owner, char *target, size_t maxlen);
+void olc_roomtemplate_setdescription(void *owner, const char *text);
+/* ~roomtemplate.c */
 
 
 

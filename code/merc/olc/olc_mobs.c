@@ -27,9 +27,10 @@
  * IMPORTS
  ***************************************************************************/
 extern void mob_auto_hit_dice(struct mob_index_data *mix, enum medit_auto_config_type auto_config_type);
-extern void string_append(struct char_data * ch, char **string);
 
 
+static void olc_mobindexdata_getdescription(void *owner, char *target, size_t maxlen);
+static void olc_mobindexdata_setdescription(void *owner, const char *text);
 
 /*****************************************************************************
  *	do_medit
@@ -435,7 +436,7 @@ EDIT(medit_desc){
 
     EDIT_MOB(ch, mob_idx);
     if (argument[0] == '\0') {
-        string_append(ch, &mob_idx->description);
+        olc_start_string_editor(ch, mob_idx, olc_mobindexdata_getdescription, olc_mobindexdata_setdescription);
         return true;
     }
 
@@ -1525,4 +1526,20 @@ EDIT(medit_delmprog){
 
     send_to_char("Mprog removed.\n\r", ch);
     return true;
+}
+
+void olc_mobindexdata_getdescription(void *owner, char *target, size_t maxlen)
+{
+    struct mob_index_data *mobtemplate;
+    mobtemplate = (struct mob_index_data *)owner;
+    (void)strncpy(target, mobtemplate->description, maxlen);
+    return;
+}
+void olc_mobindexdata_setdescription(void *owner, const char *text)
+{
+    struct mob_index_data *mobtemplate;
+    mobtemplate = (struct mob_index_data *)owner;
+    free_string(mobtemplate->description);
+    mobtemplate->description = str_dup(text);
+    return;
 }

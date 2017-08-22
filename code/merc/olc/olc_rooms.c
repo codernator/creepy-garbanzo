@@ -31,9 +31,25 @@
  *	external functions
  ***************************************************************************/
 extern int wear_bit(int loc);
-extern char *format_string(char *oldstring /*, bool fSpace */);
-extern void string_append(struct char_data * ch, char **string);
 
+
+/***************************************************************************
+ *	local functions
+ ***************************************************************************/
+static void olc_exitdata_getdescription(void *owner, char *target, size_t maxlen);
+static void olc_exitdata_setdescription(void* owner, const char *text);
+static void redit_extradesc_add(struct char_data *ch, const char *argument);
+static void redit_extradesc_edit(struct char_data *ch, const char *argument);
+static void redit_extradesc_delete(struct char_data *ch, const char *argument);
+static void redit_extradesc_help(struct char_data *ch, const char *argument);
+static const struct editor_cmd_type extra_cmd_table[] =
+    {
+        { "add",    redit_extradesc_add,    "add <key>    - add a new extra desc and enter string editor." },
+        { "edit",   redit_extradesc_edit,   "edit <key>   - enter string editor for given key."},
+        { "remove", redit_extradesc_delete, "remove <key> - remove extra desc by given key." },
+        { "?",      redit_extradesc_help,   "?            - show this help."},
+        { "", NULL, "" }
+    };
 
 /***************************************************************************
  *	change_exit
@@ -257,7 +273,7 @@ static bool change_exit(struct char_data *ch, const char *argument, int door)
                 return false;
             }
 
-            string_append(ch, &room->exit[door]->description);
+            olc_start_string_editor(ch, &room->exit[door], olc_exitdata_getdescription, olc_exitdata_setdescription);
             return true;
         }
 
@@ -898,114 +914,27 @@ EDIT(redit_down){
  *
  *	edit the rooms extra description
  ***************************************************************************/
-EDIT(redit_ed){
-    struct room_index_data *room;
-    struct extra_descr_data *ed;
+EDIT(redit_ed)
+{
     char command[MAX_INPUT_LENGTH];
-    char keyword[MAX_INPUT_LENGTH];
-
-    EDIT_ROOM(ch, room);
+    int cmdindex = 0;
 
     argument = one_argument(argument, command);
-    one_argument(argument, keyword);
 
-    if (command[0] == '\0' || keyword[0] == '\0') {
-        send_to_char("Syntax:  ed add [keyword]\n\r", ch);
-        send_to_char("         ed edit [keyword]\n\r", ch);
-        send_to_char("         ed delete [keyword]\n\r", ch);
-        send_to_char("         ed format [keyword]\n\r", ch);
+    if (command[0] == '\0') {
+        redit_extradesc_help(ch, argument);
         return false;
     }
 
-    if (!str_cmp(command, "add")) {
-        if (keyword[0] == '\0') {
-            send_to_char("Syntax:  ed add [keyword]\n\r", ch);
-            return false;
+    for (cmdindex = 0; extra_cmd_table[cmdindex].do_fn != NULL; cmdindex++) {
+        if (command[0] == extra_cmd_table[cmdindex].name[0]
+            && !str_cmp(command, extra_cmd_table[cmdindex].name)) {
+            (*extra_cmd_table[cmdindex].do_fn)(ch, argument);
+            return true;
         }
-
-        ed = new_extra_descr();
-        ed->keyword = str_dup(keyword);
-        ed->description = str_dup("");
-        ed->next = room->extra_descr;
-        room->extra_descr = ed;
-
-        string_append(ch, &ed->description);
-        return true;
     }
 
-
-    if (!str_cmp(command, "edit")) {
-        if (keyword[0] == '\0') {
-            send_to_char("Syntax:  ed edit [keyword]\n\r", ch);
-            return false;
-        }
-
-        for (ed = room->extra_descr; ed; ed = ed->next)
-            if (is_name(keyword, ed->keyword))
-                break;
-
-        if (!ed) {
-            send_to_char("REdit:  Extra description keyword not found.\n\r", ch);
-            return false;
-        }
-
-        string_append(ch, &ed->description);
-        return true;
-    }
-
-
-    if (!str_cmp(command, "delete")) {
-        struct extra_descr_data *ped = NULL;
-
-        if (keyword[0] == '\0') {
-            send_to_char("Syntax:  ed delete [keyword]\n\r", ch);
-            return false;
-        }
-
-        for (ed = room->extra_descr; ed; ed = ed->next) {
-            if (is_name(keyword, ed->keyword))
-                break;
-            ped = ed;
-        }
-
-        if (!ed) {
-            send_to_char("REdit:  Extra description keyword not found.\n\r", ch);
-            return false;
-        }
-
-        if (!ped)
-            room->extra_descr = ed->next;
-        else
-            ped->next = ed->next;
-
-        free_extra_descr(ed);
-
-        send_to_char("Extra description deleted.\n\r", ch);
-        return true;
-    }
-
-
-    if (!str_cmp(command, "format")) {
-        if (keyword[0] == '\0') {
-            send_to_char("Syntax:  ed format [keyword]\n\r", ch);
-            return false;
-        }
-
-        for (ed = room->extra_descr; ed; ed = ed->next)
-            if (is_name(keyword, ed->keyword))
-                break;
-
-        if (!ed) {
-            send_to_char("REdit:  Extra description keyword not found.\n\r", ch);
-            return false;
-        }
-        ed->description = format_string(ed->description);
-
-        send_to_char("Extra description formatted.\n\r", ch);
-        return true;
-    }
-
-    redit_ed(ch, "");
+    send_to_char("``COMMAND NOT FOUND``\n\r", ch);
     return false;
 }
 
@@ -1041,13 +970,15 @@ EDIT(redit_desc){
     struct room_index_data *room;
 
     EDIT_ROOM(ch, room);
-    if (argument[0] == '\0') {
-        string_append(ch, &room->description);
+    if (argument[0] != '\0') {
+        olc_roomtemplate_setdescription(room, argument);
+        send_to_char("Room description set.", ch);
         return true;
     }
 
-    send_to_char("Syntax:  desc\n\r", ch);
-    return false;
+    olc_start_string_editor(ch, room, olc_roomtemplate_getdescription, olc_roomtemplate_setdescription);
+    return true;
+    olc_start_string_editor(ch, room, olc_roomtemplate_getdescription, olc_roomtemplate_setdescription);
 }
 
 
@@ -1233,22 +1164,6 @@ EDIT(redit_delaffect){
 
     send_to_char("Affect number does not exist.\n\r", ch);
     return false;
-}
-
-/***************************************************************************
- *	redit_format
- *
- *	format the room description
- ***************************************************************************/
-EDIT(redit_format){
-    struct room_index_data *room;
-
-    EDIT_ROOM(ch, room);
-
-    room->description = format_string(room->description);
-
-    send_to_char("String formatted.\n\r", ch);
-    return true;
 }
 
 
@@ -1627,4 +1542,93 @@ EDIT(redit_showrooms){
     page_to_char(buf_string(buf), ch);
     free_buf(buf);
     return false;
+}
+
+
+void olc_exitdata_getdescription(void *owner, char *target, size_t maxlen)
+{
+    struct exit_data *exit;
+    exit = (struct exit_data *)owner;
+    (void)strncpy(target, exit->description, maxlen);
+    return;
+}
+
+void olc_exitdata_setdescription(void* owner, const char *text)
+{
+    struct exit_data *exit;
+    exit = (struct exit_data *)owner;
+    free_string(exit->description);
+    exit->description = str_dup(text);
+    return;
+}
+
+void redit_extradesc_add(struct char_data *ch, const char *argument)
+{
+    char keyword[MAX_INPUT_LENGTH];
+    struct extra_descr_data *ed;
+    struct room_index_data *template;
+
+    one_argument(argument, keyword);
+    if (keyword[0] == '\0') {
+        send_to_char("Syntax:  ed add [keyword]\n\r", ch);
+        return;
+    }
+
+    EDIT_ROOM(ch, template);
+    ed = roomtemplate_addextra(template, keyword, "");
+    olc_start_string_editor(ch, ed, olc_extradescrdata_getdescription, olc_extradescrdata_setdescription);
+    return;
+}
+
+void redit_extradesc_edit(struct char_data *ch, const char *argument)
+{
+    struct extra_descr_data *ed;
+    char keyword[MAX_INPUT_LENGTH];
+    struct room_index_data *template;
+    EDIT_ROOM(ch, template);
+
+    one_argument(argument, keyword);
+    if (keyword[0] == '\0') {
+        send_to_char("Syntax:  ed edit [keyword]\n\r", ch);
+        return;
+    }
+
+    ed = roomtemplate_findextra(template, keyword);
+    if (ed == NULL) {
+        send_to_char("REdit:  Extra description keyword not found.\n\r", ch);
+        return;
+    }
+
+    olc_start_string_editor(ch, ed, olc_extradescrdata_getdescription, olc_extradescrdata_setdescription);
+    return;
+}
+
+void redit_extradesc_delete(struct char_data *ch, const char *argument)
+{
+    char keyword[MAX_INPUT_LENGTH];
+    struct room_index_data *template;
+    EDIT_ROOM(ch, template);
+
+    one_argument(argument, keyword);
+    if (keyword[0] == '\0') {
+        send_to_char("Syntax:  ed delete [keyword]\n\r", ch);
+        return;
+    }
+
+    if (!roomtemplate_deleteextra(template, keyword)) {
+        send_to_char("REdit:  Extra description keyword not found.\n\r", ch);
+        return;
+    }
+
+    send_to_char("Extra description deleted.\n\r", ch);
+    return;
+}
+
+void redit_extradesc_help(struct char_data *ch, const char *argument) {
+    int cmdindex;
+    send_to_char("`3-`#========`3- `@OLC Extra Description Editor `3-`#=========`3-``\n\r", ch);
+    for (cmdindex = 0; extra_cmd_table[cmdindex].do_fn != NULL; cmdindex++) {
+        printf_to_char(ch, "%s\n\r", extra_cmd_table[cmdindex].lexicon);
+    }
+    return;
 }

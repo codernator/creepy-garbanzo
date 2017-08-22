@@ -1,26 +1,72 @@
 #AREADATA
 vnum
-    1
+	0
 name
 	Limbo
-builders
-	Codernator
-minvnum
-	1 
-maxvnum
-	38
-credits 
-	`#[`&  NONE   `#]``  Diku    Limbo
+description
+	(no description)
+flags
+	A
 security
 	9
+builders
+	Codernator
+min_vnum
+	1
+max_vnum
+	2
+llevel
+	0
+ulevel
+	0
 #
-
 #MOBILES
 #0
 
-#OBJECTS
-#0
 
+
+#OBJECT
+vnum
+	1
+name
+	Thing
+short
+	You see a Thing.
+long
+	It is a Thing.
+extra
+	
+extra2
+	
+wear
+	AQ
+type
+	none
+value1
+	
+value2
+	
+value3
+	
+value4
+	
+value5
+	
+weight
+	50
+cost
+	1000
+inittimer
+	100
+condition
+	100
+affects
+	#
+	
+extras
+	#
+	
+#
 #ROOMS
 #1
 `4The `1End of the `4Universe``~
@@ -41,13 +87,19 @@ darkness around you without any trace of edges or shadow.
 S
 #0
 
+
+
 #PROGRAMS
 #0
 
 #RESETS
 S
 
+
+
 #SHOPS
 0
+
+
 
 #$

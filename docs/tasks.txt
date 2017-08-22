@@ -30,6 +30,9 @@ Gods feature is incomplete.
 
 REFACTOR ISSUES
 ===============
-bug: extra description string editor is borken because extras are no longer shared strings.
+description editors are inconsistent - make them all "set" if an argument is provided or start string editor otherwise.
+tracking whether area changed is hokey, especially when invoking the string editor.  need a better method.
+
+
 
 

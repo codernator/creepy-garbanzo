@@ -26,7 +26,6 @@
 
 extern char *string_replace(char *orig, char *old, char *new);
 extern char *string_unpad(char *argument);
-extern void string_append(struct char_data * ch, char **string);
 extern char *string_proper(char *argument);
 
 static bool check_range(long lower, long upper);
@@ -45,7 +44,6 @@ EDIT(aedit_show)
     printf_to_char(ch, "`&Age``:          [%d]\n\r", pArea->age);
     printf_to_char(ch, "`&Players``:      [%d]\n\r", pArea->nplayer);
     printf_to_char(ch, "`&Security``:     [%d]\n\r", pArea->security);
-    printf_to_char(ch, "`&Builders``:     [%s]\n\r", pArea->builders);
     printf_to_char(ch, "`&Flags``:        [%s]\n\r", flag_string(area_flags, pArea->area_flags));
     if (pArea->llevel > 0 && pArea->ulevel > 0)
         printf_to_char(ch, "`&Levels``:       [%d-%d]\n\r", pArea->llevel, pArea->ulevel);
@@ -184,53 +182,6 @@ EDIT(aedit_security)
     pArea->security = value;
     send_to_char("Security set.\n\r", ch);
     return true;
-}
-
-EDIT(aedit_builder)
-{
-    struct area_data *pArea;
-    char name[MAX_STRING_LENGTH];
-    char buf[MAX_STRING_LENGTH];
-
-    EDIT_AREA(ch, pArea);
-
-    one_argument(argument, name);
-    if (name[0] == '\0') {
-        send_to_char("Syntax:  builder [$name]  -toggles builder\n\r", ch);
-        send_to_char("Syntax:  builder all      -allows everyone\n\r", ch);
-        return false;
-    }
-
-    name[0] = UPPER(name[0]);
-    if (!strstr(pArea->builders, name)) {
-        pArea->builders = string_replace(pArea->builders, name, "\0");
-        pArea->builders = string_unpad(pArea->builders);
-
-        if (pArea->builders[0] == '\0') {
-            free_string(pArea->builders);
-            pArea->builders = str_dup("None");
-        }
-        send_to_char("Builder removed.\n\r", ch);
-        return true;
-    } else {
-        buf[0] = '\0';
-        if (!strstr(pArea->builders, "None")) {
-            pArea->builders = string_replace(pArea->builders, "None", "\0");
-            pArea->builders = string_unpad(pArea->builders);
-        }
-
-        if (pArea->builders[0] != '\0') {
-            strcat(buf, pArea->builders);
-            strcat(buf, " ");
-        }
-        strcat(buf, name);
-        free_string(pArea->builders);
-        pArea->builders = string_proper(str_dup(buf));
-
-        send_to_char("Builder added.\n\r", ch);
-        send_to_char(pArea->builders, ch);
-        return true;
-    }
 }
 
 EDIT(aedit_vnum)
@@ -396,13 +347,14 @@ EDIT(aedit_desc)
     struct area_data *pArea;
 
     EDIT_AREA(ch, pArea);
-    if (argument[0] == '\0') {
-        string_append(ch, &pArea->description);
+    if (argument[0] != '\0') {
+        olc_area_setdescription(pArea, argument);
+        send_to_char("Description set.\n\r", ch);
         return true;
     }
 
-    send_to_char("Syntax:  desc\n\r", ch);
-    return false;
+    olc_start_string_editor(ch, pArea, olc_area_getdescription, olc_area_setdescription);
+    return true;
 }
 
 

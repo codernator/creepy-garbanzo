@@ -8,8 +8,9 @@
 #include "help.h"
 
 
-extern void string_append(struct char_data * ch, char **string);
 
+static void olc_help_gettext(void *owner, char *target, size_t maxlen);
+static void olc_help_settext(void *owner, const char *text);
 
 const struct olc_cmd_type hedit_table[] =
 {
@@ -170,8 +171,7 @@ EDIT(hedit_text){
     struct help_data *help;
 
     EDIT_HELP(ch, help);
-
-    string_append(ch, &help->text);
+    olc_start_string_editor(ch, help, olc_help_gettext, olc_help_settext);
     return true;
 }
 
@@ -221,3 +221,19 @@ EDIT(hedit_list){
     return false;
 }
 
+
+void olc_help_gettext(void *owner, char *target, size_t maxlen)
+{
+    struct help_data *help;
+    help = (struct help_data *)owner;
+    (void)strncpy(target, help->text, maxlen);
+    return;
+}
+void olc_help_settext(void *owner, const char *text)
+{
+    struct help_data *help;
+    help = (struct help_data *)owner;
+    free_string(help->text);
+    help->text = str_dup(text);
+    return;
+}

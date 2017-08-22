@@ -45,13 +45,13 @@
 #include "tables.h"
 #include "libfile.h"
 #include "help.h"
+#include "olc.h"
 
 /***************************************************************************
  *	globals
  ***************************************************************************/
 extern int _filbuf(FILE *);
 extern char area_file[MAX_INPUT_LENGTH];
-extern void string_append(struct char_data * ch, char **string);
 
 #define MAX_MESSAGE_LENGTH              4096
 #define MIN_MESSAGE_LEVEL               10
@@ -75,6 +75,8 @@ static char *get_message_name(int type);
 static struct note_data **get_message_thread(int type);
 static struct note_data *get_message(struct char_data * ch, int *msg_num, int type);
 static struct note_data *clone_message(struct note_data * src);
+static void olc_note_gettext(void *owner, char *target, size_t maxlen);
+static void olc_note_settext(void *owner, const char *text);
 
 
 /***************************************************************************
@@ -790,11 +792,11 @@ static void message_edit(struct char_data *ch, const char *argument, int type)
 {
     attach_message(ch, type);
     if (ch->pnote == NULL) {
-	send_to_char("The message type is invalid.\n\r", ch);
-	return;
+        send_to_char("The message type is invalid.\n\r", ch);
+        return;
     }
 
-    string_append(ch, &ch->pnote->text);
+    olc_start_string_editor(ch, ch->pnote, olc_note_gettext, olc_note_settext);
 }
 
 /***************************************************************************
@@ -1453,4 +1455,20 @@ void do_idea(struct char_data *ch, const char *argument)
 void do_build(struct char_data *ch, const char *argument)
 {
     parse_message(ch, argument, NOTE_BUILD);
+}
+
+void olc_note_gettext(void *owner, char *target, size_t maxlen)
+{
+    struct note_data *note;
+    note = (struct note_data *)owner;
+    (void)strncpy(target, note->text, maxlen);
+    return;
+}
+void olc_note_settext(void *owner, const char *text)
+{
+    struct note_data *note;
+    note = (struct note_data *)owner;
+    free_string(note->text);
+    note->text = str_dup(text);
+    return;
 }

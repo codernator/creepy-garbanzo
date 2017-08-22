@@ -12,7 +12,7 @@
 extern struct dynamic_skill *gsp_hide;
 
 
-char *repeater(char *s, int i);
+static void repeater(char *target, const char c, int count);
 
 
 /* Command logging types.*/
@@ -635,17 +635,19 @@ void do_commands(struct char_data *ch, const char *argument)
 void do_wizcommands(struct char_data *ch, const char *argument)
 {
     struct buf_type *buf;
+    char hrule[81];
     int cmd;
     int level;
     int col;
 
     buf = new_buf();
 
+    repeater(hrule, '-', 80);
     for (level = LEVEL_HERO; level <= (int)UMIN(MAX_LEVEL, get_trust(ch)); level++) {
-        printf_buf(buf, repeater("-", 80));
+        printf_buf(buf, hrule);
         printf_buf(buf, "\n\r");
         printf_buf(buf, "`O%41d``:\n\r", level);
-        printf_buf(buf, repeater("-", 80));
+        printf_buf(buf, hrule);
         printf_buf(buf, "\n\r");
         col = 0;
         for (cmd = 0; cmd_table[cmd].name[0] != '\0'; cmd++) {
@@ -720,4 +722,17 @@ const CMD *cmd_lookup(struct char_data *ch, const char *argument)
     }
 
     return NULL;
+}
+
+void repeater(char *target, const char c, int count)
+{
+    int iter;
+    char *pbuf;
+
+    pbuf = target;
+    for (iter = 0; iter < count; iter++) {
+        *pbuf = c;
+        pbuf++;
+    }
+    pbuf = '\0';
 }

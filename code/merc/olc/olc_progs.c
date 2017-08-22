@@ -29,11 +29,13 @@
 
 
 
-extern void string_append(struct char_data * ch, char **string);
-
 /***************************************************************************
  *	local defines
  ***************************************************************************/
+void olc_mprog_getcode(void *owner, char *target, size_t maxlen);
+void olc_mprog_setcode(void* owner, const char *text);
+
+
 #define MPEDIT(fun)           bool fun(struct char_data * ch, const char *argument)
 
 /* editor table */
@@ -282,13 +284,14 @@ MPEDIT(mpedit_code){
     struct mprog_code *mpcode;
 
     EDIT_MPCODE(ch, mpcode);
-    if (argument[0] == '\0') {
-        string_append(ch, &mpcode->code);
+    if (argument[0] != '\0') {
+        olc_mprog_setcode(mpcode, argument);
+        send_to_char("Code set.", ch);
         return true;
     }
 
-    send_to_char("Syntax: code\n\r", ch);
-    return false;
+    olc_start_string_editor(ch, mpcode, olc_mprog_getcode, olc_mprog_setcode);
+    return true;
 }
 
 
@@ -362,4 +365,21 @@ MPEDIT(mpedit_list){
     }
 
     return false;
+}
+
+void olc_mprog_getcode(void *owner, char *target, size_t maxlen)
+{
+    struct mprog_code *mprog;
+    mprog = (struct mprog_code *)owner;
+    (void)strncpy(target, mprog->code, maxlen);
+    return;
+}
+
+void olc_mprog_setcode(void* owner, const char *text)
+{
+    struct mprog_code *mprog;
+    mprog = (struct mprog_code *)owner;
+    free_string(mprog->code);
+    mprog->code = str_dup(text);
+    return;
 }

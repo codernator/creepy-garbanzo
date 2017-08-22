@@ -771,8 +771,9 @@ void send_to_char(char *txt, struct char_data *ch)
 /* JDS */
 void send_to_char_ascii(char *txt, struct char_data *ch)
 {
+    // TODO - this probably doesn't work!
     if (txt != NULL && ch->desc != NULL)
-        write_to_buffer(ch->desc, string_replace(txt, "|", "?"), (int)strlen(txt));
+        write_to_buffer(ch->desc, txt, (int)strlen(txt));
     return;
 }
 

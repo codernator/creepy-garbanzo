@@ -75,7 +75,6 @@ struct area_data *area_new(unsigned long vnum)
         areadata->description = strdup("");
         areadata->area_flags = AREA_ADDED;
         areadata->security = 1;
-        areadata->builders = strdup("");
         areadata->empty = true;
 
         {
@@ -105,9 +104,6 @@ struct array_list *area_serialize(const struct area_data *areadata)
     serialize_take_string(answer, "flags", flag_to_string(areadata->area_flags));
     serialize_take_string(answer, "security", uint_to_string(areadata->security));
 
-    if (areadata->builders[0] != '\0') {
-        serialize_copy_string(answer, "builders", areadata->builders);
-    }
     serialize_take_string(answer, "min_vnum", ulong_to_string(areadata->min_vnum));
     serialize_take_string(answer, "max_vnum", ulong_to_string(areadata->max_vnum));
     serialize_take_string(answer, "llevel", uint_to_string(areadata->llevel));
@@ -134,7 +130,6 @@ struct area_data *area_deserialize(const struct array_list *data, const char *fi
     deserialize_assign_string_default(data, areadata->description, "description", "(no description)");
     deserialize_assign_flag(data, areadata->area_flags, "flags");
     deserialize_assign_uint(data, areadata->security, "security");
-    deserialize_assign_string_default(data, areadata->builders, "builders", "");
     deserialize_assign_ulong(data, areadata->min_vnum, "min_vnum");
     deserialize_assign_ulong(data, areadata->max_vnum, "max_vnum");
     deserialize_assign_uint(data, areadata->llevel, "llevel");
@@ -159,7 +154,6 @@ void area_free(struct area_data *areadata)
 
     free(areadata->name);
     free(areadata->description);
-    free(areadata->builders);
 
     free(areadata);
 }
@@ -187,3 +181,20 @@ bool passes(struct area_data *testee, const struct area_filter *filter)
     return testee->vnum == filter->vnum;
 }
 
+
+void olc_area_getdescription(void *owner, char *target, size_t maxsize)
+{
+    struct area_data *area;
+    area = (struct area_data *)owner;
+    (void)strncpy(target, area->description, maxsize);
+}
+
+void olc_area_setdescription(void *owner, const char *text)
+{
+    struct area_data *area;
+    area = (struct area_data *)owner;
+    if (area->description != NULL)
+        free (area->description);
+    area->description = strdup(text);
+    return;
+}

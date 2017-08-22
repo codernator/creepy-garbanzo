@@ -8,9 +8,6 @@
 #include "help.h"
 
 
-
-extern void string_append(struct char_data * ch, char **string);
-
 static bool set_value(struct char_data *ch, struct objecttemplate *template, const char *argument, int value);
 static void show_obj_values(struct char_data *ch, struct objecttemplate *obj);
 static bool set_obj_values(struct char_data *ch, struct objecttemplate *template, int value_num, const char *argument);
@@ -316,13 +313,12 @@ EDIT(oedit_long)
 
     EDIT_OBJ(ch, template);
     if (argument[0] == '\0') {
-        send_to_char("Syntax:  long [string]\n\r", ch);
-        return false;
+        objecttemplate_setlong(template, argument);
+        send_to_char("Long description set.\n\r", ch);
+        return true;
     }
 
-    objecttemplate_setlong(template, argument);
-    send_to_char("Long description set.\n\r", ch);
-    return true;
+    olc_start_string_editor(ch, template, olc_objecttemplate_getdescription, olc_objecttemplate_setdescription); return true;
 }
 
 
@@ -1216,7 +1212,6 @@ void oedit_extradesc_add(struct char_data *ch, const char *argument)
     char keyword[MAX_INPUT_LENGTH];
     struct extra_descr_data *ed;
     struct objecttemplate *template;
-    EDIT_OBJ(ch, template);
 
     one_argument(argument, keyword);
     if (keyword[0] == '\0') {
@@ -1224,21 +1219,9 @@ void oedit_extradesc_add(struct char_data *ch, const char *argument)
         return;
     }
 
+    EDIT_OBJ(ch, template);
     ed = objecttemplate_addextra(template, keyword, "");
-
-    // set description editor.
-    string_append(ch, &ed->description);
-    return;
-}
-
-static void oedit_extradesc_getter(/*@dependent@*/void *owner, char *target, size_t maxsize)
-{
-    extradescrdata_getdescription((struct extra_descr_data *)owner, target, maxsize);
-}
-
-static void oedit_extradesc_setter(/*@dependent@*/void *owner, /*@observer@*/const char *text)
-{
-    extradescrdata_setdescription((struct extra_descr_data *)owner, text);
+    olc_start_string_editor(ch, ed, olc_extradescrdata_getdescription, olc_extradescrdata_setdescription);
     return;
 }
 
@@ -1261,7 +1244,7 @@ void oedit_extradesc_edit(struct char_data *ch, const char *argument)
         return;
     }
 
-    olc_start_string_editor(ch, ed, oedit_extradesc_getter, oedit_extradesc_setter);
+    olc_start_string_editor(ch, ed, olc_extradescrdata_getdescription, olc_extradescrdata_setdescription);
     return;
 }
 

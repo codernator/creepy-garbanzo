@@ -6,6 +6,7 @@
 #include "lookup.h"
 #include "ansi.h"
 #include "interp.h"
+#include "olc.h"
 
 #ifndef S_SPLINT_S
 #include <ctype.h>
@@ -17,7 +18,6 @@
 #include "libfile.h"
 
 
-extern void string_append(struct char_data * ch, char **string);
 extern char *password_encrypt(const char *plain);
 extern bool password_matches(char *existing, const char *plain);
 extern int password_acceptance(const char *plain);
@@ -1538,76 +1538,11 @@ void do_deathcry(struct char_data *ch, const char *argument)
  ***************************************************************************/
 void do_description(struct char_data *ch, const char *argument)
 {
-
-    static char buf[MAX_STRING_LENGTH];
-
     DENY_NPC(ch);
 
     if (!str_prefix(argument, "edit")) {
-        string_append(ch, &ch->description);
+        olc_start_string_editor(ch, ch, olc_character_getdescription, olc_character_setdescription);
         return;
-    }
-
-    if (argument[0] == '-') {
-        int len, buf_len;
-        bool found = false;
-
-        if (ch->description == NULL || ch->description[0] == '\0') {
-            send_to_char("No lines left to remove.\n\r", ch);
-            return;
-        }
-
-        strcpy(buf, ch->description);
-        buf_len = (int)strlen(buf);
-        for (len = buf_len; len > 0; len--) {
-            if (buf[len] == '\r') {
-                if (!found) {            /* back it up */
-                    if (len > 0)
-                        len--;
-                    found = true;
-                } else {
-                    /* found the second one */
-                    buf[len + 1] = '\0';
-                    free_string(ch->description);
-                    ch->description = str_dup(buf);
-                    send_to_char("Your description is```8:``\n\r", ch);
-                    send_to_char(ch->description ? ch->description : "(None).\n\r", ch);
-                    return;
-                }
-            }
-        }
-        buf[0] = '\0';
-        free_string(ch->description);
-        ch->description = str_dup(buf);
-        send_to_char("Description cleared.\n\r", ch);
-        return;
-    }
-
-    if (argument[0] == '+') {
-        static char sanitized[MAX_STRING_LENGTH];
-        char *s;
-
-        (void)strncpy(sanitized, argument, MAX_STRING_LENGTH);
-        smash_tilde(sanitized);
-
-        if (ch->description != NULL) {
-            strncpy(buf, ch->description, strlen(ch->description));
-        }
-
-        s = sanitized + 1;
-        while (isspace((int)*s)) {
-            s++;
-        }
-
-        if (strlen(buf) + strlen(s) >= 1024) {
-            send_to_char("Description too long.\n\r", ch);
-            return;
-        }
-
-        strcat(buf, s);
-        strcat(buf, "\n\r");
-        free_string(ch->description);
-        ch->description = str_dup(buf);
     }
 
     send_to_char("Your description is```8:``\n\r", ch);
