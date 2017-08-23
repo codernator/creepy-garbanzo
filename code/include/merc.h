@@ -1311,8 +1311,8 @@ struct char_data {
     struct note_data *pnote;
     struct gameobject *carrying;
     struct gameobject *on;
-    struct room_index_data *in_room;
-    struct room_index_data *was_in_room;
+    struct roomtemplate *in_room;
+    struct roomtemplate *was_in_room;
     struct area_data *zone;
     struct pc_data *pcdata;
     bool valid;
@@ -1516,7 +1516,7 @@ struct pc_data {
     /*@dependent@*//*@null@*/struct affect_data *affected;
 
     /*@dependent@*/struct objecttemplate *objtemplate;
-    /*@dependent@*//*@null@*/struct room_index_data *in_room;
+    /*@dependent@*//*@null@*/struct roomtemplate *in_room;
     /*@shared@*//*@null@*/char *owner_name;
     /*@shared@*//*@null@*/char *override_name;
     long extra_flags;
@@ -1530,25 +1530,44 @@ struct pc_data {
 };
 
 
+
+struct area_data {
+    /*@owned@*//*@null@*//*@partial@*/struct area_data *next;
+    /*@dependent@*//*@null@*//*@partial@*/struct area_data *prev;
+
+    unsigned long vnum;
+    /*@only@*/char *file_name;
+    /*@only@*/char *name;
+    /*@only@*/char *description;
+    unsigned long area_flags;
+    unsigned long min_vnum;
+    unsigned long max_vnum;
+    unsigned int llevel;
+    unsigned int ulevel;
+    unsigned int security;
+
+    /*@owned@*//*@null@*//*@partial@*/struct reset_data *reset_first;
+    /*@dependent@*//*@null@*//*@partial@*/struct reset_data *reset_last;
+    int age;
+    int nplayer;
+    bool empty;
+};
+
 /***************************************************************************
  * room specific structures
  ***************************************************************************/
-struct exit_data {
-    union {
-	struct room_index_data * to_room;
-	long   vnum;
-    } u1;
-    int  exit_info;
-    int  level;
-    long  key;
-    char *  keyword;
-    char *  description;
-    struct exit_data * next;
-    int  rs_flags;
-    int  orig_door;
+/*@abstract@*/struct exit_data {
+    unsigned long vnum;
+    struct roomtemplate *to_room;
+    struct exit_data *next;
+    char *keyword;
+    char *description;
+    int direction;
+    unsigned long exit_info;
+    unsigned long rs_flags;
+    long key;
+    int orig_door;
 };
-
-
 
 /***************************************************************************
  * reset_data
@@ -1573,50 +1592,30 @@ struct reset_data {
     int  arg4;
 };
 
+#define MAX_EXITS 6
+/*@abstract@*/struct roomtemplate {
+    long vnum;
 
-struct area_data {
-    /*@owned@*//*@null@*//*@partial@*/struct area_data *next;
-    /*@dependent@*//*@null@*//*@partial@*/struct area_data *prev;
-
-    unsigned long vnum;
-    /*@only@*/char *file_name;
-    /*@only@*/char *name;
-    /*@only@*/char *description;
-    unsigned long area_flags;
-    unsigned long min_vnum;
-    unsigned long max_vnum;
-    unsigned int llevel;
-    unsigned int ulevel;
-    unsigned int security;
-
-    /*@owned@*//*@null@*//*@partial@*/struct reset_data *reset_first;
-    /*@owned@*//*@null@*//*@partial@*/struct reset_data *reset_last;
-    int age;
-    int nplayer;
-    bool empty;
-};
-
-
-struct room_index_data {
-    struct room_index_data * next;
+    struct roomtemplate * next;
+    struct roomtemplate * prev;
     struct char_data *  people;
     struct gameobject *  contents;
-    struct extra_descr_data * extra_descr;
+
     struct area_data *  area;
-    struct exit_data *  exit[6];
+    struct exit_data *  exit[MAX_EXITS];
     struct reset_data *  reset_first;
     struct reset_data *  reset_last;
     struct affect_data *  affected;
-    char *   name;
-    char *   description;
-    char *   owner;
-    long   vnum;
-    long   room_flags;
-    int   light;
-    int   sector_type;
-    int   heal_rate;
-    int   mana_rate;
-    int   timer;
+    struct extra_descr_data * extra_descr;
+    char *name;
+    char *description;
+    char *owner;
+    unsigned long room_flags;
+    int light;
+    int sector_type;
+    int heal_rate;
+    int mana_rate;
+    int timer;
 };
 
 
@@ -1846,10 +1845,6 @@ extern int gn_max_group_sn;
 /*****************************************************************************
  *                                    OLC                                    *
  *****************************************************************************/
-
-/* Object defined in limbo.are * Used in save.c to load objects that don't exist. */
-#define OBJ_VNUM_DUMMY  39l
-
 /* Area flags. */
 #define         AREA_NONE       0
 #define         AREA_CHANGED    1       /* Area has been modified. */
@@ -1878,7 +1873,7 @@ extern long top_vnum_mob;
 extern long top_vnum_obj;
 extern long top_vnum_room;
 extern struct mob_index_data *mob_index_hash  [MAX_KEY_HASH];
-extern struct room_index_data *room_index_hash [MAX_KEY_HASH];
+extern struct roomtemplate *room_index_hash [MAX_KEY_HASH];
 
 
 
@@ -1930,7 +1925,7 @@ void set_bash(struct char_data * ch, int pulse);
 
 
 /* act_enter.c */
-struct room_index_data *get_random_room(struct char_data * ch, struct area_data * area);
+struct roomtemplate *get_random_room(struct char_data * ch, struct area_data * area);
 
 /* act_info.c */
 void set_title(struct char_data * ch, char *title);
@@ -1992,7 +1987,7 @@ void clear_char(struct char_data * ch);
 
 /* find functions  */
 struct mob_index_data *get_mob_index(long vnum);
-struct room_index_data *get_room_index(long vnum);
+struct roomtemplate *get_room_index(long vnum);
 
 
 /* memory management */
@@ -2014,7 +2009,7 @@ void tail_chain(void);
 /* olc/mprogs */
 struct mprog_code *get_mprog_index(long vnum);
 void reset_area(struct area_data * pArea);
-void reset_room(struct room_index_data * pRoom);
+void reset_room(struct roomtemplate * pRoom);
 void load_socials(void);
 
 /* effects.c */
@@ -2071,7 +2066,7 @@ int can_carry_w(struct char_data * ch);
 int get_wield_weight(struct char_data * ch);
 bool is_name(const char *str, const char *namelist);
 void char_from_room(struct char_data * ch);
-void char_to_room(struct char_data * ch, struct room_index_data * pRoomIndex);
+void char_to_room(struct char_data * ch, struct roomtemplate * pRoomIndex);
 void obj_to_char(struct gameobject * obj, struct char_data * ch);
 void obj_from_char(struct gameobject * obj);
 long apply_ac(struct gameobject * obj, int iWear, int type);
@@ -2080,7 +2075,7 @@ void equip_char(struct char_data * ch, struct gameobject * obj, int iWear);
 void unequip_char(struct char_data * ch, struct gameobject * obj);
 int count_obj_list(struct objecttemplate * obj, struct gameobject * list);
 void obj_from_room(struct gameobject * obj);
-void obj_to_room(struct gameobject * obj, struct room_index_data * pRoomIndex);
+void obj_to_room(struct gameobject * obj, struct roomtemplate * pRoomIndex);
 void obj_to_obj(struct gameobject * obj, struct gameobject * obj_to);
 void obj_from_obj(struct gameobject * obj);
 void extract_obj(struct gameobject * obj);
@@ -2097,12 +2092,12 @@ struct gameobject *create_money(unsigned int gold, unsigned int silver);
 int get_obj_number(struct gameobject * obj);
 int get_obj_weight(struct gameobject * obj);
 int get_true_weight(struct gameobject * obj);
-bool room_is_dark(struct char_data * ch, struct room_index_data * pRoomIndex);
-bool is_room_owner(struct char_data * ch, struct room_index_data * room);
-bool room_is_private(struct room_index_data * pRoomIndex);
+bool room_is_dark(struct char_data * ch, struct roomtemplate * pRoomIndex);
+bool is_room_owner(struct char_data * ch, struct roomtemplate * room);
+bool room_is_private(struct roomtemplate * pRoomIndex);
 bool can_see(struct char_data * ch, struct char_data * victim);
 bool can_see_obj(struct char_data * ch, struct gameobject * obj);
-bool can_see_room(struct char_data * ch, struct room_index_data * pRoomIndex);
+bool can_see_room(struct char_data * ch, struct roomtemplate * pRoomIndex);
 bool can_drop_obj(struct char_data * ch, struct gameobject * obj);
 char *item_type_name(struct gameobject * obj);
 char *affect_loc_name(long location);
@@ -2121,25 +2116,25 @@ char *comm_bit_name(long comm_flags);
 char *cont_bit_name(long cont_flags);
 char *token_bit_name(long token_flags);
 const char *first_arg(const char *argument, char *arg_first, bool fCase);
-char *room_flag_bit_name(struct room_index_data * room);
+char *room_flag_bit_name(struct roomtemplate * room);
 /*@observer@*/char *uncolor_str(char *txt);
 void identify_item(struct char_data * ch, struct gameobject * obj);
 void furniture_check(struct char_data * ch);
-struct room_index_data *find_location(struct char_data * ch, const char *arg);
-struct room_index_data *get_death_room(struct char_data * ch);
+struct roomtemplate *find_location(struct char_data * ch, const char *arg);
+struct roomtemplate *get_death_room(struct char_data * ch);
 
 /* affects.c */
 void affect_to_char(struct char_data * ch, /*@partial@*/struct affect_data * paf);
 void affect_to_obj(struct gameobject * obj, struct affect_data * paf);
-void affect_to_room(struct room_index_data * room, struct affect_data * paf);
+void affect_to_room(struct roomtemplate * room, struct affect_data * paf);
 void affect_remove(struct char_data * ch, struct affect_data * paf);
 void affect_remove_obj(struct gameobject * obj, struct affect_data * paf);
-void affect_remove_room(struct room_index_data * room, struct affect_data * paf);
+void affect_remove_room(struct roomtemplate * room, struct affect_data * paf);
 void affect_strip(struct char_data * ch, struct dynamic_skill * skill);
-void affect_strip_room(struct room_index_data * room, int sn);
+void affect_strip_room(struct roomtemplate * room, int sn);
 void affect_join(struct char_data * ch, struct affect_data * paf);
 bool is_affected(struct char_data * ch, struct dynamic_skill * skill);
-bool is_affected_room(struct room_index_data * room, struct dynamic_skill * skill);
+bool is_affected_room(struct roomtemplate * room, struct dynamic_skill * skill);
 
 /* rooms.c */
 char *room_affect(struct affect_data * paf);
@@ -2173,7 +2168,7 @@ int exp_per_level(struct char_data * ch, int points);
 void check_improve(struct char_data * ch, struct dynamic_skill * skill, bool success, int multiplier);
 
 /* teleport.c */
-struct room_index_data *room_by_name(char *target, int level, bool error);
+struct roomtemplate *room_by_name(char *target, int level, bool error);
 
 /* update.c */
 void advance_level(struct char_data * ch, int level);
@@ -2291,14 +2286,52 @@ void olc_character_getdescription(void *owner, char *target, size_t maxlen);
 void olc_character_setdescription(void *owner, const char *text);
 /* ~character.c */
 
+
 /* roomtemplate.c */
-/*@dependent@*/struct extra_descr_data *roomtemplate_addextra(struct room_index_data *room, /*@observer@*/const char *keyword, /*@observer@*/const char *description);
-/*@dependent@*//*@null@*/struct extra_descr_data *roomtemplate_findextra(struct room_index_data *room, /*@observer@*/const char *keyword);
-bool roomtemplate_deleteextra(struct room_index_data *room, /*@observer@*/const char *keyword);
+struct roomtemplate_filter {
+    /*@null@*/const char *name;
+};
+extern const struct roomtemplate_filter roomtemplate_empty_filter;
+
+/*@dependent@*/struct roomtemplate *roomtemplate_new(unsigned long vnum);
+/*@dependent@*/struct roomtemplate *roomtemplate_clone(/*@observer@*/struct roomtemplate *target, unsigned long vnum, /*@dependent@*/struct area_data *area);
+void roomtemplate_free(/*@owned@*/struct roomtemplate *templatedata);
+int roomtemplate_list_count();
+/*@dependent@*//*@null@*/struct roomtemplate *roomtemplate_iterator_start(const struct roomtemplate_filter *filter);
+/*@dependent@*//*@null@*/struct roomtemplate *roomtemplate_iterator(struct roomtemplate *current, const struct roomtemplate_filter *filter);
+/*@dependent@*//*@null@*/struct roomtemplate *roomtemplate_getbyvnum(unsigned long vnum);
+/*@only@*/struct array_list *roomtemplate_serialize(const struct roomtemplate *obj);
+/*@dependent@*/struct roomtemplate *roomtemplate_deserialize(const struct array_list *data);
+void roomtemplate_setname(struct roomtemplate *obj, /*@observer@*/const char *name);
+void roomtemplate_setshort(struct roomtemplate *obj, /*@observer@*/const char *short_desc);
+void roomtemplate_setlong(struct roomtemplate *obj, /*@observer@*/const char *description);
+
+/*@dependent@*/struct extra_descr_data *roomtemplate_addextra(struct roomtemplate *room, /*@observer@*/const char *keyword, /*@observer@*/const char *description);
+/*@dependent@*//*@null@*/struct extra_descr_data *roomtemplate_findextra(struct roomtemplate *room, /*@observer@*/const char *keyword);
+bool roomtemplate_deleteextra(struct roomtemplate *room, /*@observer@*/const char *keyword);
 void olc_roomtemplate_getdescription(void *owner, char *target, size_t maxlen);
 void olc_roomtemplate_setdescription(void *owner, const char *text);
 /* ~roomtemplate.c */
 
+/* exittemplate.c */
+struct exit_data *exittemplate_new(unsigned long vnum);
+struct exit_data *exittemplate_clone(struct exit_data *source, int direction);
+struct exit_data *exittemplate_deserialize(const struct array_list *data);
+struct array_list *exittemplate_serialize(const struct exit_data *obj);
+void exittemplate_free(struct exit_data *templatedata);
+void exittemplate_setkeyword(struct exit_data *template, const char *keyword);
+void exittemplate_setlong(struct exit_data *template, const char *description);
+void olc_exittemplate_getdescription(void *owner, char *target, size_t maxlen);
+void olc_exittemplate_setdescription(void *owner, const char *text);
+/* ~exittemplate.c */
+
+/* resettemplate.c */
+struct reset_data *resetdata_new();
+struct reset_data *resetdata_clone(struct reset_data *source);
+struct reset_data *resetdata_deserialize(const struct array_list *data);
+struct array_list *resetdata_serialize(const struct reset_data *obj);
+void resetdata_free(struct reset_data *templatedata);
+/* ~resettemplate.c */
 
 
 /* recycle.c */

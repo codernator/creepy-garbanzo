@@ -58,8 +58,8 @@ struct char_data *get_random_pc(struct char_data *ch, struct area_data *area)
 
 void do_at(struct char_data *ch, const char *argument)
 {
-    struct room_index_data *location = NULL;
-    struct room_index_data *original;
+    struct roomtemplate *location = NULL;
+    struct roomtemplate *original;
     struct char_data *wch = NULL;
     struct char_data *vch = NULL;
     struct gameobject *on;

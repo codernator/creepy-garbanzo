@@ -2,14 +2,14 @@
 
 
 
-struct room_index_data *get_scan_room(struct room_index_data * room, int direction, int distance);
+struct roomtemplate *get_scan_room(struct roomtemplate * room, int direction, int distance);
 
 
 /***************************************************************************
 *	local declarations
 ***************************************************************************/
 /* local functions */
-static void scan_list(struct room_index_data * scan_room, struct char_data * ch, int depth, int door, const char *argument);
+static void scan_list(struct roomtemplate * scan_room, struct char_data * ch, int depth, int door, const char *argument);
 
 /*
  * Right Here
@@ -42,7 +42,7 @@ static char *const direction_name[] =
 ***************************************************************************/
 void do_scan(struct char_data *ch, const char *argument)
 {
-	struct room_index_data *room;
+	struct roomtemplate *room;
 	int max_dist;
 	int dist;
 	int dir;
@@ -99,7 +99,7 @@ void do_scan(struct char_data *ch, const char *argument)
 *	generate a list of all the people in a give room
 *	or just the people who match <argument>
 ***************************************************************************/
-static void scan_list(struct room_index_data *scan_room, struct char_data *ch, int depth, int direction, const char *argument)
+static void scan_list(struct roomtemplate *scan_room, struct char_data *ch, int depth, int direction, const char *argument)
 {
 	struct char_data *rch;
 	bool found;
@@ -143,11 +143,11 @@ static void scan_list(struct room_index_data *scan_room, struct char_data *ch, i
 *	get a room in a direct <direction> - distance rooms away
 *	returns NULL if there is no room there
 ***************************************************************************/
-struct room_index_data *get_scan_room(struct room_index_data *room,
+struct roomtemplate *get_scan_room(struct roomtemplate *room,
 			       int		direction,
 			       int		distance)
 {
-	struct room_index_data *scan_room;
+	struct roomtemplate *scan_room;
 	struct exit_data *exit;
 	int depth;
 
@@ -157,7 +157,7 @@ struct room_index_data *get_scan_room(struct room_index_data *room,
 			if ((exit = scan_room->exit[direction]) != NULL)
 				/* we have an exit in that direction, so set
 				 * scan_room to that room and keep going */
-				scan_room = exit->u1.to_room;
+				scan_room = exit->to_room;
 			else
 				/* there is not an exit in that direction -
 				*  which means we fell short so return NULL */
@@ -177,7 +177,7 @@ struct room_index_data *get_scan_room(struct room_index_data *room,
 ***************************************************************************/
 struct char_data *get_char_scan(struct char_data *ch, const char *argument)
 {
-	struct room_index_data *room;
+	struct roomtemplate *room;
 	struct char_data *rch;
 	struct char_data *vch;
 	int max_dist;

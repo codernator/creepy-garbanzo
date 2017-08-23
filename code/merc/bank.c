@@ -11,7 +11,7 @@
 
 
 /** imports */
-extern struct gameobject *get_object_by_itemtype_and_room(int item_type, struct room_index_data *room, struct char_data *ch);
+extern struct gameobject *get_object_by_itemtype_and_room(int item_type, struct roomtemplate *room, struct char_data *ch);
 extern void sick_harvey_proctor(struct char_data *ch, enum e_harvey_proctor_is, const char *message);
 
 

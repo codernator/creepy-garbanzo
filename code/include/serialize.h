@@ -20,6 +20,10 @@ void serialize_take_string(struct array_list *kvp_array, const char *const key, 
     entry = kvp_array_find((data), (name)); \
     (field) = (entry != NULL) ? parse_int(entry) : 0;
 
+#define deserialize_assign_char(data, field, name)     \
+    entry = kvp_array_find((data), (name));           \
+    (field) = (entry != NULL) ? (char)parse_int(entry) : 0;
+
 #define deserialize_assign_string(data, field, name) \
     entry = kvp_array_find((data), (name)); \
     (field) = (entry != NULL) ? strdup(entry) : NULL;

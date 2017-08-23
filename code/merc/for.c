@@ -133,7 +133,7 @@ static void for_gods(struct char_data *ch, char *name, const char *argument)
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
     struct descriptor_data *d;
     struct descriptor_data *dpending;
-    struct room_index_data *origin;
+    struct roomtemplate *origin;
     struct area_data *area;
     char cmd[MAX_STRING_LENGTH];
     int count = 0;
@@ -182,7 +182,7 @@ static void for_morts(struct char_data *ch, char *name, const char *argument)
     struct descriptor_iterator_filter playing_filter = { .must_playing = true, .skip_character = ch };
     struct descriptor_data *d;
     struct descriptor_data *dpending;
-    struct room_index_data *origin;
+    struct roomtemplate *origin;
     struct area_data *area;
     char cmd[MAX_STRING_LENGTH];
     int count = 0;
@@ -257,7 +257,7 @@ static void for_room(struct char_data *ch, char *name, const char *argument)
  ***************************************************************************/
 static void for_name(struct char_data *ch, char *name, const char *argument)
 {
-    struct room_index_data *origin;
+    struct roomtemplate *origin;
     struct char_data *vch;
     struct char_data *vch_next;
     struct area_data *area;

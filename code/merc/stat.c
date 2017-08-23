@@ -20,7 +20,7 @@ static void show_mob_stats(struct char_data *ch, const char *argument);
 void do_stat(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
-    struct room_index_data *location;
+    struct roomtemplate *location;
     struct char_data *victim;
     char arg[MAX_INPUT_LENGTH];
     const char *string;
@@ -80,7 +80,7 @@ void do_stat(struct char_data *ch, const char *argument)
  */
 void show_room_stats(struct char_data *ch, const char *argument)
 {
-    struct room_index_data *location;
+    struct roomtemplate *location;
     struct gameobject *obj;
     struct char_data *rch;
     struct affect_data *paf;
@@ -168,7 +168,7 @@ void show_room_stats(struct char_data *ch, const char *argument)
         if ((pexit = location->exit[door]) != NULL) {
             printf_to_char(ch, "Door: %d.  To: %d.  Key: %d.  Exit flags: %s.\n\rKeyword: '%s'.  Description: %s",
                            door,
-                           (pexit->u1.to_room == NULL ? -1 : pexit->u1.to_room->vnum),
+                           (pexit->to_room == NULL ? -1 : pexit->to_room->vnum),
                            pexit->key,
                            exit_bit_name(pexit->exit_info),
                            pexit->keyword,

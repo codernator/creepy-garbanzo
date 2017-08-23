@@ -355,8 +355,8 @@ void bust_a_prompt(struct char_data *ch)
               doors[0] = '\0';
               for (door = 0; door < 6; door++) {
                   if ((pexit = ch->in_room->exit[door]) != NULL
-                      && pexit->u1.to_room != NULL
-                      && (can_see_room(ch, pexit->u1.to_room)
+                      && pexit->to_room != NULL
+                      && (can_see_room(ch, pexit->to_room)
                           || (IS_AFFECTED(ch, AFF_INFRARED)
                               && !IS_AFFECTED(ch, AFF_BLIND)))) {
                       found = true;

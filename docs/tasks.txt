@@ -1,3 +1,8 @@
+room exits 
+- don't realize non-exits
+- serialize exit index (since index == direction)
+** check all serialize methods for incorrect keys!
+
 
 NEW OBJECT SAVE:
 ================

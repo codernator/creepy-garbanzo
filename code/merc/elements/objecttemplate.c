@@ -6,13 +6,13 @@
 #include "serialize.h"
 
 
-#ifndef OBJPROTO_MAX_KEY_HASH
+#ifndef OBJECTTEMPLATE_MAX_KEY_HASH
 // Consult http://www.planetmath.org/goodhashtableprimes for a nice writeup on numbers to use.
 // Bear in mind that whatever value is used here translates to an array containing this number of elements.
-#define OBJPROTO_MAX_KEY_HASH (unsigned long)3079 
+#define OBJECTTEMPLATE_MAX_KEY_HASH (unsigned long)3079 
 #endif
 
-#define HASH_KEY(vnum) (vnum) % OBJPROTO_MAX_KEY_HASH
+#define HASH_KEY(vnum) (vnum) % OBJECTTEMPLATE_MAX_KEY_HASH
 
 /** exports */
 const struct objecttemplate_filter objecttemplate_empty_filter;
@@ -33,7 +33,7 @@ static struct objecttemplate head_node;
 static bool passes(struct objecttemplate *testee, const struct objecttemplate_filter *filter);
 static void headlist_add(/*@owned@*/struct objecttemplate *entry);
 /* an array of linked lists, with an empty head node. */
-static struct hash_entry lookup[OBJPROTO_MAX_KEY_HASH];
+static struct hash_entry lookup[OBJECTTEMPLATE_MAX_KEY_HASH];
 static void lookup_add(unsigned long entrykey, /*@dependent@*/struct objecttemplate *entry);
 static void lookup_remove(unsigned long entrykey, /*@dependent@*/struct objecttemplate *entry);
 

@@ -88,8 +88,8 @@ void move_char(struct char_data *ch, int door, bool follow)
 {
     struct char_data *fch;
     struct char_data *fch_next;
-    struct room_index_data *in_room;
-    struct room_index_data *to_room;
+    struct roomtemplate *in_room;
+    struct roomtemplate *to_room;
     struct exit_data *pexit;
     char buf[MAX_STRING_LENGTH];
 
@@ -105,7 +105,7 @@ void move_char(struct char_data *ch, int door, bool follow)
 	return;
 
     in_room = ch->in_room;
-    if ((pexit = in_room->exit[door]) == NULL || (to_room = pexit->u1.to_room) == NULL || !can_see_room(ch, pexit->u1.to_room)) {
+    if ((pexit = in_room->exit[door]) == NULL || (to_room = pexit->to_room) == NULL || !can_see_room(ch, pexit->to_room)) {
 	send_to_char("Alas, you cannot go that way.\n\r", ch);
 	return;
     }
@@ -289,8 +289,8 @@ void move_char(struct char_data *ch, int door, bool follow)
  ***************************************************************************/
 void do_push(struct char_data *ch, const const char *argument)
 {
-    struct room_index_data *in_room;
-    struct room_index_data *to_room;
+    struct roomtemplate *in_room;
+    struct roomtemplate *to_room;
     struct char_data *victim;
     struct exit_data *pexit;
     char arg[MAX_INPUT_LENGTH];
@@ -361,8 +361,8 @@ void do_push(struct char_data *ch, const const char *argument)
 
     in_room = ch->in_room;
     if ((pexit = in_room->exit[door]) == NULL
-	    || (to_room = pexit->u1.to_room) == NULL
-	    || pexit->u1.vnum == 0) {
+	    || (to_room = pexit->to_room) == NULL
+	    || pexit->vnum == 0) {
 	send_to_char("There's no exit in that direction!\n\r", ch);
 	return;
     }
@@ -393,8 +393,8 @@ void do_push(struct char_data *ch, const const char *argument)
 void do_drag(struct char_data *ch, const const char *argument)
 {
     struct char_data *victim;
-    struct room_index_data *in_room;
-    struct room_index_data *to_room;
+    struct roomtemplate *in_room;
+    struct roomtemplate *to_room;
     struct exit_data *pexit;
     char arg[MAX_INPUT_LENGTH];
     int door;
@@ -455,10 +455,10 @@ void do_drag(struct char_data *ch, const const char *argument)
 
     in_room = ch->in_room;
     if ((pexit = in_room->exit[door]) == NULL
-	    || (to_room = pexit->u1.to_room) == NULL
-	    || pexit->u1.vnum == 0
-	    || !can_see_room(ch, pexit->u1.to_room)
-	    || !can_see_room(victim, pexit->u1.to_room)) {
+	    || (to_room = pexit->to_room) == NULL
+	    || pexit->vnum == 0
+	    || !can_see_room(ch, pexit->to_room)
+	    || !can_see_room(victim, pexit->to_room)) {
 	send_to_char("There's no exit in that direction!\n\r", ch);
 	return;
     }
@@ -490,8 +490,8 @@ void push_char(struct char_data *ch, struct char_data *vch, int door, bool follo
 {
     struct char_data *fch;
     struct char_data *fch_next;
-    struct room_index_data *in_room;
-    struct room_index_data *to_room;
+    struct roomtemplate *in_room;
+    struct roomtemplate *to_room;
     struct exit_data *pexit;
     char buf[256];
 
@@ -508,8 +508,8 @@ void push_char(struct char_data *ch, struct char_data *vch, int door, bool follo
 
     in_room = vch->in_room;
     if ((pexit = in_room->exit[door]) == NULL
-	    || (to_room = pexit->u1.to_room) == NULL
-	    || pexit->u1.vnum == 0) {
+	    || (to_room = pexit->to_room) == NULL
+	    || pexit->vnum == 0) {
 	send_to_char("You are `!slammed`` up against a wall.\n\r", vch);
 	return;
     }
@@ -578,8 +578,8 @@ void drag_char(struct char_data *ch, struct char_data *victim, int door, bool fo
 {
     struct char_data *fch;
     struct char_data *fch_next;
-    struct room_index_data *in_room;
-    struct room_index_data *to_room;
+    struct roomtemplate *in_room;
+    struct roomtemplate *to_room;
     struct exit_data *pexit;
 
     if (check_affected(ch, "web")) {
@@ -594,21 +594,21 @@ void drag_char(struct char_data *ch, struct char_data *victim, int door, bool fo
 
     in_room = ch->in_room;
     pexit = in_room->exit[door];
-    to_room = pexit->u1.to_room;
+    to_room = pexit->to_room;
 
     furniture_check(victim);
 
     if ((pexit) == NULL
 	    || (to_room) == NULL
-	    || !can_see_room(ch, pexit->u1.to_room)) {
+	    || !can_see_room(ch, pexit->to_room)) {
 	if (IS_AWAKE(victim)) {
 	    send_to_char("You get dragged around the room!\n\r", ch);
 	    return;
 	}
     }
 
-    if (pexit->u1.vnum == 0 ||
-	    pexit->u1.to_room == NULL) {
+    if (pexit->vnum == 0 ||
+	    pexit->to_room == NULL) {
 	send_to_char("For some reason you dream that your head is being slammed into a wall!\n\r", victim);
 	send_to_char("There is not an exit in that direction.\n\r", ch);
 	return;
@@ -1075,7 +1075,7 @@ void do_open(struct char_data *ch, const char *argument)
 
     if ((door = find_door(ch, arg)) >= 0) {
 	/* 'open door' */
-	struct room_index_data *to_room;
+	struct roomtemplate *to_room;
 	struct exit_data *pexit;
 	struct exit_data *pexit_rev;
 
@@ -1095,9 +1095,9 @@ void do_open(struct char_data *ch, const char *argument)
 	send_to_char("Ok.\n\r", ch);
 
 	/* open the other side */
-	if ((to_room = pexit->u1.to_room) != NULL
+	if ((to_room = pexit->to_room) != NULL
 		&& (pexit_rev = to_room->exit[rev_dir[door]]) != NULL
-		&& pexit_rev->u1.to_room == ch->in_room) {
+		&& pexit_rev->to_room == ch->in_room) {
 	    struct char_data *rch;
 
 	    REMOVE_BIT(pexit_rev->exit_info, EX_CLOSED);
@@ -1170,7 +1170,7 @@ void do_close(struct char_data *ch, const char *argument)
 
     if ((door = find_door(ch, arg)) >= 0) {
 	/* 'close door' */
-	struct room_index_data *to_room;
+	struct roomtemplate *to_room;
 	struct exit_data *pexit;
 	struct exit_data *pexit_rev;
 
@@ -1185,9 +1185,9 @@ void do_close(struct char_data *ch, const char *argument)
 	send_to_char("Ok.\n\r", ch);
 
 	/* close the other side */
-	if ((to_room = pexit->u1.to_room) != NULL
+	if ((to_room = pexit->to_room) != NULL
 		&& (pexit_rev = to_room->exit[rev_dir[door]]) != 0
-		&& pexit_rev->u1.to_room == ch->in_room) {
+		&& pexit_rev->to_room == ch->in_room) {
 	    struct char_data *rch;
 
 	    SET_BIT(pexit_rev->exit_info, EX_CLOSED);
@@ -1301,7 +1301,7 @@ void do_lock(struct char_data *ch, const char *argument)
 
     if ((door = find_door(ch, arg)) >= 0) {
 	/* 'lock door' */
-	struct room_index_data *to_room;
+	struct roomtemplate *to_room;
 	struct exit_data *pexit;
 	struct exit_data *pexit_rev;
 
@@ -1329,9 +1329,9 @@ void do_lock(struct char_data *ch, const char *argument)
 	act("$n locks the $d.", ch, NULL, pexit->keyword, TO_ROOM);
 
 	/* lock the other side */
-	if ((to_room = pexit->u1.to_room) != NULL
+	if ((to_room = pexit->to_room) != NULL
 		&& (pexit_rev = to_room->exit[rev_dir[door]]) != 0
-		&& pexit_rev->u1.to_room == ch->in_room)
+		&& pexit_rev->to_room == ch->in_room)
 	    SET_BIT(pexit_rev->exit_info, EX_LOCKED);
     }
 }
@@ -1419,7 +1419,7 @@ void do_unlock(struct char_data *ch, const char *argument)
 
     if ((door = find_door(ch, arg)) >= 0) {
 	/* 'unlock door' */
-	struct room_index_data *to_room;
+	struct roomtemplate *to_room;
 	struct exit_data *pexit;
 	struct exit_data *pexit_rev;
 
@@ -1446,9 +1446,9 @@ void do_unlock(struct char_data *ch, const char *argument)
 	act("$n unlocks the $d.", ch, NULL, pexit->keyword, TO_ROOM);
 
 	/* unlock the other side */
-	if ((to_room = pexit->u1.to_room) != NULL
+	if ((to_room = pexit->to_room) != NULL
 		&& (pexit_rev = to_room->exit[rev_dir[door]]) != NULL
-		&& pexit_rev->u1.to_room == ch->in_room)
+		&& pexit_rev->to_room == ch->in_room)
 	    REMOVE_BIT(pexit_rev->exit_info, EX_LOCKED);
     }
 
@@ -1559,7 +1559,7 @@ void do_pick(struct char_data *ch, const char *argument)
 
     if ((door = find_door(ch, arg)) >= 0) {
 	/* 'pick door' */
-	struct room_index_data *to_room;
+	struct roomtemplate *to_room;
 	struct exit_data *pexit;
 	struct exit_data *pexit_rev;
 
@@ -1587,9 +1587,9 @@ void do_pick(struct char_data *ch, const char *argument)
 	check_improve(ch, skill, true, 2);
 
 	/* pick the other side */
-	if ((to_room = pexit->u1.to_room) != NULL
+	if ((to_room = pexit->to_room) != NULL
 		&& (pexit_rev = to_room->exit[rev_dir[door]]) != NULL
-		&& pexit_rev->u1.to_room == ch->in_room)
+		&& pexit_rev->to_room == ch->in_room)
 	    REMOVE_BIT(pexit_rev->exit_info, EX_LOCKED);
     }
 }

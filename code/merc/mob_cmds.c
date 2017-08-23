@@ -14,7 +14,7 @@
 
 
 extern DECLARE_DO_FUN(do_look);
-extern struct room_index_data *find_location(struct char_data *, const char *);
+extern struct roomtemplate *find_location(struct char_data *, const char *);
 void mob_interpret(struct char_data * ch, const char *argument);
 
 /*
@@ -290,7 +290,7 @@ void do_mpzecho(struct char_data *ch, const char *argument)
  */
 void do_mpasound(struct char_data *ch, const char *argument)
 {
-    struct room_index_data *was_in_room;
+    struct roomtemplate *was_in_room;
     int door;
 
     if (argument[0] == '\0')
@@ -300,8 +300,8 @@ void do_mpasound(struct char_data *ch, const char *argument)
     for (door = 0; door < 6; door++) {
 	struct exit_data *pexit;
 
-	if ((pexit = was_in_room->exit[door]) != NULL && pexit->u1.to_room != NULL && pexit->u1.to_room != was_in_room) {
-	    ch->in_room = pexit->u1.to_room;
+	if ((pexit = was_in_room->exit[door]) != NULL && pexit->to_room != NULL && pexit->to_room != was_in_room) {
+	    ch->in_room = pexit->to_room;
 	    act_new(argument, ch, NULL, NULL, TO_ROOM, POS_RESTING, false);
 	}
     }
@@ -626,7 +626,7 @@ void do_mppurge(struct char_data *ch, const char *argument)
  */
 void do_mpgoto(struct char_data *ch, const char *argument)
 {
-    struct room_index_data *location;
+    struct roomtemplate *location;
     char arg[MAX_INPUT_LENGTH];
 
     one_argument(argument, arg);
@@ -660,8 +660,8 @@ void do_mpgoto(struct char_data *ch, const char *argument)
 void do_mpat(struct char_data *ch, const char *argument)
 {
     char arg[MAX_INPUT_LENGTH];
-    struct room_index_data *location;
-    struct room_index_data *original;
+    struct roomtemplate *location;
+    struct roomtemplate *original;
     struct char_data *wch;
     struct gameobject *on;
 
@@ -710,7 +710,7 @@ void do_mptransfer(struct char_data *ch, const char *argument)
     char arg1[MAX_INPUT_LENGTH];
     char arg2[MAX_INPUT_LENGTH];
     char buf[MAX_STRING_LENGTH];
-    struct room_index_data *location;
+    struct roomtemplate *location;
     struct char_data *victim;
 
     argument = one_argument(argument, arg1);
@@ -1142,7 +1142,7 @@ void do_mpcall(struct char_data *ch, const char *argument)
  */
 void do_mpflee(struct char_data *ch, const char *argument)
 {
-    struct room_index_data *was_in;
+    struct roomtemplate *was_in;
     struct exit_data *pexit;
     int door, attempt, dir;
 
@@ -1156,10 +1156,10 @@ void do_mpflee(struct char_data *ch, const char *argument)
     door = -1;
     for (dir = 0; dir < 6; dir++) {
 	if ((pexit = was_in->exit[dir]) == 0
-		|| pexit->u1.to_room == NULL
+		|| pexit->to_room == NULL
 		|| IS_SET(pexit->exit_info, EX_CLOSED)
 		|| (IS_NPC(ch)
-		    && IS_SET(pexit->u1.to_room->room_flags, ROOM_NO_MOB))) {
+		    && IS_SET(pexit->to_room->room_flags, ROOM_NO_MOB))) {
 	    continue;
 	} else {
 	    if (number_range(0, attempt) == 0)
@@ -1186,7 +1186,7 @@ void do_mpflee(struct char_data *ch, const char *argument)
 void do_mpotransfer(struct char_data *ch, const char *argument)
 {
     struct gameobject *obj;
-    struct room_index_data *location;
+    struct roomtemplate *location;
     char arg[MAX_INPUT_LENGTH];
     char buf[MAX_INPUT_LENGTH];
 

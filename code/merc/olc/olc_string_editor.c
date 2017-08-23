@@ -44,17 +44,17 @@ static void sedit_commit(struct char_data *ch, const char *argument);
 static void sedit_abandon(struct char_data *ch, const char *argument);
 static const struct editor_cmd_type string_edit_table[] =
 {
-    { COMMAND_TOKEN"!c", sedit_clear,        COMMAND_TOKEN"!c               - clear text in progress.\n\r" },
-    { COMMAND_TOKEN"",   sedit_show,         COMMAND_TOKEN"                 - show text in progress with line numbers.\n\r" },
-    { COMMAND_TOKEN"%s", sedit_replaceone,   COMMAND_TOKEN"%s <find> <repl> - substitute <find> with <repl>.\n\r" },
-    { COMMAND_TOKEN"!f", sedit_formatstring, COMMAND_TOKEN"!f               - format the string in progress.\n\r" },
-    { COMMAND_TOKEN"li", sedit_lineinsert,   COMMAND_TOKEN"li <#> <line>    - insert <line> at line <#>.\n\r" },
-    { COMMAND_TOKEN"ld", sedit_linedelete,   COMMAND_TOKEN"ld <#>           - delete line at <#>\n\r." },
-    { COMMAND_TOKEN"la", sedit_lineappend,   COMMAND_TOKEN"la <line>        - append <line>... same as entering a line with no command.\n\r" },
-    { COMMAND_TOKEN"!!revert", sedit_revert, COMMAND_TOKEN"!!revert         - undo all changes.\n\r" },
-    { COMMAND_TOKEN"wq", sedit_commit,       COMMAND_TOKEN"wq               - commit the text and close the editor.\n\r" },
-    { COMMAND_TOKEN"q!", sedit_abandon,      COMMAND_TOKEN"q!               - abandon the changes and close the editor.\n\r" },
-    { COMMAND_TOKEN"?",  sedit_help,         COMMAND_TOKEN"?                - show this help.\n\r" },
+    { COMMAND_TOKEN"!c", sedit_clear,        COMMAND_TOKEN"!c               - clear text in progress." },
+    { COMMAND_TOKEN"",   sedit_show,         COMMAND_TOKEN"                 - show text in progress with line numbers." },
+    { COMMAND_TOKEN"%s", sedit_replaceone,   COMMAND_TOKEN"%s <find> <repl> - substitute <find> with <repl>." },
+    { COMMAND_TOKEN"!f", sedit_formatstring, COMMAND_TOKEN"!f               - format the string in progress." },
+    { COMMAND_TOKEN"li", sedit_lineinsert,   COMMAND_TOKEN"li <#> <line>    - insert <line> at line <#>." },
+    { COMMAND_TOKEN"ld", sedit_linedelete,   COMMAND_TOKEN"ld <#>           - delete line at <#>." },
+    { COMMAND_TOKEN"la", sedit_lineappend,   COMMAND_TOKEN"la <line>        - append <line>... same as entering a line with no command." },
+    { COMMAND_TOKEN"!!revert", sedit_revert, COMMAND_TOKEN"!!revert         - undo all changes." },
+    { COMMAND_TOKEN"wq", sedit_commit,       COMMAND_TOKEN"wq               - commit the text and close the editor." },
+    { COMMAND_TOKEN"q!", sedit_abandon,      COMMAND_TOKEN"q!               - abandon the changes and close the editor." },
+    { COMMAND_TOKEN"?",  sedit_help,         COMMAND_TOKEN"?                - show this help." },
     { "", NULL, "" }
 };
 
@@ -65,7 +65,7 @@ void olc_start_string_editor(struct char_data *ch, void *owner, DESC_GETTER *get
 {
     send_to_char("`3-`#========`3- `@Entering Editor `3-`#=========`3-``\n\r", ch);
     send_to_char("    Type `2"COMMAND_TOKEN"`@?`` on a new line for help\n\r", ch);
-    send_to_char("   Terminate with a `"COMMAND_TOKEN"wq`` on a blank line.\n\r", ch);
+    send_to_char("   Terminate with a `2"COMMAND_TOKEN"wq`` on a blank line.\n\r", ch);
     send_to_char("`3-`#=========================================`3-``\n\r", ch);
     (*getter)(owner, EDIT_STRING(ch), MAX_STRING_LENGTH);
     EDIT_OWNER(ch) = owner;

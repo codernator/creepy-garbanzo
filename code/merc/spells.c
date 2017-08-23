@@ -1207,7 +1207,7 @@ void spell_faerie_fire(struct dynamic_skill *skill, int level, struct char_data 
 
 void spell_faerie_fog(struct dynamic_skill *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
-    struct room_index_data *room;
+    struct roomtemplate *room;
     struct char_data *ich;
     struct affect_data af;
 
@@ -2693,7 +2693,7 @@ void spell_noremove(struct dynamic_skill *skill, int level, struct char_data *ch
 
 void spell_winds(struct dynamic_skill *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
-    struct room_index_data *room;
+    struct roomtemplate *room;
     struct dynamic_skill *skill_fog;
 
     skill_fog = gsp_faerie_fog;
@@ -2800,7 +2800,7 @@ void spell_web(struct dynamic_skill *skill, int level, struct char_data *ch, voi
  ***************************************************************************/
 void spell_displacement(struct dynamic_skill *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
-    struct room_index_data *room;
+    struct roomtemplate *room;
     struct affect_data af;
 
     if ((room = ch->in_room) == NULL)
@@ -2835,7 +2835,7 @@ void spell_displacement(struct dynamic_skill *skill, int level, struct char_data
  ***************************************************************************/
 void spell_haven(struct dynamic_skill *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
-    struct room_index_data *room;
+    struct roomtemplate *room;
     struct affect_data af;
 
     if ((room = ch->in_room) == NULL)
@@ -2868,7 +2868,7 @@ void spell_haven(struct dynamic_skill *skill, int level, struct char_data *ch, v
  ***************************************************************************/
 void spell_mana_vortex(struct dynamic_skill *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
-    struct room_index_data *room;
+    struct roomtemplate *room;
     struct affect_data af;
 
     if ((room = ch->in_room) == NULL)
@@ -2901,7 +2901,7 @@ void spell_mana_vortex(struct dynamic_skill *skill, int level, struct char_data 
  ***************************************************************************/
 void spell_parasitic_cloud(struct dynamic_skill *skill, int level, struct char_data *ch, void *vo, int target, const char *argument)
 {
-    struct room_index_data *room;
+    struct roomtemplate *room;
     struct affect_data af;
 
     if ((room = ch->in_room) == NULL)
@@ -3043,8 +3043,8 @@ void spell_nexus(struct dynamic_skill *skill, int level, struct char_data *ch, v
 {
     struct char_data *victim;
     struct gameobject *portal;
-    struct room_index_data *to_room;
-    struct room_index_data *from_room;
+    struct roomtemplate *to_room;
+    struct roomtemplate *from_room;
 
 
     if ((victim = get_char_world(ch, argument)) == NULL
@@ -3215,7 +3215,7 @@ void spell_ring_of_fire(struct dynamic_skill *skill, int level, struct char_data
     struct char_data *last_vict;
     struct char_data *next_vict;
     struct exit_data *pexit;
-    struct room_index_data *curr_room;
+    struct roomtemplate *curr_room;
     int dam;
     int door;
 
@@ -3258,7 +3258,7 @@ void spell_ring_of_fire(struct dynamic_skill *skill, int level, struct char_data
     for (door = 0; door <= 5; door++) {
 	if ((pexit = curr_room->exit[door]) != NULL
 		&& (!IS_SET(pexit->exit_info, EX_CLOSED))) {
-	    if ((tmp_vict = pexit->u1.to_room->people) != NULL) {
+	    if ((tmp_vict = pexit->to_room->people) != NULL) {
 		switch (door) {
 		    case DIR_NORTH:
 			act("Fire rages north!", ch, NULL, NULL, TO_ROOM);
@@ -3298,7 +3298,7 @@ void spell_ring_of_fire(struct dynamic_skill *skill, int level, struct char_data
 			break;
 		}
 
-		for (tmp_vict = pexit->u1.to_room->people;
+		for (tmp_vict = pexit->to_room->people;
 			tmp_vict != NULL;
 			tmp_vict = next_vict) {
 		    next_vict = tmp_vict->next_in_room;

@@ -267,7 +267,7 @@ char *olc_ed_name(struct char_data *ch)
 char *olc_ed_vnum(struct char_data *ch)
 {
     struct area_data *pArea;
-    struct room_index_data *pRoom;
+    struct roomtemplate *pRoom;
     struct objecttemplate *pObj;
     struct mob_index_data *pMob;
     struct mprog_code *pMprog;
@@ -440,7 +440,7 @@ void aedit(struct char_data *ch, const char *argument)
 void redit(struct char_data *ch, const char *argument)
 {
     struct area_data *pArea;
-    struct room_index_data *pRoom;
+    struct roomtemplate *pRoom;
     char arg[MAX_STRING_LENGTH];
     const char *parg;
     char command[MAX_INPUT_LENGTH];
@@ -694,7 +694,7 @@ void do_aedit(struct char_data *ch, const char *argument)
  *****************************************************************************/
 static void display_resets(struct char_data *ch)
 {
-    struct room_index_data *pRoom;
+    struct roomtemplate *pRoom;
     struct reset_data *pReset;
     struct mob_index_data *pMob = NULL;
     struct buf_type *final;
@@ -713,8 +713,8 @@ static void display_resets(struct char_data *ch)
         struct mob_index_data *pMobIndex;
         struct objecttemplate *pObjIndex;
         struct objecttemplate *pObjToIndex;
-        struct room_index_data *pRoomIndex;
-        struct room_index_data *pRoomIndexPrev;
+        struct roomtemplate *pRoomIndex;
+        struct roomtemplate *pRoomIndexPrev;
 
         printf_buf(final, "[`1%2d``] ", ++num);
         switch (pReset->command) {
@@ -880,7 +880,7 @@ static void display_resets(struct char_data *ch)
  * Purpose:	Inserts a new reset in the given index slot.
  * Called by:	do_resets(olc.c).
  ****************************************************************************/
-void add_reset(struct room_index_data *room, struct reset_data *pReset, long index)
+void add_reset(struct roomtemplate *room, struct reset_data *pReset, long index)
 {
     struct reset_data *reset;
     long num = 0;
@@ -952,7 +952,7 @@ void do_resets(struct char_data *ch, const char *argument)
 
 
     if (is_number(arg1)) {
-        struct room_index_data *pRoom = ch->in_room;
+        struct roomtemplate *pRoom = ch->in_room;
 
         if (!str_cmp(arg2, "delete")) {
             int insert_loc = parse_int(arg1);

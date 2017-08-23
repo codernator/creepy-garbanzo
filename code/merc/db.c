@@ -31,7 +31,7 @@ struct shop_data *shop_last;
 struct note_data *note_free;
 /*@observer@*/const char *help_greeting;
 struct mob_index_data *mob_index_hash[MAX_KEY_HASH];
-struct room_index_data *room_index_hash[MAX_KEY_HASH];
+struct roomtemplate *room_index_hash[MAX_KEY_HASH];
 int top_affect;
 int top_ed;
 long top_exit;
@@ -99,8 +99,7 @@ static void load_template(/*@observer@*/const struct database_controller *db, /*
 
 static void load_helps(const char const *filepath);
 static void load_mobiles(FILE * fp, /*@shared@*/struct area_data *area);
-static void load_resets(FILE * fp, /*@shared@*/struct area_data *area);
-static void load_rooms(FILE * fp, /*@shared@*/struct area_data *area);
+static void load_room(const struct database_controller *db, /*@shared@*/struct area_data *area);
 static void load_shops(FILE * fp, /*@shared@*/struct area_data *area);
 static void load_mobprogs(FILE * fp, /*@shared@*/struct area_data *area);
 
@@ -229,12 +228,10 @@ static void init_areas()
                     load_mobiles(db->_cfptr, area_loading);
                 } else if (!str_cmp(word, "PROGRAMS")) {
                     load_mobprogs(db->_cfptr, area_loading);
+                } else if (!str_cmp(word, "ROOM")) {
+                    load_room(db, area_loading);
                 } else if (!str_cmp(word, "OBJECT")) {
                     load_template(db, area_loading);
-                } else if (!str_cmp(word, "RESETS")) {
-                    load_resets(db->_cfptr, area_loading);
-                } else if (!str_cmp(word, "ROOMS")) {
-                    load_rooms(db->_cfptr, area_loading);
                 } else if (!str_cmp(word, "SHOPS")) {
                     load_shops(db->_cfptr, area_loading);
                 } else {
@@ -381,6 +378,32 @@ void load_template(const struct database_controller *db, struct area_data *area)
     assign_area_vnum(vnum, area);
 }
 
+/*
+ * Snarf a room section.
+ */
+void load_room(const struct database_controller *db, struct area_data *area)
+{
+    struct array_list *data;
+    char *dbstream;
+    struct roomtemplate *template;
+    long vnum;
+
+    dbstream = database_read_stream(db);
+    data = database_parse_stream(dbstream);
+    free(dbstream);
+    template = roomtemplate_deserialize(data);
+    kvp_free_array(data);
+
+    template->area = area;
+    vnum = template->vnum;
+
+    top_room++;
+    top_vnum_room = top_vnum_room < vnum ? vnum : top_vnum_room;
+    assign_area_vnum(vnum, area);
+
+    return;
+}
+
 
 /*
  * Sets vnum range for area using OLC protection features.
@@ -437,284 +460,6 @@ void load_helps(const char const *filepath)
 }
 
 
-
-
-/*
- * Adds a reset to a room.  OLC
- * Similar to add_reset in olc.c
- */
-static void new_reset(struct room_index_data *pR, struct reset_data *reset)
-{
-    struct reset_data *pr;
-
-    if (!pR)
-        return;
-
-    pr = pR->reset_last;
-
-    if (!pr) {
-        pR->reset_first = reset;
-        pR->reset_last = reset;
-    } else {
-        pR->reset_last->next = reset;
-        pR->reset_last = reset;
-        pR->reset_last->next = NULL;
-    }
-
-    return;
-}
-
-
-
-/*
- * Snarf a reset section.
- */
-void load_resets(FILE *fp, struct area_data *area)
-{
-    struct reset_data *reset;
-    struct exit_data *pexit;
-    struct room_index_data *room_idx;
-    long rVnum = -1;
-
-    for (;; ) {
-        /*
-         *      OLC
-         *              struct room_index_data *	room_idx;
-         *              struct exit_data *			pexit;
-         *              struct objecttemplate *	temp_index;
-         */
-        char letter;
-
-        if ((letter = fread_letter(fp)) == 'S')
-            break;
-
-        if (letter == '*') {
-            fread_to_eol(fp);
-            continue;
-        }
-
-        reset = new_reset_data();
-        reset->command = letter;
-
-        /* if_flag */ fread_number(fp);
-
-        reset->arg1 = fread_number(fp);
-        reset->arg2 = fread_number(fp);
-        reset->arg3 = (letter == 'G' || letter == 'R') ? 0 : fread_number(fp);
-        reset->arg4 = (letter == 'P' || letter == 'M') ? fread_number(fp) : 0;
-        fread_to_eol(fp);
-
-        /*
-         * Validate parameters.
-         * We're calling the index functions for the side effect.
-         */
-        switch (reset->command) {
-          case 'M':
-          case 'O':
-              rVnum = reset->arg3;
-              break;
-
-          case 'P':
-          case 'G':
-          case 'E':
-              break;
-
-          case 'D':
-              room_idx = get_room_index((rVnum = reset->arg1));
-              if (reset->arg2 < 0
-                  || reset->arg2 >= MAX_DIR || !room_idx
-                  || ((pexit = room_idx->exit[reset->arg2]) == NULL)
-                  || !IS_SET(pexit->rs_flags, EX_ISDOOR)) {
-                  bug(fp, "Load_resets: 'D': exit %d, room %d not door.", reset->arg2, reset->arg1);
-                  ABORT;
-              }
-
-              switch (reset->arg3) {
-                default: 
-                    bug(fp, "Load_resets: 'D': bad 'locks': %d.", reset->arg3); 
-                    break;
-                case 0: 
-                    break;
-                case 1: 
-                    SET_BIT(pexit->rs_flags, EX_CLOSED);
-                    SET_BIT(pexit->exit_info, EX_CLOSED); 
-                    break;
-                case 2: 
-                    SET_BIT(pexit->rs_flags, EX_CLOSED | EX_LOCKED);
-                    SET_BIT(pexit->exit_info, EX_CLOSED | EX_LOCKED); 
-                    break;
-              }
-              break;
-
-          case 'R':
-              rVnum = reset->arg1;
-              break;
-        }
-
-        if (rVnum == -1) {
-            bug(fp, "load_resets : rVnum == -1");
-            ABORT;
-        }
-
-        if (reset->command != 'D')
-            new_reset(get_room_index(rVnum), reset);
-        else
-            free_reset_data(reset);
-    }
-
-    return;
-}
-
-/*
- * Snarf a room section.
- */
-void load_rooms(FILE *fp, struct area_data *area)
-{
-    struct room_index_data *room_idx;
-
-    for (;; ) {
-        long vnum;
-        char letter;
-        int door;
-        int hash_idx;
-
-        letter = fread_letter(fp);
-        if (letter != '#') {
-            bug(fp, "Load_rooms: # not found.");
-            ABORT;
-        }
-
-        vnum = (long)fread_number(fp);
-        if (vnum == 0)
-            break;
-
-        db_loading = false;
-        if (get_room_index(vnum) != NULL) {
-            bug(fp, "Load_rooms: vnum %ld duplicated.", vnum);
-            ABORT;
-        }
-        db_loading = true;
-
-        room_idx = alloc_perm((unsigned int)sizeof(*room_idx));
-        room_idx->owner = str_dup("");
-        room_idx->people = NULL;
-        room_idx->contents = NULL;
-        room_idx->extra_descr = NULL;
-        room_idx->area = area;
-        room_idx->vnum = vnum;
-        room_idx->name = fread_string(fp);
-        room_idx->description = fread_string(fp);
-        /* Area number */ fread_number(fp);
-        room_idx->room_flags = fread_flag(fp);
-
-        room_idx->sector_type = fread_number(fp);
-        room_idx->light = 0;
-        for (door = 0; door <= 5; door++)
-            room_idx->exit[door] = NULL;
-
-        /* defaults */
-        room_idx->heal_rate = 100;
-        room_idx->mana_rate = 100;
-
-        for (;; ) {
-            letter = fread_letter(fp);
-
-            if (letter == 'S')
-                break;
-
-            if (letter == 'H') {     /* healing room */
-                room_idx->heal_rate = fread_number(fp);
-            } else if (letter == 'M') { /* mana room */
-                room_idx->mana_rate = fread_number(fp);
-            } else if (letter == 'D') {
-                struct exit_data *pexit;
-                int locks;
-
-                door = fread_number(fp);
-                if (door < 0 || door > 5) {
-                    bug(fp, "Fread_rooms: vnum %ld has bad door number.", vnum);
-                    ABORT;
-                }
-
-                pexit = alloc_perm((unsigned int)sizeof(*pexit));
-                pexit->description = fread_string(fp);
-                pexit->keyword = fread_string(fp);
-                pexit->exit_info = 0;
-                pexit->rs_flags = 0;
-                locks = fread_number(fp);
-                pexit->key = fread_number(fp);
-                pexit->u1.vnum = fread_number(fp);
-                pexit->orig_door = door;
-
-                switch (locks) {
-                  case 1:
-                      pexit->exit_info = EX_ISDOOR;
-                      pexit->rs_flags = EX_ISDOOR;
-                      break;
-                  case 2:
-                      pexit->exit_info = EX_ISDOOR | EX_PICKPROOF;
-                      pexit->rs_flags = EX_ISDOOR | EX_PICKPROOF;
-                      break;
-                  case 3:
-                      pexit->exit_info = EX_ISDOOR | EX_NOPASS;
-                      pexit->rs_flags = EX_ISDOOR | EX_NOPASS;
-                      break;
-                  case 4:
-                      pexit->exit_info = EX_ISDOOR | EX_NOPASS | EX_PICKPROOF;
-                      pexit->rs_flags = EX_ISDOOR | EX_NOPASS | EX_PICKPROOF;
-                      break;
-                }
-
-                room_idx->exit[door] = pexit;
-                /*room_idx->old_exit[door] = pexit; */
-                top_exit++;
-            } else if (letter == 'E') {
-                char *key;
-                char *desc;
-                key = fread_string(fp);
-                desc = fread_string(fp);
-                (void)roomtemplate_addextra(room_idx, key, desc);
-                free_string(key);
-                free_string(desc);
-                top_ed++;
-            } else if (letter == 'O') {
-                if (room_idx->owner[0] != '\0') {
-                    bug(fp, "Load_rooms: duplicate owner.");
-                    ABORT;
-                }
-
-                room_idx->owner = fread_string(fp);
-            } else if (letter == 'A') {
-                struct affect_data af;
-                struct dynamic_skill *skill;
-
-                if ((skill = skill_lookup(fread_word(fp))) != NULL) {
-                    af.where = TO_AFFECTS;
-                    af.type = skill->sn;
-                    af.skill = skill;
-                    af.level = (int)fread_number(fp);
-                    af.duration = -1;
-                    af.location = 0;
-                    af.modifier = 0;
-                    af.bitvector = 0;
-                    affect_to_room(room_idx, &af);
-                }
-            } else {
-                bug(fp, "Load_rooms: vnum %ld has flag not 'HMDEOS'.", vnum);
-                ABORT;
-            }
-        }
-
-        hash_idx = (int)vnum % MAX_KEY_HASH;
-        room_idx->next = room_index_hash[hash_idx];
-        room_index_hash[hash_idx] = room_idx;
-        top_room++;
-        top_vnum_room = top_vnum_room < vnum ? vnum : top_vnum_room;
-        assign_area_vnum(vnum, area);
-    }
-
-    return;
-}
 
 
 /**
@@ -945,13 +690,13 @@ void load_mobiles(FILE *fp, struct area_data *area)
 void fix_exits(void)
 {
     extern const int rev_dir[];
-    struct room_index_data *room_idx;
-    struct room_index_data *to_room;
+    struct roomtemplate *room_idx;
+    struct roomtemplate *to_room;
     struct exit_data *pexit;
     struct exit_data *pexit_rev;
     struct reset_data *reset;
-    struct room_index_data *iLastRoom;
-    struct room_index_data *ilast_obj;
+    struct roomtemplate *iLastRoom;
+    struct roomtemplate *ilast_obj;
     int hash_idx;
     int door;
 
@@ -1020,12 +765,12 @@ void fix_exits(void)
             fexit = false;
             for (door = 0; door <= 5; door++) {
                 if ((pexit = room_idx->exit[door]) != NULL) {
-                    if (pexit->u1.vnum <= 0
-                        || get_room_index(pexit->u1.vnum) == NULL) {
-                        pexit->u1.to_room = NULL;
+                    if (pexit->vnum <= 0
+                        || get_room_index(pexit->vnum) == NULL) {
+                        pexit->to_room = NULL;
                     } else {
                         fexit = true;
-                        pexit->u1.to_room = get_room_index(pexit->u1.vnum);
+                        pexit->to_room = get_room_index(pexit->vnum);
                     }
                 }
             }
@@ -1040,15 +785,15 @@ void fix_exits(void)
              room_idx = room_idx->next) {
             for (door = 0; door <= 5; door++) {
                 if ((pexit = room_idx->exit[door]) != NULL
-                    && (to_room = pexit->u1.to_room) != NULL
+                    && (to_room = pexit->to_room) != NULL
                     && (pexit_rev = to_room->exit[rev_dir[door]]) != NULL
-                    && pexit_rev->u1.to_room != room_idx
+                    && pexit_rev->to_room != room_idx
                     && (room_idx->vnum < 1200 || room_idx->vnum > 1299)
                     && (room_idx->vnum < 5700 && room_idx->vnum > 5799)) {
                     log_bug("Fix_exits: %d:%d -> %d:%d -> %d.",
                         room_idx->vnum, door,
                         to_room->vnum, rev_dir[door],
-                        (pexit_rev->u1.to_room == NULL) ? 0 : pexit_rev->u1.to_room->vnum);
+                        (pexit_rev->to_room == NULL) ? 0 : pexit_rev->to_room->vnum);
                 }
             }
         }
@@ -1174,7 +919,7 @@ void area_update(void)
              * Note: Mud School resets every 3 minutes(not 15).
              */
             if ((!area->empty && (area->nplayer == 0 || area->age >= 15)) || area->age >= 31) {
-                struct room_index_data *room_idx;
+                struct roomtemplate *room_idx;
 
                 reset_area(area);
                 sprintf(buf, "%s has just been reset.", area->name);
@@ -1197,7 +942,7 @@ void area_update(void)
 /* OLC
  * Reset one room.  Called by reset_area and olc.
  */
-void reset_room(struct room_index_data *room)
+void reset_room(struct roomtemplate *room)
 {
     struct reset_data *reset;
     struct char_data *mob_it;
@@ -1218,8 +963,8 @@ void reset_room(struct room_index_data *room)
         if ((exit = room->exit[exit_dir])) {
             exit->exit_info = (int)exit->rs_flags;
 
-            if ((exit->u1.to_room != NULL)
-                && ((exit = exit->u1.to_room->exit[rev_dir[exit_dir]])))
+            if ((exit->to_room != NULL)
+                && ((exit = exit->to_room->exit[rev_dir[exit_dir]])))
                 exit->exit_info = (int)exit->rs_flags;
         }
     }
@@ -1228,7 +973,7 @@ void reset_room(struct room_index_data *room)
         struct mob_index_data *mob_idx;
         struct objecttemplate *objtemplate;
         struct objecttemplate *obj_to_idx;
-        struct room_index_data *room_idx;
+        struct roomtemplate *room_idx;
         int count;
         int limit = 0;
 
@@ -1280,7 +1025,7 @@ void reset_room(struct room_index_data *room)
                * Pet shop mobiles get ACT_PET set.
                */
               {
-                  struct room_index_data *room_idxPrev;
+                  struct roomtemplate *room_idxPrev;
 
                   room_idxPrev = get_room_index(room->vnum - 1);
                   if (room_idxPrev && IS_SET(room_idxPrev->room_flags, ROOM_PET_SHOP))
@@ -1442,7 +1187,7 @@ void reset_room(struct room_index_data *room)
  */
 void reset_area(struct area_data *area)
 {
-    struct room_index_data *room;
+    struct roomtemplate *room;
     long vnum;
 
     for (vnum = area->min_vnum; vnum <= area->max_vnum; vnum++)
@@ -1858,9 +1603,9 @@ struct mob_index_data *get_mob_index(long vnum)
  * Translates mob virtual number to its room index struct.
  * Hash table lookup.
  */
-struct room_index_data *get_room_index(long vnum)
+struct roomtemplate *get_room_index(long vnum)
 {
-    struct room_index_data *room_idx;
+    struct roomtemplate *room_idx;
 
     for (room_idx = room_index_hash[vnum % MAX_KEY_HASH];
          room_idx != NULL;
@@ -2326,7 +2071,7 @@ void do_dump(struct char_data *ch, const char *argument)
     fprintf(fp, "Affects	%10ld(%12ld bytes), %10ld free(%12ld bytes)\n", aff_count, (long)aff_count * (long)(sizeof(*af)), count, (long)count * (long)(sizeof(*af)));
 
     /* rooms */
-    fprintf(fp, "Rooms	%10ld(%12ld bytes)\n", top_room, top_room * (long)(sizeof(struct room_index_data *)));
+    fprintf(fp, "Rooms	%10ld(%12ld bytes)\n", top_room, top_room * (long)(sizeof(struct roomtemplate *)));
 
     /* exits */
     fprintf(fp, "Exits	%10ld(%12ld bytes)\n", top_exit, top_exit * (long)(sizeof(struct exit_data *)));

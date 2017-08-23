@@ -58,7 +58,7 @@ static const struct editor_cmd_type extra_cmd_table[] =
  ***************************************************************************/
 static bool change_exit(struct char_data *ch, const char *argument, int door)
 {
-    struct room_index_data *room;
+    struct roomtemplate *room;
     char command[MAX_INPUT_LENGTH];
     char arg[MAX_INPUT_LENGTH];
     int value;
@@ -67,7 +67,7 @@ static bool change_exit(struct char_data *ch, const char *argument, int door)
 
     /* set the exit flags - needs full argument */
     if ((value = flag_value(exit_flags, argument)) != NO_FLAG) {
-        struct room_index_data *pToRoom;
+        struct roomtemplate *pToRoom;
         int rev;
 
         if (!room->exit[door]) {
@@ -80,7 +80,7 @@ static bool change_exit(struct char_data *ch, const char *argument, int door)
         room->exit[door]->exit_info = room->exit[door]->rs_flags;
 
         /* connected room */
-        pToRoom = room->exit[door]->u1.to_room;
+        pToRoom = room->exit[door]->to_room;
         rev = rev_dir[door];
 
         if (pToRoom->exit[rev] != NULL) {
@@ -107,7 +107,7 @@ static bool change_exit(struct char_data *ch, const char *argument, int door)
     }
 
     if (!str_cmp(command, "delete")) {
-        struct room_index_data *pToRoom;
+        struct roomtemplate *pToRoom;
         int rev;
 
         if (!room->exit[door]) {
@@ -117,7 +117,7 @@ static bool change_exit(struct char_data *ch, const char *argument, int door)
 
         /* remove ToRoom exit */
         rev = rev_dir[door];
-        pToRoom = room->exit[door]->u1.to_room;
+        pToRoom = room->exit[door]->to_room;
 
         if (pToRoom->exit[rev]) {
             free_exit(pToRoom->exit[rev]);
@@ -134,7 +134,7 @@ static bool change_exit(struct char_data *ch, const char *argument, int door)
 
     if (!str_cmp(command, "link")) {
         struct exit_data *pExit;
-        struct room_index_data *toRoom;
+        struct roomtemplate *toRoom;
 
         if (arg[0] == '\0' || !is_number(arg)) {
             send_to_char("Syntax:  [direction] link [vnum]\n\r", ch);
@@ -161,12 +161,12 @@ static bool change_exit(struct char_data *ch, const char *argument, int door)
         if (!room->exit[door])
             room->exit[door] = new_exit();
 
-        room->exit[door]->u1.to_room = toRoom;
+        room->exit[door]->to_room = toRoom;
         room->exit[door]->orig_door = door;
 
         door = rev_dir[door];
         pExit = new_exit();
-        pExit->u1.to_room = room;
+        pExit->to_room = room;
         pExit->orig_door = door;
         toRoom->exit[door] = pExit;
 
@@ -189,7 +189,7 @@ static bool change_exit(struct char_data *ch, const char *argument, int door)
     }
 
     if (!str_cmp(command, "room")) {
-        struct room_index_data *toRoom;
+        struct roomtemplate *toRoom;
 
         if (arg[0] == '\0' || !is_number(arg)) {
             send_to_char("Syntax:  [direction] room [vnum]\n\r", ch);
@@ -205,7 +205,7 @@ static bool change_exit(struct char_data *ch, const char *argument, int door)
         if (!room->exit[door])
             room->exit[door] = new_exit();
 
-        room->exit[door]->u1.to_room = toRoom;
+        room->exit[door]->to_room = toRoom;
         room->exit[door]->orig_door = door;
 
         send_to_char("One-way link established.\n\r", ch);
@@ -292,7 +292,7 @@ static bool change_exit(struct char_data *ch, const char *argument, int door)
  *****************************************************************************/
 void do_redit(struct char_data *ch, const char *argument)
 {
-    struct room_index_data *room;
+    struct roomtemplate *room;
     char arg[MAX_STRING_LENGTH];
 
     if (IS_NPC(ch))
@@ -322,7 +322,7 @@ void do_redit(struct char_data *ch, const char *argument)
                 ch->desc->editor = ED_ROOM;
                 char_from_room(ch);
                 char_to_room(ch, ch->desc->ed_data);
-                SET_BIT(((struct room_index_data *)ch->desc->ed_data)->area->area_flags, AREA_CHANGED);
+                SET_BIT(((struct roomtemplate *)ch->desc->ed_data)->area->area_flags, AREA_CHANGED);
             }
 
             return;
@@ -339,7 +339,7 @@ void do_redit(struct char_data *ch, const char *argument)
                 char_from_room(ch);
                 char_to_room(ch, ch->desc->ed_data);
 
-                SET_BIT(((struct room_index_data *)ch->desc->ed_data)->area->area_flags, AREA_CHANGED);
+                SET_BIT(((struct roomtemplate *)ch->desc->ed_data)->area->area_flags, AREA_CHANGED);
                 redit_clone(ch, argument);
             }
 
@@ -384,7 +384,7 @@ void do_redit(struct char_data *ch, const char *argument)
  ***************************************************************************/
 EDIT(redit_create){
     struct area_data *area;
-    struct room_index_data *room;
+    struct roomtemplate *room;
     long value;
     long hash_idx;
 
@@ -434,8 +434,8 @@ EDIT(redit_create){
  *	Clone the properties from some room into the builder's current room.
  ***************************************************************************/
 EDIT(redit_clone){
-    struct room_index_data *room = NULL;
-    struct room_index_data *clone = NULL;
+    struct roomtemplate *room = NULL;
+    struct roomtemplate *clone = NULL;
     long room_idx;
     char buf[100];
 
@@ -479,7 +479,7 @@ EDIT(redit_clone){
  *	display a list of rooms
  ***************************************************************************/
 EDIT(redit_rlist){
-    struct room_index_data *room;
+    struct roomtemplate *room;
     struct area_data *area;
     struct buf_type *buf;
     char *unclr;
@@ -717,7 +717,7 @@ EDIT(redit_oshow){
  *	show the details for a room
  ***************************************************************************/
 EDIT(redit_show){
-    struct room_index_data *room;
+    struct roomtemplate *room;
     struct gameobject *obj;
     struct char_data *rch;
     char buf[MAX_STRING_LENGTH];
@@ -817,7 +817,7 @@ EDIT(redit_show){
 
             printf_to_char(ch, "`#%s``:\n\r [%5d] Key: [%5d] ",
                            capitalize(dir_name[door]),
-                           pexit->u1.to_room ? pexit->u1.to_room->vnum : 0,
+                           pexit->to_room ? pexit->to_room->vnum : 0,
                            pexit->key);
             /*
              * Format up the exit info.
@@ -945,7 +945,7 @@ EDIT(redit_ed)
  *	set the name of the room
  ***************************************************************************/
 EDIT(redit_name){
-    struct room_index_data *room;
+    struct roomtemplate *room;
 
     EDIT_ROOM(ch, room);
     if (argument[0] == '\0') {
@@ -967,7 +967,7 @@ EDIT(redit_name){
  *	set the description of the room
  ***************************************************************************/
 EDIT(redit_desc){
-    struct room_index_data *room;
+    struct roomtemplate *room;
 
     EDIT_ROOM(ch, room);
     if (argument[0] != '\0') {
@@ -988,7 +988,7 @@ EDIT(redit_desc){
  *	set the healing rate of the room
  ***************************************************************************/
 EDIT(redit_heal){
-    struct room_index_data *room;
+    struct roomtemplate *room;
 
     EDIT_ROOM(ch, room);
     if (is_number(argument)) {
@@ -1007,7 +1007,7 @@ EDIT(redit_heal){
  *	set the rate at which mana is healed
  ***************************************************************************/
 EDIT(redit_mana){
-    struct room_index_data *room;
+    struct roomtemplate *room;
 
     EDIT_ROOM(ch, room);
     if (is_number(argument)) {
@@ -1026,7 +1026,7 @@ EDIT(redit_mana){
  *	set the owner of a room
  ***************************************************************************/
 EDIT(redit_owner){
-    struct room_index_data *room;
+    struct roomtemplate *room;
 
     EDIT_ROOM(ch, room);
     if (argument[0] == '\0') {
@@ -1053,7 +1053,7 @@ EDIT(redit_owner){
  *	toggle the room flags
  ***************************************************************************/
 EDIT(redit_room){
-    struct room_index_data *room;
+    struct roomtemplate *room;
     int value;
 
     EDIT_ROOM(ch, room);
@@ -1076,7 +1076,7 @@ EDIT(redit_room){
  *	set the sector type of a room
  ***************************************************************************/
 EDIT(redit_sector){
-    struct room_index_data *room;
+    struct roomtemplate *room;
     int value;
 
     EDIT_ROOM(ch, room);
@@ -1098,7 +1098,7 @@ EDIT(redit_sector){
  *	add an affect to the room
  ***************************************************************************/
 EDIT(redit_addaffect){
-    struct room_index_data *room;
+    struct roomtemplate *room;
     struct affect_data af;
     struct dynamic_skill *skill;
     char arg[MAX_STRING_LENGTH];
@@ -1136,7 +1136,7 @@ EDIT(redit_addaffect){
  *	remove an affect to the room
  ***************************************************************************/
 EDIT(redit_delaffect){
-    struct room_index_data *room;
+    struct roomtemplate *room;
     struct affect_data *paf;
     struct affect_data *paf_next;
     char arg[MAX_STRING_LENGTH];
@@ -1173,7 +1173,7 @@ EDIT(redit_delaffect){
  *	edit the rooms mob resets
  ***************************************************************************/
 EDIT(redit_mreset){
-    struct room_index_data *room;
+    struct roomtemplate *room;
     struct mob_index_data *mob;
     struct char_data *newmob;
     struct reset_data *pReset;
@@ -1232,7 +1232,7 @@ EDIT(redit_mreset){
  *	edit the rooms obj resets
  ***************************************************************************/
 EDIT(redit_oreset){
-    struct room_index_data *room;
+    struct roomtemplate *room;
     struct objecttemplate *obj;
     struct gameobject *newobj;
     struct gameobject *to_obj;
@@ -1417,7 +1417,7 @@ EDIT(redit_oreset){
  *	added by Monrick, 2/2008
  ***************************************************************************/
 EDIT(redit_flagall){
-    struct room_index_data *room;                          /* individual room to edit */
+    struct roomtemplate *room;                          /* individual room to edit */
     struct area_data *area;                                /* area being edited */
     struct buf_type *buf;                                    /* text to return to ch */
     char *unclr;                                    /* uncolored room name */
@@ -1489,7 +1489,7 @@ EDIT(redit_flagall){
  *	added by Monrick, 2/2008
  ***************************************************************************/
 EDIT(redit_showrooms){
-    struct room_index_data *room;                          /* individual room to edit */
+    struct roomtemplate *room;                          /* individual room to edit */
     struct area_data *area;                                /* area being edited */
     struct buf_type *buf;                                    /* text to return to ch */
     char *unclr;                                    /* uncolored room name */
@@ -1566,7 +1566,7 @@ void redit_extradesc_add(struct char_data *ch, const char *argument)
 {
     char keyword[MAX_INPUT_LENGTH];
     struct extra_descr_data *ed;
-    struct room_index_data *template;
+    struct roomtemplate *template;
 
     one_argument(argument, keyword);
     if (keyword[0] == '\0') {
@@ -1584,7 +1584,7 @@ void redit_extradesc_edit(struct char_data *ch, const char *argument)
 {
     struct extra_descr_data *ed;
     char keyword[MAX_INPUT_LENGTH];
-    struct room_index_data *template;
+    struct roomtemplate *template;
     EDIT_ROOM(ch, template);
 
     one_argument(argument, keyword);
@@ -1606,7 +1606,7 @@ void redit_extradesc_edit(struct char_data *ch, const char *argument)
 void redit_extradesc_delete(struct char_data *ch, const char *argument)
 {
     char keyword[MAX_INPUT_LENGTH];
-    struct room_index_data *template;
+    struct roomtemplate *template;
     EDIT_ROOM(ch, template);
 
     one_argument(argument, keyword);

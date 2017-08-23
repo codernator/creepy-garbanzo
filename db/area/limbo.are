@@ -9,8 +9,6 @@ flags
 	A
 security
 	9
-builders
-	Codernator
 min_vnum
 	1
 max_vnum

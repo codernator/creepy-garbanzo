@@ -658,8 +658,8 @@ static void mobile_update(void)
 	}
 
 	if (ch->mob_wuss != NULL && ch->in_room->people != NULL) {
-	    struct room_index_data *was_in;
-	    struct room_index_data *now_in;
+	    struct roomtemplate *was_in;
+	    struct roomtemplate *now_in;
 	    struct char_data *laters;
 	    struct char_data *laters_next;
 	    int attempt;
@@ -679,10 +679,10 @@ static void mobile_update(void)
 
 			door = number_door();
 			if ((pexit = was_in->exit[door]) == 0
-				|| pexit->u1.to_room == NULL
+				|| pexit->to_room == NULL
 				|| IS_SET(pexit->exit_info, EX_CLOSED)
 				|| (IS_NPC(ch)
-				    && IS_SET(pexit->u1.to_room->room_flags, ROOM_NO_MOB)))
+				    && IS_SET(pexit->to_room->room_flags, ROOM_NO_MOB)))
 			    continue;
 
 			move_char(ch, door, false);
@@ -704,15 +704,15 @@ static void mobile_update(void)
 		&& number_bits(3) == 0
 		&& (door = number_bits(5)) <= 5
 		&& (pexit = ch->in_room->exit[door]) != NULL
-		&& pexit->u1.to_room != NULL
+		&& pexit->to_room != NULL
 		&& !IS_SET(pexit->exit_info, EX_CLOSED)
-		&& !IS_SET(pexit->u1.to_room->room_flags, ROOM_NO_MOB)
+		&& !IS_SET(pexit->to_room->room_flags, ROOM_NO_MOB)
 		&& (!IS_SET(ch->act, ACT_STAY_AREA)
-		    || pexit->u1.to_room->area == ch->in_room->area)
+		    || pexit->to_room->area == ch->in_room->area)
 		&& (!IS_SET(ch->act, ACT_OUTDOORS)
-		    || !IS_SET(pexit->u1.to_room->room_flags, ROOM_INDOORS))
+		    || !IS_SET(pexit->to_room->room_flags, ROOM_INDOORS))
 		&& (!IS_SET(ch->act, ACT_INDOORS)
-		    || IS_SET(pexit->u1.to_room->room_flags, ROOM_INDOORS)))
+		    || IS_SET(pexit->to_room->room_flags, ROOM_INDOORS)))
 	    move_char(ch, door, false);
     }
 
@@ -884,7 +884,7 @@ static void auto_restore(void)
  ***************************************************************************/
 static void room_update(void)
 {
-    struct room_index_data *room;
+    struct roomtemplate *room;
     int index;
     static int decr;
 

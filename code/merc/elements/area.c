@@ -66,24 +66,21 @@ struct area_data *area_new(unsigned long vnum)
 
     areadata = malloc(sizeof(struct area_data));
     assert(areadata != NULL);
+    memset(areadata, 0, sizeof(struct area_data));
 
+    areadata->vnum = vnum;
+    /*@-mustfreeonly@*/
     {
-        memset(areadata, 0, sizeof(struct area_data));
-        /*@-mustfreeonly@*/
-        areadata->vnum = vnum;
-        areadata->name = strdup("New area");
-        areadata->description = strdup("");
-        areadata->area_flags = AREA_ADDED;
-        areadata->security = 1;
-        areadata->empty = true;
-
-        {
-            char filename[MAX_INPUT_LENGTH];
-            (void)snprintf(filename, MAX_INPUT_LENGTH, "area%lu.are", areadata->vnum);
-            areadata->file_name = strdup(filename);
-        }
-        /*@+mustfreeonly@*/
+        char filename[MAX_INPUT_LENGTH];
+        (void)snprintf(filename, MAX_INPUT_LENGTH, "area%lu.are", areadata->vnum);
+        areadata->file_name = strdup(filename);
     }
+    areadata->name = strdup("New area");
+    areadata->description = strdup("");
+    /*@+mustfreeonly@*/
+    areadata->area_flags = AREA_ADDED;
+    areadata->security = 1;
+    areadata->empty = true;
 
     headlist_add(areadata);
 
@@ -93,6 +90,7 @@ struct area_data *area_new(unsigned long vnum)
 struct array_list *area_serialize(const struct area_data *areadata)
 {
     struct array_list *answer;
+    struct reset_data *reset;
 
     answer = kvp_create_array(12);
 
@@ -109,6 +107,12 @@ struct array_list *area_serialize(const struct area_data *areadata)
     serialize_take_string(answer, "llevel", uint_to_string(areadata->llevel));
     serialize_take_string(answer, "ulevel", uint_to_string(areadata->ulevel));
 
+    for (reset = areadata->reset_first; reset != NULL; reset = reset->next) {
+        struct array_list *serialized = resetdata_serialize(reset);
+        serialize_take_string(answer, "reset", database_create_stream(serialized));
+        kvp_free_array(serialized);
+    }
+
     return answer;
 }
 
@@ -118,6 +122,7 @@ struct area_data *area_deserialize(const struct array_list *data, const char *fi
 {
     struct area_data *areadata;
     const char *entry;
+    const struct key_string_pair *entrynode;
 
     areadata = malloc(sizeof(struct area_data));
     assert(areadata != NULL);
@@ -135,6 +140,28 @@ struct area_data *area_deserialize(const struct array_list *data, const char *fi
     deserialize_assign_uint(data, areadata->llevel, "llevel");
     deserialize_assign_uint(data, areadata->ulevel, "ulevel");
     /*@+mustfreeonly@*/
+
+    {
+        size_t index;
+        struct array_list *serialized;
+        array_list_each(data, index) {
+            entrynode = array_list_node_at(data, struct key_string_pair, index);
+            assert(entrynode != NULL);
+
+            if (entrynode->key[0] == 'r' && strcmp(entrynode->key, "reset") == 0) {
+                struct reset_data *element;
+                serialized = database_parse_stream(entrynode->value);
+                element = resetdata_deserialize(serialized);
+                assert(element->next == NULL);
+                if(areadata->reset_last == NULL)
+                    areadata->reset_last = element;
+                element->next = areadata->reset_first;
+                areadata->reset_first = element;
+                kvp_free_array(serialized);
+            }
+
+        }
+    }
 
     headlist_add(areadata);
     return areadata;
@@ -154,6 +181,18 @@ void area_free(struct area_data *areadata)
 
     free(areadata->name);
     free(areadata->description);
+
+    /** Clean up resets. */
+    {
+        /*@only@*/struct reset_data *reset = areadata->reset_first;
+        /*@only@*/struct reset_data *reset_next = areadata->reset_first;
+        while(reset != NULL) {
+            reset_next = reset->next;
+            resetdata_free(reset);
+            reset = reset_next;
+        }
+        areadata->reset_last = NULL;
+    }
 
     free(areadata);
 }

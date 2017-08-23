@@ -271,8 +271,8 @@ void do_murder(struct char_data *ch, const char *argument)
 
 void do_flee(/*@dependent@*/struct char_data *ch, /*@unused@*/const char *argument)
 {
-    struct room_index_data *was_in;
-    struct room_index_data *now_in;
+    struct roomtemplate *was_in;
+    struct roomtemplate *now_in;
     struct char_data *victim;
     int attempt;
 
@@ -290,10 +290,10 @@ void do_flee(/*@dependent@*/struct char_data *ch, /*@unused@*/const char *argume
 
 	door = number_door();
 	if ((pexit = was_in->exit[door]) == 0
-		|| pexit->u1.to_room == NULL
+		|| pexit->to_room == NULL
 		|| IS_SET(pexit->exit_info, EX_CLOSED)
 		|| (IS_NPC(ch)
-		    && IS_SET(pexit->u1.to_room->room_flags, ROOM_NO_MOB)))
+		    && IS_SET(pexit->to_room->room_flags, ROOM_NO_MOB)))
 	    continue;
 
 	move_char(ch, door, false);

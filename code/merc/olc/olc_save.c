@@ -17,10 +17,8 @@ static void save_area(struct area_data *area);
 static void save_mobprogs(FILE *fp, struct area_data *area);
 static void save_mobile(FILE *fp, struct mob_index_data *mob_idx);
 static void save_mobiles(FILE *fp, struct area_data *area);
-static void save_objects(struct database_controller *db, struct area_data *area);
-static void save_rooms(FILE *fp, struct area_data *area);
-static void save_door_resets(FILE *fp, struct area_data *area);
-static void save_resets(FILE *fp, struct area_data *area);
+static void save_objects(const struct database_controller *db, const struct area_data *area);
+static void save_rooms(const struct database_controller *db, const struct area_data *area);
 static void save_shops(FILE *fp, struct area_data *area);
 static void save_helps(const char const *filename);
 static void show_save_help(struct char_data *ch);
@@ -376,229 +374,47 @@ void save_mobiles(FILE *fp, struct area_data *area)
 }
 
 
-void save_objects(struct database_controller *db, struct area_data *area)
+void save_objects(const struct database_controller *db, const struct area_data *area)
 {
-    long iter;
     struct objecttemplate *template;
     struct array_list *serialized;
     char *dbstream;
 
-    for (iter = area->min_vnum; iter <= area->max_vnum; iter++)
-        if ((template = objecttemplate_getbyvnum(iter))) {
-            fprintf(db->_cfptr, "#OBJECT\n");
+    template = objecttemplate_iterator_start(&objecttemplate_empty_filter);
+    while (template != NULL) {
+        fprintf(db->_cfptr, "#OBJECT\n");
 
-            serialized = objecttemplate_serialize(template);
-            dbstream = database_create_stream(serialized);
-            kvp_free_array(serialized);
-            database_write_stream(db, dbstream);
-            free(dbstream);
-        }
+        serialized = objecttemplate_serialize(template);
+        dbstream = database_create_stream(serialized);
+        kvp_free_array(serialized);
+        database_write_stream(db, dbstream);
+        free(dbstream);
 
-    return;
-}
-
-void save_rooms(FILE *fp, struct area_data *area)
-{
-    struct room_index_data *room;
-    struct extra_descr_data *extra;
-    struct exit_data *exit;
-    struct affect_data *paf;
-    struct dynamic_skill *skill;
-    int hash_idx;
-    int door;
-
-    fprintf(fp, "#ROOMS\n");
-    for (hash_idx = 0; hash_idx < MAX_KEY_HASH; hash_idx++) {
-        for (room = room_index_hash[hash_idx];
-             room != NULL;
-             room = room->next) {
-            if (room->area == area) {
-                fprintf(fp, "#%ld\n", room->vnum);
-                fprintf(fp, "%s~\n", room->name);
-                fprintf(fp, "%s~\n", fix_string(room->description));
-                fprintf(fp, "0 ");
-                fprintf(fp, "%ld ", room->room_flags);
-                fprintf(fp, "%d\n", room->sector_type);
-
-                for (extra = room->extra_descr; extra; extra = extra->next) {
-                    fprintf(fp, "E\n%s~\n%s~\n",
-                            extra->keyword,
-                            fix_string(extra->description));
-                }
-
-                for (door = 0; door < MAX_DIR; door++) { /* I hate this! */
-                    if ((exit = room->exit[door])
-                        && exit->u1.to_room) {
-                        int locks = 0;
-
-                        /* HACK : TO PREVENT EX_LOCKED etc without EX_ISDOOR
-                         * to stop booting the mud */
-                        if (IS_SET(exit->rs_flags, EX_CLOSED)
-                            || IS_SET(exit->rs_flags, EX_LOCKED)
-                            || IS_SET(exit->rs_flags, EX_PICKPROOF)
-                            || IS_SET(exit->rs_flags, EX_NOPASS)
-                            || IS_SET(exit->rs_flags, EX_EASY)
-                            || IS_SET(exit->rs_flags, EX_HARD)
-                            || IS_SET(exit->rs_flags, EX_INFURIATING)
-                            || IS_SET(exit->rs_flags, EX_NOCLOSE)
-                            || IS_SET(exit->rs_flags, EX_NOLOCK))
-                            SET_BIT(exit->rs_flags, EX_ISDOOR);
-                        else
-                            REMOVE_BIT(exit->rs_flags, EX_ISDOOR);
-
-                        /* THIS SUCKS but it's backwards compatible */
-                        /* NOTE THAT EX_NOCLOSE NOLOCK etc aren't being saved */
-                        if (IS_SET(exit->rs_flags, EX_ISDOOR)
-                            && (!IS_SET(exit->rs_flags, EX_PICKPROOF))
-                            && (!IS_SET(exit->rs_flags, EX_NOPASS)))
-                            locks = 1;
-
-                        if (IS_SET(exit->rs_flags, EX_ISDOOR)
-                            && (IS_SET(exit->rs_flags, EX_PICKPROOF))
-                            && (!IS_SET(exit->rs_flags, EX_NOPASS)))
-                            locks = 2;
-
-                        if (IS_SET(exit->rs_flags, EX_ISDOOR)
-                            && (!IS_SET(exit->rs_flags, EX_PICKPROOF))
-                            && (IS_SET(exit->rs_flags, EX_NOPASS)))
-                            locks = 3;
-
-                        if (IS_SET(exit->rs_flags, EX_ISDOOR)
-                            && (IS_SET(exit->rs_flags, EX_PICKPROOF))
-                            && (IS_SET(exit->rs_flags, EX_NOPASS)))
-                            locks = 4;
-
-                        fprintf(fp, "D%d\n", exit->orig_door);
-                        fprintf(fp, "%s~\n", fix_string(exit->description));
-                        fprintf(fp, "%s~\n", exit->keyword);
-                        fprintf(fp, "%d %ld %ld\n",
-                                locks,
-                                exit->key,
-                                exit->u1.to_room->vnum);
-                    }
-                }
-
-                if (room->mana_rate != 100 || room->heal_rate != 100) {
-                    fprintf(fp, "M %d H %d\n",
-                            room->mana_rate,
-                            room->heal_rate);
-                }
-
-                if (!IS_NULLSTR(room->owner))
-                    fprintf(fp, "O %s~\n", room->owner);
-
-                for (paf = room->affected; paf != NULL; paf = paf->next)
-                    if (paf->duration < 0 && (skill = resolve_skill_sn(paf->type)) != NULL)
-                        fprintf(fp, "A '%s' %d\n", skill->name, paf->level);
-                fprintf(fp, "S\n");
-            }
-        }
-    }
-
-    fprintf(fp, "#0\n\n\n\n");
-    return;
-}
-
-void save_door_resets(FILE *fp, struct area_data *area)
-{
-    struct room_index_data *room;
-    struct exit_data *exit;
-    int hash_idx;
-    int door;
-
-    for (hash_idx = 0; hash_idx < MAX_KEY_HASH; hash_idx++) {
-        for (room = room_index_hash[hash_idx]; room; room = room->next) {
-            if (room->area == area) {
-                for (door = 0; door < MAX_DIR; door++) {
-                    if ((exit = room->exit[door])
-                        && exit->u1.to_room
-                        && (IS_SET(exit->rs_flags, EX_CLOSED) || IS_SET(exit->rs_flags, EX_LOCKED))) {
-                        fprintf(fp, "D 0 %ld %d %d\n",
-                                room->vnum,
-                                exit->orig_door,
-                                IS_SET(exit->rs_flags, EX_LOCKED) ? 2 : 1);
-                    }
-                }
-            }
-        }
+        template = objecttemplate_iterator(template, &objecttemplate_empty_filter);
     }
 
     return;
 }
 
-void save_resets(FILE *fp, struct area_data *area)
+void save_rooms(const struct database_controller *db, const struct area_data *area)
 {
-    struct reset_data *pReset;
-    struct mob_index_data *pLastMob = NULL;
-    struct room_index_data *pRoom;
-    int hash_idx;
+    struct roomtemplate *template;
+    struct array_list *serialized;
+    char *dbstream;
 
-    fprintf(fp, "#RESETS\n");
+    template = roomtemplate_iterator_start(&roomtemplate_empty_filter);
+    while (template != NULL) {
+        fprintf(db->_cfptr, "#ROOM\n");
 
-    save_door_resets(fp, area);
+        serialized = roomtemplate_serialize(template);
+        dbstream = database_create_stream(serialized);
+        kvp_free_array(serialized);
+        database_write_stream(db, dbstream);
+        free(dbstream);
 
-    for (hash_idx = 0; hash_idx < MAX_KEY_HASH; hash_idx++) {
-        for (pRoom = room_index_hash[hash_idx]; pRoom; pRoom = pRoom->next) {
-            if (pRoom->area == area) {
-                for (pReset = pRoom->reset_first; pReset; pReset = pReset->next) {
-                    switch (pReset->command) {
-                      default:
-                          log_bug("Save_resets: bad command %c.", (int)pReset->command);
-                          break;
+        template = roomtemplate_iterator(template, &roomtemplate_empty_filter);
+    }
 
-                      case 'M':
-                          pLastMob = get_mob_index(pReset->arg1);
-                          fprintf(fp, "M 0 %ld %d %ld %d\n",
-                                  pReset->arg1,
-                                  pReset->arg2,
-                                  pReset->arg3,
-                                  pReset->arg4);
-                          break;
-
-                      case 'O':
-                          pRoom = get_room_index(pReset->arg3);
-                          fprintf(fp, "O 0 %ld 0 %ld\n",
-                                  pReset->arg1,
-                                  pReset->arg3);
-                          break;
-
-                      case 'P':
-                          fprintf(fp, "P 0 %ld %d %ld %d\n",
-                                  pReset->arg1,
-                                  pReset->arg2,
-                                  pReset->arg3,
-                                  pReset->arg4);
-                          break;
-
-                      case 'G':
-                          fprintf(fp, "G 0 %ld 0\n", pReset->arg1);
-                          if (!pLastMob)
-                              log_string("Save_resets: !NO_MOB! in [%s]", area->file_name);
-                          break;
-                      case 'E':
-                          fprintf(fp, "E 0 %ld 0 %ld\n",
-                                  pReset->arg1,
-                                  pReset->arg3);
-                          if (!pLastMob)
-                              log_string("Save_resets: !NO_MOB! in [%s]", area->file_name);
-                          break;
-
-                      case 'D':
-                          break;
-
-                      case 'R':
-                          pRoom = get_room_index(pReset->arg1);
-                          fprintf(fp, "R 0 %ld %d\n",
-                                  pReset->arg1,
-                                  pReset->arg2);
-                          break;
-                    }
-                }
-            }       /* End if correct area */
-        }               /* End for pRoom */
-    } /* End for hash_idx */
-
-    fprintf(fp, "S\n\n\n\n");
     return;
 }
 
@@ -644,7 +460,7 @@ void save_helps(const char const *filename)
         perror(filename);
         return;
     }
-    
+
     current = helpdata_iteratorstart();
     while (current != NULL) {
         struct array_list *data = helpdata_serialize(current);
@@ -681,11 +497,10 @@ void save_area(struct area_data *area)
         free(dbstream);
     }
 
-    save_mobiles(db->_cfptr, area);
+    save_rooms(db, area);
     save_objects(db, area);
-    save_rooms(db->_cfptr, area);
+    save_mobiles(db->_cfptr, area);
     save_mobprogs(db->_cfptr, area);
-    save_resets(db->_cfptr, area);
     save_shops(db->_cfptr, area);
 
     fprintf(db->_cfptr, "#$\n");

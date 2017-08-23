@@ -352,7 +352,7 @@ void affect_to_obj(struct gameobject *obj, struct affect_data *paf)
 *
 *	add an affect to a room
 ***************************************************************************/
-void affect_to_room(struct room_index_data *room, struct affect_data *paf)
+void affect_to_room(struct roomtemplate *room, struct affect_data *paf)
 {
 	struct affect_data *paf_new;
 
@@ -474,7 +474,7 @@ void affect_remove_obj(struct gameobject *obj, struct affect_data *paf)
 *
 *	remove an affect from a room
 ***************************************************************************/
-void affect_remove_room(struct room_index_data *room, struct affect_data *paf)
+void affect_remove_room(struct roomtemplate *room, struct affect_data *paf)
 {
 	if (room->affected == NULL) {
 		log_bug("affect_remove_room: no affect.");
@@ -529,7 +529,7 @@ void affect_strip(struct char_data *ch, struct dynamic_skill *skill)
 *
 *	strips all affects of the given sn
 ***************************************************************************/
-void affect_strip_room(struct room_index_data *room, int sn)
+void affect_strip_room(struct roomtemplate *room, int sn)
 {
 	struct affect_data *paf;
 	struct affect_data *paf_next;
@@ -593,7 +593,7 @@ bool is_affected(struct char_data *ch, struct dynamic_skill *skill)
 *
 *	check to see if a room is affected by a spell
 ***************************************************************************/
-bool is_affected_room(struct room_index_data *room, struct dynamic_skill *skill)
+bool is_affected_room(struct roomtemplate *room, struct dynamic_skill *skill)
 {
 	struct affect_data *paf;
 
@@ -651,8 +651,8 @@ char *room_affect(struct affect_data *paf)
 ***************************************************************************/
 void affect_displacement(struct dynamic_skill *skill, void *target, int type, struct affect_data *paf)
 {
-	struct room_index_data *room = (struct room_index_data *)target;
-	struct room_index_data *to = NULL;
+	struct roomtemplate *room = (struct roomtemplate *)target;
+	struct roomtemplate *to = NULL;
 	struct char_data *vch;
 	struct char_data *vch_next;
 
@@ -684,7 +684,7 @@ void affect_displacement(struct dynamic_skill *skill, void *target, int type, st
 ***************************************************************************/
 void affect_parasitic_cloud(struct dynamic_skill *skill, void *target, int type, struct affect_data *paf)
 {
-	struct room_index_data *room = (struct room_index_data *)target;
+	struct roomtemplate *room = (struct roomtemplate *)target;
 	struct char_data *vch;
 	struct char_data *vch_next;
 

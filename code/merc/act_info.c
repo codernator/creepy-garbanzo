@@ -841,8 +841,8 @@ void do_exits(struct char_data *ch, const char *argument)
     found = false;
     for (door = 0; door <= 5; door++) {
         if ((pexit = ch->in_room->exit[door]) != NULL
-            && pexit->u1.to_room != NULL
-            && can_see_room(ch, pexit->u1.to_room)) {
+            && pexit->to_room != NULL
+            && can_see_room(ch, pexit->to_room)) {
             found = true;
             dClosed = IS_SET(pexit->exit_info, EX_CLOSED);
             if (fAuto) {
@@ -852,12 +852,12 @@ void do_exits(struct char_data *ch, const char *argument)
             } else {
                 sprintf(buf + strlen(buf), "%-5s - %s",
                         capitalize(dir_name[door]),
-                        room_is_dark(ch, pexit->u1.to_room)
+                        room_is_dark(ch, pexit->to_room)
                         ? "Too dark to tell"
-                        : pexit->u1.to_room->name
+                        : pexit->to_room->name
                        );
                 if (IS_IMMORTAL(ch))
-                    sprintf(buf + strlen(buf), "(room %ld)\n\r", pexit->u1.to_room->vnum);
+                    sprintf(buf + strlen(buf), "(room %ld)\n\r", pexit->to_room->vnum);
                 else
                     sprintf(buf + strlen(buf), "\n\r");
             }
@@ -874,8 +874,8 @@ void do_exits(struct char_data *ch, const char *argument)
 
     for (door = 0; door <= 5; door++) {
         if ((pexit = ch->in_room->exit[door]) != NULL
-            && pexit->u1.to_room != NULL
-            && can_see_room(ch, pexit->u1.to_room)) {
+            && pexit->to_room != NULL
+            && can_see_room(ch, pexit->to_room)) {
             dClosed = IS_SET(pexit->exit_info, EX_CLOSED);
 
             if (door == 0) {
