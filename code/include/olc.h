@@ -136,8 +136,6 @@ DECLARE_OLC_FUN(aedit_desc);
 
 /* room editor */
 DECLARE_OLC_FUN(redit_show);
-DECLARE_OLC_FUN(redit_create);
-DECLARE_OLC_FUN(redit_clone);
 DECLARE_OLC_FUN(redit_name);
 DECLARE_OLC_FUN(redit_desc);
 DECLARE_OLC_FUN(redit_ed);

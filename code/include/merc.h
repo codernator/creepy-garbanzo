@@ -2252,6 +2252,9 @@ void affectdata_free(/*@only@*/struct affect_data *data);
 void extradescrdata_free(/*@only@*/struct extra_descr_data *data);
 /*@only@*/struct extra_descr_data *extradescrdata_deserialize(const struct array_list *data);
 /*@only@*/struct array_list *extradescrdata_serialize(const struct extra_descr_data *extra);
+/*@null@*//*@observer@*/struct extra_descr_data *extradescrdata_riterator_startroom(struct roomtemplate *room);
+/*@null@*//*@observer@*/struct extra_descr_data *extradescrdata_iterator_startobject(struct objecttemplate *object);
+/*@null@*//*@observer@*/struct extra_descr_data *extradescrdata_terator(struct extra_descr_data *current);
 
 /*@null@*//*@observer@*/struct extra_descr_data *extradescrdata_match(/*@observer@*/struct extra_descr_data *head, /*@observer@*/const char *partialkey);
 

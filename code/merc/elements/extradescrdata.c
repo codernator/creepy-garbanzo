@@ -85,6 +85,24 @@ struct extra_descr_data *extradescrdata_match(struct extra_descr_data *head, con
     return target;
 }
 
+struct extra_descr_data *extradescrdata_iterator_startroom(struct roomtemplate *room)
+{
+    assert(room != NULL);
+    return room->extra_descr->next;
+}
+
+struct extra_descr_data *extradescrdata_iterator_startobject(struct objecttemplate *object)
+{
+    assert(object != NULL);
+    return object->extra_descr->next;
+}
+
+struct extra_descr_data *extradescrdata_iterator(struct extra_descr_data *current)
+{
+    assert(current != NULL);
+    return current->next;
+}
+
 void olc_extradescrdata_getdescription(void *owner, char *target, size_t maxsize)
 {
     struct extra_descr_data *extra;
@@ -101,3 +119,4 @@ void olc_extradescrdata_setdescription(void *owner, const char *text)
     extra->description = strdup(text);
     return;
 }
+

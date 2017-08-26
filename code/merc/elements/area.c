@@ -11,6 +11,7 @@ static struct area_data head_node;
 static bool passes(struct area_data *testee, /*@null@*//*@partial@*/const struct area_filter *filter);
 static void headlist_add(/*@owned@*/struct area_data *entry);
 
+
 struct area_data *area_iterator_start(const struct area_filter *filter)
 {
     struct area_data *current = head_node.next;
@@ -115,8 +116,6 @@ struct array_list *area_serialize(const struct area_data *areadata)
 
     return answer;
 }
-
-
 
 struct area_data *area_deserialize(const struct array_list *data, const char *filename)
 {

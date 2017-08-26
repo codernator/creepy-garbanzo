@@ -36,8 +36,7 @@ extern int wear_bit(int loc);
 /***************************************************************************
  *	local functions
  ***************************************************************************/
-static void olc_exitdata_getdescription(void *owner, char *target, size_t maxlen);
-static void olc_exitdata_setdescription(void* owner, const char *text);
+static bool change_exit(struct char_data *ch, const char *argument, int door);
 static void redit_extradesc_add(struct char_data *ch, const char *argument);
 static void redit_extradesc_edit(struct char_data *ch, const char *argument);
 static void redit_extradesc_delete(struct char_data *ch, const char *argument);
@@ -51,238 +50,22 @@ static const struct editor_cmd_type extra_cmd_table[] =
         { "", NULL, "" }
     };
 
-/***************************************************************************
- *	change_exit
- *
- *	change the values of an exit
- ***************************************************************************/
-static bool change_exit(struct char_data *ch, const char *argument, int door)
-{
-    struct roomtemplate *room;
-    char command[MAX_INPUT_LENGTH];
-    char arg[MAX_INPUT_LENGTH];
-    int value;
-
-    EDIT_ROOM(ch, room);
-
-    /* set the exit flags - needs full argument */
-    if ((value = flag_value(exit_flags, argument)) != NO_FLAG) {
-        struct roomtemplate *pToRoom;
-        int rev;
-
-        if (!room->exit[door]) {
-            send_to_char("Exit does not exist.\n\r", ch);
-            return false;
-        }
-
-        /* this room */
-        TOGGLE_BIT(room->exit[door]->rs_flags, value);
-        room->exit[door]->exit_info = room->exit[door]->rs_flags;
-
-        /* connected room */
-        pToRoom = room->exit[door]->to_room;
-        rev = rev_dir[door];
-
-        if (pToRoom->exit[rev] != NULL) {
-            pToRoom->exit[rev]->rs_flags = room->exit[door]->rs_flags;
-            pToRoom->exit[rev]->exit_info = room->exit[door]->exit_info;
-        }
-
-        send_to_char("Exit flag toggled.\n\r", ch);
-        return true;
-    }
-
-    /* parse the arguments */
-    argument = one_argument(argument, command);
-    one_argument(argument, arg);
-
-    if (command[0] == '\0' && argument[0] == '\0') {
-        move_char(ch, door, true);
-        return false;
-    }
-
-    if (command[0] == '?') {
-        show_help(ch->desc, "OLC_EXIT", NULL);
-        return false;
-    }
-
-    if (!str_cmp(command, "delete")) {
-        struct roomtemplate *pToRoom;
-        int rev;
-
-        if (!room->exit[door]) {
-            send_to_char("REdit:  Cannot delete a null exit.\n\r", ch);
-            return false;
-        }
-
-        /* remove ToRoom exit */
-        rev = rev_dir[door];
-        pToRoom = room->exit[door]->to_room;
-
-        if (pToRoom->exit[rev]) {
-            free_exit(pToRoom->exit[rev]);
-            pToRoom->exit[rev] = NULL;
-        }
-
-        /* remove this exit */
-        free_exit(room->exit[door]);
-        room->exit[door] = NULL;
-
-        send_to_char("Exit unlinked.\n\r", ch);
-        return true;
-    }
-
-    if (!str_cmp(command, "link")) {
-        struct exit_data *pExit;
-        struct roomtemplate *toRoom;
-
-        if (arg[0] == '\0' || !is_number(arg)) {
-            send_to_char("Syntax:  [direction] link [vnum]\n\r", ch);
-            return false;
-        }
-
-        value = parse_int(arg);
-
-        if (!(toRoom = get_room_index(value))) {
-            send_to_char("REdit:  Cannot link to non-existant room.\n\r", ch);
-            return false;
-        }
-
-        if (!IS_BUILDER(ch, toRoom->area)) {
-            send_to_char("REdit:  Cannot link to that area.\n\r", ch);
-            return false;
-        }
-
-        if (toRoom->exit[rev_dir[door]]) {
-            send_to_char("REdit:  Remote side's exit already exists.\n\r", ch);
-            return false;
-        }
-
-        if (!room->exit[door])
-            room->exit[door] = new_exit();
-
-        room->exit[door]->to_room = toRoom;
-        room->exit[door]->orig_door = door;
-
-        door = rev_dir[door];
-        pExit = new_exit();
-        pExit->to_room = room;
-        pExit->orig_door = door;
-        toRoom->exit[door] = pExit;
-
-        send_to_char("Two-way link established.\n\r", ch);
-        return true;
-    }
-
-    if (!str_cmp(command, "dig")) {
-        char buf[MAX_STRING_LENGTH];
-
-        if (arg[0] == '\0' || !is_number(arg)) {
-            send_to_char("Syntax: [direction] dig <vnum>\n\r", ch);
-            return false;
-        }
-
-        redit_create(ch, arg);
-        sprintf(buf, "link %s", arg);
-        change_exit(ch, buf, door);
-        return true;
-    }
-
-    if (!str_cmp(command, "room")) {
-        struct roomtemplate *toRoom;
-
-        if (arg[0] == '\0' || !is_number(arg)) {
-            send_to_char("Syntax:  [direction] room [vnum]\n\r", ch);
-            return false;
-        }
-        value = parse_int(arg);
-
-        if (!(toRoom = get_room_index(value))) {
-            send_to_char("REdit:  Cannot link to non-existant room.\n\r", ch);
-            return false;
-        }
-
-        if (!room->exit[door])
-            room->exit[door] = new_exit();
-
-        room->exit[door]->to_room = toRoom;
-        room->exit[door]->orig_door = door;
-
-        send_to_char("One-way link established.\n\r", ch);
-        return true;
-    }
-
-    if (!str_cmp(command, "key")) {
-        struct objecttemplate *key;
-
-        if (arg[0] == '\0' || !is_number(arg)) {
-            send_to_char("Syntax:  [direction] key [vnum]\n\r", ch);
-            return false;
-        }
-
-        if (!room->exit[door]) {
-            send_to_char("Exit does not exist.\n\r", ch);
-            return false;
-        }
-
-        value = parse_int(arg);
-
-        if (!(key = objecttemplate_getbyvnum(value))) {
-            send_to_char("REdit:  Key doesn't exist.\n\r", ch);
-            return false;
-        }
-
-        if (key->item_type != ITEM_KEY) {
-            send_to_char("REdit:  Object is not a key.\n\r", ch);
-            return false;
-        }
-
-        room->exit[door]->key = value;
-
-        send_to_char("Exit key set.\n\r", ch);
-        return true;
-    }
-
-    if (!str_cmp(command, "name")) {
-        if (arg[0] == '\0') {
-            send_to_char("Syntax:  [direction] name [string]\n\r", ch);
-            send_to_char("         [direction] name none\n\r", ch);
-            return false;
-        }
-
-        if (!room->exit[door]) {
-            send_to_char("Exit does not exist.\n\r", ch);
-            return false;
-        }
-
-        free_string(room->exit[door]->keyword);
-
-        if (str_cmp(arg, "none"))
-            room->exit[door]->keyword = str_dup(arg);
-        else
-            room->exit[door]->keyword = str_dup("");
-
-        send_to_char("Exit name set.\n\r", ch);
-        return true;
-    }
-
-    if (!str_prefix(command, "description")) {
-        if (arg[0] == '\0') {
-            if (!room->exit[door]) {
-                send_to_char("Exit does not exist.\n\r", ch);
-                return false;
-            }
-
-            olc_start_string_editor(ch, &room->exit[door], olc_exitdata_getdescription, olc_exitdata_setdescription);
-            return true;
-        }
-
-        send_to_char("Syntax:  [direction] desc\n\r", ch);
-        return false;
-    }
-
-    return false;
-}
+static void redit_reset(struct char_data *ch, const char *argument);
+static void redit_create(struct char_data *ch, const char *argument);
+static void redit_clone(struct char_data *ch, const char *argument);
+static void redit_edit(struct char_data *ch, const char *argument);
+static void redit_delete(struct char_data *ch, const char *argument);
+static void redit_help(struct char_data *ch, const char *argument);
+static const struct editor_cmd_type redit_cmd_table[] =
+    {
+        { "create", redit_create,  "create <vnum>            - create a new room in the current area." },
+        { "clone",  redit_clone,   "clone <source> <target>  - clone an existing room to a new room." },
+        { "edit",   redit_edit,    "edit <vnum>              - enter edit mode for an existing room."},
+        { "remove", redit_delete,  "remove <vnum>            - remove an existing room." },
+        { "reset",  redit_reset,   "reset <vnum>             - reset a room." },
+        { "?",      redit_help,    "?                        - show this help."},
+        { "", NULL, "" }
+    };
 
 
 /*****************************************************************************
@@ -292,185 +75,213 @@ static bool change_exit(struct char_data *ch, const char *argument, int door)
  *****************************************************************************/
 void do_redit(struct char_data *ch, const char *argument)
 {
-    struct roomtemplate *room;
-    char arg[MAX_STRING_LENGTH];
+    char command[MAX_INPUT_LENGTH];
+    int cmdindex = 0;
 
-    if (IS_NPC(ch))
-        return;
+    DENY_NPC(ch);
 
-    argument = one_argument(argument, arg);
-    room = ch->in_room;
+    argument = one_argument(argument, command);
 
-    if (!str_cmp(arg, "reset")) { /* redit reset */
-        if (!IS_BUILDER(ch, room->area)) {
-            send_to_char("Insufficient security to edit rooms.\n\r", ch);
-            return;
-        }
-
-        reset_room(room);
-        send_to_char("Room reset.\n\r", ch);
-
-        return;
-    } else {
-        if (!str_cmp(arg, "create")) {   /* redit create <vnum> */
-            if (argument[0] == '\0' || parse_int(argument) == 0) {
-                send_to_char("Syntax:  edit room create [vnum]\n\r", ch);
-                return;
-            }
-
-            if (redit_create(ch, argument)) {
-                ch->desc->editor = ED_ROOM;
-                char_from_room(ch);
-                char_to_room(ch, ch->desc->ed_data);
-                SET_BIT(((struct roomtemplate *)ch->desc->ed_data)->area->area_flags, AREA_CHANGED);
-            }
-
-            return;
-        } else if (!str_cmp(arg, "clone")) {
-            if (argument[0] == '\0') {
-                send_to_char("Syntax:  edit room clone [new vnum] [existing vnum]\n\r", ch);
-                return;
-            }
-
-            if (redit_create(ch, argument)) {
-                argument = one_argument(argument, arg);
-                ch->desc->editor = ED_ROOM;
-
-                char_from_room(ch);
-                char_to_room(ch, ch->desc->ed_data);
-
-                SET_BIT(((struct roomtemplate *)ch->desc->ed_data)->area->area_flags, AREA_CHANGED);
-                redit_clone(ch, argument);
-            }
-
-            return;
-        } else if (!IS_NULLSTR(arg)) {  /* redit <vnum> */
-            room = get_room_index(parse_int(arg));
-
-            if (!room) {
-                send_to_char("REdit : room does not exist.\n\r", ch);
-                return;
-            }
-
-            if (!IS_BUILDER(ch, room->area)) {
-                send_to_char("REdit : insufficient security to edit rooms.\n\r", ch);
-                return;
-            }
-
-            char_from_room(ch);
-            char_to_room(ch, room);
-        }
-    }
-
-    if (!IS_BUILDER(ch, room->area)) {
-        send_to_char("REdit : Insufficient security to edit rooms.\n\r", ch);
+    if (command[0] == '\0') {
+        redit_help(ch, argument);
         return;
     }
 
-    ch->desc->ed_data = (void *)room;
-    ch->desc->editor = ED_ROOM;
+    if (is_number(argument)) {
+        // edit room <vnum> simpler than edit room edit <vnum>
+        redit_edit(ch, argument);
+    }
 
+    for (cmdindex = 0; redit_cmd_table[cmdindex].do_fn != NULL; cmdindex++) {
+        if (command[0] == redit_cmd_table[cmdindex].name[0]
+            && !str_cmp(command, redit_cmd_table[cmdindex].name)) {
+            (*redit_cmd_table[cmdindex].do_fn)(ch, argument);
+            return;
+        }
+    }
+
+    send_to_char("`@COMMAND NOT FOUND``\n\r", ch);
     return;
 }
 
-
-/***************************************************************************
- *	redit functions
- ***************************************************************************/
-/***************************************************************************
- *	redit_create
- *
- *	create a new room
- ***************************************************************************/
-EDIT(redit_create){
-    struct area_data *area;
+void redit_reset(struct char_data *ch, const char *argument)
+{
     struct roomtemplate *room;
-    long value;
-    long hash_idx;
+    unsigned long vnum;
+    char arg[MAX_STRING_LENGTH];
 
-    EDIT_ROOM(ch, room);
-    value = parse_long(argument);
-    if (argument[0] == '\0' || value <= 0) {
-        send_to_char("Syntax:  create [vnum > 0]\n\r", ch);
-        return false;
+    (void)one_argument(argument, arg);
+    if (is_number(arg)){
+        vnum = parse_unsigned_long(arg);
+        room = roomtemplate_getbyvnum(vnum);
+        if (room == NULL) {
+            printf_to_char(ch, "Room %lu does not exist.\n\r", vnum);
+            return;
+        }
+    } else {
+        room = ch->in_room;
     }
 
-    area = area_getbycontainingvnum(value);
+    if (!IS_BUILDER(ch, room->area)) {
+        send_to_char("Insufficient security to edit rooms.\n\r", ch);
+        return;
+    }
+
+    reset_room(room);
+    send_to_char("Room reset.\n\r", ch);
+    return;
+}
+
+void redit_create(struct char_data *ch, const char *argument)
+{
+    struct area_data *area;
+    struct roomtemplate *room;
+    unsigned long vnum;
+
+    if (argument[0] == '\0' || !is_number(argument)) {
+        send_to_char("Syntax:  edit room create [vnum]\n\r", ch);
+        return;
+    }
+
+    area = area_getbycontainingvnum(vnum);
     if (!area) {
-        send_to_char("REdit:  That vnum is not assigned an area.\n\r", ch);
-        return false;
+        printf_to_char(ch, "REdit: There is no area containing vnum %lu.\n\r", vnum);
+        return;
     }
 
     if (!IS_BUILDER(ch, area)) {
-        send_to_char("REdit:  Vnum in an area you cannot build in.\n\r", ch);
-        return false;
+        printf_to_char(ch, "REdit: You don't have access to build in the area contained by vnum %lu.\n\r", vnum);
+        return;
     }
 
     if (get_room_index(value)) {
-        send_to_char("REdit:  Room vnum already exists.\n\r", ch);
-        return false;
+        printf_to_char(ch, "REdit: Room vnum %lu already exists.\n\r", vnum);
+        return;
     }
 
-    room = new_room_index();
+    room = roomtemplate_new(vnum);
     room->area = area;
-    room->vnum = value;
 
     if (value > top_vnum_room)
         top_vnum_room = value;
 
-    hash_idx = value % MAX_KEY_HASH;
-    room->next = room_index_hash[hash_idx];
-    room_index_hash[hash_idx] = room;
-    ch->desc->ed_data = (void *)room;
-
     send_to_char("Room created.\n\r", ch);
-    return true;
+
+    char_from_room(ch);
+    char_to_room(ch, room);
+    SET_BIT(area->area_flags, AREA_CHANGED);
+    ch->desc->ed_data = (void *)room;
+    ch->desc->editor = ED_ROOM;
+    return;
 }
 
+void redit_clone(struct char_data *ch, const char *argument)
+{
+    struct roomtemplate *source;
+    struct roomtemplate *target;
+    char arg1[MAX_STRING_LENGTH];
+    char arg2[MAX_STRING_LENGTH];
+    struct area_data *targetarea;
+    unsigned long targetvnum;
+    unsigned long sourcevnum;
 
-/***************************************************************************
- *	redit_clone
- *
- *	Clone the properties from some room into the builder's current room.
- ***************************************************************************/
-EDIT(redit_clone){
-    struct roomtemplate *room = NULL;
-    struct roomtemplate *clone = NULL;
-    long room_idx;
-    char buf[100];
+    argument = one_argument(argument, arg1);
+    (void)one_argument(argument, arg2);
 
-    EDIT_ROOM(ch, room);
-    if (room == NULL) {
-        send_to_char("REdit: Cloning a room copies over the room you are in, but you are not in a room.", ch);
-        return false;
+    if (arg1[0] == '\0' || !is_number(arg1)) {
+        send_to_char("REdit syntax: clone [target vnum] <source vnum>\n\r", ch);
+        return;
     }
 
-    room_idx = parse_long(argument);
+    targetvnum = parse_int(arg1);
+    if (roomtemplate_getbyvnum(targetvnum) != NULL) {
+        printf_to_char(ch, "REdit:  Target vnum %lu already exists.\n\r", targetvnum);
+        return;
+    }
+    targetarea = area_getbycontainingvnum(targetvnum);
+    if (!targetarea) {
+        printf_to_char(ch, "REdit: There is no area containing vnum %lu.\n\r", targetvnum);
+        return;
+    }
+
+    if (!IS_BUILDER(ch, targetarea)) {
+        printf_to_char(ch, "REdit: You don't have access to build in the area contained by vnum %lu.\n\r", targetvnum);
+        return;
+    }
+
+    if (arg2[0] != '\0')
+    {
+        if (!is_number(arg2))
+        {
+            send_to_char("REdit:  The source vnum must be a number.\n\r", ch);
+            return;
+        }
+        sourcevnum = parse_int(arg2);
+        source = roomtemplate_getbyvnum(sourcevnum);
+        if (source == NULL)
+        {
+            printf_to_char(ch, "REdit:  Source vnum %lu does not yet exist.\n\r", sourcevnum);
+            return;
+        }
+    }
+    else
+    {
+        EDIT_ROOM(ch, source);
+        sourcevnum = source->vnum;
+    }
+
+    target = roomtemplate_clone(source, targetvnum, targetarea);
+    ch->desc->ed_data = (void *)target;
+    if (targetvnum > top_vnum_room)
+        top_vnum_room = targetvnum;
+
+    char_from_room(ch);
+    char_to_room(ch, target);
+    SET_BIT(targetarea->area_flags, AREA_CHANGED);
+    ch->desc->editor = ED_ROOM;
+    printf_to_char(ch, "Room %lu cloned. You are now editing room %lu.\n\r", sourcevnum, targetvnum);
+    return;
+}
+
+void redit_edit(struct char_data *ch, const char *argument)
+{
+    struct area_data *area;
+    struct roomtemplate *room;
+    unsigned long vnum;
+
     if (argument[0] == '\0') {
-        send_to_char("REdit: Syntax:  clone [existing vnum]\n\r", ch);
-        return false;
+        EDIT_ROOM(ch, room);
+
+        if (!IS_BUILDER(ch, room->area)) {
+            send_to_char("REdit : insufficient security to edit rooms.\n\r", ch);
+            return;
+        }
+        ch->desc->ed_data = (void *)room;
+        ch->desc->editor = ED_ROOM;
+        printf_to_char(ch, "You are now editing room %lu.\n\r", room->vnum);
+        return;
     }
 
-    if ((clone = get_room_index(room_idx)) == NULL) {
-        send_to_char("REdit:  Room to clone does not exist.\n\r", ch);
-        return false;
+    if (!is_number(argument)) {
+        send_to_char("REdit syntax: edit [target vnum]\n\r", ch);
+        return;
     }
 
-    free_string(room->name);
-    free_string(room->description);
+    vnum = parse_unsigned_long(argument);
+    room = roomtemplate_getbyvnum(vnum);
+    if (room == NULL) {
+        printf_to_char(ch, "REdit:  Room vnum %lu does not yet exist.\n\r", vnum);
+        return;
+    }
 
-    room->name = str_dup(clone->name);
-    room->description = str_dup(clone->description);
-    room->room_flags = clone->room_flags;
-    room->light = clone->light;
-    room->sector_type = clone->sector_type;
-    room->heal_rate = clone->heal_rate;
-    room->mana_rate = clone->mana_rate;
-
-    snprintf(buf, 100, "REdit: This room has become a clone of room %ld.\n\r", room_idx);
-    send_to_char(buf, ch);
-    return true;
+    char_from_room(ch);
+    char_to_room(ch, room);
+    ch->desc->ed_data = (void *)room;
+    ch->desc->editor = ED_ROOM;
+    printf_to_char(ch, "You are now editing room %lu.\n\r", room->vnum);
+    return;
 }
+
 
 
 /***************************************************************************
@@ -485,7 +296,6 @@ EDIT(redit_rlist){
     char *unclr;
     char arg[MAX_INPUT_LENGTH];
     bool found;
-    long vnum;
     int col = 0;
 
     (void)one_argument(argument, arg);
@@ -494,17 +304,17 @@ EDIT(redit_rlist){
     buf = new_buf();
     found = false;
 
-    for (vnum = area->min_vnum; vnum <= area->max_vnum; vnum++) {
-        if ((room = get_room_index(vnum))) {
-            found = true;
+    for (room = roomtemplate_iterator_start(&roomtemplate_empty_filter);
+            room != NULL;
+            room = roomtemplate_iterator(room, &rommtemplate_empty_filter)) {
+        found = true;
 
-            unclr = uncolor_str(capitalize(room->name));
-            printf_buf(buf, "[`1%5d``] %-17.16s", vnum, unclr);
-            free_string(unclr);
+        unclr = uncolor_str(capitalize(room->name));
+        printf_buf(buf, "[`1%5d``] %-17.16s", vnum, unclr);
+        free_string(unclr);
 
-            if (++col % 3 == 0)
-                add_buf(buf, "\n\r");
-        }
+        if (++col % 3 == 0)
+            add_buf(buf, "\n\r");
     }
 
     if (!found) {
@@ -522,196 +332,6 @@ EDIT(redit_rlist){
 
 
 /***************************************************************************
- *	redit_mlist
- *
- *	list all of the mobs in an area
- ***************************************************************************/
-EDIT(redit_mlist){
-    struct mob_index_data *mob;
-    struct area_data *area;
-    struct buf_type *buf;
-    char arg[MAX_INPUT_LENGTH];
-    char *unclr;
-    bool all;
-    bool found;
-    long vnum;
-    int col = 0;
-
-
-    one_argument(argument, arg);
-    if (is_help(arg)) {
-        send_to_char("Syntax:  mlist <all/name>\n\r", ch);
-        return false;
-    }
-
-    buf = new_buf();
-    area = ch->in_room->area;
-    all = !str_cmp(arg, "all");
-    found = false;
-
-    for (vnum = area->min_vnum; vnum <= area->max_vnum; vnum++) {
-        if ((mob = get_mob_index(vnum)) != NULL) {
-            if (all || is_name(arg, mob->player_name)) {
-                found = true;
-                unclr = uncolor_str(capitalize(mob->short_descr));
-
-                printf_buf(buf, "[`1%5d``] %-17.16s",
-                           mob->vnum,
-                           unclr);
-
-                free_string(unclr);
-                if (++col % 3 == 0)
-                    add_buf(buf, "\n\r");
-            }
-        }
-    }
-
-    if (!found) {
-        send_to_char("Mobile(s) not found in this area.\n\r", ch);
-        return false;
-    }
-
-    if (col % 3 != 0)
-        add_buf(buf, "\n\r");
-
-
-    page_to_char(buf_string(buf), ch);
-    free_buf(buf);
-    return false;
-}
-
-
-
-/***************************************************************************
- *	redit_olist
- *
- *	list all the objects in an area
- ***************************************************************************/
-EDIT(redit_olist){
-    struct objecttemplate *obj;
-    struct area_data *area;
-    struct buf_type *buf;
-    char arg[MAX_INPUT_LENGTH];
-    char *unclr;
-    bool all;
-    bool found;
-    long vnum;
-    int col = 0;
-
-    (void)one_argument(argument, arg);
-    if (arg[0] == '\0') {
-        send_to_char("Syntax:  olist <all/name/item_type>\n\r", ch);
-        return false;
-    }
-
-    area = ch->in_room->area;
-    buf = new_buf();
-    all = !str_cmp(arg, "all");
-    found = false;
-
-    for (vnum = area->min_vnum; vnum <= area->max_vnum; vnum++) {
-        if ((obj = objecttemplate_getbyvnum(vnum))) {
-            if (all || is_name(arg, obj->name)
-                || flag_value(type_flags, arg) == obj->item_type) {
-                found = true;
-                unclr = uncolor_str(capitalize(obj->short_descr));
-                printf_buf(buf, "[`1%5d``] %-17.16s",
-                           obj->vnum,
-                           unclr);
-                free_string(unclr);
-                if (++col % 3 == 0)
-                    add_buf(buf, "\n\r");
-            }
-        }
-    }
-
-    if (!found) {
-        send_to_char("Object(s) not found in this area.\n\r", ch);
-        return false;
-    }
-
-    if (col % 3 != 0)
-        add_buf(buf, "\n\r");
-
-    page_to_char(buf_string(buf), ch);
-    free_buf(buf);
-    return false;
-}
-
-
-/***************************************************************************
- *	redit_mshow
- *
- *	show a mob in the area
- ***************************************************************************/
-EDIT(redit_mshow){
-    struct mob_index_data *mob;
-    int value;
-
-    if (argument[0] == '\0') {
-        send_to_char("Syntax:  mshow <vnum>\n\r", ch);
-        return false;
-    }
-
-    if (!is_number(argument)) {
-        send_to_char("REdit: Enter a mobs vnum.\n\r", ch);
-        return false;
-    }
-
-    if (is_number(argument)) {
-        value = parse_int(argument);
-        if (!(mob = get_mob_index(value))) {
-            send_to_char("REdit:  That mobile does not exist.\n\r", ch);
-            return false;
-        }
-
-        ch->desc->ed_data = (void *)mob;
-    }
-
-    medit_show(ch, argument);
-    ch->desc->ed_data = (void *)ch->in_room;
-
-    return false;
-}
-
-
-/***************************************************************************
- *	redit_oshow
- *
- *	show an object in an area
- ***************************************************************************/
-EDIT(redit_oshow){
-    struct objecttemplate *obj;
-    int value;
-
-    if (argument[0] == '\0') {
-        send_to_char("Syntax:  oshow <vnum>\n\r", ch);
-        return false;
-    }
-
-    if (!is_number(argument)) {
-        send_to_char("REdit: Enter an object vnum.\n\r", ch);
-        return false;
-    }
-
-    if (is_number(argument)) {
-        value = parse_int(argument);
-        if (!(obj = objecttemplate_getbyvnum(value))) {
-            send_to_char("REdit:  That object does not exist.\n\r", ch);
-            return false;
-        }
-
-        ch->desc->ed_data = (void *)obj;
-    }
-
-    oedit_show(ch, argument);
-
-    ch->desc->ed_data = (void *)ch->in_room;
-    return false;
-}
-
-
-/***************************************************************************
  *	redit_show
  *
  *	show the details for a room
@@ -720,6 +340,7 @@ EDIT(redit_show){
     struct roomtemplate *room;
     struct gameobject *obj;
     struct char_data *rch;
+    struct extra_descr_data *ed;
     char buf[MAX_STRING_LENGTH];
     int door;
     bool fcnt;
@@ -741,15 +362,17 @@ EDIT(redit_show){
     if (!IS_NULLSTR(room->owner))
         printf_to_char(ch, "`&Owner``:       [%s]\n\r", room->owner);
 
-    if (room->extra_descr) {
-        struct extra_descr_data *ed;
-
+    ed = extradescrdata_iterator_startroom(room);
+    if (ed != NULL {
+        struct extra_descr_data *ednext;
 
         printf_to_char(ch, "`&Desc Kwds``:   [");
-        for (ed = room->extra_descr; ed; ed = ed->next) {
+        while (ed != NULL) {
+            ednext = extradescrdata_iterator(ed);
             printf_to_char(ch, ed->keyword);
-            if (ed->next)
+            if (ednext != NULL)
                 printf_to_char(ch, " ");
+            ed = ednext;
 
         }
         printf_to_char(ch, "]\n\r");
@@ -978,7 +601,6 @@ EDIT(redit_desc){
 
     olc_start_string_editor(ch, room, olc_roomtemplate_getdescription, olc_roomtemplate_setdescription);
     return true;
-    olc_start_string_editor(ch, room, olc_roomtemplate_getdescription, olc_roomtemplate_setdescription);
 }
 
 
@@ -1545,23 +1167,6 @@ EDIT(redit_showrooms){
 }
 
 
-void olc_exitdata_getdescription(void *owner, char *target, size_t maxlen)
-{
-    struct exit_data *exit;
-    exit = (struct exit_data *)owner;
-    (void)strncpy(target, exit->description, maxlen);
-    return;
-}
-
-void olc_exitdata_setdescription(void* owner, const char *text)
-{
-    struct exit_data *exit;
-    exit = (struct exit_data *)owner;
-    free_string(exit->description);
-    exit->description = str_dup(text);
-    return;
-}
-
 void redit_extradesc_add(struct char_data *ch, const char *argument)
 {
     char keyword[MAX_INPUT_LENGTH];
@@ -1632,3 +1237,238 @@ void redit_extradesc_help(struct char_data *ch, const char *argument) {
     }
     return;
 }
+
+
+/***************************************************************************
+ *	change_exit
+ *
+ *	change the values of an exit
+ ***************************************************************************/
+bool change_exit(struct char_data *ch, const char *argument, int door)
+{
+    struct roomtemplate *room;
+    char command[MAX_INPUT_LENGTH];
+    char arg[MAX_INPUT_LENGTH];
+    int value;
+
+    EDIT_ROOM(ch, room);
+
+    /* set the exit flags - needs full argument */
+    if ((value = flag_value(exit_flags, argument)) != NO_FLAG) {
+        struct roomtemplate *pToRoom;
+        int rev;
+
+        if (!room->exit[door]) {
+            send_to_char("Exit does not exist.\n\r", ch);
+            return false;
+        }
+
+        /* this room */
+        TOGGLE_BIT(room->exit[door]->rs_flags, value);
+        room->exit[door]->exit_info = room->exit[door]->rs_flags;
+
+        /* connected room */
+        pToRoom = room->exit[door]->to_room;
+        rev = rev_dir[door];
+
+        if (pToRoom->exit[rev] != NULL) {
+            pToRoom->exit[rev]->rs_flags = room->exit[door]->rs_flags;
+            pToRoom->exit[rev]->exit_info = room->exit[door]->exit_info;
+        }
+
+        send_to_char("Exit flag toggled.\n\r", ch);
+        return true;
+    }
+
+    /* parse the arguments */
+    argument = one_argument(argument, command);
+    one_argument(argument, arg);
+
+    if (command[0] == '\0' && argument[0] == '\0') {
+        move_char(ch, door, true);
+        return false;
+    }
+
+    if (command[0] == '?') {
+        show_help(ch->desc, "OLC_EXIT", NULL);
+        return false;
+    }
+
+    if (!str_cmp(command, "delete")) {
+        struct roomtemplate *pToRoom;
+        int rev;
+
+        if (!room->exit[door]) {
+            send_to_char("REdit:  Cannot delete a null exit.\n\r", ch);
+            return false;
+        }
+
+        /* remove ToRoom exit */
+        rev = rev_dir[door];
+        pToRoom = room->exit[door]->to_room;
+
+        if (pToRoom->exit[rev]) {
+            free_exit(pToRoom->exit[rev]);
+            pToRoom->exit[rev] = NULL;
+        }
+
+        /* remove this exit */
+        free_exit(room->exit[door]);
+        room->exit[door] = NULL;
+
+        send_to_char("Exit unlinked.\n\r", ch);
+        return true;
+    }
+
+    if (!str_cmp(command, "link")) {
+        struct exit_data *pExit;
+        struct roomtemplate *toRoom;
+
+        if (arg[0] == '\0' || !is_number(arg)) {
+            send_to_char("Syntax:  [direction] link [vnum]\n\r", ch);
+            return false;
+        }
+
+        value = parse_int(arg);
+
+        if (!(toRoom = get_room_index(value))) {
+            send_to_char("REdit:  Cannot link to non-existant room.\n\r", ch);
+            return false;
+        }
+
+        if (!IS_BUILDER(ch, toRoom->area)) {
+            send_to_char("REdit:  Cannot link to that area.\n\r", ch);
+            return false;
+        }
+
+        if (toRoom->exit[rev_dir[door]]) {
+            send_to_char("REdit:  Remote side's exit already exists.\n\r", ch);
+            return false;
+        }
+
+        if (!room->exit[door])
+            room->exit[door] = new_exit();
+
+        room->exit[door]->to_room = toRoom;
+        room->exit[door]->orig_door = door;
+
+        door = rev_dir[door];
+        pExit = new_exit();
+        pExit->to_room = room;
+        pExit->orig_door = door;
+        toRoom->exit[door] = pExit;
+
+        send_to_char("Two-way link established.\n\r", ch);
+        return true;
+    }
+
+    if (!str_cmp(command, "dig")) {
+        char buf[MAX_STRING_LENGTH];
+
+        if (arg[0] == '\0' || !is_number(arg)) {
+            send_to_char("Syntax: [direction] dig <vnum>\n\r", ch);
+            return false;
+        }
+
+        redit_create(ch, arg);
+        sprintf(buf, "link %s", arg);
+        change_exit(ch, buf, door);
+        return true;
+    }
+
+    if (!str_cmp(command, "room")) {
+        struct roomtemplate *toRoom;
+
+        if (arg[0] == '\0' || !is_number(arg)) {
+            send_to_char("Syntax:  [direction] room [vnum]\n\r", ch);
+            return false;
+        }
+        value = parse_int(arg);
+
+        if (!(toRoom = get_room_index(value))) {
+            send_to_char("REdit:  Cannot link to non-existant room.\n\r", ch);
+            return false;
+        }
+
+        if (!room->exit[door])
+            room->exit[door] = new_exit();
+
+        room->exit[door]->to_room = toRoom;
+        room->exit[door]->orig_door = door;
+
+        send_to_char("One-way link established.\n\r", ch);
+        return true;
+    }
+
+    if (!str_cmp(command, "key")) {
+        struct objecttemplate *key;
+
+        if (arg[0] == '\0' || !is_number(arg)) {
+            send_to_char("Syntax:  [direction] key [vnum]\n\r", ch);
+            return false;
+        }
+
+        if (!room->exit[door]) {
+            send_to_char("Exit does not exist.\n\r", ch);
+            return false;
+        }
+
+        value = parse_int(arg);
+
+        if (!(key = objecttemplate_getbyvnum(value))) {
+            send_to_char("REdit:  Key doesn't exist.\n\r", ch);
+            return false;
+        }
+
+        if (key->item_type != ITEM_KEY) {
+            send_to_char("REdit:  Object is not a key.\n\r", ch);
+            return false;
+        }
+
+        room->exit[door]->key = value;
+
+        send_to_char("Exit key set.\n\r", ch);
+        return true;
+    }
+
+    if (!str_cmp(command, "name")) {
+        if (arg[0] == '\0') {
+            send_to_char("Syntax:  [direction] name [string]\n\r", ch);
+            send_to_char("         [direction] name none\n\r", ch);
+            return false;
+        }
+
+        if (!room->exit[door]) {
+            send_to_char("Exit does not exist.\n\r", ch);
+            return false;
+        }
+
+        free_string(room->exit[door]->keyword);
+
+        if (str_cmp(arg, "none"))
+            room->exit[door]->keyword = str_dup(arg);
+        else
+            room->exit[door]->keyword = str_dup("");
+
+        send_to_char("Exit name set.\n\r", ch);
+        return true;
+    }
+
+    if (!str_prefix(command, "description")) {
+        if (arg[0] == '\0') {
+            if (!room->exit[door]) {
+                send_to_char("Exit does not exist.\n\r", ch);
+                return false;
+            }
+
+            olc_start_string_editor(ch, &room->exit[door], olc_exittemplate_getdescription, olc_exittemplate_setdescription);
+            return true;
+        }
+
+        send_to_char("Syntax:  [direction] desc\n\r", ch);
+        return false;
+    }
+
+    return false;
+}
+

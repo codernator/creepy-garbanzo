@@ -122,8 +122,6 @@ struct reset_data *resetdata_deserialize(const struct array_list *data)
 {
     struct reset_data *templatedata;
     const char *entry;
-    const char *entrydata;
-
 
     templatedata = malloc(sizeof(struct reset_data));
     assert(templatedata != NULL);

@@ -65,8 +65,6 @@ static const struct olc_cmd_type redit_table[] =
     /*  {   command			function		}, */
 
     { "commands",  show_commands   },
-    { "create",    redit_create    },
-    { "clone",     redit_clone     },
     { "desc",      redit_desc      },
     { "ed",	       redit_ed	       },
     { "name",      redit_name      },
@@ -83,13 +81,7 @@ static const struct olc_cmd_type redit_table[] =
     { "down",      redit_down      },
 
     /* New reset commands. */
-    { "mreset",    redit_mreset    },
-    { "oreset",    redit_oreset    },
-    { "mlist",     redit_mlist     },
     { "rlist",     redit_rlist     },
-    { "olist",     redit_olist     },
-    { "mshow",     redit_mshow     },
-    { "oshow",     redit_oshow     },
     { "owner",     redit_owner     },
     { "room",      redit_room      },
     { "sector",    redit_sector    },
