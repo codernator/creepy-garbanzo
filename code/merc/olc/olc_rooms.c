@@ -283,7 +283,6 @@ void redit_edit(struct char_data *ch, const char *argument)
 }
 
 
-
 /***************************************************************************
  *	redit_rlist
  *
@@ -336,11 +335,13 @@ EDIT(redit_rlist){
  *
  *	show the details for a room
  ***************************************************************************/
-EDIT(redit_show){
+EDIT(redit_show)
+{
     struct roomtemplate *room;
     struct gameobject *obj;
     struct char_data *rch;
     struct extra_descr_data *ed;
+    struct affect_data *paf;
     char buf[MAX_STRING_LENGTH];
     int door;
     bool fcnt;
@@ -358,12 +359,13 @@ EDIT(redit_show){
         printf_to_char(ch, "`&Health rate``: [%d]\n\r`&Mana rate``:   [%d]\n\r",
                        room->heal_rate, room->mana_rate);
 
-
     if (!IS_NULLSTR(room->owner))
         printf_to_char(ch, "`&Owner``:       [%s]\n\r", room->owner);
 
+    printf_to_char(ch, "`&Description``:\n\r%s", room->description);
+
     ed = extradescrdata_iterator_startroom(room);
-    if (ed != NULL {
+    if (ed != NULL) {
         struct extra_descr_data *ednext;
 
         printf_to_char(ch, "`&Desc Kwds``:   [");
@@ -373,9 +375,26 @@ EDIT(redit_show){
             if (ednext != NULL)
                 printf_to_char(ch, " ");
             ed = ednext;
-
         }
         printf_to_char(ch, "]\n\r");
+    }
+
+    paf = affecttemplate_iterator_startroom(room);
+    if (paf != NULL) {
+        struct dynamic_skill *skill;
+        int iter = 0;
+
+        send_to_char("\n\r`&Number Level  Spell          ``\n\r", ch);
+        send_to_char("`1------ ------ -------------------``\n\r", ch);
+        while (paf != NULL) {
+            if ((skill = resolve_skill_affect(paf)) != NULL) {
+                printf_to_char(ch, "[%4d] %-6d %s\n\r",
+                                iter++,
+                                paf->level,
+                                skill->name);
+            }
+            paf = affecttemplate_iterator(paf);
+        }
     }
 
     printf_to_char(ch, "`&Characters``:  [");
@@ -406,26 +425,6 @@ EDIT(redit_show){
 
     if (!fcnt)
         send_to_char("none]\n\r", ch);
-
-    printf_to_char(ch, "`&Description``:\n\r%s", room->description);
-
-    if (room->affected != NULL) {
-        struct affect_data *paf;
-        struct dynamic_skill *skill;
-        int iter = 0;
-
-        send_to_char("\n\r`&Number Level  Spell          ``\n\r", ch);
-        send_to_char("`1------ ------ -------------------``\n\r", ch);
-
-        for (paf = room->affected; paf != NULL; paf = paf->next, iter++) {
-            if ((skill = resolve_skill_affect(paf)) != NULL) {
-                printf_to_char(ch, "[%4d] %-6d %s\n\r",
-                               iter,
-                               paf->level,
-                               skill->name);
-            }
-        }
-    }
 
     send_to_char("\n\r`&EXITS:\n\r", ch);
     for (door = 0; door < MAX_DIR; door++) {
@@ -491,42 +490,48 @@ EDIT(redit_show){
 /***************************************************************************
  *	redit_north
  ***************************************************************************/
-EDIT(redit_north){
+EDIT(redit_north)
+{
     return change_exit(ch, argument, DIR_NORTH);
 }
 
 /***************************************************************************
  *	redit_south
  ***************************************************************************/
-EDIT(redit_south){
+EDIT(redit_south)
+{
     return change_exit(ch, argument, DIR_SOUTH);
 }
 
 /***************************************************************************
  *	redit_east
  ***************************************************************************/
-EDIT(redit_east){
+EDIT(redit_east)
+{
     return change_exit(ch, argument, DIR_EAST);
 }
 
 /***************************************************************************
  *	redit_west
  ***************************************************************************/
-EDIT(redit_west){
+EDIT(redit_west)
+{
     return change_exit(ch, argument, DIR_WEST);
 }
 
 /***************************************************************************
  *	redit_up
  ***************************************************************************/
-EDIT(redit_up){
+EDIT(redit_up)
+{
     return change_exit(ch, argument, DIR_UP);
 }
 
 /***************************************************************************
  *	redit_down
  ***************************************************************************/
-EDIT(redit_down){
+EDIT(redit_down)
+{
     return change_exit(ch, argument, DIR_DOWN);
 }
 
@@ -576,9 +581,7 @@ EDIT(redit_name){
         return false;
     }
 
-    free_string(room->name);
-    room->name = str_dup(argument);
-
+    roomtemplate_setname(room, argument);
     send_to_char("Name set.\n\r", ch);
     return true;
 }
@@ -589,7 +592,8 @@ EDIT(redit_name){
  *
  *	set the description of the room
  ***************************************************************************/
-EDIT(redit_desc){
+EDIT(redit_desc)
+{
     struct roomtemplate *room;
 
     EDIT_ROOM(ch, room);
@@ -609,7 +613,8 @@ EDIT(redit_desc){
  *
  *	set the healing rate of the room
  ***************************************************************************/
-EDIT(redit_heal){
+EDIT(redit_heal)
+{
     struct roomtemplate *room;
 
     EDIT_ROOM(ch, room);
@@ -628,7 +633,8 @@ EDIT(redit_heal){
  *
  *	set the rate at which mana is healed
  ***************************************************************************/
-EDIT(redit_mana){
+EDIT(redit_mana)
+{
     struct roomtemplate *room;
 
     EDIT_ROOM(ch, room);
@@ -647,7 +653,8 @@ EDIT(redit_mana){
  *
  *	set the owner of a room
  ***************************************************************************/
-EDIT(redit_owner){
+EDIT(redit_owner)
+{
     struct roomtemplate *room;
 
     EDIT_ROOM(ch, room);
@@ -674,7 +681,8 @@ EDIT(redit_owner){
  *
  *	toggle the room flags
  ***************************************************************************/
-EDIT(redit_room){
+EDIT(redit_room)
+{
     struct roomtemplate *room;
     int value;
 
@@ -697,7 +705,8 @@ EDIT(redit_room){
  *
  *	set the sector type of a room
  ***************************************************************************/
-EDIT(redit_sector){
+EDIT(redit_sector)
+{
     struct roomtemplate *room;
     int value;
 
@@ -719,7 +728,8 @@ EDIT(redit_sector){
  *
  *	add an affect to the room
  ***************************************************************************/
-EDIT(redit_addaffect){
+EDIT(redit_addaffect)
+{
     struct roomtemplate *room;
     struct affect_data af;
     struct dynamic_skill *skill;

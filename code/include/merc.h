@@ -2244,6 +2244,10 @@ void olc_objecttemplate_setdescription(/*@dependent@*/void *owner, /*@observer@*
 void affectdata_free(/*@only@*/struct affect_data *data);
 /*@only@*/struct array_list *affectdata_serialize(const struct affect_data *source);
 /*@only@*/struct affect_data *affectdata_deserialize(const struct array_list *data);
+
+/*@null@*//*@observer@*/struct affect_data *affecttemplate_iterator_startroom(struct roomtemplate *room);
+/*@null@*//*@observer@*/struct affect_data *affecttemplate_iterator_startobject(struct objecttemplate *object);
+/*@null@*//*@observer@*/struct affect_data *affecttemplate_iterator(struct affect_data *current);
 /* ~affect_data.c */
 
 /* extra_descr_data.c */
@@ -2252,9 +2256,9 @@ void affectdata_free(/*@only@*/struct affect_data *data);
 void extradescrdata_free(/*@only@*/struct extra_descr_data *data);
 /*@only@*/struct extra_descr_data *extradescrdata_deserialize(const struct array_list *data);
 /*@only@*/struct array_list *extradescrdata_serialize(const struct extra_descr_data *extra);
-/*@null@*//*@observer@*/struct extra_descr_data *extradescrdata_riterator_startroom(struct roomtemplate *room);
+/*@null@*//*@observer@*/struct extra_descr_data *extradescrdata_iterator_startroom(struct roomtemplate *room);
 /*@null@*//*@observer@*/struct extra_descr_data *extradescrdata_iterator_startobject(struct objecttemplate *object);
-/*@null@*//*@observer@*/struct extra_descr_data *extradescrdata_terator(struct extra_descr_data *current);
+/*@null@*//*@observer@*/struct extra_descr_data *extradescrdata_iterator(struct extra_descr_data *current);
 
 /*@null@*//*@observer@*/struct extra_descr_data *extradescrdata_match(/*@observer@*/struct extra_descr_data *head, /*@observer@*/const char *partialkey);
 

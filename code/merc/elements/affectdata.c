@@ -77,3 +77,24 @@ struct array_list *affectdata_serialize(const struct affect_data *affect)
 
     return answer;
 }
+
+struct affect_data *affecttemplate_iterator_startroom(struct roomtemplate *room)
+{
+    assert(room != NULL);
+    assert(room->affected != NULL);
+    return room->affected->next;
+}
+
+struct affect_data *affecttemplate_iterator_startobject(struct objecttemplate *object);
+{
+    assert(object != NULL);
+    assert(object->affected != NULL);
+    return object->affected->next;
+}
+
+struct affect_data *affecttemplate_iterator(struct affect_data *current);
+{
+    assert(current != NULL);
+    return current->next;
+}
+
