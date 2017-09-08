@@ -68,11 +68,7 @@ static const struct editor_cmd_type redit_cmd_table[] =
     };
 
 
-/*****************************************************************************
- *	do_redit
- *
- *	entry level function into the room editor
- *****************************************************************************/
+
 void do_redit(struct char_data *ch, const char *argument)
 {
     char command[MAX_INPUT_LENGTH];
@@ -103,6 +99,8 @@ void do_redit(struct char_data *ch, const char *argument)
     send_to_char("`@COMMAND NOT FOUND``\n\r", ch);
     return;
 }
+
+
 
 void redit_reset(struct char_data *ch, const char *argument)
 {
@@ -154,7 +152,7 @@ void redit_create(struct char_data *ch, const char *argument)
         return;
     }
 
-    if (get_room_index(value)) {
+    if (get_room_index(vnum)) {
         printf_to_char(ch, "REdit: Room vnum %lu already exists.\n\r", vnum);
         return;
     }
@@ -245,7 +243,6 @@ void redit_clone(struct char_data *ch, const char *argument)
 
 void redit_edit(struct char_data *ch, const char *argument)
 {
-    struct area_data *area;
     struct roomtemplate *room;
     unsigned long vnum;
 
@@ -282,15 +279,9 @@ void redit_edit(struct char_data *ch, const char *argument)
     return;
 }
 
-
-/***************************************************************************
- *	redit_rlist
- *
- *	display a list of rooms
- ***************************************************************************/
-EDIT(redit_rlist){
+void redit_rlist(struct char_data *ch, const char *argument)
+{
     struct roomtemplate *room;
-    struct area_data *area;
     struct buf_type *buf;
     char *unclr;
     char arg[MAX_INPUT_LENGTH];
@@ -299,17 +290,16 @@ EDIT(redit_rlist){
 
     (void)one_argument(argument, arg);
 
-    area = ch->in_room->area;
     buf = new_buf();
     found = false;
 
     for (room = roomtemplate_iterator_start(&roomtemplate_empty_filter);
             room != NULL;
-            room = roomtemplate_iterator(room, &rommtemplate_empty_filter)) {
+            room = roomtemplate_iterator(room, &roomtemplate_empty_filter)) {
         found = true;
 
         unclr = uncolor_str(capitalize(room->name));
-        printf_buf(buf, "[`1%5d``] %-17.16s", vnum, unclr);
+        printf_buf(buf, "[`1%5d``] %-17.16s", room->vnum, unclr);
         free_string(unclr);
 
         if (++col % 3 == 0)
@@ -329,13 +319,7 @@ EDIT(redit_rlist){
     return false;
 }
 
-
-/***************************************************************************
- *	redit_show
- *
- *	show the details for a room
- ***************************************************************************/
-EDIT(redit_show)
+void redit_show(struct char_data *ch, const char *argument)
 {
     struct roomtemplate *room;
     struct gameobject *obj;
@@ -482,67 +466,37 @@ EDIT(redit_show)
     return false;
 }
 
-
-
-/***************************************************************************
- *	exits
- ***************************************************************************/
-/***************************************************************************
- *	redit_north
- ***************************************************************************/
-EDIT(redit_north)
+void redit_north(struct char_data *ch, const char *argument)
 {
     return change_exit(ch, argument, DIR_NORTH);
 }
 
-/***************************************************************************
- *	redit_south
- ***************************************************************************/
-EDIT(redit_south)
+void redit_south(struct char_data *ch, const char *argument)
 {
     return change_exit(ch, argument, DIR_SOUTH);
 }
 
-/***************************************************************************
- *	redit_east
- ***************************************************************************/
-EDIT(redit_east)
+void redit_east(struct char_data *ch, const char *argument)
 {
     return change_exit(ch, argument, DIR_EAST);
 }
 
-/***************************************************************************
- *	redit_west
- ***************************************************************************/
-EDIT(redit_west)
+void redit_west(struct char_data *ch, const char *argument)
 {
     return change_exit(ch, argument, DIR_WEST);
 }
 
-/***************************************************************************
- *	redit_up
- ***************************************************************************/
-EDIT(redit_up)
+void redit_up(struct char_data *ch, const char *argument)
 {
     return change_exit(ch, argument, DIR_UP);
 }
 
-/***************************************************************************
- *	redit_down
- ***************************************************************************/
-EDIT(redit_down)
+void redit_down(struct char_data *ch, const char *argument)
 {
     return change_exit(ch, argument, DIR_DOWN);
 }
 
-
-
-/***************************************************************************
- *	redit_ed
- *
- *	edit the rooms extra description
- ***************************************************************************/
-EDIT(redit_ed)
+void redit_ed(struct char_data *ch, const char *argument)
 {
     char command[MAX_INPUT_LENGTH];
     int cmdindex = 0;
@@ -566,13 +520,8 @@ EDIT(redit_ed)
     return false;
 }
 
-
-/***************************************************************************
- *	redit_name
- *
- *	set the name of the room
- ***************************************************************************/
-EDIT(redit_name){
+void redit_name(struct char_data *ch, const char *argument)
+{
     struct roomtemplate *room;
 
     EDIT_ROOM(ch, room);
@@ -586,13 +535,7 @@ EDIT(redit_name){
     return true;
 }
 
-
-/***************************************************************************
- *	redit_desc
- *
- *	set the description of the room
- ***************************************************************************/
-EDIT(redit_desc)
+void redit_desc(struct char_data *ch, const char *argument)
 {
     struct roomtemplate *room;
 
@@ -607,13 +550,7 @@ EDIT(redit_desc)
     return true;
 }
 
-
-/***************************************************************************
- *	redit_heal
- *
- *	set the healing rate of the room
- ***************************************************************************/
-EDIT(redit_heal)
+void redit_heal(struct char_data *ch, const char *argument)
 {
     struct roomtemplate *room;
 
@@ -628,12 +565,7 @@ EDIT(redit_heal)
     return false;
 }
 
-/***************************************************************************
- *	redit_mana
- *
- *	set the rate at which mana is healed
- ***************************************************************************/
-EDIT(redit_mana)
+void redit_mana(struct char_data *ch, const char *argument)
 {
     struct roomtemplate *room;
 
@@ -648,12 +580,7 @@ EDIT(redit_mana)
     return false;
 }
 
-/***************************************************************************
- *	redit_owner
- *
- *	set the owner of a room
- ***************************************************************************/
-EDIT(redit_owner)
+void redit_owner(struct char_data *ch, const char *argument)
 {
     struct roomtemplate *room;
 
@@ -674,14 +601,7 @@ EDIT(redit_owner)
     return true;
 }
 
-
-
-/***************************************************************************
- *	redit_room
- *
- *	toggle the room flags
- ***************************************************************************/
-EDIT(redit_room)
+void redit_room(struct char_data *ch, const char *argument)
 {
     struct roomtemplate *room;
     int value;
@@ -699,13 +619,7 @@ EDIT(redit_room)
     return true;
 }
 
-
-/***************************************************************************
- *	redit_sector
- *
- *	set the sector type of a room
- ***************************************************************************/
-EDIT(redit_sector)
+void redit_sector(struct char_data *ch, const char *argument)
 {
     struct roomtemplate *room;
     int value;
@@ -723,12 +637,7 @@ EDIT(redit_sector)
     return true;
 }
 
-/***************************************************************************
- *	redit_addaffect
- *
- *	add an affect to the room
- ***************************************************************************/
-EDIT(redit_addaffect)
+void redit_addaffect(struct char_data *ch, const char *argument)
 {
     struct roomtemplate *room;
     struct affect_data af;
@@ -761,13 +670,8 @@ EDIT(redit_addaffect)
     return true;
 }
 
-
-/***************************************************************************
- *	redit_delaffect
- *
- *	remove an affect to the room
- ***************************************************************************/
-EDIT(redit_delaffect){
+void redit_delaffect(struct char_data *ch, const char *argument)
+{
     struct roomtemplate *room;
     struct affect_data *paf;
     struct affect_data *paf_next;
@@ -798,13 +702,8 @@ EDIT(redit_delaffect){
     return false;
 }
 
-
-/***************************************************************************
- *	redit_mreset
- *
- *	edit the rooms mob resets
- ***************************************************************************/
-EDIT(redit_mreset){
+void redit_mreset(struct char_data *ch, const char *argument)
+{
     struct roomtemplate *room;
     struct mob_index_data *mob;
     struct char_data *newmob;
@@ -857,13 +756,8 @@ EDIT(redit_mreset){
     return true;
 }
 
-
-/***************************************************************************
- *	redit_oreset
- *
- *	edit the rooms obj resets
- ***************************************************************************/
-EDIT(redit_oreset){
+void redit_oreset(struct char_data *ch, const char *argument)
+{
     struct roomtemplate *room;
     struct objecttemplate *obj;
     struct gameobject *newobj;
@@ -1042,13 +936,8 @@ EDIT(redit_oreset){
     return false;
 }
 
-/***************************************************************************
- *	redit_flagall
- *
- *	set or toggle room flags throughout entire area
- *	added by Monrick, 2/2008
- ***************************************************************************/
-EDIT(redit_flagall){
+void redit_flagall(struct char_data *ch, const char *argument)
+{
     struct roomtemplate *room;                          /* individual room to edit */
     struct area_data *area;                                /* area being edited */
     struct buf_type *buf;                                    /* text to return to ch */
@@ -1114,13 +1003,8 @@ EDIT(redit_flagall){
     return true;
 }
 
-/***************************************************************************
- *	redit_showrooms
- *
- *	show room flags throughout entire area
- *	added by Monrick, 2/2008
- ***************************************************************************/
-EDIT(redit_showrooms){
+void redit_showrooms(struct char_data *ch, const char *argument)
+{
     struct roomtemplate *room;                          /* individual room to edit */
     struct area_data *area;                                /* area being edited */
     struct buf_type *buf;                                    /* text to return to ch */
@@ -1239,7 +1123,8 @@ void redit_extradesc_delete(struct char_data *ch, const char *argument)
     return;
 }
 
-void redit_extradesc_help(struct char_data *ch, const char *argument) {
+void redit_extradesc_help(struct char_data *ch, const char *argument)
+{
     int cmdindex;
     send_to_char("`3-`#========`3- `@OLC Extra Description Editor `3-`#=========`3-``\n\r", ch);
     for (cmdindex = 0; extra_cmd_table[cmdindex].do_fn != NULL; cmdindex++) {
@@ -1248,12 +1133,6 @@ void redit_extradesc_help(struct char_data *ch, const char *argument) {
     return;
 }
 
-
-/***************************************************************************
- *	change_exit
- *
- *	change the values of an exit
- ***************************************************************************/
 bool change_exit(struct char_data *ch, const char *argument, int door)
 {
     struct roomtemplate *room;
@@ -1481,4 +1360,3 @@ bool change_exit(struct char_data *ch, const char *argument, int door)
 
     return false;
 }
-

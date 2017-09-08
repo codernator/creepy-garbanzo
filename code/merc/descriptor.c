@@ -88,6 +88,22 @@ void descriptor_free(struct descriptor_data *d)
     free(d);
 }
 
+void descriptor_push_interpreter(struct descriptor *desc, INTERPRETER_FUN *fun)
+{
+    desc->interpreter_stack.fun[++desc->interpreter_stack.index] = fun;
+}
+
+void descriptor_pop_interpreter(struct descriptor *desc)
+{
+    desc->interpreter_stack.fun[desc->interpreter_stack.index--] = NULL;
+}
+
+INTERPRETER_FUN *descriptor_interpreter(struct descriptor *desc)
+{
+    return desc->interpreter_stack.fun[desc->interpreter_stack.index] = fun;
+}
+
+
 struct descriptor_data *descriptor_iterator_start(const DESCRIPTOR_ITERATOR_FILTER *filter)
 {
     return descriptor_iterator(&head_node, filter);

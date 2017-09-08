@@ -292,17 +292,16 @@ const struct cmd_type cmd_table[] =
     { "return",	      do_return,       POS_DEAD,     L5, LOG_NORMAL, 1 },
     { "snoop",	      do_snoop,	       POS_DEAD,     L7, LOG_ALWAYS, 1 },
     { "snlist",	      do_snlist,       POS_DEAD,     L7, LOG_NORMAL, 1 },
-    { "slot",	      do_slot,	       POS_DEAD,     L2, LOG_NORMAL, 1 },
-    { "stat",	      do_stat,	       POS_DEAD,     L8, LOG_NORMAL, 1 },
-    { "omnistat",	  do_omnistat,     POS_DEAD,     IM, LOG_NORMAL, 1 },
+    { "slot",	        do_slot,	       POS_DEAD,     L2, LOG_NORMAL, 1 },
+    { "stat",	        do_stat,	       POS_DEAD,     L8, LOG_NORMAL, 1 },
+    { "omnistat",	    do_omnistat,     POS_DEAD,     IM, LOG_NORMAL, 1 },
     { "switch",	      do_switch,       POS_DEAD,     L5, LOG_ALWAYS, 1 },
-    { "wizinvis",	  do_winvis,       POS_DEAD,     IM, LOG_NORMAL, 1 },
-    /*  { "vnum",         do_vnum,         POS_DEAD,     L4, LOG_NORMAL, 1 }, */
+    { "wizinvis",	    do_winvis,       POS_DEAD,     IM, LOG_NORMAL, 1 },
     { "ovnum",	      do_ovnum,	       POS_DEAD,     L5, LOG_NORMAL, 1 },
     { "mvnum",	      do_mvnum,	       POS_DEAD,     L5, LOG_NORMAL, 1 },
 
     { "zecho",	      do_zecho,	       POS_DEAD,     IM, LOG_ALWAYS, 1 },
-    { "affstrip",	  do_affstrip,     POS_DEAD,     L8, LOG_ALWAYS, 1 },
+    { "affstrip",	    do_affstrip,     POS_DEAD,     L8, LOG_ALWAYS, 1 },
     { "clone",	      do_clone,	       POS_DEAD,     L6, LOG_ALWAYS, 1 },
 
     { "wiznet",	      do_wiznet,       POS_DEAD,     IM, LOG_NORMAL, 1 },
@@ -310,14 +309,13 @@ const struct cmd_type cmd_table[] =
     { "imotd",	      do_imotd,	       POS_DEAD,     IM, LOG_NORMAL, 1 },
     { "prefi",	      do_prefi,	       POS_DEAD,     IM, LOG_NORMAL, 0 },
     { "prefix",	      do_prefix,       POS_DEAD,     IM, LOG_NORMAL, 1 },
-    { "busy",	      do_busy,	       POS_DEAD,     IM, LOG_NORMAL, 1 },
+    { "busy",	        do_busy,	       POS_DEAD,     IM, LOG_NORMAL, 1 },
     { "coding",	      do_coding,       POS_DEAD,     L1, LOG_NORMAL, 1 },
-    { "building",	  do_building,     POS_DEAD,     L5, LOG_NORMAL, 1 },
-    /*	{ "host",		do_host,		POS_DEAD,	ML,		LOG_ALWAYS,		1	}, */
+    { "building",	    do_building,     POS_DEAD,     L5, LOG_NORMAL, 1 },
 
     /*  OLC  */
 
-    { "edit",	      do_olc,	       POS_DEAD,     L5, LOG_NORMAL, 0 },
+    { "edit",	        do_olc,          POS_DEAD,     L5, LOG_NORMAL, 0 },
     { "asave",	      do_asave,	       POS_DEAD,     L5, LOG_NORMAL, 1 },
     { "alist",	      do_alist,	       POS_DEAD,     L5, LOG_NORMAL, 1 },
     { "resets",	      do_resets,       POS_DEAD,     L5, LOG_NORMAL, 1 },

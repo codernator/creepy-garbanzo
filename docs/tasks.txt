@@ -1,3 +1,9 @@
+typedef void INTERPRETER_FUN(/*@partial@*/struct descriptor_data* desc, /*@observer@*/const char *argument);
+struct interpreter_stack {
+    INTERPRETER_FUN *fun[10];
+    int index;
+}
+
 room exits 
 - don't realize non-exits
 - serialize exit index (since index == direction)

@@ -207,8 +207,6 @@ struct weather_data {
 #define CON_BREAK_CONNECT       15
 #define CON_GET_ANSI            16
 #define CON_COPYOVER_RECOVER    17
-#define INTERP_MODE_STANDARD    0
-#define INTERP_MODE_STRING_EDIT 1
 
 
 typedef void DESC_GETTER(/*@observer@*/void *owner, char *target, size_t maxsize);
@@ -221,6 +219,10 @@ struct olc_string_editor_data {
     /*@dependent@*//*@null@*/DESC_SETTER *setter;
     char text[MAX_STRING_LENGTH];
 };
+
+
+#define INTERP_MODE_STANDARD    0
+#define INTERP_MODE_STRING_EDIT 1
 
 /* Descriptor (channel) structure. */
 struct descriptor_data {
@@ -248,9 +250,11 @@ struct descriptor_data {
     /*@owned@*//*@null@*/char *outbuf;
     size_t outsize;
     int outtop;
-    int interpmode;
     /*@shared@*//*@null@*/char *showstr_head;
     /*@shared@*//*@null@*/char *showstr_point;
+
+    //struct interpreter_stack interpreters;
+    int interpmode;
     /*@shared@*//*@null@*/void *ed_data;
     struct olc_string_editor_data olc_string_editor;
     int editor;
@@ -2205,6 +2209,9 @@ int descriptor_list_count();
 /*@dependent@*//*@null@*/struct descriptor_data *descriptor_iterator_start(const DESCRIPTOR_ITERATOR_FILTER *filter);
 /*@dependent@*//*@null@*/struct descriptor_data *descriptor_iterator(struct descriptor_data *current, const DESCRIPTOR_ITERATOR_FILTER *filter);
 void descriptor_host_set(struct descriptor_data *d, /*@observer@*/const char *value);
+void descriptor_push_interpreter(struct descriptor *desc, INTERPRETER_FUN *fun);
+void descriptor_pop_interpreter(struct descriptor *desc);
+INTERPRETER_FUN *descriptor_interpreter(struct descriptor *desc);
 /* ~descriptor.c */
 
 

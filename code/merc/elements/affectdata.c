@@ -85,14 +85,14 @@ struct affect_data *affecttemplate_iterator_startroom(struct roomtemplate *room)
     return room->affected->next;
 }
 
-struct affect_data *affecttemplate_iterator_startobject(struct objecttemplate *object);
+struct affect_data *affecttemplate_iterator_startobject(struct objecttemplate *object)
 {
     assert(object != NULL);
     assert(object->affected != NULL);
     return object->affected->next;
 }
 
-struct affect_data *affecttemplate_iterator(struct affect_data *current);
+struct affect_data *affecttemplate_iterator(struct affect_data *current)
 {
     assert(current != NULL);
     return current->next;
